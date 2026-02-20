@@ -1,0 +1,43 @@
+[gd_scene load_steps=2 format=3 uid="uid://byfljvilhvi0k"]
+
+[ext_resource type="Script" uid="uid://dlruyi4ga57ey" path="res://scripts/configs/language.gd" id="1_tfytk"]
+
+[node name="language" type="Node2D"]
+script = ExtResource("1_tfytk")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_right = 1158.0
+offset_bottom = 652.0
+color = Color(0.50140655, 0.5014065, 0.5014065, 1)
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -19.0
+offset_top = -20.0
+offset_right = 21.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VSplitContainer" type="VSplitContainer" parent="Control"]
+layout_mode = 0
+offset_left = 534.0
+offset_top = 277.0
+offset_right = 631.0
+offset_bottom = 351.0
+
+[node name="english" type="Button" parent="Control/VSplitContainer"]
+layout_mode = 2
+text = "English"
+
+[node name="portuguese" type="Button" parent="Control/VSplitContainer"]
+layout_mode = 2
+text = "Portuguese"
+
+[connection signal="pressed" from="Control/VSplitContainer/english" to="." method="_on_english_pressed"]
+[connection signal="pressed" from="Control/VSplitContainer/portuguese" to="." method="_on_portuguese_pressed"]

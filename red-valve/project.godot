@@ -1,0 +1,33 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="Red Valve"
+config/name_localized={
+"en_US": "",
+"pt_BR": ""
+}
+config/version="1.0"
+config/features=PackedStringArray("4.5", "Mobile")
+config/icon="res://icon.svg"
+
+[file_customization]
+
+folder_colors={
+"res://assets/": "orange",
+"res://scenes/": "green",
+"res://scripts/": "purple",
+"res://shaders/": "pink"
+}
+
+[rendering]
+
+renderer/rendering_method="mobile"
