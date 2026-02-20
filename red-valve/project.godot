@@ -28,6 +28,10 @@ folder_colors={
 "res://shaders/": "pink"
 }
 
+[global_group]
+
+player=""
+
 [input]
 
 ui_left={

@@ -1,0 +1,136 @@
+[gd_scene load_steps=19 format=3 uid="uid://xf6qeqrya6pi"]
+
+[ext_resource type="PackedScene" uid="uid://crs1r6yrt728p" path="res://assets/3d_model/enemies/the-cobalt-husker.glb" id="1_mut4x"]
+[ext_resource type="Script" uid="uid://baha8x6yln0ig" path="res://scripts/enemies/thecobalthusker.gd" id="1_yyq7i"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_mut4x"]
+radius = 0.66552734
+height = 1.78125
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_yyq7i"]
+animation = &"Slow_Orc_Walk"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_4qkir"]
+animation = &"Female_Crouch_Pick_Throw_Forward"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_kgd81"]
+animation = &"Running"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_b6l5s"]
+animation = &"Walking"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_wanwn"]
+animation = &"Electrocuted_Fall"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_dym45"]
+animation = &"Casual_Walk"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_81yhm"]
+xfade_time = 0.2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_heb6s"]
+xfade_time = 0.2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_3mmb5"]
+xfade_time = 0.2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_22vhb"]
+xfade_time = 0.2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_5ksfx"]
+xfade_time = 0.5
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_hmc62"]
+xfade_time = 0.5
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_g0m3k"]
+xfade_time = 0.5
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_24n3h"]
+xfade_time = 0.2
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_im4ed"]
+states/End/position = Vector2(673, 120)
+states/attack_1/node = SubResource("AnimationNodeAnimation_yyq7i")
+states/attack_1/position = Vector2(285, 206)
+states/attack_2/node = SubResource("AnimationNodeAnimation_4qkir")
+states/attack_2/position = Vector2(505, 206)
+states/dead/node = SubResource("AnimationNodeAnimation_kgd81")
+states/dead/position = Vector2(500, 49)
+states/run/node = SubResource("AnimationNodeAnimation_b6l5s")
+states/run/position = Vector2(353, 39)
+states/walk/node = SubResource("AnimationNodeAnimation_wanwn")
+states/walk/position = Vector2(1285, 152)
+states/walk_slow/node = SubResource("AnimationNodeAnimation_dym45")
+states/walk_slow/position = Vector2(397, 126)
+transitions = ["Start", "walk_slow", SubResource("AnimationNodeStateMachineTransition_81yhm"), "walk_slow", "run", SubResource("AnimationNodeStateMachineTransition_heb6s"), "walk_slow", "attack_1", SubResource("AnimationNodeStateMachineTransition_3mmb5"), "walk_slow", "attack_2", SubResource("AnimationNodeStateMachineTransition_22vhb"), "attack_2", "walk_slow", SubResource("AnimationNodeStateMachineTransition_5ksfx"), "attack_1", "walk_slow", SubResource("AnimationNodeStateMachineTransition_hmc62"), "run", "walk_slow", SubResource("AnimationNodeStateMachineTransition_g0m3k"), "walk_slow", "dead", SubResource("AnimationNodeStateMachineTransition_24n3h")]
+graph_offset = Vector2(-376.02243, 0)
+
+[node name="TheCobaltHusker" type="Node3D"]
+
+[node name="enemy" type="CharacterBody3D" parent="."]
+collision_layer = 4
+collision_mask = 2
+script = ExtResource("1_yyq7i")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="enemy"]
+transform = Transform3D(2.084061, 0, 0, 0, 2.317266, 0, 0, 0, 2.2621195, 0.22100568, 1.4105382, 0.009167435)
+shape = SubResource("CapsuleShape3D_mut4x")
+
+[node name="the-cobalt-husker" parent="enemy" instance=ExtResource("1_mut4x")]
+transform = Transform3D(2.4440317, 0, 0, 0, 2.0019765, 0, 0, 0, 1.6483841, 0.006389618, 0, -0.017198324)
+
+[node name="Skeleton3D" parent="enemy/the-cobalt-husker/Armature" index="0"]
+bones/0/position = Vector3(28.411383, 86.9431, -8.940448)
+bones/0/rotation = Quaternion(0.17361733, 0.07596359, -0.12836048, 0.97345275)
+bones/1/rotation = Quaternion(0.88955253, 0.18229496, -0.16689053, 0.38420367)
+bones/2/position = Vector3(2.3940509e-06, 31.64134, -1.6573267e-06)
+bones/2/rotation = Quaternion(0.549841, 0.094252795, -0.031354424, 0.829342)
+bones/3/rotation = Quaternion(-0.54147905, 0.040076386, 0.098202586, 0.83399683)
+bones/4/rotation = Quaternion(-0.6148281, -0.04103959, -0.009928156, 0.78753006)
+bones/5/rotation = Quaternion(0.83197284, -0.1233105, 0.17265749, 0.5126452)
+bones/6/rotation = Quaternion(0.6395822, -0.088434696, 0.05826226, 0.76139313)
+bones/7/position = Vector3(-5.020047e-07, 30.303709, 8.888252e-07)
+bones/7/rotation = Quaternion(-0.3647143, 0.018915093, -0.22023162, 0.904502)
+bones/8/rotation = Quaternion(-0.6098255, 0.09088723, -0.012638634, 0.7872056)
+bones/9/position = Vector3(0.030053833, 11.694855, 6.165523)
+bones/9/rotation = Quaternion(0.36129472, -0.012139697, -0.019582681, 0.932167)
+bones/10/position = Vector3(-1.1585664e-06, 13.220598, 1.8078958e-05)
+bones/10/rotation = Quaternion(0.014681418, 0.002021257, -0.0071688103, 0.9998646)
+bones/11/position = Vector3(1.3439369e-07, 13.220636, -2.2957793e-06)
+bones/11/rotation = Quaternion(-0.20883818, 0.0011327596, -0.007390497, 0.97792166)
+bones/12/rotation = Quaternion(-0.26962727, -0.6389743, 0.71692467, -0.07093644)
+bones/13/position = Vector3(-1.3462613e-06, 40.597866, 1.6036324e-07)
+bones/13/rotation = Quaternion(-0.19629954, 0.24714118, 0.62908006, 0.7103844)
+bones/14/position = Vector3(6.668046e-06, 32.101925, 2.120579e-06)
+bones/14/rotation = Quaternion(-0.3215456, -0.039574947, 0.29447678, 0.89906937)
+bones/15/position = Vector3(9.182595e-06, 32.28061, -1.1160214e-06)
+bones/15/rotation = Quaternion(0.04667482, -0.2422285, 0.044487454, 0.96807426)
+bones/16/position = Vector3(-4.3068023, 10.025276, -1.652158)
+bones/16/rotation = Quaternion(0.33360496, -0.66028327, 0.66688806, 0.08941021)
+bones/17/position = Vector3(-8.916545e-06, 40.98217, 4.108707e-06)
+bones/17/rotation = Quaternion(-0.27020565, -0.22379321, -0.63862526, 0.684882)
+bones/18/position = Vector3(-2.1904789e-06, 33.326138, -1.6978693e-06)
+bones/18/rotation = Quaternion(-0.21354973, 0.051380258, -0.1940364, 0.9560892)
+bones/19/position = Vector3(2.2370386e-06, 32.205788, 1.2875596e-05)
+bones/19/rotation = Quaternion(0.011797724, -0.19012883, -0.14968286, 0.9702098)
+bones/20/rotation = Quaternion(0.18576545, -0.014805243, -0.03811032, 0.9817432)
+bones/21/position = Vector3(1.7664945e-07, 8.954335, 9.937271e-06)
+bones/21/rotation = Quaternion(0.25921866, 0.14138211, 0.15364611, 0.9429792)
+bones/22/position = Vector3(-0.11289317, 7.293632, -2.8948808)
+bones/22/rotation = Quaternion(-0.18780218, 9.600749e-06, 0.00731882, 0.9821796)
+bones/23/position = Vector3(0.112877436, 5.4948134, 2.894859)
+bones/23/rotation = Quaternion(0.24002297, 7.017965e-06, -0.009367274, 0.9707221)
+
+[node name="AnimationTree" type="AnimationTree" parent="enemy/the-cobalt-husker"]
+tree_root = SubResource("AnimationNodeStateMachine_im4ed")
+anim_player = NodePath("../AnimationPlayer")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+
+[editable path="enemy/the-cobalt-husker"]
