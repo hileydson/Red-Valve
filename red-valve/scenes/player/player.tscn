@@ -1,12 +1,87 @@
-[gd_scene load_steps=36 format=3 uid="uid://cluvbknxfjx2k"]
+[gd_scene load_steps=49 format=3 uid="uid://cluvbknxfjx2k"]
 
 [ext_resource type="Script" uid="uid://deirdushqeh74" path="res://scripts/player/player.gd" id="1_8afob"]
+[ext_resource type="Texture2D" uid="uid://bcav021wtw4vf" path="res://assets/images/player/fire_gun.png" id="2_75vfm"]
 [ext_resource type="Texture2D" uid="uid://bet48rlumqtua" path="res://assets/images/player/sprite-256px-16.png" id="2_dovo2"]
 [ext_resource type="AudioStream" uid="uid://cn3pregco36bw" path="res://assets/sounds/player/gun_load.mp3" id="3_p47bc"]
 [ext_resource type="AudioStream" uid="uid://u3eclo54hry0" path="res://assets/sounds/player/gun_shot.mp3" id="4_75vfm"]
 [ext_resource type="AudioStream" uid="uid://cof0aohm8uyuj" path="res://assets/sounds/player/passos.mp3" id="5_0owmy"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_dovo2"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_dovo2"]
+font_size = 34
+font_color = Color(0.6261257, 0.6261257, 0.6261257, 1)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uniwh"]
+atlas = ExtResource("2_75vfm")
+region = Rect2(0, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_iqsei"]
+atlas = ExtResource("2_75vfm")
+region = Rect2(32, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tffgl"]
+atlas = ExtResource("2_75vfm")
+region = Rect2(64, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pk8ii"]
+atlas = ExtResource("2_75vfm")
+region = Rect2(96, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5mf0n"]
+atlas = ExtResource("2_75vfm")
+region = Rect2(128, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4hvnv"]
+atlas = ExtResource("2_75vfm")
+region = Rect2(160, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bbmj2"]
+atlas = ExtResource("2_75vfm")
+region = Rect2(192, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kxw46"]
+atlas = ExtResource("2_75vfm")
+region = Rect2(224, 0, 32, 48)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_8qxvo"]
+animations = [{
+"frames": [{
+"duration": 0.01,
+"texture": null
+}, {
+"duration": 0.07,
+"texture": SubResource("AtlasTexture_uniwh")
+}, {
+"duration": 0.07,
+"texture": SubResource("AtlasTexture_iqsei")
+}, {
+"duration": 0.07,
+"texture": SubResource("AtlasTexture_tffgl")
+}, {
+"duration": 0.07,
+"texture": SubResource("AtlasTexture_pk8ii")
+}, {
+"duration": 0.07,
+"texture": SubResource("AtlasTexture_5mf0n")
+}, {
+"duration": 0.07,
+"texture": SubResource("AtlasTexture_4hvnv")
+}, {
+"duration": 0.07,
+"texture": SubResource("AtlasTexture_bbmj2")
+}, {
+"duration": 0.07,
+"texture": SubResource("AtlasTexture_kxw46")
+}, {
+"duration": 0.01,
+"texture": null
+}],
+"loop": false,
+"name": &"shoot",
+"speed": 5.0
+}]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_gmlin"]
 atlas = ExtResource("2_dovo2")
@@ -227,9 +302,22 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="LabelSettings" id="LabelSettings_dovo2"]
-font_size = 34
-font_color = Color(0.6261257, 0.6261257, 0.6261257, 1)
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_p47bc"]
+direction = Vector3(1, 0, -1)
+spread = 20.0
+initial_velocity_min = 8.0
+initial_velocity_max = 10.0
+gravity = Vector3(0, -20.8, 0)
+damping_min = 3.0000002
+damping_max = 5.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_75vfm"]
+shading_mode = 0
+albedo_color = Color(0.8762129, 0.61552095, 0.2608116, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_0owmy"]
+material = SubResource("StandardMaterial3D_75vfm")
+size = Vector3(0.02, 0.02, 0.02)
 
 [node name="CharacterBody3D" type="CharacterBody3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1128244, 0)
@@ -237,25 +325,6 @@ script = ExtResource("1_8afob")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape3D_dovo2")
-
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-
-[node name="control_weapons" type="Control" parent="CanvasLayer"]
-layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="pistola" type="AnimatedSprite2D" parent="CanvasLayer/control_weapons"]
-modulate = Color(1.1898682, 1.0701013, 0.9420746, 1)
-position = Vector2(852.99994, 565.00006)
-rotation = 0.113768786
-scale = Vector2(1.2259275, 1.2875113)
-sprite_frames = SubResource("SpriteFrames_ioxgp")
-animation = &"shoot"
-autoplay = "idle"
-frame = 8
-frame_progress = 1.0
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.49483705, 0)
@@ -271,6 +340,41 @@ offset_right = 607.0
 offset_bottom = 348.0
 text = "."
 label_settings = SubResource("LabelSettings_dovo2")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="Camera3D"]
+
+[node name="control_weapons" type="Control" parent="Camera3D/CanvasLayer"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="fire" type="AnimatedSprite2D" parent="Camera3D/CanvasLayer/control_weapons"]
+position = Vector2(704, 416.99997)
+rotation = -1.0701286
+scale = Vector2(2.8160782, 2.0424397)
+sprite_frames = SubResource("SpriteFrames_8qxvo")
+animation = &"shoot"
+
+[node name="pistola" type="AnimatedSprite2D" parent="Camera3D/CanvasLayer/control_weapons"]
+modulate = Color(1.1898682, 1.0701013, 0.9420746, 1)
+position = Vector2(852.99994, 565.00006)
+rotation = 0.113768786
+scale = Vector2(1.2259275, 1.2875113)
+sprite_frames = SubResource("SpriteFrames_ioxgp")
+animation = &"shoot"
+autoplay = "idle"
+frame = 8
+frame_progress = 1.0
+
+[node name="faisca" type="GPUParticles3D" parent="Camera3D"]
+transform = Transform3D(0.09489015, 0, 0.99548775, 0, 1, 0, -0.99548775, 0, 0.09489015, 1.6013589, -0.835124, -3.537651)
+emitting = false
+amount = 15
+lifetime = 0.25
+one_shot = true
+process_material = SubResource("ParticleProcessMaterial_p47bc")
+draw_pass_1 = SubResource("BoxMesh_0owmy")
 
 [node name="sounds" type="Node" parent="."]
 
@@ -288,4 +392,4 @@ stream = ExtResource("5_0owmy")
 volume_db = 3.006
 pitch_scale = 0.75
 
-[connection signal="animation_finished" from="CanvasLayer/control_weapons/pistola" to="." method="_on_pistola_animation_finished"]
+[connection signal="animation_finished" from="Camera3D/CanvasLayer/control_weapons/pistola" to="." method="_on_pistola_animation_finished"]

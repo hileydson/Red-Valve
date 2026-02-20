@@ -1,10 +1,12 @@
 extends CharacterBody3D
 
 @onready var camera = $Camera3D # Certifique-se de que sua câmera se chama Camera3D
-@onready var pistola: AnimatedSprite2D = $CanvasLayer/control_weapons/pistola
 @onready var gun_load: AudioStreamPlayer = $sounds/GunLoad
 @onready var gun_shot: AudioStreamPlayer = $sounds/GunShot
 @onready var passos: AudioStreamPlayer = $sounds/Passos
+@onready var pistola: AnimatedSprite2D = $Camera3D/CanvasLayer/control_weapons/pistola
+@onready var faisca: GPUParticles3D = $Camera3D/faisca
+@onready var fire: AnimatedSprite2D = $Camera3D/CanvasLayer/control_weapons/fire
 
 const SPEED = 5.0
 const JUMP_VELOCITY = 4.5
@@ -33,12 +35,7 @@ func _input(event):
 		camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(-80), deg_to_rad(80))
 
 func _physics_process(delta: float) -> void:
-	
-	#testrwadwad
-	if current_weapon:
-		print(current_weapon.rotation)
-		
-		
+	print(self.global_position)
 	# Adiciona gravidade
 	if not is_on_floor():
 		velocity += get_gravity() * delta
@@ -93,6 +90,9 @@ func shoot():
 
 		var tween = create_tween()
 		current_weapon.play("shoot")
+		fire.play("shoot")
+		faisca.restart()
+		faisca.emitting = true
 		gun_shot.play()
 		can_shoot_again = false
 		

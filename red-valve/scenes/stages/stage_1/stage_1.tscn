@@ -22,17 +22,17 @@ uv1_scale = Vector3(10, 10, 10)
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_23usu")
 
-[node name="chao" type="RigidBody3D" parent="."]
-transform = Transform3D(33.357807, 0, 0, 0, 1, 0, 0, 0, 33.294865, 0, 0, 0)
+[node name="CharacterBody3D" parent="." instance=ExtResource("1_23usu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.123184, 0)
+
+[node name="chao" type="StaticBody3D" parent="."]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="chao"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.700309, -0.42651343, -3.4244328)
+transform = Transform3D(33.357807, 0, 0, 0, 1, 0, 0, 0, 33.294865, 156.79199, -0.42651343, -114.01602)
 shape = SubResource("BoxShape3D_j2ghu")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="chao"]
-transform = Transform3D(61.05178, 0, 0, 0, 1, 0, 0, 0, 60.546356, 0, -0.8911679, 0)
+transform = Transform3D(2036.5535, 0, 0, 0, 1, 0, 0, 0, 2015.8827, 0, -0.8911679, 0)
 mesh = SubResource("BoxMesh_hdpfd")
+skeleton = NodePath("")
 surface_material_override/0 = SubResource("StandardMaterial3D_nwsyl")
-
-[node name="CharacterBody3D" parent="." instance=ExtResource("1_23usu")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0760732, 0)
