@@ -1,4 +1,8 @@
-# Enemy Name: The Cobalt Husker
+
+<img width="500" height="500" alt="The Cobalt Husker" src="https://github.com/user-attachments/assets/3775e172-907e-4c2e-8a6e-6a6eadbfd182" />
+
+
+# The Cobalt Husker
 
 # Description
 
