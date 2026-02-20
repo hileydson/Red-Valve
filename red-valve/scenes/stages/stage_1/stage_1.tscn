@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://e1y1h562iv55" path="res://assets/images/stages/stage_1/texture_floor_barro.jpeg" id="1_qt8wg"]
 
 [sub_resource type="Environment" id="Environment_23usu"]
-background_energy_multiplier = 0.81
+background_energy_multiplier = 0.52
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_j2ghu"]
 size = Vector3(70.52861, 0.14697266, 68.32997)
@@ -15,7 +15,7 @@ size = Vector3(70.52861, 0.14697266, 68.32997)
 shading_mode = 0
 albedo_texture = ExtResource("1_qt8wg")
 albedo_texture_force_srgb = true
-uv1_scale = Vector3(10, 10, 10)
+uv1_scale = Vector3(100, 100, 100)
 
 [node name="Stage1" type="Node3D"]
 
@@ -23,7 +23,7 @@ uv1_scale = Vector3(10, 10, 10)
 environment = SubResource("Environment_23usu")
 
 [node name="CharacterBody3D" parent="." instance=ExtResource("1_23usu")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.123184, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.6203766, 0)
 
 [node name="chao" type="StaticBody3D" parent="."]
 

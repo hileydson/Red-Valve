@@ -7,10 +7,15 @@ extends CharacterBody3D
 @onready var pistola: AnimatedSprite2D = $Camera3D/CanvasLayer/control_weapons/pistola
 @onready var faisca: GPUParticles3D = $Camera3D/faisca
 @onready var fire: AnimatedSprite2D = $Camera3D/CanvasLayer/control_weapons/fire
+@onready var shoot_light: OmniLight3D = $Camera3D/shoot_light
+@onready var flash_tela: ColorRect = $Camera3D/CanvasLayer/control_weapons/flash_tela
 
 const SPEED = 5.0
 const JUMP_VELOCITY = 4.5
 const SENSITIVITY = 0.003 # Sensibilidade do mouse
+const WALK_SPEED = 5.0
+const RUN_SPEED = 8.5 # Velocidade maior para a corrida
+
 var current_weapon: AnimatedSprite2D
 var can_shoot_again:bool = true
 
@@ -35,7 +40,6 @@ func _input(event):
 		camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(-80), deg_to_rad(80))
 
 func _physics_process(delta: float) -> void:
-	print(self.global_position)
 	# Adiciona gravidade
 	if not is_on_floor():
 		velocity += get_gravity() * delta
@@ -50,21 +54,33 @@ func _physics_process(delta: float) -> void:
 	
 	if Input.is_action_just_pressed("ui_shoot"):
 		shoot()
+	
+	# --- LÓGICA DE VELOCIDADE (CORRIDA) ---
+	var velocidade_atual = WALK_SPEED
+	if Input.is_action_pressed("ui_run"): # Use 'pressed' para manter a corrida enquanto segura
+		velocidade_atual = RUN_SPEED
 
 	# Movimentação
 	var input_dir := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
-	# transform.basis garante que "frente" seja para onde você está olhando
 	var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 	
 	if direction:
-		print("andando")
-		if !passos.playing: passos.play()
-		velocity.x = direction.x * SPEED
-		velocity.z = direction.z * SPEED
+		# Se estiver correndo, podemos aumentar o pitch do som dos passos para parecer mais rápido
+		if Input.is_action_pressed("ui_run"):
+			passos.pitch_scale = 1.2 # Som mais rápido
+		else:
+			passos.pitch_scale = 1.0 # Som normal
+			
+		if !passos.playing: 
+			passos.play()
+			
+		velocity.x = direction.x * velocidade_atual
+		velocity.z = direction.z * velocidade_atual
 	else:
-		
-		velocity.x = move_toward(velocity.x, 0, SPEED)
-		velocity.z = move_toward(velocity.z, 0, SPEED)
+		velocity.x = move_toward(velocity.x, 0, velocidade_atual)
+		velocity.z = move_toward(velocity.z, 0, velocidade_atual)
+		if passos.playing:
+			passos.stop() # Para o som quando parar de andar
 
 	move_and_slide()
 
@@ -95,6 +111,16 @@ func shoot():
 		faisca.emitting = true
 		gun_shot.play()
 		can_shoot_again = false
+		
+		# --- EFEITO DE LUZ (CLARÃO) ---
+		var flash_tween = create_tween()
+		
+		# 1. Faz o flash aparecer com uns 20% ou 30% de opacidade instantaneamente
+		# Não coloque 1.0 (100%) se não a tela fica toda branca e você não vê nada
+		flash_tela.color.a = 0.1 
+		
+		# 2. Faz ele sumir suavemente
+		flash_tween.tween_property(flash_tela, "color:a", 0.0, 0.2).set_trans(Tween.TRANS_SINE)
 		
 		# --- IMPACTO DO TIRO (IDR PARA TRÁS E GIRAR) ---
 		# Rotaciona 3 graus
