@@ -1,0 +1,38 @@
+[gd_scene load_steps=7 format=3 uid="uid://by4m6cxe53dhn"]
+
+[ext_resource type="PackedScene" uid="uid://cluvbknxfjx2k" path="res://scenes/player/player.tscn" id="1_23usu"]
+[ext_resource type="Texture2D" uid="uid://e1y1h562iv55" path="res://assets/images/stages/stage_1/texture_floor_barro.jpeg" id="1_qt8wg"]
+
+[sub_resource type="Environment" id="Environment_23usu"]
+background_energy_multiplier = 0.81
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_j2ghu"]
+size = Vector3(70.52861, 0.14697266, 68.32997)
+
+[sub_resource type="BoxMesh" id="BoxMesh_hdpfd"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nwsyl"]
+shading_mode = 0
+albedo_texture = ExtResource("1_qt8wg")
+albedo_texture_force_srgb = true
+uv1_scale = Vector3(10, 10, 10)
+
+[node name="Stage1" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_23usu")
+
+[node name="chao" type="RigidBody3D" parent="."]
+transform = Transform3D(33.357807, 0, 0, 0, 1, 0, 0, 0, 33.294865, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="chao"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.700309, -0.42651343, -3.4244328)
+shape = SubResource("BoxShape3D_j2ghu")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="chao"]
+transform = Transform3D(61.05178, 0, 0, 0, 1, 0, 0, 0, 60.546356, 0, -0.8911679, 0)
+mesh = SubResource("BoxMesh_hdpfd")
+surface_material_override/0 = SubResource("StandardMaterial3D_nwsyl")
+
+[node name="CharacterBody3D" parent="." instance=ExtResource("1_23usu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0760732, 0)

@@ -47,3 +47,17 @@ Aesthetics: It allows for vibrant, eerie colors (neon purples, greens, deep oran
 Simplicity: The goal is always "go deeper" and "kill what shouldn't exist."
 
 Atmosphere: The isolation of space is the perfect modern stand-in for Lovecraft’s lonely coastal towns.
+
+
+# Design Methods
+
+3D Enviroments 
+Enemies in 3D
+Player in 3D
+Effects in 3D
+Sprites 2D used for simple itens like a candle or some textures
+Weapons in sprites 2D
+
+Create sprites with free Gemini
+Animate sprites with Ludos.ai
+Create and animate 3D models with Meshy.ai
