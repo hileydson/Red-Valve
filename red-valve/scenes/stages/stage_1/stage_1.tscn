@@ -1,6 +1,7 @@
-[gd_scene load_steps=9 format=3 uid="uid://by4m6cxe53dhn"]
+[gd_scene load_steps=10 format=3 uid="uid://by4m6cxe53dhn"]
 
 [ext_resource type="PackedScene" uid="uid://cluvbknxfjx2k" path="res://scenes/player/player.tscn" id="1_23usu"]
+[ext_resource type="Script" uid="uid://b4fb6trwatryq" path="res://scripts/stages/stage_1.gd" id="1_nwsyl"]
 [ext_resource type="Texture2D" uid="uid://e1y1h562iv55" path="res://assets/images/stages/stage_1/texture_floor_barro.jpeg" id="1_qt8wg"]
 [ext_resource type="PackedScene" uid="uid://xf6qeqrya6pi" path="res://scenes/enemies/the_cobalt_husker.tscn" id="3_hdpfd"]
 
@@ -8,13 +9,10 @@
 background_energy_multiplier = 0.52
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_hdpfd"]
-vertices = PackedVector3Array(-253.49841, 1.7928054, -245.19942, -253.49841, 1.7928054, 244.80058, 250.50159, 1.7928054, 244.80058, 250.50159, 1.7928054, -245.19942)
+vertices = PackedVector3Array(-605.27985, 0.69685364, -590.2546, -605.27985, 0.69685364, 589.7454, 604.72015, 0.69685364, 589.7454, 604.72015, 0.69685364, -590.2546)
 polygons = [PackedInt32Array(3, 2, 0), PackedInt32Array(0, 2, 1)]
 cell_size = 2.0
 cell_height = 1.0
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_j2ghu"]
-size = Vector3(60.187878, 0.14697266, 35.61301)
 
 [sub_resource type="BoxMesh" id="BoxMesh_hdpfd"]
 
@@ -24,7 +22,11 @@ albedo_texture = ExtResource("1_qt8wg")
 albedo_texture_force_srgb = true
 uv1_scale = Vector3(100, 100, 100)
 
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_nwsyl"]
+data = PackedVector3Array(-0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, -0.5, -0.5)
+
 [node name="Stage1" type="Node3D"]
+script = ExtResource("1_nwsyl")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 light_color = Color(0.58103293, 0.581033, 0.58103275, 1)
@@ -38,19 +40,19 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.049024582, 0)
 navigation_mesh = SubResource("NavigationMesh_hdpfd")
 
 [node name="chao" type="StaticBody3D" parent="NavigationRegion3D"]
-transform = Transform3D(0.39899185, 0, 0, 0, 1, 0, 0, 0, 0.41697738, 0, 0.2920556, 0)
+transform = Transform3D(0.957, 0, 0, 0, 2.398, 0, 0, 0, 1, 0, 0.2920556, 0)
 collision_layer = 2
 collision_mask = 0
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/chao"]
-transform = Transform3D(21.190018, 0, 0, 0, 1, 0, 0, 0, 33.294865, -2.6688766, -0.5206499, 0.028656006)
-shape = SubResource("BoxShape3D_j2ghu")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="NavigationRegion3D/chao"]
 transform = Transform3D(1269.1323, 0, 0, 0, 1, 0, 0, 0, 1184.5092, 0, -0.9992502, 0)
 mesh = SubResource("BoxMesh_hdpfd")
 skeleton = NodePath("")
 surface_material_override/0 = SubResource("StandardMaterial3D_nwsyl")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/chao"]
+transform = Transform3D(1269.1323, 0, 0, 0, 1, 0, 0, 0, 1184.5092, 0, -0.9992502, 0)
+shape = SubResource("ConcavePolygonShape3D_nwsyl")
 
 [node name="Player" parent="." instance=ExtResource("1_23usu")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.4587126, 0)
@@ -60,3 +62,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.0277386, 0)
 
 [node name="TheCobaltHusker" parent="enemies" instance=ExtResource("3_hdpfd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0222588, -0.3530271, -10.357668)
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 2.633
