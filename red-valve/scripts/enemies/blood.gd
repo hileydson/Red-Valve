@@ -1,12 +1,10 @@
 extends GPUParticles3D
 @onready var mancha: Sprite3D = $mancha
 
-
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	emitting = true
 	
-	mancha
 	var tween = create_tween()
 	tween.tween_property(mancha, "modulate:a", 0, 0.3) # Fade out
 	#tween.finished.connect(queue_free)

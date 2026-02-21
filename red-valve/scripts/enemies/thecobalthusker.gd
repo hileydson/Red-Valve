@@ -5,10 +5,28 @@ const ACCEL = 4.0
 
 @onready var player = get_tree().get_first_node_in_group("player")
 @onready var nav_agent: NavigationAgent3D = $"../NavigationAgent3D"
+@onready var health_bar_sprite: Sprite3D = $HealthBarSprite
+@onready var animation_tree: AnimationTree = $"the-cobalt-husker/AnimationTree"
+@onready var health_bar: ProgressBar = $HealthBarViewport/HealthBar
 
+var max_health = 50
+var current_health = 50
 var update_timer = 0.0
 
+var playback 
+var dead:bool = false
+
+func _ready() -> void:
+	playback = animation_tree["parameters/playback"]
+	# Configura os valores iniciais da barra
+	health_bar.max_value = max_health
+	health_bar.value = current_health
+	# Opcional: esconder a barra se estiver com vida cheia
+	health_bar_sprite.hide()
+
 func _physics_process(delta: float) -> void:
+	if dead: return
+	
 	# 1. Gravidade sempre ativa
 	if not is_on_floor():
 		velocity += get_gravity() * delta
@@ -46,3 +64,25 @@ func _physics_process(delta: float) -> void:
 
 	# 5. Move o corpo físico
 	move_and_slide()
+	
+	
+func take_damage(amount):
+	current_health -= amount
+	current_health = clamp(current_health, 0, max_health)
+	
+	health_bar_sprite.show()
+	
+	# Animação suave da barra diminuindo
+	var tween = create_tween()
+	tween.tween_property(health_bar, "value", current_health, 0.2).set_trans(Tween.TRANS_SINE)
+	
+	if current_health <= 0:
+		die()
+
+func die():
+	dead = true
+	health_bar_sprite.hide()
+	# Seu código de morte aqui
+	playback.travel("dead")
+	await get_tree().create_timer(20.0).timeout
+	queue_free()

@@ -19,6 +19,8 @@ const SENSITIVITY = 0.003 # Sensibilidade do mouse
 const WALK_SPEED = 5.0
 const RUN_SPEED = 8.5 # Velocidade maior para a corrida
 
+#CHANGE LATER - DYNAMICLY
+const damage_pistol:int = 10 #3 
 var current_weapon: AnimatedSprite2D
 var can_shoot_again:bool = true
 
@@ -147,9 +149,12 @@ func shoot():
 		tween.parallel().tween_property(current_weapon, "position:y", current_weapon.position.y, 0.1).set_trans(Tween.TRANS_BACK)
 		
 		
-		#enemy blood
+		#get enemy - set blood
 		if ray_cast_3d.is_colliding():
 			var target = ray_cast_3d.get_collider()
+			
+			#set damage
+			target.take_damage(damage_pistol)
 			
 			# Verifica se o que atingimos é um inimigo
 			if target.is_in_group("enemies"):

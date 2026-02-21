@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://xf6qeqrya6pi"]
+[gd_scene load_steps=22 format=3 uid="uid://xf6qeqrya6pi"]
 
 [ext_resource type="PackedScene" uid="uid://crs1r6yrt728p" path="res://assets/3d_model/enemies/the-cobalt-husker.glb" id="1_mut4x"]
 [ext_resource type="Script" uid="uid://baha8x6yln0ig" path="res://scripts/enemies/thecobalthusker.gd" id="1_yyq7i"]
@@ -78,6 +78,12 @@ initial_velocity_min = 5.0
 initial_velocity_max = 5.0
 color = Color(0.5853828, 0, 0.022112181, 1)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yyq7i"]
+bg_color = Color(0.31344908, 0.0012166491, 0.584479, 1)
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_yyq7i"]
+viewport_path = NodePath("enemy/HealthBarViewport")
+
 [node name="TheCobaltHusker" type="Node3D"]
 
 [node name="enemy" type="CharacterBody3D" parent="." groups=["enemies"]]
@@ -97,42 +103,42 @@ transform = Transform3D(2.4440317, 0, 0, 0, 2.0019765, 0, 0, 0, 1.6483841, 0.006
 transform = Transform3D(-0.01, 0, -8.7422775e-10, 0, 0.01, 0, 8.7422775e-10, 0, -0.01, 0, 0, 0)
 
 [node name="Skeleton3D" parent="enemy/the-cobalt-husker/Armature" index="0"]
-bones/0/position = Vector3(26.904606, 83.29208, -8.743934)
-bones/0/rotation = Quaternion(0.2068406, -0.1204078, -0.10839807, 0.96486735)
-bones/1/rotation = Quaternion(0.82457405, 0.17071481, -0.29323515, 0.452711)
+bones/0/position = Vector3(26.756275, 83.36454, -8.80375)
+bones/0/rotation = Quaternion(0.20482524, -0.11780594, -0.10764078, 0.96570283)
+bones/1/rotation = Quaternion(0.82812786, 0.1706341, -0.29114413, 0.44757515)
 bones/2/position = Vector3(2.3940509e-06, 31.64134, -1.6573267e-06)
-bones/2/rotation = Quaternion(0.687036, 0.082338646, -0.065356925, 0.71897876)
-bones/3/rotation = Quaternion(-0.62107736, 0.079024695, 0.10596152, 0.77252203)
-bones/4/rotation = Quaternion(-0.597089, -0.087981634, -0.11813411, 0.7885356)
-bones/5/rotation = Quaternion(0.80835724, -0.10588769, 0.147987, 0.5598627)
-bones/6/rotation = Quaternion(0.7243031, -0.09142201, 0.079552874, 0.6787477)
+bones/2/rotation = Quaternion(0.68365, 0.082523584, -0.06447784, 0.722257)
+bones/3/rotation = Quaternion(-0.62032634, 0.07880294, 0.10686764, 0.77302307)
+bones/4/rotation = Quaternion(-0.5970494, -0.088222496, -0.11824869, 0.78852147)
+bones/5/rotation = Quaternion(0.80830824, -0.1062904, 0.14738204, 0.56001675)
+bones/6/rotation = Quaternion(0.7246389, -0.09126805, 0.07963557, 0.67840034)
 bones/7/position = Vector3(-5.020047e-07, 30.303709, 8.888252e-07)
-bones/7/rotation = Quaternion(-0.46277463, 0.006961141, -0.16916768, 0.8701572)
-bones/8/rotation = Quaternion(-0.618791, 0.05044377, 0.0019689456, 0.7839319)
+bones/7/rotation = Quaternion(-0.4627911, 0.009235415, -0.16866605, 0.8702246)
+bones/8/rotation = Quaternion(-0.61917, 0.050363153, 0.0022748841, 0.783637)
 bones/9/position = Vector3(0.030053833, 11.694855, 6.165523)
-bones/9/rotation = Quaternion(0.38600475, -0.026273744, -0.01413829, 0.9220142)
+bones/9/rotation = Quaternion(0.38527447, -0.025995478, -0.0139151225, 0.9223308)
 bones/10/position = Vector3(-1.1585664e-06, 13.220598, 1.8078958e-05)
-bones/10/rotation = Quaternion(0.0272467, 0.0147446, 0.023546208, 0.99924266)
+bones/10/rotation = Quaternion(0.02715678, 0.014969348, 0.0231863, 0.99925023)
 bones/11/position = Vector3(1.3439369e-07, 13.220636, -2.2957793e-06)
-bones/11/rotation = Quaternion(-0.20668522, 0.0015880595, -0.0016048949, 0.978405)
-bones/12/rotation = Quaternion(-0.2826878, -0.64798313, 0.69658846, -0.12235226)
+bones/11/rotation = Quaternion(-0.20676802, 0.0015196363, -0.0015391668, 0.9783876)
+bones/12/rotation = Quaternion(-0.2824327, -0.6479025, 0.69684064, -0.12193196)
 bones/13/position = Vector3(-1.3462613e-06, 40.597866, 1.6036324e-07)
-bones/13/rotation = Quaternion(-0.12748414, 0.39700076, 0.6891999, 0.59257203)
+bones/13/rotation = Quaternion(-0.12662332, 0.39647478, 0.68851554, 0.5939029)
 bones/14/position = Vector3(6.668046e-06, 32.101925, 2.120579e-06)
-bones/14/rotation = Quaternion(-0.28575116, -0.039823964, 0.25576043, 0.9226846)
+bones/14/rotation = Quaternion(-0.2869381, -0.039907392, 0.25704283, 0.92195606)
 bones/15/position = Vector3(9.182595e-06, 32.28061, -1.1160214e-06)
-bones/15/rotation = Quaternion(0.05350823, -0.18152943, 0.045816574, 0.9808592)
+bones/15/rotation = Quaternion(0.053025313, -0.18303372, 0.04436307, 0.9806727)
 bones/16/position = Vector3(-4.3068023, 10.025276, -1.652158)
-bones/16/rotation = Quaternion(0.36024523, -0.64558554, 0.6707371, 0.0596197)
+bones/16/rotation = Quaternion(0.35986245, -0.6455053, 0.67098516, 0.060008466)
 bones/17/position = Vector3(-8.916545e-06, 40.98217, 4.108707e-06)
-bones/17/rotation = Quaternion(-0.19001539, -0.2373472, -0.72958606, 0.61258847)
+bones/17/rotation = Quaternion(-0.1917567, -0.23563734, -0.7286887, 0.61377287)
 bones/18/position = Vector3(-2.1904789e-06, 33.326138, -1.6978693e-06)
-bones/18/rotation = Quaternion(-0.23141947, 0.051663414, -0.20302169, 0.9500307)
+bones/18/rotation = Quaternion(-0.23139255, 0.05162225, -0.2031522, 0.95001155)
 bones/19/position = Vector3(2.2370386e-06, 32.205788, 1.2875596e-05)
-bones/19/rotation = Quaternion(0.022761177, -0.14300281, -0.14631091, 0.97858334)
-bones/20/rotation = Quaternion(0.19384876, 0.03943691, -0.02761837, 0.97984934)
+bones/19/rotation = Quaternion(0.02285692, -0.14179567, -0.14722104, 0.9786202)
+bones/20/rotation = Quaternion(0.19324203, 0.03862543, -0.027689707, 0.9799995)
 bones/21/position = Vector3(1.7664945e-07, 8.954335, 9.937271e-06)
-bones/21/rotation = Quaternion(0.18134531, 0.09555425, 0.024218919, 0.9784665)
+bones/21/rotation = Quaternion(0.1837996, 0.09579117, 0.025634898, 0.97794926)
 bones/22/position = Vector3(-0.11289317, 7.293632, -2.8948808)
 bones/22/rotation = Quaternion(-0.18780218, 9.600749e-06, 0.00731882, 0.9821796)
 bones/23/position = Vector3(0.112877436, 5.4948134, 2.894859)
@@ -149,6 +155,21 @@ lifetime = 2.9799999999999995
 explosiveness = 1.0
 local_coords = true
 process_material = SubResource("ParticleProcessMaterial_yyq7i")
+
+[node name="HealthBarViewport" type="SubViewport" parent="enemy"]
+transparent_bg = true
+size = Vector2i(100, 20)
+render_target_update_mode = 4
+
+[node name="HealthBar" type="ProgressBar" parent="enemy/HealthBarViewport"]
+offset_right = 4.0
+offset_bottom = 27.0
+theme_override_styles/fill = SubResource("StyleBoxFlat_yyq7i")
+
+[node name="HealthBarSprite" type="Sprite3D" parent="enemy"]
+transform = Transform3D(1.4301426, 0, 0, 0, 1, 0, 0, 0, 1, -0.36923468, 3.3472676, -3.227952e-08)
+billboard = 1
+texture = SubResource("ViewportTexture_yyq7i")
 
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
 
