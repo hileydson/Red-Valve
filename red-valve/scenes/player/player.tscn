@@ -477,6 +477,7 @@ shape = SubResource("CapsuleShape3D_dovo2")
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.49483705, 0)
+current = true
 
 [node name="RayCast3D" type="RayCast3D" parent="Camera3D"]
 transform = Transform3D(-0.9999521, 0, -0.00979113, 0, 1, 0, 0.00979113, 0, -0.9999521, 0, -0.045309782, 0)
@@ -537,6 +538,9 @@ lifetime = 0.25
 one_shot = true
 process_material = SubResource("ParticleProcessMaterial_p47bc")
 draw_pass_1 = SubResource("BoxMesh_0owmy")
+
+[node name="Camera3D_Bullet_Time" type="Camera3D" parent="."]
+fov = 90.4
 
 [node name="sounds" type="Node" parent="."]
 

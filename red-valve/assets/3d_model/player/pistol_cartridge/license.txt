@@ -1,0 +1,11 @@
+Model Information:
+* title:	10mm Ammo Box
+* source:	https://sketchfab.com/3d-models/10mm-ammo-box-d6f4264eb14b4ee88c1ecd0252129fd1
+* author:	VladIG_CG (https://sketchfab.com/VladIG_CG)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "10mm Ammo Box" (https://sketchfab.com/3d-models/10mm-ammo-box-d6f4264eb14b4ee88c1ecd0252129fd1) by VladIG_CG (https://sketchfab.com/VladIG_CG) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

@@ -1,0 +1,11 @@
+Model Information:
+* title:	9x19mm (Luger/Parabellum) cartridge - (DWM) 1913
+* source:	https://sketchfab.com/3d-models/9x19mm-lugerparabellum-cartridge-dwm-1913-5e537fa4abc242c08be0400383b89346
+* author:	Orpind (https://sketchfab.com/leondp)
+
+Model License:
+* license type:	CC-BY-NC-ND-4.0 (http://creativecommons.org/licenses/by-nc-nd/4.0/)
+* requirements:	Author must be credited. No commercial use. Modified versions can not be distributed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "9x19mm (Luger/Parabellum) cartridge - (DWM) 1913" (https://sketchfab.com/3d-models/9x19mm-lugerparabellum-cartridge-dwm-1913-5e537fa4abc242c08be0400383b89346) by Orpind (https://sketchfab.com/leondp) licensed under CC-BY-NC-ND-4.0 (http://creativecommons.org/licenses/by-nc-nd/4.0/)
