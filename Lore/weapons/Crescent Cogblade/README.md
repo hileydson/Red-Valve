@@ -1,4 +1,6 @@
 
+<img width="585" height="427" alt="Crescent Cogblade" src="https://github.com/user-attachments/assets/5b6a83f5-ff42-454a-a0cb-415879048d58" />
+
 
 # Crescent Cogblade: A Relíquia da Geometria Impura
 # Origem
