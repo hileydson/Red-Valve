@@ -55,10 +55,10 @@ transform = Transform3D(1269.1323, 0, 0, 0, 1, 0, 0, 0, 1184.5092, 0, -0.9992502
 shape = SubResource("ConcavePolygonShape3D_nwsyl")
 
 [node name="Player" parent="." instance=ExtResource("1_23usu")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3237407, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.2299366, 1.3237407, 2.5718293)
 
 [node name="enemies" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0158861, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.4599466, 1.0158861, 5.6326284)
 
 [node name="TheCobaltHusker" parent="enemies" instance=ExtResource("3_hdpfd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0222588, -0.3530271, -10.357668)

@@ -9,6 +9,9 @@ extends CharacterBody3D
 @onready var fire: AnimatedSprite2D = $Camera3D/CanvasLayer/control_weapons/fire
 @onready var shoot_light: OmniLight3D = $Camera3D/shoot_light
 @onready var flash_tela: ColorRect = $Camera3D/CanvasLayer/control_weapons/flash_tela
+@onready var ray_cast_3d: RayCast3D = $Camera3D/RayCast3D
+
+var blood_effect = preload("res://scenes/enemies/blood.tscn")
 
 const SPEED = 5.0
 const JUMP_VELOCITY = 4.5
@@ -52,7 +55,7 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_just_pressed("ui_reload"):
 		reload()
 	
-	if Input.is_action_just_pressed("ui_shoot"):
+	if pistola.animation!="reload" and Input.is_action_just_pressed("ui_shoot"):
 		shoot()
 	
 	# --- LÓGICA DE VELOCIDADE (CORRIDA) ---
@@ -67,12 +70,13 @@ func _physics_process(delta: float) -> void:
 	if direction:
 		# Se estiver correndo, podemos aumentar o pitch do som dos passos para parecer mais rápido
 		if Input.is_action_pressed("ui_run"):
+			if pistola.animation!="reload" and pistola.animation!="run":pistola.play("run")
 			passos.pitch_scale = 1.2 # Som mais rápido
 		else:
+			if pistola.animation!="reload" and pistola.animation!="walk":pistola.play("walk")
 			passos.pitch_scale = 1.0 # Som normal
 			
-		if !passos.playing: 
-			passos.play()
+		if !passos.playing: passos.play()
 			
 		velocity.x = direction.x * velocidade_atual
 		velocity.z = direction.z * velocidade_atual
@@ -142,8 +146,26 @@ func shoot():
 		tween.parallel().tween_property(current_weapon, "position:x", current_weapon.position.x, 0.1).set_trans(Tween.TRANS_BACK)
 		tween.parallel().tween_property(current_weapon, "position:y", current_weapon.position.y, 0.1).set_trans(Tween.TRANS_BACK)
 		
+		
+		#enemy blood
+		if ray_cast_3d.is_colliding():
+			var target = ray_cast_3d.get_collider()
+			
+			# Verifica se o que atingimos é um inimigo
+			if target.is_in_group("enemies"):
+				spawn_blood(ray_cast_3d.get_collision_point(), ray_cast_3d.get_collision_normal())
+		
 		await get_tree().create_timer(0.56).timeout
 		can_shoot_again = true
 
+func spawn_blood(pos, normal):
+	var blood = blood_effect.instantiate()
+	get_tree().root.add_child(blood) # Adiciona na raiz para não mover com o player
+	blood.global_position = pos
+	
+	# Faz o sangue espirrar na direção oposta ao impacto (opcional)
+	if normal != Vector3.ZERO:
+		blood.look_at(pos + normal, Vector3.UP)
+		
 func _on_pistola_animation_finished() -> void:
 	current_weapon.play("idle")
