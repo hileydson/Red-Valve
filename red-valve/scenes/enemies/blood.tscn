@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://clggmhb37xmlp"]
+[gd_scene load_steps=6 format=3 uid="uid://clggmhb37xmlp"]
 
 [ext_resource type="Script" uid="uid://bx633ykf7cx57" path="res://scripts/enemies/blood.gd" id="1_44f6p"]
+[ext_resource type="Texture2D" uid="uid://bvgwpas0j658a" path="res://assets/images/enemies/blood_mark.png" id="2_xewpu"]
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ckm2l"]
 direction = Vector3(0, 1, 0)
@@ -29,3 +30,9 @@ local_coords = true
 process_material = SubResource("ParticleProcessMaterial_ckm2l")
 draw_pass_1 = SubResource("QuadMesh_xewpu")
 script = ExtResource("1_44f6p")
+
+[node name="mancha" type="Sprite3D" parent="."]
+transform = Transform3D(0.15829988, 0, 0, 0, 0.18740822, 0, 0, 0, 0.6, 0, 0, 0)
+modulate = Color(0.9116014, 0.9116014, 0.9116014, 0.56078434)
+billboard = 1
+texture = ExtResource("2_xewpu")
