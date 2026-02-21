@@ -1,26 +1,23 @@
 
+<img width="585" height="427" alt="Crescent Cogblade" src="https://github.com/user-attachments/assets/5b6a83f5-ff42-454a-a0cb-415879048d58" />
 
-# Crescent Cogblade: A Relíquia da Geometria Impura
-# Origem
+# Crescent Cogblade: The Relic of Impure Geometry
+# Origin
+Originally, the Cogblade was not a weapon, but a high-torque hydraulic precision tool used by Acheron V’s elite engineers to slice through the ultra-dense mineral veins of the asteroid's mantle. Its intricate gear system was designed to multiply rotational force, allowing the crescent blade to vibrate at frequencies capable of shattering solid rock.
 
-Originalmente, a Cogblade não era uma arma, mas uma ferramenta de precisão hidráulica utilizada pelos engenheiros de elite da estação para cortar sedimentos ultra-densos do manto do asteroide. Seu mecanismo de engrenagens servia para multiplicar a força de rotação, permitindo que a lâmina em crescente vibrasse em frequências capazes de romper rocha sólida.
+# The Corruption
+When reality fractured, the Cogblade was the first tool to "evolve". The Chisel Cultists believe the gears began turning on their own—powered not by electricity, but by the rhythmic pulses emanating from the translucent minerals.
 
-# A Corrupção
+Before they gouged out their eyes, the miners etched the ornate runes seen at the base of the blade. They claimed the metal required "language" to understand its new, divine purpose: severing the flesh from the soul.
 
-Quando a ruptura na realidade ocorreu, a Cogblade foi a primeira ferramenta a "mudar". Os Chisel Cultists (Cultistas do Formão) acreditam que as engrenagens da arma começaram a girar sozinhas, movidas não por eletricidade, mas pelos sussurros vindos do mineral pulsante.
+# Gameplay Mechanics
+In Red-Valve, the Crescent Cogblade serves as your primary melee defense:
 
-Eles gravaram as runas que você vê na base da lâmina enquanto ainda tinham olhos, alegando que o metal precisava de "linguagem" para entender sua nova função: separar a carne da alma.
+Primary Attack: A heavy horizontal swing. The gears grind loudly, spitting sparks and black oil.
 
-# Papel no Gameplay
+Secondary Attack (Heavy): The player engages the internal motor. The crescent blade spins like a circular saw for a few seconds—perfect for carving through Geometric Aberrations that ignore standard ballistics.
 
-No jogo, a Crescent Cogblade seria a sua principal arma de curto alcance (Melee).
+Sanity Synergy: As your health drops and the world distorts, the blade’s gears begin to glow with a neon purple hue. The lower your sanity, the higher the critical damage, as the weapon "aligns" with the encroaching dimensions.
 
-Ataque Primário: Um corte horizontal pesado. As engrenagens rangem alto e espalham fagulhas e óleo negro.
-
-Ataque Secundário (Heavy): O jogador ativa o mecanismo de rotação. A lâmina gira como uma serra circular por alguns segundos, ideal para desmembrar as Geometric Aberrations que tentam se aproximar.
-
-Sinergia com Sanidade: Quanto menor a sua vida (e maior a distorção visual), as engrenagens da arma começam a brilhar em um tom roxo neon, aumentando o dano crítico à medida que a arma "reconhece" a presença de dimensões superiores.
-
-# Descrição em um Log de Áudio (Lore In-game):
-
-"Engenheiro H. Vance - Registro 402: Eu não consigo mais desligar a serra. O motor está frio, os cabos estão desconectados, mas as engrenagens... elas continuam girando. Elas fazem um som rítmico, como uma prece. Ontem, vi um dos mineradores beijando a lâmina. Ele disse que o ângulo do corte é a única coisa que faz sentido agora. Eu deveria jogá-la no incinerador, mas o metal é tão... hipnotizante."
+# In-Game Audio Log (Found near the Excavation Site):
+"Engineer H. Vance - Log 402: I can't stop the gears anymore. The motor is cold, the cables are severed, but they... they just keep turning. It’s a rhythmic sound, like a prayer. Yesterday, I saw a miner kissing the blade. He said the angle of the crescent is the only thing that makes sense anymore. I should throw it in the incinerator, but the metal is so... mesmerizing."
