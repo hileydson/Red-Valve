@@ -1,4 +1,5 @@
 
+<img width="585" height="427" alt="Maycow Lopes" src="https://github.com/user-attachments/assets/c7381be1-0bab-4726-864a-334beda61530" />
 
 
 # Maycow Lopes: The Last Executioner
