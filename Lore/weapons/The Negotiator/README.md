@@ -1,4 +1,5 @@
 
+<img width="585" height="427" alt="The Negotiator" src="https://github.com/user-attachments/assets/a2f35d96-a507-4fa7-8621-cde72804f1a1" />
 
 # The Acheron Sentinel: "The Negotiator"
 # Background
