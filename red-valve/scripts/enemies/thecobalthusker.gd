@@ -12,6 +12,7 @@ extends CharacterBody3D
 @onready var steps: AudioStreamPlayer3D = $steps
 @onready var timer: Timer = $"../../../Timer"
 @onready var growl_3: AudioStreamPlayer3D = $growl_3
+@onready var drop_dead: AudioStreamPlayer3D = $drop_dead
 
 const SPEED = 2.0
 const ACCEL = 4.0
@@ -102,7 +103,11 @@ func die():
 	health_bar_sprite.hide()
 	# Seu código de morte aqui
 	playback.travel("dead")
-	await get_tree().create_timer(20.0).timeout
+	
+	await get_tree().create_timer(3.7).timeout
+	drop_dead.play()
+	
+	await get_tree().create_timer(15.0).timeout
 	queue_free()
 
 

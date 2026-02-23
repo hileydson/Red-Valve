@@ -739,17 +739,18 @@ fov = 90.4
 
 [node name="GunLoad" type="AudioStreamPlayer" parent="sounds"]
 stream = ExtResource("3_p47bc")
-pitch_scale = 0.79
+volume_db = -5.41
+pitch_scale = 0.67
 
 [node name="GunShot" type="AudioStreamPlayer" parent="sounds"]
 stream = ExtResource("4_75vfm")
-volume_db = -3.607
-pitch_scale = 0.67
+volume_db = -4.208
+pitch_scale = 0.65
 
 [node name="Passos" type="AudioStreamPlayer" parent="sounds"]
 stream = ExtResource("5_0owmy")
-volume_db = 3.006
-pitch_scale = 0.75
+volume_db = -2.405
+pitch_scale = 0.68
 
 [connection signal="animation_finished" from="Camera3D/CanvasLayer/control_weapons/pistola" to="." method="_on_pistola_animation_finished"]
 [connection signal="body_entered" from="Camera3D/Crescent Cogblade/Area3D" to="." method="_on_area_3d_body_entered"]

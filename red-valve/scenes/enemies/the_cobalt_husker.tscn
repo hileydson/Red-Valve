@@ -1,10 +1,11 @@
-[gd_scene load_steps=26 format=4 uid="uid://xf6qeqrya6pi"]
+[gd_scene load_steps=27 format=4 uid="uid://xf6qeqrya6pi"]
 
 [ext_resource type="PackedScene" uid="uid://crs1r6yrt728p" path="res://assets/3d_model/enemies/the-cobalt-husker.glb" id="1_mut4x"]
 [ext_resource type="Script" uid="uid://baha8x6yln0ig" path="res://scripts/enemies/thecobalthusker.gd" id="1_yyq7i"]
 [ext_resource type="AudioStream" uid="uid://ybiwpy2ltoiu" path="res://assets/sounds/enemies/the_cobalt_husker/growl_1.mp3" id="3_b6l5s"]
 [ext_resource type="AudioStream" uid="uid://bq4guf1cn210k" path="res://assets/sounds/enemies/the_cobalt_husker/growl_2.mp3" id="4_wanwn"]
 [ext_resource type="AudioStream" uid="uid://brb5mjg7bc80j" path="res://assets/sounds/enemies/the_cobalt_husker/steps.mp3" id="5_dym45"]
+[ext_resource type="AudioStream" uid="uid://b6f1682rqsmnx" path="res://assets/sounds/enemies/the_cobalt_husker/drop_dead.mp3" id="6_wanwn"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_mut4x"]
 radius = 0.41259766
@@ -109,42 +110,42 @@ transform = Transform3D(2.4440317, 0, 0, 0, 2.0019765, 0, 0, 0, 1.6483841, 0.006
 transform = Transform3D(-0.01, 0, -8.7422775e-10, 0, 0.01, 0, 8.7422775e-10, 0, -0.01, 0, 0, 0)
 
 [node name="Skeleton3D" parent="enemy/the-cobalt-husker/Armature" index="0"]
-bones/0/position = Vector3(35.445072, 86.38409, -9.160691)
-bones/0/rotation = Quaternion(0.19484897, -0.054411724, -0.1561348, 0.9667964)
-bones/1/rotation = Quaternion(0.8296973, 0.17625086, -0.2544518, 0.46453452)
+bones/0/position = Vector3(12.250497, 76.75211, -6.411167)
+bones/0/rotation = Quaternion(0.2346001, -0.12390536, 0.032704126, 0.96360815)
+bones/1/rotation = Quaternion(0.6701428, 0.17076391, -0.32072437, 0.6472127)
 bones/2/position = Vector3(2.3940509e-06, 31.64134, -1.6573267e-06)
-bones/2/rotation = Quaternion(0.6221101, 0.084826134, -0.049020045, 0.7767757)
-bones/3/rotation = Quaternion(-0.56061006, 0.022738714, 0.05915535, 0.8256512)
-bones/4/rotation = Quaternion(-0.61395866, -0.035681017, -0.0137218665, 0.788412)
-bones/5/rotation = Quaternion(0.8528064, -0.0942081, 0.17129569, 0.4842561)
-bones/6/rotation = Quaternion(0.6666854, -0.09149979, 0.06457409, 0.73687756)
+bones/2/rotation = Quaternion(0.73047465, 0.086515814, -0.07820006, 0.672909)
+bones/3/rotation = Quaternion(-0.48083073, 0.024913883, 0.16793403, 0.86022043)
+bones/4/rotation = Quaternion(-0.61318725, -0.043826364, -0.006495482, 0.78869426)
+bones/5/rotation = Quaternion(0.80547863, -0.15181072, 0.036484934, 0.5716874)
+bones/6/rotation = Quaternion(0.69258773, -0.13553141, 0.077231266, 0.7042647)
 bones/7/position = Vector3(-5.020047e-07, 30.303709, 8.888252e-07)
-bones/7/rotation = Quaternion(-0.37697357, -0.020551616, -0.20319392, 0.90342736)
-bones/8/rotation = Quaternion(-0.6113175, 0.08590679, -0.023277877, 0.78636444)
+bones/7/rotation = Quaternion(-0.5534438, 0.025134262, -0.2443136, 0.79585135)
+bones/8/rotation = Quaternion(-0.59105104, 0.060856674, 0.01582962, 0.80417955)
 bones/9/position = Vector3(0.030053833, 11.694855, 6.165523)
-bones/9/rotation = Quaternion(0.37149346, -0.015599549, -0.03076656, 0.92779464)
+bones/9/rotation = Quaternion(0.39861548, 0.022832178, 0.0029235994, 0.91682935)
 bones/10/position = Vector3(-1.1585664e-06, 13.220598, 1.8078958e-05)
-bones/10/rotation = Quaternion(0.03255239, 0.0100051, 0.003256361, 0.9994147)
+bones/10/rotation = Quaternion(0.015570886, -0.00070880685, -0.003645227, 0.99987197)
 bones/11/position = Vector3(1.3439369e-07, 13.220636, -2.2957793e-06)
-bones/11/rotation = Quaternion(-0.20818378, 0.003232788, -0.0070618642, 0.97805893)
-bones/12/rotation = Quaternion(-0.2772605, -0.639788, 0.7105802, -0.09420038)
+bones/11/rotation = Quaternion(-0.20548353, -0.0013042192, -0.0013082149, 0.97865885)
+bones/12/rotation = Quaternion(-0.2552585, -0.65527767, 0.7006771, -0.12044105)
 bones/13/position = Vector3(-1.3462613e-06, 40.597866, 1.6036324e-07)
-bones/13/rotation = Quaternion(-0.09790829, 0.3829645, 0.7019727, 0.59244114)
+bones/13/rotation = Quaternion(-0.2685975, 0.19276416, 0.5648409, 0.7560768)
 bones/14/position = Vector3(6.668046e-06, 32.101925, 2.120579e-06)
-bones/14/rotation = Quaternion(-0.27308008, -0.03621123, 0.24020712, 0.93081504)
+bones/14/rotation = Quaternion(-0.30299506, -0.0362151, 0.2820661, 0.909572)
 bones/15/position = Vector3(9.182595e-06, 32.28061, -1.1160214e-06)
-bones/15/rotation = Quaternion(0.08237635, -0.20918925, 0.058621433, 0.97263443)
+bones/15/rotation = Quaternion(0.042025715, -0.31375578, 0.076438166, 0.9454884)
 bones/16/position = Vector3(-4.3068023, 10.025276, -1.652158)
-bones/16/rotation = Quaternion(0.36221415, -0.65528965, 0.65768075, 0.08278033)
+bones/16/rotation = Quaternion(0.32607436, -0.6613196, 0.66899776, 0.09366995)
 bones/17/position = Vector3(-8.916545e-06, 40.98217, 4.108707e-06)
-bones/17/rotation = Quaternion(-0.24975878, -0.2721136, -0.6923794, 0.619827)
+bones/17/rotation = Quaternion(-0.40726256, -0.051080126, -0.55775094, 0.7214166)
 bones/18/position = Vector3(-2.1904789e-06, 33.326138, -1.6978693e-06)
-bones/18/rotation = Quaternion(-0.21724676, 0.051129837, -0.19626334, 0.95481426)
+bones/18/rotation = Quaternion(-0.2468035, 0.053836524, -0.23113002, 0.9395577)
 bones/19/position = Vector3(2.2370386e-06, 32.205788, 1.2875596e-05)
-bones/19/rotation = Quaternion(0.030707924, -0.19240318, -0.15514949, 0.96848685)
-bones/20/rotation = Quaternion(0.2048461, 0.02330001, -0.03346469, 0.9779445)
+bones/19/rotation = Quaternion(0.04437196, -0.15907772, -0.16559473, 0.9722673)
+bones/20/rotation = Quaternion(0.22081453, -0.006189958, -0.030037235, 0.97483355)
 bones/21/position = Vector3(1.7664945e-07, 8.954335, 9.937271e-06)
-bones/21/rotation = Quaternion(0.2186194, 0.14655451, 0.10448577, 0.95906734)
+bones/21/rotation = Quaternion(0.16437402, 0.0010695802, -0.021127062, 0.98617125)
 bones/22/position = Vector3(-0.11289317, 7.293632, -2.8948808)
 bones/22/rotation = Quaternion(-0.18780218, 9.600749e-06, 0.00731882, 0.9821796)
 bones/23/position = Vector3(0.112877436, 5.4948134, 2.894859)
@@ -196,6 +197,11 @@ pitch_scale = 1.46
 [node name="steps" type="AudioStreamPlayer3D" parent="enemy"]
 stream = ExtResource("5_dym45")
 pitch_scale = 1.34
+
+[node name="drop_dead" type="AudioStreamPlayer3D" parent="enemy"]
+stream = ExtResource("6_wanwn")
+volume_db = -7.398
+pitch_scale = 0.65
 
 [node name="Timer" type="Timer" parent="enemy"]
 wait_time = 7.57
