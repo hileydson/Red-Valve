@@ -11,6 +11,8 @@ extends CharacterBody3D
 @onready var flash_tela: ColorRect = $Camera3D/CanvasLayer/control_weapons/flash_tela
 @onready var ray_cast_3d: RayCast3D = $Camera3D/RayCast3D
 @onready var magic_hand: AnimatedSprite2D = $Camera3D/CanvasLayer/control_magic/magic_hand
+@onready var magic_hand_particles: GPUParticles3D = $Camera3D/magic_hand_particles
+@onready var crescent_cogblade: Node3D = $"Camera3D/Crescent Cogblade"
 
 var blood_effect = preload("res://scenes/enemies/blood.tscn")
 
@@ -27,6 +29,7 @@ var can_shoot_again:bool = true
 
 #ORIGINAL POSITION FOR THE LEFT HAND
 var magic_hand_pos_original
+var magic_blade_pos_original
 
 func _ready():
 
@@ -37,6 +40,7 @@ func _ready():
 	current_weapon = pistola
 	
 	magic_hand_pos_original = magic_hand.position
+	magic_blade_pos_original = crescent_cogblade.position
 
 func _input(event):
 	# Lógica de rotação da câmera
@@ -114,26 +118,64 @@ func reload():
 		tween.tween_property(current_weapon, "rotation_degrees", 8.4, 0.55).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 func magic_hand_attack():
+	# 1. ANIMAÇÃO DA MÃO (2D)
 	magic_hand.play("attack")
+	var tween_magic = create_tween().set_parallel(true)
 	
-	var tween_magic = create_tween()
-	
-	var pos_alvo = magic_hand_pos_original + Vector2(60, -235)
-	
-	tween_magic.tween_property(magic_hand, "position", pos_alvo, 0.8)\
+	var pos_alvo_mao = magic_hand_pos_original + Vector2(60, -235)
+	tween_magic.tween_property(magic_hand, "position", pos_alvo_mao, 0.4)\
 		.set_trans(Tween.TRANS_BACK)\
 		.set_ease(Tween.EASE_OUT)
 		
-	# 5. Animação de volta (Opcional - se quiser que ele retorne)
-	tween_magic.tween_property(magic_hand, "position", magic_hand_pos_original, 0.4)\
-		.set_delay(2.0)\
+	# 2. LANÇA A CRESCENT COGBLADE (3D)
+	crescent_cogblade.show()
+	
+	# RESET: Garante que a lâmina comece na posição original (atrás/perto da câmera)
+	crescent_cogblade.position = magic_blade_pos_original
+	
+	# ALVO LOCAL: Como ela é filha da câmera, -5 no eixo Z é SEMPRE a frente.
+	# Somamos ao X e Y originais para ela manter a altura/lado corretos.
+	var pos_final_local = magic_blade_pos_original + Vector3(0, 0, -5)
+	
+	# Tween de ida
+	tween_magic.tween_property(crescent_cogblade, "position", pos_final_local, 0.8)\
+		.set_trans(Tween.TRANS_QUAD)\
+		.set_ease(Tween.EASE_OUT)
+	
+	# Giro 3x
+	tween_magic.tween_property(crescent_cogblade, "rotation:y", crescent_cogblade.rotation.y + deg_to_rad(1080), 0.8)
+
+	# 3. RETORNO
+	var tween_back = create_tween().set_parallel(true)
+	
+	# Volta a mão
+	tween_back.tween_property(magic_hand, "position", magic_hand_pos_original, 0.5)\
+		.set_delay(1.0)\
 		.set_trans(Tween.TRANS_SINE)
 		
-		
-		
-	await get_tree().create_timer(3.0).timeout
+	# Volta a lâmina para a posição original (magic_blade_pos_original)
+	# Assim ela volta exatamente para onde saiu, seguindo a câmera.
+	tween_back.tween_property(crescent_cogblade, "position", magic_blade_pos_original, 0.6)\
+		.set_delay(0.8)\
+		.set_trans(Tween.TRANS_SINE)
+	
+	await tween_back.finished
+	crescent_cogblade.hide()
 	magic_hand.play("idle")
 
+func cast_spell():
+	# Reinicia o efeito
+	magic_hand_particles.emitting = true
+	
+	# Cria um Tween para aumentar a intensidade da cor ou escala
+	var tween = create_tween()
+	magic_hand_particles.amount = 50 # Aumenta a densidade
+	
+	# Faz o círculo "crescer" e depois sumir
+	tween.tween_property(magic_hand_particles.process_material, "scale_min", 2.0, 0.5)
+	await get_tree().create_timer(3.0).timeout
+	magic_hand_particles.emitting = false
+	
 func shoot():
 	if current_weapon.animation != "shoot" and can_shoot_again:
 		if not is_instance_valid(current_weapon): return

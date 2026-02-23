@@ -7,6 +7,8 @@
 
 [sub_resource type="Environment" id="Environment_23usu"]
 background_energy_multiplier = 0.52
+glow_enabled = true
+glow_blend_mode = 0
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_hdpfd"]
 vertices = PackedVector3Array(-605.27985, 0.69685364, -590.2546, -605.27985, 0.69685364, 589.7454, 604.72015, 0.69685364, 589.7454, 604.72015, 0.69685364, -590.2546)

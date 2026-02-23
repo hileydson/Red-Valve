@@ -1,4 +1,4 @@
-[gd_scene load_steps=79 format=3 uid="uid://cluvbknxfjx2k"]
+[gd_scene load_steps=85 format=3 uid="uid://cluvbknxfjx2k"]
 
 [ext_resource type="Script" uid="uid://deirdushqeh74" path="res://scripts/player/player.gd" id="1_8afob"]
 [ext_resource type="Texture2D" uid="uid://bcav021wtw4vf" path="res://assets/images/player/fire_gun.png" id="2_75vfm"]
@@ -7,12 +7,9 @@
 [ext_resource type="Texture2D" uid="uid://cp4f6dw2xfp6" path="res://assets/images/player/magic_hand.png" id="4_0owmy"]
 [ext_resource type="AudioStream" uid="uid://u3eclo54hry0" path="res://assets/sounds/player/gun_shot.mp3" id="4_75vfm"]
 [ext_resource type="AudioStream" uid="uid://cof0aohm8uyuj" path="res://assets/sounds/player/passos.mp3" id="5_0owmy"]
+[ext_resource type="PackedScene" uid="uid://d2auovyhugl71" path="res://assets/3d_model/player/Crescent Cogblade/Crescent Cogblade.glb" id="5_qek5x"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_dovo2"]
-
-[sub_resource type="LabelSettings" id="LabelSettings_dovo2"]
-font_size = 34
-font_color = Color(0.6261257, 0.6261257, 0.6261257, 1)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_uniwh"]
 atlas = ExtResource("2_75vfm")
@@ -566,6 +563,10 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="LabelSettings" id="LabelSettings_dovo2"]
+font_size = 34
+font_color = Color(0.6261257, 0.6261257, 0.6261257, 1)
+
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_p47bc"]
 direction = Vector3(1, 0, -1)
 spread = 20.0
@@ -583,6 +584,37 @@ albedo_color = Color(0.8762129, 0.61552095, 0.2608116, 1)
 material = SubResource("StandardMaterial3D_75vfm")
 size = Vector3(0.02, 0.02, 0.02)
 
+[sub_resource type="Gradient" id="Gradient_0owmy"]
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_qek5x"]
+gradient = SubResource("Gradient_0owmy")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_5gtgg"]
+emission_shape = 6
+emission_ring_axis = Vector3(0, 0, 1)
+emission_ring_height = 1.0
+emission_ring_radius = 1.0
+emission_ring_inner_radius = 0.0
+emission_ring_cone_angle = 90.0
+direction = Vector3(0, 0, 0)
+orbit_velocity_min = 1.0000001
+orbit_velocity_max = 2.0000002
+gravity = Vector3(0, 0, 0)
+color_ramp = SubResource("GradientTexture1D_qek5x")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h17s1"]
+next_pass = SubResource("ParticleProcessMaterial_5gtgg")
+transparency = 1
+shading_mode = 0
+albedo_color = Color(0.18697298, 0.0017617332, 0.25312763, 0.8666667)
+billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_je7p5"]
+material = SubResource("StandardMaterial3D_h17s1")
+
 [node name="Player" type="CharacterBody3D" groups=["player"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1128244, 0)
 collision_mask = 2
@@ -594,19 +626,6 @@ shape = SubResource("CapsuleShape3D_dovo2")
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.49483705, 0)
 current = true
-
-[node name="RayCast3D" type="RayCast3D" parent="Camera3D"]
-transform = Transform3D(-0.9999521, 0, -0.00979113, 0, 1, 0, 0.00979113, 0, -0.9999521, 0, -0.045309782, 0)
-target_position = Vector3(0, -1, 50)
-collision_mask = 4
-
-[node name="point" type="Label" parent="Camera3D"]
-offset_left = 567.0
-offset_top = 301.0
-offset_right = 607.0
-offset_bottom = 348.0
-text = "."
-label_settings = SubResource("LabelSettings_dovo2")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="Camera3D"]
 
@@ -654,6 +673,19 @@ animation = &"attack"
 autoplay = "idle"
 frame_progress = 1.0
 
+[node name="RayCast3D" type="RayCast3D" parent="Camera3D"]
+transform = Transform3D(-0.9999521, 0, -0.00979113, 0, 1, 0, 0.00979113, 0, -0.9999521, 0, -0.045309782, 0)
+target_position = Vector3(0, -1, 50)
+collision_mask = 4
+
+[node name="point" type="Label" parent="Camera3D"]
+offset_left = 567.0
+offset_top = 301.0
+offset_right = 607.0
+offset_bottom = 348.0
+text = "."
+label_settings = SubResource("LabelSettings_dovo2")
+
 [node name="shoot_light" type="OmniLight3D" parent="Camera3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.012886882, -0.062121868, -1.3703871)
 light_color = Color(0.942523, 0.6523214, 0.16422758, 1)
@@ -670,7 +702,15 @@ one_shot = true
 process_material = SubResource("ParticleProcessMaterial_p47bc")
 draw_pass_1 = SubResource("BoxMesh_0owmy")
 
+[node name="magic_hand_particles" type="GPUParticles3D" parent="Camera3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3266101, 0.08178985, -0.74835825)
+draw_pass_1 = SubResource("QuadMesh_je7p5")
+
+[node name="Crescent Cogblade" parent="Camera3D" instance=ExtResource("5_qek5x")]
+transform = Transform3D(1, 0, 0, 0, -0.32357067, -0.946204, 0, 0.946204, -0.32357067, -0.37319887, -0.3111421, 0.6566876)
+
 [node name="Camera3D_Bullet_Time" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.0479126, 0)
 fov = 90.4
 
 [node name="sounds" type="Node" parent="."]
