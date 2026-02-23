@@ -741,5 +741,6 @@ pitch_scale = 0.75
 
 [connection signal="animation_finished" from="Camera3D/CanvasLayer/control_weapons/pistola" to="." method="_on_pistola_animation_finished"]
 [connection signal="body_entered" from="Camera3D/Crescent Cogblade/Area3D" to="." method="_on_area_3d_body_entered"]
+[connection signal="body_exited" from="Camera3D/Crescent Cogblade/Area3D" to="." method="_on_area_3d_body_exited"]
 
 [editable path="Camera3D/Crescent Cogblade"]

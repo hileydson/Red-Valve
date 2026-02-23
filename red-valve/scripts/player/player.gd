@@ -23,6 +23,7 @@ const WALK_SPEED = 5.0
 const RUN_SPEED = 8.5 # Velocidade maior para a corrida
 
 #CHANGE LATER - DYNAMICLY
+const damage_crescent_cogblade:int = 14
 const damage_pistol:int = 10 #3 
 var current_weapon: AnimatedSprite2D
 var can_shoot_again:bool = true
@@ -255,5 +256,12 @@ func _on_pistola_animation_finished() -> void:
 
 
 func _on_area_3d_body_entered(body: Node3D) -> void:
-	spawn_blood_effect(body)
+	if magic_hand.animation == "attack":
+		spawn_blood_effect(body)
+		body.take_damage(damage_crescent_cogblade)
 	
+
+func _on_area_3d_body_exited(body: Node3D) -> void:
+	if magic_hand.animation == "attack":
+		spawn_blood_effect(body)
+		body.take_damage(damage_crescent_cogblade)
