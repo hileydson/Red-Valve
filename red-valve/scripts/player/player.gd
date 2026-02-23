@@ -244,5 +244,16 @@ func spawn_blood(pos, normal):
 	if normal != Vector3.ZERO:
 		blood.look_at(pos + normal, Vector3.UP)
 		
+func spawn_blood_effect(body: Node3D):
+	var blood = blood_effect.instantiate()
+	get_tree().root.add_child(blood)
+	blood.global_position = body.global_position
+	blood.global_position.y += 2 # para sair um pouco do chao... ficar mais alto
+		
 func _on_pistola_animation_finished() -> void:
 	current_weapon.play("idle")
+
+
+func _on_area_3d_body_entered(body: Node3D) -> void:
+	spawn_blood_effect(body)
+	
