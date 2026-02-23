@@ -7,6 +7,11 @@ extends CharacterBody3D
 @onready var health_bar: ProgressBar = $HealthBarViewport/HealthBar
 @onready var blood_out: AudioStreamPlayer3D = $blood_out
 @onready var collision_shape_3d: CollisionShape3D = $CollisionShape3D
+@onready var growl_1: AudioStreamPlayer3D = $growl_1
+@onready var growl_2: AudioStreamPlayer3D = $growl_2
+@onready var steps: AudioStreamPlayer3D = $steps
+@onready var timer: Timer = $"../../../Timer"
+@onready var growl_3: AudioStreamPlayer3D = $growl_3
 
 const SPEED = 2.0
 const ACCEL = 4.0
@@ -25,9 +30,12 @@ func _ready() -> void:
 	health_bar.value = current_health
 	# Opcional: esconder a barra se estiver com vida cheia
 	health_bar_sprite.hide()
+	timer.start()
 
 func _physics_process(delta: float) -> void:
-	if dead: return
+	if dead: 
+		steps.stop()
+		return
 	
 	# 1. Gravidade sempre ativa
 	if not is_on_floor():
@@ -59,7 +67,10 @@ func _physics_process(delta: float) -> void:
 			look_pos.y = global_position.y
 			if global_position.distance_to(look_pos) > 0.5:
 				look_at(look_pos, Vector3.UP)
+			
+			if steps.playing == false and !dead: steps.play()
 		else:
+			steps.stop()
 			# Para gradualmente ao chegar
 			velocity.x = move_toward(velocity.x, 0, SPEED)
 			velocity.z = move_toward(velocity.z, 0, SPEED)
@@ -69,6 +80,7 @@ func _physics_process(delta: float) -> void:
 	
 	
 func take_damage(amount):
+	if growl_3.playing == false: growl_3.play()
 	blood_out.play()
 	current_health -= amount
 	current_health = clamp(current_health, 0, max_health)
@@ -83,6 +95,8 @@ func take_damage(amount):
 		die()
 
 func die():
+	timer.stop()
+	growl_2.play()
 	self.set_collision_layer_value(3,false)
 	dead = true
 	health_bar_sprite.hide()
@@ -90,3 +104,8 @@ func die():
 	playback.travel("dead")
 	await get_tree().create_timer(20.0).timeout
 	queue_free()
+
+
+func _on_timer_timeout() -> void:
+	if !dead:
+		growl_1.play()

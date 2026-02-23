@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://xf6qeqrya6pi" path="res://scenes/enemies/the_cobalt_husker.tscn" id="3_hdpfd"]
 
 [sub_resource type="Environment" id="Environment_23usu"]
+background_mode = 1
 background_energy_multiplier = 0.52
 glow_enabled = true
 glow_blend_mode = 0
