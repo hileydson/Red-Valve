@@ -1,13 +1,15 @@
 extends CharacterBody3D
 
-const SPEED = 2.0
-const ACCEL = 4.0
-
 @onready var player = get_tree().get_first_node_in_group("player")
 @onready var nav_agent: NavigationAgent3D = $"../NavigationAgent3D"
 @onready var health_bar_sprite: Sprite3D = $HealthBarSprite
 @onready var animation_tree: AnimationTree = $"the-cobalt-husker/AnimationTree"
 @onready var health_bar: ProgressBar = $HealthBarViewport/HealthBar
+@onready var blood_out: AudioStreamPlayer3D = $blood_out
+@onready var collision_shape_3d: CollisionShape3D = $CollisionShape3D
+
+const SPEED = 2.0
+const ACCEL = 4.0
 
 var max_health = 150
 var current_health = 150
@@ -67,6 +69,7 @@ func _physics_process(delta: float) -> void:
 	
 	
 func take_damage(amount):
+	blood_out.play()
 	current_health -= amount
 	current_health = clamp(current_health, 0, max_health)
 	
@@ -80,6 +83,7 @@ func take_damage(amount):
 		die()
 
 func die():
+	self.set_collision_layer_value(3,false)
 	dead = true
 	health_bar_sprite.hide()
 	# Seu código de morte aqui

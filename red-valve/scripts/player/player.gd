@@ -13,6 +13,9 @@ extends CharacterBody3D
 @onready var magic_hand: AnimatedSprite2D = $Camera3D/CanvasLayer/control_magic/magic_hand
 @onready var magic_hand_particles: GPUParticles3D = $Camera3D/magic_hand_particles
 @onready var crescent_cogblade: Node3D = $"Camera3D/Crescent Cogblade"
+@onready var blade_in: AudioStreamPlayer3D = $"Camera3D/Crescent Cogblade/blade_in"
+@onready var blade_back: AudioStreamPlayer3D = $"Camera3D/Crescent Cogblade/blade_back"
+@onready var blade_out: AudioStreamPlayer = $"Camera3D/Crescent Cogblade/BladeOut"
 
 var blood_effect = preload("res://scenes/enemies/blood.tscn")
 
@@ -121,6 +124,7 @@ func reload():
 func magic_hand_attack():
 	# 1. ANIMAÇÃO DA MÃO (2D)
 	magic_hand.play("attack")
+	blade_out.play()
 	var tween_magic = create_tween().set_parallel(true)
 	
 	var pos_alvo_mao = magic_hand_pos_original + Vector2(60, -235)
@@ -151,7 +155,7 @@ func magic_hand_attack():
 	
 	# Volta a mão
 	tween_back.tween_property(magic_hand, "position", magic_hand_pos_original, 0.5)\
-		.set_delay(1.0)\
+		.set_delay(0.8)\
 		.set_trans(Tween.TRANS_SINE)
 		
 	# Volta a lâmina para a posição original (magic_blade_pos_original)
@@ -255,30 +259,18 @@ func _on_pistola_animation_finished() -> void:
 	current_weapon.play("idle")
 
 
-## LEVAR PARA CLASSE UTIL GLOBAL
-func ativar_camera_lenta(escala: float, duracao: float):
-	# Muda a velocidade do tempo
-	Engine.time_scale = escala
-	
-	# Cria um timer para voltar ao normal
-	# Usamos 'get_tree().create_timer' com o último parâmetro como 'true' 
-	# para que o próprio timer ignore a câmera lenta, senão ele demoraria para acabar!
-	await get_tree().create_timer(duracao * escala, true, false, true).timeout
-	
-	# Volta para a velocidade normal suavemente (opcional, mas fica mais bonito)
-	var tween = create_tween()
-	tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS) # Faz o tween ignorar o time_scale
-	tween.tween_property(Engine, "time_scale", 1.0, 0.2)
 
 func _on_area_3d_body_entered(body: Node3D) -> void:
 	if magic_hand.animation == "attack":
+		blade_in.play()
 		spawn_blood_effect(body)
-		ativar_camera_lenta(0.2, 0.5) # Velocidade 20% por meio segundo
+		GlobalUtils.ativar_camera_lenta(0.2, 0.5) # Velocidade 20% por meio segundo
 		body.take_damage(damage_crescent_cogblade)
 	
 
 func _on_area_3d_body_exited(body: Node3D) -> void:
 	if magic_hand.animation == "attack":
+		blade_back.play()
 		spawn_blood_effect(body)
-		ativar_camera_lenta(0.2, 0.5) # Velocidade 20% por meio segundo
+		GlobalUtils.ativar_camera_lenta(0.2, 0.5) # Velocidade 20% por meio segundo
 		body.take_damage(damage_crescent_cogblade)

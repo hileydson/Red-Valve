@@ -1,4 +1,4 @@
-[gd_scene load_steps=86 format=3 uid="uid://cluvbknxfjx2k"]
+[gd_scene load_steps=89 format=3 uid="uid://cluvbknxfjx2k"]
 
 [ext_resource type="Script" uid="uid://deirdushqeh74" path="res://scripts/player/player.gd" id="1_8afob"]
 [ext_resource type="Texture2D" uid="uid://bcav021wtw4vf" path="res://assets/images/player/fire_gun.png" id="2_75vfm"]
@@ -8,6 +8,9 @@
 [ext_resource type="AudioStream" uid="uid://u3eclo54hry0" path="res://assets/sounds/player/gun_shot.mp3" id="4_75vfm"]
 [ext_resource type="AudioStream" uid="uid://cof0aohm8uyuj" path="res://assets/sounds/player/passos.mp3" id="5_0owmy"]
 [ext_resource type="PackedScene" uid="uid://d2auovyhugl71" path="res://assets/3d_model/player/Crescent Cogblade/Crescent Cogblade.glb" id="5_qek5x"]
+[ext_resource type="AudioStream" uid="uid://f0trbtheulq1" path="res://assets/sounds/player/blade_in.mp3" id="6_h17s1"]
+[ext_resource type="AudioStream" uid="uid://cxjydv8f3dunn" path="res://assets/sounds/player/blade_out.mp3" id="6_je7p5"]
+[ext_resource type="AudioStream" uid="uid://1d6mb1u5xxu0" path="res://assets/sounds/player/blade_back.mp3" id="7_je7p5"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_dovo2"]
 
@@ -718,6 +721,15 @@ collision_mask = 4
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Camera3D/Crescent Cogblade/Area3D"]
 transform = Transform3D(0.96378, -0.2092309, -0.016176704, 0.2641511, 0.76560247, 0.0037847757, 0.036773995, -0.015833378, 0.39677575, 0.11413285, 0.036559522, 0.03797698)
 shape = SubResource("BoxShape3D_qek5x")
+
+[node name="BladeOut" type="AudioStreamPlayer" parent="Camera3D/Crescent Cogblade"]
+stream = ExtResource("6_je7p5")
+
+[node name="blade_in" type="AudioStreamPlayer3D" parent="Camera3D/Crescent Cogblade"]
+stream = ExtResource("6_h17s1")
+
+[node name="blade_back" type="AudioStreamPlayer3D" parent="Camera3D/Crescent Cogblade"]
+stream = ExtResource("7_je7p5")
 
 [node name="Camera3D_Bullet_Time" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.0479126, 0)
