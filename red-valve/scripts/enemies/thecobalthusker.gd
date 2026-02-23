@@ -9,8 +9,8 @@ const ACCEL = 4.0
 @onready var animation_tree: AnimationTree = $"the-cobalt-husker/AnimationTree"
 @onready var health_bar: ProgressBar = $HealthBarViewport/HealthBar
 
-var max_health = 50
-var current_health = 50
+var max_health = 150
+var current_health = 150
 var update_timer = 0.0
 
 var playback 
