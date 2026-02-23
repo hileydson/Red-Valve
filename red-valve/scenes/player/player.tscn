@@ -1,9 +1,10 @@
-[gd_scene load_steps=64 format=3 uid="uid://cluvbknxfjx2k"]
+[gd_scene load_steps=79 format=3 uid="uid://cluvbknxfjx2k"]
 
 [ext_resource type="Script" uid="uid://deirdushqeh74" path="res://scripts/player/player.gd" id="1_8afob"]
 [ext_resource type="Texture2D" uid="uid://bcav021wtw4vf" path="res://assets/images/player/fire_gun.png" id="2_75vfm"]
 [ext_resource type="Texture2D" uid="uid://bet48rlumqtua" path="res://assets/images/player/sprite-256px-16.png" id="2_dovo2"]
 [ext_resource type="AudioStream" uid="uid://cn3pregco36bw" path="res://assets/sounds/player/gun_load.mp3" id="3_p47bc"]
+[ext_resource type="Texture2D" uid="uid://cp4f6dw2xfp6" path="res://assets/images/player/magic_hand.png" id="4_0owmy"]
 [ext_resource type="AudioStream" uid="uid://u3eclo54hry0" path="res://assets/sounds/player/gun_shot.mp3" id="4_75vfm"]
 [ext_resource type="AudioStream" uid="uid://cof0aohm8uyuj" path="res://assets/sounds/player/passos.mp3" id="5_0owmy"]
 
@@ -450,6 +451,121 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_gmu8b"]
+atlas = ExtResource("4_0owmy")
+region = Rect2(0, 0, 1216, 880)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ahqnk"]
+atlas = ExtResource("4_0owmy")
+region = Rect2(0, 0, 1216, 323)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vb1ce"]
+atlas = ExtResource("4_0owmy")
+region = Rect2(0, 0, 1216, 363)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0ncpa"]
+atlas = ExtResource("4_0owmy")
+region = Rect2(0, 0, 1216, 411)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_upxxc"]
+atlas = ExtResource("4_0owmy")
+region = Rect2(0, 0, 1216, 453)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ln3h3"]
+atlas = ExtResource("4_0owmy")
+region = Rect2(0, 0, 1216, 488)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uygh0"]
+atlas = ExtResource("4_0owmy")
+region = Rect2(0, 0, 1216, 524)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t1aof"]
+atlas = ExtResource("4_0owmy")
+region = Rect2(0, 0, 1216, 557)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w8qe1"]
+atlas = ExtResource("4_0owmy")
+region = Rect2(0, 0, 1216, 592)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hdvrm"]
+atlas = ExtResource("4_0owmy")
+region = Rect2(0, 0, 1216, 616)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5xbmr"]
+atlas = ExtResource("4_0owmy")
+region = Rect2(0, 0, 1216, 639)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hir57"]
+atlas = ExtResource("4_0owmy")
+region = Rect2(0, 0, 1216, 678)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7072n"]
+atlas = ExtResource("4_0owmy")
+region = Rect2(0, 0, 1216, 736)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_gmu8b"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gmu8b")
+}],
+"loop": false,
+"name": &"attack",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 0.21,
+"texture": null
+}, {
+"duration": 0.21,
+"texture": SubResource("AtlasTexture_ahqnk")
+}, {
+"duration": 0.21,
+"texture": SubResource("AtlasTexture_vb1ce")
+}, {
+"duration": 0.21,
+"texture": SubResource("AtlasTexture_0ncpa")
+}, {
+"duration": 0.21,
+"texture": SubResource("AtlasTexture_upxxc")
+}, {
+"duration": 0.21,
+"texture": SubResource("AtlasTexture_ln3h3")
+}, {
+"duration": 0.21,
+"texture": SubResource("AtlasTexture_uygh0")
+}, {
+"duration": 0.21,
+"texture": SubResource("AtlasTexture_t1aof")
+}, {
+"duration": 0.21,
+"texture": SubResource("AtlasTexture_w8qe1")
+}, {
+"duration": 0.21,
+"texture": SubResource("AtlasTexture_hdvrm")
+}, {
+"duration": 0.21,
+"texture": SubResource("AtlasTexture_5xbmr")
+}, {
+"duration": 0.21,
+"texture": SubResource("AtlasTexture_hir57")
+}, {
+"duration": 0.21,
+"texture": SubResource("AtlasTexture_7072n")
+}],
+"loop": false,
+"name": &"attack__",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": null
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}]
+
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_p47bc"]
 direction = Vector3(1, 0, -1)
 spread = 20.0
@@ -514,7 +630,7 @@ position = Vector2(852.99994, 565.00006)
 rotation = 0.113768786
 scale = Vector2(1.2259275, 1.2875113)
 sprite_frames = SubResource("SpriteFrames_ioxgp")
-animation = &"run"
+animation = &"idle"
 autoplay = "idle"
 
 [node name="flash_tela" type="ColorRect" parent="Camera3D/CanvasLayer/control_weapons"]
@@ -522,6 +638,21 @@ layout_mode = 0
 offset_right = 1156.0
 offset_bottom = 650.0
 color = Color(0.34789982, 0.21805532, 0.088210836, 0)
+
+[node name="control_magic" type="Control" parent="Camera3D/CanvasLayer"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="magic_hand" type="AnimatedSprite2D" parent="Camera3D/CanvasLayer/control_magic"]
+modulate = Color(0.77, 0.7238, 0.6314, 1)
+position = Vector2(390.00003, 757)
+scale = Vector2(0.6463816, 0.67045456)
+sprite_frames = SubResource("SpriteFrames_gmu8b")
+animation = &"attack"
+autoplay = "idle"
+frame_progress = 1.0
 
 [node name="shoot_light" type="OmniLight3D" parent="Camera3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.012886882, -0.062121868, -1.3703871)

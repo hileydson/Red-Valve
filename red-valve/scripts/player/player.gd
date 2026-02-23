@@ -10,6 +10,7 @@ extends CharacterBody3D
 @onready var shoot_light: OmniLight3D = $Camera3D/shoot_light
 @onready var flash_tela: ColorRect = $Camera3D/CanvasLayer/control_weapons/flash_tela
 @onready var ray_cast_3d: RayCast3D = $Camera3D/RayCast3D
+@onready var magic_hand: AnimatedSprite2D = $Camera3D/CanvasLayer/control_magic/magic_hand
 
 var blood_effect = preload("res://scenes/enemies/blood.tscn")
 
@@ -24,6 +25,9 @@ const damage_pistol:int = 10 #3
 var current_weapon: AnimatedSprite2D
 var can_shoot_again:bool = true
 
+#ORIGINAL POSITION FOR THE LEFT HAND
+var magic_hand_pos_original
+
 func _ready():
 
 	# Captura o mouse e o esconde ao iniciar o jogo
@@ -31,6 +35,8 @@ func _ready():
 	
 	# a priori sera a pistola... mas precisa ter um change da arma para mudar 
 	current_weapon = pistola
+	
+	magic_hand_pos_original = magic_hand.position
 
 func _input(event):
 	# Lógica de rotação da câmera
@@ -59,6 +65,9 @@ func _physics_process(delta: float) -> void:
 	
 	if pistola.animation!="reload" and Input.is_action_just_pressed("ui_shoot"):
 		shoot()
+	
+	if magic_hand.animation == "idle" and Input.is_action_just_pressed("ui_magic_attack"):
+		magic_hand_attack()
 	
 	# --- LÓGICA DE VELOCIDADE (CORRIDA) ---
 	var velocidade_atual = WALK_SPEED
@@ -103,6 +112,27 @@ func reload():
 		tween.tween_interval(0.8)
 		# Volta para o zero
 		tween.tween_property(current_weapon, "rotation_degrees", 8.4, 0.55).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+func magic_hand_attack():
+	magic_hand.play("attack")
+	
+	var tween_magic = create_tween()
+	
+	var pos_alvo = magic_hand_pos_original + Vector2(60, -235)
+	
+	tween_magic.tween_property(magic_hand, "position", pos_alvo, 0.8)\
+		.set_trans(Tween.TRANS_BACK)\
+		.set_ease(Tween.EASE_OUT)
+		
+	# 5. Animação de volta (Opcional - se quiser que ele retorne)
+	tween_magic.tween_property(magic_hand, "position", magic_hand_pos_original, 0.4)\
+		.set_delay(2.0)\
+		.set_trans(Tween.TRANS_SINE)
+		
+		
+		
+	await get_tree().create_timer(3.0).timeout
+	magic_hand.play("idle")
 
 func shoot():
 	if current_weapon.animation != "shoot" and can_shoot_again:
