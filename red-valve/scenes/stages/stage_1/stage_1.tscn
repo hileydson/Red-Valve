@@ -1,37 +1,96 @@
-[gd_scene load_steps=10 format=3 uid="uid://by4m6cxe53dhn"]
+[gd_scene load_steps=15 format=3 uid="uid://by4m6cxe53dhn"]
 
 [ext_resource type="PackedScene" uid="uid://cluvbknxfjx2k" path="res://scenes/player/player.tscn" id="1_23usu"]
 [ext_resource type="Script" uid="uid://b4fb6trwatryq" path="res://scripts/stages/stage_1.gd" id="1_nwsyl"]
-[ext_resource type="Texture2D" uid="uid://e1y1h562iv55" path="res://assets/images/stages/stage_1/texture_floor_barro.jpeg" id="1_qt8wg"]
+[ext_resource type="Script" uid="uid://bxfia7n8fhpk4" path="res://scripts/stages/stage_1/terrain_3d.gd" id="2_nwsyl"]
 [ext_resource type="PackedScene" uid="uid://xf6qeqrya6pi" path="res://scenes/enemies/the_cobalt_husker.tscn" id="3_hdpfd"]
 
 [sub_resource type="Environment" id="Environment_23usu"]
 background_mode = 1
-background_energy_multiplier = 0.52
+background_color = Color(0.6872149, 0.68721503, 0.6872149, 1)
+background_energy_multiplier = 0.23
 glow_enabled = true
 glow_blend_mode = 0
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_hdpfd"]
-vertices = PackedVector3Array(-605.27985, 0.69685364, -590.2546, -605.27985, 0.69685364, 589.7454, 604.72015, 0.69685364, 589.7454, 604.72015, 0.69685364, -590.2546)
+vertices = PackedVector3Array(-766.76605, 1.001, -766.76605, -766.76605, 1.001, 764.76404, 764.76404, 1.001, 764.76404, 764.76404, 1.001, -766.76605)
 polygons = [PackedInt32Array(3, 2, 0), PackedInt32Array(0, 2, 1)]
 cell_size = 2.0
 cell_height = 1.0
 
-[sub_resource type="BoxMesh" id="BoxMesh_hdpfd"]
+[sub_resource type="Gradient" id="Gradient_hdpfd"]
+offsets = PackedFloat32Array(0.2, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nwsyl"]
-shading_mode = 0
-albedo_texture = ExtResource("1_qt8wg")
-albedo_texture_force_srgb = true
-uv1_scale = Vector3(100, 100, 100)
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_nwsyl"]
+noise_type = 2
+frequency = 0.03
+cellular_jitter = 3.0
+cellular_return_type = 0
+domain_warp_enabled = true
+domain_warp_type = 1
+domain_warp_amplitude = 50.0
+domain_warp_fractal_type = 2
+domain_warp_fractal_lacunarity = 1.5
+domain_warp_fractal_gain = 1.0
 
-[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_nwsyl"]
-data = PackedVector3Array(-0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, -0.5, -0.5)
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_fennn"]
+noise = SubResource("FastNoiseLite_nwsyl")
+color_ramp = SubResource("Gradient_hdpfd")
+seamless = true
+
+[sub_resource type="Terrain3DMaterial" id="Terrain3DMaterial_k7vii"]
+_shader_parameters = {
+&"bias_distance": 512.0,
+&"blend_sharpness": 0.87,
+&"depth_blur": 0.0,
+&"enable_macro_variation": true,
+&"enable_projection": true,
+&"height_blending": true,
+&"macro_variation1": Color(1, 1, 1, 1),
+&"macro_variation2": Color(1, 1, 1, 1),
+&"macro_variation_slope": 0.333,
+&"mipmap_bias": 1.0,
+&"noise1_angle": 0.0,
+&"noise1_offset": Vector2(0.5, 0.5),
+&"noise1_scale": 0.04,
+&"noise2_scale": 0.076,
+&"noise3_scale": 0.225,
+&"noise_texture": SubResource("NoiseTexture2D_fennn"),
+&"projection_angular_division": 2.0,
+&"projection_threshold": 0.8,
+&"world_space_normal_blend": true
+}
+show_checkered = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_usgmi"]
+transparency = 4
+cull_mode = 2
+vertex_color_use_as_albedo = true
+backlight_enabled = true
+backlight = Color(0.5, 0.5, 0.5, 1)
+distance_fade_mode = 1
+distance_fade_min_distance = 128.0
+distance_fade_max_distance = 96.0
+
+[sub_resource type="Terrain3DMeshAsset" id="Terrain3DMeshAsset_xu06q"]
+generated_type = 1
+height_offset = 0.5
+material_override = SubResource("StandardMaterial3D_usgmi")
+last_lod = 0
+last_shadow_lod = 0
+lod0_range = 128.0
+
+[sub_resource type="Terrain3DAssets" id="Terrain3DAssets_e34qf"]
+mesh_list = Array[Terrain3DMeshAsset]([SubResource("Terrain3DMeshAsset_xu06q")])
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_hdpfd"]
 
 [node name="Stage1" type="Node3D"]
 script = ExtResource("1_nwsyl")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 18.977646, 0)
 light_color = Color(0.58103293, 0.581033, 0.58103275, 1)
 light_energy = 0.617
 
@@ -42,20 +101,18 @@ environment = SubResource("Environment_23usu")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.049024582, 0)
 navigation_mesh = SubResource("NavigationMesh_hdpfd")
 
-[node name="chao" type="StaticBody3D" parent="NavigationRegion3D"]
-transform = Transform3D(0.957, 0, 0, 0, 2.398, 0, 0, 0, 1, 0, 0.2920556, 0)
-collision_layer = 2
-collision_mask = 0
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="NavigationRegion3D/chao"]
-transform = Transform3D(1269.1323, 0, 0, 0, 1, 0, 0, 0, 1184.5092, 0, -0.9992502, 0)
-mesh = SubResource("BoxMesh_hdpfd")
-skeleton = NodePath("")
-surface_material_override/0 = SubResource("StandardMaterial3D_nwsyl")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/chao"]
-transform = Transform3D(1269.1323, 0, 0, 0, 1, 0, 0, 0, 1184.5092, 0, -0.9992502, 0)
-shape = SubResource("ConcavePolygonShape3D_nwsyl")
+[node name="Terrain3D" type="Terrain3D" parent="NavigationRegion3D"]
+data_directory = "res://addons/terrain_3d/data_temp"
+material = SubResource("Terrain3DMaterial_k7vii")
+assets = SubResource("Terrain3DAssets_e34qf")
+collision_mode = 4
+collision_layer = 15
+collision_mask = 15
+physics_material = SubResource("PhysicsMaterial_hdpfd")
+show_checkered = true
+top_level = true
+script = ExtResource("2_nwsyl")
+metadata/_edit_lock_ = true
 
 [node name="Player" parent="." instance=ExtResource("1_23usu")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.2299366, 1.3237407, 2.5718293)

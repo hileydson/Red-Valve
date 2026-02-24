@@ -740,6 +740,7 @@ omni_range = 5.524
 
 [node name="Faiscas" type="GPUParticles3D" parent="Camera3D/Crescent Cogblade"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.90113115, -0.040700614, -0.027554512)
+emitting = false
 amount = 400
 process_material = SubResource("ParticleProcessMaterial_gx1jg")
 draw_pass_1 = SubResource("QuadMesh_gx1jg")

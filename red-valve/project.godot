@@ -23,6 +23,10 @@ config/icon="res://icon.svg"
 
 GlobalUtils="*res://scripts/Global_Utils.gd"
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/SunshineClouds2/plugin.cfg", "res://addons/terrain_3d/plugin.cfg")
+
 [file_customization]
 
 folder_colors={
