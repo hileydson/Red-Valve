@@ -1,4 +1,4 @@
-[gd_scene load_steps=90 format=3 uid="uid://cluvbknxfjx2k"]
+[gd_scene load_steps=91 format=3 uid="uid://cluvbknxfjx2k"]
 
 [ext_resource type="Script" uid="uid://deirdushqeh74" path="res://scripts/player/player.gd" id="1_8afob"]
 [ext_resource type="Texture2D" uid="uid://bcav021wtw4vf" path="res://assets/images/player/fire_gun.png" id="2_75vfm"]
@@ -12,6 +12,7 @@
 [ext_resource type="AudioStream" uid="uid://f0trbtheulq1" path="res://assets/sounds/player/blade_in.mp3" id="6_h17s1"]
 [ext_resource type="AudioStream" uid="uid://cxjydv8f3dunn" path="res://assets/sounds/player/blade_out.mp3" id="6_je7p5"]
 [ext_resource type="AudioStream" uid="uid://1d6mb1u5xxu0" path="res://assets/sounds/player/blade_back.mp3" id="7_je7p5"]
+[ext_resource type="PackedScene" uid="uid://c6yruf806s5mq" path="res://assets/3d_model/player/pistol_bullet/scene.gltf" id="10_gx1jg"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_dovo2"]
 
@@ -738,8 +739,11 @@ stream = ExtResource("6_h17s1")
 stream = ExtResource("7_je7p5")
 
 [node name="Camera3D_Bullet_Time" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.0479126, 0)
+transform = Transform3D(0.9999991, 0, -0.0013613696, 0, 1, 0, 0.0013613696, 0, 0.9999991, 0, 0.3755691, 1.2577136)
 fov = 90.4
+
+[node name="bullet" parent="Camera3D_Bullet_Time" instance=ExtResource("10_gx1jg")]
+transform = Transform3D(-0.00053130195, 0, 8.9319616e-07, 0, 0.00095878425, 0, -1.1035243e-06, 0, -0.00043003776, 0.23140772, -0.11630559, -0.24088502)
 
 [node name="sounds" type="Node" parent="."]
 
