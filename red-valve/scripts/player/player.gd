@@ -7,7 +7,7 @@ extends CharacterBody3D
 @onready var pistola: AnimatedSprite2D = $Camera3D/CanvasLayer/control_weapons/pistola
 @onready var faisca: GPUParticles3D = $Camera3D/faisca
 @onready var fire: AnimatedSprite2D = $Camera3D/CanvasLayer/control_weapons/fire
-@onready var shoot_light: OmniLight3D = $Camera3D/shoot_light
+@onready var bullet_light: OmniLight3D = $Camera3D/Camera3D_Bullet_Time/bullet_light
 @onready var flash_tela: ColorRect = $Camera3D/CanvasLayer/control_weapons/flash_tela
 @onready var ray_cast_3d: RayCast3D = $Camera3D/RayCast3D
 @onready var magic_hand: AnimatedSprite2D = $Camera3D/CanvasLayer/control_magic/magic_hand
@@ -39,6 +39,8 @@ var can_shoot_again:bool = true
 var magic_hand_pos_original
 var magic_blade_pos_original
 var camera_bullet_time_position
+var camera_bullet_time_ON = false
+
 
 func _ready():
 
@@ -51,8 +53,13 @@ func _ready():
 	magic_hand_pos_original = magic_hand.position
 	magic_blade_pos_original = crescent_cogblade.position
 	camera_bullet_time_position = camera_3d_bullet_time.global_position
+	
 
 func _input(event):
+	#se estiver no bullet time sai vazado pra nao interferir no movimento da camera
+	if camera_bullet_time_ON:
+		return
+	
 	# Lógica de rotação da câmera
 	if event is InputEventMouseMotion:
 		# Gira o corpo do personagem no eixo Y (esquerda/direita)
@@ -82,6 +89,10 @@ func _physics_process(delta: float) -> void:
 	
 	if magic_hand.animation == "idle" and Input.is_action_just_pressed("ui_magic_attack"):
 		magic_hand_attack()
+	
+	#se estiver no bullet time sai vazado pra nao interferir no movimento da camera
+	if camera_bullet_time_ON:
+		return
 	
 	# --- LÓGICA DE VELOCIDADE (CORRIDA) ---
 	var velocidade_atual = WALK_SPEED
@@ -253,17 +264,36 @@ func shoot():
 				#ativa camera bullet time
 				#camera_3d_bullet_time
 				
+				
+				
+			#LOGICA PARA GIRAR A BALA
+			var tween_bullet = create_tween()
+			# 2. GIRA A BALA (O Efeito que você quer)
+			# 360 graus = 1 volta completa. 1800 graus = 5 voltas.
+			# deg_to_rad converte para o formato que o Godot entende (radianos)
+			var voltas = deg_to_rad(1800) 
+			# Animamos a rotação no eixo Z (para girar como uma hélice) 
+			# ou Y (se ela girar como um disco)
+			tween_bullet.tween_property(bullet, "rotation:z", bullet.rotation.z + voltas, 2.5)\
+				.set_trans(Tween.TRANS_LINEAR) # Linear faz o giro ser constante	
+				
+				
 			control_weapons.visible = false
 			control_magic.visible = false
+			bullet_light.visible = true
+			bullet.visible = true
+			camera_bullet_time_ON = true
 			GlobalUtils.ativar_camera_lenta(0.1, 60.0)
+			AudioServer.set_playback_speed_scale(0.2)
 			
 			# 3. Cria o movimento da câmera
 			var tween_cam = create_tween()
 			
 			camera_3d_bullet_time.make_current()
+			
 			# Faz a câmera ir até o ponto de impacto
 			# Usamos global_position porque o inimigo pode estar longe na cena
-			tween_cam.tween_property(camera_3d_bullet_time, "global_position", ponto_colisao + Vector3(0, 1, 2), 0.5)\
+			tween_cam.tween_property(camera_3d_bullet_time, "global_position", ponto_colisao + Vector3(0, 0, 2), 0.9)\
 				.set_trans(Tween.TRANS_QUINT)\
 				.set_ease(Tween.EASE_OUT)
 				
@@ -271,15 +301,16 @@ func shoot():
 			camera_3d_bullet_time.look_at(ponto_colisao)
 
 			# 5. Espera um pouco no alvo e volta
-			tween_cam.tween_interval(0.5) # Pausa dramática no inimigo
+			tween_cam.tween_interval(0.05) # Pausa dramática no inimigo
 
 			tween_cam.tween_property(camera_3d_bullet_time, "position", camera_bullet_time_position, 0.4)\
 				.set_trans(Tween.TRANS_SINE)
 			
-			tween_cam.tween_callback(bullet_time_back)
+			#tween_cam.tween_callback(bullet_time_back)
 			
-			await get_tree().create_timer(0.56).timeout
-			camera.make_current()
+			await get_tree().create_timer(0.65).timeout
+			bullet_time_back()
+			
 				
 		await get_tree().create_timer(0.56).timeout
 		can_shoot_again = true
@@ -287,6 +318,10 @@ func shoot():
 func bullet_time_back():
 	control_weapons.visible = true
 	control_magic.visible = true
+	camera_bullet_time_ON = false
+	bullet_light.visible = false
+	bullet.visible = false
+	AudioServer.set_playback_speed_scale(1.0)
 	camera.make_current()
 
 
