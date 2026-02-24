@@ -20,6 +20,7 @@ extends CharacterBody3D
 @onready var control_weapons: Control = $Camera3D/CanvasLayer/control_weapons
 @onready var control_magic: Control = $Camera3D/CanvasLayer/control_magic
 @onready var bullet: Node3D = $Camera3D/Camera3D_Bullet_Time/bullet
+@onready var camera_bullet_time_mark: Marker3D = $Camera3D/camera_bullet_time_mark
 
 var blood_effect = preload("res://scenes/enemies/blood.tscn")
 
@@ -52,7 +53,6 @@ func _ready():
 	
 	magic_hand_pos_original = magic_hand.position
 	magic_blade_pos_original = crescent_cogblade.position
-	camera_bullet_time_position = camera_3d_bullet_time.global_position
 	
 
 func _input(event):
@@ -72,6 +72,8 @@ func _input(event):
 		camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(-80), deg_to_rad(80))
 
 func _physics_process(delta: float) -> void:
+	print(camera_bullet_time_mark.global_position)
+	
 	# Adiciona gravidade
 	if not is_on_floor():
 		velocity += get_gravity() * delta
@@ -264,7 +266,13 @@ func shoot():
 				#ativa camera bullet time
 				#camera_3d_bullet_time
 				
-				
+			# 1. CALCULAMOS O ALVO REAL (Um pouco acima do centro do inimigo)
+			# Pegamos a posição global do inimigo e subimos ex: 1.5 metros no eixo Y
+			var offset_altura = Vector3(0, 1.2, 0) 
+			var alvo_ajustado = target.global_position + offset_altura
+
+			# Se você quiser que a câmera foque EXATAMENTE onde a bala bateu, mas um pouco acima:
+			# var alvo_ajustado = ponto_colisao + Vector3(0, 0.5, 0)
 				
 			#LOGICA PARA GIRAR A BALA
 			var tween_bullet = create_tween()
@@ -289,21 +297,26 @@ func shoot():
 			# 3. Cria o movimento da câmera
 			var tween_cam = create_tween()
 			
+			camera_3d_bullet_time.global_position = camera.global_position
 			camera_3d_bullet_time.make_current()
+			
 			
 			# Faz a câmera ir até o ponto de impacto
 			# Usamos global_position porque o inimigo pode estar longe na cena
-			tween_cam.tween_property(camera_3d_bullet_time, "global_position", ponto_colisao + Vector3(0, 0, 2), 0.9)\
+			#tween_cam.tween_property(camera_3d_bullet_time, "global_position", ponto_colisao + Vector3(0, 0, 2), 0.9)\
+			#	.set_trans(Tween.TRANS_QUINT)\
+			#	.set_ease(Tween.EASE_OUT)
+			tween_cam.tween_property(camera_3d_bullet_time, "global_position", alvo_ajustado, 0.9)\
 				.set_trans(Tween.TRANS_QUINT)\
 				.set_ease(Tween.EASE_OUT)
 				
 			# 4. Faz a câmera olhar para o inimigo enquanto viaja
-			camera_3d_bullet_time.look_at(ponto_colisao)
+			camera_3d_bullet_time.look_at(alvo_ajustado)
 
 			# 5. Espera um pouco no alvo e volta
 			tween_cam.tween_interval(0.05) # Pausa dramática no inimigo
 
-			tween_cam.tween_property(camera_3d_bullet_time, "position", camera_bullet_time_position, 0.4)\
+			tween_cam.tween_property(camera_3d_bullet_time, "global_position", camera.global_position, 0.4)\
 				.set_trans(Tween.TRANS_SINE)
 			
 			#tween_cam.tween_callback(bullet_time_back)
