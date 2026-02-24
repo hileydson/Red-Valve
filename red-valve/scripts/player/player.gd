@@ -58,7 +58,7 @@ func _ready():
 
 func _input(event):
 	#se estiver no bullet time sai vazado pra nao interferir no movimento da camera
-	if camera_bullet_time_ON:
+	if camera_bullet_time_ON or magic_hand.animation =="attack":
 		return
 	
 	# Lógica de rotação da câmera
@@ -73,6 +73,10 @@ func _input(event):
 		camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(-80), deg_to_rad(80))
 
 func _physics_process(delta: float) -> void:
+	
+	#paralisa jogador enquanto tiver fazendo o magic attack
+	if magic_hand.animation =="attack":
+		return 
 	
 	# Adiciona gravidade
 	if not is_on_floor():
@@ -154,11 +158,14 @@ func magic_hand_attack():
 	# 2. LANÇA A CRESCENT COGBLADE (3D)
 	crescent_cogblade.show()
 	
-	# RESET: Garante que a lâmina comece na posição original (atrás/perto da câmera)
+	# LIGA AS FAÍSCAS (Certifique-se que o nó está dentro da cogblade)
+	# Exemplo: $Camera3D/crescent_cogblade/Faiscas
+	var faiscas = crescent_cogblade.get_node("Faiscas") 
+	faiscas.emitting = true
+	
+	# RESET: Posição original
 	crescent_cogblade.position = magic_blade_pos_original
 	
-	# ALVO LOCAL: Como ela é filha da câmera, -5 no eixo Z é SEMPRE a frente.
-	# Somamos ao X e Y originais para ela manter a altura/lado corretos.
 	var pos_final_local = magic_blade_pos_original + Vector3(0, 0, -5)
 	
 	# Tween de ida
@@ -166,7 +173,7 @@ func magic_hand_attack():
 		.set_trans(Tween.TRANS_QUAD)\
 		.set_ease(Tween.EASE_OUT)
 	
-	# Giro 3x
+	# Giro 3x (Gira as faíscas junto se elas forem filhas do objeto)
 	tween_magic.tween_property(crescent_cogblade, "rotation:y", crescent_cogblade.rotation.y + deg_to_rad(1080), 0.8)
 
 	# 3. RETORNO
@@ -177,11 +184,13 @@ func magic_hand_attack():
 		.set_delay(0.8)\
 		.set_trans(Tween.TRANS_SINE)
 		
-	# Volta a lâmina para a posição original (magic_blade_pos_original)
-	# Assim ela volta exatamente para onde saiu, seguindo a câmera.
+	# Volta a lâmina
 	tween_back.tween_property(crescent_cogblade, "position", magic_blade_pos_original, 0.6)\
 		.set_delay(0.8)\
 		.set_trans(Tween.TRANS_SINE)
+	
+	# DESLIGA AS FAÍSCAS no meio do caminho de volta ou no fim
+	tween_back.tween_callback(func(): faiscas.emitting = false).set_delay(1.2)
 	
 	await tween_back.finished
 	crescent_cogblade.hide()

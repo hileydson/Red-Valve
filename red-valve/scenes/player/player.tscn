@@ -1,4 +1,4 @@
-[gd_scene load_steps=92 format=3 uid="uid://cluvbknxfjx2k"]
+[gd_scene load_steps=94 format=3 uid="uid://cluvbknxfjx2k"]
 
 [ext_resource type="Script" uid="uid://deirdushqeh74" path="res://scripts/player/player.gd" id="1_8afob"]
 [ext_resource type="Texture2D" uid="uid://bcav021wtw4vf" path="res://assets/images/player/fire_gun.png" id="2_75vfm"]
@@ -620,6 +620,20 @@ particles_anim_loop = false
 [sub_resource type="QuadMesh" id="QuadMesh_je7p5"]
 material = SubResource("StandardMaterial3D_h17s1")
 
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_gx1jg"]
+angle_min = -2.9999893
+angle_max = 1.0728835e-05
+inherit_velocity_ratio = 0.07
+spread = 79.759
+initial_velocity_min = 1.0
+initial_velocity_max = 10.0
+gravity = Vector3(0, -3.8, 0)
+scale_max = 2.0
+color = Color(0.16134527, 0.5570205, 0.6372557, 1)
+
+[sub_resource type="QuadMesh" id="QuadMesh_gx1jg"]
+size = Vector2(0.1, 0.04)
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_qek5x"]
 size = Vector3(1.8548584, 1, 0.57092285)
 
@@ -716,6 +730,19 @@ draw_pass_1 = SubResource("QuadMesh_je7p5")
 
 [node name="Crescent Cogblade" parent="Camera3D" instance=ExtResource("5_qek5x")]
 transform = Transform3D(1, 0, 0, 0, -0.32357067, -0.946204, 0, 0.946204, -0.32357067, -0.37319887, -0.3111421, 0.6566876)
+
+[node name="blade_light" type="OmniLight3D" parent="Camera3D/Crescent Cogblade"]
+transform = Transform3D(1, -1.3877788e-17, 4.6566134e-10, -4.4061063e-10, -0.32357067, 0.946204, 1.5067433e-10, -0.946204, -0.32357067, 0.58364236, -0.06071821, -0.29580855)
+light_color = Color(0.62088203, 0.7037089, 0.8496639, 1)
+light_energy = 14.563
+light_size = 1.0
+omni_range = 5.524
+
+[node name="Faiscas" type="GPUParticles3D" parent="Camera3D/Crescent Cogblade"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.90113115, -0.040700614, -0.027554512)
+amount = 400
+process_material = SubResource("ParticleProcessMaterial_gx1jg")
+draw_pass_1 = SubResource("QuadMesh_gx1jg")
 
 [node name="Area3D" type="Area3D" parent="Camera3D/Crescent Cogblade"]
 collision_mask = 4
