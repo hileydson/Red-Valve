@@ -1,8 +1,9 @@
-[gd_scene load_steps=89 format=3 uid="uid://cluvbknxfjx2k"]
+[gd_scene load_steps=90 format=3 uid="uid://cluvbknxfjx2k"]
 
 [ext_resource type="Script" uid="uid://deirdushqeh74" path="res://scripts/player/player.gd" id="1_8afob"]
 [ext_resource type="Texture2D" uid="uid://bcav021wtw4vf" path="res://assets/images/player/fire_gun.png" id="2_75vfm"]
 [ext_resource type="Texture2D" uid="uid://bet48rlumqtua" path="res://assets/images/player/sprite-256px-16.png" id="2_dovo2"]
+[ext_resource type="PackedScene" uid="uid://b4oj84gc8m06l" path="res://assets/3d_model/player/Maycow Lopes/maycow_lopes.glb" id="2_fm80t"]
 [ext_resource type="AudioStream" uid="uid://cn3pregco36bw" path="res://assets/sounds/player/gun_load.mp3" id="3_p47bc"]
 [ext_resource type="Texture2D" uid="uid://cp4f6dw2xfp6" path="res://assets/images/player/magic_hand.png" id="4_0owmy"]
 [ext_resource type="AudioStream" uid="uid://u3eclo54hry0" path="res://assets/sounds/player/gun_shot.mp3" id="4_75vfm"]
@@ -626,6 +627,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1128244, 0)
 collision_mask = 2
 script = ExtResource("1_8afob")
 
+[node name="maycow_lopes" parent="." instance=ExtResource("2_fm80t")]
+transform = Transform3D(-0.9999971, 0, 0.0024260576, 0, 1, 0, -0.0024260576, 0, -0.9999971, 0, -1.050483, 0.42049956)
+
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape3D_dovo2")
 
@@ -711,6 +715,7 @@ draw_pass_1 = SubResource("BoxMesh_0owmy")
 
 [node name="magic_hand_particles" type="GPUParticles3D" parent="Camera3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3266101, 0.08178985, -0.74835825)
+visible = false
 draw_pass_1 = SubResource("QuadMesh_je7p5")
 
 [node name="Crescent Cogblade" parent="Camera3D" instance=ExtResource("5_qek5x")]
