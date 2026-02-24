@@ -1,9 +1,11 @@
-[gd_scene load_steps=15 format=3 uid="uid://by4m6cxe53dhn"]
+[gd_scene load_steps=16 format=3 uid="uid://by4m6cxe53dhn"]
 
 [ext_resource type="PackedScene" uid="uid://cluvbknxfjx2k" path="res://scenes/player/player.tscn" id="1_23usu"]
 [ext_resource type="Script" uid="uid://b4fb6trwatryq" path="res://scripts/stages/stage_1.gd" id="1_nwsyl"]
 [ext_resource type="Script" uid="uid://bxfia7n8fhpk4" path="res://scripts/stages/stage_1/terrain_3d.gd" id="2_nwsyl"]
 [ext_resource type="PackedScene" uid="uid://xf6qeqrya6pi" path="res://scenes/enemies/the_cobalt_husker.tscn" id="3_hdpfd"]
+
+[sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_nwsyl"]
 
 [sub_resource type="Environment" id="Environment_23usu"]
 background_mode = 1
@@ -89,6 +91,36 @@ mesh_list = Array[Terrain3DMeshAsset]([SubResource("Terrain3DMeshAsset_xu06q")])
 [node name="Stage1" type="Node3D"]
 script = ExtResource("1_nwsyl")
 
+[node name="stop_walls" type="Node3D" parent="."]
+
+[node name="StaticBody3D" type="StaticBody3D" parent="stop_walls"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 161.21188, -676.30334)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="stop_walls/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.64712524, 0)
+shape = SubResource("WorldBoundaryShape3D_nwsyl")
+
+[node name="StaticBody3D2" type="StaticBody3D" parent="stop_walls"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 161.21188, 677.0092)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="stop_walls/StaticBody3D2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.64712524, 0)
+shape = SubResource("WorldBoundaryShape3D_nwsyl")
+
+[node name="StaticBody3D3" type="StaticBody3D" parent="stop_walls"]
+transform = Transform3D(-4.371139e-08, 1, -4.371139e-08, 0, -4.371139e-08, -1, -1, -4.371139e-08, 1.9106855e-15, -686.1373, 161.21182, 110.93671)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="stop_walls/StaticBody3D3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.64712524, 0)
+shape = SubResource("WorldBoundaryShape3D_nwsyl")
+
+[node name="StaticBody3D4" type="StaticBody3D" parent="stop_walls"]
+transform = Transform3D(-4.371139e-08, 1, -4.371139e-08, 0, -4.371139e-08, -1, -1, -4.371139e-08, 1.9106855e-15, 677.48004, 161.21182, 110.93671)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="stop_walls/StaticBody3D4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.64712524, 0)
+shape = SubResource("WorldBoundaryShape3D_nwsyl")
+
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 18.977646, 0)
 light_color = Color(0.58103293, 0.581033, 0.58103275, 1)
@@ -115,10 +147,10 @@ script = ExtResource("2_nwsyl")
 metadata/_edit_lock_ = true
 
 [node name="Player" parent="." instance=ExtResource("1_23usu")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.2299366, 1.3237407, 2.5718293)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 582.2625, 1.3237407, 583.30914)
 
 [node name="enemies" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.4599466, 1.0158861, 5.6326284)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 580.0325, 1.0158861, 586.36993)
 
 [node name="TheCobaltHusker" parent="enemies" instance=ExtResource("3_hdpfd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0222588, -0.3530271, -10.357668)
