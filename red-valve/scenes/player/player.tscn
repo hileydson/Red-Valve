@@ -1,4 +1,4 @@
-[gd_scene load_steps=91 format=3 uid="uid://cluvbknxfjx2k"]
+[gd_scene load_steps=92 format=3 uid="uid://cluvbknxfjx2k"]
 
 [ext_resource type="Script" uid="uid://deirdushqeh74" path="res://scripts/player/player.gd" id="1_8afob"]
 [ext_resource type="Texture2D" uid="uid://bcav021wtw4vf" path="res://assets/images/player/fire_gun.png" id="2_75vfm"]
@@ -623,6 +623,8 @@ material = SubResource("StandardMaterial3D_h17s1")
 [sub_resource type="BoxShape3D" id="BoxShape3D_qek5x"]
 size = Vector3(1.8548584, 1, 0.57092285)
 
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_gx1jg"]
+
 [node name="Player" type="CharacterBody3D" groups=["player"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1128244, 0)
 collision_mask = 2
@@ -741,6 +743,14 @@ fov = 113.1
 [node name="bullet" parent="Camera3D/Camera3D_Bullet_Time" instance=ExtResource("10_gx1jg")]
 transform = Transform3D(-0.0005484972, 0, 1.5476553e-05, 0, 0.00052350154, 0, -1.9777031e-05, 0, -0.0004292279, -0.10402084, -0.23633671, -0.24365199)
 
+[node name="bullet_touch" type="Area3D" parent="Camera3D/Camera3D_Bullet_Time/bullet"]
+collision_layer = 0
+collision_mask = 12
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Camera3D/Camera3D_Bullet_Time/bullet/bullet_touch"]
+transform = Transform3D(196.37262, 0, -5.1498413e-05, 0, -117.94477, 0, 1.335144e-05, 0, 628.2169, -21.287323, 0, 248.19348)
+shape = SubResource("CapsuleShape3D_gx1jg")
+
 [node name="bullet_light" type="OmniLight3D" parent="Camera3D/Camera3D_Bullet_Time"]
 transform = Transform3D(0.999999, 0, 0.0013613699, 0, 1, 0, -0.0013613699, 0, 0.999999, -0.00811027, -0.1965667, -0.7048087)
 light_color = Color(0.942523, 0.6523214, 0.16422758, 1)
@@ -768,5 +778,6 @@ pitch_scale = 0.68
 [connection signal="animation_finished" from="Camera3D/CanvasLayer/control_weapons/pistola" to="." method="_on_pistola_animation_finished"]
 [connection signal="body_entered" from="Camera3D/Crescent Cogblade/Area3D" to="." method="_on_area_3d_body_entered"]
 [connection signal="body_exited" from="Camera3D/Crescent Cogblade/Area3D" to="." method="_on_area_3d_body_exited"]
+[connection signal="body_entered" from="Camera3D/Camera3D_Bullet_Time/bullet/bullet_touch" to="." method="_on_bullet_touch_body_entered"]
 
 [editable path="Camera3D/Crescent Cogblade"]

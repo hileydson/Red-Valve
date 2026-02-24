@@ -33,6 +33,7 @@ const RUN_SPEED = 8.5 # Velocidade maior para a corrida
 #CHANGE LATER - DYNAMICLY
 const damage_crescent_cogblade:int = 14
 const damage_pistol:int = 10 #3 
+const damage_headshoot:int = 100
 var current_weapon: AnimatedSprite2D
 var can_shoot_again:bool = true
 
@@ -72,7 +73,6 @@ func _input(event):
 		camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(-80), deg_to_rad(80))
 
 func _physics_process(delta: float) -> void:
-	print(camera_bullet_time_mark.global_position)
 	
 	# Adiciona gravidade
 	if not is_on_floor():
@@ -262,67 +262,69 @@ func shoot():
 			print("O inimigo está a ", distancia, " metros de distância.")
 			
 			# HEADSHOT
-			#if target.name == "head" and distancia > 7:
+			if target.name == "head" and distancia > 7:
 				#ativa camera bullet time
 				#camera_3d_bullet_time
-				
-			# 1. CALCULAMOS O ALVO REAL (Um pouco acima do centro do inimigo)
-			# Pegamos a posição global do inimigo e subimos ex: 1.5 metros no eixo Y
-			var offset_altura = Vector3(0, 1.2, 0) 
-			var alvo_ajustado = target.global_position + offset_altura
+				target.take_damage(damage_pistol+damage_headshoot)
+					
+				# 1. CALCULAMOS O ALVO REAL (Um pouco acima do centro do inimigo)
+				# Pegamos a posição global do inimigo e subimos ex: 1.5 metros no eixo Y
+				var offset_altura = Vector3(0, -1.9, 0) 
+				var alvo_ajustado = target.global_position + offset_altura
 
-			# Se você quiser que a câmera foque EXATAMENTE onde a bala bateu, mas um pouco acima:
-			# var alvo_ajustado = ponto_colisao + Vector3(0, 0.5, 0)
+				# Se você quiser que a câmera foque EXATAMENTE onde a bala bateu, mas um pouco acima:
+				# var alvo_ajustado = ponto_colisao + Vector3(0, 0.5, 0)
+					
+				#LOGICA PARA GIRAR A BALA
+				var tween_bullet = create_tween()
+				# 2. GIRA A BALA (O Efeito que você quer)
+				# 360 graus = 1 volta completa. 1800 graus = 5 voltas.
+				# deg_to_rad converte para o formato que o Godot entende (radianos)
+				var voltas = deg_to_rad(1800) 
+				# Animamos a rotação no eixo Z (para girar como uma hélice) 
+				# ou Y (se ela girar como um disco)
+				tween_bullet.tween_property(bullet, "rotation:z", bullet.rotation.z + voltas, 2.5)\
+					.set_trans(Tween.TRANS_LINEAR) # Linear faz o giro ser constante	
+					
+					
+				control_weapons.visible = false
+				control_magic.visible = false
+				bullet_light.visible = true
+				bullet.visible = true
+				camera_bullet_time_ON = true
+				GlobalUtils.ativar_camera_lenta(0.1, 60.0)
+				AudioServer.set_playback_speed_scale(0.2)
 				
-			#LOGICA PARA GIRAR A BALA
-			var tween_bullet = create_tween()
-			# 2. GIRA A BALA (O Efeito que você quer)
-			# 360 graus = 1 volta completa. 1800 graus = 5 voltas.
-			# deg_to_rad converte para o formato que o Godot entende (radianos)
-			var voltas = deg_to_rad(1800) 
-			# Animamos a rotação no eixo Z (para girar como uma hélice) 
-			# ou Y (se ela girar como um disco)
-			tween_bullet.tween_property(bullet, "rotation:z", bullet.rotation.z + voltas, 2.5)\
-				.set_trans(Tween.TRANS_LINEAR) # Linear faz o giro ser constante	
+				# 3. Cria o movimento da câmera
+				var tween_cam = create_tween()
 				
+				camera_3d_bullet_time.global_position = camera.global_position
+				camera_3d_bullet_time.make_current()
 				
-			control_weapons.visible = false
-			control_magic.visible = false
-			bullet_light.visible = true
-			bullet.visible = true
-			camera_bullet_time_ON = true
-			GlobalUtils.ativar_camera_lenta(0.1, 60.0)
-			AudioServer.set_playback_speed_scale(0.2)
-			
-			# 3. Cria o movimento da câmera
-			var tween_cam = create_tween()
-			
-			camera_3d_bullet_time.global_position = camera.global_position
-			camera_3d_bullet_time.make_current()
-			
-			
-			# Faz a câmera ir até o ponto de impacto
-			# Usamos global_position porque o inimigo pode estar longe na cena
-			#tween_cam.tween_property(camera_3d_bullet_time, "global_position", ponto_colisao + Vector3(0, 0, 2), 0.9)\
-			#	.set_trans(Tween.TRANS_QUINT)\
-			#	.set_ease(Tween.EASE_OUT)
-			tween_cam.tween_property(camera_3d_bullet_time, "global_position", alvo_ajustado, 0.9)\
-				.set_trans(Tween.TRANS_QUINT)\
-				.set_ease(Tween.EASE_OUT)
-				
-			# 4. Faz a câmera olhar para o inimigo enquanto viaja
-			camera_3d_bullet_time.look_at(alvo_ajustado)
+				# No lugar do seu ponto 3 e 4, use isto:
+				# 3. Movimento da posição
+				tween_cam.tween_property(camera_3d_bullet_time, "global_position", alvo_ajustado + (ray_cast_3d.global_transform.basis.z * 2.0), 0.9)\
+					.set_trans(Tween.TRANS_QUINT)\
+					.set_ease(Tween.EASE_OUT)
 
-			# 5. Espera um pouco no alvo e volta
-			tween_cam.tween_interval(0.05) # Pausa dramática no inimigo
+				# 4. Rastreamento do Olhar (Faz a câmera atualizar o foco a cada frame do Tween)
+				tween_cam.parallel().tween_method(
+				func(pos): camera_3d_bullet_time.look_at(alvo_ajustado), # Função que olha pro alvo
+					0.0, # Valor inicial (não importa)
+					1.0, # Valor final (não importa)
+					0.9  # Mesma duração do movimento
+				)
 
-			tween_cam.tween_property(camera_3d_bullet_time, "global_position", camera.global_position, 0.4)\
-				.set_trans(Tween.TRANS_SINE)
-			
-			#tween_cam.tween_callback(bullet_time_back)
-			
-			await get_tree().create_timer(0.65).timeout
-			bullet_time_back()
+				# 5. Espera um pouco no alvo e volta
+				tween_cam.tween_interval(0.05) # Pausa dramática no inimigo
+
+				tween_cam.tween_property(camera_3d_bullet_time, "global_position", camera.global_position, 0.4)\
+					.set_trans(Tween.TRANS_SINE)
+				
+				#tween_cam.tween_callback(bullet_time_back)
+				
+				await get_tree().create_timer(0.65).timeout
+				if camera_bullet_time_ON: bullet_time_back()
 			
 				
 		await get_tree().create_timer(0.56).timeout
@@ -335,6 +337,7 @@ func bullet_time_back():
 	bullet_light.visible = false
 	bullet.visible = false
 	AudioServer.set_playback_speed_scale(1.0)
+	GlobalUtils.remover_camera_lenta()
 	camera.make_current()
 
 
@@ -372,3 +375,7 @@ func _on_area_3d_body_exited(body: Node3D) -> void:
 		spawn_blood_effect(body)
 		GlobalUtils.ativar_camera_lenta(0.2, 0.5) # Velocidade 20% por meio segundo
 		body.take_damage(damage_crescent_cogblade)
+
+
+func _on_bullet_touch_body_entered(body: Node3D) -> void:
+	bullet_time_back()

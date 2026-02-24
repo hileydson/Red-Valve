@@ -98,7 +98,7 @@ func take_damage(amount):
 func die():
 	timer.stop()
 	growl_2.play()
-	self.set_collision_layer_value(3,false)
+	
 	dead = true
 	health_bar_sprite.hide()
 	# Seu código de morte aqui
@@ -106,6 +106,9 @@ func die():
 	
 	await get_tree().create_timer(3.7).timeout
 	drop_dead.play()
+	
+	await get_tree().create_timer(1.0).timeout
+	self.set_collision_layer_value(3,false)
 	
 	await get_tree().create_timer(15.0).timeout
 	queue_free()
