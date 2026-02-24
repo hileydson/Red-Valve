@@ -738,12 +738,12 @@ stream = ExtResource("6_h17s1")
 [node name="blade_back" type="AudioStreamPlayer3D" parent="Camera3D/Crescent Cogblade"]
 stream = ExtResource("7_je7p5")
 
-[node name="Camera3D_Bullet_Time" type="Camera3D" parent="."]
-transform = Transform3D(0.9999991, 0, -0.0013613696, 0, 1, 0, 0.0013613696, 0, 0.9999991, 0, 0.3755691, 1.2577136)
+[node name="Camera3D_Bullet_Time" type="Camera3D" parent="Camera3D"]
+transform = Transform3D(0.9999991, 0, -0.0013613696, 0, 1, 0, 0.0013613696, 0, 0.9999991, 0.17540467, -0.17339468, 1.2577136)
 fov = 90.4
 
-[node name="bullet" parent="Camera3D_Bullet_Time" instance=ExtResource("10_gx1jg")]
-transform = Transform3D(-0.00053130195, 0, 8.9319616e-07, 0, 0.00095878425, 0, -1.1035243e-06, 0, -0.00043003776, 0.23140772, -0.11630559, -0.24088502)
+[node name="bullet" parent="Camera3D/Camera3D_Bullet_Time" instance=ExtResource("10_gx1jg")]
+transform = Transform3D(-0.00053130195, 0, 8.9319593e-07, 0, 0.00095878425, 0, -1.1035241e-06, 0, -0.00043003767, -0.22512746, -0.23633671, -0.24026358)
 
 [node name="sounds" type="Node" parent="."]
 

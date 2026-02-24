@@ -16,6 +16,10 @@ extends CharacterBody3D
 @onready var blade_in: AudioStreamPlayer3D = $"Camera3D/Crescent Cogblade/blade_in"
 @onready var blade_back: AudioStreamPlayer3D = $"Camera3D/Crescent Cogblade/blade_back"
 @onready var blade_out: AudioStreamPlayer = $"Camera3D/Crescent Cogblade/BladeOut"
+@onready var camera_3d_bullet_time: Camera3D = $Camera3D/Camera3D_Bullet_Time
+@onready var control_weapons: Control = $Camera3D/CanvasLayer/control_weapons
+@onready var control_magic: Control = $Camera3D/CanvasLayer/control_magic
+@onready var bullet: Node3D = $Camera3D/Camera3D_Bullet_Time/bullet
 
 var blood_effect = preload("res://scenes/enemies/blood.tscn")
 
@@ -34,6 +38,7 @@ var can_shoot_again:bool = true
 #ORIGINAL POSITION FOR THE LEFT HAND
 var magic_hand_pos_original
 var magic_blade_pos_original
+var camera_bullet_time_position
 
 func _ready():
 
@@ -45,6 +50,7 @@ func _ready():
 	
 	magic_hand_pos_original = magic_hand.position
 	magic_blade_pos_original = crescent_cogblade.position
+	camera_bullet_time_position = camera_3d_bullet_time.global_position
 
 func _input(event):
 	# Lógica de rotação da câmera
@@ -233,16 +239,56 @@ func shoot():
 			#set damage
 			target.take_damage(damage_pistol)
 			
-			# HEADSHOT
-			if target.name == "head":
-				GlobalUtils.ativar_camera_lenta(0.1, 1.5)
-			
 			# Verifica se o que atingimos é um inimigo
 			if target.is_in_group("enemies"):
 				spawn_blood_raycast(ray_cast_3d.get_collision_point(), ray_cast_3d.get_collision_normal())
 		
+			var ponto_colisao = ray_cast_3d.get_collision_point()
+			# A distância entre a origem do RayCast e onde ele bateu
+			var distancia = ray_cast_3d.global_position.distance_to(ponto_colisao)
+			print("O inimigo está a ", distancia, " metros de distância.")
+			
+			# HEADSHOT
+			#if target.name == "head" and distancia > 7:
+				#ativa camera bullet time
+				#camera_3d_bullet_time
+				
+			control_weapons.visible = false
+			control_magic.visible = false
+			GlobalUtils.ativar_camera_lenta(0.1, 60.0)
+			
+			# 3. Cria o movimento da câmera
+			var tween_cam = create_tween()
+			
+			camera_3d_bullet_time.make_current()
+			# Faz a câmera ir até o ponto de impacto
+			# Usamos global_position porque o inimigo pode estar longe na cena
+			tween_cam.tween_property(camera_3d_bullet_time, "global_position", ponto_colisao + Vector3(0, 1, 2), 0.5)\
+				.set_trans(Tween.TRANS_QUINT)\
+				.set_ease(Tween.EASE_OUT)
+				
+			# 4. Faz a câmera olhar para o inimigo enquanto viaja
+			camera_3d_bullet_time.look_at(ponto_colisao)
+
+			# 5. Espera um pouco no alvo e volta
+			tween_cam.tween_interval(0.5) # Pausa dramática no inimigo
+
+			tween_cam.tween_property(camera_3d_bullet_time, "position", camera_bullet_time_position, 0.4)\
+				.set_trans(Tween.TRANS_SINE)
+			
+			tween_cam.tween_callback(bullet_time_back)
+			
+			await get_tree().create_timer(0.56).timeout
+			camera.make_current()
+				
 		await get_tree().create_timer(0.56).timeout
 		can_shoot_again = true
+
+func bullet_time_back():
+	control_weapons.visible = true
+	control_magic.visible = true
+	camera.make_current()
+
 
 func spawn_blood_raycast(pos, normal):
 	var blood = blood_effect.instantiate()
