@@ -233,6 +233,10 @@ func shoot():
 			#set damage
 			target.take_damage(damage_pistol)
 			
+			# HEADSHOT
+			if target.name == "head":
+				GlobalUtils.ativar_camera_lenta(0.1, 1.5)
+			
 			# Verifica se o que atingimos é um inimigo
 			if target.is_in_group("enemies"):
 				spawn_blood_raycast(ray_cast_3d.get_collision_point(), ray_cast_3d.get_collision_normal())
