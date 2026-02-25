@@ -1,0 +1,11 @@
+Custom License for 3D Assets
+
+Usage: These 3D assets can be used in any project, including commercial ones.
+
+Redistribution: These 3D assets cannot be sold or redistributed as standalone items. They can only be included as part of a larger project, such as a game.
+
+Attribution: Credit must be given to the creator of these assets. Please include the following attribution in your project: "3D assets created by jhonny."
+
+Enjoyment: Have fun with these assets and let your creativity shine!
+
+Contact Information: For any inquiries or further information, please contact [ jorspo@hotmail.com ].

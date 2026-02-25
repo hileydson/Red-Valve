@@ -36,6 +36,10 @@ folder_colors={
 "res://shaders/": "pink"
 }
 
+[filesystem]
+
+import/blender/enabled=false
+
 [global_group]
 
 player=""
