@@ -2,7 +2,7 @@ extends CharacterBody3D
 
 @onready var player = get_tree().get_first_node_in_group("player")
 
-@onready var nav_agent: NavigationAgent3D = $"../NavigationAgent3D"
+@onready var nav_agent: NavigationAgent3D = $NavigationAgent3D
 @onready var health_bar_sprite: Sprite3D = $HealthBarSprite
 @onready var animation_tree: AnimationTree = $"the-cobalt-husker/AnimationTree"
 @onready var health_bar: ProgressBar = $HealthBarViewport/HealthBar
@@ -39,48 +39,45 @@ func _physics_process(delta: float) -> void:
 		steps.stop()
 		return
 	
-	# 1. Gravidade
+	# 1. Gravidade sempre ativa
 	if not is_on_floor():
 		velocity += get_gravity() * delta
-	
-	# Verificação de segurança: se o player ou nav_agent sumirem, não faz nada
-	if not player or not nav_agent:
-		return
-
-	# 2. Atualiza o destino
-	update_timer += delta
-	if update_timer >= 0.2:
-		nav_agent.target_position = player.global_position
-		update_timer = 0.0
-	
-	# 3. Calcula o movimento
-	if not nav_agent.is_navigation_finished():
-		# IMPORTANTE: get_next_path_position() é o que faz o agente seguir o bake do terreno
-		var next_p = nav_agent.get_next_path_position()
-		var current_p = global_position
-		
-		# Direção considerando o próximo ponto da NavMesh
-		var direction = (next_p - current_p).normalized()
-		
-		# Aplica a velocidade (mantendo a gravidade no Y)
-		velocity.x = lerp(velocity.x, direction.x * SPEED, delta * ACCEL)
-		velocity.z = lerp(velocity.z, direction.z * SPEED, delta * ACCEL)
-		
-		# 4. Rotação suave para olhar o Player
-		var look_target = player.global_position
-		look_target.y = global_position.y # Trava o olhar horizontalmente
-		
-		if global_position.distance_to(look_target) > 0.5:
-			# Usamos lerp_angle ou uma rotação suave para não ficar "duro"
-			var target_transform = global_transform.looking_at(look_target, Vector3.UP)
-			global_transform = global_transform.interpolate_with(target_transform, delta * 5.0)
-			
-		if not steps.playing: steps.play()
 	else:
-		steps.stop()
-		velocity.x = move_toward(velocity.x, 0, SPEED * delta)
-		velocity.z = move_toward(velocity.z, 0, SPEED * delta)
+		velocity.y = 0
 
+	if player and nav_agent:
+		# 2. Atualiza o destino apenas 5 vezes por segundo (Economiza CPU)
+		update_timer += delta
+		if update_timer >= 0.2:
+			nav_agent.target_position = player.global_position
+			update_timer = 0.0
+		
+		# 3. Calcula o movimento se ainda não chegou no alvo
+		if not nav_agent.is_navigation_finished():
+			var next_p = nav_agent.get_next_path_position()
+			var direction = (next_p - global_position)
+			
+			direction.y = 0 # FORÇA o inimigo a não subir
+			direction = direction.normalized()
+			
+			# Aplica a velocidade suavemente
+			velocity.x = lerp(velocity.x, direction.x * SPEED, delta * ACCEL)
+			velocity.z = lerp(velocity.z, direction.z * SPEED, delta * ACCEL)
+			
+			# 4. Rotação (Olha para o player, mas mantém o corpo reto)
+			var look_pos = player.global_position
+			look_pos.y = global_position.y
+			if global_position.distance_to(look_pos) > 0.5:
+				look_at(look_pos, Vector3.UP)
+			
+			if steps.playing == false and !dead: steps.play()
+		else:
+			steps.stop()
+			# Para gradualmente ao chegar
+			velocity.x = move_toward(velocity.x, 0, SPEED)
+			velocity.z = move_toward(velocity.z, 0, SPEED)
+
+	# 5. Move o corpo físico
 	move_and_slide()
 	
 	
