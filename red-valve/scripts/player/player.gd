@@ -407,4 +407,7 @@ func _on_area_3d_body_exited(body: Node3D) -> void:
 
 
 func _on_bullet_touch_body_entered(body: Node3D) -> void:
-	bullet_time_back()
+	#bullet_time_back()
+	bullet.visible = false
+	bullet_light.visible = false
+	spawn_blood_effect(body)
