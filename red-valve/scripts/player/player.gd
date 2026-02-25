@@ -22,6 +22,7 @@ extends CharacterBody3D
 @onready var bullet: Node3D = $Camera3D/Camera3D_Bullet_Time/bullet
 @onready var camera_bullet_time_mark: Marker3D = $Camera3D/camera_bullet_time_mark
 @onready var slay_it: AudioStreamPlayer = $sounds/SlayIt
+@onready var blade_light: OmniLight3D = $"Camera3D/Crescent Cogblade/blade_light"
 
 var blood_effect = preload("res://scenes/enemies/blood.tscn")
 
@@ -65,6 +66,7 @@ func _ready():
 	
 	# Reativa a física
 	set_physics_process(true)
+	
 	
 
 func _input(event):
@@ -211,6 +213,8 @@ func magic_hand_attack():
 func cast_spell():
 	# Reinicia o efeito
 	magic_hand_particles.emitting = true
+	blade_light.visible = true
+	print("entrou")
 	
 	# Cria um Tween para aumentar a intensidade da cor ou escala
 	var tween = create_tween()
@@ -220,6 +224,8 @@ func cast_spell():
 	tween.tween_property(magic_hand_particles.process_material, "scale_min", 2.0, 0.5)
 	await get_tree().create_timer(3.0).timeout
 	magic_hand_particles.emitting = false
+	blade_light.visible = false
+	print("saiu")
 	
 func shoot():
 	if current_weapon.animation != "shoot" and can_shoot_again:

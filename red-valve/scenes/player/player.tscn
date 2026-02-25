@@ -731,11 +731,12 @@ draw_pass_1 = SubResource("QuadMesh_je7p5")
 
 [node name="Crescent Cogblade" parent="Camera3D" instance=ExtResource("5_qek5x")]
 transform = Transform3D(1, 0, 0, 0, -0.32357067, -0.946204, 0, 0.946204, -0.32357067, -0.37319887, -0.3111421, 0.6566876)
+visible = false
 
 [node name="blade_light" type="OmniLight3D" parent="Camera3D/Crescent Cogblade"]
 transform = Transform3D(1, -1.3877788e-17, 4.6566134e-10, -4.4061063e-10, -0.32357067, 0.946204, 1.5067433e-10, -0.946204, -0.32357067, 0.58364236, -0.06071821, -0.29580855)
 light_color = Color(6.738305e-07, 0.46266872, 0.54521537, 1)
-light_energy = 6.323
+light_energy = 6.5
 light_size = 1.0
 omni_range = 5.524
 
