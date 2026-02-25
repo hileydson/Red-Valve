@@ -37,6 +37,63 @@ import_script/path=""
 materials/extract=0
 materials/extract_format=0
 materials/extract_path=""
-_subresources={}
+_subresources={
+"meshes": {
+"TREE_BIRCH_Cylinder_005": {
+"generate/lightmap_uv": 0,
+"generate/lods": 0,
+"generate/shadow_meshes": 0,
+"lods/normal_merge_angle": 20.0,
+"save_to_file/enabled": true,
+"save_to_file/fallback_path": "res://assets/3d_model/stage_1/meshes/TREE_BIRCH_Cylinder_005.res",
+"save_to_file/path": "uid://butpbh55mady6"
+},
+"TREE_BIRCH_Cylinder_006": {
+"generate/lightmap_uv": 0,
+"generate/lods": 0,
+"generate/shadow_meshes": 0,
+"lods/normal_merge_angle": 20.0,
+"save_to_file/enabled": true,
+"save_to_file/fallback_path": "res://assets/3d_model/stage_1/meshes/TREE_BIRCH_Cylinder_006.res",
+"save_to_file/path": "uid://fcvs3sn6uu0d"
+},
+"TREE_BIRCH_Cylinder_007": {
+"generate/lightmap_uv": 0,
+"generate/lods": 0,
+"generate/shadow_meshes": 0,
+"lods/normal_merge_angle": 20.0,
+"save_to_file/enabled": true,
+"save_to_file/fallback_path": "res://assets/3d_model/stage_1/meshes/TREE_BIRCH_Cylinder_007.res",
+"save_to_file/path": "uid://dxifiqpj5d04o"
+},
+"TREE_BIRCH_Cylinder_008": {
+"generate/lightmap_uv": 0,
+"generate/lods": 0,
+"generate/shadow_meshes": 0,
+"lods/normal_merge_angle": 20.0,
+"save_to_file/enabled": true,
+"save_to_file/fallback_path": "res://assets/3d_model/stage_1/meshes/TREE_BIRCH_Cylinder_008.res",
+"save_to_file/path": "uid://cm4jumyou4bts"
+},
+"TREE_BIRCH_Cylinder_009": {
+"generate/lightmap_uv": 0,
+"generate/lods": 0,
+"generate/shadow_meshes": 0,
+"lods/normal_merge_angle": 20.0,
+"save_to_file/enabled": true,
+"save_to_file/fallback_path": "res://assets/3d_model/stage_1/meshes/TREE_BIRCH_Cylinder_009.res",
+"save_to_file/path": "uid://dqa863js6geyw"
+},
+"TREE_BIRCH_Plane": {
+"generate/lightmap_uv": 0,
+"generate/lods": 0,
+"generate/shadow_meshes": 0,
+"lods/normal_merge_angle": 20.0,
+"save_to_file/enabled": true,
+"save_to_file/fallback_path": "res://assets/3d_model/stage_1/meshes/TREE_BIRCH_Plane.res",
+"save_to_file/path": "uid://dx2f0shfjw28n"
+}
+}
+}
 gltf/naming_version=2
 gltf/embedded_image_handling=1

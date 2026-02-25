@@ -30,7 +30,7 @@ const SPEED = 5.0
 const JUMP_VELOCITY = 4.5
 const SENSITIVITY = 0.003 # Sensibilidade do mouse
 const WALK_SPEED = 5.0
-const RUN_SPEED = 8.5 # Velocidade maior para a corrida
+@export var RUN_SPEED = 8.5 # Velocidade maior para a corrida
 
 #CHANGE LATER - DYNAMICLY
 const damage_crescent_cogblade:int = 14

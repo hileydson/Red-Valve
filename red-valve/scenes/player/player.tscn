@@ -644,6 +644,7 @@ size = Vector3(1.8548584, 1, 0.57092285)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1128244, 0)
 collision_mask = 2
 script = ExtResource("1_8afob")
+RUN_SPEED = 108.5
 
 [node name="maycow_lopes" parent="." instance=ExtResource("2_fm80t")]
 transform = Transform3D(-0.9999971, 0, 0.0024260576, 0, 1, 0, -0.0024260576, 0, -0.9999971, 0, -1.050483, 0.42049956)
