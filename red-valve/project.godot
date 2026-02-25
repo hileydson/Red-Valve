@@ -107,3 +107,6 @@ ui_magic_attack={
 [rendering]
 
 renderer/rendering_method="mobile"
+global_illumination/gi/use_half_resolution=true
+scaling_3d/scale=0.8
+occlusion_culling/use_occlusion_culling=true
