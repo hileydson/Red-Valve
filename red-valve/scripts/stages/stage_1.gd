@@ -13,4 +13,4 @@ func _process(delta: float) -> void:
 
 
 func _on_timer_timeout() -> void:
-	navigation_region_3d.bake_navigation_mesh(true)
+	pass #navigation_region_3d.bake_navigation_mesh(true)

@@ -21,6 +21,7 @@ extends CharacterBody3D
 @onready var control_magic: Control = $Camera3D/CanvasLayer/control_magic
 @onready var bullet: Node3D = $Camera3D/Camera3D_Bullet_Time/bullet
 @onready var camera_bullet_time_mark: Marker3D = $Camera3D/camera_bullet_time_mark
+@onready var slay_it: AudioStreamPlayer = $sounds/SlayIt
 
 var blood_effect = preload("res://scenes/enemies/blood.tscn")
 
@@ -156,6 +157,7 @@ func reload():
 
 func magic_hand_attack():
 	# 1. ANIMAÇÃO DA MÃO (2D)
+	slay_it.play()
 	magic_hand.play("attack")
 	blade_out.play()
 	var tween_magic = create_tween().set_parallel(true)
