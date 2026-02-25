@@ -1,6 +1,7 @@
 extends CharacterBody3D
 
 @onready var player = get_tree().get_first_node_in_group("player")
+
 @onready var nav_agent: NavigationAgent3D = $"../NavigationAgent3D"
 @onready var health_bar_sprite: Sprite3D = $HealthBarSprite
 @onready var animation_tree: AnimationTree = $"the-cobalt-husker/AnimationTree"
