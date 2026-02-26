@@ -1,0 +1,163 @@
+[gd_scene load_steps=26 format=3 uid="uid://com0h5rly7ayq"]
+
+[ext_resource type="PackedScene" uid="uid://u0i4xiobmvny" path="res://scenes/enemies/enemy.tscn" id="1_gl10n"]
+[ext_resource type="Script" uid="uid://76krycf0vttc" path="res://scripts/enemies/zombie.gd" id="1_p4ex4"]
+[ext_resource type="PackedScene" uid="uid://bh3ka06bxmwb7" path="res://assets/3d_model/enemies/zombie.glb" id="2_7s1wu"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_rdvt3"]
+animation = &"Unsteady_Walk"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_a0lpg"]
+animation = &"Mummy_Stagger"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_bgxja"]
+animation = &"Weapon_Combo_2"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_irn3l"]
+animation = &"Shot_in_the_Back_and_Fall"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_p4ex4"]
+animation = &"Running"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_7s1wu"]
+animation = &"Walking"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_1m5pk"]
+animation = &"Idle_11"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_i8kx7"]
+animation = &"Idle"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_rdvt3"]
+xfade_time = 0.7
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_a0lpg"]
+xfade_time = 0.5
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_bgxja"]
+xfade_time = 0.7
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_irn3l"]
+xfade_time = 0.7
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_p4ex4"]
+xfade_time = 0.7
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_7s1wu"]
+xfade_time = 0.7
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_1m5pk"]
+xfade_time = 0.7
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_i8kx7"]
+xfade_time = 0.7
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_xb2l8"]
+xfade_time = 0.7
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_i1x1v"]
+xfade_time = 0.7
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_xb2l8"]
+states/Start/position = Vector2(228, 143)
+states/attack_1/node = SubResource("AnimationNodeAnimation_rdvt3")
+states/attack_1/position = Vector2(617, 100)
+states/attack_2/node = SubResource("AnimationNodeAnimation_a0lpg")
+states/attack_2/position = Vector2(721, 177)
+states/dead/node = SubResource("AnimationNodeAnimation_bgxja")
+states/dead/position = Vector2(391, 219)
+states/idle/node = SubResource("AnimationNodeAnimation_irn3l")
+states/idle/position = Vector2(468, 143)
+states/idle_static/node = SubResource("AnimationNodeAnimation_p4ex4")
+states/idle_static/position = Vector2(473, 48)
+states/run/node = SubResource("AnimationNodeAnimation_7s1wu")
+states/run/position = Vector2(1251, 127)
+states/walk/node = SubResource("AnimationNodeAnimation_1m5pk")
+states/walk/position = Vector2(330, 62)
+states/walk_normal/node = SubResource("AnimationNodeAnimation_i8kx7")
+states/walk_normal/position = Vector2(1251, 62)
+transitions = ["Start", "idle", SubResource("AnimationNodeStateMachineTransition_rdvt3"), "idle", "walk", SubResource("AnimationNodeStateMachineTransition_a0lpg"), "walk", "idle", SubResource("AnimationNodeStateMachineTransition_bgxja"), "idle", "idle_static", SubResource("AnimationNodeStateMachineTransition_irn3l"), "idle_static", "idle", SubResource("AnimationNodeStateMachineTransition_p4ex4"), "idle", "attack_1", SubResource("AnimationNodeStateMachineTransition_7s1wu"), "idle", "attack_2", SubResource("AnimationNodeStateMachineTransition_1m5pk"), "idle", "dead", SubResource("AnimationNodeStateMachineTransition_i8kx7"), "attack_2", "idle", SubResource("AnimationNodeStateMachineTransition_xb2l8"), "attack_1", "idle", SubResource("AnimationNodeStateMachineTransition_i1x1v")]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_rdvt3"]
+radius = 0.18026884
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_a0lpg"]
+radius = 0.11230469
+height = 0.71757126
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_rdvt3"]
+viewport_path = NodePath("enemy/HealthBarViewport")
+
+[node name="Zombie" type="Node3D"]
+
+[node name="enemy" parent="." instance=ExtResource("1_gl10n")]
+safe_margin = 0.05
+script = ExtResource("1_p4ex4")
+max_health = 50
+
+[node name="zombie" parent="enemy" instance=ExtResource("2_7s1wu")]
+transform = Transform3D(1.2165924, 0, 0, 0, 1.1881708, 0, 0, 0, 1.2637573, 0, 0, 0)
+
+[node name="Skeleton3D" parent="enemy/zombie/Armature" index="0"]
+bones/0/position = Vector3(-92.011314, 7.7909393, 82.39978)
+bones/0/rotation = Quaternion(0.12034403, 0.10792863, 0.6077911, 0.7774694)
+bones/0/scale = Vector3(1, 0.9999998, 0.9999998)
+bones/1/rotation = Quaternion(0.8536992, 0.046443574, 0.5141055, 0.06882077)
+bones/2/rotation = Quaternion(0.3986326, 0.086792536, 0.038035657, 0.91220206)
+bones/3/rotation = Quaternion(-0.4611448, -0.10398938, -0.06201145, 0.87902576)
+bones/4/position = Vector3(-8.241281e-07, 12.814002, 1.0399724e-06)
+bones/4/rotation = Quaternion(-0.4111572, -0.07879321, -0.006914409, 0.9081265)
+bones/5/rotation = Quaternion(0.13519843, -0.2992827, 0.9440209, -0.031236641)
+bones/6/rotation = Quaternion(0.37264138, -0.029186469, -0.04720123, 0.92631453)
+bones/7/position = Vector3(-2.3321627e-06, 37.76275, -7.3247156e-06)
+bones/7/rotation = Quaternion(-0.31963283, 0.30130702, 0.16204633, 0.8836232)
+bones/8/position = Vector3(-9.548069e-08, 13.978398, 1.8158817e-06)
+bones/8/rotation = Quaternion(-0.4100026, 0.097579144, 0.021729447, 0.9065893)
+bones/9/position = Vector3(-1.0658269, 14.826298, 2.5981288)
+bones/9/rotation = Quaternion(0.08410664, -0.769151, 0.021909703, 0.6331295)
+bones/10/rotation = Quaternion(0.06220213, -0.017686332, 0.02795192, 0.9975153)
+bones/11/position = Vector3(-1.6402441e-07, 15.089919, -1.5643541e-06)
+bones/11/rotation = Quaternion(-0.059302144, 0.006519879, -0.0065015857, 0.9981977)
+bones/12/position = Vector3(3.4560564, 5.6725845, -0.48379618)
+bones/12/rotation = Quaternion(0.34806067, 0.739507, -0.3129492, 0.48378304)
+bones/13/position = Vector3(-8.7215994e-07, 15.115783, -3.2294563e-05)
+bones/13/rotation = Quaternion(0.3230687, -0.23611884, -0.051696084, 0.9149875)
+bones/14/position = Vector3(4.239232e-06, 26.352245, -4.48253e-06)
+bones/14/rotation = Quaternion(-0.7446292, -0.3135553, 0.32248494, 0.4931672)
+bones/15/position = Vector3(6.4644487e-06, 26.787079, -3.7730842e-06)
+bones/15/rotation = Quaternion(0.25048468, 0.15041958, 0.014762028, 0.9562498)
+bones/16/position = Vector3(-3.809544, 5.231907, -1.0415148)
+bones/16/rotation = Quaternion(-0.556144, 0.53625655, -0.3318869, -0.5412798)
+bones/17/position = Vector3(-3.0014799e-06, 14.374175, 6.0646635e-06)
+bones/17/rotation = Quaternion(0.6126973, 0.13284293, -0.10343185, 0.7721766)
+bones/18/position = Vector3(4.876646e-06, 26.34673, -1.994952e-06)
+bones/18/rotation = Quaternion(-0.7867124, 0.30026105, -0.3540274, 0.4069293)
+bones/19/position = Vector3(-3.801937e-06, 26.296947, 1.5673091e-05)
+bones/19/rotation = Quaternion(-0.06445601, -0.3547385, -0.026015637, 0.93237823)
+bones/20/position = Vector3(0.35348412, 8.682163, 1.5253189)
+bones/20/rotation = Quaternion(-0.09747808, 0.0131323235, -0.034653045, 0.99454755)
+bones/21/position = Vector3(4.266428e-06, 10.679953, -2.911203e-05)
+bones/21/rotation = Quaternion(0.5467967, 0.052871175, 0.103777125, 0.82912505)
+bones/22/rotation = Quaternion(-0.2776363, 3.492492e-08, -0.029766338, 0.9602251)
+bones/23/rotation = Quaternion(0.39783546, 1.8151857e-07, 0.04265373, 0.91646475)
+
+[node name="AnimationTree" type="AnimationTree" parent="enemy/zombie"]
+tree_root = SubResource("AnimationNodeStateMachine_xb2l8")
+anim_player = NodePath("../AnimationPlayer")
+
+[node name="CollisionShape3D" parent="enemy/head" index="0"]
+transform = Transform3D(0.6876633, 0, 0, 0, 0.6761768, 0, 0, 0, 1, -0.1530143, -0.2684481, 0.0021207482)
+shape = SubResource("SphereShape3D_rdvt3")
+
+[node name="CollisionShape3D" parent="enemy" index="3"]
+transform = Transform3D(2.084061, 0, 0, 0, 2.317266, 0, 0, 0, 2.2621195, 0.010469139, 0.8742763, 0.09777875)
+shape = SubResource("CapsuleShape3D_a0lpg")
+
+[node name="HealthBarSprite" parent="enemy" index="5"]
+texture = SubResource("ViewportTexture_rdvt3")
+
+[editable path="enemy"]
+[editable path="enemy/zombie"]

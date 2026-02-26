@@ -17,8 +17,8 @@ extends CharacterBody3D
 const SPEED = 2.0
 const ACCEL = 4.0
 
-var max_health = 150
-var current_health = 150
+@export var max_health = 150
+var current_health = max_health
 var update_timer = 0.0
 
 var playback 
