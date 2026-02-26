@@ -35,6 +35,7 @@ func _ready() -> void:
 	timer.start()
 
 func _physics_process(delta: float) -> void:
+	
 	if dead: 
 		steps.stop()
 		return

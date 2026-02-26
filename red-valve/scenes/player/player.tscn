@@ -656,6 +656,19 @@ shape = SubResource("CapsuleShape3D_dovo2")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.49483705, 0)
 current = true
 
+[node name="lanterna" type="SpotLight3D" parent="Camera3D"]
+transform = Transform3D(1, 0, 0, 0, 0.8835941, 0.46825373, 0, -0.46825373, 0.8835941, 0, -0.14011133, -0.040479183)
+light_energy = 2.391
+light_indirect_energy = 0.304
+light_volumetric_fog_energy = 9.547
+shadow_enabled = true
+shadow_transmittance_bias = 4.025
+shadow_blur = 4.975
+distance_fade_enabled = true
+spot_range = 17.277
+spot_attenuation = 2.12
+spot_angle = 27.11
+
 [node name="CanvasLayer" type="CanvasLayer" parent="Camera3D"]
 
 [node name="control_weapons" type="Control" parent="Camera3D/CanvasLayer"]
