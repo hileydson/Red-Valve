@@ -297,7 +297,7 @@ func shoot():
 						
 					# 1. CALCULAMOS O ALVO REAL (Um pouco acima do centro do inimigo)
 					# Pegamos a posição global do inimigo e subimos ex: 1.5 metros no eixo Y
-					var offset_altura = Vector3(0, -0.3, 0) 
+					var offset_altura = Vector3(0.2, -0.3, 0) 
 					var alvo_ajustado = target.global_position + offset_altura
 
 					# Se você quiser que a câmera foque EXATAMENTE onde a bala bateu, mas um pouco acima:

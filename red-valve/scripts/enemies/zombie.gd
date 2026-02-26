@@ -69,9 +69,12 @@ func _physics_process(delta: float) -> void:
 			if global_position.distance_to(look_pos) > 0.5:
 				look_at(look_pos, Vector3.UP)
 			
-			if steps.playing == false and !dead: steps.play()
+			if steps.playing == false and !dead: 
+				steps.play()
+				playback.travel("walk")
 		else:
 			steps.stop()
+			playback.travel("attack_1")
 			# Para gradualmente ao chegar
 			velocity.x = move_toward(velocity.x, 0, SPEED)
 			velocity.z = move_toward(velocity.z, 0, SPEED)

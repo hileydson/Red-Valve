@@ -12375,6 +12375,13 @@ _subresources={
 "slice_99/start_frame": 0,
 "slices/amount": 0
 }
+},
+"materials": {
+"Material_1": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://assets/3d_model/enemies/materials/zombie/Material_1.tres",
+"use_external/path": "uid://b4y0tama7kw5s"
+}
 }
 }
 gltf/naming_version=2

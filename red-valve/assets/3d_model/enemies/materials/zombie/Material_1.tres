@@ -1,0 +1,14 @@
+[gd_resource type="StandardMaterial3D" load_steps=3 format=3 uid="uid://b4y0tama7kw5s"]
+
+[ext_resource type="Texture2D" uid="uid://be1puqdq0t7k3" path="res://assets/3d_model/enemies/zombie_texture_0_1.png" id="1_i3hue"]
+[ext_resource type="Texture2D" uid="uid://c1dhp5nuida0o" path="res://assets/3d_model/enemies/zombie_texture_0.png" id="2_svvon"]
+
+[resource]
+resource_name = "Material_1"
+transparency = 4
+cull_mode = 2
+albedo_texture = ExtResource("1_i3hue")
+metallic = 1.0
+roughness = 0.41008475
+emission_enabled = true
+emission_texture = ExtResource("2_svvon")
