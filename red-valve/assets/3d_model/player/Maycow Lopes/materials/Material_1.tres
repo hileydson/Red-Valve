@@ -1,0 +1,14 @@
+[gd_resource type="StandardMaterial3D" load_steps=3 format=3 uid="uid://b4ex0mcd02t5c"]
+
+[ext_resource type="Texture2D" uid="uid://c6jiaommm5wsp" path="res://assets/3d_model/player/Maycow Lopes/maycow_lopes_texture_0_1.png" id="1_sau8g"]
+[ext_resource type="Texture2D" uid="uid://bxt2gi22ac0a5" path="res://assets/3d_model/player/Maycow Lopes/maycow_lopes_texture_0.png" id="2_x0lmh"]
+
+[resource]
+resource_name = "Material_1"
+transparency = 4
+cull_mode = 2
+albedo_texture = ExtResource("1_sau8g")
+metallic = 1.0
+roughness = 0.41008475
+emission_enabled = true
+emission_texture = ExtResource("2_x0lmh")

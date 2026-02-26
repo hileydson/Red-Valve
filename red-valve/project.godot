@@ -45,6 +45,7 @@ import/blender/enabled=false
 
 player=""
 enemies=""
+camera_player=""
 
 [input]
 

@@ -109,6 +109,7 @@ transform = Transform3D(-1.2165924, 0, -1.10481174e-07, 0, 1.1881708, 0, 1.06357
 [node name="char1" parent="enemy/enemy_model/Armature/Skeleton3D" index="0"]
 material_override = SubResource("StandardMaterial3D_bgxja")
 material_overlay = ExtResource("4_a0lpg")
+gi_mode = 2
 
 [node name="AnimationTree" type="AnimationTree" parent="enemy/enemy_model"]
 tree_root = SubResource("AnimationNodeStateMachine_xb2l8")

@@ -1,0 +1,13 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://m4cwnr5nbhe6"]
+
+[ext_resource type="Texture2D" uid="uid://cffmkxxoxr3a6" path="res://assets/3d_model/enemies/the-cobalt-husker_texture_0.png" id="1_veb6f"]
+
+[resource]
+resource_name = "Material_1"
+cull_mode = 2
+albedo_texture = ExtResource("1_veb6f")
+metallic = 1.0
+roughness = 0.41008475
+emission_enabled = true
+emission_energy_multiplier = 0.1
+emission_texture = ExtResource("1_veb6f")

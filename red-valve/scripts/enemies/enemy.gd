@@ -56,7 +56,6 @@ func _ready() -> void:
 	health_bar_sprite.hide()
 
 func _physics_process(delta: float) -> void:
-	print(max_health)
 	
 	if dead: 
 		steps.stop()

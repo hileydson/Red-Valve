@@ -1,9 +1,10 @@
-[gd_scene load_steps=95 format=3 uid="uid://cluvbknxfjx2k"]
+[gd_scene load_steps=109 format=3 uid="uid://cluvbknxfjx2k"]
 
 [ext_resource type="Script" uid="uid://deirdushqeh74" path="res://scripts/player/player.gd" id="1_8afob"]
 [ext_resource type="Texture2D" uid="uid://bcav021wtw4vf" path="res://assets/images/player/fire_gun.png" id="2_75vfm"]
 [ext_resource type="Texture2D" uid="uid://bet48rlumqtua" path="res://assets/images/player/sprite-256px-16.png" id="2_dovo2"]
 [ext_resource type="PackedScene" uid="uid://b4oj84gc8m06l" path="res://assets/3d_model/player/Maycow Lopes/maycow_lopes.glb" id="2_fm80t"]
+[ext_resource type="Material" uid="uid://b4ex0mcd02t5c" path="res://assets/3d_model/player/Maycow Lopes/materials/Material_1.tres" id="3_fcs02"]
 [ext_resource type="AudioStream" uid="uid://cn3pregco36bw" path="res://assets/sounds/player/gun_load.mp3" id="3_p47bc"]
 [ext_resource type="Texture2D" uid="uid://cp4f6dw2xfp6" path="res://assets/images/player/magic_hand.png" id="4_0owmy"]
 [ext_resource type="AudioStream" uid="uid://u3eclo54hry0" path="res://assets/sounds/player/gun_shot.mp3" id="4_75vfm"]
@@ -14,6 +15,60 @@
 [ext_resource type="AudioStream" uid="uid://1d6mb1u5xxu0" path="res://assets/sounds/player/blade_back.mp3" id="7_je7p5"]
 [ext_resource type="PackedScene" uid="uid://c6yruf806s5mq" path="res://assets/3d_model/player/pistol_bullet/scene.gltf" id="10_gx1jg"]
 [ext_resource type="AudioStream" uid="uid://dqdph2q1pfo6s" path="res://assets/sounds/player/slay_it.mp3" id="14_ugbui"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_myrg7"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_fcs02"]
+animation = &"Jump_Over_Obstacle_2"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_myrg7"]
+animation = &"Running"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_kvlxm"]
+animation = &"Walking"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_uf5tr"]
+animation = &"Jump_Over_Obstacle"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_lgqa7"]
+xfade_time = 0.2
+advance_mode = 2
+advance_condition = &"!jump"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_8ydkj"]
+xfade_time = 0.2
+advance_condition = &"!jump"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_3j4b4"]
+xfade_time = 0.2
+advance_condition = &"!jump"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_ioxgp"]
+xfade_time = 0.2
+advance_condition = &"!jump"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_cnsyf"]
+xfade_time = 0.2
+advance_condition = &"!jump"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_fcs02"]
+xfade_time = 0.2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_myrg7"]
+xfade_time = 0.2
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_6cv16"]
+states/idle/node = SubResource("AnimationNodeAnimation_fcs02")
+states/idle/position = Vector2(340, 147)
+states/jump/node = SubResource("AnimationNodeAnimation_myrg7")
+states/jump/position = Vector2(546, 176)
+states/run/node = SubResource("AnimationNodeAnimation_kvlxm")
+states/run/position = Vector2(482, 49)
+states/walk/node = SubResource("AnimationNodeAnimation_uf5tr")
+states/walk/position = Vector2(329, 34)
+transitions = ["Start", "idle", SubResource("AnimationNodeStateMachineTransition_lgqa7"), "idle", "walk", SubResource("AnimationNodeStateMachineTransition_8ydkj"), "idle", "run", SubResource("AnimationNodeStateMachineTransition_3j4b4"), "walk", "idle", SubResource("AnimationNodeStateMachineTransition_ioxgp"), "run", "idle", SubResource("AnimationNodeStateMachineTransition_cnsyf"), "idle", "jump", SubResource("AnimationNodeStateMachineTransition_fcs02"), "jump", "idle", SubResource("AnimationNodeStateMachineTransition_myrg7")]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_dovo2"]
 
@@ -648,10 +703,69 @@ script = ExtResource("1_8afob")
 [node name="maycow_lopes" parent="." instance=ExtResource("2_fm80t")]
 transform = Transform3D(-0.9999971, 0, 0.0024260576, 0, 1, 0, -0.0024260576, 0, -0.9999971, 0, -1.050483, 0.42049956)
 
+[node name="Skeleton3D" parent="maycow_lopes/Armature" index="0"]
+bones/0/position = Vector3(-0.77964103, 88.32195, 6.4493937)
+bones/0/rotation = Quaternion(-0.49012578, -0.322715, 0.67903763, -0.44106668)
+bones/1/position = Vector3(-3.969882, 12.447611, 2.3092685)
+bones/1/rotation = Quaternion(0.35673654, 0.63709986, 0.2811981, 0.62271214)
+bones/2/position = Vector3(1.486734e-07, 25.43265, -1.4886309e-06)
+bones/2/rotation = Quaternion(0.23353556, 0.07713372, 0.054110177, 0.96777254)
+bones/3/position = Vector3(1.1652274e-06, 38.544994, -4.1007524e-06)
+bones/3/rotation = Quaternion(-0.5392175, -0.16096759, 0.010451995, 0.8265741)
+bones/4/position = Vector3(1.190569e-06, 15.135166, 4.6952387e-06)
+bones/4/rotation = Quaternion(-0.36621398, -0.03685048, -0.005433702, 0.9297849)
+bones/5/position = Vector3(5.892036, -6.7502546, 8.54742)
+bones/5/rotation = Quaternion(0.37362587, 0.7517528, 0.5006183, 0.21131241)
+bones/6/position = Vector3(-3.2604457e-06, 25.236313, -1.8557996e-06)
+bones/6/rotation = Quaternion(0.20876811, -0.036860835, -0.0033524688, 0.9772646)
+bones/7/position = Vector3(-2.309921e-06, 39.64522, 8.545399e-06)
+bones/7/rotation = Quaternion(-0.48238248, 0.13396287, -0.041372143, 0.8646673)
+bones/8/position = Vector3(2.3441962e-06, 15.110209, 8.3510486e-07)
+bones/8/rotation = Quaternion(-0.4802296, 0.11100437, 0.009727632, 0.87003624)
+bones/9/position = Vector3(-1.922134, -5.697372, -13.898543)
+bones/9/rotation = Quaternion(-0.39375725, -0.39295822, 0.73903877, 0.37994847)
+bones/10/position = Vector3(2.831233e-07, 15.143428, -6.356413e-08)
+bones/10/rotation = Quaternion(0.063870884, 0.0017876427, -0.02203648, 0.99771327)
+bones/11/position = Vector3(2.8508438e-08, 15.143428, -5.499834e-07)
+bones/11/rotation = Quaternion(-0.013950917, 0.0019620028, -0.002422018, 0.99989784)
+bones/12/position = Vector3(3.964422, 9.729747, -0.2355297)
+bones/12/rotation = Quaternion(0.56638956, 0.48927698, -0.47173443, 0.46613055)
+bones/13/position = Vector3(2.1201843e-06, 15.702131, -2.519087e-05)
+bones/13/rotation = Quaternion(0.52179444, 0.41528854, 0.21396793, 0.71378136)
+bones/14/position = Vector3(5.586153e-07, 23.863192, 6.9055186e-06)
+bones/14/rotation = Quaternion(-0.20181064, -0.07252521, 0.096657336, 0.9719413)
+bones/15/position = Vector3(7.51514e-06, 23.702587, -7.824918e-06)
+bones/15/rotation = Quaternion(0.025249477, -0.098567404, 0.17314082, 0.97962713)
+bones/16/position = Vector3(-3.885693, 9.404064, -0.24505265)
+bones/16/rotation = Quaternion(-0.62281847, 0.4293518, -0.46482387, -0.46010107)
+bones/17/position = Vector3(-2.393332e-06, 15.760644, 1.0084156e-05)
+bones/17/rotation = Quaternion(0.5533154, -0.3172974, -0.14749813, 0.7559159)
+bones/18/position = Vector3(-7.414518e-06, 22.65629, 1.1165166e-06)
+bones/18/rotation = Quaternion(-0.14715303, 0.101217076, -0.0010957603, 0.98392075)
+bones/19/position = Vector3(3.0827741e-06, 23.847586, 1.7270304e-06)
+bones/19/rotation = Quaternion(0.0116926385, -0.28726542, -0.21108875, 0.9342287)
+bones/20/position = Vector3(-0.07872752, 12.653917, 0.48058555)
+bones/20/rotation = Quaternion(-0.12961952, 0.008182341, 0.024701424, 0.9912223)
+bones/21/position = Vector3(4.7968985e-07, 6.8079042, 3.177196e-06)
+bones/21/rotation = Quaternion(0.44786358, 0.016925603, 0.0029370205, 0.89393693)
+bones/22/position = Vector3(-0.103247374, 19.695272, -8.996929)
+bones/22/rotation = Quaternion(-0.21261281, 1.3880059e-09, 0.0024399215, 0.9771335)
+bones/23/position = Vector3(0.10324735, 5.522046, 8.996923)
+bones/23/rotation = Quaternion(0.48829594, 2.2863954e-08, -0.0056035705, 0.8726601)
+
+[node name="char1" parent="maycow_lopes/Armature/Skeleton3D" index="0"]
+material_overlay = ExtResource("3_fcs02")
+surface_material_override/0 = SubResource("StandardMaterial3D_myrg7")
+
+[node name="AnimationTree" type="AnimationTree" parent="maycow_lopes"]
+tree_root = SubResource("AnimationNodeStateMachine_6cv16")
+anim_player = NodePath("../AnimationPlayer")
+parameters/conditions/!jump = false
+
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape3D_dovo2")
 
-[node name="Camera3D" type="Camera3D" parent="." groups=["current_camera_3d"]]
+[node name="Camera3D" type="Camera3D" parent="." groups=["camera_player"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.49483705, 0)
 current = true
 
@@ -831,4 +945,5 @@ max_polyphony = 8
 [connection signal="body_exited" from="Camera3D/Crescent Cogblade/Area3D" to="." method="_on_area_3d_body_exited"]
 [connection signal="body_entered" from="Camera3D/Camera3D_Bullet_Time/bullet/bullet_touch" to="." method="_on_bullet_touch_body_entered"]
 
+[editable path="maycow_lopes"]
 [editable path="Camera3D/Crescent Cogblade"]

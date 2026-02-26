@@ -23,13 +23,14 @@ extends CharacterBody3D
 @onready var camera_bullet_time_mark: Marker3D = $Camera3D/camera_bullet_time_mark
 @onready var slay_it: AudioStreamPlayer = $sounds/SlayIt
 @onready var blade_light: OmniLight3D = $"Camera3D/Crescent Cogblade/blade_light"
+@onready var animation_tree: AnimationTree = $maycow_lopes/AnimationTree
 
 var blood_effect = preload("res://scenes/enemies/blood.tscn")
 
 const SPEED = 5.0
 const JUMP_VELOCITY = 4.5
 const SENSITIVITY = 0.003 # Sensibilidade do mouse
-const WALK_SPEED = 5.0
+@export var WALK_SPEED = 5.0
 @export var RUN_SPEED = 8.5 # Velocidade maior para a corrida
 
 #CHANGE LATER - DYNAMICLY
@@ -45,11 +46,14 @@ var magic_blade_pos_original
 var camera_bullet_time_position
 var camera_bullet_time_ON = false
 
+var playback 
 
 func _ready():
 
 	# Captura o mouse e o esconde ao iniciar o jogo
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	
+	playback = animation_tree["parameters/playback"]
 	
 	# a priori sera a pistola... mas precisa ter um change da arma para mudar 
 	current_weapon = pistola
@@ -98,6 +102,7 @@ func _physics_process(delta: float) -> void:
 	# Pulo
 	if Input.is_action_just_pressed("ui_accept") and is_on_floor():
 		velocity.y = JUMP_VELOCITY
+		playback.travel("jump")
 		
 	# reload
 	if Input.is_action_just_pressed("ui_reload"):
@@ -127,15 +132,18 @@ func _physics_process(delta: float) -> void:
 		if Input.is_action_pressed("ui_run"):
 			if pistola.animation!="reload" and pistola.animation!="run":pistola.play("run")
 			passos.pitch_scale = 1.2 # Som mais rápido
+			if playback.get_current_node() != "jump": playback.travel("run")
 		else:
 			if pistola.animation!="reload" and pistola.animation!="walk":pistola.play("walk")
 			passos.pitch_scale = 1.0 # Som normal
+			if playback.get_current_node() != "jump": playback.travel("walk")
 			
 		if !passos.playing: passos.play()
 			
 		velocity.x = direction.x * velocidade_atual
 		velocity.z = direction.z * velocidade_atual
 	else:
+		if playback.get_current_node() != "jump": playback.travel("idle")
 		velocity.x = move_toward(velocity.x, 0, velocidade_atual)
 		velocity.z = move_toward(velocity.z, 0, velocidade_atual)
 		if passos.playing:
