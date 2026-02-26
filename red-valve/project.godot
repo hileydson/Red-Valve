@@ -16,6 +16,7 @@ config/name_localized={
 "pt_BR": ""
 }
 config/version="1.0"
+run/main_scene="uid://byfljvilhvi0k"
 config/features=PackedStringArray("4.5", "Mobile")
 config/icon="res://icon.svg"
 

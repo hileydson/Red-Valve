@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://dnm8x0caec1fn"]
+
+[ext_resource type="VideoStream" uid="uid://d4fao4cdciufh" path="res://assets/videos/intro/intro_game.ogv" id="1_n27gl"]
+[ext_resource type="Script" uid="uid://jkj2g8eahwcf" path="res://scenes/configs/intro_game_video.gd" id="2_n27gl"]
+[ext_resource type="PackedScene" uid="uid://dy356o67p6jyn" path="res://scenes/configs/fade.tscn" id="3_hv0ih"]
+
+[node name="intro_game_video" type="Node2D"]
+
+[node name="VideoStreamPlayer" type="VideoStreamPlayer" parent="."]
+offset_right = 1155.0
+offset_bottom = 648.0
+stream = ExtResource("1_n27gl")
+autoplay = true
+expand = true
+script = ExtResource("2_n27gl")
+
+[node name="Fade" parent="." instance=ExtResource("3_hv0ih")]
+
+[connection signal="finished" from="VideoStreamPlayer" to="VideoStreamPlayer" method="_on_finished"]
