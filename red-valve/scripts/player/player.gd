@@ -363,11 +363,12 @@ func bullet_time_back():
 	control_weapons.visible = true
 	control_magic.visible = true
 	camera_bullet_time_ON = false
-	bullet_light.visible = false
 	bullet.visible = false
 	AudioServer.set_playback_speed_scale(1.0)
 	GlobalUtils.remover_camera_lenta()
 	camera.make_current()
+	await get_tree().create_timer(0.16).timeout
+	bullet_light.visible = false
 
 
 func spawn_blood_raycast(pos, normal):

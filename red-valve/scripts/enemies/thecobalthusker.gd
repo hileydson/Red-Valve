@@ -11,7 +11,6 @@ extends CharacterBody3D
 @onready var growl_1: AudioStreamPlayer3D = $growl_1
 @onready var growl_2: AudioStreamPlayer3D = $growl_2
 @onready var steps: AudioStreamPlayer3D = $steps
-@onready var timer: Timer = $"../../../Timer"
 @onready var growl_3: AudioStreamPlayer3D = $growl_3
 @onready var drop_dead: AudioStreamPlayer3D = $drop_dead
 
@@ -32,7 +31,6 @@ func _ready() -> void:
 	health_bar.value = current_health
 	# Opcional: esconder a barra se estiver com vida cheia
 	health_bar_sprite.hide()
-	timer.start()
 
 func _physics_process(delta: float) -> void:
 	
@@ -98,7 +96,6 @@ func take_damage(amount):
 		die()
 
 func die():
-	timer.stop()
 	growl_2.play()
 	
 	dead = true
