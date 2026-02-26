@@ -1,3 +1,5 @@
+
+
 extends CharacterBody3D
 
 @onready var player = get_tree().get_first_node_in_group("player")
@@ -16,6 +18,8 @@ extends CharacterBody3D
 
 const SPEED = 2.0
 const ACCEL = 4.0
+
+@export var distance_to_aproach = 15
 
 @export var max_health = 50
 var current_health = max_health
@@ -44,7 +48,10 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity.y = 0
 
+	var distancia_to_player = self.global_position.distance_to(player.global_position)
+	
 	if player and nav_agent:
+		
 		# 2. Atualiza o destino apenas 5 vezes por segundo (Economiza CPU)
 		update_timer += delta
 		if update_timer >= 0.2:
@@ -52,29 +59,36 @@ func _physics_process(delta: float) -> void:
 			update_timer = 0.0
 		
 		# 3. Calcula o movimento se ainda não chegou no alvo
-		if not nav_agent.is_navigation_finished():
-			var next_p = nav_agent.get_next_path_position()
-			var direction = (next_p - global_position)
+		if not nav_agent.is_navigation_finished() and (distancia_to_player<distance_to_aproach):
 			
-			direction.y = 0 # FORÇA o inimigo a não subir
-			direction = direction.normalized()
-			
-			# Aplica a velocidade suavemente
-			velocity.x = lerp(velocity.x, direction.x * SPEED, delta * ACCEL)
-			velocity.z = lerp(velocity.z, direction.z * SPEED, delta * ACCEL)
-			
-			# 4. Rotação (Olha para o player, mas mantém o corpo reto)
-			var look_pos = player.global_position
-			look_pos.y = global_position.y
-			if global_position.distance_to(look_pos) > 0.5:
-				look_at(look_pos, Vector3.UP)
-			
-			if steps.playing == false and !dead: 
-				steps.play()
-				playback.travel("walk")
+			#ataca se tiver perto
+			if distancia_to_player < 5:
+				steps.stop()
+				growl_1.play()
+				playback.travel("attack_2")
+			else:
+				var next_p = nav_agent.get_next_path_position()
+				var direction = (next_p - global_position)
+				
+				direction.y = 0 # FORÇA o inimigo a não subir
+				direction = direction.normalized()
+				
+				# Aplica a velocidade suavemente
+				velocity.x = lerp(velocity.x, direction.x * SPEED, delta * ACCEL)
+				velocity.z = lerp(velocity.z, direction.z * SPEED, delta * ACCEL)
+				
+				# 4. Rotação (Olha para o player, mas mantém o corpo reto)
+				var look_pos = player.global_position
+				look_pos.y = global_position.y
+				if global_position.distance_to(look_pos) > 0.5:
+					look_at(look_pos, Vector3.UP)
+				
+				if steps.playing == false and !dead: 
+					steps.play()
+					playback.travel("walk")
 		else:
-			steps.stop()
-			playback.travel("attack_1")
+			steps.stop()			
+			playback.travel("idle")
 			# Para gradualmente ao chegar
 			velocity.x = move_toward(velocity.x, 0, SPEED)
 			velocity.z = move_toward(velocity.z, 0, SPEED)
@@ -119,3 +133,24 @@ func die():
 func _on_timer_timeout() -> void:
 	if !dead:
 		growl_1.play()
+
+
+func _on_attack_body_entered(body: Node3D) -> void:
+	if body is CharacterBody3D:
+		
+		# 1. Calcula a direção oposta ao impacto
+		var direcao = (body.global_position - global_position).normalized()
+		direcao.y = 0 # Mantém no chão
+		
+		# 2. Define o ponto de destino (ex: 3 metros para trás)
+		var destino = body.global_position + (direcao * 3.0)
+		
+		# 3. Cria o movimento suave
+		var tween = create_tween()
+		tween.tween_property(body, "global_position", destino, 0.2).set_trans(Tween.TRANS_QUAD)
+		
+		# 4. Chama o tremor de tela
+		GlobalUtils.shake_camera(0.2, 0.2)
+		
+		#lanca damage no player
+		

@@ -30,3 +30,22 @@ func remover_camera_lenta():
 	# Exemplo: se guardaste o tween numa variável 'tween_tempo'
 	# if tween_tempo and tween_tempo.is_valid():
 	#    tween_tempo.kill()
+	
+	
+# No script da sua Camera3D
+func shake_camera(duracao: float, forca: float):
+	var camera = get_viewport().get_camera_3d()
+	var original_h = camera.h_offset
+	var original_v = camera.v_offset
+	
+	var tween = create_tween()
+	
+	# Cria várias posições aleatórias rápidas
+	for i in range(10):
+		var offset_random = Vector2(randf_range(-forca, forca), randf_range(-forca, forca))
+		tween.tween_property(camera, "h_offset", offset_random.x, duracao / 10)
+		tween.tween_property(camera, "v_offset", offset_random.y, duracao / 10)
+	
+	# Volta para a posição original no final
+	tween.tween_property(camera, "h_offset", original_h, 0.1)
+	tween.tween_property(camera, "v_offset", original_v, 0.1)
