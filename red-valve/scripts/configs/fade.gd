@@ -14,6 +14,7 @@ func fade_out():
 	tween.tween_property(self, "modulate", Color(0.0, 0.0, 0.0, 1.0), 2.0)
 
 func fade_in():
+	self.visible = true
 	var tween: Tween = get_tree().create_tween()
 
 	# Fade In: partindo de transparente para totalmente visível

@@ -16,4 +16,12 @@ script = ExtResource("2_n27gl")
 
 [node name="Fade" parent="." instance=ExtResource("3_hv0ih")]
 
+[node name="close_valve_intro" type="ColorRect" parent="."]
+visible = false
+offset_left = -21.0
+offset_top = 295.0
+offset_right = 1171.0
+offset_bottom = 660.0
+color = Color(0, 0, 0, 1)
+
 [connection signal="finished" from="VideoStreamPlayer" to="VideoStreamPlayer" method="_on_finished"]
