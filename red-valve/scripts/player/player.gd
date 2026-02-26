@@ -33,9 +33,9 @@ const WALK_SPEED = 5.0
 @export var RUN_SPEED = 8.5 # Velocidade maior para a corrida
 
 #CHANGE LATER - DYNAMICLY
-const damage_crescent_cogblade:int = 14
-const damage_pistol:int = 10 #3 
-const damage_headshoot:int = 100
+@export var damage_crescent_cogblade:int = 14
+@export var damage_pistol:int = 10 #3 
+@export var damage_headshoot:int = 100
 var current_weapon: AnimatedSprite2D
 var can_shoot_again:bool = true
 
@@ -385,10 +385,13 @@ func spawn_blood_effect(body: Node3D):
 	blood.global_position = body.global_position
 	blood.global_position.y += 2 # para sair um pouco do chao... ficar mais alto
 		
+		
+func take_damage(number:int):
+	print("Damage taken by the player: "+str(number))
+	
+	
 func _on_pistola_animation_finished() -> void:
 	current_weapon.play("idle")
-
-
 
 func _on_area_3d_body_entered(body: Node3D) -> void:
 	if magic_hand.animation == "attack":

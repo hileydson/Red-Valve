@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=4 uid="uid://u0i4xiobmvny"]
+[gd_scene load_steps=13 format=4 uid="uid://u0i4xiobmvny"]
 
 [ext_resource type="Script" uid="uid://cm6tpge0kjmwk" path="res://scripts/enemies/enemy.gd" id="1_nb6gf"]
 [ext_resource type="Script" uid="uid://bbbnsvxlr8ak3" path="res://scripts/enemies/head.gd" id="2_jt03m"]
@@ -7,12 +7,15 @@
 [ext_resource type="AudioStream" uid="uid://brb5mjg7bc80j" path="res://assets/sounds/enemies/the_cobalt_husker/steps.mp3" id="5_y5th1"]
 [ext_resource type="AudioStream" uid="uid://b6f1682rqsmnx" path="res://assets/sounds/enemies/the_cobalt_husker/drop_dead.mp3" id="6_tihwb"]
 
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_nb6gf"]
+radius = 0.56884766
+
 [sub_resource type="SphereShape3D" id="SphereShape3D_p7w77"]
 radius = 0.18026884
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_k4gvh"]
 radius = 0.11230469
-height = 1.033371
+height = 0.7871933
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sb86v"]
 bg_color = Color(0.31344908, 0.0012166491, 0.584479, 1)
@@ -31,18 +34,25 @@ script = ExtResource("1_nb6gf")
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
 navigation_layers = 4
 
+[node name="attack" type="Area3D" parent="."]
+collision_layer = 0
+
+[node name="attack_shape" type="CollisionShape3D" parent="attack"]
+transform = Transform3D(1, 0, -2.1316282e-13, 0, 0.99999976, 0, 0, 0, 0.9999999, -5.061077e-08, 0.8341688, 0.55731374)
+shape = SubResource("CapsuleShape3D_nb6gf")
+
 [node name="head" type="Area3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.13483459, 2.158297, 0.10937059)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("2_jt03m")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="head"]
+[node name="head_shape" type="CollisionShape3D" parent="head"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.15019697, -0.2684481, -0.043956265)
 shape = SubResource("SphereShape3D_p7w77")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(2.084061, 0, 0, 0, 2.317266, 0, 0, 0, 2.2621195, 0.039468348, 0.9283525, 0.094585374)
+[node name="body_shape" type="CollisionShape3D" parent="."]
+transform = Transform3D(2.084061, 0, 0, 0, 2.317266, 0, 0, 0, 2.2621195, 0.039468348, 0.6431229, 0.094585374)
 shape = SubResource("CapsuleShape3D_k4gvh")
 
 [node name="HealthBarViewport" type="SubViewport" parent="."]
@@ -89,3 +99,5 @@ pitch_scale = 0.65
 [node name="Timer" type="Timer" parent="."]
 wait_time = 7.57
 autostart = true
+
+[connection signal="body_entered" from="attack" to="." method="_on_attack_body_entered"]

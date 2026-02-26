@@ -7,6 +7,7 @@
 resource_name = "Material_1"
 transparency = 4
 cull_mode = 2
+albedo_color = Color(0.14044744, 0.14044747, 0.14044738, 1)
 albedo_texture = ExtResource("1_i3hue")
 metallic = 1.0
 roughness = 0.41008475
