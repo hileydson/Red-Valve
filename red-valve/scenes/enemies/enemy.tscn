@@ -41,13 +41,13 @@ collision_layer = 0
 transform = Transform3D(1, 0, -2.1316282e-13, 0, 0.99999976, 0, 0, 0, 0.9999999, -5.061077e-08, 0.8341688, 0.55731374)
 shape = SubResource("CapsuleShape3D_nb6gf")
 
-[node name="head" type="Area3D" parent="."]
+[node name="heart" type="Area3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.13483459, 2.158297, 0.10937059)
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("2_jt03m")
 
-[node name="head_shape" type="CollisionShape3D" parent="head"]
+[node name="head_shape" type="CollisionShape3D" parent="heart"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.15019697, -0.2684481, -0.043956265)
 shape = SubResource("SphereShape3D_p7w77")
 

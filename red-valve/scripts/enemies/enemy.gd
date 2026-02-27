@@ -155,7 +155,7 @@ func _on_timer_timeout() -> void:
 
 
 func _on_attack_body_entered(body: Node3D) -> void:
-	if body is CharacterBody3D:
+	if body is CharacterBody3D and !dead:
 		
 		# 1. Calcula a direção oposta ao impacto
 		var direcao = (body.global_position - global_position).normalized()

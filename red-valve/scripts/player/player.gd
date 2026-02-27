@@ -1,6 +1,10 @@
 extends CharacterBody3D
 
 @onready var camera = $Camera3D # Certifique-se de que sua câmera se chama Camera3D
+@onready var camera_third_person: Camera3D = $camera_third_person
+@onready var camera_third_person_marker: Marker3D = $camera_third_person_marker
+@onready var camera_first_person_marker: Marker3D = $camera_first_person_marker
+
 @onready var gun_load: AudioStreamPlayer = $sounds/GunLoad
 @onready var gun_shot: AudioStreamPlayer = $sounds/GunShot
 @onready var passos: AudioStreamPlayer = $sounds/Passos
@@ -24,14 +28,15 @@ extends CharacterBody3D
 @onready var slay_it: AudioStreamPlayer = $sounds/SlayIt
 @onready var blade_light: OmniLight3D = $"Camera3D/Crescent Cogblade/blade_light"
 @onready var animation_tree: AnimationTree = $maycow_lopes/AnimationTree
+@onready var point: Label = $Camera3D/point
 
 var blood_effect = preload("res://scenes/enemies/blood.tscn")
 
 const SPEED = 5.0
 const JUMP_VELOCITY = 4.5
 const SENSITIVITY = 0.003 # Sensibilidade do mouse
-@export var WALK_SPEED = 5.0
-@export var RUN_SPEED = 8.5 # Velocidade maior para a corrida
+@export var WALK_SPEED = 4.0
+@export var RUN_SPEED = 7.5 # Velocidade maior para a corrida
 
 #CHANGE LATER - DYNAMICLY
 @export var damage_crescent_cogblade:int = 14
@@ -45,6 +50,9 @@ var magic_hand_pos_original
 var magic_blade_pos_original
 var camera_bullet_time_position
 var camera_bullet_time_ON = false
+
+var is_first_person = false
+var transition_camera = false
 
 var playback 
 
@@ -71,6 +79,13 @@ func _ready():
 	# Reativa a física
 	set_physics_process(true)
 	
+	#setup camera
+	camera.current = false
+	control_magic.visible = false
+	control_weapons.visible = false
+	camera_third_person.make_current()
+	point.visible = false
+	
 	
 
 func _input(event):
@@ -79,17 +94,51 @@ func _input(event):
 		return
 	
 	# Lógica de rotação da câmera
+	# No seu script de Input de Mouse:
+	var camera_atual = get_viewport().get_camera_3d()
+
 	if event is InputEventMouseMotion:
 		# Gira o corpo do personagem no eixo Y (esquerda/direita)
 		rotate_y(-event.relative.x * SENSITIVITY)
 		
 		# Gira apenas a câmera no eixo X (cima/baixo)
-		camera.rotate_x(-event.relative.y * SENSITIVITY)
+		camera_atual.rotate_x(-event.relative.y * SENSITIVITY)
 		
 		# Trava a câmera para não girar 360 graus verticalmente (limitando a 80 graus)
-		camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(-80), deg_to_rad(80))
+		camera_atual.rotation.x = clamp(camera_atual.rotation.x, deg_to_rad(-80), deg_to_rad(80))
 
+
+# Adicione estas variáveis no topo do script (fora do _process) se ainda não tiver
+var hold_timer: float = 0.0
+var hold_threshold: float = 0.15 # 200 milisegundos para confirmar o "segurar"
 func _physics_process(delta: float) -> void:
+	
+	# muda pra primeira pessoa
+	# Lógica do Cronômetro para o botão
+	if Input.is_action_pressed("ui_hold_first_person_view"):
+		hold_timer += delta
+	else:
+		hold_timer = 0.0 # Reset instantâneo ao soltar
+
+	# Só consideramos "holding" se o tempo passar do limite
+	var holding_view = hold_timer >= hold_threshold
+
+	if holding_view and !is_first_person:
+		# MUDANDO PARA PRIMEIRA PESSOA
+		is_first_person = true
+		transicao_camera(camera_third_person, camera, camera_first_person_marker, true)
+
+	elif !holding_view and is_first_person:
+		# VOLTANDO PARA TERCEIRA PESSOA
+		is_first_person = false
+		transicao_camera(camera, camera_third_person, camera_third_person_marker, false)
+		
+	
+	#mostra sempre o point quando em primeira pessoa
+	if is_first_person:
+		point.visible = true
+	else:
+		point.visible = false
 	
 	#paralisa jogador enquanto tiver fazendo o magic attack
 	if magic_hand.animation =="attack":
@@ -100,19 +149,20 @@ func _physics_process(delta: float) -> void:
 		velocity += get_gravity() * delta
 
 	# Pulo
-	if Input.is_action_just_pressed("ui_accept") and is_on_floor():
+	if Input.is_action_just_pressed("ui_accept") and is_on_floor() and !holding_view:
 		velocity.y = JUMP_VELOCITY
 		playback.travel("jump")
 		
 	# reload
-	if Input.is_action_just_pressed("ui_reload"):
+	if Input.is_action_just_pressed("ui_reload") and !transition_camera:
 		reload()
 	
-	if pistola.animation!="reload" and Input.is_action_just_pressed("ui_shoot"):
+	if pistola.animation!="reload" and Input.is_action_just_pressed("ui_shoot") and !transition_camera:
 		shoot()
 	
-	if magic_hand.animation == "idle" and Input.is_action_just_pressed("ui_magic_attack"):
+	if magic_hand.animation == "idle" and Input.is_action_just_pressed("ui_magic_attack") and !transition_camera and camera.current:
 		magic_hand_attack()
+		
 	
 	#se estiver no bullet time sai vazado pra nao interferir no movimento da camera
 	if camera_bullet_time_ON:
@@ -127,15 +177,15 @@ func _physics_process(delta: float) -> void:
 	var input_dir := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 	var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 	
-	if direction:
+	if direction and !transition_camera:
 		# Se estiver correndo, podemos aumentar o pitch do som dos passos para parecer mais rápido
 		if Input.is_action_pressed("ui_run"):
 			if pistola.animation!="reload" and pistola.animation!="run":pistola.play("run")
-			passos.pitch_scale = 1.2 # Som mais rápido
+			passos.pitch_scale = 1.42 # Som mais rápido
 			if playback.get_current_node() != "jump": playback.travel("run")
 		else:
 			if pistola.animation!="reload" and pistola.animation!="walk":pistola.play("walk")
-			passos.pitch_scale = 1.0 # Som normal
+			passos.pitch_scale = 0.924 # Som normal
 			if playback.get_current_node() != "jump": playback.travel("walk")
 			
 		if !passos.playing: passos.play()
@@ -151,7 +201,44 @@ func _physics_process(delta: float) -> void:
 
 	move_and_slide()
 
-#
+
+# Função auxiliar para não repetir código
+func transicao_camera(origem: Camera3D, camera_destino: Camera3D, destino: Marker3D, show_ui: bool):
+	transition_camera = true
+	#COLOCA CADA CAMERA NO SEU LUGAR ANTES DE PROCESSAR
+	camera.global_transform = camera_first_person_marker.global_transform
+	camera_third_person.global_transform = camera_third_person_marker.global_transform
+	
+	# Mostra/Esconde a UI rapido pra nao ficar estranho se for pra esconder a arma
+	if camera_destino == camera_third_person:
+		control_magic.visible = show_ui
+		control_weapons.visible = show_ui
+
+	# IMPORTANTE: Garante que a câmera que vai "viajar" seja a atual
+	origem.make_current()
+
+	var tween = create_tween()
+	# Fazemos a câmera que está ativa (origem) viajar até o lugar da outra (destino)
+	tween.tween_property(origem, "global_transform", destino.global_transform, 0.15)\
+		.set_trans(Tween.TRANS_CUBIC)\
+		.set_ease(Tween.EASE_IN_OUT)
+
+	# Quando o movimento acabar, garantimos que o foco mude oficialmente para a câmera de destino
+	tween.finished.connect(func(): 
+		if !camera_bullet_time_ON:
+			camera_destino.make_current()
+		
+		transition_camera = false
+		# FAZER A ARMA VIM SURGINDO DE BAIXO PRA CIMA DEPOIS
+		# TODO: FAZER
+		# Mostra/Esconde a UI com delay pra nao ficar estranho
+		control_magic.visible = show_ui
+		control_weapons.visible = show_ui
+		)
+	
+	
+	
+	
 func reload():
 	if current_weapon.animation != "reload":
 		if not is_instance_valid(current_weapon): return
@@ -236,7 +323,7 @@ func cast_spell():
 	print("saiu")
 	
 func shoot():
-	if current_weapon.animation != "shoot" and can_shoot_again:
+	if current_weapon.animation != "shoot" and can_shoot_again and camera.current:
 		if not is_instance_valid(current_weapon): return
 
 		var rotation_default = current_weapon.rotation
@@ -297,10 +384,10 @@ func shoot():
 				# A distância entre a origem do RayCast e onde ele bateu
 				var distancia = ray_cast_3d.global_position.distance_to(ponto_colisao)
 				
-				# HEADSHOT
-				if target.name == "head" and distancia > 7:
+				# HEARTSHOT
+				if target.name == "heart" and distancia > 7:
 					#ativa camera bullet time
-					#camera_3d_bullet_time
+					bullet.visible = true
 					target.take_damage(damage_pistol+damage_headshoot)
 						
 					# 1. CALCULAMOS O ALVO REAL (Um pouco acima do centro do inimigo)
@@ -366,16 +453,23 @@ func shoot():
 		await get_tree().create_timer(0.56).timeout
 		can_shoot_again = true
 
-func bullet_time_back():
-	control_weapons.visible = true
-	control_magic.visible = true
+func bullet_time_back():	
 	camera_bullet_time_ON = false
 	bullet.visible = false
 	AudioServer.set_playback_speed_scale(1.0)
 	GlobalUtils.remover_camera_lenta()
-	camera.make_current()
+	
+	if is_first_person:
+		camera.make_current()
+		control_weapons.visible = true
+		control_magic.visible = true
+	else:
+		camera_third_person.make_current()
+	
 	await get_tree().create_timer(0.16).timeout
 	bullet_light.visible = false
+	
+
 
 
 func spawn_blood_raycast(pos, normal):

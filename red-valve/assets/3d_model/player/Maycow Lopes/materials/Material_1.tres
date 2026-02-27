@@ -7,8 +7,11 @@
 resource_name = "Material_1"
 transparency = 4
 cull_mode = 2
+albedo_color = Color(0, 0, 0, 1)
 albedo_texture = ExtResource("1_sau8g")
 metallic = 1.0
+metallic_specular = 0.75
 roughness = 0.41008475
 emission_enabled = true
+emission_energy_multiplier = 0.26
 emission_texture = ExtResource("2_x0lmh")
