@@ -2,6 +2,7 @@ extends VideoStreamPlayer
 @onready var fade: ColorRect = $"../Fade"
 @onready var video_stream_player: VideoStreamPlayer = $"."
 @onready var close_valve_intro: ColorRect = $"../close_valve_intro"
+@onready var close_valve_intro_2: ColorRect = $"../close_valve_intro2"
 
 
 signal any_input_pressed
@@ -21,6 +22,7 @@ func _process(delta: float) -> void:
 		
 	var tempo_atual = video_stream_player.stream_position
 	if tempo_atual > 31:
+		close_valve_intro.visible = true
 		close_valve_intro.visible = true
 
 

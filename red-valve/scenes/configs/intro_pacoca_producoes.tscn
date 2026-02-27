@@ -7,8 +7,8 @@
 [node name="intro_pacoca_producoes" type="Node2D"]
 
 [node name="VideoStreamPlayer" type="VideoStreamPlayer" parent="."]
-offset_right = 1155.0
-offset_bottom = 648.0
+offset_right = 1919.0
+offset_bottom = 1083.0
 stream = ExtResource("1_mfeo3")
 autoplay = true
 expand = true

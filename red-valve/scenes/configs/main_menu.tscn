@@ -543,8 +543,8 @@ autoplay = true
 parameters/looping = true
 
 [node name="VideoStreamPlayer" type="VideoStreamPlayer" parent="."]
-offset_right = 1150.0
-offset_bottom = 650.0
+offset_right = 1929.0
+offset_bottom = 1088.0
 stream = ExtResource("2_m6bhs")
 volume_db = -80.0
 speed_scale = 0.723
@@ -554,10 +554,10 @@ loop = true
 
 [node name="SubViewportContainer" type="SubViewportContainer" parent="VideoStreamPlayer"]
 layout_mode = 0
-offset_left = 585.0
-offset_top = 831.00006
-offset_right = 1088.5637
-offset_bottom = 1342.9802
+offset_left = 1612.0
+offset_top = 942.0
+offset_right = 2124.0
+offset_bottom = 1454.0
 rotation = -1.5673872
 scale = Vector2(1.7052422, 1.6597677)
 
@@ -578,24 +578,25 @@ transform = Transform3D(0.9702957, 0, 0.2419219, 0, 1.0000001, 0, -0.2419219, 0,
 
 [node name="RedValveSpriteNoBackground" type="Sprite2D" parent="VideoStreamPlayer"]
 modulate = Color(0.5372549, 0.5372549, 0.5372549, 0.74509805)
-position = Vector2(584.99994, 661)
-scale = Vector2(1.5735294, 1.5522876)
+position = Vector2(942, 1095)
+scale = Vector2(2.0997193, 1.9522876)
 texture = ExtResource("4_1yqn0")
 
 [node name="ColorRect" type="ColorRect" parent="."]
-offset_right = 1181.0
-offset_bottom = 665.0
+offset_right = 1929.0
+offset_bottom = 1092.0
 color = Color(0.7882353, 0.3254902, 0.13725491, 0.2901961)
 
 [node name="red_valve_animation" type="AnimatedSprite2D" parent="."]
-position = Vector2(569, 167.00003)
-scale = Vector2(2.2011495, 2.228302)
+position = Vector2(927.8163, 248.34991)
+scale = Vector2(2.5211482, 2.5083013)
 sprite_frames = SubResource("SpriteFrames_ckfy8")
 animation = &"go"
 autoplay = "go"
 
 [node name="RedValve" type="Sprite2D" parent="."]
-position = Vector2(563, 165)
+position = Vector2(921.8163, 246.34988)
+scale = Vector2(1.145378, 1.1256559)
 texture = ExtResource("4_uw1if")
 
 [node name="Control" type="Control" parent="."]
@@ -605,10 +606,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -443.0
-offset_top = 182.0
-offset_right = -403.0
-offset_bottom = 222.0
+offset_left = -809.0
+offset_top = 396.0
+offset_right = -769.0
+offset_bottom = 436.0
 grow_horizontal = 2
 grow_vertical = 2
 

@@ -5,7 +5,7 @@
 [node name="ColorRect" type="ColorRect"]
 visible = false
 z_index = 1
-offset_right = 1153.0
-offset_bottom = 650.0
+offset_right = 1938.0
+offset_bottom = 1095.0
 color = Color(0, 0, 0, 1)
 script = ExtResource("1_gcrln")
