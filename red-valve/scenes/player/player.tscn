@@ -788,41 +788,47 @@ spot_angle = 27.11
 z_index = 1
 layout_mode = 3
 anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_left = 467.0
+offset_top = 438.0
+offset_right = 507.0
+offset_bottom = 478.0
 
 [node name="fire" type="AnimatedSprite2D" parent="Camera3D/CanvasLayer/control_weapons"]
-position = Vector2(704, 416.99997)
+position = Vector2(900.1885, 398.9618)
 rotation = -1.0701286
-scale = Vector2(2.8160782, 2.0424397)
+scale = Vector2(3.6290712, 2.563619)
 sprite_frames = SubResource("SpriteFrames_8qxvo")
 animation = &"shoot"
 
 [node name="pistola" type="AnimatedSprite2D" parent="Camera3D/CanvasLayer/control_weapons"]
 modulate = Color(1.1898682, 1.0701013, 0.9420746, 1)
-position = Vector2(852.99994, 565.00006)
+position = Vector2(1049.1885, 546.96204)
 rotation = 0.113768786
-scale = Vector2(1.2259275, 1.2875113)
+scale = Vector2(1.579849, 1.6160519)
 sprite_frames = SubResource("SpriteFrames_ioxgp")
 animation = &"idle"
 autoplay = "idle"
 
 [node name="flash_tela" type="ColorRect" parent="Camera3D/CanvasLayer/control_weapons"]
 layout_mode = 0
-offset_right = 1156.0
-offset_bottom = 650.0
+offset_left = -473.0
+offset_top = -445.0
+offset_right = 1464.0
+offset_bottom = 653.0
 color = Color(0.34789982, 0.21805532, 0.088210836, 0)
 
 [node name="control_magic" type="Control" parent="Camera3D/CanvasLayer"]
 layout_mode = 3
 anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_left = 467.0
+offset_top = 438.0
+offset_right = 507.0
+offset_bottom = 478.0
 
 [node name="magic_hand" type="AnimatedSprite2D" parent="Camera3D/CanvasLayer/control_magic"]
 modulate = Color(0.77, 0.7238, 0.6314, 1)
-position = Vector2(390.00003, 757)
-scale = Vector2(0.6463816, 0.67045456)
+position = Vector2(219.00003, 757)
+scale = Vector2(0.72638285, 0.75045455)
 sprite_frames = SubResource("SpriteFrames_gmu8b")
 animation = &"attack"
 autoplay = "idle"
@@ -835,10 +841,10 @@ collision_mask = 12
 collide_with_areas = true
 
 [node name="point" type="Label" parent="Camera3D"]
-offset_left = 567.0
-offset_top = 301.0
-offset_right = 607.0
-offset_bottom = 348.0
+offset_left = 948.0
+offset_top = 524.0
+offset_right = 988.0
+offset_bottom = 571.0
 text = "."
 label_settings = SubResource("LabelSettings_dovo2")
 
