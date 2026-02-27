@@ -105,7 +105,11 @@ func _input(event):
 		camera_atual.rotate_x(-event.relative.y * SENSITIVITY)
 		
 		# Trava a câmera para não girar 360 graus verticalmente (limitando a 80 graus)
-		camera_atual.rotation.x = clamp(camera_atual.rotation.x, deg_to_rad(-80), deg_to_rad(80))
+		#olhar pra baixo travado pra terceira pessoa
+		var value_look_down = -80
+		if camera_atual == camera_third_person: 
+			value_look_down = -10
+		camera_atual.rotation.x = clamp(camera_atual.rotation.x, deg_to_rad(value_look_down), deg_to_rad(80))
 
 
 # Adicione estas variáveis no topo do script (fora do _process) se ainda não tiver

@@ -766,14 +766,15 @@ parameters/conditions/!jump = false
 shape = SubResource("CapsuleShape3D_dovo2")
 
 [node name="camera_third_person_marker" type="Marker3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.45392615, 0.49483705, 1.0951247)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.607825, 0.5881319, 1.3441371)
 
 [node name="camera_first_person_marker" type="Marker3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0, 0.49483693, -3.3527613e-08)
 
 [node name="camera_third_person" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.45392615, 0.49483705, 1.0951247)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.607825, 0.5881319, 1.3441371)
 current = true
+fov = 83.2
 
 [node name="Camera3D" type="Camera3D" parent="." groups=["camera_player"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.49483705, 0)
