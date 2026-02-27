@@ -13,7 +13,7 @@
 [ext_resource type="Script" uid="uid://deo0gxkmk2ahd" path="res://addons/sky_3d/src/Sky3D.gd" id="10_nep0f"]
 [ext_resource type="Script" uid="uid://b4tkplvh7fq40" path="res://addons/sky_3d/src/SkyDome.gd" id="11_kkdsm"]
 [ext_resource type="Script" uid="uid://cjmkcj8hwm7ts" path="res://addons/sky_3d/src/TimeOfDay.gd" id="12_dvrea"]
-[ext_resource type="PackedScene" uid="uid://com0h5rly7ayq" path="res://scenes/enemies/zombie.tscn" id="14_mnipt"]
+[ext_resource type="PackedScene" uid="uid://klurx8hfjyr3" path="res://scenes/enemies/zombie_1.tscn" id="14_mnipt"]
 [ext_resource type="PackedScene" uid="uid://xf6qeqrya6pi" path="res://scenes/enemies/the_cobalt_husker.tscn" id="15_766kb"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_7dm0k"]
@@ -101,8 +101,8 @@ shader_parameter/cirrus_absorption = 2.0
 shader_parameter/cirrus_sky_tint_fade = 0.5
 shader_parameter/cirrus_size = 1.0
 shader_parameter/cirrus_uv = Vector2(0.16, 0.11)
-shader_parameter/cirrus_position1 = Vector2(0.08992367, 0.08992367)
-shader_parameter/cirrus_position2 = Vector2(0.08992367, 0.08992367)
+shader_parameter/cirrus_position1 = Vector2(0.19935249, 0.19935249)
+shader_parameter/cirrus_position2 = Vector2(0.19935249, 0.19935249)
 shader_parameter/cirrus_texture = ExtResource("4_mnipt")
 shader_parameter/cumulus_visible = true
 shader_parameter/cumulus_intensity = 13.875
@@ -112,7 +112,7 @@ shader_parameter/cumulus_absorption = 2.0
 shader_parameter/cumulus_noise_freq = 2.7
 shader_parameter/cumulus_sky_tint_fade = 0.0
 shader_parameter/cumulus_size = 0.5
-shader_parameter/cumulus_position = Vector2(0.44958353, 0.44958353)
+shader_parameter/cumulus_position = Vector2(0.9965893, 0.9965893)
 shader_parameter/cumulus_texture = ExtResource("5_766kb")
 shader_parameter/cumulus_partial_mie_phase = Vector3(0.957564, 1.042436, 0.412)
 shader_parameter/cumulus_mie_intensity = 1.0
@@ -215,12 +215,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2390218, 7.056343)
 
 [node name="Zombie" parent="." instance=ExtResource("14_mnipt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.87704, 1.3316387e-10, -5.1213512)
-
-[node name="Zombie2" parent="." instance=ExtResource("14_mnipt")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0882914, 4.7697034e-07, -5.4559617)
-
-[node name="Zombie3" parent="." instance=ExtResource("14_mnipt")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.1346025, 4.7697034e-07, -4.752668)
 
 [node name="TheCobaltHusker" parent="." instance=ExtResource("15_766kb")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -4)

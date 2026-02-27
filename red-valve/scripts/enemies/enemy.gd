@@ -28,9 +28,10 @@ extends CharacterBody3D
 @onready var health_bar: ProgressBar = $HealthBarViewport/HealthBar
 @onready var blood_out: AudioStreamPlayer3D = $blood_out
 @onready var collision_shape_3d: CollisionShape3D = $CollisionShape3D
-@onready var growl_1: AudioStreamPlayer3D = $growl_1
-@onready var growl_2: AudioStreamPlayer3D = $growl_2
-@onready var growl_3: AudioStreamPlayer3D = $growl_3
+@onready var growl_attack: AudioStreamPlayer3D = $growl_attack
+@onready var growl_timed: AudioStreamPlayer3D = $growl_timed
+@onready var growl_death: AudioStreamPlayer3D = $growl_death
+@onready var growl_damage_taken: AudioStreamPlayer3D = $growl_damage_taken
 @onready var steps: AudioStreamPlayer3D = $steps
 @onready var drop_dead: AudioStreamPlayer3D = $drop_dead
 
@@ -83,7 +84,7 @@ func _physics_process(delta: float) -> void:
 			#ataca se tiver perto
 			if distancia_to_player < 5:
 				steps.stop()
-				growl_1.play()
+				growl_attack.play()
 				playback.travel("attack")
 			else:
 				var next_p = nav_agent.get_next_path_position()
@@ -117,7 +118,7 @@ func _physics_process(delta: float) -> void:
 	
 	
 func take_damage(amount):
-	if growl_3.playing == false: growl_3.play()
+	if growl_damage_taken.playing == false: growl_damage_taken.play()
 	blood_out.play()
 	current_health -= amount
 	current_health = clamp(current_health, 0, max_health)
@@ -132,7 +133,7 @@ func take_damage(amount):
 		die()
 
 func die():
-	growl_2.play()
+	growl_death.play()
 	
 	dead = true
 	health_bar_sprite.hide()
@@ -151,7 +152,7 @@ func die():
 
 func _on_timer_timeout() -> void:
 	if !dead:
-		growl_1.play()
+		growl_timed.play()
 
 
 func _on_attack_body_entered(body: Node3D) -> void:

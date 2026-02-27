@@ -372,92 +372,94 @@ func shoot():
 		tween.parallel().tween_property(current_weapon, "position:x", current_weapon.position.x, 0.1).set_trans(Tween.TRANS_BACK)
 		tween.parallel().tween_property(current_weapon, "position:y", current_weapon.position.y, 0.1).set_trans(Tween.TRANS_BACK)
 		
-		
-		#get enemy - set blood
-		if ray_cast_3d.is_colliding():
-			var target = ray_cast_3d.get_collider()
-			
-			#set damage
-			#recheck if target stell exists
-			if target and target.has_method("take_damage"):
-				target.take_damage(damage_pistol)
-				
-				# Verifica se o que atingimos é um inimigo
-				if target.is_in_group("enemies"):
-					spawn_blood_raycast(ray_cast_3d.get_collision_point(), ray_cast_3d.get_collision_normal())
-			
-				var ponto_colisao = ray_cast_3d.get_collision_point()
-				# A distância entre a origem do RayCast e onde ele bateu
-				var distancia = ray_cast_3d.global_position.distance_to(ponto_colisao)
-				
-				# HEARTSHOT
-				if target.name == "heart" and distancia > 7:
-					#ativa camera bullet time
-					bullet.visible = true
-					target.take_damage(damage_pistol+damage_headshoot)
-						
-					# 1. CALCULAMOS O ALVO REAL (Um pouco acima do centro do inimigo)
-					# Pegamos a posição global do inimigo e subimos ex: 1.5 metros no eixo Y
-					var offset_altura = Vector3(0.25, -0.3, 0) 
-					var alvo_ajustado = target.global_position + offset_altura
-
-					# Se você quiser que a câmera foque EXATAMENTE onde a bala bateu, mas um pouco acima:
-					# var alvo_ajustado = ponto_colisao + Vector3(0, 0.5, 0)
-						
-					#LOGICA PARA GIRAR A BALA
-					var tween_bullet = create_tween()
-					# 2. GIRA A BALA (O Efeito que você quer)
-					# 360 graus = 1 volta completa. 1800 graus = 5 voltas.
-					# deg_to_rad converte para o formato que o Godot entende (radianos)
-					var voltas = deg_to_rad(1800) 
-					# Animamos a rotação no eixo Z (para girar como uma hélice) 
-					# ou Y (se ela girar como um disco)
-					tween_bullet.tween_property(bullet, "rotation:z", bullet.rotation.z + voltas, 2.5)\
-						.set_trans(Tween.TRANS_LINEAR) # Linear faz o giro ser constante	
-						
-						
-					control_weapons.visible = false
-					control_magic.visible = false
-					bullet_light.visible = true
-					bullet.visible = true
-					camera_bullet_time_ON = true
-					GlobalUtils.ativar_camera_lenta(0.1, 60.0)
-					AudioServer.set_playback_speed_scale(0.2)
-					
-					# 3. Cria o movimento da câmera
-					var tween_cam = create_tween()
-					
-					camera_3d_bullet_time.global_position = camera.global_position
-					camera_3d_bullet_time.make_current()
-					
-					# No lugar do seu ponto 3 e 4, use isto:
-					# 3. Movimento da posição
-					tween_cam.tween_property(camera_3d_bullet_time, "global_position", alvo_ajustado + (ray_cast_3d.global_transform.basis.z * 2.0), 0.9)\
-						.set_trans(Tween.TRANS_QUINT)\
-						.set_ease(Tween.EASE_OUT)
-
-					# 4. Rastreamento do Olhar (Faz a câmera atualizar o foco a cada frame do Tween)
-					tween_cam.parallel().tween_method(
-					func(pos): camera_3d_bullet_time.look_at(alvo_ajustado), # Função que olha pro alvo
-						0.0, # Valor inicial (não importa)
-						1.0, # Valor final (não importa)
-						0.9  # Mesma duração do movimento
-					)
-
-					# 5. Espera um pouco no alvo e volta
-					tween_cam.tween_interval(0.05) # Pausa dramática no inimigo
-
-					tween_cam.tween_property(camera_3d_bullet_time, "global_position", camera.global_position, 0.4)\
-						.set_trans(Tween.TRANS_SINE)
-					
-					#tween_cam.tween_callback(bullet_time_back)
-					
-					await get_tree().create_timer(0.65).timeout
-					if camera_bullet_time_ON: bullet_time_back()
-			
+		#processa raycast - pega o inimigo e plota o sange/dano
+		raycast_process_shoot()		
 				
 		await get_tree().create_timer(0.56).timeout
 		can_shoot_again = true
+
+func raycast_process_shoot():
+	#get enemy - set blood
+	if ray_cast_3d.is_colliding():
+		var target = ray_cast_3d.get_collider()
+		
+		#set damage
+		#recheck if target stell exists
+		if target and target.has_method("take_damage"):
+			target.take_damage(damage_pistol)
+			
+			# Verifica se o que atingimos é um inimigo
+			if target.is_in_group("enemies"):
+				spawn_blood_raycast(ray_cast_3d.get_collision_point(), ray_cast_3d.get_collision_normal())
+		
+			var ponto_colisao = ray_cast_3d.get_collision_point()
+			# A distância entre a origem do RayCast e onde ele bateu
+			var distancia = ray_cast_3d.global_position.distance_to(ponto_colisao)
+			
+			# HEARTSHOT
+			if target.name == "heart" and distancia > 7:
+				#ativa camera bullet time
+				bullet.visible = true
+				target.take_damage(damage_pistol+damage_headshoot)
+					
+				# 1. CALCULAMOS O ALVO REAL (Um pouco acima do centro do inimigo)
+				# Pegamos a posição global do inimigo e subimos ex: 1.5 metros no eixo Y
+				var offset_altura = Vector3(0.25, -0.3, 0) 
+				var alvo_ajustado = target.global_position + offset_altura
+
+				# Se você quiser que a câmera foque EXATAMENTE onde a bala bateu, mas um pouco acima:
+				# var alvo_ajustado = ponto_colisao + Vector3(0, 0.5, 0)
+					
+				#LOGICA PARA GIRAR A BALA
+				var tween_bullet = create_tween()
+				# 2. GIRA A BALA (O Efeito que você quer)
+				# 360 graus = 1 volta completa. 1800 graus = 5 voltas.
+				# deg_to_rad converte para o formato que o Godot entende (radianos)
+				var voltas = deg_to_rad(1800) 
+				# Animamos a rotação no eixo Z (para girar como uma hélice) 
+				# ou Y (se ela girar como um disco)
+				tween_bullet.tween_property(bullet, "rotation:z", bullet.rotation.z + voltas, 2.5)\
+					.set_trans(Tween.TRANS_LINEAR) # Linear faz o giro ser constante	
+					
+					
+				control_weapons.visible = false
+				control_magic.visible = false
+				bullet_light.visible = true
+				bullet.visible = true
+				camera_bullet_time_ON = true
+				GlobalUtils.ativar_camera_lenta(0.1, 60.0)
+				AudioServer.set_playback_speed_scale(0.2)
+				
+				# 3. Cria o movimento da câmera
+				var tween_cam = create_tween()
+				
+				camera_3d_bullet_time.global_position = camera.global_position
+				camera_3d_bullet_time.make_current()
+				
+				# No lugar do seu ponto 3 e 4, use isto:
+				# 3. Movimento da posição
+				tween_cam.tween_property(camera_3d_bullet_time, "global_position", alvo_ajustado + (ray_cast_3d.global_transform.basis.z * 2.0), 0.9)\
+					.set_trans(Tween.TRANS_QUINT)\
+					.set_ease(Tween.EASE_OUT)
+
+				# 4. Rastreamento do Olhar (Faz a câmera atualizar o foco a cada frame do Tween)
+				tween_cam.parallel().tween_method(
+				func(pos): camera_3d_bullet_time.look_at(alvo_ajustado), # Função que olha pro alvo
+					0.0, # Valor inicial (não importa)
+					1.0, # Valor final (não importa)
+					0.9  # Mesma duração do movimento
+				)
+
+				# 5. Espera um pouco no alvo e volta
+				tween_cam.tween_interval(0.05) # Pausa dramática no inimigo
+
+				tween_cam.tween_property(camera_3d_bullet_time, "global_position", camera.global_position, 0.4)\
+					.set_trans(Tween.TRANS_SINE)
+				
+				#tween_cam.tween_callback(bullet_time_back)
+				
+				await get_tree().create_timer(0.65).timeout
+				if camera_bullet_time_ON: bullet_time_back()
 
 func bullet_time_back():	
 	camera_bullet_time_ON = false
