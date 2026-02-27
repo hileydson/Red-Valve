@@ -3,11 +3,11 @@
 [ext_resource type="Script" uid="uid://bqagqk5aso4d3" path="res://scripts/configs/main_menu.gd" id="1_yoyn4"]
 [ext_resource type="PackedScene" uid="uid://d00gp331s0j7o" path="res://assets/3d_model/objects/red_valve.glb" id="2_govmt"]
 [ext_resource type="AudioStream" uid="uid://d34lkiwwli5f0" path="res://assets/sounds/menu/Ashen_Serenity.mp3" id="2_lodsn"]
-[ext_resource type="VideoStream" uid="uid://dkp5tbrqflqgm" path="res://assets/videos/main_menu/main_menu_loop.ogv" id="2_m6bhs"]
 [ext_resource type="Texture2D" uid="uid://bvgwpas0j658a" path="res://assets/images/enemies/blood_mark.png" id="2_paibe"]
 [ext_resource type="Texture2D" uid="uid://d36fbaiwryk7w" path="res://assets/images/menu/red_valve_sprite_sheet.png" id="2_uw1if"]
 [ext_resource type="AudioStream" uid="uid://duoftehhw2ej2" path="res://assets/sounds/menu/fire_cracling.mp3" id="3_sdu8l"]
 [ext_resource type="Texture2D" uid="uid://dhtuhdmdpmhqf" path="res://assets/images/menu/red_valve_sprite_no_background.png" id="4_1yqn0"]
+[ext_resource type="VideoStream" uid="uid://d32037yhnkgh" path="res://assets/videos/main_menu/loop_video_menu.ogv" id="4_lodsn"]
 [ext_resource type="Texture2D" uid="uid://cye3my787jekm" path="res://assets/images/menu/red_valve.png" id="4_uw1if"]
 [ext_resource type="PackedScene" uid="uid://dy356o67p6jyn" path="res://scenes/configs/fade.tscn" id="8_yhon5"]
 
@@ -543,9 +543,11 @@ autoplay = true
 parameters/looping = true
 
 [node name="VideoStreamPlayer" type="VideoStreamPlayer" parent="."]
-offset_right = 1929.0
-offset_bottom = 1088.0
-stream = ExtResource("2_m6bhs")
+offset_left = 4.0
+offset_top = -29.0
+offset_right = 1917.0
+offset_bottom = 1429.0
+stream = ExtResource("4_lodsn")
 volume_db = -80.0
 speed_scale = 0.723
 autoplay = true
@@ -578,7 +580,7 @@ transform = Transform3D(0.9702957, 0, 0.2419219, 0, 1.0000001, 0, -0.2419219, 0,
 
 [node name="RedValveSpriteNoBackground" type="Sprite2D" parent="VideoStreamPlayer"]
 modulate = Color(0.5372549, 0.5372549, 0.5372549, 0.74509805)
-position = Vector2(942, 1095)
+position = Vector2(1430.0001, 1173.0001)
 scale = Vector2(2.0997193, 1.9522876)
 texture = ExtResource("4_1yqn0")
 
@@ -588,14 +590,14 @@ offset_bottom = 1092.0
 color = Color(0.7882353, 0.3254902, 0.13725491, 0.2901961)
 
 [node name="red_valve_animation" type="AnimatedSprite2D" parent="."]
-position = Vector2(927.8163, 248.34991)
+position = Vector2(1420.8163, 291.3499)
 scale = Vector2(2.5211482, 2.5083013)
 sprite_frames = SubResource("SpriteFrames_ckfy8")
 animation = &"go"
 autoplay = "go"
 
 [node name="RedValve" type="Sprite2D" parent="."]
-position = Vector2(921.8163, 246.34988)
+position = Vector2(1414.8163, 289.34988)
 scale = Vector2(1.145378, 1.1256559)
 texture = ExtResource("4_uw1if")
 
@@ -606,25 +608,25 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -809.0
-offset_top = 396.0
-offset_right = -769.0
-offset_bottom = 436.0
+offset_left = -418.0
+offset_top = 587.0
+offset_right = -378.0
+offset_bottom = 627.0
 grow_horizontal = 2
 grow_vertical = 2
 
 [node name="BloodMark" type="Sprite2D" parent="Control"]
 modulate = Color(0.7564044, 0.7564044, 0.7564044, 1)
-position = Vector2(15, 18)
+position = Vector2(1232.5, -175)
 scale = Vector2(0.66932905, 0.6070288)
 texture = ExtResource("2_paibe")
 
 [node name="VSplitContainer" type="VSplitContainer" parent="Control"]
 layout_mode = 0
-offset_left = -53.0
-offset_top = -12.0
-offset_right = 44.0
-offset_bottom = 62.0
+offset_left = 1164.5
+offset_top = -205.0
+offset_right = 1261.5
+offset_bottom = -131.0
 
 [node name="start" type="Button" parent="Control/VSplitContainer"]
 layout_mode = 2
