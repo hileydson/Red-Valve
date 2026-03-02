@@ -133,7 +133,7 @@ var hold_threshold: float = 0.15 # 200 milisegundos para confirmar o "segurar"
 var limite_rotacao_lateral = deg_to_rad(35) # O máximo que ele pode "virar" (ex: 35 graus)
 var velocidade_giro = 8.0
 func _physics_process(delta: float) -> void:
-	
+	print(playback.get_current_node())
 	# muda pra primeira pessoa
 	# Lógica do Cronômetro para o botão
 	if Input.is_action_pressed("ui_hold_first_person_view"):
@@ -221,24 +221,24 @@ func _physics_process(delta: float) -> void:
 	# Movimentação
 	var input_dir := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 	var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
-	
+	var velocity_Y_zero:bool = velocity.y <= 0
 	if direction and !transition_camera:
 		# Se estiver correndo, podemos aumentar o pitch do som dos passos para parecer mais rápido
 		if Input.is_action_pressed("ui_run"):
 			if pistola.animation!="reload" and pistola.animation!="run":pistola.play("run")
 			passos.pitch_scale = 1.23 # Som mais rápido
-			if is_on_floor() and velocity.y <= 0 and playback.get_current_node() != "jump": playback.travel("run")
+			if is_on_floor() and velocity_Y_zero : playback.travel("run")
 		else:
 			if pistola.animation!="reload" and pistola.animation!="walk":pistola.play("walk")
 			passos.pitch_scale = 0.7 # Som normal
-			if is_on_floor() and velocity.y <= 0 and playback.get_current_node() != "jump": playback.travel("walk")
+			if is_on_floor() and velocity_Y_zero: playback.travel("walk")
 			
-		if !passos.playing: passos.play()
+		if !passos.playing and is_on_floor(): passos.play()
 			
 		velocity.x = direction.x * velocidade_atual
 		velocity.z = direction.z * velocidade_atual
 	else:
-		if is_on_floor() and velocity.y <= 0 and playback.get_current_node() != "jump": playback.travel("idle")
+		if is_on_floor() and velocity_Y_zero: playback.travel("idle")
 		
 		velocity.x = move_toward(velocity.x, 0, velocidade_atual)
 		velocity.z = move_toward(velocity.z, 0, velocidade_atual)
