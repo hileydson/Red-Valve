@@ -1,0 +1,52 @@
+[gd_scene load_steps=3 format=3 uid="uid://bhyhnppiawn07"]
+
+[ext_resource type="Script" uid="uid://byse10af10m63" path="res://scripts/configs/pause.gd" id="1_acl5t"]
+[ext_resource type="Texture2D" uid="uid://bvgwpas0j658a" path="res://assets/images/enemies/blood_mark.png" id="2_ktwnj"]
+
+[node name="Pause" type="Node2D"]
+process_mode = 3
+visible = false
+script = ExtResource("1_acl5t")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_right = 1952.0
+offset_bottom = 1103.0
+color = Color(0.40392157, 0.40392157, 0.40392157, 0.40392157)
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -418.0
+offset_top = 587.0
+offset_right = -378.0
+offset_bottom = 627.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BloodMark" type="Sprite2D" parent="Control"]
+modulate = Color(0.7564044, 0.7564044, 0.7564044, 1)
+position = Vector2(1398.5, -94.99997)
+scale = Vector2(0.66932905, 0.6070288)
+texture = ExtResource("2_ktwnj")
+
+[node name="VSplitContainer" type="VSplitContainer" parent="Control"]
+layout_mode = 0
+offset_left = 1330.5
+offset_top = -124.99997
+offset_right = 1427.5
+offset_bottom = -50.99997
+
+[node name="resume" type="Button" parent="Control/VSplitContainer"]
+layout_mode = 2
+text = "RESUME"
+
+[node name="exit" type="Button" parent="Control/VSplitContainer"]
+layout_mode = 2
+text = "EXIT"
+
+[connection signal="pressed" from="Control/VSplitContainer/resume" to="." method="_on_resume_pressed"]
+[connection signal="pressed" from="Control/VSplitContainer/exit" to="." method="_on_exit_pressed"]

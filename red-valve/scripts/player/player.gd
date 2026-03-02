@@ -133,7 +133,7 @@ var hold_threshold: float = 0.15 # 200 milisegundos para confirmar o "segurar"
 var limite_rotacao_lateral = deg_to_rad(35) # O máximo que ele pode "virar" (ex: 35 graus)
 var velocidade_giro = 8.0
 func _physics_process(delta: float) -> void:
-	print(playback.get_current_node())
+	
 	# muda pra primeira pessoa
 	# Lógica do Cronômetro para o botão
 	if Input.is_action_pressed("ui_hold_first_person_view"):

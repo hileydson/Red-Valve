@@ -104,5 +104,10 @@ pitch_scale = 0.65
 wait_time = 7.57
 autostart = true
 
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.309875, 0)
+light_color = Color(0.72522753, 0.07687218, 0.28674668, 1)
+light_energy = 0.329
+
 [connection signal="body_entered" from="attack" to="." method="_on_attack_body_entered"]
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
