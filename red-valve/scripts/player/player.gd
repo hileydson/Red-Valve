@@ -117,6 +117,8 @@ func _input(event):
 # Adicione estas variáveis no topo do script (fora do _process) se ainda não tiver
 var hold_timer: float = 0.0
 var hold_threshold: float = 0.15 # 200 milisegundos para confirmar o "segurar"
+# No topo do script, defina a velocidade de rotação
+var rotacao_smooth: float = 10.0
 func _physics_process(delta: float) -> void:
 	
 	# muda pra primeira pessoa
@@ -187,11 +189,11 @@ func _physics_process(delta: float) -> void:
 		# Se estiver correndo, podemos aumentar o pitch do som dos passos para parecer mais rápido
 		if Input.is_action_pressed("ui_run"):
 			if pistola.animation!="reload" and pistola.animation!="run":pistola.play("run")
-			passos.pitch_scale = 1.42 # Som mais rápido
+			passos.pitch_scale = 1.23 # Som mais rápido
 			if playback.get_current_node() != "jump": playback.travel("run")
 		else:
 			if pistola.animation!="reload" and pistola.animation!="walk":pistola.play("walk")
-			passos.pitch_scale = 0.924 # Som normal
+			passos.pitch_scale = 0.7 # Som normal
 			if playback.get_current_node() != "jump": playback.travel("walk")
 			
 		if !passos.playing: passos.play()
@@ -204,6 +206,18 @@ func _physics_process(delta: float) -> void:
 		velocity.z = move_toward(velocity.z, 0, velocidade_atual)
 		if passos.playing:
 			passos.stop() # Para o som quando parar de andar
+
+	# Só rotacionamos se houver movimento (para o player não resetar a rotação parado)
+	if velocity.length() > 0.2:
+		# 1. Criamos um vetor que aponta para onde estamos indo no plano horizontal
+		var direcao_olhar = Vector2(velocity.z, velocity.x)
+
+		# 2. Calculamos o ângulo alvo (em radianos)
+		var angulo_alvo = direcao_olhar.angle()
+
+		# 3. Aplicamos a rotação APENAS no nó visual do personagem
+		# Substitua $Modelo3D pelo nome do seu nó de malha/personagem
+		self.get_node("maycow_lopes").rotation.y = lerp_angle(self.get_node("maycow_lopes").rotation.y, angulo_alvo, delta * rotacao_smooth)
 
 	move_and_slide()
 

@@ -2,14 +2,14 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c6jiaommm5wsp"
+uid="uid://b60ysooqh7ovu"
 path.s3tc="res://.godot/imported/maycow_lopes_texture_0_1.png-e9391dde8ad13e19adf276aff9dc1029.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
 }
 generator_parameters={
-"md5": "20f99a1895dfab18c5e8122070e519ca"
+"md5": "327b46a668401636a13d6b0e7742b709"
 }
 
 [deps]
