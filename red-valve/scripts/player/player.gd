@@ -45,6 +45,18 @@ const SENSITIVITY = 0.003 # Sensibilidade do mouse
 var current_weapon: AnimatedSprite2D
 var can_shoot_again:bool = true
 
+# CONFIGURACAO DO CONTROLE
+@export var JOY_SENSITIVITY = 0.04 # Sensibilidade para o analógico
+@export var DEADZONE = 0.1
+
+
+# Configurações do balanço da tela (Bobbing)
+@export var head_bob_ON = true
+var bob_freq = 2.0      # Frequência (quão rápido balança)
+var bob_amp = 0.05      # Amplitude (quão longe a câmera vai)
+var t_bob = 0.0         # Contador de tempo para o cálculo do Seno
+
+
 #ORIGINAL POSITION FOR THE LEFT HAND
 var magic_hand_pos_original
 var magic_blade_pos_original
@@ -117,8 +129,9 @@ func _input(event):
 # Adicione estas variáveis no topo do script (fora do _process) se ainda não tiver
 var hold_timer: float = 0.0
 var hold_threshold: float = 0.15 # 200 milisegundos para confirmar o "segurar"
-# No topo do script, defina a velocidade de rotação
-var rotacao_smooth: float = 10.0
+# No topo do script
+var limite_rotacao_lateral = deg_to_rad(35) # O máximo que ele pode "virar" (ex: 35 graus)
+var velocidade_giro = 8.0
 func _physics_process(delta: float) -> void:
 	
 	# muda pra primeira pessoa
@@ -160,6 +173,7 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_just_pressed("ui_accept") and is_on_floor() and !holding_view:
 		velocity.y = JUMP_VELOCITY
 		playback.travel("jump")
+		print(playback.get_current_node())
 		
 	# reload
 	if Input.is_action_just_pressed("ui_reload") and !transition_camera:
@@ -176,6 +190,28 @@ func _physics_process(delta: float) -> void:
 	if camera_bullet_time_ON:
 		return
 	
+	
+	# --- LÓGICA DO ANALÓGICO DIREITO (CONTROLE) ---
+	if !camera_bullet_time_ON and magic_hand.animation != "attack":
+		var joy_dir = Input.get_vector("ui_look_left", "ui_look_right", "ui_look_up", "ui_look_down")
+		if joy_dir.length() > DEADZONE: # Deadzone para evitar drift
+			var camera_atual = get_viewport().get_camera_3d()
+			
+			# Rotação Horizontal (Eixo Y do Player)
+			rotate_y(-joy_dir.x * JOY_SENSITIVITY)
+			
+			# Rotação Vertical (Eixo X da Câmera)
+			camera_atual.rotate_x(-joy_dir.y * JOY_SENSITIVITY)
+			
+			# Aplica o mesmo Clamp que você já tem no _input
+			var value_look_down = -80
+			var value_look_up = 80
+			if camera_atual == camera_third_person: 
+				value_look_down = -10
+				value_look_up = 20
+			camera_atual.rotation.x = clamp(camera_atual.rotation.x, deg_to_rad(value_look_down), deg_to_rad(value_look_up))	
+	
+	
 	# --- LÓGICA DE VELOCIDADE (CORRIDA) ---
 	var velocidade_atual = WALK_SPEED
 	if Input.is_action_pressed("ui_run"): # Use 'pressed' para manter a corrida enquanto segura
@@ -190,37 +226,77 @@ func _physics_process(delta: float) -> void:
 		if Input.is_action_pressed("ui_run"):
 			if pistola.animation!="reload" and pistola.animation!="run":pistola.play("run")
 			passos.pitch_scale = 1.23 # Som mais rápido
-			if playback.get_current_node() != "jump": playback.travel("run")
+			if is_on_floor() and playback.get_current_node() != "jump": playback.travel("run")
 		else:
 			if pistola.animation!="reload" and pistola.animation!="walk":pistola.play("walk")
 			passos.pitch_scale = 0.7 # Som normal
-			if playback.get_current_node() != "jump": playback.travel("walk")
+			if is_on_floor() and playback.get_current_node() != "jump": playback.travel("walk")
 			
 		if !passos.playing: passos.play()
 			
 		velocity.x = direction.x * velocidade_atual
 		velocity.z = direction.z * velocidade_atual
 	else:
-		if playback.get_current_node() != "jump": playback.travel("idle")
+		if playback.get_current_node() != "jump" and is_on_floor(): playback.travel("idle")
+		
 		velocity.x = move_toward(velocity.x, 0, velocidade_atual)
 		velocity.z = move_toward(velocity.z, 0, velocidade_atual)
 		if passos.playing:
 			passos.stop() # Para o som quando parar de andar
+	
+	if head_bob_ON:
+				head_bob(delta)
 
-	# Só rotacionamos se houver movimento (para o player não resetar a rotação parado)
-	if velocity.length() > 0.2:
-		# 1. Criamos um vetor que aponta para onde estamos indo no plano horizontal
-		var direcao_olhar = Vector2(velocity.z, velocity.x)
+# GIRAR PARA O LADO AO SE MOVIMENTAR
+	var alvo_y = PI 
 
-		# 2. Calculamos o ângulo alvo (em radianos)
-		var angulo_alvo = direcao_olhar.angle()
+	if input_dir.y <= 0.1: 
+		if input_dir.x > 0: 
+			alvo_y = PI - limite_rotacao_lateral 
+		elif input_dir.x < 0: 
+			alvo_y = PI + limite_rotacao_lateral 
 
-		# 3. Aplicamos a rotação APENAS no nó visual do personagem
-		# Substitua $Modelo3D pelo nome do seu nó de malha/personagem
-		self.get_node("maycow_lopes").rotation.y = lerp_angle(self.get_node("maycow_lopes").rotation.y, angulo_alvo, delta * rotacao_smooth)
+		# Certifique-se que o nó "maycow_lopes" existe exatamente com esse nome
+		var modelo = get_node_or_null("maycow_lopes")
+		if modelo:
+			modelo.rotation.y = lerp_angle(modelo.rotation.y, alvo_y, delta * velocidade_giro)	
 
+		
 	move_and_slide()
 
+func head_bob(delta: float):
+	t_bob += delta * velocity.length() * float(is_on_floor())
+	
+	var cam_atual: Camera3D
+	var marker_referencia: Marker3D # Precisamos saber onde a câmera DEVERIA estar
+	
+	if is_first_person:
+		cam_atual = camera
+		marker_referencia = camera_first_person_marker
+	else:
+		cam_atual = camera_third_person
+		marker_referencia = camera_third_person_marker
+	
+	var ajuste_intensidade = 0.8
+	if Input.is_action_pressed("ui_run"):
+		bob_freq = 2.1
+		
+		if is_first_person:
+			ajuste_intensidade = 1.0
+			bob_freq = 4.5
+	else:
+		bob_freq = 2.0 # Voltei para 2.0 porque 1.0 é muito lento
+
+	var pos_bob = Vector3.ZERO
+	if is_on_floor() and velocity.length() > 0.1:
+		pos_bob.y = sin(t_bob * bob_freq) * bob_amp * ajuste_intensidade
+		pos_bob.x = cos(t_bob * bob_freq * 0.5) * bob_amp * 0.5 * ajuste_intensidade
+	
+	# O SEGREDO: A posição da câmera deve ser a posição do MARKER + o balanço
+	# Se não estiver em transição, mantemos a câmera colada no marker com o balanço
+	if !transition_camera:
+		cam_atual.global_transform.origin = marker_referencia.global_transform.origin + pos_bob
+	
 
 # Função auxiliar para não repetir código
 func transicao_camera(origem: Camera3D, camera_destino: Camera3D, destino: Marker3D, show_ui: bool):
@@ -260,7 +336,7 @@ func transicao_camera(origem: Camera3D, camera_destino: Camera3D, destino: Marke
 	
 	
 func reload():
-	if current_weapon.animation != "reload":
+	if is_first_person and current_weapon.animation != "reload":
 		if not is_instance_valid(current_weapon): return
 
 		var tween = create_tween()
