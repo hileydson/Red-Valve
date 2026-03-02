@@ -194,22 +194,23 @@ func _physics_process(delta: float) -> void:
 	# --- LÓGICA DO ANALÓGICO DIREITO (CONTROLE) ---
 	if !camera_bullet_time_ON and magic_hand.animation != "attack":
 		var joy_dir = Input.get_vector("ui_look_left", "ui_look_right", "ui_look_up", "ui_look_down")
-		if joy_dir.length() > DEADZONE: # Deadzone para evitar drift
-			var camera_atual = get_viewport().get_camera_3d()
-			
-			# Rotação Horizontal (Eixo Y do Player)
-			rotate_y(-joy_dir.x * JOY_SENSITIVITY)
-			
-			# Rotação Vertical (Eixo X da Câmera)
-			camera_atual.rotate_x(-joy_dir.y * JOY_SENSITIVITY)
-			
-			# Aplica o mesmo Clamp que você já tem no _input
-			var value_look_down = -80
-			var value_look_up = 80
-			if camera_atual == camera_third_person: 
-				value_look_down = -10
-				value_look_up = 20
-			camera_atual.rotation.x = clamp(camera_atual.rotation.x, deg_to_rad(value_look_down), deg_to_rad(value_look_up))	
+		if joy_dir:
+			if joy_dir.length() > DEADZONE: # Deadzone para evitar drift
+				var camera_atual = get_viewport().get_camera_3d()
+				
+				# Rotação Horizontal (Eixo Y do Player)
+				rotate_y(-joy_dir.x * JOY_SENSITIVITY)
+				
+				# Rotação Vertical (Eixo X da Câmera)
+				camera_atual.rotate_x(-joy_dir.y * JOY_SENSITIVITY)
+				
+				# Aplica o mesmo Clamp que você já tem no _input
+				var value_look_down = -80
+				var value_look_up = 80
+				if camera_atual == camera_third_person: 
+					value_look_down = -10
+					value_look_up = 20
+				camera_atual.rotation.x = clamp(camera_atual.rotation.x, deg_to_rad(value_look_down), deg_to_rad(value_look_up))	
 	
 	
 	# --- LÓGICA DE VELOCIDADE (CORRIDA) ---
@@ -226,18 +227,18 @@ func _physics_process(delta: float) -> void:
 		if Input.is_action_pressed("ui_run"):
 			if pistola.animation!="reload" and pistola.animation!="run":pistola.play("run")
 			passos.pitch_scale = 1.23 # Som mais rápido
-			if is_on_floor() and playback.get_current_node() != "jump": playback.travel("run")
+			if is_on_floor() and velocity.y <= 0 and playback.get_current_node() != "jump": playback.travel("run")
 		else:
 			if pistola.animation!="reload" and pistola.animation!="walk":pistola.play("walk")
 			passos.pitch_scale = 0.7 # Som normal
-			if is_on_floor() and playback.get_current_node() != "jump": playback.travel("walk")
+			if is_on_floor() and velocity.y <= 0 and playback.get_current_node() != "jump": playback.travel("walk")
 			
 		if !passos.playing: passos.play()
 			
 		velocity.x = direction.x * velocidade_atual
 		velocity.z = direction.z * velocidade_atual
 	else:
-		if playback.get_current_node() != "jump" and is_on_floor(): playback.travel("idle")
+		if is_on_floor() and velocity.y <= 0 and playback.get_current_node() != "jump": playback.travel("idle")
 		
 		velocity.x = move_toward(velocity.x, 0, velocidade_atual)
 		velocity.z = move_toward(velocity.z, 0, velocidade_atual)
