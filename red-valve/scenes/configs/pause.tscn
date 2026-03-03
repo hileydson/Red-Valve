@@ -1,19 +1,19 @@
-[gd_scene load_steps=3 format=3 uid="uid://bhyhnppiawn07"]
+[gd_scene format=3 uid="uid://bhyhnppiawn07"]
 
 [ext_resource type="Script" uid="uid://byse10af10m63" path="res://scripts/configs/pause.gd" id="1_acl5t"]
 [ext_resource type="Texture2D" uid="uid://bvgwpas0j658a" path="res://assets/images/enemies/blood_mark.png" id="2_ktwnj"]
 
-[node name="Pause" type="Node2D"]
+[node name="Pause" type="Node2D" unique_id=1267958209]
 process_mode = 3
 visible = false
 script = ExtResource("1_acl5t")
 
-[node name="ColorRect" type="ColorRect" parent="."]
+[node name="ColorRect" type="ColorRect" parent="." unique_id=209238046]
 offset_right = 1952.0
 offset_bottom = 1103.0
-color = Color(0.40392157, 0.40392157, 0.40392157, 0.40392157)
+color = Color(0.2627451, 0.2627451, 0.2627451, 0.5294118)
 
-[node name="Control" type="Control" parent="."]
+[node name="Control" type="Control" parent="." unique_id=952863432]
 layout_mode = 3
 anchors_preset = 8
 anchor_left = 0.5
@@ -27,24 +27,24 @@ offset_bottom = 627.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="BloodMark" type="Sprite2D" parent="Control"]
+[node name="BloodMark" type="Sprite2D" parent="Control" unique_id=1289328245]
 modulate = Color(0.7564044, 0.7564044, 0.7564044, 1)
 position = Vector2(1398.5, -94.99997)
 scale = Vector2(0.66932905, 0.6070288)
 texture = ExtResource("2_ktwnj")
 
-[node name="VSplitContainer" type="VSplitContainer" parent="Control"]
+[node name="VSplitContainer" type="VSplitContainer" parent="Control" unique_id=1360685637]
 layout_mode = 0
 offset_left = 1330.5
 offset_top = -124.99997
 offset_right = 1427.5
 offset_bottom = -50.99997
 
-[node name="resume" type="Button" parent="Control/VSplitContainer"]
+[node name="resume" type="Button" parent="Control/VSplitContainer" unique_id=1953553517]
 layout_mode = 2
 text = "RESUME"
 
-[node name="exit" type="Button" parent="Control/VSplitContainer"]
+[node name="exit" type="Button" parent="Control/VSplitContainer" unique_id=1048547502]
 layout_mode = 2
 text = "EXIT"
 

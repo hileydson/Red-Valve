@@ -31,6 +31,9 @@ func remover_camera_lenta():
 	# if tween_tempo and tween_tempo.is_valid():
 	#    tween_tempo.kill()
 	
+
+func vibrate_controller(input:Variant, low_strengh:float, high_strengh:float, time:float):
+	input.start_joy_vibration(0,low_strengh, high_strengh, time)
 	
 # No script da sua Camera3D
 func shake_camera(duracao: float, forca: float):

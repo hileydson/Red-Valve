@@ -6,11 +6,12 @@ extends CharacterBody3D
 @onready var camera_first_person_marker: Marker3D = $camera_first_person_marker
 
 @onready var gun_load: AudioStreamPlayer = $sounds/GunLoad
+@onready var load_gun: AudioStreamPlayer = $sounds/LoadGun
 @onready var gun_shot: AudioStreamPlayer = $sounds/GunShot
 @onready var passos: AudioStreamPlayer = $sounds/Passos
 @onready var pistola: AnimatedSprite2D = $Camera3D/CanvasLayer/control_weapons/pistola
-@onready var faisca: GPUParticles3D = $Camera3D/faisca
-@onready var fire: AnimatedSprite2D = $Camera3D/CanvasLayer/control_weapons/fire
+@onready var faisca: GPUParticles3D = $Camera3D/hand_with_pistol/faisca
+@onready var fire: AnimatedSprite3D = $Camera3D/hand_with_pistol/fire
 @onready var bullet_light: OmniLight3D = $Camera3D/Camera3D_Bullet_Time/bullet_light
 @onready var flash_tela: ColorRect = $Camera3D/CanvasLayer/control_weapons/flash_tela
 @onready var ray_cast_3d: RayCast3D = $Camera3D/RayCast3D
@@ -29,6 +30,8 @@ extends CharacterBody3D
 @onready var blade_light: OmniLight3D = $"Camera3D/Crescent Cogblade/blade_light"
 @onready var animation_tree: AnimationTree = $maycow_lopes/AnimationTree
 @onready var point: Label = $Camera3D/point
+@onready var camera_top_view: Camera3D = $camera_top_view
+@onready var hand_with_pistol: Node3D = $Camera3D/hand_with_pistol
 
 var blood_effect = preload("res://scenes/enemies/blood.tscn")
 
@@ -42,7 +45,7 @@ const SENSITIVITY = 0.003 # Sensibilidade do mouse
 @export var damage_crescent_cogblade:int = 14
 @export var damage_pistol:int = 10 #3 
 @export var damage_headshoot:int = 100
-var current_weapon: AnimatedSprite2D
+var current_weapon #: AnimatedSprite2D
 var can_shoot_again:bool = true
 
 # CONFIGURACAO DO CONTROLE
@@ -95,7 +98,9 @@ func _ready():
 	camera.current = false
 	control_magic.visible = false
 	control_weapons.visible = false
+	hand_with_pistol.visible = false
 	camera_third_person.make_current()
+	#camera_top_view.make_current()
 	point.visible = false
 	
 	
@@ -132,7 +137,7 @@ var hold_threshold: float = 0.15 # 200 milisegundos para confirmar o "segurar"
 # No topo do script
 var limite_rotacao_lateral = deg_to_rad(35) # O máximo que ele pode "virar" (ex: 35 graus)
 var velocidade_giro = 8.0
-func _physics_process(delta: float) -> void:
+func _physics_process(delta: float) -> void:			
 	
 	# muda pra primeira pessoa
 	# Lógica do Cronômetro para o botão
@@ -180,7 +185,7 @@ func _physics_process(delta: float) -> void:
 		reload()
 	
 	if pistola.animation!="reload" and Input.is_action_just_pressed("ui_shoot") and !transition_camera:
-		shoot()
+		shoot(Input)
 	
 	if magic_hand.animation == "idle" and Input.is_action_just_pressed("ui_magic_attack") and !transition_camera and camera.current:
 		magic_hand_attack()
@@ -310,6 +315,10 @@ func transicao_camera(origem: Camera3D, camera_destino: Camera3D, destino: Marke
 	if camera_destino == camera_third_person:
 		control_magic.visible = show_ui
 		control_weapons.visible = show_ui
+		hand_with_pistol.visible = show_ui
+	else:
+		load_gun.play()
+		
 
 	# IMPORTANTE: Garante que a câmera que vai "viajar" seja a atual
 	origem.make_current()
@@ -331,23 +340,25 @@ func transicao_camera(origem: Camera3D, camera_destino: Camera3D, destino: Marke
 		# Mostra/Esconde a UI com delay pra nao ficar estranho
 		control_magic.visible = show_ui
 		control_weapons.visible = show_ui
+		hand_with_pistol.visible = show_ui
 		)
 	
 	
 	
 	
 func reload():
-	if is_first_person and current_weapon.animation != "reload":
+	#if is_first_person and current_weapon.animation != "reload":
+	if is_first_person:
 		if not is_instance_valid(current_weapon): return
 
 		var tween = create_tween()
-		current_weapon.play("reload")
+		#current_weapon.play("reload")
 		gun_load.play()
 		tween.tween_interval(0.1)
-		tween.tween_property(current_weapon, "rotation_degrees", 15.0, 0.15).set_trans(Tween.TRANS_SINE)
+		#tween.tween_property(current_weapon, "rotation_degrees", 15.0, 0.15).set_trans(Tween.TRANS_SINE)
 		tween.tween_interval(0.8)
 		# Volta para o zero
-		tween.tween_property(current_weapon, "rotation_degrees", 8.4, 0.55).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		#tween.tween_property(current_weapon, "rotation_degrees", 8.4, 0.55).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 func magic_hand_attack():
 	# 1. ANIMAÇÃO DA MÃO (2D)
@@ -419,15 +430,20 @@ func cast_spell():
 	blade_light.visible = false
 	print("saiu")
 	
-func shoot():
-	if current_weapon.animation != "shoot" and can_shoot_again and camera.current:
+func shoot(input:Variant):
+	#if current_weapon.animation != "shoot" and can_shoot_again and camera.current:
+	if can_shoot_again and camera.current:
 		if not is_instance_valid(current_weapon): return
 
+		#TEMP TROCA POR NOVA ARMA 3D
+		current_weapon = hand_with_pistol
 		var rotation_default = current_weapon.rotation
 
 		var tween = create_tween()
-		current_weapon.play("shoot")
+		#current_weapon.play("shoot")
 		fire.play("shoot")
+		GlobalUtils.shake_camera(0.03, 0.05)
+		GlobalUtils.vibrate_controller(input, 0.5, 0.0, 0.1)
 		faisca.restart()
 		faisca.emitting = true
 		gun_shot.play()
@@ -445,18 +461,18 @@ func shoot():
 		
 		# --- IMPACTO DO TIRO (IDR PARA TRÁS E GIRAR) ---
 		# Rotaciona 3 graus
-		tween.tween_property(current_weapon, "rotation_degrees", 3.0, 0.05).set_trans(Tween.TRANS_SINE)
+		#tween.tween_property(current_weapon, "rotation_degrees", 3.0, 0.05).set_trans(Tween.TRANS_SINE)
 		
 		# Move para trás (X) e um pouco para cima (Y) AO MESMO TEMPO
 		# Ajuste os valores (ex: 10 ou -10) conforme a posição da sua arma na tela
-		tween.parallel().tween_property(current_weapon, "position:x", current_weapon.position.x + 10, 0.05).set_trans(Tween.TRANS_SINE)
-		tween.parallel().tween_property(current_weapon, "position:y", current_weapon.position.y - 5, 0.05).set_trans(Tween.TRANS_SINE)
+		tween.parallel().tween_property(current_weapon, "position:x", current_weapon.position.x + 0.01, 0.05).set_trans(Tween.TRANS_SINE)
+		tween.parallel().tween_property(current_weapon, "position:y", current_weapon.position.y - 0.01, 0.05).set_trans(Tween.TRANS_SINE)
 
 		tween.tween_interval(0.1)
 
 		# --- VOLTA PARA A POSIÇÃO PADRÃO ---
 		# Usamos TRANS_BACK para dar aquele efeito de mola realista no encaixe
-		tween.tween_property(current_weapon, "rotation_degrees", 8.4, 0.1).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		#tween.tween_property(current_weapon, "rotation_degrees", 8.4, 0.1).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 		current_weapon.rotation = rotation_default
 		# Volta a posição X e Y originais
 		# DICA: É melhor salvar a posição inicial da arma numa variável se você for usar muito isso
@@ -514,6 +530,7 @@ func raycast_process_shoot():
 					
 					
 				control_weapons.visible = false
+				hand_with_pistol.visible = false
 				control_magic.visible = false
 				bullet_light.visible = true
 				bullet.visible = true
@@ -561,6 +578,7 @@ func bullet_time_back():
 	if is_first_person:
 		camera.make_current()
 		control_weapons.visible = true
+		hand_with_pistol.visible = true
 		control_magic.visible = true
 	else:
 		camera_third_person.make_current()
@@ -588,11 +606,12 @@ func spawn_blood_effect(body: Node3D):
 		
 		
 func take_damage(number:int):
+	GlobalUtils.vibrate_controller(Input, 0.5, 0.5, 0.2)
 	print("Damage taken by the player: "+str(number))
 	
 	
 func _on_pistola_animation_finished() -> void:
-	current_weapon.play("idle")
+	pass #current_weapon.play("idle")
 
 func _on_area_3d_body_entered(body: Node3D) -> void:
 	if magic_hand.animation == "attack":

@@ -1,8 +1,6 @@
-[gd_scene load_steps=131 format=3 uid="uid://cluvbknxfjx2k"]
+[gd_scene format=3 uid="uid://cluvbknxfjx2k"]
 
 [ext_resource type="Script" uid="uid://deirdushqeh74" path="res://scripts/player/player.gd" id="1_8afob"]
-[ext_resource type="Texture2D" uid="uid://bcav021wtw4vf" path="res://assets/images/player/fire_gun.png" id="2_75vfm"]
-[ext_resource type="Texture2D" uid="uid://bet48rlumqtua" path="res://assets/images/player/sprite-256px-16.png" id="2_dovo2"]
 [ext_resource type="PackedScene" uid="uid://36xyu24cj8b6" path="res://assets/3d_model/player/Maycow Lopes/maycow_lopes.glb" id="2_fm80t"]
 [ext_resource type="PackedScene" uid="uid://b2ba8tmond28o" path="res://scenes/player/battle_field.tscn" id="2_myrg7"]
 [ext_resource type="Material" uid="uid://bh0aft5khrkdm" path="res://assets/3d_model/player/Maycow Lopes/materials/Material_1.tres" id="3_fcs02"]
@@ -10,14 +8,23 @@
 [ext_resource type="Texture2D" uid="uid://cp4f6dw2xfp6" path="res://assets/images/player/magic_hand.png" id="4_0owmy"]
 [ext_resource type="AudioStream" uid="uid://u3eclo54hry0" path="res://assets/sounds/player/gun_shot.mp3" id="4_75vfm"]
 [ext_resource type="AudioStream" uid="uid://cof0aohm8uyuj" path="res://assets/sounds/player/passos.mp3" id="5_0owmy"]
+[ext_resource type="PackedScene" uid="uid://c2drneyxbcjoe" path="res://assets/3d_model/player/hands/hand_with_pistol.glb" id="5_kvlxm"]
 [ext_resource type="PackedScene" uid="uid://d2auovyhugl71" path="res://assets/3d_model/player/Crescent Cogblade/Crescent Cogblade.glb" id="5_qek5x"]
+[ext_resource type="SpriteFrames" uid="uid://cawar0ym41nu6" path="res://scripts/player/sprite_fire.tres" id="6_3j4b4"]
 [ext_resource type="AudioStream" uid="uid://f0trbtheulq1" path="res://assets/sounds/player/blade_in.mp3" id="6_h17s1"]
 [ext_resource type="AudioStream" uid="uid://cxjydv8f3dunn" path="res://assets/sounds/player/blade_out.mp3" id="6_je7p5"]
+[ext_resource type="Texture2D" uid="uid://dsh3fs7i657hh" path="res://assets/3d_model/player/hands/hand_with_pistol_texture.png" id="6_uf5tr"]
+[ext_resource type="Shader" uid="uid://b7uwyebyoyh5x" path="res://scripts/player/luz_na_arma_2d.gdshader" id="7_8ydkj"]
 [ext_resource type="AudioStream" uid="uid://1d6mb1u5xxu0" path="res://assets/sounds/player/blade_back.mp3" id="7_je7p5"]
+[ext_resource type="SpriteFrames" uid="uid://chrckpkagwvif" path="res://scenes/player/canvas_gun_animation.tres" id="8_uf5tr"]
+[ext_resource type="Script" uid="uid://byqlaykhy5nq" path="res://scripts/player/hand_with_pistol.gd" id="10_3j4b4"]
 [ext_resource type="PackedScene" uid="uid://c6yruf806s5mq" path="res://assets/3d_model/player/pistol_bullet/scene.gltf" id="10_gx1jg"]
 [ext_resource type="AudioStream" uid="uid://dqdph2q1pfo6s" path="res://assets/sounds/player/slay_it.mp3" id="14_ugbui"]
+[ext_resource type="AudioStream" uid="uid://dgp7u4s1k2qu1" path="res://assets/sounds/player/load_gun.mp3" id="19_lgqa7"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_myrg7"]
+metallic = 1.0
+metallic_specular = 1.0
 
 [sub_resource type="Animation" id="Animation_fcs02"]
 resource_name = "Angry_Ground_Stomp_2"
@@ -6627,442 +6634,8 @@ transitions = ["idle", "walk", SubResource("AnimationNodeStateMachineTransition_
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_dovo2"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_uniwh"]
-atlas = ExtResource("2_75vfm")
-region = Rect2(0, 0, 32, 48)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_iqsei"]
-atlas = ExtResource("2_75vfm")
-region = Rect2(32, 0, 32, 48)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_tffgl"]
-atlas = ExtResource("2_75vfm")
-region = Rect2(64, 0, 32, 48)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_pk8ii"]
-atlas = ExtResource("2_75vfm")
-region = Rect2(96, 0, 32, 48)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_5mf0n"]
-atlas = ExtResource("2_75vfm")
-region = Rect2(128, 0, 32, 48)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_4hvnv"]
-atlas = ExtResource("2_75vfm")
-region = Rect2(160, 0, 32, 48)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_bbmj2"]
-atlas = ExtResource("2_75vfm")
-region = Rect2(192, 0, 32, 48)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_kxw46"]
-atlas = ExtResource("2_75vfm")
-region = Rect2(224, 0, 32, 48)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_8qxvo"]
-animations = [{
-"frames": [{
-"duration": 0.01,
-"texture": null
-}, {
-"duration": 0.07,
-"texture": SubResource("AtlasTexture_uniwh")
-}, {
-"duration": 0.07,
-"texture": SubResource("AtlasTexture_iqsei")
-}, {
-"duration": 0.07,
-"texture": SubResource("AtlasTexture_tffgl")
-}, {
-"duration": 0.07,
-"texture": SubResource("AtlasTexture_pk8ii")
-}, {
-"duration": 0.07,
-"texture": SubResource("AtlasTexture_5mf0n")
-}, {
-"duration": 0.07,
-"texture": SubResource("AtlasTexture_4hvnv")
-}, {
-"duration": 0.07,
-"texture": SubResource("AtlasTexture_bbmj2")
-}, {
-"duration": 0.07,
-"texture": SubResource("AtlasTexture_kxw46")
-}, {
-"duration": 0.01,
-"texture": null
-}],
-"loop": false,
-"name": &"shoot",
-"speed": 5.0
-}]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_gmlin"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(0, 0, 516, 355)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_lvxji"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(0, 0, 514, 351)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_p47bc"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(0, 0, 512, 349)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_75vfm"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(0, 0, 510, 347)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_0owmy"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(0, 0, 516, 355)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_qek5x"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(516, 0, 516, 355)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_5gtgg"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(1032, 0, 516, 355)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_h17s1"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(1548, 0, 516, 355)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_je7p5"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(0, 355, 516, 355)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_fm80t"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(516, 355, 516, 355)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_gx1jg"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(1032, 355, 516, 355)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ugbui"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(1548, 355, 516, 355)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_fcs02"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(0, 710, 516, 355)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_myrg7"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(516, 710, 516, 355)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_kvlxm"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(1032, 710, 516, 355)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_uf5tr"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(1548, 710, 516, 355)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_lgqa7"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(0, 1065, 516, 355)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_8ydkj"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(516, 1065, 516, 355)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_3j4b4"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(1032, 1065, 516, 355)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_yj68g"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(1548, 1065, 516, 355)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_8qxvo"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(0, 0, 516, 355)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_5q8fn"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(0, 0, 512, 352)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_wva7c"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(0, 0, 508, 349)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_7obkq"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(0, 0, 504, 346)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_vo27k"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(0, 0, 500, 343)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_genst"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(0, 0, 496, 346)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_niom3"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(0, 0, 492, 349)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ttakn"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(0, 0, 488, 352)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_dovo2"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(0, 0, 516, 330)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ioxgp"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(0, 0, 514, 329)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_cnsyf"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(0, 0, 512, 328)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_007i1"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(0, 0, 510, 327)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_6cv16"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(0, 0, 508, 326)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_j4nxn"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(0, 0, 506, 325)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_28m0y"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(0, 0, 504, 324)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_rw8a5"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(0, 0, 516, 355)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_iwuka"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(0, 0, 512, 353)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_hyqqp"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(0, 0, 508, 351)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ds1xl"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(0, 0, 504, 349)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_1u1sw"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(0, 0, 507, 351)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_2t3bg"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(0, 0, 503, 353)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_jrbya"]
-atlas = ExtResource("2_dovo2")
-region = Rect2(0, 0, 499, 355)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_ioxgp"]
-animations = [{
-"frames": [{
-"duration": 1.01,
-"texture": SubResource("AtlasTexture_gmlin")
-}, {
-"duration": 1.01,
-"texture": SubResource("AtlasTexture_lvxji")
-}, {
-"duration": 1.01,
-"texture": SubResource("AtlasTexture_p47bc")
-}, {
-"duration": 1.01,
-"texture": SubResource("AtlasTexture_75vfm")
-}, {
-"duration": 1.01,
-"texture": SubResource("AtlasTexture_p47bc")
-}, {
-"duration": 1.01,
-"texture": SubResource("AtlasTexture_lvxji")
-}],
-"loop": true,
-"name": &"idle",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 0.51,
-"texture": SubResource("AtlasTexture_0owmy")
-}, {
-"duration": 0.51,
-"texture": SubResource("AtlasTexture_qek5x")
-}, {
-"duration": 0.51,
-"texture": SubResource("AtlasTexture_5gtgg")
-}, {
-"duration": 0.51,
-"texture": SubResource("AtlasTexture_h17s1")
-}, {
-"duration": 0.51,
-"texture": SubResource("AtlasTexture_je7p5")
-}, {
-"duration": 0.51,
-"texture": SubResource("AtlasTexture_fm80t")
-}, {
-"duration": 0.51,
-"texture": SubResource("AtlasTexture_gx1jg")
-}, {
-"duration": 0.51,
-"texture": SubResource("AtlasTexture_ugbui")
-}, {
-"duration": 0.51,
-"texture": SubResource("AtlasTexture_fcs02")
-}, {
-"duration": 0.51,
-"texture": SubResource("AtlasTexture_myrg7")
-}, {
-"duration": 0.51,
-"texture": SubResource("AtlasTexture_kvlxm")
-}, {
-"duration": 0.51,
-"texture": SubResource("AtlasTexture_uf5tr")
-}, {
-"duration": 0.51,
-"texture": SubResource("AtlasTexture_lgqa7")
-}, {
-"duration": 0.51,
-"texture": SubResource("AtlasTexture_8ydkj")
-}, {
-"duration": 0.51,
-"texture": SubResource("AtlasTexture_3j4b4")
-}, {
-"duration": 0.51,
-"texture": SubResource("AtlasTexture_yj68g")
-}],
-"loop": false,
-"name": &"reload",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 0.31,
-"texture": SubResource("AtlasTexture_8qxvo")
-}, {
-"duration": 0.31,
-"texture": SubResource("AtlasTexture_5q8fn")
-}, {
-"duration": 0.31,
-"texture": SubResource("AtlasTexture_wva7c")
-}, {
-"duration": 0.31,
-"texture": SubResource("AtlasTexture_7obkq")
-}, {
-"duration": 0.31,
-"texture": SubResource("AtlasTexture_vo27k")
-}, {
-"duration": 0.31,
-"texture": SubResource("AtlasTexture_genst")
-}, {
-"duration": 0.31,
-"texture": SubResource("AtlasTexture_niom3")
-}, {
-"duration": 0.31,
-"texture": SubResource("AtlasTexture_ttakn")
-}, {
-"duration": 0.31,
-"texture": SubResource("AtlasTexture_niom3")
-}, {
-"duration": 0.31,
-"texture": SubResource("AtlasTexture_genst")
-}, {
-"duration": 0.31,
-"texture": SubResource("AtlasTexture_vo27k")
-}, {
-"duration": 0.31,
-"texture": SubResource("AtlasTexture_7obkq")
-}, {
-"duration": 0.31,
-"texture": SubResource("AtlasTexture_wva7c")
-}, {
-"duration": 0.31,
-"texture": SubResource("AtlasTexture_5q8fn")
-}],
-"loop": false,
-"name": &"run",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 0.11,
-"texture": SubResource("AtlasTexture_dovo2")
-}, {
-"duration": 0.11,
-"texture": SubResource("AtlasTexture_ioxgp")
-}, {
-"duration": 0.11,
-"texture": SubResource("AtlasTexture_cnsyf")
-}, {
-"duration": 0.11,
-"texture": SubResource("AtlasTexture_007i1")
-}, {
-"duration": 0.11,
-"texture": SubResource("AtlasTexture_6cv16")
-}, {
-"duration": 0.11,
-"texture": SubResource("AtlasTexture_j4nxn")
-}, {
-"duration": 0.11,
-"texture": SubResource("AtlasTexture_28m0y")
-}, {
-"duration": 0.11,
-"texture": SubResource("AtlasTexture_j4nxn")
-}, {
-"duration": 0.11,
-"texture": SubResource("AtlasTexture_6cv16")
-}],
-"loop": false,
-"name": &"shoot",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 0.61,
-"texture": SubResource("AtlasTexture_rw8a5")
-}, {
-"duration": 0.61,
-"texture": SubResource("AtlasTexture_iwuka")
-}, {
-"duration": 0.61,
-"texture": SubResource("AtlasTexture_hyqqp")
-}, {
-"duration": 0.61,
-"texture": SubResource("AtlasTexture_ds1xl")
-}, {
-"duration": 0.61,
-"texture": SubResource("AtlasTexture_1u1sw")
-}, {
-"duration": 0.61,
-"texture": SubResource("AtlasTexture_2t3bg")
-}, {
-"duration": 0.61,
-"texture": SubResource("AtlasTexture_jrbya")
-}, {
-"duration": 0.61,
-"texture": SubResource("AtlasTexture_2t3bg")
-}, {
-"duration": 0.61,
-"texture": SubResource("AtlasTexture_1u1sw")
-}, {
-"duration": 0.61,
-"texture": SubResource("AtlasTexture_ds1xl")
-}, {
-"duration": 0.61,
-"texture": SubResource("AtlasTexture_hyqqp")
-}, {
-"duration": 0.61,
-"texture": SubResource("AtlasTexture_iwuka")
-}],
-"loop": false,
-"name": &"walk",
-"speed": 5.0
-}]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3j4b4"]
+shader = ExtResource("7_8ydkj")
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_gmu8b"]
 atlas = ExtResource("4_0owmy")
@@ -7183,6 +6756,9 @@ animations = [{
 font_size = 34
 font_color = Color(0.6261257, 0.6261257, 0.6261257, 1)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lgqa7"]
+albedo_texture = ExtResource("6_uf5tr")
+
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_p47bc"]
 direction = Vector3(1, 0, -1)
 spread = 20.0
@@ -7194,11 +6770,11 @@ damping_max = 5.0
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_75vfm"]
 shading_mode = 0
-albedo_color = Color(0.8762129, 0.61552095, 0.2608116, 1)
+albedo_color = Color(1, 1, 0.8235294, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_0owmy"]
 material = SubResource("StandardMaterial3D_75vfm")
-size = Vector3(0.02, 0.02, 0.02)
+size = Vector3(0.009, 0.01, 0.01)
 
 [sub_resource type="Gradient" id="Gradient_0owmy"]
 
@@ -7250,62 +6826,63 @@ size = Vector3(1.8548584, 1, 0.57092285)
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_gx1jg"]
 
-[node name="Player" type="CharacterBody3D" groups=["player"]]
+[node name="Player" type="CharacterBody3D" unique_id=448699446 groups=["player"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1128244, 0)
 collision_mask = 2
 script = ExtResource("1_8afob")
 WALK_SPEED = 2.0
 RUN_SPEED = 4.5
 
-[node name="battle_field" parent="." instance=ExtResource("2_myrg7")]
+[node name="battle_field" parent="." unique_id=1017578515 instance=ExtResource("2_myrg7")]
 transform = Transform3D(1.9637946, 0, 0, 0, 1.4772774, 0, 0, 0, 1.8820053, 0, -0.9627619, 0)
+visible = false
 
-[node name="maycow_lopes" parent="." instance=ExtResource("2_fm80t")]
+[node name="maycow_lopes" parent="." unique_id=664068214 instance=ExtResource("2_fm80t")]
 transform = Transform3D(-0.9999971, 0, 0.0024260576, 0, 1, 0, -0.0024260576, 0, -0.9999971, 0, -1.050483, 0.42049956)
 
 [node name="Skeleton3D" parent="maycow_lopes/Armature" index="0"]
-bones/0/position = Vector3(-1.0994582, 83.42905, 8.427164)
-bones/0/rotation = Quaternion(-0.032571886, 0.040372837, -0.15308534, 0.98685056)
+bones/0/position = Vector3(-1.0826013, 83.465034, 8.462522)
+bones/0/rotation = Quaternion(-0.03342222, 0.04104946, -0.15384413, 0.98667616)
 bones/1/position = Vector3(13.340321, -2.5262918, 3.8072872)
-bones/1/rotation = Quaternion(0.9368363, 0.24489546, -0.11307179, 0.22266296)
+bones/1/rotation = Quaternion(0.9369697, 0.24596614, -0.11335269, 0.22077093)
 bones/2/position = Vector3(2.684138e-06, 24.766985, 2.268152e-06)
-bones/2/rotation = Quaternion(0.3459277, 0.09218149, 0.04049627, 0.9328434)
+bones/2/rotation = Quaternion(0.3438934, 0.09209186, 0.040776093, 0.93359184)
 bones/3/position = Vector3(1.2683254e-06, 36.84416, -8.807921e-07)
-bones/3/rotation = Quaternion(-0.48903042, -0.08263683, 0.015525713, 0.86820465)
+bones/3/rotation = Quaternion(-0.48787612, -0.081964485, 0.015415713, 0.86891955)
 bones/4/position = Vector3(-1.0653237e-06, 14.950345, -1.1445736e-06)
-bones/4/rotation = Quaternion(-0.43830848, -0.078076854, 0.027877007, 0.89499307)
-bones/5/rotation = Quaternion(0.9213712, 0.026103158, 0.38656285, -0.031030416)
+bones/4/rotation = Quaternion(-0.43883002, -0.07817843, 0.028044477, 0.8947233)
+bones/5/rotation = Quaternion(0.92139214, 0.027236655, 0.38612208, -0.034705013)
 bones/6/position = Vector3(2.1458898e-06, 24.75429, -4.4649037e-06)
-bones/6/rotation = Quaternion(0.27744034, -0.0810533, -0.021173371, 0.9570836)
+bones/6/rotation = Quaternion(0.27341107, -0.08101584, -0.0216882, 0.958234)
 bones/7/position = Vector3(2.5856752e-06, 36.974712, 2.9194227e-06)
-bones/7/rotation = Quaternion(-0.5366699, 0.033424255, -0.035752725, 0.8423717)
+bones/7/rotation = Quaternion(-0.5350089, 0.03407351, -0.035450794, 0.8434143)
 bones/8/position = Vector3(-1.9888064e-06, 14.890399, 7.7055404e-08)
-bones/8/rotation = Quaternion(-0.4801872, 0.08895208, -0.028922047, 0.8721647)
-bones/9/rotation = Quaternion(0.13219109, -0.10656124, 0.15050156, 0.97391975)
+bones/8/rotation = Quaternion(-0.4806152, 0.0890387, -0.029031105, 0.87191653)
+bones/9/rotation = Quaternion(0.13060641, -0.10666665, 0.15013677, 0.97417825)
 bones/10/position = Vector3(-3.5017786e-07, 16.545918, 3.8379776e-06)
-bones/10/rotation = Quaternion(-0.043764032, 0.031995315, 0.0070505254, 0.9985046)
+bones/10/rotation = Quaternion(-0.044937488, 0.03205746, 0.0070322864, 0.99845064)
 bones/11/position = Vector3(-5.711273e-08, 16.546003, 1.4896173e-06)
-bones/11/rotation = Quaternion(-0.02778703, 0.0060682716, -0.0005341272, 0.99959534)
+bones/11/rotation = Quaternion(-0.027788984, 0.0060610087, -0.00063154235, 0.9995952)
 bones/12/position = Vector3(3.8462558, 8.140699, -0.4956247)
-bones/12/rotation = Quaternion(0.5192185, 0.54197365, -0.43066436, 0.50120354)
+bones/12/rotation = Quaternion(0.5192724, 0.5422663, -0.43204194, 0.4996431)
 bones/13/position = Vector3(-2.427416e-06, 15.815192, -3.988356e-06)
-bones/13/rotation = Quaternion(0.6495972, 0.36243883, 0.19948085, 0.63786274)
+bones/13/rotation = Quaternion(0.6523982, 0.36235955, 0.19143023, 0.6375159)
 bones/14/position = Vector3(2.3212299e-06, 24.94295, 8.932441e-06)
-bones/14/rotation = Quaternion(-0.14069198, -0.06978105, 0.03337761, 0.98702705)
+bones/14/rotation = Quaternion(-0.14047857, -0.06974408, 0.033447426, 0.9870577)
 bones/15/position = Vector3(6.0303573e-06, 24.110703, 3.7298014e-07)
-bones/15/rotation = Quaternion(0.056671016, 0.1465624, 0.09174193, 0.98330635)
+bones/15/rotation = Quaternion(0.05893074, 0.14731199, 0.09557109, 0.9826966)
 bones/16/position = Vector3(-3.9271922, 8.045, -0.5905786)
-bones/16/rotation = Quaternion(-0.57546186, 0.48305845, -0.43641645, -0.49501407)
+bones/16/rotation = Quaternion(-0.57497907, 0.48316017, -0.43579456, -0.4960227)
 bones/17/position = Vector3(-2.6784335e-06, 15.411067, -2.0204836e-05)
-bones/17/rotation = Quaternion(0.6082552, -0.39852864, -0.26814476, 0.63190097)
+bones/17/rotation = Quaternion(0.60858846, -0.39734447, -0.2704429, 0.6313463)
 bones/18/position = Vector3(-1.5086316e-06, 24.015932, 5.3937256e-06)
-bones/18/rotation = Quaternion(-0.19999412, 0.10562991, -0.010206346, 0.9740332)
+bones/18/rotation = Quaternion(-0.19306582, 0.105976716, -0.0059116213, 0.9754279)
 bones/19/position = Vector3(1.5162362e-05, 23.311129, 1.1055323e-05)
-bones/19/rotation = Quaternion(-0.003412962, -0.44554523, 0.019091003, 0.89504933)
+bones/19/rotation = Quaternion(-0.0145472195, -0.44215602, 0.018154424, 0.8966365)
 bones/20/position = Vector3(0.08093618, 14.430521, 1.0861983)
-bones/20/rotation = Quaternion(0.030166123, 0.029429179, 0.015006612, 0.9989989)
+bones/20/rotation = Quaternion(0.028912006, 0.029344613, 0.015280971, 0.99903435)
 bones/21/position = Vector3(9.224111e-07, 6.804858, -1.9791642e-06)
-bones/21/rotation = Quaternion(0.30455315, 0.0011924708, -0.04108902, 0.951608)
+bones/21/rotation = Quaternion(0.31142288, 0.0008251937, -0.04169969, 0.9493558)
 bones/22/position = Vector3(0.15257373, 16.290588, -8.277084)
 bones/22/rotation = Quaternion(-0.23286161, 4.172363e-06, -0.004287176, 0.97250044)
 bones/23/position = Vector3(-0.15257384, 5.0526996, 8.2771)
@@ -7316,34 +6893,32 @@ material_overlay = ExtResource("3_fcs02")
 surface_material_override/0 = SubResource("StandardMaterial3D_myrg7")
 
 [node name="AnimationPlayer" parent="maycow_lopes" index="1"]
-libraries = {
-&"": SubResource("AnimationLibrary_bbmj2")
-}
+libraries/ = SubResource("AnimationLibrary_bbmj2")
 
-[node name="AnimationTree" type="AnimationTree" parent="maycow_lopes"]
+[node name="AnimationTree" type="AnimationTree" parent="maycow_lopes" unique_id=1327097337]
 tree_root = SubResource("AnimationNodeStateMachine_6cv16")
 anim_player = NodePath("../AnimationPlayer")
 parameters/conditions/!jump = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=157311208]
 shape = SubResource("CapsuleShape3D_dovo2")
 
-[node name="camera_third_person_marker" type="Marker3D" parent="."]
+[node name="camera_third_person_marker" type="Marker3D" parent="." unique_id=1357153698]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.607825, 0.5881319, 1.3441371)
 
-[node name="camera_first_person_marker" type="Marker3D" parent="."]
+[node name="camera_first_person_marker" type="Marker3D" parent="." unique_id=686008711]
 transform = Transform3D(1, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0, 0.49483693, -3.3527613e-08)
 
-[node name="camera_third_person" type="Camera3D" parent="."]
+[node name="camera_third_person" type="Camera3D" parent="." unique_id=1985829915]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.607825, 0.5881319, 1.3441371)
 current = true
 fov = 83.2
 
-[node name="Camera3D" type="Camera3D" parent="." groups=["camera_player"]]
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1378119187 groups=["camera_player"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.49483705, 0)
 
-[node name="lanterna" type="SpotLight3D" parent="Camera3D"]
-transform = Transform3D(1, 0, 0, 0, 0.8835941, 0.46825373, 0, -0.46825373, 0.8835941, 0, -0.14011133, -0.040479183)
+[node name="lanterna" type="SpotLight3D" parent="Camera3D" unique_id=2115110811]
+transform = Transform3D(1, 0, 0, 0, 0.9535225, 0.30132163, 0, -0.30132163, 0.9535225, 0, -0.14011133, -0.040479183)
 light_energy = 2.391
 light_indirect_energy = 0.304
 light_volumetric_fog_energy = 9.547
@@ -7355,9 +6930,16 @@ spot_range = 17.277
 spot_attenuation = 2.12
 spot_angle = 27.11
 
-[node name="CanvasLayer" type="CanvasLayer" parent="Camera3D"]
+[node name="hand_with_pistol_2" type="AnimatedSprite3D" parent="Camera3D" unique_id=925974263]
+transform = Transform3D(0.0798504, 0.006041116, 0.082761936, -0.0057867854, 0.083968505, 0, -0.0068231327, -0.000516207, 0.9685541, 0.28422898, -0.21924281, -0.335675)
+visible = false
+sprite_frames = ExtResource("8_uf5tr")
+animation = &"idle"
+autoplay = "idle"
 
-[node name="control_weapons" type="Control" parent="Camera3D/CanvasLayer"]
+[node name="CanvasLayer" type="CanvasLayer" parent="Camera3D" unique_id=1160797924]
+
+[node name="control_weapons" type="Control" parent="Camera3D/CanvasLayer" unique_id=1288329609]
 z_index = 1
 layout_mode = 3
 anchors_preset = 0
@@ -7366,23 +6948,27 @@ offset_top = 438.0
 offset_right = 507.0
 offset_bottom = 478.0
 
-[node name="fire" type="AnimatedSprite2D" parent="Camera3D/CanvasLayer/control_weapons"]
-position = Vector2(900.1885, 398.9618)
-rotation = -1.0701286
+[node name="fire" type="AnimatedSprite2D" parent="Camera3D/CanvasLayer/control_weapons" unique_id=590328938]
+position = Vector2(706, 189)
+rotation = -1.3742911
 scale = Vector2(3.6290712, 2.563619)
-sprite_frames = SubResource("SpriteFrames_8qxvo")
+sprite_frames = ExtResource("6_3j4b4")
 animation = &"shoot"
+frame = 9
+frame_progress = 1.0
 
-[node name="pistola" type="AnimatedSprite2D" parent="Camera3D/CanvasLayer/control_weapons"]
+[node name="pistola" type="AnimatedSprite2D" parent="Camera3D/CanvasLayer/control_weapons" unique_id=12664434]
+visible = false
 modulate = Color(1.1898682, 1.0701013, 0.9420746, 1)
+material = SubResource("ShaderMaterial_3j4b4")
 position = Vector2(1049.1885, 546.96204)
 rotation = 0.113768786
 scale = Vector2(1.579849, 1.6160519)
-sprite_frames = SubResource("SpriteFrames_ioxgp")
+sprite_frames = ExtResource("8_uf5tr")
 animation = &"idle"
 autoplay = "idle"
 
-[node name="flash_tela" type="ColorRect" parent="Camera3D/CanvasLayer/control_weapons"]
+[node name="flash_tela" type="ColorRect" parent="Camera3D/CanvasLayer/control_weapons" unique_id=1979800804]
 layout_mode = 0
 offset_left = -473.0
 offset_top = -445.0
@@ -7390,7 +6976,7 @@ offset_right = 1464.0
 offset_bottom = 653.0
 color = Color(0.34789982, 0.21805532, 0.088210836, 0)
 
-[node name="control_magic" type="Control" parent="Camera3D/CanvasLayer"]
+[node name="control_magic" type="Control" parent="Camera3D/CanvasLayer" unique_id=1931423526]
 layout_mode = 3
 anchors_preset = 0
 offset_left = 467.0
@@ -7398,7 +6984,7 @@ offset_top = 438.0
 offset_right = 507.0
 offset_bottom = 478.0
 
-[node name="magic_hand" type="AnimatedSprite2D" parent="Camera3D/CanvasLayer/control_magic"]
+[node name="magic_hand" type="AnimatedSprite2D" parent="Camera3D/CanvasLayer/control_magic" unique_id=986678744]
 modulate = Color(0.77, 0.7238, 0.6314, 1)
 position = Vector2(219.00003, 757)
 scale = Vector2(0.72638285, 0.75045455)
@@ -7407,13 +6993,13 @@ animation = &"attack"
 autoplay = "idle"
 frame_progress = 1.0
 
-[node name="RayCast3D" type="RayCast3D" parent="Camera3D"]
+[node name="RayCast3D" type="RayCast3D" parent="Camera3D" unique_id=1707951630]
 transform = Transform3D(-0.9999521, 0, -0.00979113, 0, 1, 0, 0.00979113, 0, -0.9999521, 0, -0.045309782, 0)
 target_position = Vector3(0, -1, 50)
 collision_mask = 12
 collide_with_areas = true
 
-[node name="point" type="Label" parent="Camera3D"]
+[node name="point" type="Label" parent="Camera3D" unique_id=1181176971]
 offset_left = 948.0
 offset_top = 524.0
 offset_right = 988.0
@@ -7421,75 +7007,91 @@ offset_bottom = 571.0
 text = "."
 label_settings = SubResource("LabelSettings_dovo2")
 
-[node name="faisca" type="GPUParticles3D" parent="Camera3D"]
-transform = Transform3D(0.09489015, 0, 0.99548775, 0, 1, 0, -0.99548775, 0, 0.09489015, 1.916163, -1.4380026, -3.537651)
+[node name="hand_with_pistol" parent="Camera3D" unique_id=1109781536 instance=ExtResource("5_kvlxm")]
+transform = Transform3D(-0.011178745, 0.03977712, -0.36271122, 0.0060710553, 0.35277897, 0.040586613, 0.25816986, -0.006573502, -0.016659578, 0.31141216, -0.24224794, -0.5220645)
+script = ExtResource("10_3j4b4")
+
+[node name="Mesh_0" parent="Camera3D/hand_with_pistol" index="0"]
+surface_material_override/0 = SubResource("StandardMaterial3D_lgqa7")
+
+[node name="faisca" type="GPUParticles3D" parent="Camera3D/hand_with_pistol" unique_id=1214377118]
+transform = Transform3D(-2.987067, -0.24497434, 2.446312, 0.06789896, 2.7920492, 0.36250407, -1.7381315, 0.31374314, -2.0909274, -1.1534331, 0.3644991, 0.034621)
 emitting = false
 amount = 15
 lifetime = 0.25
 one_shot = true
+preprocess = 0.6
+speed_scale = 0.0
 process_material = SubResource("ParticleProcessMaterial_p47bc")
 draw_pass_1 = SubResource("BoxMesh_0owmy")
 
-[node name="magic_hand_particles" type="GPUParticles3D" parent="Camera3D"]
+[node name="fire" type="AnimatedSprite3D" parent="Camera3D/hand_with_pistol" unique_id=1944722340]
+transform = Transform3D(0.100792184, -1.7544194, 0.14813651, 1.2676312, 0.09970003, -0.1149438, 0.15592588, 0.32353836, 0.8387035, -1.4256879, 0.40604806, 0.16528794)
+sprite_frames = ExtResource("6_3j4b4")
+animation = &"shoot"
+frame = 9
+frame_progress = 1.0
+
+[node name="magic_hand_particles" type="GPUParticles3D" parent="Camera3D" unique_id=469586579]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3266101, 0.08178985, -0.74835825)
 visible = false
 draw_pass_1 = SubResource("QuadMesh_je7p5")
 
-[node name="Crescent Cogblade" parent="Camera3D" instance=ExtResource("5_qek5x")]
+[node name="Crescent Cogblade" parent="Camera3D" unique_id=465200558 instance=ExtResource("5_qek5x")]
 transform = Transform3D(1, 0, 0, 0, -0.32357067, -0.946204, 0, 0.946204, -0.32357067, -0.37319887, -0.3111421, 0.6566876)
 visible = false
 
-[node name="blade_light" type="OmniLight3D" parent="Camera3D/Crescent Cogblade"]
+[node name="blade_light" type="OmniLight3D" parent="Camera3D/Crescent Cogblade" unique_id=1815389671]
 transform = Transform3D(1, -1.3877788e-17, 4.6566134e-10, -4.4061063e-10, -0.32357067, 0.946204, 1.5067433e-10, -0.946204, -0.32357067, 0.58364236, -0.06071821, -0.29580855)
 light_color = Color(6.738305e-07, 0.46266872, 0.54521537, 1)
 light_energy = 6.5
 light_size = 1.0
 omni_range = 5.524
 
-[node name="Faiscas" type="GPUParticles3D" parent="Camera3D/Crescent Cogblade"]
+[node name="Faiscas" type="GPUParticles3D" parent="Camera3D/Crescent Cogblade" unique_id=441017236]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.90113115, -0.040700614, -0.027554512)
 emitting = false
 amount = 400
 process_material = SubResource("ParticleProcessMaterial_gx1jg")
 draw_pass_1 = SubResource("QuadMesh_gx1jg")
 
-[node name="Area3D" type="Area3D" parent="Camera3D/Crescent Cogblade"]
+[node name="Area3D" type="Area3D" parent="Camera3D/Crescent Cogblade" unique_id=271670280]
 collision_layer = 0
 collision_mask = 4
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Camera3D/Crescent Cogblade/Area3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Camera3D/Crescent Cogblade/Area3D" unique_id=1765988521]
 transform = Transform3D(0.96378, -0.2092309, -0.016176704, 0.2641511, 0.76560247, 0.0037847757, 0.036773995, -0.015833378, 0.39677575, 0.11413285, 0.036559522, 0.03797698)
 shape = SubResource("BoxShape3D_qek5x")
 
-[node name="BladeOut" type="AudioStreamPlayer" parent="Camera3D/Crescent Cogblade"]
+[node name="BladeOut" type="AudioStreamPlayer" parent="Camera3D/Crescent Cogblade" unique_id=2110484288]
 stream = ExtResource("6_je7p5")
 
-[node name="blade_in" type="AudioStreamPlayer3D" parent="Camera3D/Crescent Cogblade"]
+[node name="blade_in" type="AudioStreamPlayer3D" parent="Camera3D/Crescent Cogblade" unique_id=657251318]
 stream = ExtResource("6_h17s1")
 
-[node name="blade_back" type="AudioStreamPlayer3D" parent="Camera3D/Crescent Cogblade"]
+[node name="blade_back" type="AudioStreamPlayer3D" parent="Camera3D/Crescent Cogblade" unique_id=1866714834]
 stream = ExtResource("7_je7p5")
 
-[node name="camera_bullet_time_mark" type="Marker3D" parent="Camera3D"]
+[node name="camera_bullet_time_mark" type="Marker3D" parent="Camera3D" unique_id=193205096]
 transform = Transform3D(0.9999991, 0, -0.0013613696, 0, 1, 0, 0.0013613696, 0, 0.9999991, 0.21759427, -0.17339468, 1.2577136)
 
-[node name="Camera3D_Bullet_Time" type="Camera3D" parent="Camera3D"]
+[node name="Camera3D_Bullet_Time" type="Camera3D" parent="Camera3D" unique_id=234241067]
 transform = Transform3D(0.9999991, 0, -0.0013613696, 0, 1, 0, 0.0013613696, 0, 0.9999991, 0.21759427, -0.17339468, 0.95688343)
 fov = 113.1
 
-[node name="bullet" parent="Camera3D/Camera3D_Bullet_Time" instance=ExtResource("10_gx1jg")]
+[node name="bullet" parent="Camera3D/Camera3D_Bullet_Time" unique_id=944025970 instance=ExtResource("10_gx1jg")]
 transform = Transform3D(-0.0005484972, 0, 1.5476553e-05, 0, 0.00052350154, 0, -1.9777031e-05, 0, -0.0004292279, -0.10402084, -0.23633671, -0.24365199)
 visible = false
 
-[node name="bullet_touch" type="Area3D" parent="Camera3D/Camera3D_Bullet_Time/bullet"]
+[node name="bullet_touch" type="Area3D" parent="Camera3D/Camera3D_Bullet_Time/bullet" unique_id=660182551]
 collision_layer = 0
 collision_mask = 12
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Camera3D/Camera3D_Bullet_Time/bullet/bullet_touch"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Camera3D/Camera3D_Bullet_Time/bullet/bullet_touch" unique_id=766831695]
 transform = Transform3D(196.37262, 0, -5.1498413e-05, 0, -117.94477, 0, 1.335144e-05, 0, 628.2169, -21.287323, 0, 248.19348)
 shape = SubResource("CapsuleShape3D_gx1jg")
 
-[node name="bullet_light" type="OmniLight3D" parent="Camera3D/Camera3D_Bullet_Time"]
+[node name="bullet_light" type="OmniLight3D" parent="Camera3D/Camera3D_Bullet_Time" unique_id=746199043]
 transform = Transform3D(0.999999, 0, 0.0013613699, 0, 1, 0, -0.0013613699, 0, 0.999999, -0.00811027, -0.1965667, -0.7048087)
 visible = false
 light_color = Color(0.942523, 0.6523214, 0.16422758, 1)
@@ -7497,28 +7099,36 @@ light_energy = 14.563
 light_size = 1.0
 omni_range = 5.524
 
-[node name="sounds" type="Node" parent="."]
+[node name="sounds" type="Node" parent="." unique_id=1821399472]
 
-[node name="GunLoad" type="AudioStreamPlayer" parent="sounds"]
+[node name="GunLoad" type="AudioStreamPlayer" parent="sounds" unique_id=955880056]
 stream = ExtResource("3_p47bc")
 volume_db = -5.41
 pitch_scale = 0.67
 
-[node name="GunShot" type="AudioStreamPlayer" parent="sounds"]
+[node name="GunShot" type="AudioStreamPlayer" parent="sounds" unique_id=709919333]
 stream = ExtResource("4_75vfm")
 volume_db = -4.208
 pitch_scale = 0.65
 
-[node name="Passos" type="AudioStreamPlayer" parent="sounds"]
+[node name="Passos" type="AudioStreamPlayer" parent="sounds" unique_id=1869574848]
 stream = ExtResource("5_0owmy")
 volume_db = -2.405
 pitch_scale = 0.68
 
-[node name="SlayIt" type="AudioStreamPlayer" parent="sounds"]
+[node name="SlayIt" type="AudioStreamPlayer" parent="sounds" unique_id=580397253]
 stream = ExtResource("14_ugbui")
 volume_db = -10.22
 pitch_scale = 0.93
 max_polyphony = 8
+
+[node name="LoadGun" type="AudioStreamPlayer" parent="sounds" unique_id=1042432423]
+stream = ExtResource("19_lgqa7")
+volume_db = -4.809
+
+[node name="camera_top_view" type="Camera3D" parent="." unique_id=1685097595]
+transform = Transform3D(0.9207194, -0.35988784, 0.1508531, 0.21020474, 0.78310835, 0.5852822, -0.3287703, -0.5071706, 0.7966732, 2.0130591, 4.6527047, 2.9330404)
+visible = false
 
 [connection signal="animation_finished" from="Camera3D/CanvasLayer/control_weapons/pistola" to="." method="_on_pistola_animation_finished"]
 [connection signal="body_entered" from="Camera3D/Crescent Cogblade/Area3D" to="." method="_on_area_3d_body_entered"]
@@ -7526,4 +7136,5 @@ max_polyphony = 8
 [connection signal="body_entered" from="Camera3D/Camera3D_Bullet_Time/bullet/bullet_touch" to="." method="_on_bullet_touch_body_entered"]
 
 [editable path="maycow_lopes"]
+[editable path="Camera3D/hand_with_pistol"]
 [editable path="Camera3D/Crescent Cogblade"]
