@@ -32,6 +32,8 @@ extends CharacterBody3D
 @onready var point: Label = $Camera3D/point
 @onready var camera_top_view: Camera3D = $camera_top_view
 @onready var hand_with_pistol: Node3D = $Camera3D/hand_with_pistol
+@onready var smoke_effect: AnimatedSprite2D = $Camera3D/CanvasLayer/smoke_effect
+@onready var smoke_effect_back: AnimatedSprite2D = $Camera3D/CanvasLayer/smoke_effect_back
 
 var blood_effect = preload("res://scenes/enemies/blood.tscn")
 
@@ -60,6 +62,7 @@ var bob_amp = 0.05      # Amplitude (quão longe a câmera vai)
 var t_bob = 0.0         # Contador de tempo para o cálculo do Seno
 
 
+# DASH
 @export_group("Dash Settings")
 @export var DASH_SPEED : float = 30.0    # Velocidade durante o dash
 @export var DASH_DURATION : float = 0.2  # Quanto tempo dura (em segundos)
@@ -69,7 +72,8 @@ var is_dashing : bool = false
 var dash_timer : float = 0.0
 var dash_cooldown_timer : float = 0.0
 var dash_direction : Vector3 = Vector3.ZERO
-
+@onready var trail_particles: GPUParticles3D = $trail_particles # Nó de fumaça
+@onready var modelo_visual = $maycow_lopes/Armature/Skeleton3D/char1
 
 
 #ORIGINAL POSITION FOR THE LEFT HAND
@@ -214,6 +218,7 @@ func _physics_process(delta: float) -> void:
 	# 7. MOVIMENTAÇÃO (DASH VS CAMINHADA)
 	var input_dir := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 	
+	# No seu item 7 do _physics_process:
 	if is_dashing:
 		# MOVIMENTO DE DASH
 		velocity.x = dash_direction.x * DASH_SPEED
@@ -267,20 +272,58 @@ func _physics_process(delta: float) -> void:
 	# 9. FINALIZAÇÃO
 	move_and_slide()
 
-# --- FUNÇÃO DE SUPORTE AO DASH ---
+
+
 func dash():
+	var tween = create_tween()
+		# Ativa o rastro de fumaça
+	if trail_particles:
+		trail_particles.emitting = true
+		smoke_effect.process_mode = Node.PROCESS_MODE_ALWAYS
+		smoke_effect.speed_scale = 1.0 / 0.2 # Substitua 0.2 pelo valor da sua camera lenta
+		smoke_effect.play("smoke")
+		smoke_effect_back.process_mode = Node.PROCESS_MODE_ALWAYS
+		smoke_effect_back.speed_scale = 1.0 / 0.2 # Substitua 0.2 pelo valor da sua camera lenta
+		smoke_effect_back.play("smoke")
+
+	# --- 1. SUA LÓGICA DE FÍSICA E DIREÇÃO JÁ EXISTENTE ---
 	var input_dir = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 	var direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 	
 	if direction == Vector3.ZERO:
-		direction = -transform.basis.z # Dash para frente se estiver parado
+		direction = -transform.basis.z # Dash para frente se parado
 	
 	dash_direction = direction
 	is_dashing = true
-	dash_timer = DASH_DURATION
+	dash_timer = DASH_DURATION # Use o tempo que você já tem
 	dash_cooldown_timer = DASH_COOLDOWN
+
+	# --- 2. EFEITO DE ENCOLHER (SQUASH) ---
+	if modelo_visual:
+		var tween_scale = create_tween()
+		
+		# Faz o Tween ignorar a câmera lenta para ser instantâneo no seu controle
+		tween_scale.set_speed_scale(1.0 / 0.2) 
+		
+		# ENCOLHER: Vai para escala zero em 0.1 segundos
+		# Usamos TRANS_BACK para dar um efeito de "mola" ao sumir, se desejar
+		var shrink = tween_scale.tween_property(modelo_visual, "scale", Vector3(0, 0, 0), 0.17)
+		if shrink: shrink.set_trans(Tween.TRANS_SINE)
+		
+		# ESPERA: O tempo que você determinou para o Dash
+		tween_scale.tween_interval(DASH_DURATION)
+		
+		# DESENCOLHER: Volta para a escala normal (1, 1, 1)
+		var grow = tween_scale.tween_property(modelo_visual, "scale", Vector3(1, 1, 1), 0.17)
+		if grow: grow.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+		
+	# Ativa o rastro de fumaça
+	if trail_particles:
+		trail_particles.emitting = true
+
 	
-	# Vibração de impacto do Dash
+	# --- 3. SEUS EFEITOS DE VIBRAÇÃO E CAMERA LENTA ---
 	GlobalUtils.vibrate_controller(Input, 0.5, 0.2, 0.1)
 	GlobalUtils.ativar_camera_lenta_com_fim(0.2, 1.0, true)
 	
