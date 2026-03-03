@@ -34,6 +34,7 @@ extends CharacterBody3D
 @onready var hand_with_pistol: Node3D = $Camera3D/hand_with_pistol
 @onready var smoke_effect: AnimatedSprite2D = $Camera3D/CanvasLayer/smoke_effect
 @onready var smoke_effect_back: AnimatedSprite2D = $Camera3D/CanvasLayer/smoke_effect_back
+@onready var dash_effect: AudioStreamPlayer = $sounds/DashEffect
 
 var blood_effect = preload("res://scenes/enemies/blood.tscn")
 
@@ -279,12 +280,18 @@ func dash():
 		# Ativa o rastro de fumaça
 	if trail_particles:
 		trail_particles.emitting = true
+		
+	if !is_first_person:
 		smoke_effect.process_mode = Node.PROCESS_MODE_ALWAYS
 		smoke_effect.speed_scale = 1.0 / 0.2 # Substitua 0.2 pelo valor da sua camera lenta
 		smoke_effect.play("smoke")
 		smoke_effect_back.process_mode = Node.PROCESS_MODE_ALWAYS
 		smoke_effect_back.speed_scale = 1.0 / 0.2 # Substitua 0.2 pelo valor da sua camera lenta
-		smoke_effect_back.play("smoke")
+		smoke_effect_back.play("smoke")	
+		
+	dash_effect.process_mode = Node.PROCESS_MODE_ALWAYS
+	dash_effect.pitch_scale = 1.0 / 0.2 # Substitua 0.2 pelo valor da sua camera lenta
+	dash_effect.play()
 
 	# --- 1. SUA LÓGICA DE FÍSICA E DIREÇÃO JÁ EXISTENTE ---
 	var input_dir = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
