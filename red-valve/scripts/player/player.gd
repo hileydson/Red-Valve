@@ -60,6 +60,18 @@ var bob_amp = 0.05      # Amplitude (quão longe a câmera vai)
 var t_bob = 0.0         # Contador de tempo para o cálculo do Seno
 
 
+@export_group("Dash Settings")
+@export var DASH_SPEED : float = 30.0    # Velocidade durante o dash
+@export var DASH_DURATION : float = 0.2  # Quanto tempo dura (em segundos)
+@export var DASH_COOLDOWN : float = 1.0  # Tempo de espera para usar de novo
+
+var is_dashing : bool = false
+var dash_timer : float = 0.0
+var dash_cooldown_timer : float = 0.0
+var dash_direction : Vector3 = Vector3.ZERO
+
+
+
 #ORIGINAL POSITION FOR THE LEFT HAND
 var magic_hand_pos_original
 var magic_blade_pos_original
@@ -137,138 +149,141 @@ var hold_threshold: float = 0.15 # 200 milisegundos para confirmar o "segurar"
 # No topo do script
 var limite_rotacao_lateral = deg_to_rad(35) # O máximo que ele pode "virar" (ex: 35 graus)
 var velocidade_giro = 8.0
-func _physics_process(delta: float) -> void:			
-	
-	# muda pra primeira pessoa
-	# Lógica do Cronômetro para o botão
+func _physics_process(delta: float) -> void:
+	# 1. LÓGICA DE VISÃO (PRIMEIRA/TERCEIRA PESSOA)
 	if Input.is_action_pressed("ui_hold_first_person_view"):
 		hold_timer += delta
 	else:
-		hold_timer = 0.0 # Reset instantâneo ao soltar
+		hold_timer = 0.0
 
-	# Só consideramos "holding" se o tempo passar do limite
 	var holding_view = hold_timer >= hold_threshold
 
 	if holding_view and !is_first_person:
-		# MUDANDO PARA PRIMEIRA PESSOA
 		is_first_person = true
 		transicao_camera(camera_third_person, camera, camera_first_person_marker, true)
-
 	elif !holding_view and is_first_person:
-		# VOLTANDO PARA TERCEIRA PESSOA
 		is_first_person = false
 		transicao_camera(camera, camera_third_person, camera_third_person_marker, false)
 		
+	point.visible = is_first_person
 	
-	#mostra sempre o point quando em primeira pessoa
-	if is_first_person:
-		point.visible = true
-	else:
-		point.visible = false
-	
-	#paralisa jogador enquanto tiver fazendo o magic attack
-	if magic_hand.animation =="attack":
+	# 2. TRAVA DE ATAQUE MÁGICO
+	if magic_hand.animation == "attack":
 		return 
 	
-	# Adiciona gravidade
+	# 3. GRAVIDADE
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 
-	# Pulo
+	# 4. PULO E RECARGA
 	if Input.is_action_just_pressed("ui_accept") and is_on_floor() and !holding_view:
 		velocity.y = JUMP_VELOCITY
 		playback.travel("jump")
-		print(playback.get_current_node())
 		
-	# reload
 	if Input.is_action_just_pressed("ui_reload") and !transition_camera:
 		reload()
 	
-	if pistola.animation!="reload" and Input.is_action_just_pressed("ui_shoot") and !transition_camera:
+	if pistola.animation != "reload" and Input.is_action_just_pressed("ui_shoot") and !transition_camera:
 		shoot(Input)
 	
 	if magic_hand.animation == "idle" and Input.is_action_just_pressed("ui_magic_attack") and !transition_camera and camera.current:
 		magic_hand_attack()
 		
-	
-	#se estiver no bullet time sai vazado pra nao interferir no movimento da camera
 	if camera_bullet_time_ON:
 		return
-	
-	
-	# --- LÓGICA DO ANALÓGICO DIREITO (CONTROLE) ---
+
+	# 5. ROTAÇÃO DA CÂMERA (ANALÓGICO DIREITO)
 	if !camera_bullet_time_ON and magic_hand.animation != "attack":
 		var joy_dir = Input.get_vector("ui_look_left", "ui_look_right", "ui_look_up", "ui_look_down")
-		if joy_dir:
-			if joy_dir.length() > DEADZONE: # Deadzone para evitar drift
-				var camera_atual = get_viewport().get_camera_3d()
-				
-				# Rotação Horizontal (Eixo Y do Player)
-				rotate_y(-joy_dir.x * JOY_SENSITIVITY)
-				
-				# Rotação Vertical (Eixo X da Câmera)
-				camera_atual.rotate_x(-joy_dir.y * JOY_SENSITIVITY)
-				
-				# Aplica o mesmo Clamp que você já tem no _input
-				var value_look_down = -80
-				var value_look_up = 80
-				if camera_atual == camera_third_person: 
-					value_look_down = -10
-					value_look_up = 20
-				camera_atual.rotation.x = clamp(camera_atual.rotation.x, deg_to_rad(value_look_down), deg_to_rad(value_look_up))	
-	
-	
-	# --- LÓGICA DE VELOCIDADE (CORRIDA) ---
-	var velocidade_atual = WALK_SPEED
-	if Input.is_action_pressed("ui_run"): # Use 'pressed' para manter a corrida enquanto segura
-		velocidade_atual = RUN_SPEED
+		if joy_dir.length() > DEADZONE:
+			var camera_atual = get_viewport().get_camera_3d()
+			rotate_y(-joy_dir.x * JOY_SENSITIVITY)
+			camera_atual.rotate_x(-joy_dir.y * JOY_SENSITIVITY)
+			
+			var v_down = -10 if camera_atual == camera_third_person else -80
+			var v_up = 20 if camera_atual == camera_third_person else 80
+			camera_atual.rotation.x = clamp(camera_atual.rotation.x, deg_to_rad(v_down), deg_to_rad(v_up))
 
-	# Movimentação
+	# 6. GESTÃO DO DASH (COOLDOWN E EXECUÇÃO)
+	if dash_cooldown_timer > 0:
+		dash_cooldown_timer -= delta
+
+	if Input.is_action_just_pressed("ui_dash") and not is_dashing and dash_cooldown_timer <= 0:
+		dash()
+
+	# 7. MOVIMENTAÇÃO (DASH VS CAMINHADA)
 	var input_dir := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
-	var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
-	var velocity_Y_zero:bool = velocity.y <= 0
-	if direction and !transition_camera:
-		# Se estiver correndo, podemos aumentar o pitch do som dos passos para parecer mais rápido
-		if Input.is_action_pressed("ui_run"):
-			if pistola.animation!="reload" and pistola.animation!="run":pistola.play("run")
-			passos.pitch_scale = 1.23 # Som mais rápido
-			if is_on_floor() and velocity_Y_zero : playback.travel("run")
-		else:
-			if pistola.animation!="reload" and pistola.animation!="walk":pistola.play("walk")
-			passos.pitch_scale = 0.7 # Som normal
-			if is_on_floor() and velocity_Y_zero: playback.travel("walk")
-			
-		if !passos.playing and is_on_floor(): passos.play()
-			
-		velocity.x = direction.x * velocidade_atual
-		velocity.z = direction.z * velocidade_atual
-	else:
-		if is_on_floor() and velocity_Y_zero: playback.travel("idle")
-		
-		velocity.x = move_toward(velocity.x, 0, velocidade_atual)
-		velocity.z = move_toward(velocity.z, 0, velocidade_atual)
-		if passos.playing:
-			passos.stop() # Para o som quando parar de andar
 	
-	if head_bob_ON:
-				head_bob(delta)
+	if is_dashing:
+		# MOVIMENTO DE DASH
+		velocity.x = dash_direction.x * DASH_SPEED
+		velocity.z = dash_direction.z * DASH_SPEED
+		
+		dash_timer -= delta
+		if dash_timer <= 0:
+			is_dashing = false
+	else:
+		# MOVIMENTO NORMAL (WALK/RUN)
+		var velocidade_atual = RUN_SPEED if Input.is_action_pressed("ui_run") else WALK_SPEED
+		var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
+		var velocity_Y_zero: bool = velocity.y <= 0
 
-# GIRAR PARA O LADO AO SE MOVIMENTAR
-	var alvo_y = PI 
+		if direction and !transition_camera:
+			# Animações e Sons
+			if Input.is_action_pressed("ui_run"):
+				if pistola.animation not in ["reload", "run"]: pistola.play("run")
+				passos.pitch_scale = 1.23
+				if is_on_floor() and velocity_Y_zero: playback.travel("run")
+			else:
+				if pistola.animation not in ["reload", "walk"]: pistola.play("walk")
+				passos.pitch_scale = 0.7
+				if is_on_floor() and velocity_Y_zero: playback.travel("walk")
+			
+			if !passos.playing and is_on_floor(): passos.play()
+			
+			velocity.x = direction.x * velocidade_atual
+			velocity.z = direction.z * velocidade_atual
+		else:
+			# IDLE / PARADA
+			if is_on_floor() and velocity_Y_zero: playback.travel("idle")
+			velocity.x = move_toward(velocity.x, 0, velocidade_atual)
+			velocity.z = move_toward(velocity.z, 0, velocidade_atual)
+			if passos.playing: passos.stop()
 
+	# 8. ROTAÇÃO VISUAL DO MODELO (MAYCOW LOPES)
 	if input_dir.y <= 0.1: 
-		if input_dir.x > 0: 
-			alvo_y = PI - limite_rotacao_lateral 
-		elif input_dir.x < 0: 
-			alvo_y = PI + limite_rotacao_lateral 
+		var alvo_y = PI 
+		if input_dir.x > 0: alvo_y = PI - limite_rotacao_lateral 
+		elif input_dir.x < 0: alvo_y = PI + limite_rotacao_lateral 
 
-		# Certifique-se que o nó "maycow_lopes" existe exatamente com esse nome
 		var modelo = get_node_or_null("maycow_lopes")
 		if modelo:
-			modelo.rotation.y = lerp_angle(modelo.rotation.y, alvo_y, delta * velocidade_giro)	
+			modelo.rotation.y = lerp_angle(modelo.rotation.y, alvo_y, delta * velocidade_giro)
 
-		
+
+	if head_bob_ON:
+		head_bob(delta) # Lembre-se de incluir a vibração dentro da sua função head_bob!
+	
+	# 9. FINALIZAÇÃO
 	move_and_slide()
+
+# --- FUNÇÃO DE SUPORTE AO DASH ---
+func dash():
+	var input_dir = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+	var direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
+	
+	if direction == Vector3.ZERO:
+		direction = -transform.basis.z # Dash para frente se estiver parado
+	
+	dash_direction = direction
+	is_dashing = true
+	dash_timer = DASH_DURATION
+	dash_cooldown_timer = DASH_COOLDOWN
+	
+	# Vibração de impacto do Dash
+	GlobalUtils.vibrate_controller(Input, 0.5, 0.2, 0.1)
+	GlobalUtils.ativar_camera_lenta_com_fim(0.2, 1.0, true)
+	
 
 func head_bob(delta: float):
 	t_bob += delta * velocity.length() * float(is_on_floor())
@@ -316,6 +331,8 @@ func transicao_camera(origem: Camera3D, camera_destino: Camera3D, destino: Marke
 		control_magic.visible = show_ui
 		control_weapons.visible = show_ui
 		hand_with_pistol.visible = show_ui
+		await get_tree().create_timer(0.2).timeout
+		GlobalUtils.remover_camera_lenta()
 	else:
 		load_gun.play()
 		
@@ -535,8 +552,7 @@ func raycast_process_shoot():
 				bullet_light.visible = true
 				bullet.visible = true
 				camera_bullet_time_ON = true
-				GlobalUtils.ativar_camera_lenta(0.1, 60.0)
-				AudioServer.set_playback_speed_scale(0.2)
+				GlobalUtils.ativar_camera_lenta(0.1, 60.0, true)
 				
 				# 3. Cria o movimento da câmera
 				var tween_cam = create_tween()
@@ -572,7 +588,6 @@ func raycast_process_shoot():
 func bullet_time_back():	
 	camera_bullet_time_ON = false
 	bullet.visible = false
-	AudioServer.set_playback_speed_scale(1.0)
 	GlobalUtils.remover_camera_lenta()
 	
 	if is_first_person:
@@ -609,7 +624,8 @@ func take_damage(number:int):
 	GlobalUtils.vibrate_controller(Input, 0.5, 0.5, 0.2)
 	print("Damage taken by the player: "+str(number))
 	
-	
+
+		
 func _on_pistola_animation_finished() -> void:
 	pass #current_weapon.play("idle")
 
@@ -617,7 +633,7 @@ func _on_area_3d_body_entered(body: Node3D) -> void:
 	if magic_hand.animation == "attack":
 		blade_in.play()
 		spawn_blood_effect(body)
-		GlobalUtils.ativar_camera_lenta(0.2, 0.5) # Velocidade 20% por meio segundo
+		GlobalUtils.ativar_camera_lenta(0.2, 0.5, true) # Velocidade 20% por meio segundo
 		body.take_damage(damage_crescent_cogblade)
 	
 
@@ -625,7 +641,7 @@ func _on_area_3d_body_exited(body: Node3D) -> void:
 	if magic_hand.animation == "attack":
 		blade_back.play()
 		spawn_blood_effect(body)
-		GlobalUtils.ativar_camera_lenta(0.2, 0.5) # Velocidade 20% por meio segundo
+		GlobalUtils.ativar_camera_lenta(0.2, 0.5, true) # Velocidade 20% por meio segundo
 		body.take_damage(damage_crescent_cogblade)
 
 
