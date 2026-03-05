@@ -1,8 +1,6 @@
 extends Node
 
 
-
-
 func ativar_camera_lenta(escala: float, duracao: float, sound:bool):
 	# Muda a velocidade do tempo
 	Engine.time_scale = escala
