@@ -381,7 +381,7 @@ func transicao_camera(origem: Camera3D, camera_destino: Camera3D, destino: Marke
 		control_magic.visible = show_ui
 		control_weapons.visible = show_ui
 		hand_with_pistol.visible = show_ui
-		await get_tree().create_timer(0.2).timeout
+		await get_tree().create_timer(0.1).timeout
 		GlobalUtils.remover_camera_lenta()
 	else:
 		load_gun.play()

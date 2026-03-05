@@ -27,6 +27,10 @@ size = Vector2(20, 20)
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_665qe"]
 data = PackedVector3Array(10, 0, 10, -10, 0, 10, 10, 0, -10, -10, 0, 10, -10, 0, -10, 10, 0, -10)
 
+[sub_resource type="NavigationMesh" id="NavigationMesh_biy32"]
+vertices = PackedVector3Array(10, 0, 10, -10, 0, 10, 10, 0, -10, -10, 0, -10)
+polygons = [PackedInt32Array(0, 1, 2), PackedInt32Array(1, 3, 2)]
+
 [sub_resource type="QuadMesh" id="QuadMesh_ig7tw"]
 size = Vector2(0.4, 0.4)
 subdivide_width = 2
@@ -105,6 +109,10 @@ collision_mask = 0
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Ground/StaticBody3D" unique_id=1490253394]
 shape = SubResource("ConcavePolygonShape3D_665qe")
 
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="Ground" unique_id=182927968]
+navigation_mesh = SubResource("NavigationMesh_biy32")
+navigation_layers = 4
+
 [node name="GrassBlade" type="MeshInstance3D" parent="." unique_id=1756002042]
 visible = false
 mesh = SubResource("QuadMesh_ig7tw")
@@ -122,12 +130,6 @@ directional_shadow_split_1 = 0.01
 
 [node name="Player" parent="." unique_id=635962461 instance=ExtResource("3_665qe")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2390218, 7.056343)
-
-[node name="Zombie" parent="." unique_id=1898818697 instance=ExtResource("14_mnipt")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.87704, 1.3316387e-10, -5.1213512)
-
-[node name="TheCobaltHusker" parent="." unique_id=2088103365 instance=ExtResource("15_766kb")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -4)
 
 [node name="VoxelGI" type="VoxelGI" parent="." unique_id=1700195965]
 data = SubResource("VoxelGIData_766kb")
@@ -147,3 +149,11 @@ tracked_directional_light_shadow_steps = Array[int]([12])
 tracked_point_lights = [null]
 tracked_point_effectors = [null]
 metadata/_custom_type_script = "uid://djusduuxf0voj"
+
+[node name="enemies" type="Node3D" parent="." unique_id=763470506]
+
+[node name="Zombie" parent="enemies" unique_id=1898818697 instance=ExtResource("14_mnipt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.87704, 1.3316387e-10, -5.1213512)
+
+[node name="TheCobaltHusker" parent="enemies" unique_id=2088103365 instance=ExtResource("15_766kb")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -4)
