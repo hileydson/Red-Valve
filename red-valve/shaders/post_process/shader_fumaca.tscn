@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://bft8djb3rtxlx"]
+
+[ext_resource type="Shader" uid="uid://b0u6pdfmaoegw" path="res://shaders/battlefield/battlefield.gdshader" id="1_c34j5"]
+[ext_resource type="Texture2D" uid="uid://bdqwmqfimlx5b" path="res://assets/3d_model/player/hands/hand_reload_0.jpg" id="2_yu7hq"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hho5i"]
+shader = ExtResource("1_c34j5")
+shader_parameter/noise_texture = ExtResource("2_yu7hq")
+shader_parameter/fog_color = Color(0.6117647, 0.6117647, 0.6117647, 1)
+shader_parameter/density = 0.0790000037525
+shader_parameter/speed = 0.0730000034675
+
+[node name="shader_fumaca" type="ColorRect" unique_id=533863282]
+material = SubResource("ShaderMaterial_hho5i")
+offset_right = 1940.0
+offset_bottom = 1100.0

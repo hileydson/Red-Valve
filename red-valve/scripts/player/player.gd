@@ -35,6 +35,7 @@ extends CharacterBody3D
 @onready var smoke_effect: AnimatedSprite2D = $Camera3D/CanvasLayer/smoke_effect
 @onready var smoke_effect_back: AnimatedSprite2D = $Camera3D/CanvasLayer/smoke_effect_back
 @onready var dash_effect: AudioStreamPlayer = $sounds/DashEffect
+@onready var screen_shader: MeshInstance3D = $camera_third_person/screen_shader
 
 var blood_effect = preload("res://scenes/enemies/blood.tscn")
 
@@ -275,6 +276,29 @@ func _physics_process(delta: float) -> void:
 
 
 func dash():
+	
+	# Cria o Tween
+	var tween_fumaca = create_tween()
+
+	# 1. ENTRADA RÁPIDA (O sonho "invade" a tela)
+	# Aumenta a distorção para 0.03 rapidamente (0.1 segundos)
+	screen_shader.visible = true
+	tween_fumaca.tween_property(screen_shader.get_active_material(0), "shader_parameter/distortion_strength", 0.03, 0.1)\
+		.set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
+
+	# 2. DURAÇÃO DO DASH
+	# Espera o tempo que dura o seu dash (DASH_DURATION)
+	tween_fumaca.tween_interval(DASH_DURATION)
+
+	# 3. SAÍDA SUAVE (O sonho se dissipa)
+	# Volta para 0.0 suavemente (0.3 segundos)
+	tween_fumaca.tween_property(screen_shader.get_active_material(0), "shader_parameter/distortion_strength", 0.0, 0.3)\
+		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
+		
+	tween_fumaca.tween_callback(func():
+		screen_shader.visible = false
+		)
+	
 	var tween = create_tween()
 		# Ativa o rastro de fumaça
 	if trail_particles:

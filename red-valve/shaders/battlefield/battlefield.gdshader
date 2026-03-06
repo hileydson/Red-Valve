@@ -1,40 +1,24 @@
-shader_type spatial;
-render_mode unshaded, skip_vertex_transform;
+shader_type canvas_item;
 
-uniform sampler2D SCREEN_TEXTURE : hint_screen_texture, filter_linear_mipmap;
-
-// Parâmetros de Realismo e Tom
-uniform float contrast : hint_range(0.0, 2.0) = 1.2;
-uniform float saturation : hint_range(0.0, 2.0) = 0.85; // Lovecraft pede cores levemente lavadas
-uniform float vignette_intensity : hint_range(0.0, 2.0) = 0.4;
-uniform float aberration_amount : hint_range(0.0, 0.1) = 0.002; // Distorção nas bordas
-
-void vertex() {
-	POSITION = vec4(VERTEX, 1.0);
-}
+uniform sampler2D screen_texture : hint_screen_texture, filter_linear_mipmap;
+uniform sampler2D noise_texture : repeat_enable; // Use uma textura de Noise simples aqui
+uniform vec3 fog_color : source_color = vec3(0.9, 0.9, 0.9); // Cor clara e neutra
+uniform float density : hint_range(0.0, 1.0) = 0.15; // Mantenha baixo (0.1 a 0.2)
+uniform float speed : hint_range(0.0, 0.5) = 0.02;
 
 void fragment() {
-	vec2 uv = SCREEN_UV;
-	
-	// 1. ABERRAÇÃO CROMÁTICA (Distorção de lente/insanidade)
-	float r = texture(SCREEN_TEXTURE, uv + vec2(aberration_amount, 0.0)).r;
-	float g = texture(SCREEN_TEXTURE, uv).g;
-	float b = texture(SCREEN_TEXTURE, uv - vec2(aberration_amount, 0.0)).b;
-	vec3 color = vec3(r, g, b);
-	
-	// 2. CONTRASTE (Filmic Tone Mapping simples)
-	color = (color - 0.5) * contrast + 0.5;
-	
-	// 3. SATURAÇÃO (Desaturar para tom melancólico)
-	float gray = dot(color, vec3(0.299, 0.587, 0.114));
-	color = mix(vec3(gray), color, saturation);
-	
-	// 4. VINHETA (Escurecer bordas para foco central e mistério)
-	float d = distance(uv, vec2(0.5, 0.5));
-	color *= smoothstep(0.8, 0.8 - vignette_intensity, d);
-	
-	// 5. COLOR TINT (Opcional: Tom levemente azulado ou esverdeado "Deep One")
-	color *= vec3(0.95, 1.0, 0.98); 
-
-	ALBEDO = color;
+    // Deslocamento lento para a fumaça parecer "viva"
+    vec2 uv = SCREEN_UV + (TIME * speed * vec2(0.5, 0.2));
+    
+    // Leitura do ruído
+    float noise = texture(noise_texture, uv * 0.8).r;
+    
+    // Captura a cena original
+    vec4 scene = texture(screen_texture, SCREEN_UV);
+    
+    // O SEGREDO: Mistura a fumaça com a cena usando a densidade como força
+    // Isso garante que você nunca perca a visibilidade do jogo
+    vec3 final_color = mix(scene.rgb, fog_color, noise * density);
+    
+    COLOR = vec4(final_color, scene.a);
 }

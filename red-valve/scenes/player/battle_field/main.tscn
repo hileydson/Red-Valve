@@ -2,6 +2,7 @@
 
 [ext_resource type="Material" uid="uid://bra6ug2wjmj0j" path="res://scenes/player/battle_field/src/materials/grass_01/grass_ground_01.tres" id="1_0xm2m"]
 [ext_resource type="PackedScene" uid="uid://dy356o67p6jyn" path="res://scenes/configs/fade.tscn" id="1_biy32"]
+[ext_resource type="PackedScene" uid="uid://bft8djb3rtxlx" path="res://shaders/post_process/shader_fumaca.tscn" id="1_jboeg"]
 [ext_resource type="Material" uid="uid://c2to67v55oatp" path="res://scenes/player/battle_field/src/materials/grass_01/grass_01.tres" id="2_h2yge"]
 [ext_resource type="PackedScene" uid="uid://bhyhnppiawn07" path="res://scenes/configs/pause.tscn" id="2_jf8my"]
 [ext_resource type="PackedScene" uid="uid://cluvbknxfjx2k" path="res://scenes/player/player.tscn" id="3_665qe"]
@@ -64,6 +65,10 @@ propagation = 0.15
 interior = true
 
 [node name="battlefield" type="Node3D" unique_id=1589636946]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=813538425]
+
+[node name="shader_fumaca" parent="CanvasLayer" unique_id=533863282 instance=ExtResource("1_jboeg")]
 
 [node name="fade" parent="." unique_id=158118564 instance=ExtResource("1_biy32")]
 
