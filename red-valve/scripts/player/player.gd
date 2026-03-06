@@ -35,6 +35,7 @@ extends CharacterBody3D
 @onready var smoke_effect: AnimatedSprite2D = $Camera3D/CanvasLayer/smoke_effect
 @onready var smoke_effect_back: AnimatedSprite2D = $Camera3D/CanvasLayer/smoke_effect_back
 @onready var dash_effect: AudioStreamPlayer = $sounds/DashEffect
+@onready var dash_effect_particles: GPUParticles3D = $dash_effect_particles
 @onready var screen_shader: MeshInstance3D = $camera_third_person/screen_shader
 
 var blood_effect = preload("res://scenes/enemies/blood.tscn")
@@ -293,6 +294,8 @@ func dash():
 	dash_effect.process_mode = Node.PROCESS_MODE_ALWAYS
 	dash_effect.pitch_scale = 1.0 / 0.2 # Substitua 0.2 pelo valor da sua camera lenta
 	dash_effect.play()
+	
+	dash_effect_particles.emitting = true
 
 	# --- 1. SUA LÓGICA DE FÍSICA E DIREÇÃO JÁ EXISTENTE ---
 	var input_dir = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")

@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://c6dj6t1it4esk"]
 
 [ext_resource type="Material" uid="uid://bra6ug2wjmj0j" path="res://scenes/player/battle_field/src/materials/grass_01/grass_ground_01.tres" id="1_0xm2m"]
+[ext_resource type="Script" uid="uid://u7jso5m35r7n" path="res://shaders/battlefield/battlefield.gd" id="1_bb3vo"]
 [ext_resource type="PackedScene" uid="uid://dy356o67p6jyn" path="res://scenes/configs/fade.tscn" id="1_biy32"]
 [ext_resource type="PackedScene" uid="uid://bft8djb3rtxlx" path="res://shaders/post_process/shader_fumaca.tscn" id="1_jboeg"]
 [ext_resource type="Material" uid="uid://c2to67v55oatp" path="res://scenes/player/battle_field/src/materials/grass_01/grass_01.tres" id="2_h2yge"]
@@ -65,6 +66,7 @@ propagation = 0.15
 interior = true
 
 [node name="battlefield" type="Node3D" unique_id=1589636946]
+script = ExtResource("1_bb3vo")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=813538425]
 

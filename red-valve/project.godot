@@ -27,6 +27,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 GlobalUtils="*res://scripts/Global_Utils.gd"
+GlobalEvents="*uid://d3yfan1n0gd48"
 
 [display]
 

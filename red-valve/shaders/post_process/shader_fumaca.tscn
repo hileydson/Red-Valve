@@ -7,7 +7,7 @@
 shader = ExtResource("1_c34j5")
 shader_parameter/noise_texture = ExtResource("2_yu7hq")
 shader_parameter/fog_color = Color(0.6117647, 0.6117647, 0.6117647, 1)
-shader_parameter/density = 0.0790000037525
+shader_parameter/density = 0.0190000009025
 shader_parameter/speed = 0.0730000034675
 
 [node name="shader_fumaca" type="ColorRect" unique_id=533863282]

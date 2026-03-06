@@ -15,6 +15,23 @@ func _process(delta: float) -> void:
 	pass #print(back_caminho_das_pedras)
 
 
+# EVENTOS DE TEMPO
+# emite sinal de nevoa, sendo maior que 0 aplica, se for 0 para
+func set_low_nevoa() -> void:
+	_set_nevoa(1000)
+
+func set_high_nevoa() -> void:
+	_set_nevoa(5000)
+
+func _set_nevoa(amount:int) -> void:
+	var player = get_tree().get_first_node_in_group("player")
+	player.get_node("nevoa").emitting = true
+	player.get_node("nevoa").amount = amount
+	
+func stop_nevoa() -> void:
+	var player = get_tree().get_first_node_in_group("player")
+	player.get_node("nevoa").emitting = false
+
 func save_progress(fase:String)->void:
 	save_array = {}
 	save_array["default_language"] = default_language
