@@ -84,7 +84,7 @@ func _physics_process(delta: float) -> void:
 			#ataca se tiver perto
 			if distancia_to_player < 5:
 				steps.stop()
-				growl_attack.play()
+				if !growl_attack.playing: growl_attack.play()
 				playback.travel("attack")
 			else:
 				var next_p = nav_agent.get_next_path_position()
@@ -129,7 +129,7 @@ func take_damage(amount):
 	var tween = create_tween()
 	tween.tween_property(health_bar, "value", current_health, 0.2).set_trans(Tween.TRANS_SINE)
 	
-	if current_health <= 0:
+	if current_health <= 0 and !dead:
 		die()
 
 func die():
@@ -152,7 +152,7 @@ func die():
 
 func _on_timer_timeout() -> void:
 	if !dead:
-		growl_timed.play()
+		if !growl_timed.playing: growl_timed.play()
 
 
 func _on_attack_body_entered(body: Node3D) -> void:

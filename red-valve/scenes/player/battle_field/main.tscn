@@ -8,6 +8,28 @@
 [ext_resource type="PackedScene" uid="uid://klurx8hfjyr3" path="res://scenes/enemies/zombie_1.tscn" id="14_mnipt"]
 [ext_resource type="PackedScene" uid="uid://xf6qeqrya6pi" path="res://scenes/enemies/the_cobalt_husker.tscn" id="15_766kb"]
 
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_biy32"]
+sky_top_color = Color(0.2532702, 0.30802962, 0.3809917, 1)
+sky_horizon_color = Color(0.50540197, 0.5137431, 0.53043425, 1)
+sky_curve = 0.03498875
+sky_energy_multiplier = 0.55
+ground_curve = 0.058563557
+ground_energy_multiplier = 0.55
+sun_angle_max = 14.79
+sun_curve = 0.31057945
+
+[sub_resource type="Sky" id="Sky_jf8my"]
+sky_material = SubResource("ProceduralSkyMaterial_biy32")
+
+[sub_resource type="Environment" id="Environment_nbgu8"]
+background_mode = 2
+sky = SubResource("Sky_jf8my")
+ambient_light_sky_contribution = 0.74
+ambient_light_energy = 0.59
+reflected_light_source = 2
+tonemap_mode = 3
+sdfgi_enabled = true
+
 [sub_resource type="PlaneMesh" id="PlaneMesh_7dm0k"]
 size = Vector2(20, 20)
 
@@ -41,32 +63,14 @@ dynamic_range = 1.59
 propagation = 0.15
 interior = true
 
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_biy32"]
-sky_top_color = Color(0.2532702, 0.30802962, 0.3809917, 1)
-sky_horizon_color = Color(0.50540197, 0.5137431, 0.53043425, 1)
-sky_curve = 0.03498875
-sky_energy_multiplier = 0.55
-ground_curve = 0.058563557
-ground_energy_multiplier = 0.55
-sun_angle_max = 14.79
-sun_curve = 0.31057945
-
-[sub_resource type="Sky" id="Sky_jf8my"]
-sky_material = SubResource("ProceduralSkyMaterial_biy32")
-
-[sub_resource type="Environment" id="Environment_nbgu8"]
-background_mode = 2
-sky = SubResource("Sky_jf8my")
-ambient_light_sky_contribution = 0.74
-ambient_light_energy = 0.59
-reflected_light_source = 2
-tonemap_mode = 3
-
-[node name="Node3D" type="Node3D" unique_id=1589636946]
+[node name="battlefield" type="Node3D" unique_id=1589636946]
 
 [node name="fade" parent="." unique_id=158118564 instance=ExtResource("1_biy32")]
 
 [node name="Pause" parent="." unique_id=318954570 instance=ExtResource("2_jf8my")]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1487543477]
+environment = SubResource("Environment_nbgu8")
 
 [node name="Ground" type="MeshInstance3D" parent="." unique_id=131014601]
 layers = 7
@@ -120,71 +124,3 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.87704, 1.3316387e-10, -5.1
 
 [node name="TheCobaltHusker" parent="enemies" unique_id=2088103365 instance=ExtResource("15_766kb")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -4)
-
-[node name="CSGCombiner3D" type="CSGCombiner3D" parent="." unique_id=520614488]
-use_collision = true
-collision_layer = 2
-collision_mask = 5
-
-[node name="CSGBox3D" type="CSGBox3D" parent="CSGCombiner3D" unique_id=1819876661]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.021377563, 4.394684, 10.087427)
-size = Vector3(20.023468, 9.789368, 0.7314453)
-
-[node name="CSGBox3D2" type="CSGBox3D" parent="CSGCombiner3D" unique_id=1108842464]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.021377563, 4.394684, -10.049292)
-size = Vector3(20.023468, 9.789368, 0.7314453)
-
-[node name="CSGBox3D3" type="CSGBox3D" parent="CSGCombiner3D" unique_id=1248153451]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 9.758348, 4.394683, 0.37680578)
-size = Vector3(20.023468, 9.789368, 0.7314453)
-
-[node name="CSGBox3D4" type="CSGBox3D" parent="CSGCombiner3D" unique_id=815551832]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -9.647539, 4.394683, 0.20473385)
-size = Vector3(20.023468, 9.789368, 0.7314453)
-
-[node name="CSGBox3D5" type="CSGBox3D" parent="CSGCombiner3D" unique_id=765232957]
-transform = Transform3D(-4.371139e-08, 1, -4.371139e-08, 0, -4.371139e-08, -1, -1, -4.371139e-08, 1.9106855e-15, 0.021434784, 8.829939, 0.5611648)
-size = Vector3(20.023468, 19.550797, 0.7314453)
-
-[node name="CSGCylinder3D" type="CSGCylinder3D" parent="CSGCombiner3D" unique_id=1919839264]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.293634, 9.025469, -7.074765)
-operation = 2
-radius = 1.4990234
-
-[node name="CSGCylinder3D2" type="CSGCylinder3D" parent="CSGCombiner3D" unique_id=214711203]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.091343, 9.025469, -2.5562444)
-operation = 2
-radius = 1.4990234
-
-[node name="CSGCylinder3D3" type="CSGCylinder3D" parent="CSGCombiner3D" unique_id=1011918952]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.572805, 9.025469, 4.8984084)
-operation = 2
-radius = 1.4990234
-
-[node name="CSGCylinder3D4" type="CSGCylinder3D" parent="CSGCombiner3D" unique_id=1782774021]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.82211256, 9.025469, -3.6255708)
-operation = 2
-radius = 1.4990234
-
-[node name="CSGCylinder3D5" type="CSGCylinder3D" parent="CSGCombiner3D" unique_id=483540649]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.82211256, 9.025469, 2.3744292)
-operation = 2
-radius = 1.4990234
-
-[node name="CSGCylinder3D6" type="CSGCylinder3D" parent="CSGCombiner3D" unique_id=1048890797]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.820817, 9.025469, 6.8619637)
-operation = 2
-radius = 1.4990234
-
-[node name="CSGCylinder3D7" type="CSGCylinder3D" parent="CSGCombiner3D" unique_id=1343032180]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.3516655, 9.025469, -6.445653)
-operation = 2
-radius = 1.4990234
-
-[node name="CSGCylinder3D8" type="CSGCylinder3D" parent="CSGCombiner3D" unique_id=1883883574]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5316505, 9.025469, 0.021394253)
-operation = 2
-radius = 1.4990234
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1487543477]
-environment = SubResource("Environment_nbgu8")

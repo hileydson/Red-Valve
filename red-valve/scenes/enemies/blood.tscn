@@ -1,7 +1,6 @@
-[gd_scene load_steps=6 format=3 uid="uid://clggmhb37xmlp"]
+[gd_scene format=3 uid="uid://clggmhb37xmlp"]
 
 [ext_resource type="Script" uid="uid://bx633ykf7cx57" path="res://scripts/enemies/blood.gd" id="1_44f6p"]
-[ext_resource type="Texture2D" uid="uid://bvgwpas0j658a" path="res://assets/images/enemies/blood_mark.png" id="2_xewpu"]
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ckm2l"]
 direction = Vector3(0, 1, 0)
@@ -18,21 +17,22 @@ billboard_mode = 1
 material = SubResource("StandardMaterial3D_44f6p")
 size = Vector2(0.02, 0.05)
 
-[node name="blood" type="GPUParticles3D"]
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_44f6p"]
+load_path = "res://.godot/imported/blood_mark.png-4fd51daa4ece325aeb8a17240609850b.s3tc.ctex"
+
+[node name="blood" type="GPUParticles3D" unique_id=1151232905]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1652016, 0.21120834, 0.13920236)
-emitting = false
 amount = 40
 amount_ratio = 0.6886
-lifetime = 4.49
-one_shot = true
+lifetime = 1.96
 explosiveness = 1.0
 local_coords = true
 process_material = SubResource("ParticleProcessMaterial_ckm2l")
 draw_pass_1 = SubResource("QuadMesh_xewpu")
 script = ExtResource("1_44f6p")
 
-[node name="mancha" type="Sprite3D" parent="."]
-transform = Transform3D(0.15829988, 0, 0, 0, 0.18740822, 0, 0, 0, 0.6, 0, 0, 0)
-modulate = Color(0.9116014, 0.9116014, 0.9116014, 0.56078434)
+[node name="mancha" type="Sprite3D" parent="." unique_id=768623759]
+transform = Transform3D(0.08280939, 0, 0, 0, 0.11421491, 0, 0, 0, 0.20848066, 0, 0, 0)
+modulate = Color(0.9098039, 0.9098039, 0.9098039, 0.24705882)
 billboard = 1
-texture = ExtResource("2_xewpu")
+texture = SubResource("CompressedTexture2D_44f6p")

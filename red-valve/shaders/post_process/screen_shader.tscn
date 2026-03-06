@@ -1,0 +1,62 @@
+[gd_scene format=3 uid="uid://qs43hjp5mf5x"]
+
+[sub_resource type="Shader" id="Shader_lse5u"]
+code = "shader_type spatial;
+render_mode unshaded, skip_vertex_transform;
+
+uniform sampler2D SCREEN_TEXTURE : hint_screen_texture, filter_linear_mipmap;
+
+// Parâmetros de Realismo e Tom
+uniform float contrast : hint_range(0.0, 2.0) = 1.2;
+uniform float saturation : hint_range(0.0, 2.0) = 0.85; // Lovecraft pede cores levemente lavadas
+uniform float vignette_intensity : hint_range(0.0, 2.0) = 0.4;
+uniform float aberration_amount : hint_range(0.0, 0.1) = 0.002; // Distorção nas bordas
+
+void vertex() {
+	POSITION = vec4(VERTEX, 1.0);
+}
+
+void fragment() {
+	vec2 uv = SCREEN_UV;
+	
+	// 1. ABERRAÇÃO CROMÁTICA (Distorção de lente/insanidade)
+	float r = texture(SCREEN_TEXTURE, uv + vec2(aberration_amount, 0.0)).r;
+	float g = texture(SCREEN_TEXTURE, uv).g;
+	float b = texture(SCREEN_TEXTURE, uv - vec2(aberration_amount, 0.0)).b;
+	vec3 color = vec3(r, g, b);
+	
+	// 2. CONTRASTE (Filmic Tone Mapping simples)
+	color = (color - 0.5) * contrast + 0.5;
+	
+	// 3. SATURAÇÃO (Desaturar para tom melancólico)
+	float gray = dot(color, vec3(0.299, 0.587, 0.114));
+	color = mix(vec3(gray), color, saturation);
+	
+	// 4. VINHETA (Escurecer bordas para foco central e mistério)
+	float d = distance(uv, vec2(0.5, 0.5));
+	color *= smoothstep(0.8, 0.8 - vignette_intensity, d);
+	
+	// 5. COLOR TINT (Opcional: Tom levemente azulado ou esverdeado \"Deep One\")
+	color *= vec3(0.95, 1.0, 0.98); 
+
+	ALBEDO = color;
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vmk05"]
+render_priority = 0
+shader = SubResource("Shader_lse5u")
+shader_parameter/contrast = 2.0
+shader_parameter/saturation = 2.0
+shader_parameter/vignette_intensity = 2.0
+shader_parameter/aberration_amount = 0.10000000149012
+
+[sub_resource type="QuadMesh" id="QuadMesh_gheg7"]
+material = SubResource("ShaderMaterial_vmk05")
+size = Vector2(2, 2)
+
+[node name="screen_shader" type="MeshInstance3D" unique_id=380152255]
+visible = false
+cast_shadow = 0
+extra_cull_margin = 16384.0
+mesh = SubResource("QuadMesh_gheg7")
+skeleton = NodePath("../..")
