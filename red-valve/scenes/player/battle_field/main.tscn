@@ -99,7 +99,9 @@ mesh = SubResource("QuadMesh_ig7tw")
 
 [node name="Grass" type="MultiMeshInstance3D" parent="." unique_id=1928822362]
 material_override = ExtResource("2_h2yge")
+material_overlay = ExtResource("2_h2yge")
 cast_shadow = 0
+lod_bias = 0.001
 multimesh = SubResource("MultiMesh_h2yge")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=30117621]

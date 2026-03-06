@@ -1,5 +1,5 @@
 shader_type spatial;
-render_mode blend_mix, depth_prepass_alpha;
+render_mode blend_mix, cull_disabled; // Removi o render_priority daqui
 
 uniform bool billboard = false;
 
@@ -89,12 +89,15 @@ void vertex() {
 }
 
 void fragment() {
+	
+
 	float shape_value = texture(shape_texture, UV).r;
 	if(use_atlas){
 		vec2 at_uv = atlas_uv(UV, id, 2);
 		shape_value = texture(shape_atlas, at_uv).r;
 	}
 
+	
 	float noise_value = texture(noise_texture, world_pos.xz * 0.1).r;
 	if(randomf(id,1) < random_variation) noise_value += 0.4;
 	

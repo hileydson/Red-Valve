@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://hqa6gm8vhbtr"]
+
+[ext_resource type="Shader" uid="uid://dbp1pbsmfgssi" path="res://shaders/post_process/shade_2d_ps1_ps2_graphics.gdshader" id="1_ng5bf"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hho5i"]
+shader = ExtResource("1_ng5bf")
+shader_parameter/pixel_size = 0.0010000000475
+shader_parameter/color_depth = 32
+shader_parameter/jitter_intensity = 0.001
+shader_parameter/vignette_strength = 0.0030000001425
+shader_parameter/scanline_intensity = 0.1
+shader_parameter/tint_color = Color(1, 1, 1, 1)
+
+[node name="shader_ps1_ps2_graphics" type="ColorRect" unique_id=533863282]
+material = SubResource("ShaderMaterial_hho5i")
+offset_right = 1940.0
+offset_bottom = 1100.0
