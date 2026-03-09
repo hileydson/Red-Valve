@@ -7,8 +7,19 @@
 [ext_resource type="Material" uid="uid://c2to67v55oatp" path="res://scenes/player/battle_field/src/materials/grass_01/grass_01.tres" id="2_h2yge"]
 [ext_resource type="PackedScene" uid="uid://bhyhnppiawn07" path="res://scenes/configs/pause.tscn" id="2_jf8my"]
 [ext_resource type="PackedScene" uid="uid://cluvbknxfjx2k" path="res://scenes/player/player.tscn" id="3_665qe"]
+[ext_resource type="Script" uid="uid://djusduuxf0voj" path="res://addons/SunshineClouds2/SunshineCloudsDriver.gd" id="9_biy32"]
+[ext_resource type="RDShaderFile" uid="uid://dx1y5cye1m1hu" path="res://addons/SunshineClouds2/SunshineCloudsCompute.glsl" id="10_jf8my"]
+[ext_resource type="CompressedTexture3D" uid="uid://dei12lsgrjpyu" path="res://addons/SunshineClouds2/NoiseTextures/curl_noise_varied.tga" id="11_nbgu8"]
+[ext_resource type="CompressedTexture3D" uid="uid://b3uyfsp4in821" path="res://addons/SunshineClouds2/NoiseTextures/bluenoise_Dither.png" id="12_aouq6"]
+[ext_resource type="Texture2D" uid="uid://de2nsujnhdlg0" path="res://addons/SunshineClouds2/NoiseTextures/ExtraLargeScaleNoise.tres" id="13_hugnb"]
+[ext_resource type="Texture2D" uid="uid://g02m2ewpwusq" path="res://addons/SunshineClouds2/NoiseTextures/HeightGradient.tres" id="14_bfvao"]
 [ext_resource type="PackedScene" uid="uid://klurx8hfjyr3" path="res://scenes/enemies/zombie_1.tscn" id="14_mnipt"]
-[ext_resource type="PackedScene" uid="uid://xf6qeqrya6pi" path="res://scenes/enemies/the_cobalt_husker.tscn" id="15_766kb"]
+[ext_resource type="NoiseTexture3D" uid="uid://6ed3lvlpbqmg" path="res://addons/SunshineClouds2/NoiseTextures/LargeScaleNoise.tres" id="15_k2rox"]
+[ext_resource type="NoiseTexture3D" uid="uid://dxyewgt7o40m0" path="res://addons/SunshineClouds2/NoiseTextures/MediumScaleNoise.tres" id="16_cthop"]
+[ext_resource type="RDShaderFile" uid="uid://cqhejbalsrvjp" path="res://addons/SunshineClouds2/SunshineCloudsPostCompute.glsl" id="17_3ud14"]
+[ext_resource type="RDShaderFile" uid="uid://crfpk8ta4qxsk" path="res://addons/SunshineClouds2/SunshineCloudsPreCompute.glsl" id="18_1ce5y"]
+[ext_resource type="Script" uid="uid://dnblgqynq1t7l" path="res://addons/SunshineClouds2/SunshineClouds.gd" id="19_ss2wo"]
+[ext_resource type="NoiseTexture3D" uid="uid://bnck2kxeg5bkg" path="res://addons/SunshineClouds2/NoiseTextures/SmallScaleNoise.tres" id="20_dkgbg"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_biy32"]
 sky_top_color = Color(0.2532702, 0.30802962, 0.3809917, 1)
@@ -25,12 +36,38 @@ sky_material = SubResource("ProceduralSkyMaterial_biy32")
 
 [sub_resource type="Environment" id="Environment_nbgu8"]
 background_mode = 2
+background_energy_multiplier = 0.41
 sky = SubResource("Sky_jf8my")
 ambient_light_sky_contribution = 0.74
 ambient_light_energy = 0.59
 reflected_light_source = 2
 tonemap_mode = 3
 sdfgi_enabled = true
+
+[sub_resource type="CompositorEffect" id="CompositorEffect_biy32"]
+resource_local_to_scene = false
+resource_name = ""
+enabled = true
+effect_callback_type = 3
+access_resolved_color = true
+access_resolved_depth = true
+needs_motion_vectors = true
+needs_normal_roughness = false
+script = ExtResource("19_ss2wo")
+dither_noise = ExtResource("12_aouq6")
+height_gradient = ExtResource("14_bfvao")
+extra_large_noise_patterns = ExtResource("13_hugnb")
+large_scale_noise = ExtResource("15_k2rox")
+medium_scale_noise = ExtResource("16_cthop")
+small_scale_noise = ExtResource("20_dkgbg")
+curl_noise = ExtResource("11_nbgu8")
+pre_pass_compute_shader = ExtResource("18_1ce5y")
+compute_shader = ExtResource("10_jf8my")
+post_pass_compute_shader = ExtResource("17_3ud14")
+wind_direction = Vector3(1, 0, 1)
+
+[sub_resource type="Compositor" id="Compositor_jf8my"]
+compositor_effects = Array[CompositorEffect]([SubResource("CompositorEffect_biy32")])
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_7dm0k"]
 size = Vector2(20, 20)
@@ -78,6 +115,7 @@ script = ExtResource("1_bb3vo")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1487543477]
 environment = SubResource("Environment_nbgu8")
+compositor = SubResource("Compositor_jf8my")
 
 [node name="Ground" type="MeshInstance3D" parent="." unique_id=131014601]
 layers = 7
@@ -131,5 +169,12 @@ data = SubResource("VoxelGIData_766kb")
 [node name="Zombie" parent="enemies" unique_id=1898818697 instance=ExtResource("14_mnipt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.87704, 1.3316387e-10, -5.1213512)
 
-[node name="TheCobaltHusker" parent="enemies" unique_id=2088103365 instance=ExtResource("15_766kb")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -4)
+[node name="SunshineCloudsDriverGD" type="Node" parent="." unique_id=580377118 node_paths=PackedStringArray("tracked_directional_lights", "tracked_point_lights", "tracked_point_effectors")]
+script = ExtResource("9_biy32")
+update_continuously = true
+clouds_resource = SubResource("CompositorEffect_biy32")
+tracked_directional_lights = [null]
+tracked_directional_light_shadow_steps = Array[int]([12])
+tracked_point_lights = [null]
+tracked_point_effectors = [null]
+metadata/_custom_type_script = "uid://djusduuxf0voj"
