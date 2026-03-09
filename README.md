@@ -1,6 +1,7 @@
 # Red-Valve
 # FPS - Retro Style - Horror
 
+<img width="761" height="310" alt="red_valve" src="https://github.com/user-attachments/assets/58d766fe-afac-4751-a3ce-dfb10a875e27" />
 
 # O Incidente
 Maycow Lopes era um mecânico forense comum até encontrar um artefato enterrado em uma cena de crime inexplicável: o Amuleto de Engrenagem (The Gear Amulet). Ao tocá-lo, Maycow não apenas viu o que aconteceu ali, mas fragmentou sua própria existência. Ele agora vive entre duas realidades sobrepostas: o Mundo de Vigília (a Terra fria e cinzenta) e o Abismo de Ferro (uma dimensão distorcida feita de metal, sombras e magia bruta).
