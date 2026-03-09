@@ -2,62 +2,21 @@
 # FPS - Retro Style - Horror
 
 
-# Episode 1 
+# O Incidente
+Maycow Lopes era um mecânico forense comum até encontrar um artefato enterrado em uma cena de crime inexplicável: o Amuleto de Engrenagem (The Gear Amulet). Ao tocá-lo, Maycow não apenas viu o que aconteceu ali, mas fragmentou sua própria existência. Ele agora vive entre duas realidades sobrepostas: o Mundo de Vigília (a Terra fria e cinzenta) e o Abismo de Ferro (uma dimensão distorcida feita de metal, sombras e magia bruta).
 
-# First Mission: Mining Station Acheron V
+# Os Dois Mundos
+The Waking World (Mundo de Vigília): Aqui, Maycow é um fugitivo. Criaturas conhecidas como Hollowed (Vazios) o perseguem incessantemente. Como ele não tem poderes nesta realidade, o jogo se torna um stealth/puzzle de sobrevivência. Ele precisa usar o cenário e plataformas para escapar, já que suas armas não funcionam contra espectros que não pertencem a este plano.
 
-You are a mercenary sent to a deep-space mining colony on a rogue asteroid. Communications went dark shortly after the crew reported discovering "impossible geometries" within the rock’s deepest mantle.
+The Iron Abyss (Abismo de Ferro): Ao ativar o amuleto, Maycow arrasta a si mesmo e aos inimigos próximos para o Abismo. Lá, as regras mudam. Ele se torna o predador. Seus reflexos são sobre-humanos e ele manifesta seu arsenal.
 
-# The Conflict: A Rupture in Perception
+# O Arsenal de Maycow
+The Cogblade: Uma arma híbrida de mecânica e feitiçaria. É uma lâmina circular dentada que canaliza a energia do Amuleto. Maycow não a troca por outras espadas; em vez disso, ele infunde Runas de Éter nela. Cada magia nova (fogo fátuo, gelo sombrio, eletricidade estática) altera a forma como a Cogblade corta e reage aos inimigos.
 
-This wasn't a typical alien invasion. It was a breakdown of reality. While excavating a pulsing, translucent mineral, the miners began "seeing" into dimensions the human mind isn't built to process.
+The Soul-Revolver: Uma pistola forjada no Abismo que utiliza a essência dos inimigos derrotados como munição. Conforme Maycow avança, ele encontra outras armas de fogo "corrompidas" pela dimensão escura, permitindo que ele lute à distância enquanto usa a Cogblade para controle de grupo.
 
-The crew didn't just die; they became architects of a new, twisted flesh. The base is now a labyrinth of industrial steel fused with organic, throbbing matter and angles that seem to hurt the eyes.
+# O Conflito Principal
+A barreira entre os mundos está ruindo. Algo no Abismo de Ferro quer usar Maycow como uma ponte definitiva para consumir o mundo real. Maycow precisa decidir: destruir o amuleto e perder seus poderes (ficando indefeso contra os monstros que já cruzaram a fronteira) ou dominar a magia do Abismo para se tornar o novo guardião do portal, custe o que custar à sua humanidade.
 
-
-# Gameplay Elements (Lovecraftian Style)
-
-# The Enemies
-Chisel Cultists: Former miners who gouged out their own eyes because "what they saw was too beautiful to be tainted by light." They attack with mining drills and runic rituals.
-
-Geometric Aberrations: Floating, shifting masses of stone and tentacles that defy gravity and the visual logic of the game engine.
-
-The Threshold Guardian (Boss): A colossal mass of teeth and empty sockets that has overtaken the base's central processing core.
-
-# The "Sanity" Mechanic
-Instead of a complex fear meter, use visual cues:
-
-As your health drops, wall textures slowly morph into staring eyes or strange symbols.
-
-The ambient soundtrack increases in volume, mixing industrial clanging with whispers in an incomprehensible tongue.
-
-# The Twist
-Upon reaching the core, you realize you weren't sent on a rescue mission. Your ship is rigged with a "Dark Matter" charge designed not to destroy the asteroid, but to seal the rift.
-
-
-# The Catch: 
-
-To close the gate, someone has to pull the trigger manually from the inside. The game ends with you firing into the heart of the entity as the reality around you dissolves into pixels and chaos.
-
-
-# Why do I see this as a good plot:
-
-Aesthetics: It allows for vibrant, eerie colors (neon purples, greens, deep oranges) contrasted against grey industrial pipes.
-
-Simplicity: The goal is always "go deeper" and "kill what shouldn't exist."
-
-Atmosphere: The isolation of space is the perfect modern stand-in for Lovecraft’s lonely coastal towns.
-
-
-# Design Methods
-
-3D Enviroments 
-Enemies in 3D
-Player in 3D
-Effects in 3D
-Sprites 2D used for simple itens like a candle or some textures
-Weapons in sprites 2D
-
-Create sprites with free Gemini
-Animate sprites with Ludos.ai
-Create and animate 3D models with Meshy.ai
+# Frase de Efeito (Tagline):
+"In the light, you run. In the dark, they die."
