@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://b1ii25udxfjgn"]
+[gd_scene format=4 uid="uid://b1ii25udxfjgn"]
 
 [ext_resource type="Script" uid="uid://brll3q8nqbl05" path="res://scripts/stages/prolog/the_house.gd" id="1_01ffe"]
 [ext_resource type="PackedScene" uid="uid://cluvbknxfjx2k" path="res://scenes/player/player.tscn" id="1_pbbbw"]
@@ -13,6 +13,10 @@
 [ext_resource type="Script" uid="uid://b4tkplvh7fq40" path="res://addons/sky_3d/src/SkyDome.gd" id="10_vt4l1"]
 [ext_resource type="Script" uid="uid://cjmkcj8hwm7ts" path="res://addons/sky_3d/src/TimeOfDay.gd" id="11_n2v7u"]
 [ext_resource type="Texture2D" uid="uid://k08fcianykyy" path="res://assets/3d_model/stages/prolog/piso.jpeg" id="13_qysyv"]
+[ext_resource type="PackedScene" uid="uid://w6r42qko6wle" path="res://assets/3d_model/stages/prolog/gray_l-shaped_couch.glb" id="14_7yhl5"]
+[ext_resource type="PackedScene" uid="uid://by8kf6nndagu5" path="res://assets/3d_model/stages/prolog/modern_entertainment_center_free.glb" id="15_n3kvr"]
+[ext_resource type="AudioStream" uid="uid://bq52kfcrl8whl" path="res://assets/3d_model/stages/prolog/video_mapa_1_test.mp3" id="16_avu31"]
+[ext_resource type="VideoStream" uid="uid://b7gf0dajsnkca" path="res://assets/3d_model/stages/prolog/video_mapa_1_test.ogv" id="16_n3kvr"]
 
 [sub_resource type="Environment" id="Environment_pbbbw"]
 background_energy_multiplier = 0.69
@@ -34,12 +38,12 @@ shader_parameter/atm_darkness = 0.5
 shader_parameter/atm_sun_intensity = 18.0
 shader_parameter/atm_day_tint = Color(0.807843, 0.909804, 1, 1)
 shader_parameter/atm_horizon_light_tint = Color(0.980392, 0.635294, 0.462745, 1)
-shader_parameter/atm_night_tint = Color(0.018657258, 0.022128437, 0.027768973, 0.11064218)
+shader_parameter/atm_night_tint = Color(0.048975937, 0.058087897, 0.0728945, 0.2904395)
 shader_parameter/atm_level_params = Vector3(1, 0, 0)
 shader_parameter/atm_thickness = 0.7
 shader_parameter/atm_beta_ray = Vector3(5.804544e-06, 1.3562913e-05, 3.311258e-05)
 shader_parameter/atm_beta_mie = Vector3(3.038e-08, 3.038e-08, 3.038e-08)
-shader_parameter/sun_light_color = Color(0.98757434, 0.7036474, 0.56137323, 1)
+shader_parameter/sun_light_color = Color(0.98038244, 0.5321207, 0.30749944, 1)
 shader_parameter/sun_disk_color = Color(0.996094, 0.541334, 0.140076, 1)
 shader_parameter/sun_disk_intensity = 30.0
 shader_parameter/sun_disk_size = 0.02
@@ -61,7 +65,7 @@ shader_parameter/starmap_flip_u = false
 shader_parameter/starmap_flip_v = false
 shader_parameter/starmap_alignment = Vector3(2.68288, -0.25891, 0.40101)
 shader_parameter/star_rotation_offset = 9.38899
-shader_parameter/star_rotation = -10.246797717146356
+shader_parameter/star_rotation = -13.360800906618996
 shader_parameter/star_tilt = -1.2915436464758039
 shader_parameter/star_field_color = Color(1, 1, 1, 1)
 shader_parameter/star_field_texture = ExtResource("7_n3kvr")
@@ -77,8 +81,8 @@ shader_parameter/cirrus_absorption = 2.0
 shader_parameter/cirrus_sky_tint_fade = 0.5
 shader_parameter/cirrus_size = 1.0
 shader_parameter/cirrus_uv = Vector2(0.16, 0.11)
-shader_parameter/cirrus_position1 = Vector2(0.1294081, 0.1294081)
-shader_parameter/cirrus_position2 = Vector2(0.1294081, 0.1294081)
+shader_parameter/cirrus_position1 = Vector2(0.7770827, 0.7770827)
+shader_parameter/cirrus_position2 = Vector2(0.7770827, 0.7770827)
 shader_parameter/cirrus_texture = ExtResource("3_01ffe")
 shader_parameter/cumulus_visible = true
 shader_parameter/cumulus_intensity = 0.6
@@ -88,7 +92,7 @@ shader_parameter/cumulus_absorption = 2.0
 shader_parameter/cumulus_noise_freq = 2.7
 shader_parameter/cumulus_sky_tint_fade = 0.0
 shader_parameter/cumulus_size = 0.5
-shader_parameter/cumulus_position = Vector2(10.657699, 10.657699)
+shader_parameter/cumulus_position = Vector2(28.967451, 28.967451)
 shader_parameter/cumulus_texture = ExtResource("4_qysyv")
 shader_parameter/cumulus_partial_mie_phase = Vector3(0.957564, 1.042436, 0.412)
 shader_parameter/cumulus_mie_intensity = 1.0
@@ -98,7 +102,7 @@ shader_parameter/azimuthal_grid_rotation_offset = 0.03
 shader_parameter/show_equatorial_grid = false
 shader_parameter/equatorial_grid_color = Color(0, 0.75, 1, 1)
 shader_parameter/equatorial_grid_rotation_offset = 0.03
-shader_parameter/moon_matrix = Basis(0, -0.6139807, -0.7893211, -0.335876, -0.74346644, 0.5783122, -0.9419062, 0.26511404, -0.2062214)
+shader_parameter/moon_matrix = Basis(0, -0.19578257, -0.9806473, -0.9590455, 0.2777702, -0.055455778, 0.28325188, 0.9404855, -0.18776439)
 
 [sub_resource type="Sky" id="Sky_y84l6"]
 sky_material = SubResource("ShaderMaterial_m2pnx")
@@ -107,7 +111,7 @@ sky_material = SubResource("ShaderMaterial_m2pnx")
 background_mode = 2
 sky = SubResource("Sky_y84l6")
 ambient_light_source = 3
-ambient_light_color = Color(0.5896961, 0.42378697, 0.3422528, 1)
+ambient_light_color = Color(0.43044323, 0.252233, 0.1689794, 1)
 reflected_light_source = 2
 tonemap_mode = 3
 tonemap_white = 6.0
@@ -150,6 +154,47 @@ uv1_scale = Vector3(5, 5, 5)
 albedo_texture = ExtResource("13_qysyv")
 uv1_scale = Vector3(16, 16, 16)
 
+[sub_resource type="ArrayMesh" id="ArrayMesh_mlxvh"]
+_surfaces = [{
+"aabb": AABB(3.9286706, -229.84433, 144.15955, 1e-05, 459.68866, 247.43057),
+"format": 34896613377,
+"index_count": 6,
+"index_data": PackedByteArray("AAABAAIAAAADAAEA"),
+"name": "Screen",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 4,
+"vertex_data": PackedByteArray("AAD//wAAAAAAAAAA//8AAAAA/////wAAAAAAAAAAAAA=")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_m2pnx"]
+resource_name = "Sketchfab_Scene_Cube_003_Screen_0"
+lightmap_size_hint = Vector2i(38, 22)
+_surfaces = [{
+"aabb": AABB(3.9286706, -229.84433, 144.15955, 1e-05, 459.68866, 247.43057),
+"attribute_data": PackedByteArray("/xB/P+4Abjs2lFc8jC66PO4AbjuKuAk/r6F8P4wuej//EH8/irgJPzaUVzyMLno/7gBuO+4AbjuvoXw/jC66PA=="),
+"format": 34359742519,
+"index_count": 6,
+"index_data": PackedByteArray("AAABAAIAAAADAAEA"),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 4,
+"vertex_data": PackedByteArray("V297QCbYZUPYKBBDV297QCbYZcOJy8NDV297QCbYZUOJy8NDV297QCbYZcPYKBBD+v8AgP5//v/6/wCA/n/+//r/AID+f/7/+v8AgP5//v8=")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_mlxvh")
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_avu31"]
+viewport_path = NodePath("SubViewport")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vt4l1"]
+resource_local_to_scene = true
+albedo_texture = SubResource("ViewportTexture_avu31")
+emission = Color(0.7121294, 0.7121294, 0.71212935, 1)
+emission_energy_multiplier = 0.36
+uv1_scale = Vector3(-1, -1, -1)
+
 [node name="the_house" type="Node3D" unique_id=463009553]
 script = ExtResource("1_01ffe")
 
@@ -169,35 +214,37 @@ environment = SubResource("Environment_pbbbw")
 environment = SubResource("Environment_r8a1f")
 camera_attributes = SubResource("CameraAttributesPractical_touxj")
 script = ExtResource("9_osxep")
-current_time = 7.207525556719691
+current_time = 17.69352555668742
 minutes_per_day = 4.0
 wind_direction = 2.35619451204804
 metadata/_custom_type_script = "uid://deo0gxkmk2ahd"
 
 [node name="SunLight" type="DirectionalLight3D" parent="ambient/WorldEnvironment/Sky3D" unique_id=2018384540]
-transform = Transform3D(0.43269107, -0.17071407, 0.8852317, 0, 0.98190814, 0.18935782, -0.90154225, -0.08193344, 0.4248629, 0.8852317, 0.18935782, 0.4248629)
-light_color = Color(0.98757434, 0.7036474, 0.56137323, 1)
+transform = Transform3D(0.2785548, 0.009182113, -0.96037644, 0, 0.9999543, 0.009560515, 0.96042037, -0.0026631274, 0.27854207, -0.96037644, 0.009560515, 0.27854207)
+light_color = Color(0.98038244, 0.5321207, 0.30749944, 1)
+light_energy = 0.7390129
 shadow_enabled = true
 
 [node name="MoonLight" type="DirectionalLight3D" parent="ambient/WorldEnvironment/Sky3D" unique_id=321354681]
-transform = Transform3D(0, -0.33587605, -0.9419062, -0.61398065, -0.74346644, 0.26511404, -0.78932106, 0.5783122, -0.20622139, -0.9419062, 0.26511404, -0.20622139)
+transform = Transform3D(0, -0.9590455, 0.28325185, -0.19578256, 0.27777016, 0.9404855, -0.9806473, -0.05545577, -0.18776439, 0.28325185, 0.9404855, -0.18776439)
 light_color = Color(0.572549, 0.776471, 0.956863, 1)
 light_energy = 0.0
 
 [node name="SkyDome" type="Node" parent="ambient/WorldEnvironment/Sky3D" unique_id=1270046312]
 script = ExtResource("10_vt4l1")
-sun_azimuth = -2.018272
-sun_altitude = -1.3802882
-moon_azimuth = -4.9279284
-moon_altitude = -1.3024741
+sun_azimuth = -4.4301
+sun_altitude = -1.5612357
+moon_azimuth = -0.98541397
+moon_altitude = -0.34674028
 wind_direction = 2.35619451204804
 
 [node name="TimeOfDay" type="Node" parent="ambient/WorldEnvironment/Sky3D" unique_id=1678051531]
 script = ExtResource("11_n2v7u")
 dome_path = NodePath("../SkyDome")
 minutes_per_day = 4.0
-current_time = 7.207525556719691
-day = 16
+current_time = 17.69352555668742
+day = 6
+month = 2
 
 [node name="VoxelGI" type="VoxelGI" parent="ambient" unique_id=488929717]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3605957, 4.083435, -3.809204)
@@ -260,6 +307,7 @@ size = Vector3(7.316147, 5.9658203, 4.7341156)
 material = SubResource("StandardMaterial3D_osxep")
 
 [node name="tetos" type="CSGCombiner3D" parent="ambient/casa" unique_id=1817062178]
+visible = false
 
 [node name="teto" type="CSGBox3D" parent="ambient/casa/tetos" unique_id=1665429946]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.1386566, 7.0615435, -7.5341187)
@@ -363,3 +411,40 @@ size = Vector3(1, 3.1381836, 1)
 
 [node name="OmniLight3D2" type="OmniLight3D" parent="ambient/casa/abajur2" unique_id=228823248]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1475954, 2.1907704, -0.09378338)
+
+[node name="itens_da_casa" type="Node3D" parent="ambient/casa" unique_id=2022786321]
+
+[node name="sofa" parent="ambient/casa/itens_da_casa" unique_id=155579816 instance=ExtResource("14_7yhl5")]
+transform = Transform3D(-0.03409757, 0, -1.2278775, 0, 1.6098487, 0, 1.3803856, 0, -0.030330388, -2.2233515, 0.5000007, -18.281185)
+
+[node name="tv" parent="ambient/casa/itens_da_casa" unique_id=204035221 instance=ExtResource("15_n3kvr")]
+transform = Transform3D(0.004899538, 0, 0, 0, 0.0039886464, 0, 0, 0, 0.0037841175, -5.8343, 0.9824877, -18.247902)
+
+[node name="Cube_003_Screen_0" parent="ambient/casa/itens_da_casa/tv/Sketchfab_model/5836d5dd2aa14c29a482c9966515dc07_fbx/RootNode/Cube_003" parent_id_path=PackedInt32Array(204035221, 465210600) index="2" unique_id=1168453161]
+mesh = SubResource("ArrayMesh_m2pnx")
+surface_material_override/0 = SubResource("StandardMaterial3D_vt4l1")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="ambient/casa/itens_da_casa/tv/Sketchfab_model/5836d5dd2aa14c29a482c9966515dc07_fbx/RootNode/Cube_003/Cube_003_Screen_0" index="0" unique_id=1615021297]
+transform = Transform3D(204.10088, 0, 0, 0, 264.26242, 4.534737e-06, 0, 0, 250.71162, 0, 0, 0)
+stream = ExtResource("16_avu31")
+autoplay = true
+emission_angle_enabled = true
+parameters/looping = false
+
+[node name="SpotLight3D" type="SpotLight3D" parent="ambient/casa/itens_da_casa/tv/Sketchfab_model/5836d5dd2aa14c29a482c9966515dc07_fbx/RootNode/Cube_003/Cube_003_Screen_0" index="1" unique_id=1478059290]
+transform = Transform3D(1.2383208, -4.3052765e-05, 204.09712, 4.084536e-05, 264.26242, 5.5496366e-05, -250.70702, 4.2732947e-05, 1.5211176, 268.66052, 0, 252.69173)
+light_color = Color(1, 1, 0.75686276, 1)
+light_energy = 0.617
+
+[node name="SubViewport" type="SubViewport" parent="ambient/casa/itens_da_casa/tv" unique_id=1389885564]
+size = Vector2i(240, 90)
+
+[node name="VideoStreamPlayer" type="VideoStreamPlayer" parent="ambient/casa/itens_da_casa/tv/SubViewport" unique_id=1688327471]
+offset_right = 256.0
+offset_bottom = 144.0
+stream = ExtResource("16_n3kvr")
+volume_db = -80.0
+autoplay = true
+loop = true
+
+[editable path="ambient/casa/itens_da_casa/tv"]

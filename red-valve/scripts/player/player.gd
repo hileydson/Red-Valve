@@ -191,16 +191,22 @@ func _physics_process(delta: float) -> void:
 		return
 
 	# 5. ROTAÇÃO DA CÂMERA (ANALÓGICO DIREITO)
-	if !camera_bullet_time_ON and magic_hand.animation != "attack":
+	if !camera_bullet_time_ON and (magic_hand and magic_hand.animation != "attack"):
 		var joy_dir = Input.get_vector("ui_look_left", "ui_look_right", "ui_look_up", "ui_look_down")
 		if joy_dir.length() > DEADZONE:
 			var camera_atual = get_viewport().get_camera_3d()
-			rotate_y(-joy_dir.x * JOY_SENSITIVITY)
-			camera_atual.rotate_x(-joy_dir.y * JOY_SENSITIVITY)
 			
+			# Girar o corpo (Horizontal) - multiplicado por delta para suavidade
+			rotate_y(-joy_dir.x * JOY_SENSITIVITY * delta * 100)
+			
+			# Girar a câmera (Vertical)
+			camera_atual.rotate_x(-joy_dir.y * JOY_SENSITIVITY * delta * 100)
+			
+			# Trava o ângulo vertical (mesma lógica do mouse)
 			var v_down = -10 if camera_atual == camera_third_person else -80
 			var v_up = 20 if camera_atual == camera_third_person else 80
 			camera_atual.rotation.x = clamp(camera_atual.rotation.x, deg_to_rad(v_down), deg_to_rad(v_up))
+
 
 	# 6. GESTÃO DO DASH (COOLDOWN E EXECUÇÃO)
 	if dash_cooldown_timer > 0:

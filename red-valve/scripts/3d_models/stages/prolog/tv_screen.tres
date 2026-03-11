@@ -1,0 +1,54 @@
+[gd_resource type="ArrayMesh" format=3 uid="uid://clchlm6mv61jl"]
+
+[ext_resource type="Texture2D" uid="uid://fnuj1uyjlfk6" path="res://assets/3d_model/stages/prolog/modern_entertainment_center_free_8.png" id="2_bdfg4"]
+[ext_resource type="Texture2D" uid="uid://dilcl7873wtn5" path="res://assets/3d_model/stages/prolog/modern_entertainment_center_free_9.png" id="3_6dyxh"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_lyfaa"]
+viewport_path = NodePath("SubViewport")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qay2s"]
+resource_local_to_scene = true
+resource_name = "Screen"
+cull_mode = 2
+albedo_texture = SubResource("ViewportTexture_lyfaa")
+metallic = 1.0
+metallic_texture = ExtResource("2_bdfg4")
+metallic_texture_channel = 2
+roughness_texture = ExtResource("2_bdfg4")
+roughness_texture_channel = 1
+normal_enabled = true
+normal_texture = ExtResource("3_6dyxh")
+ao_enabled = true
+ao_texture = ExtResource("2_bdfg4")
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_mlxvh"]
+_surfaces = [{
+"aabb": AABB(3.9286706, -229.84433, 144.15955, 1e-05, 459.68866, 247.43057),
+"format": 34896613377,
+"index_count": 6,
+"index_data": PackedByteArray(0, 0, 1, 0, 2, 0, 0, 0, 3, 0, 1, 0),
+"name": "Screen",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 4,
+"vertex_data": PackedByteArray(0, 0, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 0, 0, 0, 0, 255, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+}]
+blend_shape_mode = 0
+
+[resource]
+resource_name = "Sketchfab_Scene_Cube_003_Screen_0"
+_surfaces = [{
+"aabb": AABB(3.9286706, -229.84433, 144.15955, 1e-05, 459.68866, 247.43057),
+"attribute_data": PackedByteArray(16, 255, 238, 0, 238, 0, 184, 137, 16, 255, 184, 137, 238, 0, 238, 0),
+"format": 34896613399,
+"index_count": 6,
+"index_data": PackedByteArray(0, 0, 1, 0, 2, 0, 0, 0, 3, 0, 1, 0),
+"material": SubResource("StandardMaterial3D_qay2s"),
+"name": "Screen",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 4,
+"vertex_data": PackedByteArray(0, 0, 255, 255, 0, 0, 84, 213, 0, 0, 0, 0, 255, 255, 84, 213, 0, 0, 255, 255, 255, 255, 84, 213, 0, 0, 0, 0, 0, 0, 84, 213, 170, 42, 170, 42, 170, 42, 170, 42, 170, 42, 170, 42, 170, 42, 170, 42)
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_mlxvh")
