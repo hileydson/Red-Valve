@@ -1,8 +1,8 @@
 extends CharacterBody3D
 
 @onready var camera = $Camera3D # Certifique-se de que sua câmera se chama Camera3D
-@onready var camera_third_person: Camera3D = $camera_third_person
-@onready var camera_third_person_marker: Marker3D = $camera_third_person_marker
+@onready var camera_third_person: Camera3D =$SpringArm3D/camera_third_person
+@onready var camera_third_person_marker: Marker3D = $SpringArm3D/camera_third_person_marker
 @onready var camera_first_person_marker: Marker3D = $camera_first_person_marker
 
 @onready var gun_load: AudioStreamPlayer = $sounds/GunLoad
@@ -125,29 +125,21 @@ func _ready():
 	
 
 func _input(event):
-	#se estiver no bullet time sai vazado pra nao interferir no movimento da camera
-	if camera_bullet_time_ON or magic_hand.animation =="attack":
+	if camera_bullet_time_ON or (magic_hand and magic_hand.animation == "attack"):
 		return
 	
-	# Lógica de rotação da câmera
-	# No seu script de Input de Mouse:
-	var camera_atual = get_viewport().get_camera_3d()
-
-	if event is InputEventMouseMotion:
-		# Gira o corpo do personagem no eixo Y (esquerda/direita)
+	if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+		# Aplica a rotação horizontal no corpo (Maycow)
 		rotate_y(-event.relative.x * SENSITIVITY)
 		
-		# Gira apenas a câmera no eixo X (cima/baixo)
+		# Aplica a rotação vertical na câmera atual
+		var camera_atual = get_viewport().get_camera_3d()
 		camera_atual.rotate_x(-event.relative.y * SENSITIVITY)
 		
-		# Trava a câmera para não girar 360 graus verticalmente (limitando a 80 graus)
-		#olhar pra baixo travado pra terceira pessoa
-		var value_look_down = -80
-		var value_look_up = 80
-		if camera_atual == camera_third_person: 
-			value_look_down = -10
-			value_look_up = 20
-		camera_atual.rotation.x = clamp(camera_atual.rotation.x, deg_to_rad(value_look_down), deg_to_rad(value_look_up))
+		# Trava o ângulo vertical
+		var v_down = -10 if camera_atual == camera_third_person else -80
+		var v_up = 20 if camera_atual == camera_third_person else 80
+		camera_atual.rotation.x = clamp(camera_atual.rotation.x, deg_to_rad(v_down), deg_to_rad(v_up))
 
 
 # Adicione estas variáveis no topo do script (fora do _process) se ainda não tiver

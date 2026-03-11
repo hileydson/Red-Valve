@@ -17,6 +17,9 @@ func _process(delta: float) -> void:
 
 # EVENTOS DE TEMPO
 # emite sinal de nevoa, sendo maior que 0 aplica, se for 0 para
+func set_minimum_nevoa() -> void:
+	_set_nevoa(500)
+
 func set_low_nevoa() -> void:
 	_set_nevoa(1000)
 

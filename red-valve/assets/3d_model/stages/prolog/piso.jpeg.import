@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dkmpnagowg3te"
-path.s3tc="res://.godot/imported/rock023_alb_ht.png-5ba2a9e0f0015aea1f80a0da612d4de0.s3tc.ctex"
+uid="uid://k08fcianykyy"
+path.s3tc="res://.godot/imported/piso.jpeg-18f320f254b45d0c25f01dbb4bb8b1fb.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://assets/3d_model/texturas/rock023_alb_ht.png"
-dest_files=["res://.godot/imported/rock023_alb_ht.png-5ba2a9e0f0015aea1f80a0da612d4de0.s3tc.ctex"]
+source_file="res://assets/3d_model/stages/prolog/piso.jpeg"
+dest_files=["res://.godot/imported/piso.jpeg-18f320f254b45d0c25f01dbb4bb8b1fb.s3tc.ctex"]
 
 [params]
 
