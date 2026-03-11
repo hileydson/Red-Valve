@@ -1,46 +1,30 @@
 shader_type sky;
 
-uniform vec4 dark_color : source_color = vec4(0.02, 0.0, 0.05, 1.0);
-uniform vec4 nebula_color : source_color = vec4(0.4, 0.0, 0.2, 1.0);
-uniform float speed : hint_range(0.0, 1.0) = 0.1;
-uniform float distortion : hint_range(0.0, 2.0) = 0.5;
-
-// Função de hash simples para criar aleatoriedade
-float hash(vec2 p) {
-    return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
-}
-
-// Função de ruído para o efeito "orgânico"
-float noise(vec2 p) {
-    vec2 i = floor(p);
-    vec2 f = fract(p);
-    float a = hash(i);
-    float b = hash(i + vec2(1.0, 0.0));
-    float c = hash(i + vec2(0.0, 1.0));
-    float d = hash(i + vec2(1.0, 1.0));
-    vec2 u = f * f * (3.0 - 2.0 * f);
-    return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
-}
+uniform vec4 base_color : source_color = vec4(0.01, 0.01, 0.02, 1.0);
+uniform vec4 pulse_color : source_color = vec4(0.5, 0.0, 0.8, 1.0);
+uniform float rotation_speed : hint_range(0.0, 2.0) = 0.5;
+uniform float pulse_speed : hint_range(0.0, 5.0) = 2.0;
 
 void sky() {
-    // Pegamos a direção do pixel no céu
-    vec2 uv = EYEDIR.xz / (EYEDIR.y + 1.0); // Projeção esférica simplificada
+    // 1. Converter direção para coordenadas polares (Ângulo e Distância)
+    vec3 dir = normalize(EYEDIR);
+    float angle = atan(dir.z, dir.x);
+    float dist = length(dir.xz);
     
-    // Distorção rotacional e temporal
-    float t = TIME * speed;
-    vec2 rot_uv = uv;
-    rot_uv.x += sin(t + uv.y * 2.0) * distortion;
-    rot_uv.y += cos(t + uv.x * 2.0) * distortion;
+    // 2. Criar um padrão de espiral distorcida pelo tempo
+    float time_val = TIME * rotation_speed;
+    float spiral = sin(angle * 3.0 + dist * 10.0 + time_val);
     
-    // Criando o "vórtice" lovecraftiano
-    float n = noise(rot_uv * 3.0 + t);
-    n += noise(rot_uv * 6.0 - t) * 0.5;
+    // 3. Efeito de "respiração" (pulso)
+    float pulse = sin(TIME * pulse_speed) * 0.5 + 0.5;
     
-    // Mix de cores para dar o tom sinistro
-    vec3 final_color = mix(dark_color.rgb, nebula_color.rgb, n * EYEDIR.y * 0.5);
+    // 4. Misturar base e a cor do pulso usando o padrão espiral
+    float mask = smoothstep(0.2, 0.8, spiral * pulse);
+    vec3 final_color = mix(base_color.rgb, pulse_color.rgb, mask * dir.y);
     
-    // Escurece conforme chega na linha do horizonte
-    final_color *= smoothstep(0.0, 0.2, EYEDIR.y + 0.1);
+    // 5. Adicionar pequenas "faíscas" de estrelas fixas
+    float stars = pow(fract(sin(dot(dir, vec3(12.9898, 78.233, 45.164))) * 43758.5453), 100.0);
+    final_color += stars * vec3(1.0, 1.0, 0.9);
     
     COLOR = final_color;
 }
