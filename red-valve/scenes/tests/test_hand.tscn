@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://j242lsvthwq1"]
+
+[ext_resource type="PackedScene" uid="uid://cxlj0ros7xthb" path="res://scenes/player/first_person_view/hand_animated.tscn" id="1_efipd"]
+[ext_resource type="PackedScene" uid="uid://dm1oddjhu4lg4" path="res://assets/3d_model/player/the_negotiator_V1/the_negotiator_v1.glb" id="2_jxfdu"]
+
+[node name="Node3D" type="Node3D" unique_id=789356230]
+
+[node name="hand_animated" parent="." unique_id=1185696949 instance=ExtResource("1_efipd")]
+transform = Transform3D(0.654543, 0.612071, -0.4437822, -0.75602496, 0.52991223, -0.3842131, 0, 0.5869943, 0.80959123, -0.58560073, 0.08265112, 0.5066685)
+
+[node name="Skeleton3D" parent="hand_animated/armature" parent_id_path=PackedInt32Array(1185696949, 1316197708) index="0" unique_id=733570619]
+bones/3/rotation = Quaternion(0.29080245, 0.13418338, 0.3003177, 0.89846426)
+bones/4/rotation = Quaternion(-0.13875353, -0.096464224, -0.36792427, 0.91437083)
+bones/5/rotation = Quaternion(0.1323626, 0.9668666, 0.03858024, 0.2148505)
+bones/7/position = Vector3(-1.44355e-08, 0.3749998, -0.062499978)
+bones/7/rotation = Quaternion(-0.04614784, -0.079930685, 0.25358024, 0.9629012)
+bones/8/position = Vector3(1.9557774e-08, 0.12499982, -0.06250001)
+bones/8/rotation = Quaternion(-0.32143956, 1.3505384e-08, 6.071721e-08, 0.9469301)
+bones/10/position = Vector3(-2.8242209e-08, 0.3124998, -0.12500003)
+bones/10/rotation = Quaternion(-0.65683687, -0.05746583, 0.0655272, 0.74897885)
+bones/11/position = Vector3(-2.7182978e-08, 0.12499988, -3.541936e-08)
+bones/11/rotation = Quaternion(-0.58840775, -0.10400551, -0.0817289, 0.7976714)
+bones/13/rotation = Quaternion(-0.43556944, 0.07680268, -0.1557405, 0.88324714)
+bones/14/rotation = Quaternion(-0.6414115, 0.04204038, -0.050101683, 0.76440424)
+bones/16/rotation = Quaternion(-0.3518596, 0.10255774, -0.26035774, 0.8932473)
+bones/17/rotation = Quaternion(-0.6626088, 0.13180128, -0.14383595, 0.7231109)
+
+[node name="the_negotiator_v1" parent="." unique_id=215579980 instance=ExtResource("2_jxfdu")]
+transform = Transform3D(-0.5251718, 0.012623648, -0.14447576, -0.029286535, 0.47671852, 0.19150506, 0.1271666, 0.16192195, -0.55255115, 0.1550006, 0.46925968, 0.3256473)
+
+[editable path="hand_animated"]
