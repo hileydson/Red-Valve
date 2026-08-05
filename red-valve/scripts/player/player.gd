@@ -29,6 +29,7 @@ extends CharacterBody3D
 @onready var slay_it: AudioStreamPlayer = $sounds/SlayIt
 @onready var blade_light: OmniLight3D = $"Camera3D/Crescent Cogblade/blade_light"
 @onready var animation_tree: AnimationTree = $maycow_lopes/AnimationTree
+@onready var animation_tree_normal: AnimationTree = $maycow_lopes_normal/AnimationTree
 @onready var point: Label = $Camera3D/point
 @onready var camera_top_view: Camera3D = $camera_top_view
 @onready var hand_with_pistol: Node3D = $Camera3D/hand_with_pistol
@@ -90,8 +91,8 @@ var transition_camera = false
 
 var playback 
 
-func _ready():
-
+func _ready():		
+		
 	# Captura o mouse e o esconde ao iniciar o jogo
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	
@@ -123,6 +124,14 @@ func _ready():
 	point.visible = false
 	
 	
+	
+	#check if esta no prologo para carregar modelo correto
+	if GlobalEvents.is_maycow_normal:
+		playback = animation_tree_normal["parameters/playback"]
+		$maycow_lopes.queue_free()
+	else:
+		$maycow_lopes_normal.queue_free() 
+	
 
 func _input(event):
 	if camera_bullet_time_ON or (magic_hand and magic_hand.animation == "attack"):
@@ -148,122 +157,200 @@ var hold_threshold: float = 0.15 # 200 milisegundos para confirmar o "segurar"
 var limite_rotacao_lateral = deg_to_rad(35) # O máximo que ele pode "virar" (ex: 35 graus)
 var velocidade_giro = 8.0
 func _physics_process(delta: float) -> void:
-	# 1. LÓGICA DE VISÃO (PRIMEIRA/TERCEIRA PESSOA)
-	if Input.is_action_pressed("ui_hold_first_person_view"):
-		hold_timer += delta
+	
+	#somente poder executar ações do jogo se nao for prologo
+	if !GlobalEvents.is_maycow_normal:
+	
+		# 1. LÓGICA DE VISÃO (PRIMEIRA/TERCEIRA PESSOA)
+		if Input.is_action_pressed("ui_hold_first_person_view"):
+			hold_timer += delta
+		else:
+			hold_timer = 0.0
+
+		var holding_view = hold_timer >= hold_threshold
+
+		if holding_view and !is_first_person:
+			is_first_person = true
+			transicao_camera(camera_third_person, camera, camera_first_person_marker, true)
+		elif !holding_view and is_first_person:
+			is_first_person = false
+			transicao_camera(camera, camera_third_person, camera_third_person_marker, false)
+			
+		point.visible = is_first_person
+		
+		# 2. TRAVA DE ATAQUE MÁGICO
+		if magic_hand.animation == "attack":
+			return 
+		
+		# 3. GRAVIDADE
+		if not is_on_floor():
+			velocity += get_gravity() * delta
+
+		# 4. PULO E RECARGA
+		if Input.is_action_just_pressed("ui_accept") and is_on_floor() and !holding_view:
+			velocity.y = JUMP_VELOCITY
+			playback.travel("jump")
+			
+		if Input.is_action_just_pressed("ui_reload") and !transition_camera:
+			reload()
+		
+		if pistola.animation != "reload" and Input.is_action_just_pressed("ui_shoot") and !transition_camera:
+			shoot(Input)
+		
+		if magic_hand.animation == "idle" and Input.is_action_just_pressed("ui_magic_attack") and !transition_camera and camera.current:
+			magic_hand_attack()
+			
+		if camera_bullet_time_ON:
+			return
+			
+		# 5. ROTAÇÃO DA CÂMERA (ANALÓGICO DIREITO)
+		if !camera_bullet_time_ON and (magic_hand and magic_hand.animation != "attack"):
+			var joy_dir = Input.get_vector("ui_look_left", "ui_look_right", "ui_look_up", "ui_look_down")
+			if joy_dir.length() > DEADZONE:
+				var camera_atual = get_viewport().get_camera_3d()
+				
+				# Girar o corpo (Horizontal) - multiplicado por delta para suavidade
+				rotate_y(-joy_dir.x * JOY_SENSITIVITY * delta * 100)
+				
+				# Girar a câmera (Vertical)
+				camera_atual.rotate_x(-joy_dir.y * JOY_SENSITIVITY * delta * 100)
+				
+				# Trava o ângulo vertical (mesma lógica do mouse)
+				var v_down = -10 if camera_atual == camera_third_person else -80
+				var v_up = 20 if camera_atual == camera_third_person else 80
+				camera_atual.rotation.x = clamp(camera_atual.rotation.x, deg_to_rad(v_down), deg_to_rad(v_up))
+	
+		# 6. GESTÃO DO DASH (COOLDOWN E EXECUÇÃO)
+		if dash_cooldown_timer > 0:
+			dash_cooldown_timer -= delta
+
+		if Input.is_action_just_pressed("ui_dash") and not is_dashing and dash_cooldown_timer <= 0:
+			dash()
+			
+
+		# 7. MOVIMENTAÇÃO (DASH VS CAMINHADA)
+		var input_dir := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+		
+		# No seu item 7 do _physics_process:
+		if is_dashing:
+			# MOVIMENTO DE DASH
+			velocity.x = dash_direction.x * DASH_SPEED
+			velocity.z = dash_direction.z * DASH_SPEED
+			
+			dash_timer -= delta
+			if dash_timer <= 0:
+				is_dashing = false
+		else:
+			# MOVIMENTO NORMAL (WALK/RUN)
+			var velocidade_atual = RUN_SPEED if Input.is_action_pressed("ui_run") else WALK_SPEED
+			var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
+			var velocity_Y_zero: bool = velocity.y <= 0
+
+			if direction and !transition_camera:
+				# Animações e Sons
+				if Input.is_action_pressed("ui_run"):
+					if pistola.animation not in ["reload", "run"]: pistola.play("run")
+					passos.pitch_scale = 1.23
+					if is_on_floor() and velocity_Y_zero: playback.travel("run")
+				else:
+					if pistola.animation not in ["reload", "walk"]: pistola.play("walk")
+					passos.pitch_scale = 0.7
+					if is_on_floor() and velocity_Y_zero: playback.travel("walk")
+				
+				if !passos.playing and is_on_floor(): passos.play()
+				
+				velocity.x = direction.x * velocidade_atual
+				velocity.z = direction.z * velocidade_atual
+			else:
+				# IDLE / PARADA
+				if is_on_floor() and velocity_Y_zero: playback.travel("idle")
+				velocity.x = move_toward(velocity.x, 0, velocidade_atual)
+				velocity.z = move_toward(velocity.z, 0, velocidade_atual)
+				if passos.playing: passos.stop()
+
+		# 8. ROTAÇÃO VISUAL DO MODELO (MAYCOW LOPES)
+		if input_dir.y <= 0.1: 
+			var alvo_y = PI 
+			if input_dir.x > 0: alvo_y = PI - limite_rotacao_lateral 
+			elif input_dir.x < 0: alvo_y = PI + limite_rotacao_lateral 
+
+			var modelo = get_node_or_null("maycow_lopes")
+			if modelo:
+				modelo.rotation.y = lerp_angle(modelo.rotation.y, alvo_y, delta * velocidade_giro)
+		
+	# DAQUI PRA FRENTE É O MAYCOW SEM PODERES 	
 	else:
-		hold_timer = 0.0
-
-	var holding_view = hold_timer >= hold_threshold
-
-	if holding_view and !is_first_person:
-		is_first_person = true
-		transicao_camera(camera_third_person, camera, camera_first_person_marker, true)
-	elif !holding_view and is_first_person:
-		is_first_person = false
-		transicao_camera(camera, camera_third_person, camera_third_person_marker, false)
 		
-	point.visible = is_first_person
-	
-	# 2. TRAVA DE ATAQUE MÁGICO
-	if magic_hand.animation == "attack":
-		return 
-	
-	# 3. GRAVIDADE
-	if not is_on_floor():
-		velocity += get_gravity() * delta
+		# 3. GRAVIDADE
+		if not is_on_floor():
+			velocity += get_gravity() * delta
 
-	# 4. PULO E RECARGA
-	if Input.is_action_just_pressed("ui_accept") and is_on_floor() and !holding_view:
-		velocity.y = JUMP_VELOCITY
-		playback.travel("jump")
-		
-	if Input.is_action_just_pressed("ui_reload") and !transition_camera:
-		reload()
-	
-	if pistola.animation != "reload" and Input.is_action_just_pressed("ui_shoot") and !transition_camera:
-		shoot(Input)
-	
-	if magic_hand.animation == "idle" and Input.is_action_just_pressed("ui_magic_attack") and !transition_camera and camera.current:
-		magic_hand_attack()
-		
-	if camera_bullet_time_ON:
-		return
-
-	# 5. ROTAÇÃO DA CÂMERA (ANALÓGICO DIREITO)
-	if !camera_bullet_time_ON and (magic_hand and magic_hand.animation != "attack"):
-		var joy_dir = Input.get_vector("ui_look_left", "ui_look_right", "ui_look_up", "ui_look_down")
-		if joy_dir.length() > DEADZONE:
-			var camera_atual = get_viewport().get_camera_3d()
+		# 5. ROTAÇÃO DA CÂMERA (ANALÓGICO DIREITO)
+		if !camera_bullet_time_ON and (magic_hand and magic_hand.animation != "attack"):
+			var joy_dir = Input.get_vector("ui_look_left", "ui_look_right", "ui_look_up", "ui_look_down")
+			if joy_dir.length() > DEADZONE:
+				var camera_atual = get_viewport().get_camera_3d()
+				
+				# Girar o corpo (Horizontal) - multiplicado por delta para suavidade
+				rotate_y(-joy_dir.x * JOY_SENSITIVITY * delta * 100)
+				
+				# Girar a câmera (Vertical)
+				camera_atual.rotate_x(-joy_dir.y * JOY_SENSITIVITY * delta * 100)
+				
+				# Trava o ângulo vertical (mesma lógica do mouse)
+				var v_down = -10 if camera_atual == camera_third_person else -80
+				var v_up = 20 if camera_atual == camera_third_person else 80
+				camera_atual.rotation.x = clamp(camera_atual.rotation.x, deg_to_rad(v_down), deg_to_rad(v_up))
 			
-			# Girar o corpo (Horizontal) - multiplicado por delta para suavidade
-			rotate_y(-joy_dir.x * JOY_SENSITIVITY * delta * 100)
-			
-			# Girar a câmera (Vertical)
-			camera_atual.rotate_x(-joy_dir.y * JOY_SENSITIVITY * delta * 100)
-			
-			# Trava o ângulo vertical (mesma lógica do mouse)
-			var v_down = -10 if camera_atual == camera_third_person else -80
-			var v_up = 20 if camera_atual == camera_third_person else 80
-			camera_atual.rotation.x = clamp(camera_atual.rotation.x, deg_to_rad(v_down), deg_to_rad(v_up))
 
-
-	# 6. GESTÃO DO DASH (COOLDOWN E EXECUÇÃO)
-	if dash_cooldown_timer > 0:
-		dash_cooldown_timer -= delta
-
-	if Input.is_action_just_pressed("ui_dash") and not is_dashing and dash_cooldown_timer <= 0:
-		dash()
-
-	# 7. MOVIMENTAÇÃO (DASH VS CAMINHADA)
-	var input_dir := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
-	
-	# No seu item 7 do _physics_process:
-	if is_dashing:
-		# MOVIMENTO DE DASH
-		velocity.x = dash_direction.x * DASH_SPEED
-		velocity.z = dash_direction.z * DASH_SPEED
+		# 7. MOVIMENTAÇÃO (DASH VS CAMINHADA)
+		var input_dir := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 		
-		dash_timer -= delta
-		if dash_timer <= 0:
-			is_dashing = false
-	else:
 		# MOVIMENTO NORMAL (WALK/RUN)
-		var velocidade_atual = RUN_SPEED if Input.is_action_pressed("ui_run") else WALK_SPEED
+		var velocidade_atual = WALK_SPEED
 		var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 		var velocity_Y_zero: bool = velocity.y <= 0
-
-		if direction and !transition_camera:
-			# Animações e Sons
-			if Input.is_action_pressed("ui_run"):
-				if pistola.animation not in ["reload", "run"]: pistola.play("run")
-				passos.pitch_scale = 1.23
-				if is_on_floor() and velocity_Y_zero: playback.travel("run")
-			else:
-				if pistola.animation not in ["reload", "walk"]: pistola.play("walk")
-				passos.pitch_scale = 0.7
-				if is_on_floor() and velocity_Y_zero: playback.travel("walk")
+		if direction:
+			passos.pitch_scale = 0.9
 			
-			if !passos.playing and is_on_floor(): passos.play()
+			if is_on_floor():
+				# Calcula se a direção do movimento é paralela ou oposta à frente do personagem
+				# transform.basis.z aponta para a "trás" padrão no Godot (ou ajustado ao seu modelo)
+				# O produto escalar nos dá um valor positivo se for para a frente e negativo se for para trás
+				var visao_frente = -global_transform.basis.z
+				var alinhamento = direction.dot(visao_frente)
+				
+				if alinhamento < -0.2:
+					# Movimento para trás
+					playback.travel("walk_back")
+				else:
+					# Movimento para frente
+					playback.travel("walk")
+			
+			if !passos.playing and is_on_floor(): 
+				passos.play()
 			
 			velocity.x = direction.x * velocidade_atual
 			velocity.z = direction.z * velocidade_atual
 		else:
 			# IDLE / PARADA
-			if is_on_floor() and velocity_Y_zero: playback.travel("idle")
+			if is_on_floor(): 
+				playback.travel("idle")
 			velocity.x = move_toward(velocity.x, 0, velocidade_atual)
 			velocity.z = move_toward(velocity.z, 0, velocidade_atual)
-			if passos.playing: passos.stop()
+			if passos.playing: 
+				passos.stop()
 
-	# 8. ROTAÇÃO VISUAL DO MODELO (MAYCOW LOPES)
-	if input_dir.y <= 0.1: 
-		var alvo_y = PI 
-		if input_dir.x > 0: alvo_y = PI - limite_rotacao_lateral 
-		elif input_dir.x < 0: alvo_y = PI + limite_rotacao_lateral 
 
-		var modelo = get_node_or_null("maycow_lopes")
-		if modelo:
-			modelo.rotation.y = lerp_angle(modelo.rotation.y, alvo_y, delta * velocidade_giro)
+		# 8. ROTAÇÃO VISUAL DO MODELO (MAYCOW LOPES)
+		#if input_dir.y <= 0.1: 
+			#var alvo_y = PI 
+			#if input_dir.x > 0: alvo_y = PI - limite_rotacao_lateral 
+			#elif input_dir.x < 0: alvo_y = PI + limite_rotacao_lateral 
+#
+			#var modelo = get_node_or_null("maycow_lopes_normal")
+			#if modelo:
+				#modelo.rotation.y = lerp_angle(modelo.rotation.y, alvo_y, delta * velocidade_giro)
 
 
 	if head_bob_ON:

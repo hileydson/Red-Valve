@@ -6,8 +6,10 @@
 [ext_resource type="PackedScene" uid="uid://b2ba8tmond28o" path="res://scenes/player/battle_field.tscn" id="2_myrg7"]
 [ext_resource type="AudioStream" uid="uid://cn3pregco36bw" path="res://assets/sounds/player/gun_load.mp3" id="3_p47bc"]
 [ext_resource type="Texture2D" uid="uid://cp4f6dw2xfp6" path="res://assets/images/player/magic_hand.png" id="4_0owmy"]
+[ext_resource type="PackedScene" uid="uid://c1r2hi53v2pus" path="res://assets/3d_model/player/Maycow Lopes/maycow_normal/maycow_normal_rigged.glb" id="4_6cv16"]
 [ext_resource type="AudioStream" uid="uid://u3eclo54hry0" path="res://assets/sounds/player/gun_shot.mp3" id="4_75vfm"]
 [ext_resource type="AudioStream" uid="uid://cof0aohm8uyuj" path="res://assets/sounds/player/passos.mp3" id="5_0owmy"]
+[ext_resource type="Texture2D" uid="uid://pmuqhyl18bwg" path="res://assets/3d_model/player/Maycow Lopes/maycow_normal/maycow_normal_rigged_texture_0.png" id="5_j4nxn"]
 [ext_resource type="PackedScene" uid="uid://c2drneyxbcjoe" path="res://assets/3d_model/player/hands/hand_with_pistol.glb" id="5_kvlxm"]
 [ext_resource type="PackedScene" uid="uid://d2auovyhugl71" path="res://assets/3d_model/player/Crescent Cogblade/Crescent Cogblade.glb" id="5_qek5x"]
 [ext_resource type="SpriteFrames" uid="uid://cawar0ym41nu6" path="res://scripts/player/sprite_fire.tres" id="6_3j4b4"]
@@ -24,6 +26,50 @@
 [ext_resource type="AudioStream" uid="uid://dgp7u4s1k2qu1" path="res://assets/sounds/player/load_gun.mp3" id="19_lgqa7"]
 [ext_resource type="AudioStream" uid="uid://ofvx4vx6qal" path="res://assets/sounds/player/dash_effect.mp3" id="23_ioxgp"]
 [ext_resource type="Texture2D" uid="uid://d30m420s5p205" path="res://assets/images/vfx/smoke.png" id="25_007i1"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_28m0y"]
+albedo_texture = ExtResource("5_j4nxn")
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_6cv16"]
+animation = &"Long_Breathe_and_Look_Around"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_j4nxn"]
+animation = &"Walking"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_28m0y"]
+animation = &"Walk_Backward_inplace"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_28m0y"]
+xfade_time = 0.2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_uniwh"]
+xfade_time = 0.2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_iqsei"]
+xfade_time = 0.2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_tffgl"]
+xfade_time = 0.2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_pk8ii"]
+xfade_time = 0.2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_5mf0n"]
+xfade_time = 0.2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_4hvnv"]
+xfade_time = 0.2
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_tffgl"]
+states/idle/node = SubResource("AnimationNodeAnimation_6cv16")
+states/idle/position = Vector2(337, 147)
+states/walk/node = SubResource("AnimationNodeAnimation_j4nxn")
+states/walk/position = Vector2(436, 24)
+states/walk_back/node = SubResource("AnimationNodeAnimation_28m0y")
+states/walk_back/position = Vector2(556, 147)
+transitions = ["Start", "idle", SubResource("AnimationNodeStateMachineTransition_28m0y"), "idle", "walk", SubResource("AnimationNodeStateMachineTransition_uniwh"), "walk", "idle", SubResource("AnimationNodeStateMachineTransition_iqsei"), "idle", "walk_back", SubResource("AnimationNodeStateMachineTransition_tffgl"), "walk_back", "idle", SubResource("AnimationNodeStateMachineTransition_pk8ii"), "walk", "walk_back", SubResource("AnimationNodeStateMachineTransition_5mf0n"), "walk_back", "walk", SubResource("AnimationNodeStateMachineTransition_4hvnv")]
+graph_offset = Vector2(-3, -14)
 
 [sub_resource type="Animation" id="Animation_fcs02"]
 resource_name = "Angry_Ground_Stomp_2"
@@ -7885,52 +7931,63 @@ RUN_SPEED = 4.5
 [node name="battle_field" parent="." unique_id=1017578515 instance=ExtResource("2_myrg7")]
 transform = Transform3D(1.9637946, 0, 0, 0, 1.4772774, 0, 0, 0, 1.8820053, 0, -0.9627619, 0)
 
+[node name="maycow_lopes_normal" parent="." unique_id=1097582912 instance=ExtResource("4_6cv16")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.39953053)
+
+[node name="char1" parent="maycow_lopes_normal/Armature/Skeleton3D" parent_id_path=PackedInt32Array(1097582912, 378254394) index="0" unique_id=1504223988]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, -101.43147, 30.511677)
+surface_material_override/0 = SubResource("StandardMaterial3D_28m0y")
+
+[node name="AnimationTree" type="AnimationTree" parent="maycow_lopes_normal" unique_id=1537583329]
+tree_root = SubResource("AnimationNodeStateMachine_tffgl")
+anim_player = NodePath("../AnimationPlayer")
+
 [node name="maycow_lopes" parent="." unique_id=664068214 instance=ExtResource("2_fm80t")]
 transform = Transform3D(-0.9999971, 0, 0.0024260576, 0, 1, 0, -0.0024260576, 0, -0.9999971, 0, -1.050483, 0.42049956)
 
 [node name="Skeleton3D" parent="maycow_lopes/Armature" index="0"]
-bones/0/position = Vector3(-1.0417771, 83.56169, 8.490856)
-bones/0/rotation = Quaternion(-0.034510132, 0.04099041, -0.1545618, 0.98652905)
+bones/0/position = Vector3(-1.2350432, 84.10591, 9.127196)
+bones/0/rotation = Quaternion(-0.038888987, 0.0421635, -0.15345863, 0.98648894)
 bones/1/position = Vector3(13.340321, -2.5262918, 3.8072872)
-bones/1/rotation = Quaternion(0.93731743, 0.24710211, -0.11392059, 0.21771249)
+bones/1/rotation = Quaternion(0.9407919, 0.2509543, -0.1193404, 0.1941405)
 bones/2/position = Vector3(2.684138e-06, 24.766985, 2.268152e-06)
-bones/2/rotation = Quaternion(0.34070075, 0.091985896, 0.041260153, 0.9347509)
+bones/2/rotation = Quaternion(0.3176719, 0.09259792, 0.04416365, 0.94263446)
 bones/3/position = Vector3(1.2683254e-06, 36.84416, -8.807921e-07)
-bones/3/rotation = Quaternion(-0.4863065, -0.08120695, 0.015224725, 0.8698734)
+bones/3/rotation = Quaternion(-0.47462425, -0.07891617, 0.015384444, 0.8765087)
 bones/4/position = Vector3(-1.0653237e-06, 14.950345, -1.1445736e-06)
-bones/4/rotation = Quaternion(-0.43967408, -0.07833477, 0.028324286, 0.89428633)
-bones/5/rotation = Quaternion(0.9214303, 0.028183246, 0.38551295, -0.039392967)
+bones/4/rotation = Quaternion(-0.44630516, -0.079814024, 0.03081111, 0.89078176)
+bones/5/rotation = Quaternion(0.9215751, 0.02935142, 0.3808088, -0.06944543)
 bones/6/position = Vector3(2.1458898e-06, 24.75429, -4.4649037e-06)
-bones/6/rotation = Quaternion(0.26778254, -0.08097397, -0.022459812, 0.959808)
+bones/6/rotation = Quaternion(0.23440938, -0.080523275, -0.027235761, 0.9684144)
 bones/7/position = Vector3(2.5856752e-06, 36.974712, 2.9194227e-06)
-bones/7/rotation = Quaternion(-0.5324512, 0.034223426, -0.035427112, 0.8450264)
+bones/7/rotation = Quaternion(-0.5220268, 0.036665756, -0.034819845, 0.851429)
 bones/8/position = Vector3(-1.9888064e-06, 14.890399, 7.7055404e-08)
-bones/8/rotation = Quaternion(-0.48107648, 0.08911627, -0.029159736, 0.8716499)
-bones/9/rotation = Quaternion(0.12833789, -0.10655296, 0.1496612, 0.97456527)
+bones/8/rotation = Quaternion(-0.48388898, 0.08950081, -0.029795747, 0.8700307)
+bones/9/rotation = Quaternion(0.111539684, -0.10831118, 0.14811777, 0.9766723)
 bones/10/position = Vector3(-3.5017786e-07, 16.545918, 3.8379776e-06)
-bones/10/rotation = Quaternion(-0.04658072, 0.032138232, 0.0070939893, 0.9983722)
+bones/10/rotation = Quaternion(-0.05884883, 0.034249764, 0.009382284, 0.9976351)
 bones/11/position = Vector3(-5.711273e-08, 16.546003, 1.4896173e-06)
-bones/11/rotation = Quaternion(-0.02797398, 0.006150655, -0.0006822787, 0.9995895)
+bones/11/rotation = Quaternion(-0.029602364, 0.006264391, -0.00036337355, 0.9995421)
 bones/12/position = Vector3(3.8462558, 8.140699, -0.4956247)
-bones/12/rotation = Quaternion(0.5167286, 0.5450393, -0.4351949, 0.496517)
+bones/12/rotation = Quaternion(0.5123881, 0.54839855, -0.44236323, 0.4909505)
 bones/13/position = Vector3(-2.427416e-06, 15.815192, -3.988356e-06)
-bones/13/rotation = Quaternion(0.6595663, 0.36017296, 0.1783569, 0.6351667)
+bones/13/rotation = Quaternion(0.6745872, 0.35618037, 0.1833155, 0.62005085)
 bones/14/position = Vector3(2.3212299e-06, 24.94295, 8.932441e-06)
-bones/14/rotation = Quaternion(-0.14324781, -0.06984128, 0.03585827, 0.98656803)
+bones/14/rotation = Quaternion(-0.13528295, -0.07044841, 0.03265895, 0.9877596)
 bones/15/position = Vector3(6.0303573e-06, 24.110703, 3.7298014e-07)
-bones/15/rotation = Quaternion(0.067113474, 0.14794813, 0.10433245, 0.98118395)
+bones/15/rotation = Quaternion(0.07098632, 0.13280647, 0.07570886, 0.9856935)
 bones/16/position = Vector3(-3.9271922, 8.045, -0.5905786)
-bones/16/rotation = Quaternion(-0.573964, 0.48416382, -0.43451563, -0.49733976)
+bones/16/rotation = Quaternion(-0.56880593, 0.48946947, -0.4451865, -0.48855758)
 bones/17/position = Vector3(-2.6784335e-06, 15.411067, -2.0204836e-05)
-bones/17/rotation = Quaternion(0.6092917, -0.39456058, -0.27025348, 0.6324941)
+bones/17/rotation = Quaternion(0.632276, -0.37994438, -0.21691063, 0.6393896)
 bones/18/position = Vector3(-1.5086316e-06, 24.015932, 5.3937256e-06)
-bones/18/rotation = Quaternion(-0.18621372, 0.10631712, -0.0019431196, 0.97673815)
+bones/18/rotation = Quaternion(-0.16999891, 0.106084295, 0.004889581, 0.9797054)
 bones/19/position = Vector3(1.5162362e-05, 23.311129, 1.1055323e-05)
-bones/19/rotation = Quaternion(-0.024564644, -0.44192556, 0.014258304, 0.8966021)
+bones/19/rotation = Quaternion(0.014951186, -0.47809345, -0.013660032, 0.87807554)
 bones/20/position = Vector3(0.08093618, 14.430521, 1.0861983)
-bones/20/rotation = Quaternion(0.027323695, 0.029391656, 0.01572047, 0.9990709)
+bones/20/rotation = Quaternion(0.014628601, 0.030808672, 0.016706694, 0.99927866)
 bones/21/position = Vector3(9.224111e-07, 6.804858, -1.9791642e-06)
-bones/21/rotation = Quaternion(0.32166645, 0.0008194255, -0.042691715, 0.94588983)
+bones/21/rotation = Quaternion(0.38267827, 0.0017155013, -0.02846923, 0.9234414)
 bones/22/position = Vector3(0.15257373, 16.290588, -8.277084)
 bones/22/rotation = Quaternion(-0.23286161, 4.172363e-06, -0.004287176, 0.97250044)
 bones/23/position = Vector3(-0.15257384, 5.0526996, 8.2771)
@@ -8171,7 +8228,7 @@ light_size = 1.0
 omni_range = 5.524
 
 [node name="OmniLight3D" type="OmniLight3D" parent="Camera3D" unique_id=2042839984]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.011548519, 0.6278131)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.011548519, 1.1979352)
 
 [node name="sounds" type="Node" parent="." unique_id=1821399472]
 
@@ -8247,6 +8304,7 @@ draw_skin = SubResource("Skin_007i1")
 [connection signal="body_exited" from="Camera3D/Crescent Cogblade/Area3D" to="." method="_on_area_3d_body_exited"]
 [connection signal="body_entered" from="Camera3D/Camera3D_Bullet_Time/bullet/bullet_touch" to="." method="_on_bullet_touch_body_entered"]
 
+[editable path="maycow_lopes_normal"]
 [editable path="maycow_lopes"]
 [editable path="Camera3D/hand_with_pistol"]
 [editable path="Camera3D/Crescent Cogblade"]
