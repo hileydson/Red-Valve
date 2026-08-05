@@ -55,12 +55,12 @@ shader_parameter/atm_darkness = 0.5
 shader_parameter/atm_sun_intensity = 18.0
 shader_parameter/atm_day_tint = Color(0.807843, 0.909804, 1, 1)
 shader_parameter/atm_horizon_light_tint = Color(0.980392, 0.635294, 0.462745, 1)
-shader_parameter/atm_night_tint = Color(0, 0, 0, 0)
+shader_parameter/atm_night_tint = Color(0.004544059, 0.0053894795, 0.0067632576, 0.026947398)
 shader_parameter/atm_level_params = Vector3(1, 0, 0)
 shader_parameter/atm_thickness = 0.7
 shader_parameter/atm_beta_ray = Vector3(5.804544e-06, 1.3562913e-05, 3.311258e-05)
 shader_parameter/atm_beta_mie = Vector3(3.038e-08, 3.038e-08, 3.038e-08)
-shader_parameter/sun_light_color = Color(1, 1, 1, 1)
+shader_parameter/sun_light_color = Color(0.9909221, 0.7834922, 0.6795503, 1)
 shader_parameter/sun_disk_color = Color(0.996094, 0.541334, 0.140076, 1)
 shader_parameter/sun_disk_intensity = 30.0
 shader_parameter/sun_disk_size = 0.02
@@ -82,7 +82,7 @@ shader_parameter/starmap_flip_u = false
 shader_parameter/starmap_flip_v = false
 shader_parameter/starmap_alignment = Vector3(2.68288, -0.25891, 0.40101)
 shader_parameter/star_rotation_offset = 9.38899
-shader_parameter/star_rotation = -11.937905592715673
+shader_parameter/star_rotation = -7.8577113030406425
 shader_parameter/star_tilt = -1.2915436464758039
 shader_parameter/star_field_color = Color(1, 1, 1, 1)
 shader_parameter/star_field_texture = ExtResource("7_n3kvr")
@@ -98,8 +98,8 @@ shader_parameter/cirrus_absorption = 2.0
 shader_parameter/cirrus_sky_tint_fade = 0.5
 shader_parameter/cirrus_size = 1.0
 shader_parameter/cirrus_uv = Vector2(0.16, 0.11)
-shader_parameter/cirrus_position1 = Vector2(0.2625977, 0.2625977)
-shader_parameter/cirrus_position2 = Vector2(0.2625977, 0.2625977)
+shader_parameter/cirrus_position1 = Vector2(0.6771723, 0.6771723)
+shader_parameter/cirrus_position2 = Vector2(0.6771723, 0.6771723)
 shader_parameter/cirrus_texture = ExtResource("3_01ffe")
 shader_parameter/cumulus_visible = true
 shader_parameter/cumulus_intensity = 0.6
@@ -109,7 +109,7 @@ shader_parameter/cumulus_absorption = 2.0
 shader_parameter/cumulus_noise_freq = 2.7
 shader_parameter/cumulus_sky_tint_fade = 0.0
 shader_parameter/cumulus_size = 0.5
-shader_parameter/cumulus_position = Vector2(21.365152, 21.365152)
+shader_parameter/cumulus_position = Vector2(43.524597, 43.524597)
 shader_parameter/cumulus_texture = ExtResource("4_qysyv")
 shader_parameter/cumulus_partial_mie_phase = Vector3(0.957564, 1.042436, 0.412)
 shader_parameter/cumulus_mie_intensity = 1.0
@@ -119,7 +119,7 @@ shader_parameter/azimuthal_grid_rotation_offset = 0.03
 shader_parameter/show_equatorial_grid = false
 shader_parameter/equatorial_grid_color = Color(0, 0.75, 1, 1)
 shader_parameter/equatorial_grid_rotation_offset = 0.03
-shader_parameter/moon_matrix = Basis(0, 0.4533659, -0.89132446, -0.9999027, -0.012432092, -0.0063234954, -0.0139478855, 0.8912378, 0.4533218)
+shader_parameter/moon_matrix = Basis(0, 0.12219488, 0.99250615, -0.97353774, 0.22681367, -0.027924731, -0.22852623, -0.96624225, 0.11896133)
 
 [sub_resource type="Sky" id="Sky_y84l6"]
 sky_material = SubResource("ShaderMaterial_m2pnx")
@@ -128,7 +128,7 @@ sky_material = SubResource("ShaderMaterial_m2pnx")
 background_mode = 2
 sky = SubResource("Sky_y84l6")
 ambient_light_source = 3
-ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_color = Color(0.66842836, 0.5290935, 0.45958433, 1)
 reflected_light_source = 2
 tonemap_mode = 3
 tonemap_white = 6.0
@@ -849,53 +849,11 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_5llxv")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7ce0s"]
-albedo_color = Color(0.6925551, 0.6672944, 0.47525704, 1)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tjlrb"]
-resource_name = "DIFFUSE.002"
-cull_mode = 2
-albedo_texture = ExtResource("24_vx3rs")
-metallic = 0.05
-roughness = 0.3
-
-[sub_resource type="ArrayMesh" id="ArrayMesh_ancak"]
-_surfaces = [{
-"aabb": AABB(-0.42219305, 0.0028077, 1.2272859e-10, 0.8443861, 0.8444777, 0.06631676),
-"format": 34896613377,
-"index_count": 168,
-"index_data": PackedByteArray("AAABAAIAAAACAAMAAgABAAQAAgAEAAUAAwACAAUAAQAGAAQABAAGAAcABAAHAAUAAQAIAAYACQAHAAYACQAGAAgABQAHAAoACQAKAAcABQAKAAsAAwAFAAsADAALAAoADAADAAsACQAMAAoADQAIAAEAAAANAAEADgAJAAgADgAMAAkADQAPAAgADgAIAA8ADQAAABAADgARAAwAEQADAAwAEgAOAA8AEgARAA4AEwAPAA0ADQAQABMAEwAUAA8AEgAPABQAFAATABUAEAAVABMAFAAVABYAEgAUABYAFwAWABUAEgAWABcAFwAVABgAEAAYABUAGQASABcAGQAXABgAEAAaABgAGQAYABoAEAAbABoAGwAZABoAAAAbABAAGQAcABIAGwAcABkAEgAcABEAAAAdABsAHAAbAB0AHAAdABEAAAADAB0AEQAdAAMA"),
-"name": "DIFFUSE.002",
-"primitive": 3,
-"uv_scale": Vector4(0, 0, 0, 0),
-"vertex_count": 30,
-"vertex_data": PackedByteArray("/3//////AABF9Uj1//8AAP9/SPX//wAAuQpI9f//AABF9Uj1KXYAAP9/SPUpdgAARfW4Cil2AAD/f7gKKXYAAEX1uAr+/wAA/3+4Cv7/AAC5CrgKKXYAALkKSPUpdgAAuQq4Cv7/AAD///////8AAP9/AAD+/wAA//8AAP7/AAD/f///AAAAAAAAAAD+/wAA/38AAAAAAAD/////AAAAAP//AAAAAAAARfVI9QAAAABF9bgKAAAAAP9/uAoAAAAA/39I9QAAAAC5CrgKAAAAALkKSPUAAAAAAAD//wAAAAAAAAAAAAAAAAAA/////wAA")
-}]
-blend_shape_mode = 0
-
-[sub_resource type="ArrayMesh" id="ArrayMesh_7ce0s"]
-resource_name = "Sketchfab_Scene_Object_38"
-_surfaces = [{
-"aabb": AABB(-0.42219305, 0.0028077, 1.2272859e-10, 0.8443861, 0.8444777, 0.06631676),
-"attribute_data": PackedByteArray("mA3+9pgN/vZMBCTETAQkxEwE/vZMBP72mA1/v5gNf7/xCVAn8QlQJ6RvnyKkb58i8QmfIvEJnyKkb1AnpG9QJ1/8j/1f/I/9X/zbl1/825esltuXrJbbl6yWj/2slo/9/DDbl/ww25f8MI/9/DCP/f0VCbT9FQm0YB8ygWAfMoH9FTKB/RUygWAfCbRgHwm0swwJtLMMCbT9FTKB/RUygbMMi3yzDIt8/RUJtP0VCbQOh28gDodvIAr2HykK9h8pCvZvIAr2byAOhx8pDocfKZUd722VHe9tSRQVO0kUFTtJFO9tSRTvbZUdcDaVHXA2rJakk6yWpJNf/KSTX/ykk1/88C1f/PAtrJbwLayW8C38MKST/DCkk/ww8C38MPAt+B7+9vge/vZCKCTEQigkxPgef7/4Hn+/Qij+9kIo/vaYDX+/mA1/v/ge/vb4Hv72+B5/v/gef7+YDf72mA3+9rLloRay5aEWSRpUG0kaVBuy5VQbsuVUG0kaoRZJGqEWSRqhFkkaoRay5VQbsuVUG0kaVBtJGlQbsuWhFrLloRakb1AnpG9QJ/EJnyLxCZ8ipG+fIqRvnyLxCVAn8QlQJ/0VCbT9FQm0YB8ygWAfMoFgHwm0YB8JtP0VMoH9FTKB/RDzCP0Q8wiy5acEsuWnBEkapwRJGqcE/u7zCP7u8wj+7vMI/u7zCEkapwRJGqcEsuWnBLLlpwT9EPMI/RDzCP7uoxH+7qMRSRqhFkkaoRay5aEWsuWhFv0QoxH9EKMR/RCjEf0QoxGy5aEWsuWhFkkaoRZJGqEW/u6jEf7uoxH4Hv72+B7+9kQoJMREKCTEQij+9kIo/vb4Hn+/+B5/v5gN/vaYDf72TgQkxE4EJMSYDX2/mA19v0wE/vZMBP72swwJtLMMCbT9FTKB/RUygf0VCbT9FQm0swyLfLMMi3xJFBU7SRQVO5Ud722VHe9tSRTvbUkU722VHXA2lR1wNv0Q8wj9EPMI/u6jEf7uoxH9EKMR/RCjEf7u8wj+7vMI/u7zCP7u8wj9EKMR/RCjEf7uoxH+7qMR/RDzCP0Q8wiYDf72mA3+9vgef7/4Hn+/+B7+9vge/vaYDX2/mA19vw6HbyAOh28gCvYfKQr2HykOhx8pDocfKQr2byAK9m8g"),
-"format": 34896613431,
-"index_count": 168,
-"index_data": PackedByteArray("AAABAAIAAAADAAEABAAFAAYABAAHAAUACAAJAAoACAAKAAsACwAKAAwACwAMAA0ADgAPABAADgARAA8AEgATABQAEgAVABMAFgAXABgAFgAZABcAGgAbABwAGgAdABsAHgAfACAAHgAgACEAIgAeACEAIgAhACMAJAAlACYAJAAnACUAKAApACoAKAArACkALAAtAC4ALAAvAC0AMAAxADIAMAAzADEANAA1ADYANAA3ADUAOAA5ADoAOAA7ADkAPAA9AD4APAA/AD0AQABBAEIAQABDAEEARABFAEYARABHAEUASABJAEoASABLAEkATABNAE4ATABPAE0AUABRAFIAUABTAFEAVABVAFYAVABXAFUAWABZAFoAWABbAFkAXABdAF4AXABfAF0AYABhAGIAYABjAGEAZABlAGYAZABnAGUAaABpAGoAaABrAGkA"),
-"material": SubResource("StandardMaterial3D_tjlrb"),
-"name": "DIFFUSE.002",
-"primitive": 3,
-"uv_scale": Vector4(0, 0, 0, 0),
-"vertex_count": 108,
-"vertex_data": PackedByteArray("/3//////AEBF9Uj1//8KQP9/SPX///8/////////CkD/f0j1////P0X1SPUpdv8//39I9Sl2/z9F9Uj1////P0X1SPUpdv5/RfW4Cil2/n//f7gKKXb+f/9/SPUpdv5/uQq4Cil2/n+5Ckj1KXb+f/9/uAr+/6oqRfW4Cil2qipF9bgK/v+qKv9/uAopdqoq/38AAP7/AEBF9bgK/v8FQP//AAD+/wZA/3+4Cv7//z//fwAAAAD/P///AAD+//8///8AAAAA/z//fwAA/v//P/9/AAAAAAAARfW4CgAAAAD/f7gKAAAAAP//AAAAAAAA/3+4CgAAAABF9bgKAAAAAEX1SPUAAAAA/39I9QAAAAC5CrgKAAAAALkKSPUAAAAA/3///wAAAABF9Uj1AAAAAP////8AAAAA/39I9QAAAAD///////+qKv9///8AAKoq/////wAAqir/f/////+qKkX1SPX//6oqRfW4Cil2qipF9Uj1KXaqKkX1uAr+/6oquQq4Cv7/VNW5Ckj1KXZU1bkKuAopdlTVuQpI9f//VNW5Ckj1//////9/SPUpdv//uQpI9Sl2////f0j1//////9/uAr+/1TVuQq4Cil2VNX/f7gKKXZU1bkKuAr+/1TV//8AAAAAAABF9Uj1AAAAAEX1uAoAAAAA/////wAAAAAAAP//AAD//7kKuAoAAP//uQpI9QAA//8AAAAAAAD///////////8/RfW4Cv7//z9F9Uj1////P///AAD+//8/AAAAAP7//7+5Ckj1////v7kKuAr+//+/AAD//////7//f///AAD//7kKSPUAAP///39I9QAA//8AAP//AAD///9///////6/uQpI9f//+r8AAP/////6v/9/SPX///+//38AAP7//7+5CrgK/v8FwP9/uAr+//+/AAAAAP7/BcC5CrgKAAD///9/AAAAAP///3+4CgAA//8AAAAAAAD//wAAAAAAAFTVAAD/////VNUAAAAA/v9U1QAA//8AAFTV/////wAAqir//wAA/v+qKv///////6oq//8AAAAAqir/f/////9V1QAA//8AAFnV/3///wAAVNUAAP////9Z1f9/AAAAAP//AAAAAP7/////fwAA/v///wAAAAAAAP//AAD//wAA////////AAD//wAA/38AAP9/AAD/fwAA/3//f////3////9/////f////3////9///9U1aoqVNWqKlTVqipU1aoqAAD//wAA//8AAP///////wAA/38AAP9/AAD/fwAA/3//vwBAB8AHQP8//78HwAhA////f////3////9/////f////3////9/AED/vwdAB8AIQAfA/z//v1TVqipU1aoqVNWqKlTVqipU1VTVVNVU1VTVVNVU1VTVqiqqKqoqqiqqKqoqqiqqKv9//z//f/8//3//P/9//z9U1aoqVNWqKlTVqipU1aoq/7//v/+//7//v/+//7//v/+//7//v/+//7//v/+//78AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD///+/AEAHwAdA/z//vwfACEAAAP//AAD//wAA////////AAD//wAA////////AAD//wdAB8AAQP+//z//vwhAB8BU1VTVVNVU1VTVVNVU1VTVqiqqKqoqqiqqKqoqqiqqKlTVqSpR1aQqVNWqKlHVpCr/v////7////+/////v///")
-}]
-blend_shape_mode = 0
-shadow_mesh = SubResource("ArrayMesh_ancak")
-
 [node name="the_house" type="Node3D" unique_id=463009553]
 script = ExtResource("1_01ffe")
 
 [node name="Player" parent="." unique_id=448699446 instance=ExtResource("1_pbbbw")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6479845, 1.6337886, -8.0917)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8378088, 1.6337886, -11.057903)
 
 [node name="ambient" type="Node3D" parent="." unique_id=1364159059]
 
@@ -910,39 +868,40 @@ environment = SubResource("Environment_pbbbw")
 environment = SubResource("Environment_r8a1f")
 camera_attributes = SubResource("CameraAttributesPractical_touxj")
 script = ExtResource("9_osxep")
-current_time = 10.04322555658359
+current_time = 16.862325556549827
 minutes_per_day = 4.0
 wind_direction = 2.35619451204804
 metadata/_custom_type_script = "uid://deo0gxkmk2ahd"
 
 [node name="SunLight" type="DirectionalLight3D" parent="ambient/WorldEnvironment/Sky3D" unique_id=2018384540]
-transform = Transform3D(0.52146316, -0.70507956, 0.48056108, 0, 0.5631968, 0.8263228, -0.85327375, -0.43089688, 0.2936864, 0.48056108, 0.8263228, 0.2936864)
+transform = Transform3D(-0.03853703, 0.27284977, -0.9612845, 0, 0.9619991, 0.2730526, 0.99925715, 0.010522637, -0.037072588, -0.9612845, 0.2730526, -0.037072588)
+light_color = Color(0.9909221, 0.7834922, 0.6795503, 1)
 shadow_enabled = true
 
 [node name="MoonLight" type="DirectionalLight3D" parent="ambient/WorldEnvironment/Sky3D" unique_id=321354681]
-transform = Transform3D(0, -0.9999027, -0.013947884, 0.45336592, -0.012432091, 0.8912378, -0.8913245, -0.006323495, 0.4533218, -0.013947884, 0.8912378, 0.4533218)
+transform = Transform3D(0, -0.97353774, -0.22852622, 0.12219487, 0.22681367, -0.9662422, 0.99250615, -0.027924731, 0.11896132, -0.22852622, -0.9662422, 0.11896132)
 light_color = Color(0.572549, 0.776471, 0.956863, 1)
 light_energy = 0.0
 
 [node name="SkyDome" type="Node" parent="ambient/WorldEnvironment/Sky3D" unique_id=1270046312]
 script = ExtResource("10_vt4l1")
-sun_azimuth = -2.1193612
-sun_altitude = -0.59824944
-moon_azimuth = -3.1723511
-moon_altitude = -0.47072926
+sun_azimuth = -4.7509356
+sun_altitude = -1.2942315
+moon_azimuth = -4.23243
+moon_altitude = -2.8810184
 wind_direction = 2.35619451204804
 
 [node name="TimeOfDay" type="Node" parent="ambient/WorldEnvironment/Sky3D" unique_id=1678051531]
 script = ExtResource("11_n2v7u")
 dome_path = NodePath("../SkyDome")
 minutes_per_day = 4.0
-current_time = 10.04322555658359
-day = 12
-month = 3
+current_time = 16.862325556549827
+day = 5
+month = 4
 year = 2029
 
 [node name="mesa_telefone" parent="ambient/WorldEnvironment/Sky3D" unique_id=1539733106 instance=ExtResource("13_5llxv")]
-transform = Transform3D(0.0169406, 0, 0.78560114, 0, 0.83553696, 0, -0.80006707, 0, 0.0166343, -3.1792624, 1.1502178, -14.070929)
+transform = Transform3D(-0.79988325, 0, -0.023667475, 0, 0.83553696, 0, 0.024103288, 0, -0.78542066, -8.257532, 1.1502178, -9.513313)
 
 [node name="VoxelGI" type="VoxelGI" parent="ambient" unique_id=488929717]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3605957, 4.083435, -3.809204)
@@ -977,7 +936,7 @@ transform = Transform3D(0.45891598, 0, 0, 0, 0.94696075, 0, 0, 0, 0.68646663, -3
 collision_layer = 2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="ambient/casa/bloqueios/StaticBody3D4" unique_id=161357330]
-transform = Transform3D(1.0000019, 0, 0, 0, 1.0000241, 0, 0, 0, 1.0000001, 14.542721, 3.0743446, -0.8878956)
+transform = Transform3D(1.0000019, 0, 0, 0, 1.0000242, 0, 0, 0, 1.0000001, 12.632811, 3.074345, -0.8878956)
 shape = SubResource("BoxShape3D_7l4xq")
 
 [node name="StaticBody3D2" type="StaticBody3D" parent="ambient/casa/bloqueios" unique_id=699799993]
@@ -1030,8 +989,8 @@ size = Vector3(23.42862, 1, 28.42273)
 material = SubResource("StandardMaterial3D_n3kvr")
 
 [node name="teto2" type="CSGBox3D" parent="ambient/casa/tetos" unique_id=905840548]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.675028, 6.7397137, -7.362509)
-size = Vector3(20.954578, 1, 25.015873)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.6269164, 6.7397137, -7.7834816)
+size = Vector3(12.56784, 1, 25.857819)
 material = SubResource("StandardMaterial3D_7yhl5")
 
 [node name="teto3" type="CSGBox3D" parent="ambient/casa/tetos" unique_id=1381254617]
@@ -1042,35 +1001,35 @@ material = SubResource("StandardMaterial3D_7yhl5")
 [node name="paredes" type="CSGCombiner3D" parent="ambient/casa" unique_id=512792956]
 
 [node name="parede" type="CSGBox3D" parent="ambient/casa/paredes" unique_id=1170777966]
-transform = Transform3D(1, 0, 0, 0, 1.8713276, 0, 0, 0, 1, 1.9879498, 3.201597, -1.8469048)
+transform = Transform3D(1, 0, 0, 0, 1.8713276, 0, 0, 0, 1, 0.19678164, 3.201597, -3.3828583)
 size = Vector3(0.9326172, 4.097534, 18.313713)
 material = SubResource("StandardMaterial3D_qysyv")
 
 [node name="parede2" type="CSGBox3D" parent="ambient/casa/paredes" unique_id=2089141738]
-transform = Transform3D(1, 0, 0, 0, 1.8713276, 0, 0, 0, 1, -4.2868876, 3.2015953, -16.955784)
-size = Vector3(0.9326172, 4.097534, 9.5560875)
+transform = Transform3D(1, 0, 0, 0, 1.8713276, 0, 0, 0, 1, -4.2868876, 3.2015953, -17.739582)
+size = Vector3(0.9326172, 4.097534, 7.988493)
 material = SubResource("StandardMaterial3D_qysyv")
 
 [node name="cozinha_armario" parent="ambient/casa/paredes/parede2" unique_id=1676513913 instance=ExtResource("14_q7orc")]
-transform = Transform3D(-0.02626256, 0, -2.5125554, 0, 1.4548404, 0, 3.0960834, 0, -0.02131278, -1.0959034, -0.7689568, -0.8713684)
+transform = Transform3D(-0.026206179, 0, -1.8766353, 0, 1.4548404, 0, 3.0894365, 0, -0.01591858, -0.9213834, -0.7689568, -0.19865227)
 
 [node name="OmniLight3D" type="OmniLight3D" parent="ambient/casa/paredes/parede2/cozinha_armario" unique_id=224629813]
 transform = Transform3D(0.23914716, 0, 4.656613e-10, 0, 0.26617327, 0, 1.1641532e-10, 0, 0.20916605, -0.036137342, 0.12727118, 0.0002681017)
 light_energy = 0.234
 
 [node name="parede3" type="CSGBox3D" parent="ambient/casa/paredes" unique_id=200382626]
-transform = Transform3D(1, 0, 0, 0, 1.8713276, 0, 0, 0, 1, -12.45251, 3.2015953, -7.443329)
+transform = Transform3D(1, 0, 0, 0, 1.8713276, 0, 0, 0, 1, -10.843656, 3.2015953, -7.443329)
 size = Vector3(0.9326172, 4.097534, 28.598385)
 material = SubResource("StandardMaterial3D_qysyv")
 
 [node name="parede4" type="CSGBox3D" parent="ambient/casa/paredes" unique_id=1675760051]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1.8713276, 0, -1, 0, -4.371139e-08, -5.6444435, 3.2015953, -5.8119535)
-size = Vector3(0.9326172, 4.097534, 24.148376)
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1.8713276, 0, -1, 0, -4.371139e-08, -4.2747, 3.2015953, -8.57132)
+size = Vector3(0.9326172, 4.097534, 16.21312)
 material = SubResource("StandardMaterial3D_qysyv")
 
 [node name="parede5" type="CSGBox3D" parent="ambient/casa/paredes" unique_id=478489673]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1.8713276, 0, -1, 0, -4.371139e-08, -15.401997, 3.2015953, -21.396461)
-size = Vector3(0.9326172, 4.097534, 6.7318416)
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1.8713276, 0, -1, 0, -4.371139e-08, -14.632034, 3.2015953, -21.396461)
+size = Vector3(0.9326172, 4.097534, 8.271767)
 material = SubResource("StandardMaterial3D_qysyv")
 
 [node name="parede8" type="CSGBox3D" parent="ambient/casa/paredes" unique_id=971401097]
@@ -1089,43 +1048,45 @@ size = Vector3(0.9326172, 4.097534, 17.447174)
 material = SubResource("StandardMaterial3D_qysyv")
 
 [node name="parede7" type="CSGBox3D" parent="ambient/casa/paredes" unique_id=1280937482]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1.8713276, 0, -1, 0, -4.371139e-08, -0.5593796, 3.2015953, -21.396461)
-size = Vector3(0.9326172, 4.097534, 13.341255)
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1.8713276, 0, -1, 0, -4.371139e-08, -1.736063, 3.2015953, -21.396461)
+size = Vector3(0.9326172, 4.097534, 10.987888)
 material = SubResource("StandardMaterial3D_qysyv")
 
 [node name="parede6" type="CSGBox3D" parent="ambient/casa/paredes" unique_id=1935395689]
-transform = Transform3D(1, 0, 0, 0, 1.8713276, 0, 0, 0, 1, 5.820309, 3.2015953, -7.443329)
+transform = Transform3D(1, 0, 0, 0, 1.8713276, 0, 0, 0, 1, 3.3266072, 3.2015953, -7.443329)
 size = Vector3(0.9326172, 4.097534, 28.598385)
 material = SubResource("StandardMaterial3D_qysyv")
 
 [node name="janela" type="CSGCylinder3D" parent="ambient/casa/paredes" unique_id=1655681668]
-transform = Transform3D(-8.603799e-08, -1.1704543, 0, 1.96832, -5.1162182e-08, 0, 0, 0, 1.9815673, -18.000397, 4.971158, -9.172432)
+transform = Transform3D(-3.8560156e-08, -1.1704543, 0, 0.88215363, -5.1162182e-08, 0, 0, 0, 0.8857095, -10.788277, 4.1544666, -10.697435)
 operation = 2
 
 [node name="janela2" type="CSGCylinder3D" parent="ambient/casa/paredes" unique_id=925815135]
-transform = Transform3D(-8.603799e-08, -1.1704543, 0, 1.96832, -5.1162182e-08, 0, 0, 0, 1.9815673, -18.000397, 4.971158, -11.540285)
+transform = Transform3D(-3.8560156e-08, -1.1704543, 0, 0.88215363, -5.1162182e-08, 0, 0, 0, 0.8857095, -10.788277, 4.1544666, -11.755805)
 operation = 2
 
 [node name="janela3" type="CSGCylinder3D" parent="ambient/casa/paredes" unique_id=1726636308]
-transform = Transform3D(-8.603799e-08, -1.1704543, 0, 1.96832, -5.1162182e-08, 0, 0, 0, 1.9815673, -18.000397, 4.971158, -13.956)
+transform = Transform3D(-3.8560156e-08, -1.1704543, 0, 0.88215363, -5.1162182e-08, 0, 0, 0, 0.8857095, -10.788277, 4.1544666, -12.8355665)
 operation = 2
 
 [node name="janela_box" type="CSGBox3D" parent="ambient/casa/paredes" unique_id=1041230203]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 5.8455176, 5.11366, -13.20755)
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 3.293469, 4.1177607, -13.20755)
 operation = 2
 size = Vector3(5.38144, 0.8872032, 1)
 
 [node name="chao" type="CSGBox3D" parent="ambient/casa" unique_id=405366250]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.1386566, 0, -7.5341187)
-size = Vector3(23.42862, 1, 28.42273)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.004896, 0, -7.5341187)
+size = Vector3(15.970539, 1, 28.42273)
 material = SubResource("StandardMaterial3D_2vn28")
 
 [node name="abajur2" type="CSGBox3D" parent="ambient/casa" unique_id=1051575920]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.704873, -0.023178816, -6.6127825)
+transform = Transform3D(-0.023420148, 0, 0.9997257, 0, 1, 0, -0.9997257, 0, -0.023420148, -3.454377, -0.023178816, -15.075782)
 size = Vector3(1, 3.1381836, 1)
 
 [node name="OmniLight3D2" type="OmniLight3D" parent="ambient/casa/abajur2" unique_id=228823248]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1475954, 2.1907704, -0.09378338)
+transform = Transform3D(1.0000001, 0, 5.5879354e-09, 0, 1, 0, -3.7252903e-09, 0, 1.0000001, -5.3729477, 2.1907704, -4.6476965)
+light_color = Color(0.9607843, 0.7176471, 0.039215688, 1)
+light_energy = 0.521
 
 [node name="OmniLight3D3" type="OmniLight3D" parent="ambient/casa/abajur2" unique_id=1745574077]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.773469, 2.9761918, -1.0035045)
@@ -1136,7 +1097,7 @@ transform = Transform3D(1, 0, 0, 0, 0.16651063, 0.9860397, 0, -0.9860397, 0.1665
 [node name="itens_da_casa" type="Node3D" parent="ambient/casa" unique_id=2022786321]
 
 [node name="sofa" parent="ambient/casa/itens_da_casa" unique_id=155579816 instance=ExtResource("14_7yhl5")]
-transform = Transform3D(-0.029123742, 0, -1.2312438, 0, 1.1130847, 0, 1.1790282, 0, -0.030413544, 0.2238965, 0.5000007, -18.281185)
+transform = Transform3D(-0.029123742, 0, -1.2312438, 0, 1.1130847, 0, 1.1790282, 0, -0.030413544, -0.5097631, 0.5000007, -18.289524)
 
 [node name="tv" parent="ambient/casa/itens_da_casa" unique_id=204035221 instance=ExtResource("15_n3kvr")]
 transform = Transform3D(0.004899538, 0, 0, 0, 0.0039886464, 0, 0, 0, 0.0037841175, -5.8343, 0.9824877, -18.247902)
@@ -1190,6 +1151,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.4844513, -4.5224266, -15.4
 transform = Transform3D(1.1071771, 0, 0, 0, 1.2638487, 0, 0, 0, 1.1058354, 8.103546, 5.0618157, -4.586317)
 
 [node name="Object_88" type="MeshInstance3D" parent="ambient/casa/itens_da_casa/table_light/TinyLiving_NotATableEnd_43" unique_id=87631348]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6797652, 0, 0.3625126)
 mesh = SubResource("ArrayMesh_dnyf3")
 skeleton = NodePath("")
 
@@ -1197,11 +1159,16 @@ skeleton = NodePath("")
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -0.031027198, 0.57604647, -0.008991241)
 
 [node name="Object_48" type="MeshInstance3D" parent="ambient/casa/itens_da_casa/table_light/TinyLiving_NotATableEnd_43/TinyLiving_TheModernDeskLamp_23" unique_id=1276452423]
+transform = Transform3D(-0.9498739, 0, 0.31263325, 0, 1, 0, -0.31263325, 0, -0.94987386, -9.688923, 0.18371272, -8.406721)
 mesh = SubResource("ArrayMesh_qlgbq")
 skeleton = NodePath("")
 
+[node name="SpotLight3D" type="SpotLight3D" parent="ambient/casa/itens_da_casa/table_light/TinyLiving_NotATableEnd_43/TinyLiving_TheModernDeskLamp_23/Object_48" unique_id=1584074831]
+transform = Transform3D(0.7741789, -0.16255265, 0.43792406, 0.40385786, 0.3475282, -0.5849567, -0.07265827, 0.7952116, 0.42227888, 0.09644413, 0.17715645, 0.2930212)
+
 [node name="SpotLight3D" type="SpotLight3D" parent="ambient/casa/itens_da_casa/table_light/TinyLiving_NotATableEnd_43/TinyLiving_TheModernDeskLamp_23" unique_id=1645715715]
-transform = Transform3D(1, 0, 0, 0, -0.8791084, 0.47662184, 0, -0.47662184, -0.8791084, 0, 0.47672534, 0)
+transform = Transform3D(0.9042937, 0, 0, 0, -0.71471596, 0.33945873, 0, -0.387494, -0.8158521, 0, 0.47672534, -0.79164267)
+light_energy = 0.234
 
 [node name="Object_14" type="MeshInstance3D" parent="ambient/casa/itens_da_casa/table_light/TinyLiving_NotATableEnd_43/TinyLiving_TheModernDeskLamp_23" unique_id=1715287410]
 transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -0.50502014, -0.09361732, 1.2710963)
@@ -1210,22 +1177,32 @@ mesh = SubResource("ArrayMesh_51fg8")
 skeleton = NodePath("")
 
 [node name="Object_24" type="MeshInstance3D" parent="ambient/casa/itens_da_casa/table_light/TinyLiving_NotATableEnd_43" unique_id=1896237811]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.7807553, 3.874302e-07, 0.036655426)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.261356, 3.874302e-07, 7.8518906)
 mesh = SubResource("ArrayMesh_ljprc")
 skeleton = NodePath("")
 
 [node name="Object_86" type="MeshInstance3D" parent="ambient/casa/itens_da_casa/table_light" unique_id=1458653043]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.070863, 5.0142097, -5.011524)
+transform = Transform3D(0.57210296, 0, 0.82018185, 0, 1, 0, -0.82018185, 0, 0.57210296, 7.4712963, 5.0142097, -4.39781)
+mesh = SubResource("ArrayMesh_ov8eb")
+skeleton = NodePath("")
+
+[node name="Object_87" type="MeshInstance3D" parent="ambient/casa/itens_da_casa/table_light" unique_id=517707921]
+transform = Transform3D(0.57210296, 0, 0.82018185, 0, 1.2394131, 0, -0.82018185, 0, 0.57210296, -2.7918797, 5.0142097, 1.2322683)
+mesh = SubResource("ArrayMesh_ov8eb")
+skeleton = NodePath("")
+
+[node name="Object_88" type="MeshInstance3D" parent="ambient/casa/itens_da_casa/table_light" unique_id=1147932375]
+transform = Transform3D(-0.6500716, 0, 0.759873, 0, 1.2394131, 0, -0.759873, 0, -0.6500716, -3.0359879, 5.0142097, 4.1358795)
 mesh = SubResource("ArrayMesh_ov8eb")
 skeleton = NodePath("")
 
 [node name="Object_62" type="MeshInstance3D" parent="ambient/casa/itens_da_casa/table_light" unique_id=2078978921]
-transform = Transform3D(1.3136351, 0, 0, 0, 1.3141278, 0, 0, 0, 1.1127579, 10.32894, 5.7543783, -5.490242)
+transform = Transform3D(1.3136351, 0, 0, 0, 1.3141278, 0, 0, 0, 1.1127579, 8.652822, 5.7543783, -5.405861)
 mesh = SubResource("ArrayMesh_x8mvr")
 skeleton = NodePath("")
 
 [node name="Object_80" type="MeshInstance3D" parent="ambient/casa/itens_da_casa/table_light/Object_62" unique_id=1721429579]
-transform = Transform3D(-7.103616e-08, 0, -1, 0, 1.5514061, 0, 1.6251179, 0, -4.371139e-08, 1.1439543, 0, 1.2776508)
+transform = Transform3D(-7.103616e-08, 0, -1, 0, 1.551406, 0, 1.6251177, 0, -4.371138e-08, 0.5166595, 0, 3.3937807)
 mesh = SubResource("ArrayMesh_x45so")
 skeleton = NodePath("")
 
@@ -1233,7 +1210,7 @@ skeleton = NodePath("")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.415297, 5.036087, 21.315674)
 
 [node name="Object_30" type="MeshInstance3D" parent="ambient/casa/itens_da_casa/table_light/TinyLiving_JustALittlePeek_18" unique_id=1112927373]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -12.153512)
+transform = Transform3D(1.213141, 0, 0, 0, 1, 0, 0, 0, 1, -2.646544, 0, -14.912878)
 mesh = SubResource("ArrayMesh_vxyp4")
 skeleton = NodePath("")
 
@@ -1262,50 +1239,50 @@ mesh = SubResource("ArrayMesh_5owc8")
 skeleton = NodePath("")
 
 [node name="Object_42" type="MeshInstance3D" parent="ambient/casa/itens_da_casa/table_light" unique_id=1892163507]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.3956997, 5.057468, 7.636917)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.6626825, 5.057468, 5.709955)
 mesh = SubResource("ArrayMesh_vx3rs")
 skeleton = NodePath("")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="ambient/casa/itens_da_casa/table_light/Object_42" unique_id=1803411267]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.264393, 0)
+light_color = Color(1, 0.6431373, 0, 1)
+light_energy = 0.329
 
 [node name="estantes" type="Node3D" parent="ambient/casa/itens_da_casa" unique_id=2114058979]
 
 [node name="estante_parece" type="MeshInstance3D" parent="ambient/casa/itens_da_casa/estantes" unique_id=2072575340]
-transform = Transform3D(-0.07104479, 0, -0.9974731, 0, 1, 0, 0.9974731, 0, -0.07104479, 1.0634065, 0.45043254, -6.8935757)
+transform = Transform3D(-0.9989849, 0, 0.045049183, 0, 1, 0, -0.045049183, 0, -0.9989849, -4.172021, 0.45043254, -9.568163)
 gi_mode = 2
 mesh = SubResource("ArrayMesh_q7orc")
 skeleton = NodePath("")
 
 [node name="Object_10" type="MeshInstance3D" parent="ambient/casa/itens_da_casa/estantes" unique_id=1886769696]
-transform = Transform3D(-0.0019373127, 0, -0.99999815, 0, 1, 0, 0.99999815, 0, -0.0019373127, 0, 0.46903634, -8.62092)
+transform = Transform3D(-0.0019373127, 0, -0.99999815, 0, 1, 0, 0.99999815, 0, -0.0019373127, -1.7911682, 0.46903634, -11.380286)
 mesh = SubResource("ArrayMesh_7l4xq")
 skeleton = NodePath("")
 
 [node name="Object_11" type="MeshInstance3D" parent="ambient/casa/itens_da_casa/estantes" unique_id=1582257682]
-transform = Transform3D(-0.0019373127, 0, -0.99999815, 0, 1, 0, 0.99999815, 0, -0.0019373127, -6.2097116, 0.39534092, -13.5630455)
+transform = Transform3D(-0.9999981, 0, 0.0019547609, 0, 1, 0, -0.0019547609, 0, -0.9999981, -2.4049788, 0.39534092, -10.544773)
 mesh = SubResource("ArrayMesh_7l4xq")
 skeleton = NodePath("")
 
 [node name="objetos_aleatorios" type="Node3D" parent="ambient/casa/itens_da_casa" unique_id=936036356]
 
 [node name="livros" type="MeshInstance3D" parent="ambient/casa/itens_da_casa/objetos_aleatorios" unique_id=207761628]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.659839, 1.5396439, -6.5854797)
+transform = Transform3D(-0.023420148, 0, 0.9997257, 0, 1, 0, -0.9997257, 0, -0.023420148, -3.4350064, 1.5396439, -15.046155)
 mesh = SubResource("ArrayMesh_uvaew")
 skeleton = NodePath("")
 
-[node name="quadro" type="MeshInstance3D" parent="ambient/casa/itens_da_casa/objetos_aleatorios" unique_id=1507373070]
-transform = Transform3D(-0.013229221, 0, 0.9999125, 0, 1.8713276, 0, -0.9999125, 0, -0.013229221, -11.864018, 3.2015953, -6.700596)
-material_overlay = SubResource("StandardMaterial3D_7ce0s")
-mesh = SubResource("ArrayMesh_7ce0s")
-skeleton = NodePath("")
-
 [node name="quadro_3d" parent="ambient/casa/itens_da_casa/objetos_aleatorios" unique_id=1431627479 instance=ExtResource("29_eubjm")]
-transform = Transform3D(-0.02694884, 0, 1.0114509, 0, 1.7147553, 0, -1.7406255, 0, -0.01565956, -11.736418, 3.7705848, -11.653597)
+transform = Transform3D(-0.020427607, 0, 1.0076615, 0, 1.3123869, 0, -1.3194191, 0, -0.015600891, -10.439157, 2.7522104, -17.086058)
 
 [node name="OmniLight3D" type="OmniLight3D" parent="ambient/casa/itens_da_casa/objetos_aleatorios/quadro_3d" unique_id=1846266695]
 transform = Transform3D(0.5744373, 0, 9.313226e-10, 0, 0.5831736, 0, 0, 0, 0.98856026, -0.007475376, 0, 0.8309326)
+light_energy = 0.329
 
 [node name="fade" parent="ambient" unique_id=158118564 instance=ExtResource("29_arpac")]
 
 [node name="mesa" parent="." unique_id=1505507440 instance=ExtResource("33_7l4xq")]
-transform = Transform3D(0.06187913, 0, -1.3299917, 0, 0.9223517, 0, 1.0631698, 0, 0.07740882, -10.907759, 1.0760224, -15.105499)
+transform = Transform3D(0.06187913, 0, -1.3299917, 0, 0.7973074, 0, 1.0631698, 0, 0.07740882, -9.308101, 1.0480951, -12.677997)
 
 [editable path="ambient/casa/itens_da_casa/tv"]
