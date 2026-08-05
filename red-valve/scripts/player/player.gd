@@ -45,6 +45,7 @@ const SPEED = 5.0
 const JUMP_VELOCITY = 4.5
 const SENSITIVITY = 0.003 # Sensibilidade do mouse
 @export var WALK_SPEED = 4.0
+@export var WALK_SPEED_NORMAL = 2.8
 @export var RUN_SPEED = 7.5 # Velocidade maior para a corrida
 
 #CHANGE LATER - DYNAMICLY
@@ -307,9 +308,11 @@ func _physics_process(delta: float) -> void:
 		var input_dir := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 		
 		# MOVIMENTO NORMAL (WALK/RUN)
-		var velocidade_atual = WALK_SPEED
+		var velocidade_atual = WALK_SPEED_NORMAL
 		var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 		var velocity_Y_zero: bool = velocity.y <= 0
+		var target_fov: float = 75.0
+
 		if direction:
 			passos.pitch_scale = 0.9
 			
@@ -323,6 +326,8 @@ func _physics_process(delta: float) -> void:
 				if alinhamento < -0.2:
 					# Movimento para trás
 					playback.travel("walk_back")
+					passos.pitch_scale = 1.0
+					target_fov = 65.0
 				else:
 					# Movimento para frente
 					playback.travel("walk")
@@ -341,6 +346,10 @@ func _physics_process(delta: float) -> void:
 			if passos.playing: 
 				passos.stop()
 
+		var camera = get_viewport().get_camera_3d()
+		if camera:
+			camera.fov = lerp(camera.fov, target_fov, 5.0 * delta)
+
 
 		# 8. ROTAÇÃO VISUAL DO MODELO (MAYCOW LOPES)
 		#if input_dir.y <= 0.1: 
@@ -358,7 +367,6 @@ func _physics_process(delta: float) -> void:
 	
 	# 9. FINALIZAÇÃO
 	move_and_slide()
-
 
 
 func dash():
