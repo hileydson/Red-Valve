@@ -55,12 +55,12 @@ shader_parameter/atm_darkness = 0.5
 shader_parameter/atm_sun_intensity = 18.0
 shader_parameter/atm_day_tint = Color(0.807843, 0.909804, 1, 1)
 shader_parameter/atm_horizon_light_tint = Color(0.980392, 0.635294, 0.462745, 1)
-shader_parameter/atm_night_tint = Color(0.004544059, 0.0053894795, 0.0067632576, 0.026947398)
+shader_parameter/atm_night_tint = Color(0.12579623, 0.14920059, 0.18723181, 0.7460029)
 shader_parameter/atm_level_params = Vector3(1, 0, 0)
 shader_parameter/atm_thickness = 0.7
 shader_parameter/atm_beta_ray = Vector3(5.804544e-06, 1.3562913e-05, 3.311258e-05)
 shader_parameter/atm_beta_mie = Vector3(3.038e-08, 3.038e-08, 3.038e-08)
-shader_parameter/sun_light_color = Color(0.9909221, 0.7834922, 0.6795503, 1)
+shader_parameter/sun_light_color = Color(0.98, 0.523, 0.294, 1)
 shader_parameter/sun_disk_color = Color(0.996094, 0.541334, 0.140076, 1)
 shader_parameter/sun_disk_intensity = 30.0
 shader_parameter/sun_disk_size = 0.02
@@ -82,7 +82,7 @@ shader_parameter/starmap_flip_u = false
 shader_parameter/starmap_flip_v = false
 shader_parameter/starmap_alignment = Vector3(2.68288, -0.25891, 0.40101)
 shader_parameter/star_rotation_offset = 9.38899
-shader_parameter/star_rotation = -7.8577113030406425
+shader_parameter/star_rotation = -10.494734738859771
 shader_parameter/star_tilt = -1.2915436464758039
 shader_parameter/star_field_color = Color(1, 1, 1, 1)
 shader_parameter/star_field_texture = ExtResource("7_n3kvr")
@@ -98,8 +98,8 @@ shader_parameter/cirrus_absorption = 2.0
 shader_parameter/cirrus_sky_tint_fade = 0.5
 shader_parameter/cirrus_size = 1.0
 shader_parameter/cirrus_uv = Vector2(0.16, 0.11)
-shader_parameter/cirrus_position1 = Vector2(0.6771723, 0.6771723)
-shader_parameter/cirrus_position2 = Vector2(0.6771723, 0.6771723)
+shader_parameter/cirrus_position1 = Vector2(0.26159438, 0.26159438)
+shader_parameter/cirrus_position2 = Vector2(0.26159438, 0.26159438)
 shader_parameter/cirrus_texture = ExtResource("3_01ffe")
 shader_parameter/cumulus_visible = true
 shader_parameter/cumulus_intensity = 0.6
@@ -109,7 +109,7 @@ shader_parameter/cumulus_absorption = 2.0
 shader_parameter/cumulus_noise_freq = 2.7
 shader_parameter/cumulus_sky_tint_fade = 0.0
 shader_parameter/cumulus_size = 0.5
-shader_parameter/cumulus_position = Vector2(43.524597, 43.524597)
+shader_parameter/cumulus_position = Vector2(197.0734, 197.0734)
 shader_parameter/cumulus_texture = ExtResource("4_qysyv")
 shader_parameter/cumulus_partial_mie_phase = Vector3(0.957564, 1.042436, 0.412)
 shader_parameter/cumulus_mie_intensity = 1.0
@@ -119,7 +119,7 @@ shader_parameter/azimuthal_grid_rotation_offset = 0.03
 shader_parameter/show_equatorial_grid = false
 shader_parameter/equatorial_grid_color = Color(0, 0.75, 1, 1)
 shader_parameter/equatorial_grid_rotation_offset = 0.03
-shader_parameter/moon_matrix = Basis(0, 0.12219488, 0.99250615, -0.97353774, 0.22681367, -0.027924731, -0.22852623, -0.96624225, 0.11896133)
+shader_parameter/moon_matrix = Basis(7.450581e-09, -0.8774694, 0.47963253, -0.2950333, 0.45828265, 0.83841056, -0.95548695, -0.1415076, -0.25888273)
 
 [sub_resource type="Sky" id="Sky_y84l6"]
 sky_material = SubResource("ShaderMaterial_m2pnx")
@@ -128,7 +128,8 @@ sky_material = SubResource("ShaderMaterial_m2pnx")
 background_mode = 2
 sky = SubResource("Sky_y84l6")
 ambient_light_source = 3
-ambient_light_color = Color(0.66842836, 0.5290935, 0.45958433, 1)
+ambient_light_color = Color(0.23515591, 0.2789067, 0.35, 1)
+ambient_light_sky_contribution = 0.7
 reflected_light_source = 2
 tonemap_mode = 3
 tonemap_white = 6.0
@@ -859,6 +860,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8378088, 1.6337886, -11.057
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="ambient" unique_id=1380061738]
 transform = Transform3D(1, 0, 0, 0, 0.025060292, 0.99968594, 0, -0.99968594, 0.025060292, 0, 20.383059, 0)
+visible = false
 light_energy = 0.1
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="ambient" unique_id=1156982904]
@@ -868,40 +870,41 @@ environment = SubResource("Environment_pbbbw")
 environment = SubResource("Environment_r8a1f")
 camera_attributes = SubResource("CameraAttributesPractical_touxj")
 script = ExtResource("9_osxep")
-current_time = 16.862325556549827
+editor_time_enabled = false
+game_time_enabled = false
+current_time = 20.42
 minutes_per_day = 4.0
 wind_direction = 2.35619451204804
 metadata/_custom_type_script = "uid://deo0gxkmk2ahd"
 
 [node name="SunLight" type="DirectionalLight3D" parent="ambient/WorldEnvironment/Sky3D" unique_id=2018384540]
-transform = Transform3D(-0.03853703, 0.27284977, -0.9612845, 0, 0.9619991, 0.2730526, 0.99925715, 0.010522637, -0.037072588, -0.9612845, 0.2730526, -0.037072588)
-light_color = Color(0.9909221, 0.7834922, 0.6795503, 1)
-shadow_enabled = true
+transform = Transform3D(-0.5723203, -0.36573586, -0.7339528, 0, 0.89503145, -0.44600293, 0.82003015, -0.25525653, -0.5122447, -0.7339528, -0.44600293, -0.5122447)
+light_color = Color(0.98, 0.523, 0.294, 1)
+light_energy = 0.0
 
 [node name="MoonLight" type="DirectionalLight3D" parent="ambient/WorldEnvironment/Sky3D" unique_id=321354681]
-transform = Transform3D(0, -0.97353774, -0.22852622, 0.12219487, 0.22681367, -0.9662422, 0.99250615, -0.027924731, 0.11896132, -0.22852622, -0.9662422, 0.11896132)
+transform = Transform3D(0, -0.2950333, -0.95548695, -0.8774694, 0.45828265, -0.14150758, 0.47963256, 0.83841056, -0.2588827, -0.95548695, -0.14150758, -0.2588827)
 light_color = Color(0.572549, 0.776471, 0.956863, 1)
 light_energy = 0.0
 
 [node name="SkyDome" type="Node" parent="ambient/WorldEnvironment/Sky3D" unique_id=1270046312]
 script = ExtResource("10_vt4l1")
-sun_azimuth = -4.7509356
-sun_altitude = -1.2942315
-moon_azimuth = -4.23243
-moon_altitude = -2.8810184
+sun_azimuth = -5.3217216
+sun_altitude = -2.0330908
+moon_azimuth = -4.9769797
+moon_altitude = -1.7127805
 wind_direction = 2.35619451204804
 
 [node name="TimeOfDay" type="Node" parent="ambient/WorldEnvironment/Sky3D" unique_id=1678051531]
 script = ExtResource("11_n2v7u")
+editor_time_enabled = false
+game_time_enabled = false
 dome_path = NodePath("../SkyDome")
 minutes_per_day = 4.0
-current_time = 16.862325556549827
-day = 5
-month = 4
+current_time = 20.42
+day = 13
+month = 7
 year = 2029
-
-[node name="mesa_telefone" parent="ambient/WorldEnvironment/Sky3D" unique_id=1539733106 instance=ExtResource("13_5llxv")]
-transform = Transform3D(-0.79988325, 0, -0.023667475, 0, 0.83553696, 0, 0.024103288, 0, -0.78542066, -8.257532, 1.1502178, -9.513313)
 
 [node name="VoxelGI" type="VoxelGI" parent="ambient" unique_id=488929717]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3605957, 4.083435, -3.809204)
@@ -981,11 +984,10 @@ material = SubResource("StandardMaterial3D_q7orc")
 
 [node name="tetos" type="CSGCombiner3D" parent="ambient/casa" unique_id=1817062178]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.0654583, 0)
-visible = false
 
 [node name="teto" type="CSGBox3D" parent="ambient/casa/tetos" unique_id=1665429946]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.1386566, 7.0615435, -7.5341187)
-size = Vector3(23.42862, 1, 28.42273)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.8392906, 7.0615435, -7.5341187)
+size = Vector3(14.693459, 1, 28.42273)
 material = SubResource("StandardMaterial3D_n3kvr")
 
 [node name="teto2" type="CSGBox3D" parent="ambient/casa/tetos" unique_id=905840548]
@@ -1084,12 +1086,13 @@ transform = Transform3D(-0.023420148, 0, 0.9997257, 0, 1, 0, -0.9997257, 0, -0.0
 size = Vector3(1, 3.1381836, 1)
 
 [node name="OmniLight3D2" type="OmniLight3D" parent="ambient/casa/abajur2" unique_id=228823248]
-transform = Transform3D(1.0000001, 0, 5.5879354e-09, 0, 1, 0, -3.7252903e-09, 0, 1.0000001, -5.3729477, 2.1907704, -4.6476965)
+transform = Transform3D(1.0000001, 0, 7.450581e-09, 0, 1, 0, -5.5879354e-09, 0, 1.0000001, -5.3940697, 2.1907704, -3.746068)
 light_color = Color(0.9607843, 0.7176471, 0.039215688, 1)
-light_energy = 0.521
+light_energy = 0.234
 
 [node name="OmniLight3D3" type="OmniLight3D" parent="ambient/casa/abajur2" unique_id=1745574077]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.773469, 2.9761918, -1.0035045)
+visible = false
 
 [node name="SpotLight3D" type="SpotLight3D" parent="ambient/casa/abajur2/OmniLight3D3" unique_id=1399418846]
 transform = Transform3D(1, 0, 0, 0, 0.16651063, 0.9860397, 0, -0.9860397, 0.16651063, 0, 0.65219164, 0)
@@ -1159,15 +1162,17 @@ skeleton = NodePath("")
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -0.031027198, 0.57604647, -0.008991241)
 
 [node name="Object_48" type="MeshInstance3D" parent="ambient/casa/itens_da_casa/table_light/TinyLiving_NotATableEnd_43/TinyLiving_TheModernDeskLamp_23" unique_id=1276452423]
-transform = Transform3D(-0.9498739, 0, 0.31263325, 0, 1, 0, -0.31263325, 0, -0.94987386, -9.688923, 0.18371272, -8.406721)
+transform = Transform3D(-0.9498739, 0, 0.31263325, 0, 1, 0, -0.31263325, 0, -0.94987386, -9.688923, 0.18371284, -7.592149)
 mesh = SubResource("ArrayMesh_qlgbq")
 skeleton = NodePath("")
 
 [node name="SpotLight3D" type="SpotLight3D" parent="ambient/casa/itens_da_casa/table_light/TinyLiving_NotATableEnd_43/TinyLiving_TheModernDeskLamp_23/Object_48" unique_id=1584074831]
 transform = Transform3D(0.7741789, -0.16255265, 0.43792406, 0.40385786, 0.3475282, -0.5849567, -0.07265827, 0.7952116, 0.42227888, 0.09644413, 0.17715645, 0.2930212)
+light_energy = 0.138
 
 [node name="SpotLight3D" type="SpotLight3D" parent="ambient/casa/itens_da_casa/table_light/TinyLiving_NotATableEnd_43/TinyLiving_TheModernDeskLamp_23" unique_id=1645715715]
 transform = Transform3D(0.9042937, 0, 0, 0, -0.71471596, 0.33945873, 0, -0.387494, -0.8158521, 0, 0.47672534, -0.79164267)
+visible = false
 light_energy = 0.234
 
 [node name="Object_14" type="MeshInstance3D" parent="ambient/casa/itens_da_casa/table_light/TinyLiving_NotATableEnd_43/TinyLiving_TheModernDeskLamp_23" unique_id=1715287410]
@@ -1278,7 +1283,10 @@ transform = Transform3D(-0.020427607, 0, 1.0076615, 0, 1.3123869, 0, -1.3194191,
 
 [node name="OmniLight3D" type="OmniLight3D" parent="ambient/casa/itens_da_casa/objetos_aleatorios/quadro_3d" unique_id=1846266695]
 transform = Transform3D(0.5744373, 0, 9.313226e-10, 0, 0.5831736, 0, 0, 0, 0.98856026, -0.007475376, 0, 0.8309326)
-light_energy = 0.329
+light_energy = 0.137
+
+[node name="mesa_telefone" parent="ambient/casa/itens_da_casa/objetos_aleatorios" unique_id=1539733106 instance=ExtResource("13_5llxv")]
+transform = Transform3D(-0.79988325, 0, -0.023667475, 0, 0.83553696, 0, 0.024103288, 0, -0.78542066, -7.355656, 1.1502178, -9.513313)
 
 [node name="fade" parent="ambient" unique_id=158118564 instance=ExtResource("29_arpac")]
 
