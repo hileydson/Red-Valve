@@ -74,7 +74,7 @@ shader_parameter/moon_texture_flip_u = false
 shader_parameter/moon_texture_flip_v = false
 shader_parameter/moon_size = 0.07
 shader_parameter/atm_moon_mie_tint = Color(0.137255, 0.184314, 0.292196, 1)
-shader_parameter/atm_moon_mie_intensity = 0.5222020304203033
+shader_parameter/atm_moon_mie_intensity = 0.522202051281929
 shader_parameter/atm_moon_partial_mie_phase = Vector3(0.36, 1.64, 1.6)
 shader_parameter/starmap_color = Color(0.709804, 0.709804, 0.709804, 0.854902)
 shader_parameter/starmap_texture = ExtResource("8_avu31")
@@ -98,8 +98,8 @@ shader_parameter/cirrus_absorption = 2.0
 shader_parameter/cirrus_sky_tint_fade = 0.5
 shader_parameter/cirrus_size = 1.0
 shader_parameter/cirrus_uv = Vector2(0.16, 0.11)
-shader_parameter/cirrus_position1 = Vector2(0.68832386, 0.68832386)
-shader_parameter/cirrus_position2 = Vector2(0.68832386, 0.68832386)
+shader_parameter/cirrus_position1 = Vector2(0.8479996, 0.8479996)
+shader_parameter/cirrus_position2 = Vector2(0.8479996, 0.8479996)
 shader_parameter/cirrus_texture = ExtResource("3_01ffe")
 shader_parameter/cumulus_visible = true
 shader_parameter/cumulus_intensity = 0.6
@@ -109,7 +109,7 @@ shader_parameter/cumulus_absorption = 2.0
 shader_parameter/cumulus_noise_freq = 2.7
 shader_parameter/cumulus_sky_tint_fade = 0.0
 shader_parameter/cumulus_size = 0.5
-shader_parameter/cumulus_position = Vector2(18.482317, 18.482317)
+shader_parameter/cumulus_position = Vector2(9.245017, 9.245017)
 shader_parameter/cumulus_texture = ExtResource("4_qysyv")
 shader_parameter/cumulus_partial_mie_phase = Vector3(0.957564, 1.042436, 0.412)
 shader_parameter/cumulus_mie_intensity = 1.0
@@ -223,6 +223,9 @@ albedo_texture = SubResource("ViewportTexture_5llxv")
 emission = Color(0.7121294, 0.7121294, 0.71212935, 1)
 emission_energy_multiplier = 0.36
 uv1_scale = Vector3(-1, -1, -1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_qlgbq"]
+size = Vector3(280.2277, 241.04486, 917.021)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_u7g2d"]
 resource_name = "DIFFUSE.010"
@@ -853,8 +856,12 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_5llxv")
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_dnyf3"]
+size = Vector3(2.0829468, 1, 2.142456)
+
 [node name="the_house" type="Node3D" unique_id=463009553]
 script = ExtResource("1_01ffe")
+tempo_para_telefone = 12.0
 
 [node name="Player" parent="." unique_id=448699446 instance=ExtResource("1_pbbbw")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8378088, 1.6337886, -12.337379)
@@ -1098,7 +1105,7 @@ size = Vector3(15.970539, 1, 28.42273)
 material = SubResource("StandardMaterial3D_2vn28")
 
 [node name="abajur2" type="CSGBox3D" parent="ambient/casa" unique_id=1051575920]
-transform = Transform3D(-0.023420148, 0, 0.9997257, 0, 1, 0, -0.9997257, 0, -0.023420148, -3.454377, -0.023178816, -15.075782)
+transform = Transform3D(-0.023420148, 0, 0.9997257, 0, 1, 0, -0.9997257, 0, -0.023420148, -3.764326, -0.023178816, -15.075782)
 size = Vector3(1, 3.1381836, 1)
 
 [node name="OmniLight3D2" type="OmniLight3D" parent="ambient/casa/abajur2" unique_id=228823248]
@@ -1162,6 +1169,12 @@ stream = ExtResource("16_n3kvr")
 volume_db = -80.0
 autoplay = true
 loop = true
+
+[node name="Area3D_tv" type="Area3D" parent="ambient/casa/itens_da_casa/tv" unique_id=1309355585]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ambient/casa/itens_da_casa/tv/Area3D_tv" unique_id=1102868885]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 802.04724, 290.50027, 61.749023)
+shape = SubResource("BoxShape3D_qlgbq")
 
 [node name="table_light" type="Node3D" parent="ambient/casa/itens_da_casa" unique_id=96261546]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.4844513, -4.5224266, -15.445244)
@@ -1304,6 +1317,12 @@ light_energy = 0.137
 [node name="mesa_telefone" parent="ambient/casa/itens_da_casa/objetos_aleatorios" unique_id=1539733106 instance=ExtResource("13_5llxv")]
 transform = Transform3D(-0.79988325, 0, -0.023667475, 0, 0.83553696, 0, 0.024103288, 0, -0.78542066, -7.355656, 1.1502178, -9.513313)
 
+[node name="Area3D_telefone" type="Area3D" parent="ambient/casa/itens_da_casa/objetos_aleatorios/mesa_telefone" unique_id=525656510]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ambient/casa/itens_da_casa/objetos_aleatorios/mesa_telefone/Area3D_telefone" unique_id=305808800]
+transform = Transform3D(0.99999714, 0, -5.5879354e-09, 0, 1, 0, -3.9115548e-08, 0, 0.9999998, -0.04940796, 0, 0.57122993)
+shape = SubResource("BoxShape3D_dnyf3")
+
 [node name="fade" parent="ambient" unique_id=158118564 instance=ExtResource("29_arpac")]
 
 [node name="mesa" parent="." unique_id=1505507440 instance=ExtResource("33_7l4xq")]
@@ -1311,5 +1330,9 @@ transform = Transform3D(0.06187913, 0, -1.3299917, 0, 0.7973074, 0, 1.0631698, 0
 
 [connection signal="body_entered" from="ambient/casa/porta_saida/Area3D" to="." method="_on_area_3d_body_entered"]
 [connection signal="body_exited" from="ambient/casa/porta_saida/Area3D" to="." method="_on_area_3d_body_exited"]
+[connection signal="body_entered" from="ambient/casa/itens_da_casa/tv/Area3D_tv" to="." method="_on_area_3d_tv_body_entered"]
+[connection signal="body_exited" from="ambient/casa/itens_da_casa/tv/Area3D_tv" to="." method="_on_area_3d_tv_body_exited"]
+[connection signal="body_entered" from="ambient/casa/itens_da_casa/objetos_aleatorios/mesa_telefone/Area3D_telefone" to="." method="_on_area_3d_telefone_body_entered"]
+[connection signal="body_exited" from="ambient/casa/itens_da_casa/objetos_aleatorios/mesa_telefone/Area3D_telefone" to="." method="_on_area_3d_telefone_body_exited"]
 
 [editable path="ambient/casa/itens_da_casa/tv"]

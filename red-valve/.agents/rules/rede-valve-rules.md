@@ -21,3 +21,6 @@ trigger: always_on
 
 
 -sempre execute o que eu pedir pra fazer, mas se eu escrever a palavra ATENCAO em caixa alta, nao execute e pergunte antes, ou se escrever ANALISE em caixa alta, eh soh pra analisar e nao executar tambem
+
+
+-qualquer texto que for adicionado incluir nos arquivos de csv disponiveis e sempre traduzir para o ingles tambem. 

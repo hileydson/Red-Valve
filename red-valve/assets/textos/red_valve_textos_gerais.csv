@@ -4,3 +4,6 @@ BTN_START,START,INICIAR
 BTN_EXIT,EXIT,SAIR
 BTN_RESUME,RESUME,CONTINUAR
 TXT_HOUSE_TV,I left the TV on...,Esqueci a televisão ligada...
+PROMPT_ANSWER_PHONE,Answer phone?,Atender telefone?
+PROMPT_TURN_ON_TV,Turn on TV,Ligar Tv
+PROMPT_TURN_OFF_TV,Turn off TV,Desligar Tv

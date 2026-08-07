@@ -1,10 +1,11 @@
-[gd_scene format=3 uid="uid://durxuu0rctm22"]
+[gd_scene format=3 uid="uid://csv84wovjbr5v"]
 
-[ext_resource type="Script" uid="uid://kbsx8gxplghl" path="res://scripts/stages/prolog/cutscene_prolog.gd" id="1_cutsn"]
+[ext_resource type="Script" path="res://scripts/stages/prolog/cutscene_telefone.gd" id="1_cutsn"]
 [ext_resource type="AudioStream" uid="uid://lvxgd3tjitad" path="res://assets/cutscenes/sound/begin.mp3" id="2_em5kw"]
 [ext_resource type="PackedScene" uid="uid://dy356o67p6jyn" path="res://scenes/configs/fade.tscn" id="2_fade"]
 
-[node name="CutsceneProlog" type="Control" unique_id=336494292]
+[node name="CutsceneTelefone" type="Control" unique_id=336494292]
+process_mode = 3
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
