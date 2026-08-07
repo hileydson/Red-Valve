@@ -1,9 +1,6 @@
 keys,en,pt
-MSG_1,After a really hard day of work!,Depois de um dia longo de trabalho...
-MSG_2,Something something...,Bla bla bla ...
-MSG_3,Something something 3 ...,Bla bla bla 3 ...
-MSG_FINAL,Final message,Mensagem final
-,,
-,,
-PROLOGO_MSG_1,5 anos alalalal...,
-PROLOGO_MSG_2,e depois... ,
+PROLOG_BEGIN_1_1,The day had been long...,O dia havia sido longo...
+PROLOG_BEGIN_1_2,The exhaustion of work weighed heavily on his shoulders.,O cansaço do trabalho pesava em seus ombros. 
+PROLOG_BEGIN_2_3,"Since Jimmy's disappearance a week ago, everything felt out of place.","Desde o desaparecimento de Jimmy, uma semana antes, tudo parecia fora de lugar."
+PROLOG_BEGIN_2_4,Jimmy wasn't just his mentor.,Jimmy não era apenas seu mentor.
+PROLOG_BEGIN_2_5,He was like family.,Era como família.

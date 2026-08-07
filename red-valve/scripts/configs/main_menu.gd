@@ -23,7 +23,10 @@ func _process(delta: float) -> void:
 
 
 func _on_start_pressed() -> void:
-	get_tree().change_scene_to_file("res://scenes/stages/prolog/the_house.tscn")
+	$Control.visible = false
+	$fade.fade_out()
+	await get_tree().create_timer(2.0).timeout
+	get_tree().change_scene_to_file("res://scenes/stages/prolog/cutscene_prolog.tscn")
 
 
 func _on_exit_pressed() -> void:

@@ -19,6 +19,35 @@ func _ready() -> void:
 	# Adicionando um contorno na fonte para destacar na cena
 	prompt_label.add_theme_constant_override("outline_size", 4)
 	add_child(prompt_label)
+	
+	_show_intro_text()
+
+func _show_intro_text() -> void:
+	await get_tree().create_timer(3.0).timeout
+	
+	var tv_label = Label.new()
+	tv_label.text = tr("TXT_HOUSE_TV")
+	tv_label.set_anchors_preset(Control.PRESET_CENTER)
+	tv_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	# Fonte levemente maior para esse texto narrativo
+	tv_label.add_theme_font_size_override("font_size", 28)
+	tv_label.add_theme_constant_override("outline_size", 4)
+	add_child(tv_label)
+	
+	# Efeito de Fade In suave
+	tv_label.modulate.a = 0
+	var tween_in = create_tween()
+	tween_in.tween_property(tv_label, "modulate:a", 1.0, 1.0)
+	await tween_in.finished
+	
+	# Fica na tela por 3 segundos
+	await get_tree().create_timer(3.0).timeout
+	
+	# Efeito de Fade Out e remove da memória
+	var tween_out = create_tween()
+	tween_out.tween_property(tv_label, "modulate:a", 0.0, 1.0)
+	await tween_out.finished
+	tv_label.queue_free()
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
