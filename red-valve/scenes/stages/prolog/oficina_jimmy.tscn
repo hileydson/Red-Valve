@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://c4ko48jpe1vms"]
+
+[ext_resource type="PackedScene" uid="uid://bhyhnppiawn07" path="res://scenes/configs/pause.tscn" id="1_b8np8"]
+[ext_resource type="PackedScene" uid="uid://bjlae2i2x8twg" path="res://assets/3d_model/stages/prolog/auto_pecas_jimmy.glb" id="1_q6dip"]
+[ext_resource type="PackedScene" uid="uid://dy356o67p6jyn" path="res://scenes/configs/fade.tscn" id="2_6q8v1"]
+[ext_resource type="PackedScene" uid="uid://cluvbknxfjx2k" path="res://scenes/player/player.tscn" id="2_falgx"]
+
+[node name="oficina_jimmy" type="Node3D" unique_id=2029993664]
+
+[node name="Pause" parent="." unique_id=1267958209 instance=ExtResource("1_b8np8")]
+
+[node name="fade" parent="." unique_id=158118564 instance=ExtResource("2_6q8v1")]
+
+[node name="auto_pecas_jimmy" parent="." unique_id=10078496 instance=ExtResource("1_q6dip")]
+transform = Transform3D(9.963111, 0, 0, 0, 7.8780704, 0, 0, 0, 21.186905, -0.9719733, 0, -0.896631)
+
+[node name="Player" parent="." unique_id=448699446 instance=ExtResource("2_falgx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4.2990584, 0)
+
+[editable path="auto_pecas_jimmy"]

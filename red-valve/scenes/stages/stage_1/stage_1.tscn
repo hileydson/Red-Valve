@@ -29,6 +29,7 @@
 [ext_resource type="VoxelGIData" uid="uid://brpd0g4andheh" path="res://scenes/stages/stage_1/baked_voxelgi/stage_1.VoxelGI_data.res" id="26_5de2w"]
 [ext_resource type="Texture2D" uid="uid://bdqwmqfimlx5b" path="res://assets/3d_model/player/hands/hand_reload_0.jpg" id="26_3817s"]
 [ext_resource type="PackedScene" uid="uid://k5p8rjs1xqwm" path="res://assets/3d_model/stages/prolog/casa_inteira_por_fora.glb" id="27_3817s"]
+[ext_resource type="PackedScene" uid="uid://bjlae2i2x8twg" path="res://assets/3d_model/stages/prolog/auto_pecas_jimmy.glb" id="29_wfumn"]
 [ext_resource type="Script" uid="uid://b6781x3j14vwg" path="res://scripts/stages/fix_materials.gd" id="99_fixmat"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_5de2w"]
@@ -126,8 +127,8 @@ shader_parameter/cirrus_absorption = 2.0
 shader_parameter/cirrus_sky_tint_fade = 0.5
 shader_parameter/cirrus_size = 1.0
 shader_parameter/cirrus_uv = Vector2(0.16, 0.11)
-shader_parameter/cirrus_position1 = Vector2(0.22904398, 0.22904398)
-shader_parameter/cirrus_position2 = Vector2(0.22904398, 0.22904398)
+shader_parameter/cirrus_position1 = Vector2(0.31579912, 0.31579912)
+shader_parameter/cirrus_position2 = Vector2(0.31579912, 0.31579912)
 shader_parameter/cirrus_texture = ExtResource("3_kvc23")
 shader_parameter/cumulus_visible = true
 shader_parameter/cumulus_intensity = 9.245
@@ -137,7 +138,7 @@ shader_parameter/cumulus_absorption = 2.0
 shader_parameter/cumulus_noise_freq = 2.7
 shader_parameter/cumulus_sky_tint_fade = 0.0
 shader_parameter/cumulus_size = 0.5
-shader_parameter/cumulus_position = Vector2(1.1452149, 1.1452149)
+shader_parameter/cumulus_position = Vector2(1.5789622, 1.5789622)
 shader_parameter/cumulus_texture = ExtResource("4_2wkc3")
 shader_parameter/cumulus_partial_mie_phase = Vector3(0.957564, 1.042436, 0.412)
 shader_parameter/cumulus_mie_intensity = 1.0
@@ -296,6 +297,12 @@ texture_list = Array[Terrain3DTextureAsset]([SubResource("Terrain3DTextureAsset_
 
 [sub_resource type="QuadOccluder3D" id="QuadOccluder3D_71jj4"]
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_tayg2"]
+size = Vector3(8.641113, 33.55414, 227.19731)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_wfumn"]
+size = Vector3(2.3670502, 1, 1.4061279)
+
 [node name="Stage1" type="Node3D" unique_id=162527]
 script = ExtResource("1_nwsyl")
 
@@ -357,7 +364,7 @@ omni_range = 19.186
 omni_attenuation = 0.162
 
 [node name="street_lamp2" parent="objects" unique_id=1979032641 instance=ExtResource("2_3oxtr")]
-transform = Transform3D(0.8346267, 0, 0, 0, 0.798187, 0, 0, 0, 0.808786, 479.3756, -1.5258789e-05, 343.33908)
+transform = Transform3D(0.8346267, 0, 0, 0, 0.798187, 0, 0, 0, 0.808786, 473.1932, -1.7166138e-05, 348.36658)
 
 [node name="OmniLight3D" type="OmniLight3D" parent="objects/street_lamp2" unique_id=263803731]
 transform = Transform3D(1.1981405, 0, 0, 0, 1.2528392, 0, 0, 0, 1.2364211, -0.25134277, 5.758327, 0)
@@ -430,6 +437,21 @@ transform = Transform3D(1, 0, 0, 0, 0.9452854, -0.32624468, 0, 0.32624468, 0.945
 mesh = ExtResource("3_71jj4")
 skeleton = NodePath("../..")
 
+[node name="TreeSpruceCube142" type="MeshInstance3D" parent="Greens" unique_id=1019077525]
+transform = Transform3D(1, 0, 0, 0, 0.9452854, -0.32624468, 0, 0.32624468, 0.9452854, 336.5416, 49.880882, 409.31726)
+mesh = ExtResource("3_71jj4")
+skeleton = NodePath("../..")
+
+[node name="TreeSpruceCube143" type="MeshInstance3D" parent="Greens" unique_id=2128849085]
+transform = Transform3D(1, 0, 0, 0, 0.9452854, -0.32624468, 0, 0.32624468, 0.9452854, 305.853, 49.880882, 445.28217)
+mesh = ExtResource("3_71jj4")
+skeleton = NodePath("../..")
+
+[node name="TreeSpruceCube144" type="MeshInstance3D" parent="Greens" unique_id=2072093117]
+transform = Transform3D(1, 0, 0, 0, 0.9452854, -0.32624468, 0, 0.32624468, 0.9452854, 336.0983, 49.880882, 466.91296)
+mesh = ExtResource("3_71jj4")
+skeleton = NodePath("../..")
+
 [node name="TreeSpruceCube137" type="MeshInstance3D" parent="Greens" unique_id=1894235261]
 transform = Transform3D(1, 0, 0, 0, 0.9452854, -0.32624468, 0, 0.32624468, 0.9452854, 586.86597, 49.880882, 110.62512)
 mesh = ExtResource("3_71jj4")
@@ -472,6 +494,16 @@ skeleton = NodePath("../..")
 
 [node name="TreeSpruceCube130" type="MeshInstance3D" parent="Greens" unique_id=773809029]
 transform = Transform3D(1, 0, 0, 0, 0.9452854, -0.32624468, 0, 0.32624468, 0.9452854, 358.9202, 49.880882, 376.14728)
+mesh = ExtResource("2_6araj")
+skeleton = NodePath("../..")
+
+[node name="TreeSpruceCube140" type="MeshInstance3D" parent="Greens" unique_id=2040808171]
+transform = Transform3D(1, 0, 0, 0, 0.9452854, -0.32624468, 0, 0.32624468, 0.9452854, 352.17184, 49.880882, 436.61368)
+mesh = ExtResource("2_6araj")
+skeleton = NodePath("../..")
+
+[node name="TreeSpruceCube141" type="MeshInstance3D" parent="Greens" unique_id=552431379]
+transform = Transform3D(1, 0, 0, 0, 0.9452854, -0.32624468, 0, 0.32624468, 0.9452854, 290.68085, 49.880882, 330.79166)
 mesh = ExtResource("2_6araj")
 skeleton = NodePath("../..")
 
@@ -629,7 +661,7 @@ top_level = true
 metadata/_edit_lock_ = true
 
 [node name="Player" parent="." unique_id=663958156 instance=ExtResource("1_23usu")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 489.38214, 1.3237407, 445.27213)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 461.09592, 1.3237331, 382.96555)
 
 [node name="enemies" type="Node3D" parent="." unique_id=1935818346]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 714.9369, 2.015886, 441.17017)
@@ -658,9 +690,6 @@ transform = Transform3D(0.059585143, 0, -0.99822325, 0, 1, 0, 0.99822325, 0, 0.0
 [node name="Zombie17" parent="enemies" unique_id=1443887500 instance=ExtResource("18_2ux1o")]
 transform = Transform3D(0.059585143, 0, -0.99822325, 0, 1, 0, 0.99822325, 0, 0.059585143, -403.88242, 1.2822897, -185.6193)
 
-[node name="Zombie18" parent="enemies" unique_id=1019466412 instance=ExtResource("18_2ux1o")]
-transform = Transform3D(0.059585143, 0, -0.99822325, 0, 1, 0, 0.99822325, 0, 0.059585143, -251.7821, 1.2822897, -77.8768)
-
 [node name="Zombie19" parent="enemies" unique_id=1870904481 instance=ExtResource("18_2ux1o")]
 transform = Transform3D(0.059585143, 0, -0.99822325, 0, 1, 0, 0.99822325, 0, 0.059585143, -389.94986, 1.2822897, -76.43982)
 
@@ -688,9 +717,6 @@ transform = Transform3D(0.059585143, 0, -0.99822325, 0, 1, 0, 0.99822325, 0, 0.0
 [node name="Zombie4" parent="enemies" unique_id=699993325 instance=ExtResource("18_2ux1o")]
 transform = Transform3D(0.059585143, 0, -0.99822325, 0, 1, 0, 0.99822325, 0, 0.059585143, -51.057617, 0, -81.61841)
 
-[node name="Zombie5" parent="enemies" unique_id=1137497567 instance=ExtResource("18_2ux1o")]
-transform = Transform3D(0.059585143, 0, -0.99822325, 0, 1, 0, 0.99822325, 0, 0.059585143, -167.85657, 0, -78.67621)
-
 [node name="Zombie6" parent="enemies" unique_id=183051955 instance=ExtResource("18_2ux1o")]
 transform = Transform3D(0.059585143, 0, -0.99822325, 0, 1, 0, 0.99822325, 0, 0.059585143, -133.71954, -1.5258789e-05, -246.30254)
 
@@ -705,9 +731,6 @@ transform = Transform3D(0.059585143, 0, -0.99822325, 0, 1, 0, 0.99822325, 0, 0.0
 
 [node name="Zombie10" parent="enemies" unique_id=1720024831 instance=ExtResource("18_2ux1o")]
 transform = Transform3D(0.059585143, 0, -0.99822325, 0, 1, 0, 0.99822325, 0, 0.059585143, -206.41092, -6.1035156e-05, -412.10077)
-
-[node name="TheCobaltHusker" parent="enemies" unique_id=620753305 instance=ExtResource("3_hdpfd")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -277.14053, -0.35303092, -55.42685)
 
 [node name="TheCobaltHusker4" parent="enemies" unique_id=1100274870 instance=ExtResource("3_hdpfd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -401.54126, -0.35303092, -326.00882)
@@ -757,6 +780,39 @@ light_energy = 1.16
 transform = Transform3D(5.3161125, 0, 0, 0, 4.745676, 0, 0, 0, 1, 672.45355, 8.297007, 36.678917)
 billboard = 1
 texture = ExtResource("22_vmqnh")
+
+[node name="itens_caminho_jimmy" type="Node3D" parent="." unique_id=982040733]
+
+[node name="StaticBody3D" type="StaticBody3D" parent="itens_caminho_jimmy" unique_id=7260239]
+collision_layer = 3
+collision_mask = 3
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="itens_caminho_jimmy/StaticBody3D" unique_id=1000526489]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 429.22018, 16.27707, 384.00406)
+shape = SubResource("BoxShape3D_tayg2")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="itens_caminho_jimmy/StaticBody3D" unique_id=601634641]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 520.44415, 16.27707, 384.00406)
+shape = SubResource("BoxShape3D_tayg2")
+
+[node name="auto_pecas_jimmy" parent="itens_caminho_jimmy" unique_id=10078496 instance=ExtResource("29_wfumn")]
+transform = Transform3D(7.193343, 0, 6.250617, 0, 6.706888, 0, -3.4048867, 0, 13.205382, 464.68893, 4.7743187, 341.1094)
+
+[node name="OmniLight3D" type="OmniLight3D" parent="itens_caminho_jimmy/auto_pecas_jimmy" unique_id=1984126682]
+transform = Transform3D(0.08094884, 0, 0, 0, 0.0318739, 0, 0, 0, 0.048533898, -0.8499718, 0.23122215, 0.14720345)
+light_color = Color(0.8445021, 0.6690769, 0.52286714, 1)
+light_energy = 2.533
+light_indirect_energy = 0.0
+light_volumetric_fog_energy = 0.0
+light_specular = 0.0
+omni_range = 27.525646
+omni_attenuation = 0.162
+
+[node name="Area3D_jimmy_house" type="Area3D" parent="itens_caminho_jimmy/auto_pecas_jimmy" unique_id=802773487]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="itens_caminho_jimmy/auto_pecas_jimmy/Area3D_jimmy_house" unique_id=1781720180]
+transform = Transform3D(1, 0, 2.9802322e-07, 0, 0.99999976, 0, 1.0430813e-07, 0, 1, -0.19568634, 0, 0.20306015)
+shape = SubResource("BoxShape3D_wfumn")
 
 [node name="casa" type="Node3D" parent="." unique_id=393651894]
 
@@ -834,5 +890,7 @@ script = ExtResource("99_fixmat")
 
 [connection signal="area_shape_entered" from="cameras/camera1" to="." method="_on_camera_1_area_shape_entered"]
 [connection signal="body_entered" from="cameras/camera2" to="." method="_on_camera_2_body_entered"]
+[connection signal="body_entered" from="itens_caminho_jimmy/auto_pecas_jimmy/Area3D_jimmy_house" to="." method="_on_area_3d_jimmy_house_body_entered"]
+[connection signal="body_exited" from="itens_caminho_jimmy/auto_pecas_jimmy/Area3D_jimmy_house" to="." method="_on_area_3d_jimmy_house_body_exited"]
 
 [editable path="CanvasLayer/shader_fumaca"]

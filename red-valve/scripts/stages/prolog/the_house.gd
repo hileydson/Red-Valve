@@ -6,14 +6,21 @@ var player_na_porta: bool = false
 var player_no_telefone: bool = false
 var player_na_tv: bool = false
 var telefone_tocando: bool = false
+var telefone_atendido: bool = false
 var tv_ligada: bool = true
 var prompt_label: Label
 var phone_audio: AudioStreamPlayer
+var ui_layer: CanvasLayer
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	GlobalEvents.is_maycow_normal = true
 	GlobalEvents.set_minimum_nevoa()
+	
+	# Cria uma camada UI por cima de todos os shaders
+	ui_layer = CanvasLayer.new()
+	ui_layer.layer = 128
+	add_child(ui_layer)
 	
 	# Cria o prompt visual por código
 	prompt_label = Label.new()
@@ -25,7 +32,7 @@ func _ready() -> void:
 	prompt_label.add_theme_font_size_override("font_size", 24)
 	# Adicionando um contorno na fonte para destacar na cena
 	prompt_label.add_theme_constant_override("outline_size", 4)
-	add_child(prompt_label)
+	ui_layer.add_child(prompt_label)
 	
 	_show_intro_text()
 	_play_phone_ring_after_delay()
@@ -54,7 +61,7 @@ func _show_intro_text() -> void:
 	# Fonte levemente maior para esse texto narrativo
 	tv_label.add_theme_font_size_override("font_size", 28)
 	tv_label.add_theme_constant_override("outline_size", 4)
-	add_child(tv_label)
+	ui_layer.add_child(tv_label)
 	
 	# Efeito de Fade In suave
 	tv_label.modulate.a = 0
@@ -91,6 +98,7 @@ func _process(delta: float) -> void:
 		elif player_no_telefone and telefone_tocando:
 			player_no_telefone = false
 			telefone_tocando = false
+			telefone_atendido = true
 			prompt_label.visible = false
 			
 			if is_instance_valid(phone_audio):
@@ -156,8 +164,8 @@ func _update_prompt() -> void:
 
 
 func _on_area_3d_body_entered(body: Node3D) -> void:
-	# Verifica se quem entrou na área foi o player
-	if body.name == "player" or body.is_in_group("player"):
+	# Verifica se quem entrou na área foi o player e se já atendeu o telefone
+	if (body.name == "player" or body.is_in_group("player")) and telefone_atendido:
 		player_na_porta = true
 		_update_prompt()
 

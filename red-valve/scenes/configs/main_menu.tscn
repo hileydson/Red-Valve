@@ -533,6 +533,7 @@ script = ExtResource("1_yoyn4")
 
 [node name="AshenSerenity" type="AudioStreamPlayer" parent="." unique_id=165548709]
 stream = ExtResource("2_lodsn")
+volume_db = -4.208
 pitch_scale = 0.45
 autoplay = true
 

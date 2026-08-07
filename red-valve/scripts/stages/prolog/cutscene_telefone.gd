@@ -3,6 +3,7 @@ extends Control
 @onready var image_rect: TextureRect = $ImageRect
 @onready var label: Label = $TextBackground/Label
 @onready var fade = $fade
+@onready var audio_player: AudioStreamPlayer = $Begin
 
 var slides = [
 	{
@@ -27,6 +28,12 @@ var is_transitioning: bool = false
 var waiting_for_input: bool = false
 
 func _ready() -> void:
+	# Fade-in suave no áudio para não começar estourando
+	var target_volume = audio_player.volume_db
+	audio_player.volume_db = -80.0
+	var audio_tween = create_tween()
+	audio_tween.tween_property(audio_player, "volume_db", target_volume, 4.0)
+	
 	# Esconde tudo inicialmente
 	image_rect.modulate.a = 0
 	$TextBackground.modulate.a = 0
@@ -122,6 +129,10 @@ func finish_cutscene() -> void:
 	# Esconde o background do texto
 	var hide_tween = create_tween()
 	hide_tween.tween_property($TextBackground, "modulate:a", 0.0, 0.5)
+	
+	# Fade-out do áudio junto com o fade_out visual
+	var audio_out_tween = create_tween()
+	audio_out_tween.tween_property(audio_player, "volume_db", -80.0, 2.0)
 	
 	fade.fade_out()
 	await get_tree().create_timer(2.0).timeout

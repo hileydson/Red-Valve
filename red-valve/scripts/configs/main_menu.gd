@@ -6,11 +6,23 @@ extends Node3D
 @onready var timer_play_animation_label: Timer = $Timer_play_animation_label
 @onready var red_valve_animation: AnimatedSprite2D = $red_valve_animation
 
+@onready var ashen: AudioStreamPlayer = $AshenSerenity
+@onready var fire: AudioStreamPlayer = $FireCracling
+
 var last_animation_label_go:bool = true
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	start.grab_focus()
+	
+	# Fade-in suave nos áudios do menu principal
+	var ashen_target = ashen.volume_db
+	var fire_target = fire.volume_db
+	ashen.volume_db = -80.0
+	fire.volume_db = -80.0
+	var audio_in_tween = create_tween().set_parallel(true)
+	audio_in_tween.tween_property(ashen, "volume_db", ashen_target, 4.0)
+	audio_in_tween.tween_property(fire, "volume_db", fire_target, 4.0)
 	
 	var tween = create_tween().set_loops()
 	# TAU = 360 graus em radianos. 
@@ -24,6 +36,12 @@ func _process(delta: float) -> void:
 
 func _on_start_pressed() -> void:
 	$Control.visible = false
+	
+	# Fade-out no áudio sincronizado com a tela escurecendo
+	var audio_out_tween = create_tween().set_parallel(true)
+	audio_out_tween.tween_property(ashen, "volume_db", -80.0, 2.0)
+	audio_out_tween.tween_property(fire, "volume_db", -80.0, 2.0)
+	
 	$fade.fade_out()
 	await get_tree().create_timer(2.0).timeout
 	get_tree().change_scene_to_file("res://scenes/stages/prolog/cutscene_prolog.tscn")
