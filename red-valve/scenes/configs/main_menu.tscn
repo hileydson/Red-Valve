@@ -630,11 +630,11 @@ offset_bottom = -131.0
 
 [node name="start" type="Button" parent="Control/VSplitContainer" unique_id=1495181597]
 layout_mode = 2
-text = "START"
+text = "BTN_START"
 
 [node name="exit" type="Button" parent="Control/VSplitContainer" unique_id=71016976]
 layout_mode = 2
-text = "EXIT"
+text = "BTN_EXIT"
 
 [node name="Timer_flick" type="Timer" parent="." unique_id=1488352259]
 autostart = true

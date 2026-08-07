@@ -74,7 +74,7 @@ shader_parameter/moon_texture_flip_u = false
 shader_parameter/moon_texture_flip_v = false
 shader_parameter/moon_size = 0.07
 shader_parameter/atm_moon_mie_tint = Color(0.137255, 0.184314, 0.292196, 1)
-shader_parameter/atm_moon_mie_intensity = 0.522202051281929
+shader_parameter/atm_moon_mie_intensity = 0.5222020304203033
 shader_parameter/atm_moon_partial_mie_phase = Vector3(0.36, 1.64, 1.6)
 shader_parameter/starmap_color = Color(0.709804, 0.709804, 0.709804, 0.854902)
 shader_parameter/starmap_texture = ExtResource("8_avu31")
@@ -98,8 +98,8 @@ shader_parameter/cirrus_absorption = 2.0
 shader_parameter/cirrus_sky_tint_fade = 0.5
 shader_parameter/cirrus_size = 1.0
 shader_parameter/cirrus_uv = Vector2(0.16, 0.11)
-shader_parameter/cirrus_position1 = Vector2(0.0016263461, 0.0016263461)
-shader_parameter/cirrus_position2 = Vector2(0.0016263461, 0.0016263461)
+shader_parameter/cirrus_position1 = Vector2(0.68832386, 0.68832386)
+shader_parameter/cirrus_position2 = Vector2(0.68832386, 0.68832386)
 shader_parameter/cirrus_texture = ExtResource("3_01ffe")
 shader_parameter/cumulus_visible = true
 shader_parameter/cumulus_intensity = 0.6
@@ -109,7 +109,7 @@ shader_parameter/cumulus_absorption = 2.0
 shader_parameter/cumulus_noise_freq = 2.7
 shader_parameter/cumulus_sky_tint_fade = 0.0
 shader_parameter/cumulus_size = 0.5
-shader_parameter/cumulus_position = Vector2(0.008131725, 0.008131725)
+shader_parameter/cumulus_position = Vector2(18.482317, 18.482317)
 shader_parameter/cumulus_texture = ExtResource("4_qysyv")
 shader_parameter/cumulus_partial_mie_phase = Vector3(0.957564, 1.042436, 0.412)
 shader_parameter/cumulus_mie_intensity = 1.0
@@ -138,6 +138,9 @@ tonemap_white = 6.0
 
 [sub_resource type="VoxelGIData" id="VoxelGIData_pbbbw"]
 interior = true
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_5llxv"]
+size = Vector3(0.17730713, 1, 0.36825562)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_qysyv"]
 size = Vector3(0.6123047, 3.1695557, 4.4477844)
@@ -916,6 +919,18 @@ use_collision = true
 collision_layer = 2
 collision_mask = 0
 
+[node name="porta_saida" type="CSGBox3D" parent="ambient/casa" unique_id=1582903963]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2367349, 1.0414219, -6.982272)
+size = Vector3(1.3740234, 3.154419, 2.791504)
+
+[node name="Area3D" type="Area3D" parent="ambient/casa/porta_saida" unique_id=2077999196]
+transform = Transform3D(7.0902934, 0, 0, 0, 1, 0, 0, 0, 7.373153, -0.39042187, -0.5591643, -0.6143637)
+collision_layer = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ambient/casa/porta_saida/Area3D" unique_id=1970946723]
+transform = Transform3D(0.9999997, 0, 0, 0, 2.23227, 0, 0, 0, 1, 0.06289676, 1.3514606, -0.1544646)
+shape = SubResource("BoxShape3D_5llxv")
+
 [node name="bloqueios" type="Node3D" parent="ambient/casa" unique_id=1755008350]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="ambient/casa/bloqueios" unique_id=1494677660]
@@ -1293,5 +1308,8 @@ transform = Transform3D(-0.79988325, 0, -0.023667475, 0, 0.83553696, 0, 0.024103
 
 [node name="mesa" parent="." unique_id=1505507440 instance=ExtResource("33_7l4xq")]
 transform = Transform3D(0.06187913, 0, -1.3299917, 0, 0.7973074, 0, 1.0631698, 0, 0.07740882, -9.308101, 1.0480951, -12.677997)
+
+[connection signal="body_entered" from="ambient/casa/porta_saida/Area3D" to="." method="_on_area_3d_body_entered"]
+[connection signal="body_exited" from="ambient/casa/porta_saida/Area3D" to="." method="_on_area_3d_body_exited"]
 
 [editable path="ambient/casa/itens_da_casa/tv"]

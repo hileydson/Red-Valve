@@ -169,6 +169,10 @@ ui_dash={
 ]
 }
 
+[internationalization]
+
+locale/translations=PackedStringArray("res://assets/textos/cutscene_prologo_textos.en.translation", "res://assets/textos/cutscene_prologo_textos.pt.translation", "res://assets/textos/red_valve_textos_gerais.en.translation", "res://assets/textos/red_valve_textos_gerais.pt.translation")
+
 [rendering]
 
 renderer/rendering_method="mobile"

@@ -42,11 +42,11 @@ offset_bottom = -50.99997
 
 [node name="resume" type="Button" parent="Control/VSplitContainer" unique_id=1953553517]
 layout_mode = 2
-text = "RESUME"
+text = "BTN_RESUME"
 
 [node name="exit" type="Button" parent="Control/VSplitContainer" unique_id=1048547502]
 layout_mode = 2
-text = "EXIT"
+text = "BTN_EXIT"
 
 [connection signal="pressed" from="Control/VSplitContainer/resume" to="." method="_on_resume_pressed"]
 [connection signal="pressed" from="Control/VSplitContainer/exit" to="." method="_on_exit_pressed"]

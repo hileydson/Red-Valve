@@ -18,3 +18,6 @@ trigger: always_on
 
 -nunca altere coisas nao relacionadas ao que foi pedido, somente se tiver ligação direta
 -nunca idente o código
+
+
+-sempre execute o que eu pedir pra fazer, mas se eu escrever a palavra ATENCAO em caixa alta, nao execute e pergunte antes, ou se escrever ANALISE em caixa alta, eh soh pra analisar e nao executar tambem
