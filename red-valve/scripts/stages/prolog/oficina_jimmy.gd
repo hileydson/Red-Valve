@@ -133,30 +133,46 @@ func iniciar_cutscene() -> void:
 	if not enemy or not player:
 		return
 		
+	var enemy_pos = enemy.global_position
+	var player_pos = player.global_position
+	
+	# Pega a direção para onde o player está olhando (o vetor -Z no Godot) e o vetor da direita (+X)
+	var player_forward = -player.global_transform.basis.z.normalized()
+	var player_right = player.global_transform.basis.x.normalized()
+	if player_forward.length() < 0.1: player_forward = Vector3.FORWARD
+	if player_right.length() < 0.1: player_right = Vector3.RIGHT
+	
+	# ---------------------------------------------------------
+	# FASE 0: Posicionamento Imediato (Antes do fade clarear)
+	# ---------------------------------------------------------
+	look_at_target = player
+	look_at_offset = Vector3(0, 0.6, 0) # Altura do peito/rosto do player
+	
+	# Coloca a câmera mais na frente do player e um pouco à direita
+	var pos_inicial = player_pos + Vector3(0, 0.6, 0) + (player_right * 0.8) + (player_forward * 2.0)
+	camera_oficina.global_position = pos_inicial
+	
+	# Força a câmera a olhar pro player no mesmíssimo milissegundo para evitar o primeiro frame torto
+	camera_oficina.look_at(look_at_target.global_position + look_at_offset, Vector3.UP)
+	camera_oficina.make_current()
+		
 	# Espera inicial para o fade_in e estabilizar a engine
 	await get_tree().create_timer(1.0).timeout
 	# Reforça a câmera caso o script do player tenha tentado roubar o foco atrasado
 	camera_oficina.make_current() 
 	
-	var enemy_pos = enemy.global_position
-	var player_pos = player.global_position
-	
 	# ---------------------------------------------------------
-	# FASE 1: Inicia focando o Player de frente
+	# FASE 1: Gira de leve (drift) sem ir para as costas
 	# ---------------------------------------------------------
-	look_at_target = player
-	look_at_offset = Vector3(0, 0.6, 0) # Altura do peito/rosto do player
+	# Um movimento suave e curto mais pro lado direito para não varar a parede atrás dele
+	var pos_drift = player_pos + Vector3(0, 0.6, 0) + (player_right * 1.5) + (player_forward * 1.0)
 	
-	# Pega a direção para onde o player está olhando (o vetor -Z no Godot)
-	var player_forward = -player.global_transform.basis.z.normalized()
-	if player_forward.length() < 0.1: player_forward = Vector3.FORWARD
+	var sweep_tween = create_tween()
+	sweep_tween.tween_property(camera_oficina, "global_position", pos_drift, 2.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	await sweep_tween.finished
 	
-	# Coloca a câmera de frente pro player (2.5 metros na frente) um pouco mais baixa
-	var camera_start_pos = player_pos + Vector3(0, 0.6, 0) + (player_forward * 2.5)
-	camera_oficina.global_position = camera_start_pos
-	
-	# Dá um tempinho de 1.5 segundos admirando o player no começo do jogo
-	await get_tree().create_timer(1.5).timeout
+	# Pequena pausa antes de viajar pro boss
+	await get_tree().create_timer(0.3).timeout
 	
 	# ---------------------------------------------------------
 	# FASE 2: Câmera viaja até o Inimigo (com Efeito de Zoom)
