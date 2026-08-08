@@ -43,6 +43,7 @@ func _update_vortex() -> void:
 	var light = get_node_or_null("MagicLight")
 	if light and light is OmniLight3D:
 		light.omni_range = alcance_da_luz
+		light.light_color = Color(1.0, 0.4, 0.1) # Laranja fogo
 
 func _generate_vortex() -> void:
 	# Limpa filhos se houver algum
@@ -90,14 +91,14 @@ func _generate_vortex() -> void:
 	curve.curve = c
 	pass_mat.scale_curve = curve
 	
-	# Cores Mágicas
+	# Cores de Fogo (Amarelo, Laranja, Vermelho Intenso)
 	var grad = GradientTexture1D.new()
 	var g = Gradient.new()
-	g.set_color(0, Color(0.1, 0.5, 2.0, 0.0))  
-	g.add_point(0.1, Color(0.1, 0.8, 2.5, 1.2))  
-	g.add_point(0.4, Color(1.5, 0.2, 2.0, 1.2))  
-	g.add_point(0.7, Color(2.5, 0.1, 0.5, 1.2))  
-	g.set_color(1, Color(1.0, 0.1, 0.1, 0.0))    
+	g.set_color(0, Color(1.0, 0.8, 0.1, 0.0))  # Amarelo transparente na base
+	g.add_point(0.1, Color(2.5, 1.5, 0.2, 1.2))  # Amarelo/Laranja super brilhante
+	g.add_point(0.4, Color(2.5, 0.5, 0.1, 1.2))  # Laranja/Vermelho fogo
+	g.add_point(0.7, Color(1.5, 0.1, 0.1, 1.2))  # Vermelho escuro brilhante
+	g.set_color(1, Color(0.5, 0.0, 0.0, 0.0))    # Vermelho escuro sumindo   
 	grad.gradient = g
 	pass_mat.color_ramp = grad
 	
@@ -117,7 +118,7 @@ func _generate_vortex() -> void:
 	
 	var magic_light = OmniLight3D.new()
 	magic_light.name = "MagicLight"
-	magic_light.light_color = Color(0.8, 0.3, 1.0)
+	magic_light.light_color = Color(1.0, 0.4, 0.1) # Laranja fogo
 	magic_light.light_energy = 5.0
 	magic_light.omni_range = alcance_da_luz
 	magic_light.shadow_enabled = true

@@ -70,7 +70,7 @@ alcance_da_luz = 9.0
 
 [node name="MagicParticles" type="GPUParticles3D" parent="auto_pecas_jimmy/VortexMagico" unique_id=806630580]
 transform = Transform3D(0.37881106, 0, 0, 0, 0.9999998, 0, 0, 0, 0.20909539, 0, 0, 0)
-amount = 800
+amount = 1100
 lifetime = 3.5
 randomness = 0.5
 visibility_aabb = AABB(-15, -5, -15, 30, 30, 30)
