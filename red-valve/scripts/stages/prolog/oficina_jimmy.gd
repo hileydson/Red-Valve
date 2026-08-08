@@ -8,12 +8,13 @@ extends Node3D
 
 var look_at_target: Node3D = null
 var look_at_offset: Vector3 = Vector3(0, 1.5, 0)
+var is_starting: bool = false
+var pos_inicial: Vector3 = Vector3.ZERO
 
 func _ready() -> void:
 	GlobalEvents.is_maycow_normal = true
 	
 	# === 1. PREPARAÇÃO DA CUTSCENE ===
-	camera_oficina.make_current()
 	
 	# Usamos process_mode = DISABLED em vez de set_physics_process para ter certeza absoluta 
 	# que o player não vai andar, mesmo que os scripts internos dele tentem ligar a física de novo
@@ -112,6 +113,14 @@ func _criar_faiscas_inimigo() -> void:
 	particles.position = Vector3(0, 0.05, 0)
 
 func _process(delta: float) -> void:
+	# Trava absoluta e agressiva nos primeiros segundos para evitar pulos de tela (Frame 0 glitch)
+	if is_starting:
+		if camera_oficina and look_at_target:
+			camera_oficina.make_current()
+			camera_oficina.global_position = pos_inicial
+			camera_oficina.look_at(look_at_target.global_position + look_at_offset, Vector3.UP)
+		return
+		
 	# A câmera sempre olha fixamente para o alvo atual
 	if look_at_target:
 		camera_oficina.look_at(look_at_target.global_position + look_at_offset, Vector3.UP)
@@ -149,17 +158,21 @@ func iniciar_cutscene() -> void:
 	look_at_offset = Vector3(0, 0.6, 0) # Altura do peito/rosto do player
 	
 	# Coloca a câmera mais na frente do player e um pouco à direita
-	var pos_inicial = player_pos + Vector3(0, 0.6, 0) + (player_right * 0.8) + (player_forward * 2.0)
+	pos_inicial = player_pos + Vector3(0, 0.6, 0) + (player_right * 0.8) + (player_forward * 2.0)
 	camera_oficina.global_position = pos_inicial
 	
 	# Força a câmera a olhar pro player no mesmíssimo milissegundo para evitar o primeiro frame torto
 	camera_oficina.look_at(look_at_target.global_position + look_at_offset, Vector3.UP)
 	camera_oficina.make_current()
+	
+	# Ativa a trava agressiva do _process para garantir que nenhum outro frame pisque fora de lugar
+	is_starting = true
 		
 	# Espera inicial para o fade_in e estabilizar a engine
 	await get_tree().create_timer(1.0).timeout
-	# Reforça a câmera caso o script do player tenha tentado roubar o foco atrasado
-	camera_oficina.make_current() 
+	
+	# Desliga a trava para podermos viajar livremente
+	is_starting = false
 	
 	# ---------------------------------------------------------
 	# FASE 1: Gira de leve (drift) sem ir para as costas
