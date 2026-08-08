@@ -11,10 +11,10 @@
 
 [node name="fade" parent="." unique_id=158118564 instance=ExtResource("2_6q8v1")]
 
-[node name="auto_pecas_jimmy" parent="." unique_id=10078496 instance=ExtResource("1_q6dip")]
+[node name="auto_pecas_jimmy" parent="." unique_id=628041015 instance=ExtResource("1_q6dip")]
 transform = Transform3D(9.963111, 0, 0, 0, 7.8780704, 0, 0, 0, 21.186905, -0.9719733, 0, -0.896631)
 
 [node name="Player" parent="." unique_id=448699446 instance=ExtResource("2_falgx")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4.2990584, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.1789682, 7.492691)
 
 [editable path="auto_pecas_jimmy"]

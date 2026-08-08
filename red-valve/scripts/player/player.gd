@@ -251,14 +251,19 @@ func _physics_process(delta: float) -> void:
 				# Animações e Sons
 				if Input.is_action_pressed("ui_run"):
 					if pistola.animation not in ["reload", "run"]: pistola.play("run")
-					passos.pitch_scale = 1.23
 					if is_on_floor() and velocity_Y_zero: playback.travel("run")
 				else:
 					if pistola.animation not in ["reload", "walk"]: pistola.play("walk")
-					passos.pitch_scale = 0.7
 					if is_on_floor() and velocity_Y_zero: playback.travel("walk")
 				
-				if !passos.playing and is_on_floor(): passos.play()
+				if !passos.playing and is_on_floor():
+					if Input.is_action_pressed("ui_run"):
+						passos.pitch_scale = randf_range(1.15, 1.3)
+						passos.volume_db = randf_range(-8.0, -5.0)
+					else:
+						passos.pitch_scale = randf_range(0.65, 0.75)
+						passos.volume_db = randf_range(-11.0, -8.0)
+					passos.play()
 				
 				velocity.x = direction.x * velocidade_atual
 				velocity.z = direction.z * velocidade_atual
@@ -314,25 +319,27 @@ func _physics_process(delta: float) -> void:
 		var target_fov: float = 75.0
 
 		if direction:
-			passos.pitch_scale = 0.9
+			var visao_frente = -global_transform.basis.z
+			var alinhamento = direction.dot(visao_frente)
 			
 			if is_on_floor():
 				# Calcula se a direção do movimento é paralela ou oposta à frente do personagem
 				# transform.basis.z aponta para a "trás" padrão no Godot (ou ajustado ao seu modelo)
 				# O produto escalar nos dá um valor positivo se for para a frente e negativo se for para trás
-				var visao_frente = -global_transform.basis.z
-				var alinhamento = direction.dot(visao_frente)
-				
 				if alinhamento < -0.2:
 					# Movimento para trás
 					playback.travel("walk_back")
-					passos.pitch_scale = 1.0
 					target_fov = 65.0
 				else:
 					# Movimento para frente
 					playback.travel("walk")
 			
 			if !passos.playing and is_on_floor(): 
+				if alinhamento < -0.2:
+					passos.pitch_scale = randf_range(0.95, 1.05)
+				else:
+					passos.pitch_scale = randf_range(0.85, 0.95)
+				passos.volume_db = randf_range(-11.0, -8.0)
 				passos.play()
 			
 			velocity.x = direction.x * velocidade_atual
