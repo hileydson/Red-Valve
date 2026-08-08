@@ -7,7 +7,9 @@
 [ext_resource type="PackedScene" uid="uid://dy356o67p6jyn" path="res://scenes/configs/fade.tscn" id="2_6q8v1"]
 [ext_resource type="PackedScene" uid="uid://cluvbknxfjx2k" path="res://scenes/player/player.tscn" id="2_falgx"]
 [ext_resource type="PackedScene" uid="uid://cv4f2h7vortex" path="res://scenes/effects/vortex_magico.tscn" id="3_6q8v1"]
+[ext_resource type="PackedScene" uid="uid://xf6qeqrya6pi" path="res://scenes/enemies/the_cobalt_husker.tscn" id="8_5tdqg"]
 [ext_resource type="PackedScene" uid="uid://cl5veaedywunh" path="res://assets/3d_model/stages/prolog/oficina_jimmy_peca_4.glb" id="8_fu0a6"]
+[ext_resource type="Script" uid="uid://dev7jghc8pt3g" path="res://scripts/stages/prolog/flutuar_pecas.gd" id="8_ixu7l"]
 [ext_resource type="PackedScene" uid="uid://dhkec8411f51e" path="res://assets/3d_model/stages/prolog/oficina_jimmy_peca_3.glb" id="9_ixu7l"]
 [ext_resource type="PackedScene" uid="uid://bqavl5m1blf5b" path="res://assets/3d_model/stages/prolog/oficina_jimmy_peca_2.glb" id="10_5tdqg"]
 [ext_resource type="PackedScene" uid="uid://cao7ykq68lbsl" path="res://assets/3d_model/stages/prolog/oficina_jimmy_peca_1.glb" id="11_oc6fq"]
@@ -62,6 +64,9 @@ size = Vector2(0.06, 0.06)
 [node name="oficina_jimmy" type="Node3D" unique_id=2029993664]
 script = ExtResource("1_17iq3")
 
+[node name="camera_oficina" type="Camera3D" parent="." unique_id=451681609]
+transform = Transform3D(0.16972786, -0.78479624, 0.5960599, 0, 0.60483545, 0.79635054, -0.985491, -0.13516288, 0.10265744, 0, 1.4036655, 0)
+
 [node name="HeatDistortionFilter" parent="." unique_id=1887297 instance=ExtResource("1_63lqe")]
 
 [node name="Pause" parent="." unique_id=1267958209 instance=ExtResource("1_b8np8")]
@@ -95,27 +100,31 @@ omni_range = 9.0
 [node name="Player" parent="." unique_id=448699446 instance=ExtResource("2_falgx")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.538715, -4.2253184, 2.9094856)
 
+[node name="TheCobaltHusker" parent="." unique_id=669848176 instance=ExtResource("8_5tdqg")]
+transform = Transform3D(-0.28493693, 0, -0.54804516, 0, 0.73305094, 0, 0.530871, 0, -0.2941549, -1.4511609, -4.2179213, -1.2733573)
+
 [node name="pecas" type="Node3D" parent="." unique_id=1518424243]
+script = ExtResource("8_ixu7l")
 
 [node name="oficina_jimmy_peca_4" parent="pecas" unique_id=1937086540 instance=ExtResource("8_fu0a6")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.9900475, -4.39374, 3.3630662)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.034958, -4.39374, 2.2907526)
 
 [node name="oficina_jimmy_peca_5" parent="pecas" unique_id=471365061 instance=ExtResource("8_fu0a6")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.40488958, -4.39374, 3.3630662)
+transform = Transform3D(-0.041526932, 0, -0.9991374, 0, 1, 0, 0.9991374, 0, -0.041526932, -8.569721, -4.39374, -1.0755305)
 
 [node name="oficina_jimmy_peca_3" parent="pecas" unique_id=1059152765 instance=ExtResource("9_ixu7l")]
-transform = Transform3D(-0.9619589, 0, 0, 0, 0.7338215, 0, 0, 0, 0.66967434, -7.0798855, -4.3685236, 1.5923576)
+transform = Transform3D(-0.46035376, 0, 0, 0, 0.41921884, 0, 0, 0, 0.4763551, -0.12563503, -4.3685236, -4.0875187)
 
 [node name="oficina_jimmy_peca_2" parent="pecas" unique_id=1792194529 instance=ExtResource("10_5tdqg")]
-transform = Transform3D(-0.928563, 0, 0.40958273, 0, 1.7874265, 0, -0.120319225, 0, -3.1609526, -6.6962333, -3.9341364, -4.310438)
+transform = Transform3D(-0.928563, 0, 0.40958273, 0, 1.7874265, 0, -0.120319225, 0, -3.1609526, -5.51892, -3.9341364, -3.5559688)
 
 [node name="oficina_jimmy_peca_1" parent="pecas" unique_id=562929052 instance=ExtResource("11_oc6fq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.8687298, -4.428582, -7.029078)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6207197, -4.4285827, -6.5256596)
 
 [node name="oficina_jimmy_peca_7" parent="pecas" unique_id=1726708629 instance=ExtResource("11_oc6fq")]
-transform = Transform3D(0.06883367, 0, 0.99762815, 0, 1, 0, -0.99762815, 0, 0.06883367, 6.572564, -4.428582, -5.081637)
+transform = Transform3D(0.06883367, 0, 0.99762815, 0, 1, 0, -0.99762815, 0, 0.06883367, -4.595435, -4.428582, 0.25828552)
 
 [node name="oficina_jimmy_peca_6" parent="pecas" unique_id=1147850552 instance=ExtResource("11_oc6fq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.9328327, -4.428582, 3.7832618)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.9328327, -4.428582, 3.5379272)
 
 [editable path="auto_pecas_jimmy"]

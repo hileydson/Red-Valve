@@ -1,5 +1,6 @@
 extends Node3D
 
+@onready var camera_oficina: Camera3D = $camera_oficina
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
