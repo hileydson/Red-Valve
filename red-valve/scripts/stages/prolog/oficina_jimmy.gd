@@ -24,8 +24,92 @@ func _ready() -> void:
 	if pecas:
 		pecas.process_mode = Node.PROCESS_MODE_DISABLED
 		
+	# Adiciona as faíscas de fogo subindo debaixo do inimigo
+	_criar_faiscas_inimigo()
+		
 	# Inicia o filme
 	iniciar_cutscene()
+
+func _criar_faiscas_inimigo() -> void:
+	if not enemy: return
+	
+	var particles = GPUParticles3D.new()
+	particles.name = "FireSparks"
+	particles.amount = 40
+	# Lifetime maior para as partículas durarem mais tempo no ar já que estão lentas
+	particles.lifetime = 2.5 
+	
+	var proc_mat = ParticleProcessMaterial.new()
+	proc_mat.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_RING
+	proc_mat.emission_ring_axis = Vector3(0, 1, 0)
+	proc_mat.emission_ring_height = 0.1
+	proc_mat.emission_ring_radius = 1.5
+	proc_mat.direction = Vector3(0, 1, 0)
+	proc_mat.spread = 15.0
+	# Velocidade inicial mais baixa para o fogo subir devagarzinho
+	proc_mat.initial_velocity_min = 0.5
+	proc_mat.initial_velocity_max = 1.5
+	# Gravidade puxando pra cima de forma muito suave
+	proc_mat.gravity = Vector3(0, 1.0, 0) 
+	
+	# Tamanho base menor
+	proc_mat.scale_min = 0.03
+	proc_mat.scale_max = 0.08
+	
+	# Curva de escala para diminuir as bolas de fogo no final
+	var scale_curve = Curve.new()
+	scale_curve.add_point(Vector2(0.0, 1.0)) # Nasce no tamanho original (100%)
+	scale_curve.add_point(Vector2(1.0, 0.1)) # Morre bem pequena (10%)
+	var scale_tex = CurveTexture.new()
+	scale_tex.curve = scale_curve
+	proc_mat.scale_curve = scale_tex
+	
+	# Gradiente de cores (Amarelo -> Laranja -> Vermelho -> Transparente)
+	var gradient = Gradient.new()
+	gradient.offsets = PackedFloat32Array([0.0, 0.2, 0.6, 1.0])
+	gradient.colors = PackedColorArray([
+		Color(1.0, 0.9, 0.5, 1.0),
+		Color(1.0, 0.5, 0.0, 1.0),
+		Color(1.0, 0.1, 0.0, 1.0),
+		Color(1.0, 0.0, 0.0, 0.0)
+	])
+	
+	var grad_tex = GradientTexture1D.new()
+	grad_tex.gradient = gradient
+	proc_mat.color_ramp = grad_tex
+	
+	particles.process_material = proc_mat
+	
+	# Criando a textura circular suave procedural (Bolinha brilhante em vez de quadrado)
+	var radial_grad = Gradient.new()
+	radial_grad.offsets = PackedFloat32Array([0.0, 0.3, 1.0])
+	radial_grad.colors = PackedColorArray([Color(1,1,1,1), Color(1,1,1,0.6), Color(1,1,1,0)])
+	var spark_tex = GradientTexture2D.new()
+	spark_tex.gradient = radial_grad
+	spark_tex.fill = GradientTexture2D.FILL_RADIAL
+	spark_tex.fill_from = Vector2(0.5, 0.5)
+	spark_tex.fill_to = Vector2(1.0, 0.5)
+	spark_tex.width = 64
+	spark_tex.height = 64
+	
+	var mat = StandardMaterial3D.new()
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.vertex_color_use_as_albedo = true
+	mat.albedo_texture = spark_tex # Aplica a textura de bolinha
+	mat.emission_enabled = true
+	mat.emission = Color(1.0, 0.5, 0.0)
+	mat.emission_energy_multiplier = 3.0
+	mat.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
+	mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	
+	var mesh = QuadMesh.new()
+	mesh.material = mat
+	particles.draw_pass_1 = mesh
+	
+	# Adiciona no inimigo, posicionado nos pés dele
+	enemy.add_child(particles)
+	particles.position = Vector3(0, 0.05, 0)
 
 func _process(delta: float) -> void:
 	# A câmera sempre olha fixamente para o alvo atual
@@ -61,13 +145,14 @@ func iniciar_cutscene() -> void:
 	# FASE 1: Inicia focando o Player de frente
 	# ---------------------------------------------------------
 	look_at_target = player
+	look_at_offset = Vector3(0, 0.6, 0) # Altura do peito/rosto do player
 	
 	# Pega a direção para onde o player está olhando (o vetor -Z no Godot)
 	var player_forward = -player.global_transform.basis.z.normalized()
 	if player_forward.length() < 0.1: player_forward = Vector3.FORWARD
 	
-	# Coloca a câmera de frente pro player (2.5 metros na frente do rosto)
-	var camera_start_pos = player_pos + Vector3(0, 1.5, 0) + (player_forward * 2.5)
+	# Coloca a câmera de frente pro player (2.5 metros na frente) um pouco mais baixa
+	var camera_start_pos = player_pos + Vector3(0, 0.6, 0) + (player_forward * 2.5)
 	camera_oficina.global_position = camera_start_pos
 	
 	# Dá um tempinho de 1.5 segundos admirando o player no começo do jogo
@@ -77,6 +162,7 @@ func iniciar_cutscene() -> void:
 	# FASE 2: Câmera viaja até o Inimigo (com Efeito de Zoom)
 	# ---------------------------------------------------------
 	look_at_target = enemy
+	look_at_offset = Vector3(0, 1.5, 0) # O Inimigo é maior, focamos mais alto
 	
 	var pivot = Node3D.new()
 	pivot.global_position = enemy_pos + Vector3(0, 1.5, 0)
@@ -109,6 +195,7 @@ func iniciar_cutscene() -> void:
 	# FASE 4: Volta voando para o Player (Mais de perto e baixo)
 	# ---------------------------------------------------------
 	look_at_target = player
+	look_at_offset = Vector3(0, 0.4, 0) # Bem baixo pra dar tensão final no rosto
 	
 	cam_transform = camera_oficina.global_transform
 	pivot.remove_child(camera_oficina)
@@ -117,8 +204,8 @@ func iniciar_cutscene() -> void:
 	camera_oficina.make_current() # Impede roubo de câmera
 	
 	var return_tween = create_tween().set_parallel(true)
-	# Posição final: de frente pro player, mais baixo (Y=1.0) e bem mais perto (1.5m)
-	var final_pos = player_pos + Vector3(0, 1.0, 0) + (player_forward * 1.5)
+	# Posição final: de frente pro player, mais baixo (Y=0.4) e bem mais perto (1.5m)
+	var final_pos = player_pos + Vector3(0, 0.4, 0) + (player_forward * 1.5)
 	return_tween.tween_property(camera_oficina, "global_position", final_pos, 2.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	# Mais zoom no player
 	return_tween.tween_property(camera_oficina, "fov", 45.0, 2.5).set_trans(Tween.TRANS_SINE)
