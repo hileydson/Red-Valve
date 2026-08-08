@@ -22,8 +22,14 @@ func iterate(node):
 				# O Player do jogo Red Valve colide com a máscara 2, então o cenário precisa estar no layer 2
 				static_body.collision_layer = 3 # (Layers 1 e 2)
 				static_body.collision_mask = 3
+				
+				# Se o modelo for oco (como uma casa vista por dentro), as normais podem estar invertidas para quem está dentro.
+				# Ativar "backface_collision" faz o chão e as paredes colidirem por ambos os lados (frente e verso).
+				for shape_child in static_body.get_children():
+					if shape_child is CollisionShape3D and shape_child.shape is ConcavePolygonShape3D:
+						shape_child.shape.backface_collision = true
 		
-		print("Colisão gerada e configurada para o Player: ", node.name)
+		print("Colisão dupla-face e Layers configurados para: ", node.name)
 	
 	# Continua a busca nos filhos deste nó
 	for child in node.get_children(true):
