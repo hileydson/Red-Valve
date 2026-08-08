@@ -24,8 +24,8 @@ curve = SubResource("Curve_17iq3")
 emission_shape = 6
 emission_ring_axis = Vector3(0, 1, 0)
 emission_ring_height = 0.5
-emission_ring_radius = 4.0
-emission_ring_inner_radius = 0.0
+emission_ring_radius = 0.8
+emission_ring_inner_radius = 0.24
 emission_ring_cone_angle = 90.0
 orbit_velocity_min = 0.3
 orbit_velocity_max = 1.0
@@ -51,6 +51,7 @@ particles_anim_loop = false
 
 [sub_resource type="QuadMesh" id="QuadMesh_fu0a6"]
 material = SubResource("StandardMaterial3D_qa4ps")
+size = Vector2(0.06, 0.06)
 
 [node name="oficina_jimmy" type="Node3D" unique_id=2029993664]
 
@@ -62,12 +63,14 @@ material = SubResource("StandardMaterial3D_qa4ps")
 transform = Transform3D(9.963111, 0, 0, 0, 7.8780704, 0, 0, 0, 21.186905, -0.9719733, 0, -0.896631)
 
 [node name="VortexMagico" parent="auto_pecas_jimmy" unique_id=2059200178 instance=ExtResource("3_6q8v1")]
-raio_interno = 0.0
-tamanho_das_particulas = 100000.0
+transform = Transform3D(1, 0, 0, 0, 0.9999998, 0, 0, 0, 1, 0, -0.3174093, 0)
+tamanho_das_particulas = 0.06
+raio_do_furacao = 0.8
+alcance_da_luz = 9.0
 
 [node name="MagicParticles" type="GPUParticles3D" parent="auto_pecas_jimmy/VortexMagico" unique_id=806630580]
 transform = Transform3D(0.37881106, 0, 0, 0, 0.9999998, 0, 0, 0, 0.20909539, 0, 0, 0)
-amount = 400
+amount = 800
 lifetime = 3.5
 randomness = 0.5
 visibility_aabb = AABB(-15, -5, -15, 30, 30, 30)
@@ -76,9 +79,9 @@ draw_pass_1 = SubResource("QuadMesh_fu0a6")
 
 [node name="MagicLight" type="OmniLight3D" parent="auto_pecas_jimmy/VortexMagico" unique_id=1767021547]
 light_color = Color(0.8, 0.3, 1, 1)
-light_energy = 5.0
+light_energy = 6.15
 shadow_enabled = true
-omni_range = 8.0
+omni_range = 9.0
 
 [node name="Player" parent="." unique_id=448699446 instance=ExtResource("2_falgx")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.538715, -4.2253184, 2.9094856)
