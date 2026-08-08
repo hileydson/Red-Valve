@@ -4,6 +4,53 @@
 [ext_resource type="PackedScene" uid="uid://bjlae2i2x8twg" path="res://assets/3d_model/stages/prolog/auto_pecas_jimmy.glb" id="1_q6dip"]
 [ext_resource type="PackedScene" uid="uid://dy356o67p6jyn" path="res://scenes/configs/fade.tscn" id="2_6q8v1"]
 [ext_resource type="PackedScene" uid="uid://cluvbknxfjx2k" path="res://scenes/player/player.tscn" id="2_falgx"]
+[ext_resource type="PackedScene" uid="uid://cv4f2h7vortex" path="res://scenes/effects/vortex_magico.tscn" id="3_6q8v1"]
+
+[sub_resource type="Gradient" id="Gradient_6q8v1"]
+offsets = PackedFloat32Array(0, 0.1, 0.4, 0.7, 1)
+colors = PackedColorArray(0.1, 0.5, 2, 0, 1, 0.1, 0.1, 0, 1.5, 0.2, 2, 1.2, 2.5, 0.1, 0.5, 1.2, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_63lqe"]
+gradient = SubResource("Gradient_6q8v1")
+
+[sub_resource type="Curve" id="Curve_17iq3"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.2, 1), 0.0, 0.0, 0, 0, Vector2(0.8, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_nim6l"]
+curve = SubResource("Curve_17iq3")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_tpw8k"]
+emission_shape = 6
+emission_ring_axis = Vector3(0, 1, 0)
+emission_ring_height = 0.5
+emission_ring_radius = 4.0
+emission_ring_inner_radius = 0.0
+emission_ring_cone_angle = 90.0
+orbit_velocity_min = 0.3
+orbit_velocity_max = 1.0
+radial_velocity_min = -3.0
+radial_velocity_max = -1.0
+gravity = Vector3(0, 2, 0)
+scale_min = 50000.0
+scale_max = 150000.0
+scale_curve = SubResource("CurveTexture_nim6l")
+color_ramp = SubResource("GradientTexture1D_63lqe")
+turbulence_enabled = true
+turbulence_noise_strength = 1.5
+turbulence_noise_scale = 3.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qa4ps"]
+blend_mode = 1
+shading_mode = 0
+vertex_color_use_as_albedo = true
+billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_fu0a6"]
+material = SubResource("StandardMaterial3D_qa4ps")
 
 [node name="oficina_jimmy" type="Node3D" unique_id=2029993664]
 
@@ -13,6 +60,25 @@
 
 [node name="auto_pecas_jimmy" parent="." unique_id=790947015 instance=ExtResource("1_q6dip")]
 transform = Transform3D(9.963111, 0, 0, 0, 7.8780704, 0, 0, 0, 21.186905, -0.9719733, 0, -0.896631)
+
+[node name="VortexMagico" parent="auto_pecas_jimmy" unique_id=2059200178 instance=ExtResource("3_6q8v1")]
+raio_interno = 0.0
+tamanho_das_particulas = 100000.0
+
+[node name="MagicParticles" type="GPUParticles3D" parent="auto_pecas_jimmy/VortexMagico" unique_id=806630580]
+transform = Transform3D(0.37881106, 0, 0, 0, 0.9999998, 0, 0, 0, 0.20909539, 0, 0, 0)
+amount = 400
+lifetime = 3.5
+randomness = 0.5
+visibility_aabb = AABB(-15, -5, -15, 30, 30, 30)
+process_material = SubResource("ParticleProcessMaterial_tpw8k")
+draw_pass_1 = SubResource("QuadMesh_fu0a6")
+
+[node name="MagicLight" type="OmniLight3D" parent="auto_pecas_jimmy/VortexMagico" unique_id=1767021547]
+light_color = Color(0.8, 0.3, 1, 1)
+light_energy = 5.0
+shadow_enabled = true
+omni_range = 8.0
 
 [node name="Player" parent="." unique_id=448699446 instance=ExtResource("2_falgx")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.538715, -4.2253184, 2.9094856)
