@@ -106,6 +106,7 @@ autostart = true
 
 [node name="OmniLight3D" type="OmniLight3D" parent="." unique_id=669912192]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.309875, 0)
+visible = false
 light_color = Color(0.72522753, 0.07687218, 0.28674668, 1)
 light_energy = 0.329
 

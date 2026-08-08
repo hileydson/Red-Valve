@@ -25,8 +25,8 @@ func _ready() -> void:
 	if pecas:
 		pecas.process_mode = Node.PROCESS_MODE_DISABLED
 		
-	# Adiciona as faíscas de fogo subindo debaixo do inimigo
-	_criar_faiscas_inimigo()
+	if pecas:
+		pecas.process_mode = Node.PROCESS_MODE_DISABLED
 		
 	# Inicia o filme
 	iniciar_cutscene()
@@ -55,12 +55,12 @@ func _criar_faiscas_inimigo() -> void:
 	
 	# Tamanho base menor
 	proc_mat.scale_min = 0.03
-	proc_mat.scale_max = 0.08
+	proc_mat.scale_max = 0.05 # Diminuido
 	
 	# Curva de escala para diminuir as bolas de fogo no final
 	var scale_curve = Curve.new()
 	scale_curve.add_point(Vector2(0.0, 1.0)) # Nasce no tamanho original (100%)
-	scale_curve.add_point(Vector2(1.0, 0.1)) # Morre bem pequena (10%)
+	scale_curve.add_point(Vector2(1.0, 0.02)) # Morre bem pequena (2%)
 	var scale_tex = CurveTexture.new()
 	scale_tex.curve = scale_curve
 	proc_mat.scale_curve = scale_tex
@@ -107,9 +107,6 @@ func _criar_faiscas_inimigo() -> void:
 	var mesh = QuadMesh.new()
 	mesh.material = mat
 	particles.draw_pass_1 = mesh
-	
-	# Inicia invisível/desligado para não aparecer na primeira parte da cutscene
-	particles.emitting = false
 	
 	# Adiciona no inimigo, posicionado nos pés dele
 	enemy.add_child(particles)
@@ -158,11 +155,21 @@ func iniciar_cutscene() -> void:
 	# FASE 0: Posicionamento Imediato (Antes do fade clarear)
 	# ---------------------------------------------------------
 	look_at_target = player
-	look_at_offset = Vector3(0, 0.6, 0) # Altura do peito/rosto do player
+	look_at_offset = Vector3(0, 0.25, 0) # Altura bem mais baixa, focando do peito pra baixo
 	
-	# Coloca a câmera mais na frente do player e um pouco à direita
-	pos_inicial = player_pos + Vector3(0, 0.6, 0) + (player_right * 0.8) + (player_forward * 2.0)
+	# Coloca a câmera mais na frente do player e um pouco à direita, e bem mais baixa
+	pos_inicial = player_pos + Vector3(0, 0.25, 0) + (player_right * 0.5) + (player_forward * 1.8)
+	camera_oficina.current = true
 	camera_oficina.global_position = pos_inicial
+	
+	# Desliga também a OmniLight3D nativa do inimigo (caso exista) para não vazar clarão
+	if enemy.has_node("enemy/OmniLight3D"):
+		enemy.get_node("enemy/OmniLight3D").visible = false
+		
+	# Desliga o VortexMagico original (que emite luz) embaixo do inimigo
+	var vortex = get_node_or_null("auto_pecas_jimmy/VortexMagico")
+	if vortex:
+		vortex.visible = false
 	
 	# Força a câmera a olhar pro player no mesmíssimo milissegundo para evitar o primeiro frame torto
 	camera_oficina.look_at(look_at_target.global_position + look_at_offset, Vector3.UP)
@@ -180,8 +187,8 @@ func iniciar_cutscene() -> void:
 	# ---------------------------------------------------------
 	# FASE 1: Gira de leve (drift) sem ir para as costas
 	# ---------------------------------------------------------
-	# Um movimento suave e curto mais pro lado direito para não varar a parede atrás dele
-	var pos_drift = player_pos + Vector3(0, 0.6, 0) + (player_right * 1.5) + (player_forward * 1.0)
+	# Um movimento suave e muito curto pro lado, sem tentar ir para trás para não clipar na parede
+	var pos_drift = player_pos + Vector3(0, 0.25, 0) + (player_right * 0.9) + (player_forward * 1.5)
 	
 	var sweep_tween = create_tween()
 	sweep_tween.tween_property(camera_oficina, "global_position", pos_drift, 2.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
@@ -196,9 +203,14 @@ func iniciar_cutscene() -> void:
 	look_at_target = enemy
 	look_at_offset = Vector3(0, 1.5, 0) # O Inimigo é maior, focamos mais alto
 	
-	# Liga o fogo do inimigo agora
-	if enemy.has_node("FireSparks"):
-		enemy.get_node("FireSparks").emitting = true
+	# Cria e liga o fogo do inimigo EXATAMENTE agora, assim não tem como ele existir antes disso
+	_criar_faiscas_inimigo()
+	# Liga a luz nativa do inimigo de volta e o vortex mágico original
+	if enemy.has_node("enemy/OmniLight3D"):
+		enemy.get_node("enemy/OmniLight3D").visible = true
+	vortex = get_node_or_null("auto_pecas_jimmy/VortexMagico")
+	if vortex:
+		vortex.visible = true
 	
 	var pivot = Node3D.new()
 	pivot.global_position = enemy_pos + Vector3(0, 1.5, 0)
