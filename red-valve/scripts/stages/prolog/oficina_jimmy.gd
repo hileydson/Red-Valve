@@ -108,6 +108,9 @@ func _criar_faiscas_inimigo() -> void:
 	mesh.material = mat
 	particles.draw_pass_1 = mesh
 	
+	# Inicia invisível/desligado para não aparecer na primeira parte da cutscene
+	particles.emitting = false
+	
 	# Adiciona no inimigo, posicionado nos pés dele
 	enemy.add_child(particles)
 	particles.position = Vector3(0, 0.05, 0)
@@ -192,6 +195,10 @@ func iniciar_cutscene() -> void:
 	# ---------------------------------------------------------
 	look_at_target = enemy
 	look_at_offset = Vector3(0, 1.5, 0) # O Inimigo é maior, focamos mais alto
+	
+	# Liga o fogo do inimigo agora
+	if enemy.has_node("FireSparks"):
+		enemy.get_node("FireSparks").emitting = true
 	
 	var pivot = Node3D.new()
 	pivot.global_position = enemy_pos + Vector3(0, 1.5, 0)

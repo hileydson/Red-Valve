@@ -6,7 +6,9 @@
 [ext_resource type="PackedScene" uid="uid://bjlae2i2x8twg" path="res://assets/3d_model/stages/prolog/auto_pecas_jimmy.glb" id="1_q6dip"]
 [ext_resource type="PackedScene" uid="uid://dy356o67p6jyn" path="res://scenes/configs/fade.tscn" id="2_6q8v1"]
 [ext_resource type="PackedScene" uid="uid://cluvbknxfjx2k" path="res://scenes/player/player.tscn" id="2_falgx"]
+[ext_resource type="AudioStream" uid="uid://cl5shgtn61go3" path="res://assets/sounds/common/fire_cracling.mp3" id="2_oc6fq"]
 [ext_resource type="PackedScene" uid="uid://cv4f2h7vortex" path="res://scenes/effects/vortex_magico.tscn" id="3_6q8v1"]
+[ext_resource type="AudioStream" uid="uid://fj4slbstwq3d" path="res://assets/cutscenes/sound/song_first_battle.mp3" id="3_e7swq"]
 [ext_resource type="PackedScene" uid="uid://xf6qeqrya6pi" path="res://scenes/enemies/the_cobalt_husker.tscn" id="8_5tdqg"]
 [ext_resource type="PackedScene" uid="uid://cl5veaedywunh" path="res://assets/3d_model/stages/prolog/oficina_jimmy_peca_4.glb" id="8_fu0a6"]
 [ext_resource type="Script" uid="uid://dev7jghc8pt3g" path="res://scripts/stages/prolog/flutuar_pecas.gd" id="8_ixu7l"]
@@ -63,6 +65,18 @@ size = Vector2(0.06, 0.06)
 
 [node name="oficina_jimmy" type="Node3D" unique_id=2029993664]
 script = ExtResource("1_17iq3")
+
+[node name="FireCracling" type="AudioStreamPlayer" parent="." unique_id=1778625709]
+stream = ExtResource("2_oc6fq")
+volume_db = -9.018
+autoplay = true
+parameters/looping = true
+
+[node name="SongFirstBattle" type="AudioStreamPlayer" parent="." unique_id=467169788]
+stream = ExtResource("3_e7swq")
+volume_db = -6.012
+autoplay = true
+parameters/looping = true
 
 [node name="camera_oficina" type="Camera3D" parent="." unique_id=451681609]
 transform = Transform3D(0.16972786, -0.78479624, 0.5960599, 0, 0.60483545, 0.79635054, -0.985491, -0.13516288, 0.10265744, 0, 1.4036655, 0)
