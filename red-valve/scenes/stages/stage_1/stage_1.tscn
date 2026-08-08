@@ -127,8 +127,8 @@ shader_parameter/cirrus_absorption = 2.0
 shader_parameter/cirrus_sky_tint_fade = 0.5
 shader_parameter/cirrus_size = 1.0
 shader_parameter/cirrus_uv = Vector2(0.16, 0.11)
-shader_parameter/cirrus_position1 = Vector2(0.31579912, 0.31579912)
-shader_parameter/cirrus_position2 = Vector2(0.31579912, 0.31579912)
+shader_parameter/cirrus_position1 = Vector2(0.58454907, 0.58454907)
+shader_parameter/cirrus_position2 = Vector2(0.58454907, 0.58454907)
 shader_parameter/cirrus_texture = ExtResource("3_kvc23")
 shader_parameter/cumulus_visible = true
 shader_parameter/cumulus_intensity = 9.245
@@ -138,7 +138,7 @@ shader_parameter/cumulus_absorption = 2.0
 shader_parameter/cumulus_noise_freq = 2.7
 shader_parameter/cumulus_sky_tint_fade = 0.0
 shader_parameter/cumulus_size = 0.5
-shader_parameter/cumulus_position = Vector2(1.5789622, 1.5789622)
+shader_parameter/cumulus_position = Vector2(433.51398, 433.51398)
 shader_parameter/cumulus_texture = ExtResource("4_2wkc3")
 shader_parameter/cumulus_partial_mie_phase = Vector3(0.957564, 1.042436, 0.412)
 shader_parameter/cumulus_mie_intensity = 1.0
@@ -661,7 +661,7 @@ top_level = true
 metadata/_edit_lock_ = true
 
 [node name="Player" parent="." unique_id=663958156 instance=ExtResource("1_23usu")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 461.09592, 1.3237331, 382.96555)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 463.71512, 1.3237236, 356.57877)
 
 [node name="enemies" type="Node3D" parent="." unique_id=1935818346]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 714.9369, 2.015886, 441.17017)
@@ -796,7 +796,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 520.44415, 16.27707, 384.0040
 shape = SubResource("BoxShape3D_tayg2")
 
 [node name="auto_pecas_jimmy" parent="itens_caminho_jimmy" unique_id=10078496 instance=ExtResource("29_wfumn")]
-transform = Transform3D(7.193343, 0, 6.250617, 0, 6.706888, 0, -3.4048867, 0, 13.205382, 464.68893, 4.7743187, 341.1094)
+transform = Transform3D(7.193343, 0, 6.250617, 0, 6.706888, 0, -3.4048867, 0, 13.205382, 464.68893, 4.3789024, 341.1094)
 
 [node name="OmniLight3D" type="OmniLight3D" parent="itens_caminho_jimmy/auto_pecas_jimmy" unique_id=1984126682]
 transform = Transform3D(0.08094884, 0, 0, 0, 0.0318739, 0, 0, 0, 0.048533898, -0.8499718, 0.23122215, 0.14720345)
