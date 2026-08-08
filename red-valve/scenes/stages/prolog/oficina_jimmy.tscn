@@ -1,5 +1,7 @@
 [gd_scene format=3 uid="uid://c4ko48jpe1vms"]
 
+[ext_resource type="Script" uid="uid://ya6fe0yegmsa" path="res://scripts/stages/prolog/oficina_jimmy.gd" id="1_17iq3"]
+[ext_resource type="PackedScene" path="res://scenes/effects/heat_distortion_filter.tscn" id="1_63lqe"]
 [ext_resource type="PackedScene" uid="uid://bhyhnppiawn07" path="res://scenes/configs/pause.tscn" id="1_b8np8"]
 [ext_resource type="PackedScene" uid="uid://bjlae2i2x8twg" path="res://assets/3d_model/stages/prolog/auto_pecas_jimmy.glb" id="1_q6dip"]
 [ext_resource type="PackedScene" uid="uid://dy356o67p6jyn" path="res://scenes/configs/fade.tscn" id="2_6q8v1"]
@@ -54,6 +56,9 @@ material = SubResource("StandardMaterial3D_qa4ps")
 size = Vector2(0.06, 0.06)
 
 [node name="oficina_jimmy" type="Node3D" unique_id=2029993664]
+script = ExtResource("1_17iq3")
+
+[node name="HeatDistortionFilter" parent="." unique_id=1887297 instance=ExtResource("1_63lqe")]
 
 [node name="Pause" parent="." unique_id=1267958209 instance=ExtResource("1_b8np8")]
 
