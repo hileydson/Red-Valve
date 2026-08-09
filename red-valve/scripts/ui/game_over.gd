@@ -84,3 +84,18 @@ void fragment() {
 	tween.tween_method(func(val): mat.set_shader_parameter("melt_amount", val), 0.0, 1.2, 6.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 	tween.tween_property(label, "modulate:a", 1.0, 3.0).set_delay(1.5)
 	tween.tween_property(particles, "modulate:a", 1.0, 3.0).set_delay(1.5)
+	
+	# 6. Esperar 6 segundos e voltar para o Menu
+	await get_tree().create_timer(6.0, true).timeout
+	
+	var fade = ColorRect.new()
+	fade.set_anchors_preset(Control.PRESET_FULL_RECT)
+	fade.color = Color(0, 0, 0, 0)
+	add_child(fade)
+	
+	var fade_tween = create_tween()
+	fade_tween.tween_property(fade, "color:a", 1.0, 1.5)
+	
+	await fade_tween.finished
+	get_tree().paused = false
+	get_tree().change_scene_to_file("res://scenes/configs/main_menu.tscn")
