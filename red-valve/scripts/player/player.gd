@@ -41,6 +41,13 @@ extends CharacterBody3D
 
 var blood_effect = preload("res://scenes/enemies/blood.tscn")
 
+# --- PLAYER HEALTH & HUD ---
+@export var max_health: int = 100
+var current_health: int = 100
+var heartbeat_hud: ColorRect
+var heartbeat_tween: Tween
+# ---------------------------
+
 const SPEED = 5.0
 const JUMP_VELOCITY = 4.5
 const SENSITIVITY = 0.003 # Sensibilidade do mouse
@@ -132,6 +139,70 @@ func _ready():
 		$maycow_lopes.queue_free()
 	else:
 		$maycow_lopes_normal.queue_free() 
+		
+	_setup_health_hud()
+
+func _setup_health_hud() -> void:
+	current_health = max_health
+	
+	var hud_layer = CanvasLayer.new()
+	hud_layer.layer = 100
+	add_child(hud_layer)
+	
+	heartbeat_hud = ColorRect.new()
+	# Posicionando no canto inferior esquerdo usando offsets a partir da âncora Bottom-Left
+	heartbeat_hud.anchor_left = 0.0
+	heartbeat_hud.anchor_top = 1.0
+	heartbeat_hud.anchor_right = 0.0
+	heartbeat_hud.anchor_bottom = 1.0
+	heartbeat_hud.offset_left = 40
+	heartbeat_hud.offset_top = -90
+	heartbeat_hud.offset_right = 70
+	heartbeat_hud.offset_bottom = -60
+	heartbeat_hud.color = Color(0, 1, 0, 0.5) # Começa verde
+	heartbeat_hud.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hud_layer.add_child(heartbeat_hud)
+	
+	_start_heartbeat_pulse()
+
+func _start_heartbeat_pulse() -> void:
+	if heartbeat_tween:
+		heartbeat_tween.kill()
+		
+	if current_health <= 0:
+		heartbeat_hud.visible = false
+		return
+		
+	heartbeat_tween = create_tween().set_loops()
+	
+	var pulse_speed = 1.0
+	var pulse_scale = Vector2(1.2, 1.2)
+	var base_scale = Vector2(1.0, 1.0)
+	var target_color = Color(0, 1, 0, 0.6) # Verde
+	
+	if current_health < 30:
+		target_color = Color(1, 0, 0, 0.9) # Vermelho
+		pulse_speed = 0.3
+		pulse_scale = Vector2(1.6, 1.6)
+	elif current_health < 70:
+		target_color = Color(1, 1, 0, 0.8) # Amarelo
+		pulse_speed = 0.6
+		pulse_scale = Vector2(1.4, 1.4)
+		
+	heartbeat_hud.color = target_color
+	# Centraliza o pivot para o tween escalar a partir do meio do bloco
+	heartbeat_hud.pivot_offset = heartbeat_hud.size / 2.0
+	
+	# Batida 1 (cresce rápido)
+	heartbeat_tween.tween_property(heartbeat_hud, "scale", pulse_scale, pulse_speed * 0.15).set_trans(Tween.TRANS_SINE)
+	# Retrai
+	heartbeat_tween.tween_property(heartbeat_hud, "scale", base_scale, pulse_speed * 0.15).set_trans(Tween.TRANS_SINE)
+	# Batida 2 (menor)
+	heartbeat_tween.tween_property(heartbeat_hud, "scale", base_scale * 1.1, pulse_speed * 0.1).set_trans(Tween.TRANS_SINE)
+	# Retrai
+	heartbeat_tween.tween_property(heartbeat_hud, "scale", base_scale, pulse_speed * 0.1).set_trans(Tween.TRANS_SINE)
+	# Descanso (intervalo entre batimentos)
+	heartbeat_tween.tween_interval(pulse_speed * 0.5) 
 	
 
 func _input(event):
@@ -775,8 +846,26 @@ func spawn_blood_effect(body: Node3D):
 		
 		
 func take_damage(number:int):
+	if current_health <= 0:
+		return
+		
+	current_health -= number
+	if current_health <= 0:
+		current_health = 0
+		_trigger_game_over()
+		
 	GlobalUtils.vibrate_controller(Input, 0.5, 0.5, 0.2)
-	print("Damage taken by the player: "+str(number))
+	print("Damage taken by the player: "+str(number) + " | HP: " + str(current_health))
+	
+	# Atualiza o visual do batimento sempre que leva dano
+	_start_heartbeat_pulse()
+
+func _trigger_game_over() -> void:
+	var game_over_script = load("res://scripts/ui/game_over.gd")
+	if game_over_script:
+		var game_over_node = CanvasLayer.new()
+		game_over_node.set_script(game_over_script)
+		get_tree().root.add_child(game_over_node)
 	
 
 		
