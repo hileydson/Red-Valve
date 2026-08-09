@@ -22,6 +22,12 @@ func _ready() -> void:
 		player.process_mode = Node.PROCESS_MODE_DISABLED
 	if enemy:
 		enemy.process_mode = Node.PROCESS_MODE_DISABLED
+		# Configura o inimigo para o modo de arremesso de peças
+		var enemy_node = enemy.get_node_or_null("enemy")
+		if enemy_node:
+			enemy_node.is_ranged_attacker = true
+			enemy_node.projectile_source = pecas
+			enemy_node.ranged_attack_cooldown = 10.0
 	if pecas:
 		pecas.process_mode = Node.PROCESS_MODE_DISABLED
 		

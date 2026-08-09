@@ -41,6 +41,13 @@ const ACCEL = 4.0
 @export var distance_to_aproach = 15
 @export var attack_damage = 15
 
+# --- Sistema de Ataque Ranged ---
+@export var is_ranged_attacker: bool = false
+@export var ranged_attack_cooldown: float = 10.0
+var projectile_source: Node3D = null
+var ranged_attack_timer: float = 5.0 # O primeiro ataque é mais rápido
+# --------------------------------
+
 @export var max_health = 50
 var current_health = max_health
 var update_timer = 0.0
@@ -81,11 +88,24 @@ func _physics_process(delta: float) -> void:
 		# 3. Calcula o movimento se ainda não chegou no alvo
 		if not nav_agent.is_navigation_finished() and (distancia_to_player<distance_to_aproach):
 			
-			#ataca se tiver perto
-			if distancia_to_player < 5:
+			# Verifica se vai atacar corpo a corpo ou à distância
+			var vai_atacar = false
+			
+			if is_ranged_attacker:
+				ranged_attack_timer -= delta
+				if ranged_attack_timer <= 0.0:
+					vai_atacar = true
+					ranged_attack_timer = ranged_attack_cooldown
+			elif distancia_to_player < 5:
+				vai_atacar = true
+				
+			if vai_atacar:
 				steps.stop()
 				if !growl_attack.playing: growl_attack.play()
 				playback.travel("attack")
+				
+				if is_ranged_attacker:
+					_throw_random_projectile()
 			else:
 				var next_p = nav_agent.get_next_path_position()
 				var direction = (next_p - global_position)
@@ -174,3 +194,69 @@ func _on_attack_body_entered(body: Node3D) -> void:
 		
 		#lanca damage no player
 		body.take_damage(attack_damage)
+
+func _throw_random_projectile() -> void:
+	if not projectile_source or projectile_source.get_child_count() == 0:
+		return
+		
+	# Espera o inimigo bater os braços no chão (aproximadamente 1.0 segundos depois do início da animação)
+	await get_tree().create_timer(1.0).timeout
+	
+	if dead or not player:
+		return
+		
+	var children = projectile_source.get_children()
+	var random_piece = children[randi() % children.size()]
+	
+	if not random_piece is Node3D:
+		return
+		
+	# Cria uma cópia da peça
+	var clone = random_piece.duplicate()
+	
+	# Cria o corpo do projétil
+	var projectile = Area3D.new()
+	projectile.name = "EnemyProjectile"
+	
+	# Adiciona colisões
+	var col = CollisionShape3D.new()
+	var sphere = SphereShape3D.new()
+	sphere.radius = 0.8 # Tamanho aproximado de colisão
+	col.shape = sphere
+	projectile.add_child(col)
+	
+	# Adiciona a malha clonada
+	projectile.add_child(clone)
+	clone.position = Vector3.ZERO # Reseta a posição local do clone para ficar centralizado na colisão
+	
+	# Adiciona à cena principal
+	get_tree().current_scene.add_child(projectile)
+	
+	# Posição de disparo (um pouco acima e à frente do chefe)
+	var forward_dir = global_transform.basis.z.normalized()
+	var spawn_pos = global_position + Vector3(0, 1.5, 0) + (forward_dir * 1.5)
+	projectile.global_position = spawn_pos
+	
+	# Posição do alvo (onde o player está AGORA)
+	var target_pos = player.global_position + Vector3(0, 1.0, 0) # Mira no peito
+	
+	# Gira aleatoriamente o projétil enquanto viaja e move ele até o jogador
+	var tween = create_tween().set_parallel(true)
+	# 0.6s de tempo de voo (rápido)
+	tween.tween_property(projectile, "global_position", target_pos, 0.6).set_trans(Tween.TRANS_SINE)
+	tween.tween_property(clone, "rotation", Vector3(randf_range(-PI, PI), randf_range(-PI, PI), randf_range(-PI, PI)), 0.6)
+	
+	# Conecta o sinal de hit para causar dano
+	projectile.body_entered.connect(func(body):
+		if body == player:
+			player.take_damage(attack_damage)
+			# Tremor de câmera
+			GlobalUtils.shake_camera(0.2, 0.2)
+			projectile.queue_free()
+	)
+	
+	# Destrói automaticamente se não bater no player (depois de dar o tempo do tween + folga)
+	get_tree().create_timer(1.0).timeout.connect(func():
+		if is_instance_valid(projectile):
+			projectile.queue_free()
+	)
