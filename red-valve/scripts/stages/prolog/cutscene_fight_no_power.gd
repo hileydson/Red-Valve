@@ -9,10 +9,7 @@ var slides = [
 	{
 		"image_path": "res://assets/cutscenes/prolog/fight_no_power/no_power_1.png",
 		"texts": [
-			"NO_POWER_1_01", "NO_POWER_1_02", "NO_POWER_1_03", "NO_POWER_1_04",
-			"NO_POWER_1_05", "NO_POWER_1_06", "NO_POWER_1_07", "NO_POWER_1_08",
-			"NO_POWER_1_09", "NO_POWER_1_10", "NO_POWER_1_11", "NO_POWER_1_12",
-			"NO_POWER_1_13", "NO_POWER_1_14", "NO_POWER_1_15"
+			"NO_POWER_1_SUM_1", "NO_POWER_1_SUM_2", "NO_POWER_1_SUM_3"
 		]
 	},
 	{
