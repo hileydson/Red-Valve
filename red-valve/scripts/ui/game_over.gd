@@ -85,8 +85,9 @@ void fragment() {
 	tween.tween_property(label, "modulate:a", 1.0, 3.0).set_delay(1.5)
 	tween.tween_property(particles, "modulate:a", 1.0, 3.0).set_delay(1.5)
 	
-	# 6. Esperar 6 segundos e voltar para o Menu
-	await get_tree().create_timer(6.0, true).timeout
+	# 6. Esperar a animação principal terminar (6 segundos)
+	await tween.finished
+	print("Animação de Game Over finalizada.")
 	
 	var fade = ColorRect.new()
 	fade.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -97,5 +98,8 @@ void fragment() {
 	fade_tween.tween_property(fade, "color:a", 1.0, 1.5)
 	
 	await fade_tween.finished
+	print("Fade out completo. Retornando ao menu...")
+	
 	get_tree().paused = false
 	get_tree().change_scene_to_file("res://scenes/configs/main_menu.tscn")
+	queue_free()

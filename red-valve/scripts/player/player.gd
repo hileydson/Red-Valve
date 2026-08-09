@@ -186,8 +186,8 @@ void fragment() {
 	float dist = abs(UV.y - target_y);
 	float glow = line_thickness / (dist + 0.005);
 	
-	// Fundo escuro semi-transparente do monitor
-	vec4 bg = vec4(0.0, 0.0, 0.0, 0.4);
+	// Fundo totalmente transparente
+	vec4 bg = vec4(0.0, 0.0, 0.0, 0.0);
 	
 	COLOR = mix(bg, vec4(line_color.rgb, 1.0), clamp(glow, 0.0, 1.0) * line_color.a);
 }
@@ -214,7 +214,7 @@ func _start_heartbeat_pulse() -> void:
 	
 	if current_health < 30:
 		target_color = Color(1, 0, 0, 1.0) # Vermelho
-		target_speed = 3.5
+		target_speed = 2.8
 	elif current_health < 70:
 		target_color = Color(1, 1, 0, 1.0) # Amarelo
 		target_speed = 2.0
