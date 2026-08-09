@@ -199,8 +199,8 @@ func _throw_random_projectile() -> void:
 	if not projectile_source or projectile_source.get_child_count() == 0:
 		return
 		
-	# Espera o inimigo bater os braços no chão (aproximadamente 1.0 segundos depois do início da animação)
-	await get_tree().create_timer(1.0).timeout
+	# Espera o inimigo bater os braços no chão (aproximadamente 2.2 segundos depois do início da animação)
+	await get_tree().create_timer(2.2).timeout
 	
 	if dead or not player:
 		return
@@ -242,9 +242,9 @@ func _throw_random_projectile() -> void:
 	
 	# Gira aleatoriamente o projétil enquanto viaja e move ele até o jogador
 	var tween = create_tween().set_parallel(true)
-	# 0.6s de tempo de voo (rápido)
-	tween.tween_property(projectile, "global_position", target_pos, 0.6).set_trans(Tween.TRANS_SINE)
-	tween.tween_property(clone, "rotation", Vector3(randf_range(-PI, PI), randf_range(-PI, PI), randf_range(-PI, PI)), 0.6)
+	# 0.9s de tempo de voo (velocidade média/equilibrada)
+	tween.tween_property(projectile, "global_position", target_pos, 0.9).set_trans(Tween.TRANS_SINE)
+	tween.tween_property(clone, "rotation", Vector3(randf_range(-PI, PI), randf_range(-PI, PI), randf_range(-PI, PI)), 0.9)
 	
 	# Conecta o sinal de hit para causar dano
 	projectile.body_entered.connect(func(body):
@@ -256,7 +256,7 @@ func _throw_random_projectile() -> void:
 	)
 	
 	# Destrói automaticamente se não bater no player (depois de dar o tempo do tween + folga)
-	get_tree().create_timer(1.0).timeout.connect(func():
+	get_tree().create_timer(1.5).timeout.connect(func():
 		if is_instance_valid(projectile):
 			projectile.queue_free()
 	)

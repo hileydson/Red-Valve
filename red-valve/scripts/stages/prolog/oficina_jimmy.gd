@@ -27,7 +27,7 @@ func _ready() -> void:
 		if enemy_node:
 			enemy_node.is_ranged_attacker = true
 			enemy_node.projectile_source = pecas
-			enemy_node.ranged_attack_cooldown = 10.0
+			enemy_node.ranged_attack_cooldown = 6.0
 	if pecas:
 		pecas.process_mode = Node.PROCESS_MODE_DISABLED
 		
