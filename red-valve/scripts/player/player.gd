@@ -45,6 +45,7 @@ var blood_effect = preload("res://scenes/enemies/blood.tscn")
 @export var max_health: int = 100
 var current_health: int = 100
 var heartbeat_hud: ColorRect
+var blood_overlay: ColorRect
 var heartbeat_tween: Tween
 # ---------------------------
 
@@ -197,6 +198,28 @@ void fragment() {
 	heartbeat_hud.material = mat
 	
 	hud_layer.add_child(heartbeat_hud)
+	
+	blood_overlay = ColorRect.new()
+	blood_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	blood_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var blood_shader = Shader.new()
+	blood_shader.code = """
+shader_type canvas_item;
+uniform vec4 color : source_color = vec4(0.8, 0.0, 0.0, 1.0);
+uniform float multiplier = 0.0;
+uniform float softness = 0.8;
+
+void fragment() {
+	float value = distance(UV, vec2(0.5));
+	value = smoothstep(0.5 - softness, 0.5, value);
+	COLOR = vec4(color.rgb, value * multiplier);
+}
+"""
+	var blood_mat = ShaderMaterial.new()
+	blood_mat.shader = blood_shader
+	blood_overlay.material = blood_mat
+	hud_layer.add_child(blood_overlay)
+	
 	_start_heartbeat_pulse()
 
 func _start_heartbeat_pulse() -> void:
@@ -883,6 +906,14 @@ func take_damage(number:int):
 		_trigger_game_over()
 		
 	GlobalUtils.vibrate_controller(Input, 0.5, 0.5, 0.2)
+	GlobalUtils.shake_camera(0.08, 0.25)
+	
+	if is_instance_valid(blood_overlay):
+		var mat = blood_overlay.material as ShaderMaterial
+		mat.set_shader_parameter("multiplier", 0.4)
+		var t = create_tween()
+		t.tween_method(func(val): mat.set_shader_parameter("multiplier", val), 0.4, 0.0, 1.5).set_trans(Tween.TRANS_CUBIC)
+	
 	print("Damage taken by the player: "+str(number) + " | HP: " + str(current_health))
 	
 	# Atualiza o visual do batimento sempre que leva dano
