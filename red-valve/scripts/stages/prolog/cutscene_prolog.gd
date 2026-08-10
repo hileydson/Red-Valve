@@ -22,8 +22,17 @@ var image_tween: Tween
 var text_tween: Tween
 var is_transitioning: bool = false
 var waiting_for_input: bool = false
+var finished: bool = false
 
 func _ready() -> void:
+	# Instancia o UI de Skip
+	var skip_layer = CanvasLayer.new()
+	skip_layer.layer = 128
+	var skip_ui = load("res://scripts/ui/skip_cutscene_ui.gd").new()
+	skip_layer.add_child(skip_ui)
+	add_child(skip_layer)
+	skip_ui.skipped.connect(finish_cutscene)
+	
 	# Fade-in suave no áudio para não começar estourando
 	var target_volume = audio_player.volume_db
 	audio_player.volume_db = -80.0
@@ -119,6 +128,12 @@ func next_slide() -> void:
 
 
 func finish_cutscene() -> void:
+	if finished: return
+	finished = true
+	
+	if image_tween: image_tween.kill()
+	if text_tween: text_tween.kill()
+	
 	is_transitioning = true
 	waiting_for_input = false
 	
