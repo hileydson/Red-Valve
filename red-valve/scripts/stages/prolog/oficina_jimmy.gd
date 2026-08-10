@@ -10,8 +10,10 @@ var look_at_target: Node3D = null
 var look_at_offset: Vector3 = Vector3(0, 1.5, 0)
 var is_starting: bool = false
 var pos_inicial: Vector3 = Vector3.ZERO
+var time_passed: float = 0.0
 
 func _ready() -> void:
+	GlobalEvents.in_cutscene = true
 	SaveManager.save_game()
 	GlobalEvents.is_maycow_normal = true
 	
@@ -121,6 +123,12 @@ func _criar_faiscas_inimigo() -> void:
 	particles.position = Vector3(0, 0.05, 0)
 
 func _process(delta: float) -> void:
+	time_passed += delta
+	var active_cam = get_viewport().get_camera_3d()
+	if active_cam:
+		active_cam.h_offset = sin(time_passed * 2.0) * 0.04
+		active_cam.v_offset = cos(time_passed * 2.5) * 0.04
+		
 	# Trava absoluta e agressiva nos primeiros segundos para evitar pulos de tela (Frame 0 glitch)
 	if is_starting:
 		if camera_oficina and look_at_target:
@@ -149,6 +157,20 @@ func _process(delta: float) -> void:
 func iniciar_cutscene() -> void:
 	if not enemy or not player:
 		return
+		
+	# Camada de texto cinematográfica
+	var text_layer = CanvasLayer.new()
+	text_layer.layer = 120
+	add_child(text_layer)
+	
+	var label = Label.new()
+	label.set_anchors_preset(Control.PRESET_CENTER)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.add_theme_font_size_override("font_size", 42)
+	label.add_theme_constant_override("outline_size", 6)
+	label.modulate.a = 0.0
+	text_layer.add_child(label)
 		
 	var enemy_pos = enemy.global_position
 	var player_pos = player.global_position
@@ -191,6 +213,21 @@ func iniciar_cutscene() -> void:
 	
 	# Desliga a trava para podermos viajar livremente
 	is_starting = false
+	
+	# Sequência dos textos
+	var text_tween = create_tween()
+	label.text = tr("TXT_OFICINA_JIMMY_1")
+	text_tween.tween_property(label, "modulate:a", 1.0, 0.5)
+	text_tween.tween_interval(2.0)
+	text_tween.tween_property(label, "modulate:a", 0.0, 0.5)
+	text_tween.tween_callback(func(): 
+		label.text = tr("TXT_OFICINA_JIMMY_2")
+		label.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
+		label.offset_bottom = -100
+	)
+	text_tween.tween_property(label, "modulate:a", 1.0, 0.5)
+	text_tween.tween_interval(2.0)
+	text_tween.tween_property(label, "modulate:a", 0.0, 0.5)
 	
 	# ---------------------------------------------------------
 	# FASE 1: Gira de leve (drift) sem ir para as costas
@@ -294,7 +331,12 @@ func iniciar_cutscene() -> void:
 	if enemy:
 		enemy.process_mode = Node.PROCESS_MODE_INHERIT
 		
+	GlobalEvents.in_cutscene = false
+		
 	if fade:
 		fade.fade_in()
+		
+	if is_instance_valid(text_layer):
+		text_layer.queue_free()
 		
 	camera_oficina.queue_free()

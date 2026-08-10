@@ -7,38 +7,50 @@ extends Control
 
 var slides = [
 	{
-		"image_path": "res://assets/cutscenes/prolog/fight_no_power/no_power_1.png",
+		"image_path": "res://assets/cutscenes/prolog/fight_with_power/with_power_1.png",
 		"texts": [
-			"NO_POWER_1_SUM_1", "NO_POWER_1_SUM_2", "NO_POWER_1_SUM_3"
+			"WITH_POWER_1_1", "WITH_POWER_1_2", "WITH_POWER_1_3", "WITH_POWER_1_4"
 		]
 	},
 	{
-		"image_path": "res://assets/cutscenes/prolog/fight_no_power/no_power_2.png",
-		"texts": ["NO_POWER_2_01", "NO_POWER_2_02"]
-	},
-	{
-		"image_path": "res://assets/cutscenes/prolog/fight_no_power/no_power_3.png",
+		"image_path": "res://assets/cutscenes/prolog/fight_with_power/with_power_2.png",
 		"texts": [
-			"NO_POWER_3_SUM_1", "NO_POWER_3_SUM_2", "NO_POWER_3_SUM_3", "NO_POWER_3_SUM_4"
+			"WITH_POWER_2_1", "WITH_POWER_2_2", "WITH_POWER_2_3", "WITH_POWER_2_4", "WITH_POWER_2_5"
 		]
 	},
 	{
-		"image_path": "res://assets/cutscenes/prolog/fight_no_power/no_power_4.png",
+		"image_path": "res://assets/cutscenes/prolog/fight_with_power/with_power_3.png",
 		"texts": [
-			"NO_POWER_4_01", "NO_POWER_4_02", "NO_POWER_4_03", "NO_POWER_4_04",
-			"NO_POWER_4_05", "NO_POWER_4_06", "NO_POWER_4_07"
+			"WITH_POWER_3_1", "WITH_POWER_3_2", "WITH_POWER_3_3", "WITH_POWER_3_4",
+			"WITH_POWER_3_5", "WITH_POWER_3_6", "WITH_POWER_3_7", "WITH_POWER_3_8"
 		]
 	},
 	{
-		"image_path": "res://assets/cutscenes/prolog/fight_no_power/no_power_5.png",
+		"image_path": "res://assets/cutscenes/prolog/fight_with_power/with_power_4.png",
 		"texts": [
-			"NO_POWER_5_SUM_1", "NO_POWER_5_SUM_2", "NO_POWER_5_SUM_3", "NO_POWER_5_SUM_4"
+			"WITH_POWER_4_1", "WITH_POWER_4_2", "WITH_POWER_4_3"
 		]
 	},
 	{
-		"image_path": "res://assets/cutscenes/prolog/fight_no_power/no_power_6.png",
+		"image_path": "res://assets/cutscenes/prolog/fight_with_power/with_power_5.png",
 		"texts": [
-			"NO_POWER_6_SUM_1", "NO_POWER_6_SUM_2", "NO_POWER_6_SUM_3", "NO_POWER_6_SUM_4"
+			"WITH_POWER_5_1", "WITH_POWER_5_2", "WITH_POWER_5_3", "WITH_POWER_5_4",
+			"WITH_POWER_5_5", "WITH_POWER_5_6", "WITH_POWER_5_7"
+		]
+	},
+	{
+		"image_path": "res://assets/cutscenes/prolog/fight_with_power/with_power_6.png",
+		"texts": [
+			"WITH_POWER_6_1", "WITH_POWER_6_2", "WITH_POWER_6_3", "WITH_POWER_6_4",
+			"WITH_POWER_6_5", "WITH_POWER_6_6"
+		]
+	},
+	{
+		"image_path": "res://assets/cutscenes/prolog/fight_with_power/with_power_7.png",
+		"texts": [
+			"WITH_POWER_7_1", "WITH_POWER_7_2", "WITH_POWER_7_3", "WITH_POWER_7_4",
+			"WITH_POWER_7_5", "WITH_POWER_7_6", "WITH_POWER_7_7", "WITH_POWER_7_8",
+			"WITH_POWER_7_9"
 		]
 	}
 ]
@@ -150,8 +162,8 @@ func finish_cutscene() -> void:
 	fade.fade_out()
 	await get_tree().create_timer(2.0).timeout
 	
-	# Muda a cena diretamente para a oficina
-	get_tree().change_scene_to_file("res://scenes/stages/prolog/oficina_jimmy.tscn")
+	# Muda a cena diretamente para o battlefield_1
+	get_tree().change_scene_to_file("res://scenes/stages/battlefield/battlefield_1.tscn")
 
 func _process(delta: float) -> void:
 	if waiting_for_input and not is_transitioning:

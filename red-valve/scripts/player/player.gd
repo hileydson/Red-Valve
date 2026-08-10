@@ -920,6 +920,14 @@ func take_damage(number:int):
 	_start_heartbeat_pulse()
 
 func _trigger_game_over() -> void:
+	if SaveManager.current_stage.contains("oficina_jimmy") or (get_tree().current_scene and get_tree().current_scene.scene_file_path.contains("oficina_jimmy")):
+		var fade = get_tree().current_scene.get_node_or_null("fade")
+		if fade:
+			fade.fade_out()
+			await get_tree().create_timer(1.5).timeout
+		get_tree().change_scene_to_file("res://scenes/stages/prolog/fight_with_power/cutscene_fight_with_power.tscn")
+		return
+		
 	var game_over_script = load("res://scripts/ui/game_over.gd")
 	if game_over_script:
 		var game_over_node = CanvasLayer.new()

@@ -87,8 +87,11 @@ func add_item(item_id: String, amount: int = 1):
 var menu_instance = null
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_menu_game"):
-		if get_tree().current_scene and get_tree().current_scene.scene_file_path.contains("main_menu"):
-			return # Não abre menu no main menu
+		if get_tree().current_scene and (get_tree().current_scene.scene_file_path.contains("main_menu") or get_tree().current_scene.scene_file_path.contains("cutscene")):
+			return # Não abre menu nessas telas
+			
+		if GlobalEvents.in_cutscene:
+			return # Não abre menu durante a cutscene da oficina
 			
 		if menu_instance == null or not is_instance_valid(menu_instance):
 			if get_tree().paused:

@@ -1,6 +1,6 @@
-[gd_scene format=3 uid="uid://dqtrictxn3cn2"]
+[gd_scene format=3 uid="uid://csv84wovjbr5v"]
 
-[ext_resource type="Script" uid="uid://bhavxqxy6ithx" path="res://scripts/stages/prolog/cutscene_fight_no_power.gd" id="1_cutsn"]
+[ext_resource type="Script" uid="uid://dcddve3ck37yh" path="res://scripts/stages/prolog/fight_with_power/cutscene_fight_with_power.gd" id="1_cutsn"]
 [ext_resource type="AudioStream" uid="uid://lvxgd3tjitad" path="res://assets/cutscenes/sound/begin.mp3" id="2_em5kw"]
 [ext_resource type="PackedScene" uid="uid://dy356o67p6jyn" path="res://scenes/configs/fade.tscn" id="2_fade"]
 

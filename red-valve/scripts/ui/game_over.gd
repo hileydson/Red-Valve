@@ -1,6 +1,9 @@
 extends CanvasLayer
 
 func _ready() -> void:
+	#sempre sera o maycow da mundo paralelo e nao do mundo real
+	GlobalEvents.is_maycow_normal = false
+	
 	self.layer = 128
 	self.process_mode = Node.PROCESS_MODE_ALWAYS
 	
