@@ -91,6 +91,9 @@ func _unhandled_input(event: InputEvent) -> void:
 			return # Não abre menu no main menu
 			
 		if menu_instance == null or not is_instance_valid(menu_instance):
+			if get_tree().paused:
+				return # Não abre se o jogo já estiver pausado (ex: Pause menu)
+				
 			var menu_script = load("res://scripts/ui/in_game_menu.gd")
 			if menu_script:
 				menu_instance = menu_script.new()

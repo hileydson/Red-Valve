@@ -16,7 +16,7 @@ var grid_container: GridContainer
 var slot_panels = []
 
 func _ready() -> void:
-	self.layer = 127 # Abaixo do Game Over (128)
+	self.layer = 129 # Acima das mensagens do jogo (128) e no mesmo nível do Pause
 	self.process_mode = Node.PROCESS_MODE_ALWAYS
 	get_tree().paused = true
 	
@@ -105,7 +105,7 @@ func _ready() -> void:
 	update_ui()
 
 func update_ui() -> void:
-	tab_label.text = "< L1 " + tr(tabs[current_tab]) + " R1 >"
+	tab_label.text = "< " + tr(tabs[current_tab]) + " >"
 	
 	if current_tab == 0:
 		grid_container.visible = true

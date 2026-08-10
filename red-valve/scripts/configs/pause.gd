@@ -1,4 +1,4 @@
-extends Node2D
+extends CanvasLayer
 
 @onready var resume: Button = $Control/VSplitContainer/resume
 
@@ -7,9 +7,10 @@ func _ready() -> void:
 	pass
 
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	if Input.is_action_just_pressed("ui_pause"):
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_pause"):
+		if not self.visible and get_tree().paused:
+			return # Não abre se já estiver pausado (ex: Inventário aberto)
 		toogle_pause()
 		
 
@@ -28,4 +29,6 @@ func _on_resume_pressed() -> void:
 
 
 func _on_exit_pressed() -> void:
-	get_tree().quit()
+	get_tree().paused = false
+	self.visible = false
+	get_tree().change_scene_to_file("res://scenes/configs/main_menu.tscn")
