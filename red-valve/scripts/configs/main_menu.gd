@@ -1,6 +1,7 @@
 extends Node3D
 
-@onready var start: Button = $Control/VSplitContainer/start
+@onready var start: Button = $Control/VBoxContainer/start
+@onready var load_btn: Button = $Control/VBoxContainer/load
 @onready var timer: Timer = $Timer_flick
 @onready var red_valve: Sprite2D = $VideoStreamPlayer/RedValveSpriteNoBackground
 @onready var timer_play_animation_label: Timer = $Timer_play_animation_label
@@ -14,6 +15,9 @@ var last_animation_label_go:bool = true
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	start.grab_focus()
+	
+	if not FileAccess.file_exists("user://save_game.json"):
+		load_btn.disabled = true
 	
 	# Fade-in suave nos áudios do menu principal
 	var ashen_target = ashen.volume_db
@@ -33,6 +37,16 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	pass
 
+func _on_load_pressed() -> void:
+	$Control.visible = false
+	
+	var audio_out_tween = create_tween().set_parallel(true)
+	audio_out_tween.tween_property(ashen, "volume_db", -80.0, 2.0)
+	audio_out_tween.tween_property(fire, "volume_db", -80.0, 2.0)
+	
+	$fade.fade_out()
+	await get_tree().create_timer(2.0).timeout
+	SaveManager.load_game()
 
 func _on_start_pressed() -> void:
 	$Control.visible = false

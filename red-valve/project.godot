@@ -28,6 +28,7 @@ config/icon="res://icon.svg"
 
 GlobalUtils="*res://scripts/Global_Utils.gd"
 GlobalEvents="*uid://d3yfan1n0gd48"
+SaveManager="*res://scripts/systems/SaveManager.gd"
 
 [display]
 

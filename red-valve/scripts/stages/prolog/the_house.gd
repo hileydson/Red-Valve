@@ -14,6 +14,7 @@ var ui_layer: CanvasLayer
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	SaveManager.save_game()
 	GlobalEvents.is_maycow_normal = true
 	GlobalEvents.set_minimum_nevoa()
 	

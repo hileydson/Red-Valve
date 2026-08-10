@@ -12,6 +12,7 @@ var is_starting: bool = false
 var pos_inicial: Vector3 = Vector3.ZERO
 
 func _ready() -> void:
+	SaveManager.save_game()
 	GlobalEvents.is_maycow_normal = true
 	
 	# === 1. PREPARAÇÃO DA CUTSCENE ===
