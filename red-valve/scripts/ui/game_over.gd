@@ -1,12 +1,15 @@
 extends CanvasLayer
 
 var shake_intensity: float = 0.0
+var noise = FastNoiseLite.new()
+var noise_time: float = 0.0
 
 func _process(delta: float) -> void:
 	if shake_intensity > 0:
+		noise_time += delta * 30.0 # Velocidade do tremor
 		offset = Vector2(
-			randf_range(-shake_intensity, shake_intensity),
-			randf_range(-shake_intensity, shake_intensity)
+			noise.get_noise_2d(noise_time, 0.0) * shake_intensity,
+			noise.get_noise_2d(0.0, noise_time) * shake_intensity
 		)
 	else:
 		offset = Vector2.ZERO
@@ -17,6 +20,9 @@ func _ready() -> void:
 	
 	self.layer = 128
 	self.process_mode = Node.PROCESS_MODE_ALWAYS
+	
+	noise.noise_type = FastNoiseLite.TYPE_PERLIN
+	noise.frequency = 0.1
 	
 	# 1. Congela o jogo
 	get_tree().paused = true

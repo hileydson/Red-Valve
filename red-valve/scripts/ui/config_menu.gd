@@ -30,6 +30,8 @@ func _ready() -> void:
 	# Container Central
 	vbox = VBoxContainer.new()
 	vbox.set_anchors_preset(Control.PRESET_CENTER)
+	vbox.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	vbox.grow_vertical = Control.GROW_DIRECTION_BOTH
 	vbox.custom_minimum_size = Vector2(400, 0)
 	vbox.add_theme_constant_override("separation", 30)
 	
@@ -43,6 +45,7 @@ func _ready() -> void:
 	var lang_label = Label.new()
 	lang_label.text = tr("CONFIG_LANGUAGE")
 	lang_label.add_theme_font_size_override("font_size", 24)
+	lang_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(lang_label)
 	
 	lang_option = OptionButton.new()
@@ -65,6 +68,7 @@ func _ready() -> void:
 	var aim_label = Label.new()
 	aim_label.text = tr("CONFIG_AIM_MODE")
 	aim_label.add_theme_font_size_override("font_size", 24)
+	aim_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(aim_label)
 	
 	aim_option = OptionButton.new()
@@ -124,6 +128,9 @@ func _on_aim_selected(index: int) -> void:
 		SaveManager.config["aim_mode"] = "toggle"
 
 func _on_back_pressed() -> void:
+	# Salva imediatamente no JSON as alterações feitas
+	SaveManager.save_game()
+	
 	# Reabre a tela de pause original
 	var pause_node = get_parent().get_node("Pause")
 	if pause_node:

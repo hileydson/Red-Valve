@@ -637,6 +637,10 @@ text = "BTN_START"
 layout_mode = 2
 text = "BTN_LOAD_GAME"
 
+[node name="config" type="Button" parent="Control/VBoxContainer" unique_id=1495181599]
+layout_mode = 2
+text = "MENU_CONFIG"
+
 [node name="exit" type="Button" parent="Control/VBoxContainer" unique_id=71016976]
 layout_mode = 2
 text = "BTN_EXIT"
@@ -657,6 +661,7 @@ autoplay = true
 
 [connection signal="pressed" from="Control/VBoxContainer/start" to="." method="_on_start_pressed"]
 [connection signal="pressed" from="Control/VBoxContainer/load" to="." method="_on_load_pressed"]
+[connection signal="pressed" from="Control/VBoxContainer/config" to="." method="_on_config_pressed"]
 [connection signal="pressed" from="Control/VBoxContainer/exit" to="." method="_on_exit_pressed"]
 [connection signal="timeout" from="Timer_flick" to="." method="_on_timer_timeout"]
 [connection signal="timeout" from="Timer_play_animation_label" to="." method="_on_timer_play_animation_label_timeout"]

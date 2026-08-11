@@ -59,17 +59,33 @@ func _ready():
 		inventory_combat.append({"id": "cogblade", "amount": 1})
 		inventory_combat.append({"id": "pistol_ammo", "amount": 25})
 		
+	# Lê silenciosamente o save no boot para não apagar dados ao salvar apenas configs depois
+	if FileAccess.file_exists(SAVE_PATH):
+		var file = FileAccess.open(SAVE_PATH, FileAccess.READ)
+		if file:
+			var content = file.get_as_text()
+			file.close()
+			var json = JSON.new()
+			if json.parse(content) == OK:
+				var data = json.get_data()
+				if typeof(data) == TYPE_DICTIONARY:
+					current_stage = data.get("current_stage", "")
+					if data.has("config"):
+						config = data["config"]
+						
 	TranslationServer.set_locale(config["language"])
 
 func save_game(scene_path: String = ""):
+	var temp_stage = current_stage
+	
 	if scene_path != "":
-		current_stage = scene_path
-	elif get_tree().current_scene:
-		current_stage = get_tree().current_scene.scene_file_path
+		temp_stage = scene_path
+	elif get_tree().current_scene and not get_tree().current_scene.scene_file_path.contains("main_menu"):
+		temp_stage = get_tree().current_scene.scene_file_path
 		
-	# Só salva se tivermos um stage válido
-	if current_stage == "" or current_stage.contains("main_menu"):
-		return
+	# Atualiza a variavel global se for valida
+	if temp_stage != "":
+		current_stage = temp_stage
 		
 	var save_data = {
 		"current_stage": current_stage,
@@ -82,7 +98,7 @@ func save_game(scene_path: String = ""):
 	if file:
 		file.store_string(JSON.stringify(save_data))
 		file.close()
-		print("Game Saved! ", current_stage)
+		print("Game/Config Saved! Stage: ", current_stage)
 
 func load_game() -> bool:
 	if not FileAccess.file_exists(SAVE_PATH):
