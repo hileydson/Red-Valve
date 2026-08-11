@@ -639,7 +639,7 @@ func dash():
 	
 	# --- 3. SEUS EFEITOS DE VIBRAÇÃO E CAMERA LENTA ---
 	GlobalUtils.vibrate_controller(Input, 0.5, 0.2, 0.1)
-	GlobalUtils.ativar_camera_lenta_com_fim(0.2, 1.0, true)
+	GlobalUtils.ativar_camera_lenta_com_fim(0.2, 1.0, false)
 	
 
 func head_bob(delta: float):
@@ -1014,7 +1014,7 @@ func take_damage(number:int):
 		_trigger_game_over()
 		
 	GlobalUtils.vibrate_controller(Input, 0.5, 0.5, 0.2)
-	GlobalUtils.shake_camera(0.015, 0.15)
+	GlobalUtils.shake_camera(0.01, 0.15)
 	
 	if is_instance_valid(blood_overlay):
 		var mat = blood_overlay.material as ShaderMaterial
