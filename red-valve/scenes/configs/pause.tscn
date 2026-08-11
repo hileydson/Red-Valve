@@ -4,9 +4,8 @@
 [ext_resource type="Texture2D" uid="uid://bvgwpas0j658a" path="res://assets/images/enemies/blood_mark.png" id="2_ktwnj"]
 
 [node name="Pause" type="CanvasLayer" unique_id=1267958209]
-layer = 129
 process_mode = 3
-visible = false
+layer = 129
 script = ExtResource("1_acl5t")
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=209238046]
@@ -33,8 +32,8 @@ grow_vertical = 2
 
 [node name="BloodMark" type="Sprite2D" parent="Control" unique_id=1289328245]
 modulate = Color(0.7564044, 0.7564044, 0.7564044, 1)
-position = Vector2(20.0, 20.0)
-scale = Vector2(0.66932905, 0.6070288)
+position = Vector2(33.000008, 28)
+scale = Vector2(0.72603834, 0.6565496)
 texture = ExtResource("2_ktwnj")
 
 [node name="VSplitContainer" type="VBoxContainer" parent="Control" unique_id=1360685637]

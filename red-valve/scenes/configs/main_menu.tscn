@@ -618,16 +618,16 @@ grow_vertical = 2
 
 [node name="BloodMark" type="Sprite2D" parent="Control" unique_id=1500276055]
 modulate = Color(0.7564044, 0.7564044, 0.7564044, 1)
-position = Vector2(1232.5, -175)
-scale = Vector2(0.66932905, 0.6070288)
+position = Vector2(1252, -161.50002)
+scale = Vector2(0.73162943, 0.6501597)
 texture = ExtResource("2_paibe")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Control" unique_id=1938075543]
 layout_mode = 0
-offset_left = 1164.5
-offset_top = -205.0
-offset_right = 1261.5
-offset_bottom = -131.0
+offset_left = 1170.0
+offset_top = -244.0
+offset_right = 1314.0
+offset_bottom = -108.0
 
 [node name="start" type="Button" parent="Control/VBoxContainer" unique_id=1495181597]
 layout_mode = 2

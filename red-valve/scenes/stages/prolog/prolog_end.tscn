@@ -1,3 +1,37 @@
 [gd_scene format=3 uid="uid://clxt8gurhl0g5"]
 
-[node name="prolog_end" type="Node3D" unique_id=1448900956]
+[ext_resource type="Script" path="res://scripts/stages/prolog/prolog_end.gd" id="1_end"]
+[ext_resource type="PackedScene" uid="uid://dy356o67p6jyn" path="res://scenes/configs/fade.tscn" id="2_fade"]
+
+[node name="prolog_end" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_end")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 48
+text = "FIM DA DEMO"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="fade" parent="." instance=ExtResource("2_fade")]
+layout_mode = 0

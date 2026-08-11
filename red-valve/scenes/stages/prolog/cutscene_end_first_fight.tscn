@@ -1,0 +1,70 @@
+[gd_scene format=3 uid="uid://df7hgfjd7slaa"]
+
+[ext_resource type="Script" path="res://scripts/stages/prolog/cutscene_end_first_fight.gd" id="1_cutsn"]
+[ext_resource type="AudioStream" uid="uid://lvxgd3tjitad" path="res://assets/cutscenes/sound/begin.mp3" id="2_em5kw"]
+[ext_resource type="PackedScene" uid="uid://dy356o67p6jyn" path="res://scenes/configs/fade.tscn" id="2_fade"]
+
+[node name="CutsceneEndFirstFight" type="Control" unique_id=5610294]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_cutsn")
+
+[node name="Begin" type="AudioStreamPlayer" parent="." unique_id=7482910]
+stream = ExtResource("2_em5kw")
+volume_db = -5.41
+pitch_scale = 0.45
+autoplay = true
+
+[node name="Background" type="ColorRect" parent="." unique_id=9873111]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="ImageRect" type="TextureRect" parent="." unique_id=2389144]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="TextBackground" type="ColorRect" parent="." unique_id=319984]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -180.0
+grow_horizontal = 2
+grow_vertical = 0
+color = Color(0, 0, 0, 0.784314)
+
+[node name="Label" type="Label" parent="TextBackground" unique_id=711200]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 60.0
+offset_top = 30.0
+offset_right = -60.0
+offset_bottom = -30.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 32
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="fade" parent="." unique_id=459918 instance=ExtResource("2_fade")]
+layout_mode = 0

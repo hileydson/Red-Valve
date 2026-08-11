@@ -83,9 +83,9 @@ func _start_final_sequence() -> void:
 	# 4. Espera a animação terminar em tempo real
 	await get_tree().create_timer(5.0, true, false, true).timeout
 	
-	# 5. Restaura e vai para a Prolog End
+	# 5. Restaura e vai para a Cutscene
 	Engine.time_scale = 1.0
-	get_tree().change_scene_to_file("res://scenes/stages/prolog/prolog_end.tscn")
+	get_tree().change_scene_to_file("res://scenes/stages/prolog/cutscene_end_first_fight.tscn")
 
 
 func iniciar_cutscene() -> void:

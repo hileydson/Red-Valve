@@ -125,3 +125,20 @@ NO_POWER_6_SUM_3,"He charges with all his strength and strikes the monster.","El
 NO_POWER_6_SUM_4,"The impact echoes a metallic clang, causing no scratch on the iron creature.","O impacto ecoa um estrondo metálico, sem causar qualquer arranhão na criatura de ferro."
 TXT_OFICINA_JIMMY_1,"What is happening?","O que está acontecendo?"
 TXT_OFICINA_JIMMY_2,"What is this thing?","O que é essa coisa?"
+PROLOG_END_FIGHT_1_1,Maycow delivers the final blow.,Maycow desfere o golpe final.
+PROLOG_END_FIGHT_1_2,The Huske dissolves.,O Huske se desfaz.
+PROLOG_END_FIGHT_1_3,Maycow passes out.,Maycow desmaia.
+PROLOG_END_FIGHT_2_1,When he wakes up…,Quando acorda…
+PROLOG_END_FIGHT_2_2,He is back in the ruined workshop.,Ele está novamente na oficina destruída.
+PROLOG_END_FIGHT_3_1,"Maycow goes down again, his wounds almost healed.","Maycow desce novamente, com seus ferimentos quase curados."
+PROLOG_END_FIGHT_3_2,A strange energy still flowed through his body.,Uma energia estranha ainda corria pelo seu corpo.
+PROLOG_END_FIGHT_3_3,The artifact now had the shape of a common gear.,O artefato agora tinha a forma de uma engrenagem comum.
+PROLOG_END_FIGHT_3_4,Perhaps it was hiding its true power from the Huskes.,Talvez estivesse escondendo seu verdadeiro poder dos Huskes.
+PROLOG_END_FIGHT_4_1,"Exploring the shelter, he finds Jimmy's notes.","Explorando o abrigo, encontra anotações de Jimmy."
+PROLOG_END_FIGHT_4_2,They spoke of the Huskes and the Iron Abyss.,Elas falavam sobre os Huskes e o Abismo de Ferro.
+PROLOG_END_FIGHT_4_3,"In the Waking World, the monsters were indestructible.","No Mundo da Vigília, os monstros eram indestrutíveis."
+PROLOG_END_FIGHT_4_4,But in the Iron Abyss... they could be killed.,Mas no Abismo de Ferro... eles podiam ser mortos.
+PROLOG_END_FIGHT_5_1,"In the chest, there was a strange suit and a letter from Jimmy.","No baú, havia uma estranha roupa e uma carta de Jimmy."
+PROLOG_END_FIGHT_5_2,"He reveals that blood opens the door, and the artifact is from another world.","Ele revela que o sangue ativa a porta, e o artefato é de outro mundo."
+PROLOG_END_FIGHT_5_3,"The Cogblade reacts to it, but its origin in the Abyss is a mystery.","A Cogblade reage a ele, mas sua origem no Abismo é um mistério."
+PROLOG_END_FIGHT_5_4,Maycow wonders what else Jimmy was hiding.,Maycow se pergunta o que mais Jimmy estava escondendo.
