@@ -58,7 +58,7 @@ const SENSITIVITY = 0.003 # Sensibilidade do mouse
 
 #CHANGE LATER - DYNAMICLY
 @export var damage_crescent_cogblade:int = 14
-@export var damage_pistol:int = 15 #3 
+@export var damage_pistol:int = 10 #3 
 @export var damage_headshoot:int = 100
 var current_weapon #: AnimatedSprite2D
 var can_shoot_again:bool = true

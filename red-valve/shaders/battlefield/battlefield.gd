@@ -5,6 +5,7 @@ var enemies: Array = []
 var camera_intro: Camera3D
 var look_at_target: Node3D
 var look_at_offset: Vector3 = Vector3.ZERO
+var final_sequence_started: bool = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -50,6 +51,41 @@ func _process(delta: float) -> void:
 		if is_instance_valid(enemy) and enemy.process_mode == Node.PROCESS_MODE_DISABLED:
 			if "animation_tree" in enemy and enemy.animation_tree and enemy.animation_tree.active:
 				enemy.animation_tree.advance(delta * 0.15)
+				
+	# --- VERIFICAÇÃO DO ÚLTIMO INIMIGO ---
+	if not final_sequence_started and not GlobalEvents.in_cutscene and enemies.size() > 0:
+		var all_dead = true
+		for enemy in enemies:
+			if is_instance_valid(enemy) and "dead" in enemy and not enemy.dead:
+				all_dead = false
+				break
+				
+		if all_dead:
+			_start_final_sequence()
+
+func _start_final_sequence() -> void:
+	final_sequence_started = true
+	
+	# 1. Ultra Câmera Lenta
+	Engine.time_scale = 0.15
+	
+	# 2. Esconde Interface
+	var ui = get_tree().root.get_node_or_null("GlobalEnemyHealthUI")
+	if ui: ui.queue_free()
+	
+	# 3. Faz o Fade Out super lento (ignorando time_scale)
+	var fade = get_tree().current_scene.get_node_or_null("fade")
+	if fade:
+		fade.modulate.a = 0.0
+		var tween = create_tween().set_ignore_time_scale(true)
+		tween.tween_property(fade, "modulate:a", 1.0, 4.0) # 4 segundos de fade
+		
+	# 4. Espera a animação terminar em tempo real
+	await get_tree().create_timer(5.0, true, false, true).timeout
+	
+	# 5. Restaura e vai para a Prolog End
+	Engine.time_scale = 1.0
+	get_tree().change_scene_to_file("res://scenes/stages/prolog/prolog_end.tscn")
 
 
 func iniciar_cutscene() -> void:
