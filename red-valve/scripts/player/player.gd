@@ -33,6 +33,7 @@ extends CharacterBody3D
 @onready var point: Label = $Camera3D/point
 @onready var camera_top_view: Camera3D = $camera_top_view
 @onready var hand_with_pistol: Node3D = $Camera3D/hand_with_pistol
+@onready var hand_with_magic: Node3D = $Camera3D/hand_with_magic
 @onready var smoke_effect: AnimatedSprite2D = $Camera3D/CanvasLayer/smoke_effect
 @onready var smoke_effect_back: AnimatedSprite2D = $Camera3D/CanvasLayer/smoke_effect_back
 @onready var dash_effect: AudioStreamPlayer = $sounds/DashEffect
@@ -137,6 +138,7 @@ func _ready():
 	control_magic.visible = false
 	control_weapons.visible = false
 	hand_with_pistol.visible = false
+	if hand_with_magic: hand_with_magic.visible = false
 	camera_third_person.make_current()
 	#camera_top_view.make_current()
 	point.visible = false
@@ -673,6 +675,7 @@ func transicao_camera(origem: Camera3D, camera_destino: Camera3D, destino: Marke
 		control_magic.visible = show_ui
 		control_weapons.visible = show_ui
 		hand_with_pistol.visible = show_ui
+		if hand_with_magic: hand_with_magic.visible = show_ui
 		await get_tree().create_timer(0.1).timeout
 		GlobalUtils.remover_camera_lenta()
 	else:
@@ -700,6 +703,7 @@ func transicao_camera(origem: Camera3D, camera_destino: Camera3D, destino: Marke
 		control_magic.visible = show_ui
 		control_weapons.visible = show_ui
 		hand_with_pistol.visible = show_ui
+		if hand_with_magic: hand_with_magic.visible = show_ui
 		)
 	
 	
@@ -902,6 +906,7 @@ func raycast_process_shoot():
 					
 				control_weapons.visible = false
 				hand_with_pistol.visible = false
+				if hand_with_magic: hand_with_magic.visible = false
 				control_magic.visible = false
 				bullet_light.visible = true
 				bullet.visible = true
@@ -948,6 +953,7 @@ func bullet_time_back():
 		camera.make_current()
 		control_weapons.visible = true
 		hand_with_pistol.visible = true
+		if hand_with_magic: hand_with_magic.visible = true
 		control_magic.visible = true
 	else:
 		camera_third_person.make_current()
@@ -984,7 +990,7 @@ func take_damage(number:int):
 		_trigger_game_over()
 		
 	GlobalUtils.vibrate_controller(Input, 0.5, 0.5, 0.2)
-	GlobalUtils.shake_camera(0.08, 0.25)
+	GlobalUtils.shake_camera(0.04, 0.15)
 	
 	if is_instance_valid(blood_overlay):
 		var mat = blood_overlay.material as ShaderMaterial

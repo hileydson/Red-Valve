@@ -64,6 +64,14 @@ func _ready() -> void:
 	if old_sprite: old_sprite.queue_free()
 	var old_viewport = get_node_or_null("HealthBarViewport")
 	if old_viewport: old_viewport.queue_free()
+	
+	# Cria uma luz própria e forte exclusiva para o inimigo
+	var self_light = OmniLight3D.new()
+	self_light.light_color = Color(1.0, 0.9, 0.9) # Luz levemente quente
+	self_light.light_energy = 3.5 # Aumentado bastante para que fique bem visível
+	self_light.omni_range = 5.0
+	self_light.position = Vector3(0, 1.5, 0.8) # Ilumina bem a frente do corpo
+	add_child(self_light)
 
 func _physics_process(delta: float) -> void:
 	
