@@ -68,6 +68,7 @@ var fall_cam: Camera3D = null
 var clip_pistol_ammo: int = 5
 var max_clip_pistol: int = 5
 var ammo_label: Label
+var ammo_icon: TextureRect
 
 # CONFIGURACAO DO CONTROLE
 @export var JOY_SENSITIVITY = 0.04 # Sensibilidade para o analógico
@@ -231,9 +232,9 @@ void fragment() {
 	ammo_label.anchor_top = 1.0
 	ammo_label.anchor_right = 1.0
 	ammo_label.anchor_bottom = 1.0
-	ammo_label.offset_left = -250
+	ammo_label.offset_left = -300
 	ammo_label.offset_top = -100
-	ammo_label.offset_right = -30
+	ammo_label.offset_right = -80
 	ammo_label.offset_bottom = -30
 	ammo_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	ammo_label.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
@@ -242,6 +243,21 @@ void fragment() {
 	ammo_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
 	ammo_label.add_theme_constant_override("outline_size", 6)
 	hud_layer.add_child(ammo_label)
+	
+	ammo_icon = TextureRect.new()
+	ammo_icon.texture = load("res://assets/images/menu/itens/mostragem_bullets/mostragem_bullets.png")
+	ammo_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	ammo_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	ammo_icon.anchor_left = 1.0
+	ammo_icon.anchor_top = 1.0
+	ammo_icon.anchor_right = 1.0
+	ammo_icon.anchor_bottom = 1.0
+	ammo_icon.offset_left = -70
+	ammo_icon.offset_top = -85
+	ammo_icon.offset_right = -30
+	ammo_icon.offset_bottom = -45
+	hud_layer.add_child(ammo_icon)
+	
 	update_ammo_ui()
 	
 	_start_heartbeat_pulse()
@@ -250,8 +266,10 @@ func update_ammo_ui() -> void:
 	if not is_instance_valid(ammo_label): return
 	if GlobalEvents.is_maycow_normal:
 		ammo_label.visible = false
+		if is_instance_valid(ammo_icon): ammo_icon.visible = false
 	else:
 		ammo_label.visible = true
+		if is_instance_valid(ammo_icon): ammo_icon.visible = true
 		var total = SaveManager.get_item_amount("pistol_ammo")
 		ammo_label.text = str(clip_pistol_ammo) + " / " + str(total)
 

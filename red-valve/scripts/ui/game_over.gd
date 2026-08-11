@@ -1,5 +1,16 @@
 extends CanvasLayer
 
+var shake_intensity: float = 0.0
+
+func _process(delta: float) -> void:
+	if shake_intensity > 0:
+		offset = Vector2(
+			randf_range(-shake_intensity, shake_intensity),
+			randf_range(-shake_intensity, shake_intensity)
+		)
+	else:
+		offset = Vector2.ZERO
+
 func _ready() -> void:
 	#sempre sera o maycow da mundo paralelo e nao do mundo real
 	GlobalEvents.is_maycow_normal = false
@@ -84,6 +95,11 @@ void fragment() {
 	
 	# 5. Animações (Tween)
 	var tween = create_tween().set_parallel(true)
+	
+	# TREMOR DE TELA (Começa forte em 40.0 e vai parando suavemente em 3 segundos)
+	shake_intensity = 40.0
+	tween.tween_property(self, "shake_intensity", 0.0, 3.0).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	
 	tween.tween_method(func(val): mat.set_shader_parameter("melt_amount", val), 0.0, 1.2, 6.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 	tween.tween_property(label, "modulate:a", 1.0, 3.0).set_delay(1.5)
 	tween.tween_property(particles, "modulate:a", 1.0, 3.0).set_delay(1.5)
