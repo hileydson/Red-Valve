@@ -882,8 +882,8 @@ func shoot(input:Variant):
 			# Impede que a cápsula bata no corpo do próprio jogador ao nascer
 			capsula.add_collision_exception_with(self)
 			
-			# Define a posição de saída (mais para a direita e um pouco acima da arma)
-			var spawn_pos = camera.global_position + camera.global_transform.basis * Vector3(0.4, -0.1, -0.4)
+			# Define a posição de saída (mais para a direita, um pouco acima, e BEM mais pra frente)
+			var spawn_pos = camera.global_position + camera.global_transform.basis * Vector3(0.4, -0.1, -0.75)
 			capsula.global_position = spawn_pos
 			capsula.global_rotation = camera.global_rotation
 			
