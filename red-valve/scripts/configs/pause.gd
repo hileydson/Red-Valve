@@ -32,3 +32,10 @@ func _on_exit_pressed() -> void:
 	get_tree().paused = false
 	self.visible = false
 	get_tree().change_scene_to_file("res://scenes/configs/main_menu.tscn")
+
+func _on_config_pressed() -> void:
+	var config_script = load("res://scripts/ui/config_menu.gd")
+	if config_script:
+		var config_menu = config_script.new()
+		get_parent().add_child(config_menu)
+		self.visible = false

@@ -65,6 +65,8 @@ var can_shoot_again:bool = true
 var is_falling_dead: bool = false
 var fall_cam: Camera3D = null
 
+var is_toggle_aim_active: bool = false
+
 var clip_pistol_ammo: int = 5
 var max_clip_pistol: int = 5
 var ammo_label: Label
@@ -342,12 +344,19 @@ func _physics_process(delta: float) -> void:
 	if !GlobalEvents.is_maycow_normal:
 	
 		# 1. LÓGICA DE VISÃO (PRIMEIRA/TERCEIRA PESSOA)
-		if Input.is_action_pressed("ui_hold_first_person_view"):
-			hold_timer += delta
+		var holding_view = false
+		
+		if SaveManager.config["aim_mode"] == "toggle":
+			if Input.is_action_just_pressed("ui_hold_first_person_view"):
+				is_toggle_aim_active = !is_toggle_aim_active
+			holding_view = is_toggle_aim_active
+			hold_timer = 0.0 # Reseta o timer pra não conflitar
 		else:
-			hold_timer = 0.0
-
-		var holding_view = hold_timer >= hold_threshold
+			if Input.is_action_pressed("ui_hold_first_person_view"):
+				hold_timer += delta
+			else:
+				hold_timer = 0.0
+			holding_view = hold_timer >= hold_threshold
 
 		if holding_view and !is_first_person:
 			is_first_person = true

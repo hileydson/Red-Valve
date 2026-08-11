@@ -37,7 +37,7 @@ position = Vector2(20.0, 20.0)
 scale = Vector2(0.66932905, 0.6070288)
 texture = ExtResource("2_ktwnj")
 
-[node name="VSplitContainer" type="VSplitContainer" parent="Control" unique_id=1360685637]
+[node name="VSplitContainer" type="VBoxContainer" parent="Control" unique_id=1360685637]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -55,9 +55,14 @@ grow_vertical = 2
 layout_mode = 2
 text = "BTN_RESUME"
 
+[node name="config" type="Button" parent="Control/VSplitContainer" unique_id=1953553518]
+layout_mode = 2
+text = "MENU_CONFIG"
+
 [node name="exit" type="Button" parent="Control/VSplitContainer" unique_id=1048547502]
 layout_mode = 2
 text = "BTN_EXIT"
 
 [connection signal="pressed" from="Control/VSplitContainer/resume" to="." method="_on_resume_pressed"]
+[connection signal="pressed" from="Control/VSplitContainer/config" to="." method="_on_config_pressed"]
 [connection signal="pressed" from="Control/VSplitContainer/exit" to="." method="_on_exit_pressed"]

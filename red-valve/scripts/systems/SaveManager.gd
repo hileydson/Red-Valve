@@ -6,6 +6,11 @@ var current_stage: String = ""
 var inventory_normal: Array = []
 var inventory_combat: Array = []
 
+var config = {
+	"aim_mode": "hold",
+	"language": "pt"
+}
+
 var inventory: Array:
 	get:
 		if GlobalEvents.is_maycow_normal:
@@ -53,6 +58,8 @@ func _ready():
 		inventory_combat.append({"id": "pistol", "amount": 1})
 		inventory_combat.append({"id": "cogblade", "amount": 1})
 		inventory_combat.append({"id": "pistol_ammo", "amount": 25})
+		
+	TranslationServer.set_locale(config["language"])
 
 func save_game(scene_path: String = ""):
 	if scene_path != "":
@@ -67,7 +74,8 @@ func save_game(scene_path: String = ""):
 	var save_data = {
 		"current_stage": current_stage,
 		"inventory_normal": inventory_normal,
-		"inventory_combat": inventory_combat
+		"inventory_combat": inventory_combat,
+		"config": config
 	}
 	
 	var file = FileAccess.open(SAVE_PATH, FileAccess.WRITE)
@@ -97,6 +105,10 @@ func load_game() -> bool:
 					{"id": "cogblade", "amount": 1},
 					{"id": "pistol_ammo", "amount": 25}
 				])
+				
+				if data.has("config"):
+					config = data["config"]
+				TranslationServer.set_locale(config["language"])
 				
 				if current_stage != "" and ResourceLoader.exists(current_stage):
 					print("Game Loaded! ", current_stage)
