@@ -11,6 +11,7 @@ var final_sequence_started: bool = false
 func _ready() -> void:
 	SaveManager.save_game()
 	GlobalEvents.set_high_nevoa()
+	GlobalEvents.is_maycow_normal = false
 	
 	player = get_tree().get_first_node_in_group("player")
 	enemies = get_tree().get_nodes_in_group("enemies")

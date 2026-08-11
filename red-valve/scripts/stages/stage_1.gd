@@ -9,12 +9,33 @@ var prompt_label: Label
 var intro_label: Label
 var ui_layer: CanvasLayer
 
+var rain_scene = preload("res://scenes/effects/rain_effect.tscn")
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	SaveManager.save_game()
 	GlobalEvents.set_low_nevoa()
 	GlobalEvents.is_maycow_normal = true
 	#$cameras/camera_1.make_current()
+	
+	# --- INICIA A CHUVA E ATMOSFERA PESADA ---
+	var rain = rain_scene.instantiate()
+	add_child(rain)
+	
+	# Escurecer o ambiente e aumentar a névoa para o clima de tempestade
+	var env_node = get_node_or_null("WorldEnvironment")
+	if env_node and env_node.environment:
+		var env = env_node.environment
+		env.volumetric_fog_enabled = true
+		env.volumetric_fog_density = 0.015
+		env.volumetric_fog_albedo = Color(0.3, 0.35, 0.4)
+		
+		env.fog_enabled = true
+		env.fog_density = 0.005
+		env.fog_light_color = Color(0.2, 0.25, 0.3)
+		
+		# Reduz levemente a luz ambiente
+		env.ambient_light_energy = 0.6
 	
 	ui_layer = CanvasLayer.new()
 	ui_layer.layer = 128

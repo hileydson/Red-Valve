@@ -163,7 +163,8 @@ func _render_inventory() -> void:
 		item_icon_preview.texture = null
 
 func _input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_menu_game") or event.is_action_pressed("ui_cancel"):
+	if event.is_action_pressed("ui_menu_game") or event.is_action_pressed("ui_cancel") or event.is_action_pressed("ui_pause"):
+		get_viewport().set_input_as_handled()
 		close_menu()
 		
 	elif event.is_action_pressed("ui_r1"):

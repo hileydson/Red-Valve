@@ -1,0 +1,70 @@
+[gd_scene format=3 uid="uid://rain3ff3ct"]
+
+[ext_resource type="Script" path="res://scripts/effects/rain_effect.gd" id="1_rain"]
+[ext_resource type="Shader" path="res://shaders/environment/screen_rain_drops.gdshader" id="2_shader"]
+[ext_resource type="AudioStream" uid="uid://4qqkepjksv0q" path="res://assets/sounds/episodios/prologo/chuva.mp3" id="3_audio"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_rain"]
+emission_shape = 3
+emission_box_extents = Vector3(25, 2, 25)
+direction = Vector3(0, -1, 0)
+spread = 5.0
+initial_velocity_min = 40.0
+initial_velocity_max = 50.0
+gravity = Vector3(0, -20, 0)
+collision_mode = 0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rain"]
+transparency = 1
+blend_mode = 1
+shading_mode = 0
+albedo_color = Color(0.7, 0.8, 0.9, 0.08)
+billboard_mode = 2
+
+[sub_resource type="QuadMesh" id="QuadMesh_rain"]
+material = SubResource("StandardMaterial3D_rain")
+size = Vector2(0.005, 1.0)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_rain"]
+noise_type = 2
+frequency = 0.05
+fractal_type = 0
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_rain"]
+seamless = true
+noise = SubResource("FastNoiseLite_rain")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rain"]
+shader = ExtResource("2_shader")
+shader_parameter/distortion_strength = 0.005
+shader_parameter/scroll_speed = Vector2(0.1, 1.0)
+shader_parameter/rain_tint = Color(0.6, 0.7, 0.8, 1.0)
+shader_parameter/tint_strength = 0.05
+shader_parameter/noise_tex = SubResource("NoiseTexture2D_rain")
+
+[node name="RainEffect" type="Node3D"]
+script = ExtResource("1_rain")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_audio")
+autoplay = true
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+amount = 1000
+lifetime = 1.0
+preprocess = 1.0
+visibility_aabb = AABB(-25, -30, -25, 50, 60, 50)
+process_material = SubResource("ParticleProcessMaterial_rain")
+draw_pass_1 = SubResource("QuadMesh_rain")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = 50
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer"]
+material = SubResource("ShaderMaterial_rain")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
