@@ -294,8 +294,8 @@ func _throw_fireball() -> void:
 	var projectile = fireball_script.new()
 	projectile.target_player = player
 	
-	# Posição Inicial: Na altura do peito, jogado um pouco pra frente
+	# Posição Inicial: Bem acima, para vir de cima para baixo
 	get_tree().current_scene.add_child(projectile)
 	
 	var forward_dir = global_transform.basis.z.normalized()
-	projectile.global_position = global_position + Vector3(0, 1.5, 0) + (forward_dir * 1.0)
+	projectile.global_position = global_position + Vector3(0, 2.8, 0) + (forward_dir * 1.0)
