@@ -744,12 +744,19 @@ func reload():
 
 		gun_load.play()
 		
+		# Mostra a mão e aciona a animação interna (dedos, etc)
+		if is_instance_valid(hand_magic_3d): hand_magic_3d.visible = true
+		if hand_magic_tree:
+			var pb = hand_magic_tree["parameters/playback"]
+			if pb: pb.travel("magic_reload")
+		
 		if hand_animations:
 			hand_animations.play("reload")
 			await hand_animations.animation_finished
 		else:
 			await get_tree().create_timer(1.0).timeout
 			
+		if is_instance_valid(hand_magic_3d): hand_magic_3d.visible = false
 		is_reloading = false
 
 func magic_hand_attack():
