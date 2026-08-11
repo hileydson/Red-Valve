@@ -48,7 +48,6 @@ var ranged_attack_timer: float = 5.0 # O primeiro ataque é mais rápido
 # --------------------------------
 
 @export var shoots_fireball: bool = false
-var fireball_cooldown_timer: float = 0.0
 
 @export var max_health = 100
 var current_health = max_health
@@ -68,9 +67,9 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	
-	if shoots_fireball and fireball_cooldown_timer > 0:
-		fireball_cooldown_timer -= delta
-		
+	if global_position.y < -10.0 and not dead:
+		take_damage(max_health)
+		return
 	if dead: 
 		steps.stop()
 		return
@@ -96,25 +95,33 @@ func _physics_process(delta: float) -> void:
 			
 			# Verifica se vai atacar corpo a corpo ou à distância
 			var vai_atacar = false
+			var disparou_agora = false
 			
-			if is_ranged_attacker:
+			if is_ranged_attacker or shoots_fireball:
 				ranged_attack_timer -= delta
 				if ranged_attack_timer <= 0.0:
 					vai_atacar = true
-					ranged_attack_timer = ranged_attack_cooldown
-			elif distancia_to_player < 5:
+					disparou_agora = true
+					ranged_attack_timer = 6.0 if shoots_fireball else ranged_attack_cooldown
+					
+			if not vai_atacar and distancia_to_player < 2.5:
 				vai_atacar = true
 				
 			if vai_atacar:
 				steps.stop()
 				if !growl_attack.playing: growl_attack.play()
-				playback.travel("attack")
 				
-				if is_ranged_attacker:
-					_throw_random_projectile()
-				elif shoots_fireball and fireball_cooldown_timer <= 0.0:
-					fireball_cooldown_timer = 2.5
-					_throw_fireball()
+				if disparou_agora:
+					if shoots_fireball:
+						playback.travel("attack")
+						_throw_fireball()
+					elif is_ranged_attacker:
+						playback.travel("attack")
+						_throw_random_projectile()
+				else:
+					playback.travel("attack_2")
+					if shoots_fireball:
+						ranged_attack_timer = 10.0
 			else:
 				var next_p = nav_agent.get_next_path_position()
 				var direction = (next_p - global_position)
@@ -274,70 +281,21 @@ func _throw_random_projectile() -> void:
 	)
 
 func _throw_fireball() -> void:
-	# O inimigo costuma bater, então vamos esperar 0.5s para sincronizar com o soco/animação
-	await get_tree().create_timer(0.5).timeout
+	# O inimigo costuma bater, então vamos esperar 2.4s para sincronizar com o soco/animação
+	await get_tree().create_timer(2.4).timeout
 	
 	if dead or not is_instance_valid(player):
 		return
 		
-	# Cria a Área de Colisão (corpo físico do projétil)
-	var projectile = Area3D.new()
-	projectile.collision_layer = 0
-	projectile.collision_mask = 2 # Acerta o player
+	# Instancia o novo script cheio de efeitos avançados
+	var fireball_script = load("res://scripts/effects/fireball_projectile.gd")
+	if not fireball_script: return
 	
-	var col = CollisionShape3D.new()
-	var sphere_shape = SphereShape3D.new()
-	sphere_shape.radius = 0.6
-	col.shape = sphere_shape
-	projectile.add_child(col)
-	
-	# Cria a Malha da Bola de Fogo
-	var mesh = MeshInstance3D.new()
-	var sphere_mesh = SphereMesh.new()
-	sphere_mesh.radius = 0.4
-	sphere_mesh.height = 0.8
-	mesh.mesh = sphere_mesh
-	
-	# Cria o Material de Fogo
-	var mat = StandardMaterial3D.new()
-	mat.albedo_color = Color(1.0, 0.4, 0.0) # Laranja fogo
-	mat.emission_enabled = true
-	mat.emission = Color(1.0, 0.2, 0.0)
-	mat.emission_energy_multiplier = 4.0
-	mesh.material_override = mat
-	projectile.add_child(mesh)
-	
-	# Cria a Luz da Bola de Fogo
-	var light = OmniLight3D.new()
-	light.light_color = Color(1.0, 0.3, 0.0)
-	light.light_energy = 5.0
-	light.omni_range = 8.0
-	projectile.add_child(light)
-	
-	# Adiciona na Cena Principal
-	get_tree().current_scene.add_child(projectile)
+	var projectile = fireball_script.new()
+	projectile.target_player = player
 	
 	# Posição Inicial: Na altura do peito, jogado um pouco pra frente
+	get_tree().current_scene.add_child(projectile)
+	
 	var forward_dir = global_transform.basis.z.normalized()
 	projectile.global_position = global_position + Vector3(0, 1.5, 0) + (forward_dir * 1.0)
-	
-	# Posição Final: Onde o Player está agora
-	var target_pos = player.global_position + Vector3(0, 1.2, 0)
-	
-	# Viagem Teleguiada até o alvo com Tween
-	var tween = create_tween()
-	tween.tween_property(projectile, "global_position", target_pos, 0.6).set_trans(Tween.TRANS_LINEAR)
-	
-	# Sinal de Dano (Bola de Fogo = 20 de dano)
-	projectile.body_entered.connect(func(body):
-		if body == player:
-			player.take_damage(20) # Exatos 20 de dano
-			GlobalUtils.shake_camera(0.3, 0.3)
-			projectile.queue_free()
-	)
-	
-	# Autodestruição para limpar a memória
-	get_tree().create_timer(2.0).timeout.connect(func():
-		if is_instance_valid(projectile):
-			projectile.queue_free()
-	)
