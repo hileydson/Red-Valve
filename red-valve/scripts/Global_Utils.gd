@@ -57,20 +57,32 @@ func remover_camera_lenta():
 func vibrate_controller(input:Variant, low_strengh:float, high_strengh:float, time:float):
 	input.start_joy_vibration(0,low_strengh, high_strengh, time)
 	
+var current_shake_tween: Tween = null
+var base_h_offset: float = 0.0
+var base_v_offset: float = 0.0
+
 # No script da sua Camera3D
 func shake_camera(duracao: float, forca: float):
 	var camera = get_viewport().get_camera_3d()
-	var original_h = camera.h_offset
-	var original_v = camera.v_offset
+	if not is_instance_valid(camera): return
 	
-	var tween = create_tween()
+	if current_shake_tween and current_shake_tween.is_valid():
+		# Se já está tremendo, nós matamos o tween antigo para prolongar com o novo,
+		# mas NÃO pegamos a posição atual como original, usamos a que já tínhamos gravado!
+		current_shake_tween.kill()
+	else:
+		# Se não estava tremendo, a posição atual é a original verdadeira
+		base_h_offset = camera.h_offset
+		base_v_offset = camera.v_offset
+	
+	current_shake_tween = create_tween()
 	
 	# Cria várias posições aleatórias rápidas
 	for i in range(10):
 		var offset_random = Vector2(randf_range(-forca, forca), randf_range(-forca, forca))
-		tween.tween_property(camera, "h_offset", offset_random.x, duracao / 10)
-		tween.tween_property(camera, "v_offset", offset_random.y, duracao / 10)
+		current_shake_tween.tween_property(camera, "h_offset", base_h_offset + offset_random.x, duracao / 10)
+		current_shake_tween.tween_property(camera, "v_offset", base_v_offset + offset_random.y, duracao / 10)
 	
 	# Volta para a posição original no final
-	tween.tween_property(camera, "h_offset", original_h, 0.1)
-	tween.tween_property(camera, "v_offset", original_v, 0.1)
+	current_shake_tween.tween_property(camera, "h_offset", base_h_offset, 0.1)
+	current_shake_tween.tween_property(camera, "v_offset", base_v_offset, 0.1)

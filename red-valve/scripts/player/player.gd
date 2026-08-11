@@ -16,6 +16,8 @@ extends CharacterBody3D
 @onready var flash_tela: ColorRect = $Camera3D/CanvasLayer/control_weapons/flash_tela
 @onready var ray_cast_3d: RayCast3D = $Camera3D/RayCast3D
 @onready var magic_hand: AnimatedSprite2D = $Camera3D/CanvasLayer/control_magic/magic_hand
+@onready var hand_magic_3d: Node3D = $Camera3D/hand_with_magic/hand_magic
+@onready var hand_magic_tree: AnimationTree = $Camera3D/hand_with_magic/hand_magic/AnimationTree
 @onready var magic_hand_particles: GPUParticles3D = $Camera3D/magic_hand_particles
 @onready var crescent_cogblade: Node3D = $"Camera3D/Crescent Cogblade"
 @onready var blade_in: AudioStreamPlayer3D = $"Camera3D/Crescent Cogblade/blade_in"
@@ -101,6 +103,9 @@ var dash_direction : Vector3 = Vector3.ZERO
 
 #ORIGINAL POSITION FOR THE LEFT HAND
 var magic_hand_pos_original
+var hand_magic_3d_pos_original: Vector3
+var hand_magic_3d_pos_hidden: Vector3
+var is_magic_attacking: bool = false
 var magic_blade_pos_original
 var camera_bullet_time_position
 var camera_bullet_time_ON = false
@@ -122,6 +127,14 @@ func _ready():
 	
 	magic_hand_pos_original = magic_hand.position
 	magic_blade_pos_original = crescent_cogblade.position
+	
+	# Esconde o sprite 2D antigo
+	magic_hand.visible = false
+	# Configura a nova mão 3D escondida atrás e abaixo da câmera
+	hand_magic_3d_pos_original = hand_magic_3d.position
+	hand_magic_3d_pos_hidden = hand_magic_3d_pos_original + Vector3(0, -0.8, 1.0)
+	hand_magic_3d.position = hand_magic_3d_pos_hidden
+	#hand_magic_3d.visible = false
 	
 	# Desativa a física por um breve momento
 	set_physics_process(false)
@@ -312,7 +325,7 @@ func _start_heartbeat_pulse() -> void:
 	
 
 func _input(event):
-	if camera_bullet_time_ON or (magic_hand and magic_hand.animation == "attack"):
+	if camera_bullet_time_ON or is_magic_attacking:
 		return
 	
 	if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
@@ -370,7 +383,7 @@ func _physics_process(delta: float) -> void:
 		point.visible = is_first_person
 		
 		# 2. TRAVA DE ATAQUE MÁGICO
-		if magic_hand.animation == "attack":
+		if is_magic_attacking:
 			return 
 		
 		# 3. GRAVIDADE
@@ -388,14 +401,14 @@ func _physics_process(delta: float) -> void:
 		if Input.is_action_just_pressed("ui_shoot") and !transition_camera:
 			shoot(Input)
 		
-		if magic_hand.animation == "idle" and Input.is_action_just_pressed("ui_magic_attack") and !transition_camera and camera.current:
+		if !is_magic_attacking and Input.is_action_just_pressed("ui_magic_attack") and !transition_camera and camera.current:
 			magic_hand_attack()
 			
 		if camera_bullet_time_ON:
 			return
 			
 		# 5. ROTAÇÃO DA CÂMERA (ANALÓGICO DIREITO)
-		if !camera_bullet_time_ON and (magic_hand and magic_hand.animation != "attack"):
+		if !camera_bullet_time_ON and !is_magic_attacking:
 			var joy_dir = Input.get_vector("ui_look_left", "ui_look_right", "ui_look_up", "ui_look_down")
 			if joy_dir.length() > DEADZONE:
 				var camera_atual = get_viewport().get_camera_3d()
@@ -482,7 +495,7 @@ func _physics_process(delta: float) -> void:
 			velocity += get_gravity() * delta
 
 		# 5. ROTAÇÃO DA CÂMERA (ANALÓGICO DIREITO)
-		if !camera_bullet_time_ON and (magic_hand and magic_hand.animation != "attack"):
+		if !camera_bullet_time_ON and !is_magic_attacking:
 			var joy_dir = Input.get_vector("ui_look_left", "ui_look_right", "ui_look_up", "ui_look_down")
 			if joy_dir.length() > DEADZONE:
 				var camera_atual = get_viewport().get_camera_3d()
@@ -731,14 +744,21 @@ func reload():
 		#tween.tween_property(current_weapon, "rotation_degrees", 8.4, 0.55).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 func magic_hand_attack():
-	# 1. ANIMAÇÃO DA MÃO (2D)
+	# 1. ANIMAÇÃO DA MÃO (3D)
+	is_magic_attacking = true
 	slay_it.play()
-	magic_hand.play("attack")
 	blade_out.play()
+	
+	if hand_magic_tree:
+		var pb = hand_magic_tree["parameters/playback"]
+		if pb: pb.travel("attack")
+		
 	var tween_magic = create_tween().set_parallel(true)
 	
-	var pos_alvo_mao = magic_hand_pos_original + Vector2(60, -235)
-	tween_magic.tween_property(magic_hand, "position", pos_alvo_mao, 0.4)\
+	# Mão vai para frente (recuada levemente para não invadir tanto a tela)
+	var pos_alvo = hand_magic_3d_pos_original + Vector3(0, 0, 0.1)
+	hand_magic_3d.visible = true
+	tween_magic.tween_property(hand_magic_3d, "position", pos_alvo, 0.4)\
 		.set_trans(Tween.TRANS_BACK)\
 		.set_ease(Tween.EASE_OUT)
 		
@@ -766,8 +786,8 @@ func magic_hand_attack():
 	# 3. RETORNO
 	var tween_back = create_tween().set_parallel(true)
 	
-	# Volta a mão
-	tween_back.tween_property(magic_hand, "position", magic_hand_pos_original, 0.5)\
+	# Volta a mão (3D)
+	tween_back.tween_property(hand_magic_3d, "position", hand_magic_3d_pos_hidden, 0.5)\
 		.set_delay(0.8)\
 		.set_trans(Tween.TRANS_SINE)
 		
@@ -781,7 +801,11 @@ func magic_hand_attack():
 	
 	await tween_back.finished
 	crescent_cogblade.hide()
-	magic_hand.play("idle")
+	
+	is_magic_attacking = false
+	if hand_magic_tree:
+		var pb = hand_magic_tree["parameters/playback"]
+		if pb: pb.travel("idle")
 
 func cast_spell():
 	# Reinicia o efeito
@@ -990,7 +1014,7 @@ func take_damage(number:int):
 		_trigger_game_over()
 		
 	GlobalUtils.vibrate_controller(Input, 0.5, 0.5, 0.2)
-	GlobalUtils.shake_camera(0.04, 0.15)
+	GlobalUtils.shake_camera(0.015, 0.15)
 	
 	if is_instance_valid(blood_overlay):
 		var mat = blood_overlay.material as ShaderMaterial
@@ -1043,7 +1067,7 @@ func _on_pistola_animation_finished() -> void:
 	pass #current_weapon.play("idle")
 
 func _on_area_3d_body_entered(body: Node3D) -> void:
-	if magic_hand.animation == "attack":
+	if is_magic_attacking:
 		blade_in.play()
 		spawn_blood_effect(body)
 		GlobalUtils.ativar_camera_lenta(0.2, 0.5, true) # Velocidade 20% por meio segundo
@@ -1051,7 +1075,7 @@ func _on_area_3d_body_entered(body: Node3D) -> void:
 	
 
 func _on_area_3d_body_exited(body: Node3D) -> void:
-	if magic_hand.animation == "attack":
+	if is_magic_attacking:
 		blade_back.play()
 		spawn_blood_effect(body)
 		GlobalUtils.ativar_camera_lenta(0.2, 0.5, true) # Velocidade 20% por meio segundo
