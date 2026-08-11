@@ -32,6 +32,7 @@ extends CharacterBody3D
 @onready var blade_light: OmniLight3D = $"Camera3D/Crescent Cogblade/blade_light"
 @onready var animation_tree: AnimationTree = $maycow_lopes/AnimationTree
 @onready var animation_tree_normal: AnimationTree = $maycow_lopes_normal/AnimationTree
+@onready var hand_animations: AnimationPlayer = $Camera3D/hand_animations
 @onready var point: Label = $Camera3D/point
 @onready var camera_top_view: Camera3D = $camera_top_view
 @onready var hand_with_pistol: Node3D = $Camera3D/hand_with_pistol
@@ -106,6 +107,7 @@ var magic_hand_pos_original
 var hand_magic_3d_pos_original: Vector3
 var hand_magic_3d_pos_hidden: Vector3
 var is_magic_attacking: bool = false
+var is_reloading: bool = false
 var magic_blade_pos_original
 var camera_bullet_time_position
 var camera_bullet_time_ON = false
@@ -723,27 +725,36 @@ func transicao_camera(origem: Camera3D, camera_destino: Camera3D, destino: Marke
 	
 	
 func reload():
-	if is_first_person:
+	if is_first_person and not is_reloading and not is_magic_attacking:
 		var total = SaveManager.get_item_amount("pistol_ammo")
 		if total <= 0 or clip_pistol_ammo >= max_clip_pistol:
 			return
 			
+		is_reloading = true
+		
 		var needed = max_clip_pistol - clip_pistol_ammo
 		var taken = mini(needed, total)
 		SaveManager.remove_item_amount("pistol_ammo", taken)
 		clip_pistol_ammo += taken
 		update_ammo_ui()
 		
-		if not is_instance_valid(current_weapon): return
+		if not is_instance_valid(current_weapon): 
+			is_reloading = false
+			return
 
-		var tween = create_tween()
 		gun_load.play()
-		tween.tween_interval(0.1)
-		tween.tween_interval(0.8)
-		# Volta para o zero
-		#tween.tween_property(current_weapon, "rotation_degrees", 8.4, 0.55).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		
+		if hand_animations:
+			hand_animations.play("reload")
+			await hand_animations.animation_finished
+		else:
+			await get_tree().create_timer(1.0).timeout
+			
+		is_reloading = false
 
 func magic_hand_attack():
+	if is_reloading: return
+	
 	# 1. ANIMAÇÃO DA MÃO (3D)
 	is_magic_attacking = true
 	slay_it.play()
@@ -825,6 +836,8 @@ func cast_spell():
 	print("saiu")
 	
 func shoot(input:Variant):
+	if is_reloading: return
+	
 	if can_shoot_again and camera.current:
 		if clip_pistol_ammo <= 0:
 			return
