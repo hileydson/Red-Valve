@@ -18,7 +18,7 @@ radius = 0.11230469
 height = 0.7871933
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sb86v"]
-bg_color = Color(0.31344908, 0.0012166491, 0.584479, 1)
+bg_color = Color(0.11, 0.81, 0.2, 1)
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_pe3k2"]
 viewport_path = NodePath("enemy/HealthBarViewport")
@@ -58,16 +58,18 @@ shape = SubResource("CapsuleShape3D_k4gvh")
 [node name="HealthBarViewport" type="SubViewport" parent="." unique_id=1200143103]
 transparent_bg = true
 scaling_3d_scale = 1.0
-size = Vector2i(100, 20)
+size = Vector2i(300, 40)
 render_target_update_mode = 4
 
 [node name="HealthBar" type="ProgressBar" parent="HealthBarViewport" unique_id=1883183514]
-offset_right = 4.0
-offset_bottom = 27.0
+offset_right = 300.0
+offset_bottom = 40.0
 theme_override_styles/fill = SubResource("StyleBoxFlat_sb86v")
+show_percentage = false
 
 [node name="HealthBarSprite" type="Sprite3D" parent="." unique_id=1513461983]
-transform = Transform3D(1.4301426, 0, 0, 0, 1, 0, 0, 0, 1, -0.36923468, 3.3472676, -3.227952e-08)
+transform = Transform3D(1.4301426, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 0.1, 0.0)
+pixel_size = 0.007
 billboard = 1
 texture = SubResource("ViewportTexture_pe3k2")
 

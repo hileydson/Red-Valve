@@ -58,10 +58,12 @@ const SENSITIVITY = 0.003 # Sensibilidade do mouse
 
 #CHANGE LATER - DYNAMICLY
 @export var damage_crescent_cogblade:int = 14
-@export var damage_pistol:int = 10 #3 
+@export var damage_pistol:int = 15 #3 
 @export var damage_headshoot:int = 100
 var current_weapon #: AnimatedSprite2D
 var can_shoot_again:bool = true
+var is_falling_dead: bool = false
+var fall_cam: Camera3D = null
 
 # CONFIGURACAO DO CONTROLE
 @export var JOY_SENSITIVITY = 0.04 # Sensibilidade para o analógico
@@ -281,6 +283,12 @@ var limite_rotacao_lateral = deg_to_rad(35) # O máximo que ele pode "virar" (ex
 var velocidade_giro = 8.0
 func _physics_process(delta: float) -> void:
 	
+	if is_instance_valid(fall_cam):
+		fall_cam.look_at(global_position, Vector3.UP)
+		
+	if global_position.y < -10.0 and current_health > 0 and not is_falling_dead:
+		_trigger_fall_death()
+		
 	#somente poder executar ações do jogo se nao for prologo
 	if !GlobalEvents.is_maycow_normal:
 	
@@ -918,6 +926,25 @@ func take_damage(number:int):
 	
 	# Atualiza o visual do batimento sempre que leva dano
 	_start_heartbeat_pulse()
+
+func _trigger_fall_death() -> void:
+	if is_falling_dead: return
+	is_falling_dead = true
+	current_health = 0
+	
+	# Cria uma câmera estática acompanhando a queda lá de cima
+	fall_cam = Camera3D.new()
+	# Fica parada na altura do abismo (Y=15) para ver o chão, os inimigos e o player caindo
+	fall_cam.global_position = Vector3(global_position.x, 20.0, global_position.z + 12.0)
+	
+	get_tree().current_scene.add_child(fall_cam)
+	fall_cam.make_current()
+	
+	if is_instance_valid(camera_third_person):
+		camera_third_person.current = false
+		
+	await get_tree().create_timer(3.0).timeout
+	_trigger_game_over()
 
 func _trigger_game_over() -> void:
 	if SaveManager.current_stage.contains("oficina_jimmy") or (get_tree().current_scene and get_tree().current_scene.scene_file_path.contains("oficina_jimmy")):

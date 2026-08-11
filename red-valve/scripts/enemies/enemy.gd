@@ -23,9 +23,7 @@ extends CharacterBody3D
 @onready var player = get_tree().get_first_node_in_group("player")
 
 @onready var nav_agent: NavigationAgent3D = $NavigationAgent3D
-@onready var health_bar_sprite: Sprite3D = $HealthBarSprite
 @onready var animation_tree: AnimationTree = $"enemy_model/AnimationTree"
-@onready var health_bar: ProgressBar = $HealthBarViewport/HealthBar
 @onready var blood_out: AudioStreamPlayer3D = $blood_out
 @onready var collision_shape_3d: CollisionShape3D = $CollisionShape3D
 @onready var growl_attack: AudioStreamPlayer3D = $growl_attack
@@ -40,6 +38,7 @@ const ACCEL = 4.0
 
 @export var distance_to_aproach = 15
 @export var attack_damage = 15
+@export var enemy_name: String = "ZOMBIE"
 
 # --- Sistema de Ataque Ranged ---
 @export var is_ranged_attacker: bool = false
@@ -48,7 +47,7 @@ var projectile_source: Node3D = null
 var ranged_attack_timer: float = 5.0 # O primeiro ataque é mais rápido
 # --------------------------------
 
-@export var max_health = 50
+@export var max_health = 100
 var current_health = max_health
 var update_timer = 0.0
 
@@ -57,11 +56,12 @@ var dead:bool = false
 
 func _ready() -> void:
 	playback = animation_tree["parameters/playback"]
-	# Configura os valores iniciais da barra
-	health_bar.max_value = max_health
-	health_bar.value = current_health
-	# Opcional: esconder a barra se estiver com vida cheia
-	health_bar_sprite.hide()
+	
+	# Limpa componentes da barra 3D antiga da cena herdada
+	var old_sprite = get_node_or_null("HealthBarSprite")
+	if old_sprite: old_sprite.queue_free()
+	var old_viewport = get_node_or_null("HealthBarViewport")
+	if old_viewport: old_viewport.queue_free()
 
 func _physics_process(delta: float) -> void:
 	
@@ -143,11 +143,15 @@ func take_damage(amount):
 	current_health -= amount
 	current_health = clamp(current_health, 0, max_health)
 	
-	health_bar_sprite.show()
-	
-	# Animação suave da barra diminuindo
-	var tween = create_tween()
-	tween.tween_property(health_bar, "value", current_health, 0.2).set_trans(Tween.TRANS_SINE)
+	# Aciona a UI Global de Chefe
+	var root = get_tree().root
+	var global_health_ui = root.get_node_or_null("GlobalEnemyHealthUI")
+	if not global_health_ui:
+		global_health_ui = load("res://scripts/ui/global_enemy_health.gd").new()
+		global_health_ui.name = "GlobalEnemyHealthUI"
+		root.add_child(global_health_ui)
+		
+	global_health_ui.show_health(self, tr(enemy_name), current_health, max_health)
 	
 	if current_health <= 0 and !dead:
 		die()
@@ -156,7 +160,6 @@ func die():
 	growl_death.play()
 	
 	dead = true
-	health_bar_sprite.hide()
 	# Seu código de morte aqui
 	playback.travel("dead")
 	

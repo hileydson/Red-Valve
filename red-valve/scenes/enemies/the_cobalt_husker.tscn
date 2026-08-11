@@ -81,6 +81,7 @@ graph_offset = Vector2(-376.02243, 0)
 [node name="enemy" parent="." unique_id=1426096021 instance=ExtResource("1_yyq7i")]
 distance_to_aproach = 50
 attack_damage = 40
+enemy_name = "THE COBALT HUSKER"
 max_health = 250
 
 [node name="attack" parent="enemy" index="1" unique_id=331778345]
