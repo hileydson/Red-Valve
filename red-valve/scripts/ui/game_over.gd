@@ -3,16 +3,23 @@ extends CanvasLayer
 var shake_intensity: float = 0.0
 var noise = FastNoiseLite.new()
 var noise_time: float = 0.0
+var bg_material: ShaderMaterial
 
 func _process(delta: float) -> void:
 	if shake_intensity > 0:
 		noise_time += delta * 30.0 # Velocidade do tremor
-		offset = Vector2(
+		var shake_vec = Vector2(
 			noise.get_noise_2d(noise_time, 0.0) * shake_intensity,
 			noise.get_noise_2d(0.0, noise_time) * shake_intensity
 		)
+		offset = shake_vec
+		if bg_material:
+			var vp_size = get_viewport().get_visible_rect().size
+			bg_material.set_shader_parameter("shake_offset", shake_vec / vp_size)
 	else:
 		offset = Vector2.ZERO
+		if bg_material:
+			bg_material.set_shader_parameter("shake_offset", Vector2.ZERO)
 
 func _ready() -> void:
 	#sempre sera o maycow da mundo paralelo e nao do mundo real
@@ -37,9 +44,10 @@ func _ready() -> void:
 shader_type canvas_item;
 uniform sampler2D screen_texture : hint_screen_texture, repeat_disable, filter_nearest;
 uniform float melt_amount : hint_range(0.0, 2.0) = 0.0;
+uniform vec2 shake_offset = vec2(0.0);
 
 void fragment() {
-	vec2 uv = SCREEN_UV;
+	vec2 uv = SCREEN_UV + shake_offset;
 	
 	// Ruído simples para colunas escorrendo
 	float col_id = floor(uv.x * 80.0) / 80.0;
@@ -57,9 +65,9 @@ void fragment() {
 	}
 }
 """
-	var mat = ShaderMaterial.new()
-	mat.shader = shader
-	bg.material = mat
+	bg_material = ShaderMaterial.new()
+	bg_material.shader = shader
+	bg.material = bg_material
 	
 	# 3. Label de Game Over
 	var label = Label.new()
@@ -106,7 +114,7 @@ void fragment() {
 	shake_intensity = 40.0
 	tween.tween_property(self, "shake_intensity", 0.0, 3.0).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 	
-	tween.tween_method(func(val): mat.set_shader_parameter("melt_amount", val), 0.0, 1.2, 6.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	tween.tween_method(func(val): if bg_material: bg_material.set_shader_parameter("melt_amount", val), 0.0, 1.2, 6.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 	tween.tween_property(label, "modulate:a", 1.0, 3.0).set_delay(1.5)
 	tween.tween_property(particles, "modulate:a", 1.0, 3.0).set_delay(1.5)
 	
