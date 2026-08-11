@@ -51,6 +51,10 @@ var current_health: int = 100
 var heartbeat_hud: ColorRect
 var blood_overlay: ColorRect
 var heartbeat_tween: Tween
+
+@export_group("Damage Feedback")
+@export var damage_camera_shake_strength: float = 0.003
+@export var damage_camera_shake_duration: float = 0.15
 # ---------------------------
 
 const SPEED = 5.0
@@ -1034,7 +1038,7 @@ func take_damage(number:int):
 		_trigger_game_over()
 		
 	GlobalUtils.vibrate_controller(Input, 0.5, 0.5, 0.2)
-	GlobalUtils.shake_camera(0.01, 0.15)
+	GlobalUtils.shake_camera(damage_camera_shake_strength, damage_camera_shake_duration)
 	
 	if is_instance_valid(blood_overlay):
 		var mat = blood_overlay.material as ShaderMaterial
