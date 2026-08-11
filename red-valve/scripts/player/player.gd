@@ -65,6 +65,10 @@ var can_shoot_again:bool = true
 var is_falling_dead: bool = false
 var fall_cam: Camera3D = null
 
+var clip_pistol_ammo: int = 5
+var max_clip_pistol: int = 5
+var ammo_label: Label
+
 # CONFIGURACAO DO CONTROLE
 @export var JOY_SENSITIVITY = 0.04 # Sensibilidade para o analógico
 @export var DEADZONE = 0.1
@@ -222,7 +226,34 @@ void fragment() {
 	blood_overlay.material = blood_mat
 	hud_layer.add_child(blood_overlay)
 	
+	ammo_label = Label.new()
+	ammo_label.anchor_left = 1.0
+	ammo_label.anchor_top = 1.0
+	ammo_label.anchor_right = 1.0
+	ammo_label.anchor_bottom = 1.0
+	ammo_label.offset_left = -250
+	ammo_label.offset_top = -100
+	ammo_label.offset_right = -30
+	ammo_label.offset_bottom = -30
+	ammo_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	ammo_label.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
+	ammo_label.add_theme_font_size_override("font_size", 48)
+	ammo_label.add_theme_color_override("font_color", Color(1, 1, 1, 1))
+	ammo_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
+	ammo_label.add_theme_constant_override("outline_size", 6)
+	hud_layer.add_child(ammo_label)
+	update_ammo_ui()
+	
 	_start_heartbeat_pulse()
+
+func update_ammo_ui() -> void:
+	if not is_instance_valid(ammo_label): return
+	if GlobalEvents.is_maycow_normal:
+		ammo_label.visible = false
+	else:
+		ammo_label.visible = true
+		var total = SaveManager.get_item_amount("pistol_ammo")
+		ammo_label.text = str(clip_pistol_ammo) + " / " + str(total)
 
 func _start_heartbeat_pulse() -> void:
 	if current_health <= 0:
@@ -325,7 +356,7 @@ func _physics_process(delta: float) -> void:
 		if Input.is_action_just_pressed("ui_reload") and !transition_camera:
 			reload()
 		
-		if pistola.animation != "reload" and Input.is_action_just_pressed("ui_shoot") and !transition_camera:
+		if Input.is_action_just_pressed("ui_shoot") and !transition_camera:
 			shoot(Input)
 		
 		if magic_hand.animation == "idle" and Input.is_action_just_pressed("ui_magic_attack") and !transition_camera and camera.current:
@@ -648,15 +679,22 @@ func transicao_camera(origem: Camera3D, camera_destino: Camera3D, destino: Marke
 	
 	
 func reload():
-	#if is_first_person and current_weapon.animation != "reload":
 	if is_first_person:
+		var total = SaveManager.get_item_amount("pistol_ammo")
+		if total <= 0 or clip_pistol_ammo >= max_clip_pistol:
+			return
+			
+		var needed = max_clip_pistol - clip_pistol_ammo
+		var taken = mini(needed, total)
+		SaveManager.remove_item_amount("pistol_ammo", taken)
+		clip_pistol_ammo += taken
+		update_ammo_ui()
+		
 		if not is_instance_valid(current_weapon): return
 
 		var tween = create_tween()
-		#current_weapon.play("reload")
 		gun_load.play()
 		tween.tween_interval(0.1)
-		#tween.tween_property(current_weapon, "rotation_degrees", 15.0, 0.15).set_trans(Tween.TRANS_SINE)
 		tween.tween_interval(0.8)
 		# Volta para o zero
 		#tween.tween_property(current_weapon, "rotation_degrees", 8.4, 0.55).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
@@ -732,8 +770,13 @@ func cast_spell():
 	print("saiu")
 	
 func shoot(input:Variant):
-	#if current_weapon.animation != "shoot" and can_shoot_again and camera.current:
 	if can_shoot_again and camera.current:
+		if clip_pistol_ammo <= 0:
+			return
+			
+		clip_pistol_ammo -= 1
+		update_ammo_ui()
+		
 		if not is_instance_valid(current_weapon): return
 
 		#TEMP TROCA POR NOVA ARMA 3D

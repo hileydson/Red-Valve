@@ -3,7 +3,20 @@ extends Node
 const SAVE_PATH = "user://save_game.json"
 
 var current_stage: String = ""
-var inventory: Array = []
+var inventory_normal: Array = []
+var inventory_combat: Array = []
+
+var inventory: Array:
+	get:
+		if GlobalEvents.is_maycow_normal:
+			return inventory_normal
+		else:
+			return inventory_combat
+	set(val):
+		if GlobalEvents.is_maycow_normal:
+			inventory_normal = val
+		else:
+			inventory_combat = val
 
 var item_db = {
 	"maycow_watch": {
@@ -11,13 +24,35 @@ var item_db = {
 		"desc_key": "ITEM_MAYCOW_WATCH_DESC",
 		"icon_path": "res://assets/images/menu/itens/relogio.png",
 		"stackable": false
+	},
+	"pistol": {
+		"name_key": "ITEM_PISTOL_NAME",
+		"desc_key": "ITEM_PISTOL_DESC",
+		"icon_path": "res://assets/images/menu/itens/red_valve/pistola.png",
+		"stackable": false
+	},
+	"cogblade": {
+		"name_key": "ITEM_COGBLADE_NAME",
+		"desc_key": "ITEM_COGBLADE_DESC",
+		"icon_path": "res://assets/images/menu/itens/red_valve/cogblade.png",
+		"stackable": false
+	},
+	"pistol_ammo": {
+		"name_key": "ITEM_AMMO_NAME",
+		"desc_key": "ITEM_AMMO_DESC",
+		"icon_path": "res://assets/images/menu/itens/red_valve/pistola_bala.png",
+		"stackable": true
 	}
 }
 
 func _ready():
 	self.process_mode = Node.PROCESS_MODE_ALWAYS
-	if inventory.is_empty():
-		add_item("maycow_watch")
+	if inventory_normal.is_empty():
+		inventory_normal.append({"id": "maycow_watch", "amount": 1})
+	if inventory_combat.is_empty():
+		inventory_combat.append({"id": "pistol", "amount": 1})
+		inventory_combat.append({"id": "cogblade", "amount": 1})
+		inventory_combat.append({"id": "pistol_ammo", "amount": 25})
 
 func save_game(scene_path: String = ""):
 	if scene_path != "":
@@ -31,7 +66,8 @@ func save_game(scene_path: String = ""):
 		
 	var save_data = {
 		"current_stage": current_stage,
-		"inventory": inventory
+		"inventory_normal": inventory_normal,
+		"inventory_combat": inventory_combat
 	}
 	
 	var file = FileAccess.open(SAVE_PATH, FileAccess.WRITE)
@@ -55,7 +91,12 @@ func load_game() -> bool:
 			var data = json.get_data()
 			if typeof(data) == TYPE_DICTIONARY:
 				current_stage = data.get("current_stage", "")
-				inventory = data.get("inventory", [])
+				inventory_normal = data.get("inventory_normal", [{"id": "maycow_watch", "amount": 1}])
+				inventory_combat = data.get("inventory_combat", [
+					{"id": "pistol", "amount": 1},
+					{"id": "cogblade", "amount": 1},
+					{"id": "pistol_ammo", "amount": 25}
+				])
 				
 				if current_stage != "" and ResourceLoader.exists(current_stage):
 					print("Game Loaded! ", current_stage)
@@ -83,6 +124,20 @@ func add_item(item_id: String, amount: int = 1):
 				break
 		if not found:
 			inventory.append({"id": item_id, "amount": 1})
+
+func get_item_amount(item_id: String) -> int:
+	for item in inventory:
+		if item["id"] == item_id:
+			return item["amount"]
+	return 0
+
+func remove_item_amount(item_id: String, amount: int) -> void:
+	for i in range(inventory.size()):
+		if inventory[i]["id"] == item_id:
+			inventory[i]["amount"] -= amount
+			if inventory[i]["amount"] < 0:
+				inventory[i]["amount"] = 0
+			return
 
 var menu_instance = null
 func _unhandled_input(event: InputEvent) -> void:

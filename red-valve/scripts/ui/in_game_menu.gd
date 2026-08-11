@@ -96,6 +96,10 @@ func _ready() -> void:
 		var qtd = Label.new()
 		qtd.name = "Qtd"
 		qtd.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+		qtd.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+		qtd.grow_vertical = Control.GROW_DIRECTION_BEGIN
+		qtd.offset_right = -5
+		qtd.offset_bottom = -5
 		qtd.add_theme_font_size_override("font_size", 18)
 		slot.add_child(qtd)
 		
