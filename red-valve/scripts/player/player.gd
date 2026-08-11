@@ -44,6 +44,7 @@ extends CharacterBody3D
 @onready var screen_shader: MeshInstance3D = $camera_third_person/screen_shader
 
 var blood_effect = preload("res://scenes/enemies/blood.tscn")
+var capsula_scene = preload("res://scenes/effects/capsula.tscn")
 
 # --- PLAYER HEALTH & HUD ---
 @export var max_health: int = 100
@@ -871,6 +872,27 @@ func shoot(input:Variant):
 		faisca.emitting = true
 		gun_shot.play()
 		can_shoot_again = false
+		
+		# --- EJEÇÃO DA CÁPSULA (Cápsula física independente) ---
+		if capsula_scene:
+			var capsula = capsula_scene.instantiate()
+			# Adiciona na raiz para não seguir o player
+			get_tree().current_scene.add_child(capsula)
+			
+			# Impede que a cápsula bata no corpo do próprio jogador ao nascer
+			capsula.add_collision_exception_with(self)
+			
+			# Define a posição de saída (mais para a direita e um pouco acima da arma)
+			var spawn_pos = camera.global_position + camera.global_transform.basis * Vector3(0.4, -0.1, -0.4)
+			capsula.global_position = spawn_pos
+			capsula.global_rotation = camera.global_rotation
+			
+			# Joga a cápsula ESTRITAMENTE para a direita e para cima
+			var eject_dir = camera.global_transform.basis * Vector3(1.0, 1.0, 0.0) 
+			capsula.apply_central_impulse(eject_dir * randf_range(1.5, 2.0))
+			
+			# Dá um torque (giro) mais leve para não espalhar tanto
+			capsula.apply_torque(Vector3(randf_range(-5, 5), randf_range(-5, 5), randf_range(-5, 5)))
 		
 		# --- EFEITO DE LUZ (CLARÃO) ---
 		var flash_tween = create_tween()

@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://cax2d47s2y7w1"]
+
+[ext_resource type="PackedScene" uid="uid://5jg8mysn81cu" path="res://assets/3d_model/player/pistol_bullet/capsula.glb" id="1_caps"]
+[ext_resource type="Script" path="res://scripts/effects/capsula.gd" id="2_caps"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_caps"]
+radius = 0.005
+height = 0.02
+
+[node name="capsula" type="RigidBody3D"]
+collision_layer = 0
+mass = 0.05
+script = ExtResource("2_caps")
+
+[node name="capsula" parent="." instance=ExtResource("1_caps")]
+transform = Transform3D(0.015, 0, 0, 0, 0.015, 0, 0, 0, 0.015, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(-4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
+shape = SubResource("CapsuleShape3D_caps")
