@@ -30,8 +30,12 @@ var progress_array: Array = []
 var elapsed_load_time: float = 0.0
 var min_load_time: float = 2.5 # Tempo mínimo garantido que a tela de loading vai ficar visível
 
+var original_master_volume: float = 0.0
+var master_bus_index: int = 0
+
 func _ready() -> void:
 	layer = 128
+	master_bus_index = AudioServer.get_bus_index("Master")
 	visible = false
 	progress_bar.value = 0
 	
@@ -61,6 +65,10 @@ func load_scene(path: String) -> void:
 	tween.tween_property(progress_bar, "modulate:a", 1.0, 0.3)
 	tween.tween_property(title_label, "modulate:a", 1.0, 0.3)
 	tween.tween_property(desc_label, "modulate:a", 1.0, 0.3)
+	
+	original_master_volume = AudioServer.get_bus_volume_db(master_bus_index)
+	tween.tween_method(func(v): AudioServer.set_bus_volume_db(master_bus_index, v), original_master_volume, -60.0, 0.3)
+	
 	tween.chain().tween_callback(func(): _start_threaded_load())
 
 func _start_threaded_load() -> void:
@@ -99,6 +107,7 @@ func _process(_delta: float) -> void:
 		tween.tween_property(progress_bar, "modulate:a", 0.0, 0.5)
 		tween.tween_property(title_label, "modulate:a", 0.0, 0.5)
 		tween.tween_property(desc_label, "modulate:a", 0.0, 0.5)
+		tween.tween_method(func(v): AudioServer.set_bus_volume_db(master_bus_index, v), -60.0, original_master_volume, 0.5)
 		tween.chain().tween_callback(func(): visible = false)
 		
 	elif status == ResourceLoader.THREAD_LOAD_FAILED or status == ResourceLoader.THREAD_LOAD_INVALID_RESOURCE:
