@@ -9,6 +9,9 @@ var grid_rows = 4
 # Referências
 var bg: ColorRect
 var tab_label: Label
+var carousel_container: Control
+var carousel_labels = []
+var carousel_tween: Tween
 var item_name_label: Label
 var item_desc_label: Label
 var item_icon_preview: TextureRect
@@ -34,13 +37,24 @@ func _ready() -> void:
 	bg.color = Color(0, 0, 0, 0.7)
 	add_child(bg)
 	
-	# Header Tabs
-	tab_label = Label.new()
-	tab_label.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	tab_label.offset_top = 20
-	tab_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	tab_label.add_theme_font_size_override("font_size", 40)
+	# Header Tabs Carousel
+	tab_label = Label.new() # Mantem a var pro resto nao quebrar caso algo acesse, mas deixamos invisivel
+	tab_label.visible = false
 	add_child(tab_label)
+	
+	carousel_container = Control.new()
+	carousel_container.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	carousel_container.offset_top = 40
+	add_child(carousel_container)
+	
+	for i in range(tabs.size()):
+		var lbl = Label.new()
+		lbl.text = tr(tabs[i])
+		lbl.add_theme_font_size_override("font_size", 40)
+		lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		carousel_container.add_child(lbl)
+		carousel_labels.append(lbl)
 	
 	# Painel Esquerdo (Info do Item)
 	var left_vbox = VBoxContainer.new()
@@ -159,8 +173,29 @@ func _create_action_menu() -> void:
 		action_options.append(lbl)
 
 func update_ui() -> void:
-	tab_label.text = "< " + tr(tabs[current_tab]) + " >"
+	# Animação do Carrossel
+	if carousel_tween: carousel_tween.kill()
+	carousel_tween = create_tween().set_parallel(true)
+	var center_x = get_viewport().get_visible_rect().size.x / 2.0
 	
+	for i in range(carousel_labels.size()):
+		var lbl = carousel_labels[i]
+		var dist = i - current_tab
+		
+		# Ajusta pra fazer a roda girar infinito se quiser (opcional)
+		if dist > tabs.size() / 2: dist -= tabs.size()
+		elif dist < -tabs.size() / 2: dist += tabs.size()
+		
+		var target_x = center_x - (lbl.size.x / 2.0) + (dist * 300.0)
+		var target_scale = Vector2(1.0, 1.0) if dist == 0 else Vector2(0.6, 0.6)
+		var target_alpha = 1.0 if dist == 0 else 0.3
+		var target_color = Color(1, 1, 0) if dist == 0 else Color(1, 1, 1)
+		
+		carousel_tween.tween_property(lbl, "position:x", target_x, 0.2).set_trans(Tween.TRANS_CUBIC)
+		carousel_tween.tween_property(lbl, "scale", target_scale, 0.2).set_trans(Tween.TRANS_CUBIC)
+		carousel_tween.tween_property(lbl, "modulate:a", target_alpha, 0.2)
+		lbl.add_theme_color_override("font_color", target_color)
+		
 	if current_tab == 0:
 		grid_container.visible = true
 		_render_inventory()

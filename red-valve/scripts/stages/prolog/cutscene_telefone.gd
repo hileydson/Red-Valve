@@ -29,6 +29,8 @@ var waiting_for_input: bool = false
 var finished: bool = false
 
 func _ready() -> void:
+	GlobalEvents.in_cutscene = true
+	
 	# Instancia o UI de Skip
 	var skip_layer = CanvasLayer.new()
 	skip_layer.layer = 128
@@ -152,7 +154,8 @@ func finish_cutscene() -> void:
 	fade.fade_out()
 	await get_tree().create_timer(2.0).timeout
 	
-	# Despausa o jogo
+	# Despausa o jogo e encerra estado de cutscene
+	GlobalEvents.in_cutscene = false
 	get_tree().paused = false
 	
 	# Remove o CanvasLayer que envolve a cutscene (o pai deste node)

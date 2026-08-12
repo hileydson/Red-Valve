@@ -51,6 +51,8 @@ var capsula_scene = preload("res://scenes/effects/capsula.tscn")
 var current_health: int = 100
 var heartbeat_hud: ColorRect
 var blood_overlay: ColorRect
+var blur_overlay: ColorRect
+var hud_layer: CanvasLayer
 var heartbeat_tween: Tween
 
 @export_group("Damage Feedback")
@@ -122,7 +124,8 @@ var transition_camera = false
 
 var playback 
 
-func _ready():		
+func _ready():
+	$CollisionShape3D.scale = Vector3(1, 1, 1) # Corrigir colisão oval travando nas quinas
 		
 	# Captura o mouse e o esconde ao iniciar o jogo
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
@@ -177,8 +180,15 @@ func _ready():
 func _setup_health_hud() -> void:
 	current_health = max_health
 	
-	var hud_layer = CanvasLayer.new()
+	hud_layer = CanvasLayer.new()
 	hud_layer.layer = 100
+	hud_layer.process_mode = Node.PROCESS_MODE_ALWAYS
+	var sc = GDScript.new()
+	sc.source_code = "extends CanvasLayer
+func _process(delta):
+	visible = not GlobalEvents.in_cutscene"
+	sc.reload()
+	hud_layer.set_script(sc)
 	add_child(hud_layer)
 	
 	heartbeat_hud = ColorRect.new()
@@ -229,6 +239,43 @@ void fragment() {
 	heartbeat_hud.material = mat
 	
 	hud_layer.add_child(heartbeat_hud)
+
+	# Adicionando BackBufferCopy para garantir captura da tela
+	var back_buffer = BackBufferCopy.new()
+	back_buffer.copy_mode = BackBufferCopy.COPY_MODE_VIEWPORT
+	hud_layer.add_child(back_buffer)
+
+	var blur_overlay = ColorRect.new()
+	blur_overlay.name = "MotionBlurOverlay"
+	blur_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	blur_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	blur_overlay.visible = false
+	var blur_shader = Shader.new()
+	blur_shader.code = """
+	shader_type canvas_item;
+	uniform sampler2D screen_texture : hint_screen_texture, filter_linear_mipmap;
+	uniform float blur_strength = 0.0;
+	
+	void fragment() {
+		vec2 center = vec2(0.5, 0.5);
+		vec2 uv = SCREEN_UV;
+		vec2 dir = center - uv;
+		vec4 c = texture(screen_texture, uv);
+		c += texture(screen_texture, uv + dir * blur_strength * 0.05);
+		c += texture(screen_texture, uv + dir * blur_strength * 0.10);
+		c += texture(screen_texture, uv + dir * blur_strength * 0.15);
+		c += texture(screen_texture, uv + dir * blur_strength * 0.20);
+		c += texture(screen_texture, uv + dir * blur_strength * 0.25);
+		c += texture(screen_texture, uv + dir * blur_strength * 0.30);
+		c += texture(screen_texture, uv + dir * blur_strength * 0.35);
+		COLOR = c / 8.0;
+	}
+	"""
+	var blur_mat = ShaderMaterial.new()
+	blur_mat.shader = blur_shader
+	blur_overlay.material = blur_mat
+	hud_layer.add_child(blur_overlay)
+
 	
 	blood_overlay = ColorRect.new()
 	blood_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -250,6 +297,10 @@ void fragment() {
 	blood_mat.shader = blood_shader
 	blood_overlay.material = blood_mat
 	hud_layer.add_child(blood_overlay)
+
+	# Blur Setup
+	
+
 	
 	ammo_label = Label.new()
 	ammo_label.anchor_left = 1.0
@@ -355,6 +406,10 @@ var hold_threshold: float = 0.15 # 200 milisegundos para confirmar o "segurar"
 var limite_rotacao_lateral = deg_to_rad(35) # O máximo que ele pode "virar" (ex: 35 graus)
 var velocidade_giro = 8.0
 func _physics_process(delta: float) -> void:
+	if is_instance_valid(blood_overlay):
+		blood_overlay.visible = not GlobalEvents.in_cutscene
+	if is_instance_valid(heartbeat_hud):
+		heartbeat_hud.visible = not GlobalEvents.in_cutscene
 	
 	if is_instance_valid(fall_cam):
 		fall_cam.look_at(global_position, Vector3.UP)
@@ -579,11 +634,11 @@ func _physics_process(delta: float) -> void:
 				#modelo.rotation.y = lerp_angle(modelo.rotation.y, alvo_y, delta * velocidade_giro)
 
 
-	if head_bob_ON:
-		head_bob(delta) # Lembre-se de incluir a vibração dentro da sua função head_bob!
-	
 	# 9. FINALIZAÇÃO
 	move_and_slide()
+
+	if head_bob_ON:
+		head_bob(delta) # Lembre-se de incluir a vibração dentro da sua função head_bob!
 
 
 func dash():
@@ -615,6 +670,22 @@ func dash():
 		direction = -transform.basis.z # Dash para frente se parado
 	
 	dash_direction = direction
+
+	var motion_blur = hud_layer.get_node_or_null("MotionBlurOverlay")
+	if motion_blur:
+		motion_blur.visible = true
+		motion_blur.material.set_shader_parameter("blur_strength", 1.0)
+		var tween_blur = create_tween().set_parallel(true)
+		tween_blur.tween_property(motion_blur.material, "shader_parameter/blur_strength", 0.0, DASH_DURATION)
+		tween_blur.chain().tween_callback(func(): motion_blur.visible = false)
+		
+		# FOV Punch (Sensação de velocidade extra)
+		var camera = get_viewport().get_camera_3d()
+		if camera:
+			var base_fov = camera.fov
+			tween_blur.tween_property(camera, "fov", base_fov + 15.0, DASH_DURATION * 0.3).set_trans(Tween.TRANS_SINE)
+			tween_blur.tween_property(camera, "fov", base_fov, DASH_DURATION * 0.7).set_delay(DASH_DURATION * 0.3).set_trans(Tween.TRANS_SINE)
+		
 	is_dashing = true
 	dash_timer = DASH_DURATION # Use o tempo que você já tem
 	dash_cooldown_timer = DASH_COOLDOWN
