@@ -30,7 +30,7 @@ func _ready() -> void:
 	prompt_label.set_anchors_preset(Control.PRESET_CENTER)
 	prompt_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	# Aumentando o tamanho da fonte para melhor leitura
-	prompt_label.add_theme_font_size_override("font_size", 24)
+	prompt_label.add_theme_font_size_override("font_size", 16)
 	# Adicionando um contorno na fonte para destacar na cena
 	prompt_label.add_theme_constant_override("outline_size", 4)
 	ui_layer.add_child(prompt_label)
@@ -60,7 +60,7 @@ func _show_intro_text() -> void:
 	tv_label.set_anchors_preset(Control.PRESET_CENTER)
 	tv_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	# Fonte levemente maior para esse texto narrativo
-	tv_label.add_theme_font_size_override("font_size", 28)
+	tv_label.add_theme_font_size_override("font_size", 18)
 	tv_label.add_theme_constant_override("outline_size", 4)
 	ui_layer.add_child(tv_label)
 	

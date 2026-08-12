@@ -36,6 +36,7 @@
 [ext_resource type="PackedScene" uid="uid://b1gfp3q3bgbfy" path="res://assets/3d_model/stages/prolog/mesa.glb" id="33_7l4xq"]
 [ext_resource type="Texture2D" uid="uid://buv0bg4mvto5r" path="res://assets/images/textures/wood_floor.png" id="tex_wood_floor"]
 [ext_resource type="Texture2D" uid="uid://bsp6rsxmhl1ts" path="res://assets/images/textures/wood_wall.png" id="tex_wood_wall"]
+[ext_resource type="Texture2D" uid="uid://dnrfoykxfgqup" path="res://assets/images/textures/wood_ceiling.png" id="tex_wood_ceiling"]
 
 [sub_resource type="Environment" id="Environment_pbbbw"]
 background_energy_multiplier = 0.69
@@ -169,6 +170,7 @@ uv1_scale = Vector3(0.5, 0.5, 0.5)
 uv1_triplanar = true
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7yhl5"]
+albedo_texture = ExtResource("tex_wood_ceiling")
 uv1_scale = Vector3(0.5, 0.5, 0.5)
 uv1_triplanar = true
 

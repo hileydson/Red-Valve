@@ -167,7 +167,7 @@ func iniciar_cutscene() -> void:
 	label.set_anchors_preset(Control.PRESET_CENTER)
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	label.add_theme_font_size_override("font_size", 42)
+	label.add_theme_font_size_override("font_size", 20)
 	label.add_theme_constant_override("outline_size", 6)
 	label.modulate.a = 0.0
 	text_layer.add_child(label)

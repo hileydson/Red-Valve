@@ -7,6 +7,11 @@ func _ready() -> void:
 	var players = get_tree().get_nodes_in_group("player")
 	if players.size() > 0:
 		player = players[0]
+		
+	# Força o loop do áudio
+	var audio = $AudioStreamPlayer
+	if audio:
+		audio.finished.connect(func(): audio.play())
 
 func _process(delta: float) -> void:
 	if is_instance_valid(player):

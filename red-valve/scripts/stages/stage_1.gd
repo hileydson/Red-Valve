@@ -46,7 +46,7 @@ func _ready() -> void:
 	prompt_label.visible = false
 	prompt_label.set_anchors_preset(Control.PRESET_CENTER)
 	prompt_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	prompt_label.add_theme_font_size_override("font_size", 24)
+	prompt_label.add_theme_font_size_override("font_size", 16)
 	prompt_label.add_theme_constant_override("outline_size", 4)
 	ui_layer.add_child(prompt_label)
 	
@@ -56,7 +56,7 @@ func _ready() -> void:
 	intro_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	intro_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	intro_label.autowrap_mode = TextServer.AUTOWRAP_WORD
-	intro_label.add_theme_font_size_override("font_size", 28)
+	intro_label.add_theme_font_size_override("font_size", 18)
 	intro_label.add_theme_constant_override("outline_size", 5)
 	intro_label.modulate.a = 0.0
 	ui_layer.add_child(intro_label)

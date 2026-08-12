@@ -7,6 +7,13 @@ var drag_sensitivity: float = 0.01
 var joy_sensitivity: float = 3.0
 var can_close: bool = false
 
+var current_zoom: float = 1.0
+var max_zoom_in: float = 2.0
+var min_zoom_out: float = 1.0
+var zoom_speed_mouse: float = 0.1
+var zoom_speed_joy: float = 1.5
+var base_scale: Vector3 = Vector3.ONE
+
 signal inspector_closed
 
 func _ready() -> void:
@@ -27,7 +34,8 @@ func _ready() -> void:
 			if max_size > 0.0:
 				# Queremos que o objeto ocupe cerca de 0.5 unidades
 				var scale_factor = 0.4 / max_size
-				pivot.scale = Vector3(scale_factor, scale_factor, scale_factor)
+				base_scale = Vector3(scale_factor, scale_factor, scale_factor)
+				pivot.scale = base_scale
 				
 	# Previne fechamento no mesmo frame que abriu
 	await get_tree().create_timer(0.1).timeout
@@ -58,6 +66,13 @@ func _process(delta: float) -> void:
 	if joy_dir.length() > 0:
 		pivot.rotate_y(joy_dir.x * joy_sensitivity * delta)
 		pivot.rotate_x(joy_dir.y * joy_sensitivity * delta)
+		
+	# Zoom Analógico Direito (Y)
+	var right_stick_y = Input.get_joy_axis(0, JOY_AXIS_RIGHT_Y)
+	if abs(right_stick_y) > 0.1:
+		current_zoom -= right_stick_y * zoom_speed_joy * delta
+		current_zoom = clamp(current_zoom, min_zoom_out, max_zoom_in)
+		pivot.scale = base_scale * current_zoom
 
 func _input(event: InputEvent) -> void:
 	if not can_close: return
@@ -65,6 +80,16 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			is_dragging = event.pressed
+		elif event.button_index == MOUSE_BUTTON_WHEEL_UP:
+			current_zoom += zoom_speed_mouse
+			current_zoom = clamp(current_zoom, min_zoom_out, max_zoom_in)
+			pivot.scale = base_scale * current_zoom
+			get_viewport().set_input_as_handled()
+		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+			current_zoom -= zoom_speed_mouse
+			current_zoom = clamp(current_zoom, min_zoom_out, max_zoom_in)
+			pivot.scale = base_scale * current_zoom
+			get_viewport().set_input_as_handled()
 		elif event.pressed:
 			close()
 			get_viewport().set_input_as_handled()
