@@ -13,12 +13,6 @@ config_version=5
 compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 [application]
-boot_splash/bg_color=Color(0, 0, 0, 1)
-boot_splash/image="res://assets/images/loadings/splash.png"
-boot_splash/show_image=true
-boot_splash/use_filter=false
-
-
 
 config/name="Red Valve"
 config/name_localized={
@@ -28,15 +22,17 @@ config/name_localized={
 config/version="1.0"
 run/main_scene="res://scenes/configs/language.tscn"
 config/features=PackedStringArray("4.6", "Mobile")
+boot_splash/bg_color=Color(0, 0, 0, 1)
+boot_splash/use_filter=false
+boot_splash/image="res://assets/images/loadings/splash.png"
 config/icon="res://icon.svg"
 
 [autoload]
 
-LoadingScreen="*res://scenes/ui/loading_screen.tscn"
-
 GlobalUtils="*res://scripts/Global_Utils.gd"
 GlobalEvents="*uid://d3yfan1n0gd48"
 SaveManager="*res://scripts/systems/SaveManager.gd"
+LoadingScreen="*res://scenes/ui/loading_screen.tscn"
 
 [display]
 

@@ -203,6 +203,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		if GlobalEvents.in_cutscene:
 			return # Não abre menu durante a cutscene da oficina
 			
+		var players = get_tree().get_nodes_in_group("player")
+		if players.size() == 0:
+			return # Só abre o inventário se o Player estiver presente na cena
+			
 		if menu_instance == null or not is_instance_valid(menu_instance):
 			if get_tree().paused:
 				return # Não abre se o jogo já estiver pausado (ex: Pause menu)

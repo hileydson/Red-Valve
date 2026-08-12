@@ -136,14 +136,14 @@ func _process(delta: float) -> void:
 			var tv_light = $"ambient/casa/itens_da_casa/tv/Sketchfab_model/5836d5dd2aa14c29a482c9966515dc07_fbx/RootNode/Cube_003/Cube_003_Screen_0/SpotLight3D"
 			
 			if tv_ligada:
-				tv_video.paused = false
+				tv_video.process_mode = Node.PROCESS_MODE_INHERIT
 				tv_video.visible = true
-				tv_audio.stream_paused = false
+				tv_audio.process_mode = Node.PROCESS_MODE_INHERIT
 				tv_light.visible = true
 			else:
-				tv_video.paused = true
+				tv_video.process_mode = Node.PROCESS_MODE_DISABLED
 				tv_video.visible = false
-				tv_audio.stream_paused = true
+				tv_audio.process_mode = Node.PROCESS_MODE_DISABLED
 				tv_light.visible = false
 
 

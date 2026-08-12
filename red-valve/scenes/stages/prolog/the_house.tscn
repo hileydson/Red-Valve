@@ -101,8 +101,8 @@ shader_parameter/cirrus_absorption = 2.0
 shader_parameter/cirrus_sky_tint_fade = 0.5
 shader_parameter/cirrus_size = 1.0
 shader_parameter/cirrus_uv = Vector2(0.16, 0.11)
-shader_parameter/cirrus_position1 = Vector2(0.29329342, 0.29329342)
-shader_parameter/cirrus_position2 = Vector2(0.29329342, 0.29329342)
+shader_parameter/cirrus_position1 = Vector2(0.9910408, 0.9910408)
+shader_parameter/cirrus_position2 = Vector2(0.9910408, 0.9910408)
 shader_parameter/cirrus_texture = ExtResource("3_01ffe")
 shader_parameter/cumulus_visible = true
 shader_parameter/cumulus_intensity = 0.6
@@ -112,7 +112,7 @@ shader_parameter/cumulus_absorption = 2.0
 shader_parameter/cumulus_noise_freq = 2.7
 shader_parameter/cumulus_sky_tint_fade = 0.0
 shader_parameter/cumulus_size = 0.5
-shader_parameter/cumulus_position = Vector2(1.4664111, 1.4664111)
+shader_parameter/cumulus_position = Vector2(4.956147, 4.956147)
 shader_parameter/cumulus_texture = ExtResource("4_qysyv")
 shader_parameter/cumulus_partial_mie_phase = Vector3(0.957564, 1.042436, 0.412)
 shader_parameter/cumulus_mie_intensity = 1.0
@@ -565,6 +565,11 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_7yl0p")
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_51fg8"]
+albedo_color = Color(0.048351176, 0.118515186, 0.11071298, 1)
+metallic = 0.7
+metallic_specular = 0.37
+
 [sub_resource type="ArrayMesh" id="ArrayMesh_gusss"]
 _surfaces = [{
 "aabb": AABB(-0.3750229, -4.7705524e-09, -0.10913752, 0.7500458, 2.1400843, 0.21827513),
@@ -872,7 +877,7 @@ size = Vector3(2.0829468, 1, 2.142456)
 
 [node name="the_house" type="Node3D" unique_id=463009553]
 script = ExtResource("1_01ffe")
-tempo_para_telefone = 6.0
+tempo_para_telefone = 60.0
 
 [node name="Pause" parent="." unique_id=1267958209 instance=ExtResource("2_dnyf3")]
 
@@ -1258,9 +1263,14 @@ skeleton = NodePath("")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.415297, 5.036087, 21.315674)
 
 [node name="Object_30" type="MeshInstance3D" parent="ambient/casa/itens_da_casa/table_light/TinyLiving_JustALittlePeek_18" unique_id=1112927373]
-transform = Transform3D(1.213141, 0, 0, 0, 1, 0, 0, 0, 1, -2.646544, 0, -14.912878)
+transform = Transform3D(1.213141, 0, 0, 0, 1, 0, 0, 0, 1, -2.646544, 0, -14.894336)
 mesh = SubResource("ArrayMesh_vxyp4")
 skeleton = NodePath("")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="ambient/casa/itens_da_casa/table_light/TinyLiving_JustALittlePeek_18/Object_30" unique_id=661024431]
+transform = Transform3D(0.9999999, 0, 0, 0, 0.99999654, 0, 0, 0, 0.99999654, 0, 0.9922268, 0.4700966)
+size = Vector3(1, 2.5024414, 1)
+material = SubResource("StandardMaterial3D_51fg8")
 
 [node name="s4studio_mesh_0_001_14" type="Node3D" parent="ambient/casa/itens_da_casa/table_light/TinyLiving_JustALittlePeek_18" unique_id=1835417328]
 

@@ -8,7 +8,7 @@ func _ready() -> void:
 	amount = 60 # Aumentei um pouco para ter volume pros quadradinhos
 	explosiveness = 0.95
 	one_shot = true
-	lifetime = 0.6
+	lifetime = 1.0
 	randomness = 0.5
 	
 	trail_enabled = true
@@ -18,9 +18,9 @@ func _ready() -> void:
 	var mat = ParticleProcessMaterial.new()
 	mat.direction = Vector3(0, 0.4, -1.0)
 	mat.spread = 40.0 # Um pouco mais de spread pros quadradinhos espalharem
-	mat.initial_velocity_min = 6.0
-	mat.initial_velocity_max = 12.0
-	mat.gravity = Vector3(0, -15.0, 0)
+	mat.initial_velocity_min = 3.0
+	mat.initial_velocity_max = 6.0
+	mat.gravity = Vector3(0, -6.0, 0)
 	
 	mat.color = Color(0.8, 0.01, 0.01, 1.0)
 	
@@ -40,7 +40,7 @@ func _ready() -> void:
 	# PASS 1: RASTRO (LINHAS DE SANGUE)
 	# ==========================================
 	var tmesh = RibbonTrailMesh.new()
-	tmesh.size = 0.06
+	tmesh.size = 0.012
 	tmesh.sections = 4
 	
 	var qmat = StandardMaterial3D.new()
@@ -58,7 +58,7 @@ func _ready() -> void:
 	# PASS 2: QUADRADINHOS ORIGINAIS
 	# ==========================================
 	var quad_mesh = QuadMesh.new()
-	quad_mesh.size = Vector2(0.02, 0.05) # Tamanho exato de como era originalmente
+	quad_mesh.size = Vector2(0.012, 0.04) # Tamanho exato de como era originalmente
 	
 	var quad_mat = StandardMaterial3D.new()
 	quad_mat.albedo_color = Color(0.75, 0.0, 0.06, 0.8)
@@ -91,6 +91,7 @@ func _ready() -> void:
 	
 	emitting = true
 	
+	if not is_inside_tree() or get_tree() == null: return
 	await get_tree().create_timer(lifetime + 0.2).timeout
 	queue_free()
 

@@ -188,12 +188,15 @@ func die():
 	# Seu código de morte aqui
 	playback.travel("dead")
 	
+	if not is_inside_tree() or get_tree() == null: return
 	await get_tree().create_timer(3.7).timeout
 	drop_dead.play()
 	
+	if not is_inside_tree() or get_tree() == null: return
 	await get_tree().create_timer(1.0).timeout
 	self.set_collision_layer_value(3,false)
 	
+	if not is_inside_tree() or get_tree() == null: return
 	await get_tree().create_timer(15.0).timeout
 	queue_free()
 
@@ -228,6 +231,7 @@ func _throw_random_projectile() -> void:
 		return
 		
 	# Espera o inimigo bater os braços no chão (aproximadamente 2.2 segundos depois do início da animação)
+	if not is_inside_tree() or get_tree() == null: return
 	await get_tree().create_timer(2.2).timeout
 	
 	if dead or not player:
@@ -284,6 +288,7 @@ func _throw_random_projectile() -> void:
 	)
 	
 	# Destrói automaticamente se não bater no player (depois de dar o tempo do tween + folga)
+	if not is_inside_tree() or get_tree() == null: return
 	get_tree().create_timer(1.5).timeout.connect(func():
 		if is_instance_valid(projectile):
 			projectile.queue_free()
@@ -291,6 +296,7 @@ func _throw_random_projectile() -> void:
 
 func _throw_fireball() -> void:
 	# O inimigo costuma bater, então vamos esperar 2.4s para sincronizar com o soco/animação
+	if not is_inside_tree() or get_tree() == null: return
 	await get_tree().create_timer(2.4).timeout
 	
 	if dead or not is_instance_valid(player):

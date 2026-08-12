@@ -103,12 +103,15 @@ func die():
 	# Seu código de morte aqui
 	playback.travel("dead")
 	
+	if not is_inside_tree() or get_tree() == null: return
 	await get_tree().create_timer(3.7).timeout
 	drop_dead.play()
 	
+	if not is_inside_tree() or get_tree() == null: return
 	await get_tree().create_timer(1.0).timeout
 	self.set_collision_layer_value(3,false)
 	
+	if not is_inside_tree() or get_tree() == null: return
 	await get_tree().create_timer(15.0).timeout
 	queue_free()
 
