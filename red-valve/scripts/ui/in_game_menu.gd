@@ -15,6 +15,14 @@ var item_icon_preview: TextureRect
 var grid_container: GridContainer
 var slot_panels = []
 
+# Action Menu
+var action_menu_panel: PanelContainer
+var action_menu_vbox: VBoxContainer
+var action_options = []
+var action_menu_open = false
+var action_menu_index = 0
+var current_item_selected = null
+
 func _ready() -> void:
 	self.layer = 129 # Acima das mensagens do jogo (128) e no mesmo nível do Pause
 	self.process_mode = Node.PROCESS_MODE_ALWAYS
@@ -103,10 +111,52 @@ func _ready() -> void:
 		qtd.add_theme_font_size_override("font_size", 18)
 		slot.add_child(qtd)
 		
+		# Indicador Equipado
+		var equip = Label.new()
+		equip.name = "Equip"
+		equip.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+		equip.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+		equip.grow_vertical = Control.GROW_DIRECTION_BEGIN
+		equip.offset_right = -5
+		equip.offset_bottom = -25
+		equip.add_theme_font_size_override("font_size", 18)
+		equip.add_theme_color_override("font_color", Color(0.2, 1.0, 0.2))
+		equip.text = "E"
+		equip.visible = false
+		slot.add_child(equip)
+		
 		grid_container.add_child(slot)
 		slot_panels.append(slot)
 		
+	_create_action_menu()
 	update_ui()
+
+func _create_action_menu() -> void:
+	action_menu_panel = PanelContainer.new()
+	var style = StyleBoxFlat.new()
+	style.bg_color = Color(0.15, 0.15, 0.15, 0.95)
+	style.border_width_bottom = 2
+	style.border_width_top = 2
+	style.border_width_left = 2
+	style.border_width_right = 2
+	style.border_color = Color(0.8, 0.8, 0.8, 1)
+	action_menu_panel.add_theme_stylebox_override("panel", style)
+	action_menu_panel.visible = false
+	
+	action_menu_vbox = VBoxContainer.new()
+	action_menu_panel.add_child(action_menu_vbox)
+	add_child(action_menu_panel)
+	
+	var options = ["Usar", "Equipar", "Inspecionar"]
+	for opt in options:
+		var lbl = Label.new()
+		lbl.text = opt
+		lbl.add_theme_font_size_override("font_size", 24)
+		lbl.set_custom_minimum_size(Vector2(150, 30))
+		lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		action_menu_vbox.add_child(lbl)
+		action_options.append(lbl)
 
 func update_ui() -> void:
 	tab_label.text = "< " + tr(tabs[current_tab]) + " >"
@@ -119,6 +169,9 @@ func update_ui() -> void:
 		item_name_label.text = ""
 		item_desc_label.text = ""
 		item_icon_preview.texture = null
+		
+	if action_menu_open:
+		_render_action_menu()
 
 func _render_inventory() -> void:
 	# Limpa slots
@@ -126,8 +179,9 @@ func _render_inventory() -> void:
 		var slot = slot_panels[i]
 		slot.get_node("Icon").texture = null
 		slot.get_node("Qtd").text = ""
+		slot.get_node("Equip").visible = false
 		var style = slot.get_theme_stylebox("panel") as StyleBoxFlat
-		if i == current_slot:
+		if i == current_slot and not action_menu_open:
 			style.border_color = Color(1.0, 1.0, 1.0, 1.0)
 			style.bg_color = Color(0.3, 0.3, 0.3, 0.9)
 		else:
@@ -148,10 +202,14 @@ func _render_inventory() -> void:
 			slot.get_node("Icon").texture = tex
 			
 			if db_info["stackable"] and item_data["amount"] > 1:
-				slot.get_node("Qtd").text = str(item_data["amount"])
+				slot.get_node("Qtd").text = str(int(item_data["amount"]))
+				
+			if SaveManager.is_equipped(item_data["id"]):
+				slot.get_node("Equip").visible = true
 				
 			if i == current_slot:
 				item_to_show = db_info
+				current_item_selected = item_data
 				item_icon_preview.texture = tex
 				
 	if item_to_show:
@@ -161,13 +219,67 @@ func _render_inventory() -> void:
 		item_name_label.text = ""
 		item_desc_label.text = ""
 		item_icon_preview.texture = null
+		current_item_selected = null
+
+func _render_action_menu() -> void:
+	if not current_item_selected:
+		close_action_menu()
+		return
+		
+	var db_info = SaveManager.item_db.get(current_item_selected["id"])
+	if not db_info: return
+	
+	action_menu_panel.visible = true
+	var slot = slot_panels[current_slot]
+	action_menu_panel.global_position = slot.global_position + Vector2(slot.size.x / 2, slot.size.y / 2)
+	
+	# Usar [0], Equipar [1], Inspecionar [2]
+	var type = db_info.get("type", "")
+	
+	var opts = ["Usar", "Equipar", "Inspecionar"]
+	for i in range(3):
+		var lbl = action_options[i]
+		var enabled = false
+		
+		if i == 0 and type == "usable": enabled = true
+		if i == 1 and type == "equippable": enabled = true
+		if i == 2 and type == "inspectable": enabled = true
+		
+		if i == 1 and current_item_selected["id"] == "cogblade": enabled = false # Cogblade nao desequipa
+		
+		if i == action_menu_index:
+			lbl.text = opts[i]
+			lbl.add_theme_color_override("font_color", Color(1.0, 1.0, 0.0) if enabled else Color(0.7, 0.7, 0.0))
+		else:
+			lbl.text = opts[i]
+			lbl.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8) if enabled else Color(0.4, 0.4, 0.4))
 
 func _input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_menu_game") or event.is_action_pressed("ui_cancel") or event.is_action_pressed("ui_pause"):
+	if event.is_action_pressed("ui_menu_game") or event.is_action_pressed("ui_pause"):
 		get_viewport().set_input_as_handled()
 		close_menu()
+		return
 		
-	elif event.is_action_pressed("ui_r1"):
+	if action_menu_open:
+		get_viewport().set_input_as_handled()
+		if event.is_action_pressed("ui_cancel") or event.is_action_pressed("ui_dash"):
+			close_action_menu()
+		elif event.is_action_pressed("ui_down"):
+			action_menu_index = (action_menu_index + 1) % 3
+			update_ui()
+		elif event.is_action_pressed("ui_up"):
+			action_menu_index = (action_menu_index - 1 + 3) % 3
+			update_ui()
+		elif event.is_action_pressed("ui_accept"):
+			execute_action()
+		return
+		
+	if event.is_action_pressed("ui_cancel") or event.is_action_pressed("ui_dash"):
+		get_viewport().set_input_as_handled()
+		close_menu()
+		return
+
+	if event.is_action_pressed("ui_r1"):
 		current_tab = (current_tab + 1) % tabs.size()
 		update_ui()
 	elif event.is_action_pressed("ui_l1"):
@@ -192,9 +304,50 @@ func _input(event: InputEvent) -> void:
 			if current_slot - grid_cols >= 0:
 				current_slot -= grid_cols
 				moved = true
+		elif event.is_action_pressed("ui_accept"):
+			if current_item_selected != null:
+				open_action_menu()
 				
 		if moved:
 			update_ui()
+
+func open_action_menu() -> void:
+	action_menu_open = true
+	action_menu_index = 0
+	update_ui()
+
+func close_action_menu() -> void:
+	action_menu_open = false
+	action_menu_panel.visible = false
+	update_ui()
+
+func execute_action() -> void:
+	if not current_item_selected: return
+	
+	var item_id = current_item_selected["id"]
+	var db_info = SaveManager.item_db.get(item_id)
+	var type = db_info.get("type", "")
+	
+	# Usar [0]
+	if action_menu_index == 0 and type == "usable":
+		SaveManager.remove_item_amount(item_id, 1)
+		close_action_menu()
+		
+	# Equipar [1]
+	elif action_menu_index == 1 and type == "equippable":
+		if item_id == "cogblade":
+			pass # Não pode desequipar
+		else:
+			if SaveManager.is_equipped(item_id):
+				SaveManager.unequip_item(item_id)
+			else:
+				SaveManager.equip_item(item_id)
+		close_action_menu()
+		
+	# Inspecionar [2]
+	elif action_menu_index == 2 and type == "inspectable":
+		# No futuro abriremos o objeto 3D aqui
+		close_action_menu()
 
 func close_menu() -> void:
 	get_tree().paused = false

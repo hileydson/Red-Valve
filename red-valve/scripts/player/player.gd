@@ -694,7 +694,7 @@ func transicao_camera(origem: Camera3D, camera_destino: Camera3D, destino: Marke
 	if camera_destino == camera_third_person:
 		control_magic.visible = show_ui
 		control_weapons.visible = show_ui
-		hand_with_pistol.visible = show_ui
+		hand_with_pistol.visible = show_ui and SaveManager.is_equipped("pistol")
 		if hand_with_magic: hand_with_magic.visible = show_ui
 		await get_tree().create_timer(0.1).timeout
 		GlobalUtils.remover_camera_lenta()
@@ -722,7 +722,7 @@ func transicao_camera(origem: Camera3D, camera_destino: Camera3D, destino: Marke
 		# Mostra/Esconde a UI com delay pra nao ficar estranho
 		control_magic.visible = show_ui
 		control_weapons.visible = show_ui
-		hand_with_pistol.visible = show_ui
+		hand_with_pistol.visible = show_ui and SaveManager.is_equipped("pistol")
 		if hand_with_magic: hand_with_magic.visible = show_ui
 		)
 	
@@ -848,6 +848,7 @@ func cast_spell():
 	print("saiu")
 	
 func shoot(input:Variant):
+	if not SaveManager.is_equipped("pistol"): return
 	if is_reloading: return
 	
 	if can_shoot_again and camera.current:
@@ -1022,7 +1023,7 @@ func bullet_time_back():
 	if is_first_person:
 		camera.make_current()
 		control_weapons.visible = true
-		hand_with_pistol.visible = true
+		hand_with_pistol.visible = SaveManager.is_equipped("pistol")
 		if hand_with_magic: hand_with_magic.visible = true
 		control_magic.visible = true
 	else:

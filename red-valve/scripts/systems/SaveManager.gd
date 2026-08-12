@@ -5,6 +5,7 @@ const SAVE_PATH = "user://save_game.json"
 var current_stage: String = ""
 var inventory_normal: Array = []
 var inventory_combat: Array = []
+var equipped_items: Array = ["cogblade"] # Cogblade sempre equipada
 
 var config = {
 	"aim_mode": "hold",
@@ -28,25 +29,29 @@ var item_db = {
 		"name_key": "ITEM_MAYCOW_WATCH_NAME",
 		"desc_key": "ITEM_MAYCOW_WATCH_DESC",
 		"icon_path": "res://assets/images/menu/itens/relogio.png",
-		"stackable": false
+		"stackable": false,
+		"type": "inspectable"
 	},
 	"pistol": {
 		"name_key": "ITEM_PISTOL_NAME",
 		"desc_key": "ITEM_PISTOL_DESC",
 		"icon_path": "res://assets/images/menu/itens/red_valve/pistola.png",
-		"stackable": false
+		"stackable": false,
+		"type": "equippable"
 	},
 	"cogblade": {
 		"name_key": "ITEM_COGBLADE_NAME",
 		"desc_key": "ITEM_COGBLADE_DESC",
 		"icon_path": "res://assets/images/menu/itens/red_valve/cogblade.png",
-		"stackable": false
+		"stackable": false,
+		"type": "equippable"
 	},
 	"pistol_ammo": {
 		"name_key": "ITEM_AMMO_NAME",
 		"desc_key": "ITEM_AMMO_DESC",
 		"icon_path": "res://assets/images/menu/itens/red_valve/pistola_bala.png",
-		"stackable": true
+		"stackable": true,
+		"type": "inspectable"
 	}
 }
 
@@ -91,6 +96,7 @@ func save_game(scene_path: String = ""):
 		"current_stage": current_stage,
 		"inventory_normal": inventory_normal,
 		"inventory_combat": inventory_combat,
+		"equipped_items": equipped_items,
 		"config": config
 	}
 	
@@ -121,6 +127,7 @@ func load_game() -> bool:
 					{"id": "cogblade", "amount": 1},
 					{"id": "pistol_ammo", "amount": 25}
 				])
+				equipped_items = data.get("equipped_items", ["cogblade"])
 				
 				if data.has("config"):
 					config = data["config"]
@@ -166,6 +173,19 @@ func remove_item_amount(item_id: String, amount: int) -> void:
 			if inventory[i]["amount"] < 0:
 				inventory[i]["amount"] = 0
 			return
+
+
+func is_equipped(item_id: String) -> bool:
+	return item_id in equipped_items
+
+func equip_item(item_id: String) -> void:
+	if not item_id in equipped_items:
+		equipped_items.append(item_id)
+
+func unequip_item(item_id: String) -> void:
+	if item_id == "cogblade": return # Cogblade nao desequipa
+	if item_id in equipped_items:
+		equipped_items.erase(item_id)
 
 var menu_instance = null
 func _unhandled_input(event: InputEvent) -> void:
