@@ -666,7 +666,7 @@ func _physics_process(delta: float) -> void:
 	if is_instance_valid(crescent_cogblade) and crescent_cogblade.top_level:
 		# Usa o eixo Global Y para girar, assim a angulação do Inspector (Pitch) é preservada
 		# e a lâmina gira como um frisbee independentemente de quão tombada estiver
-		crescent_cogblade.global_rotate(Vector3.UP, 15.0 * delta)
+		crescent_cogblade.global_rotate(Vector3.UP, -15.0 * delta)
 
 	# LÓGICA DO BUMERANGUE (COGBLADE RETORNANDO)
 	if is_blade_returning and is_instance_valid(crescent_cogblade):
