@@ -385,7 +385,17 @@ func execute_action() -> void:
 		
 	# Inspecionar [2]
 	elif action_menu_index == 2 and type == "inspectable":
-		# No futuro abriremos o objeto 3D aqui
+		var model_path = db_info.get("model_path", "")
+		if model_path != "":
+			var inspector_scene = load("res://scenes/ui/item_inspector.tscn")
+			if inspector_scene:
+				var inspector = inspector_scene.instantiate()
+				inspector.model_path = model_path
+				# Esconde o inventário enquanto inspeciona
+				visible = false
+				get_tree().root.add_child(inspector)
+				inspector.inspector_closed.connect(func(): visible = true)
+				
 		close_action_menu()
 
 func close_menu() -> void:

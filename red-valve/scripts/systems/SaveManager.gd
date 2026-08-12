@@ -31,6 +31,7 @@ var item_db = {
 		"name_key": "ITEM_MAYCOW_WATCH_NAME",
 		"desc_key": "ITEM_MAYCOW_WATCH_DESC",
 		"icon_path": "res://assets/images/menu/itens/relogio.png",
+		"model_path": "res://assets/3d_model/player/Maycow Lopes/relogio.glb",
 		"stackable": false,
 		"type": "inspectable"
 	},

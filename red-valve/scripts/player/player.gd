@@ -509,6 +509,7 @@ func _physics_process(delta: float) -> void:
 					stamina_bar.modulate.a = move_toward(stamina_bar.modulate.a, 0.0, delta)
 	
 	if is_instance_valid(stamina_bar):
+		stamina_bar.visible = not GlobalEvents.is_maycow_normal
 		stamina_bar.max_value = max_stamina
 		stamina_bar.value = current_stamina
 		
