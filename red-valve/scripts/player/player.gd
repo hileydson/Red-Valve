@@ -127,6 +127,7 @@ var hand_magic_3d_pos_hidden: Vector3
 var is_magic_attacking: bool = false
 var is_blade_returning: bool = false
 var blade_return_speed: float = 15.0
+var damage_blur_timer: float = 0.0
 var is_reloading: bool = false
 var magic_blade_pos_original
 var camera_bullet_time_position
@@ -550,6 +551,15 @@ func _physics_process(delta: float) -> void:
 				velocity.x = move_toward(velocity.x, 0, velocidade_atual)
 				velocity.z = move_toward(velocity.z, 0, velocidade_atual)
 				if passos.playing: passos.stop()
+		
+		# FX DURANTE CORRIDA (FOV e Blur leve)
+		var camera = get_viewport().get_camera_3d()
+		if camera and not is_dashing:
+			var is_running = Input.is_action_pressed("ui_run") and velocity.length() > 0.1
+			var target_run_fov = 85.0 if is_running else 75.0
+			camera.fov = lerp(camera.fov, target_run_fov, 5.0 * delta)
+			
+
 
 		# 8. ROTAÇÃO VISUAL DO MODELO (MAYCOW LOPES)
 		if input_dir.y <= 0.1: 
@@ -1217,6 +1227,16 @@ func take_damage(number:int):
 		mat.set_shader_parameter("multiplier", 0.4)
 		var t = create_tween()
 		t.tween_method(func(val): mat.set_shader_parameter("multiplier", val), 0.4, 0.0, 1.5).set_trans(Tween.TRANS_CUBIC)
+	
+	if is_instance_valid(hud_layer):
+		var motion_blur = hud_layer.get_node_or_null("MotionBlurOverlay")
+		if motion_blur:
+			motion_blur.visible = true
+			motion_blur.material.set_shader_parameter("blur_strength", 0.8)
+			damage_blur_timer = 0.4
+			var tween_blur = create_tween().set_parallel(true)
+			tween_blur.tween_property(motion_blur.material, "shader_parameter/blur_strength", 0.0, 0.4)
+			tween_blur.chain().tween_callback(func(): if not Input.is_action_pressed("ui_run"): motion_blur.visible = false)
 	
 	print("Damage taken by the player: "+str(number) + " | HP: " + str(current_health))
 	
