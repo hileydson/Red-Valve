@@ -4,9 +4,9 @@
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ckm2l"]
 direction = Vector3(0, 1, 0)
-spread = 52.152
-initial_velocity_min = 5.0
-initial_velocity_max = 5.0
+spread = 180.0
+initial_velocity_min = 0.05
+initial_velocity_max = 0.4
 color = Color(0.5853828, 0, 0.022112181, 1)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_44f6p"]
@@ -15,7 +15,7 @@ billboard_mode = 1
 
 [sub_resource type="QuadMesh" id="QuadMesh_xewpu"]
 material = SubResource("StandardMaterial3D_44f6p")
-size = Vector2(0.02, 0.05)
+size = Vector2(0.005, 0.05)
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_44f6p"]
 load_path = "res://.godot/imported/blood_mark.png-4fd51daa4ece325aeb8a17240609850b.s3tc.ctex"

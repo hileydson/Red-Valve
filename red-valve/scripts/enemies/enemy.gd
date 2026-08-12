@@ -57,6 +57,7 @@ var playback
 var dead:bool = false
 
 func _ready() -> void:
+	current_health = max_health
 	playback = animation_tree["parameters/playback"]
 	
 	# Limpa componentes da barra 3D antiga da cena herdada

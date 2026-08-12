@@ -1,8 +1,8 @@
 keys,en,pt
 PROMPT_LEAVE_HOUSE,Leave the house?,Sair da casa?
-BTN_START,START,INICIAR
-BTN_EXIT,EXIT,SAIR
-BTN_RESUME,RESUME,CONTINUAR
+BTN_START,Start,Iniciar
+BTN_EXIT,Exit,Sair
+BTN_RESUME,Resume,Continuar
 TXT_HOUSE_TV,I left the TV on...,Esqueci a televisão ligada...
 PROMPT_ANSWER_PHONE,Answer phone?,Atender telefone?
 PROMPT_TURN_ON_TV,Turn on TV,Ligar Tv
