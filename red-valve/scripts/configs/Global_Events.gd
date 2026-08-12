@@ -63,5 +63,5 @@ func load_progress()->void:
 		default_language = save_array["default_language"]
 		game_weapon_events = save_array["game_weapon_events"]
 		
-		get_tree().change_scene_to_file("res://scenes/stages/stage_1/stage_1.tscn")
+		LoadingScreen.load_scene("res://scenes/stages/stage_1/stage_1.tscn")
 		

@@ -11,7 +11,7 @@ PROMPT_ENTER_WORKSHOP,Enter Jimmy's workshop?,Entrar na oficina do Jimmy?GAME_OV
 MENU_TAB_INVENTORY,"INVENTORY","INVENTÁRIO"
 MENU_TAB_MAP,"MAP","MAPA"
 MENU_TAB_FILES,"FILES","ARQUIVOS"
-BTN_LOAD_GAME,"LOAD GAME","CARREGAR JOGO"
+BTN_LOAD_GAME,"Load Game","Carregar Jogo"
 ITEM_MAYCOW_WATCH_NAME,"Maycow's Watch","Relógio do Maycow"
 ITEM_MAYCOW_WATCH_DESC,"A worn wristwatch. The hands are frozen, but the mechanism still emits a faint ticking sound. It belongs to Maycow.","Um relógio de pulso desgastado. Os ponteiros estão congelados, mas o mecanismo ainda emite um leve tique-taque. Pertence ao Maycow."
 WITH_POWER_1_1,"One of the Huskes violently attacks Maycow.","Um dos Huskes ataca Maycow violentamente."

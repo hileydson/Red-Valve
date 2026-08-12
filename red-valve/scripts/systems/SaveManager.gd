@@ -135,7 +135,7 @@ func load_game() -> bool:
 				
 				if current_stage != "" and ResourceLoader.exists(current_stage):
 					print("Game Loaded! ", current_stage)
-					get_tree().change_scene_to_file(current_stage)
+					LoadingScreen.load_scene(current_stage)
 					return true
 	return false
 

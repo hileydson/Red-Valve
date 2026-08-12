@@ -95,7 +95,7 @@ func _process(delta: float) -> void:
 			await get_tree().create_timer(2.0).timeout
 			
 			# Transporta para a cena stage_1 seguindo o padrão atual do projeto
-			get_tree().change_scene_to_file("res://scenes/stages/stage_1/stage_1.tscn")
+			LoadingScreen.load_scene("res://scenes/stages/stage_1/stage_1.tscn")
 		elif player_no_telefone and telefone_tocando:
 			player_no_telefone = false
 			telefone_tocando = false

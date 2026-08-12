@@ -166,7 +166,7 @@ func finish_cutscene() -> void:
 	await get_tree().create_timer(2.0).timeout
 	
 	# Muda a cena diretamente para a oficina
-	get_tree().change_scene_to_file("res://scenes/stages/prolog/oficina_jimmy.tscn")
+	LoadingScreen.load_scene("res://scenes/stages/prolog/oficina_jimmy.tscn")
 
 func _process(delta: float) -> void:
 	if waiting_for_input and not is_transitioning:

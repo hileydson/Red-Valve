@@ -147,7 +147,7 @@ func finish_cutscene() -> void:
 	
 	fade.fade_out()
 	await get_tree().create_timer(2.0).timeout
-	get_tree().change_scene_to_file("res://scenes/stages/prolog/the_house.tscn")
+	LoadingScreen.load_scene("res://scenes/stages/prolog/the_house.tscn")
 
 
 func _process(delta: float) -> void:
