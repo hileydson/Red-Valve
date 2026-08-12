@@ -147,7 +147,7 @@ func _ready():
 	magic_hand.visible = false
 	# Salva a posição original e define a posição de idle deslocada
 	hand_magic_3d_pos_original = hand_magic_3d.position
-	hand_magic_3d_pos_hidden = hand_magic_3d_pos_original + Vector3(0.65, -0.52, 0.05)
+	hand_magic_3d_pos_hidden = hand_magic_3d_pos_original + Vector3(0.65, -0.2, 0.0)
 	hand_magic_3d.position = hand_magic_3d_pos_hidden
 	#hand_magic_3d.visible = false
 	
