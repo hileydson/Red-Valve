@@ -52,6 +52,13 @@ var current_health: int = 100
 var heartbeat_hud: ColorRect
 var blood_overlay: ColorRect
 var blur_overlay: ColorRect
+# STAMINA & MP
+var max_stamina: float = 100.0
+var current_stamina: float = 100.0
+var stamina_bar: ProgressBar
+var stamina_fade_timer: float = 0.0
+var mp_bar: ProgressBar
+
 var hud_layer: CanvasLayer
 var heartbeat_tween: Tween
 
@@ -351,6 +358,60 @@ void fragment() {
 	hud_layer.add_child(ammo_icon)
 	
 	update_ammo_ui()
+
+	# MP Bar
+	mp_bar = ProgressBar.new()
+	mp_bar.anchor_left = 0.5
+	mp_bar.anchor_top = 1.0
+	mp_bar.anchor_right = 0.5
+	mp_bar.anchor_bottom = 1.0
+	mp_bar.offset_left = -100
+	mp_bar.offset_top = -35
+	mp_bar.offset_right = 100
+	mp_bar.offset_bottom = -25
+	mp_bar.show_percentage = false
+	var mp_sb = StyleBoxFlat.new()
+	mp_sb.bg_color = Color(0.2, 0.4, 0.9, 0.8)
+	mp_sb.corner_radius_top_left = 4
+	mp_sb.corner_radius_top_right = 4
+	mp_sb.corner_radius_bottom_left = 4
+	mp_sb.corner_radius_bottom_right = 4
+	mp_bar.add_theme_stylebox_override("fill", mp_sb)
+	var mp_bg = StyleBoxFlat.new()
+	mp_bg.bg_color = Color(0.1, 0.1, 0.1, 0.5)
+	mp_bg.corner_radius_top_left = 4
+	mp_bg.corner_radius_top_right = 4
+	mp_bg.corner_radius_bottom_left = 4
+	mp_bg.corner_radius_bottom_right = 4
+	mp_bar.add_theme_stylebox_override("background", mp_bg)
+	hud_layer.add_child(mp_bar)
+
+	# Stamina Bar
+	stamina_bar = ProgressBar.new()
+	stamina_bar.anchor_left = 0.5
+	stamina_bar.anchor_top = 1.0
+	stamina_bar.anchor_right = 0.5
+	stamina_bar.anchor_bottom = 1.0
+	stamina_bar.offset_left = -150
+	stamina_bar.offset_top = -50
+	stamina_bar.offset_right = 150
+	stamina_bar.offset_bottom = -40
+	stamina_bar.show_percentage = false
+	var st_sb = StyleBoxFlat.new()
+	st_sb.bg_color = Color(0.9, 0.9, 0.9, 0.7)
+	st_sb.corner_radius_top_left = 2
+	st_sb.corner_radius_top_right = 2
+	st_sb.corner_radius_bottom_left = 2
+	st_sb.corner_radius_bottom_right = 2
+	stamina_bar.add_theme_stylebox_override("fill", st_sb)
+	var st_bg = StyleBoxFlat.new()
+	st_bg.bg_color = Color(0.1, 0.1, 0.1, 0.3)
+	st_bg.corner_radius_top_left = 2
+	st_bg.corner_radius_top_right = 2
+	st_bg.corner_radius_bottom_left = 2
+	st_bg.corner_radius_bottom_right = 2
+	stamina_bar.add_theme_stylebox_override("background", st_bg)
+	hud_layer.add_child(stamina_bar)
 	
 	_start_heartbeat_pulse()
 
@@ -426,6 +487,37 @@ var hold_threshold: float = 0.15 # 200 milisegundos para confirmar o "segurar"
 var limite_rotacao_lateral = deg_to_rad(35) # O máximo que ele pode "virar" (ex: 35 graus)
 var velocidade_giro = 8.0
 func _physics_process(delta: float) -> void:
+
+	# --- STAMINA LOGIC ---
+	var is_running_stam = Input.is_action_pressed("ui_run") and velocity.length() > 0.1 and current_stamina > 0
+	if is_running_stam:
+		current_stamina -= 20.0 * delta
+		if current_stamina < 0: current_stamina = 0
+		stamina_fade_timer = 2.0
+		if is_instance_valid(stamina_bar): stamina_bar.modulate.a = 1.0
+	else:
+		if current_stamina < max_stamina:
+			current_stamina += 15.0 * delta
+			if current_stamina > max_stamina: current_stamina = max_stamina
+			stamina_fade_timer = 2.0
+			if is_instance_valid(stamina_bar): stamina_bar.modulate.a = 1.0
+		else:
+			if stamina_fade_timer > 0:
+				stamina_fade_timer -= delta
+			else:
+				if is_instance_valid(stamina_bar):
+					stamina_bar.modulate.a = move_toward(stamina_bar.modulate.a, 0.0, delta)
+	
+	if is_instance_valid(stamina_bar):
+		stamina_bar.max_value = max_stamina
+		stamina_bar.value = current_stamina
+		
+	if is_instance_valid(mp_bar):
+		mp_bar.visible = not GlobalEvents.is_maycow_normal
+		mp_bar.max_value = SaveManager.max_mp
+		mp_bar.value = SaveManager.current_mp
+	# ---------------------
+
 	if is_instance_valid(blood_overlay):
 		blood_overlay.visible = not GlobalEvents.in_cutscene
 	if is_instance_valid(heartbeat_hud):
@@ -479,7 +571,7 @@ func _physics_process(delta: float) -> void:
 		if Input.is_action_just_pressed("ui_shoot") and !transition_camera and !is_magic_attacking:
 			shoot(Input)
 		
-		if !is_magic_attacking and Input.is_action_just_pressed("ui_magic_attack") and !transition_camera and camera.current:
+		if !is_magic_attacking and Input.is_action_just_pressed("ui_magic_attack") and !transition_camera and camera.current and SaveManager.current_mp >= 10.0:
 			magic_hand_attack()
 			
 		if camera_bullet_time_ON:
@@ -506,7 +598,10 @@ func _physics_process(delta: float) -> void:
 		if dash_cooldown_timer > 0:
 			dash_cooldown_timer -= delta
 
-		if Input.is_action_just_pressed("ui_dash") and not is_dashing and dash_cooldown_timer <= 0:
+		if Input.is_action_just_pressed("ui_dash") and not is_dashing and dash_cooldown_timer <= 0 and current_stamina >= 30.0:
+			current_stamina -= 30.0
+			stamina_fade_timer = 2.0
+			stamina_bar.modulate.a = 1.0
 			dash()
 			
 
@@ -524,7 +619,7 @@ func _physics_process(delta: float) -> void:
 				is_dashing = false
 		else:
 			# MOVIMENTO NORMAL (WALK/RUN)
-			var velocidade_atual = RUN_SPEED if Input.is_action_pressed("ui_run") else WALK_SPEED
+			var velocidade_atual = RUN_SPEED if (Input.is_action_pressed("ui_run") and current_stamina > 0) else WALK_SPEED
 			var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 			var velocity_Y_zero: bool = velocity.y <= 0
 
@@ -558,7 +653,7 @@ func _physics_process(delta: float) -> void:
 		# FX DURANTE CORRIDA (FOV e Blur leve)
 		var camera = get_viewport().get_camera_3d()
 		if camera and not is_dashing:
-			var is_running = Input.is_action_pressed("ui_run") and velocity.length() > 0.1
+			var is_running = Input.is_action_pressed("ui_run") and velocity.length() > 0.1 and current_stamina > 0
 			var target_run_fov = 85.0 if is_running else 75.0
 			camera.fov = lerp(camera.fov, target_run_fov, 5.0 * delta)
 			
@@ -660,7 +755,7 @@ func _physics_process(delta: float) -> void:
 
 		# Inclinação e Encolhimento da arma 2D ao correr
 		if is_instance_valid(pistola) and typeof(pistol_2d_pos_original) == TYPE_VECTOR2:
-			var is_running = Input.is_action_pressed("ui_run") and velocity.length() > 0.1
+			var is_running = Input.is_action_pressed("ui_run") and velocity.length() > 0.1 and current_stamina > 0
 			# Rotação 2D (positivo = horário = descer ponta da arma) e empurrar para baixo/fora da tela
 			var target_tilt = deg_to_rad(35.0) if is_running else 0.0
 			var target_pos = pistol_2d_pos_original + (Vector2(50.0, 150.0) if is_running else Vector2.ZERO)
@@ -939,6 +1034,8 @@ func reload():
 		is_reloading = false
 
 func magic_hand_attack():
+	SaveManager.current_mp -= 10.0
+	if SaveManager.current_mp < 0: SaveManager.current_mp = 0
 	if is_reloading: return
 	
 	# 1. ANIMAÇÃO DA MÃO (3D)

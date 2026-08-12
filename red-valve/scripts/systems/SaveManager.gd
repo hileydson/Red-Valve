@@ -6,6 +6,8 @@ var current_stage: String = ""
 var inventory_normal: Array = []
 var inventory_combat: Array = []
 var equipped_items: Array = ["cogblade"] # Cogblade sempre equipada
+var max_mp: float = 30.0
+var current_mp: float = 30.0
 
 var config = {
 	"aim_mode": "hold",
@@ -97,6 +99,8 @@ func save_game(scene_path: String = ""):
 		"inventory_normal": inventory_normal,
 		"inventory_combat": inventory_combat,
 		"equipped_items": equipped_items,
+		"max_mp": max_mp,
+		"current_mp": current_mp,
 		"config": config
 	}
 	
@@ -128,6 +132,8 @@ func load_game() -> bool:
 					{"id": "pistol_ammo", "amount": 25}
 				])
 				equipped_items = data.get("equipped_items", ["cogblade"])
+				max_mp = data.get("max_mp", 30.0)
+				current_mp = data.get("current_mp", 30.0)
 				
 				if data.has("config"):
 					config = data["config"]
