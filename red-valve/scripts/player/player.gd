@@ -356,7 +356,10 @@ void fragment() {
 
 func update_ammo_ui() -> void:
 	if not is_instance_valid(ammo_label): return
-	if GlobalEvents.is_maycow_normal:
+	
+	var is_pistol_equipped = SaveManager.is_equipped("pistol")
+	
+	if GlobalEvents.is_maycow_normal or not is_pistol_equipped:
 		ammo_label.visible = false
 		if is_instance_valid(ammo_icon): ammo_icon.visible = false
 	else:

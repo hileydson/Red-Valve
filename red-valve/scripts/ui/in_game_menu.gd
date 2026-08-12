@@ -272,6 +272,8 @@ func _render_action_menu() -> void:
 	var type = db_info.get("type", "")
 	
 	var opts = ["Usar", "Equipar", "Inspecionar"]
+	if SaveManager.is_equipped(current_item_selected["id"]):
+		opts[1] = "Remover"
 	for i in range(3):
 		var lbl = action_options[i]
 		var enabled = false
@@ -377,6 +379,8 @@ func execute_action() -> void:
 				SaveManager.unequip_item(item_id)
 			else:
 				SaveManager.equip_item(item_id)
+			# Atualiza o UI do player imediatamente
+			get_tree().call_group("player", "update_ammo_ui")
 		close_action_menu()
 		
 	# Inspecionar [2]
