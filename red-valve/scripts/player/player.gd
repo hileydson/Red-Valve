@@ -145,10 +145,9 @@ func _ready():
 	
 	# Esconde o sprite 2D antigo
 	magic_hand.visible = false
-	# Configura a nova mão 3D escondida atrás e abaixo da câmera
+	# Salva a posição original e define a posição de idle deslocada
 	hand_magic_3d_pos_original = hand_magic_3d.position
-	# Deixar a mão esquerda levemente visível (apenas a ponta), abaixada e puxada pro meio
-	hand_magic_3d_pos_hidden = hand_magic_3d_pos_original + Vector3(0.25, -0.52, 0.05)
+	hand_magic_3d_pos_hidden = hand_magic_3d_pos_original + Vector3(0.65, -0.52, 0.05)
 	hand_magic_3d.position = hand_magic_3d_pos_hidden
 	#hand_magic_3d.visible = false
 	
@@ -859,8 +858,11 @@ func reload():
 
 		gun_load.play()
 		
-		# Mostra a mão e aciona a animação interna (dedos, etc)
-		if is_instance_valid(hand_magic_3d): hand_magic_3d.visible = true
+		# Coloca a mão na posição original para animação
+		if is_instance_valid(hand_magic_3d): 
+			hand_magic_3d.position = hand_magic_3d_pos_original
+			hand_magic_3d.visible = true
+			
 		if hand_magic_tree:
 			var pb = hand_magic_tree["parameters/playback"]
 			if pb: pb.travel("magic_reload")
@@ -871,7 +873,14 @@ func reload():
 		else:
 			await get_tree().create_timer(1.0).timeout
 			
-		if is_instance_valid(hand_magic_3d): hand_magic_3d.visible = false
+		# Atraso extra para a animação da mão mágica terminar com folga
+		await get_tree().create_timer(0.4).timeout
+			
+		# Retorna para a posição de idle escondida lentamente e suave
+		if is_instance_valid(hand_magic_3d): 
+			var tween_retorno = create_tween()
+			tween_retorno.tween_property(hand_magic_3d, "position", hand_magic_3d_pos_hidden, 0.6).set_trans(Tween.TRANS_SINE)
+			
 		is_reloading = false
 
 func magic_hand_attack():

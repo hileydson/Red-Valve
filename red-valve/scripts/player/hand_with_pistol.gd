@@ -55,8 +55,8 @@ func _process(delta):
 	var run_offset_pos = Vector3.ZERO
 	var run_offset_rot = Vector3.ZERO
 	if player and Input.is_action_pressed("ui_run") and speed > 0.1:
-		run_offset_rot.x = deg_to_rad(65.0) # Pitch pra baixo
-		run_offset_pos = Vector3(0.0, -0.25, 0.2) # Abaixa e traz pra trás (Z positivo afasta da tela)
+		run_offset_rot.x = deg_to_rad(50.0) # Pitch pra baixo
+		run_offset_pos = Vector3(0.0, -0.2, 0.15) # Abaixa e traz pra trás
 		
 	# --- 4. APLICAÇÃO FINAL ---
 	var target_pos = initial_position + sway_pos + bob_offset + run_offset_pos
