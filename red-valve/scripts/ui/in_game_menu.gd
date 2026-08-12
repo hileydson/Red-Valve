@@ -315,10 +315,10 @@ func _input(event: InputEvent) -> void:
 		return
 
 	if event.is_action_pressed("ui_r1"):
-		current_tab = (current_tab + 1) % tabs.size()
+		current_tab = (current_tab - 1 + tabs.size()) % tabs.size()
 		update_ui()
 	elif event.is_action_pressed("ui_l1"):
-		current_tab = (current_tab - 1 + tabs.size()) % tabs.size()
+		current_tab = (current_tab + 1) % tabs.size()
 		update_ui()
 		
 	elif current_tab == 0:

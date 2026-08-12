@@ -112,6 +112,7 @@ var dash_direction : Vector3 = Vector3.ZERO
 #ORIGINAL POSITION FOR THE LEFT HAND
 var magic_hand_pos_original
 var hand_magic_3d_pos_original: Vector3
+var hand_pistol_pos_original: Vector3
 var hand_magic_3d_pos_hidden: Vector3
 var is_magic_attacking: bool = false
 var is_reloading: bool = false
@@ -127,6 +128,8 @@ var playback
 func _ready():
 	$CollisionShape3D.scale = Vector3(1, 1, 1) # Corrigir colisão oval travando nas quinas
 		
+	hand_pistol_pos_original = hand_with_pistol.position
+
 	# Captura o mouse e o esconde ao iniciar o jogo
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	
@@ -142,7 +145,8 @@ func _ready():
 	magic_hand.visible = false
 	# Configura a nova mão 3D escondida atrás e abaixo da câmera
 	hand_magic_3d_pos_original = hand_magic_3d.position
-	hand_magic_3d_pos_hidden = hand_magic_3d_pos_original + Vector3(0, -0.8, 1.0)
+	# Deixar a mão esquerda levemente visível (apenas a ponta)
+	hand_magic_3d_pos_hidden = hand_magic_3d_pos_original + Vector3(0.0, -0.48, 0.05)
 	hand_magic_3d.position = hand_magic_3d_pos_hidden
 	#hand_magic_3d.visible = false
 	
@@ -633,6 +637,14 @@ func _physics_process(delta: float) -> void:
 			#if modelo:
 				#modelo.rotation.y = lerp_angle(modelo.rotation.y, alvo_y, delta * velocidade_giro)
 
+		# Inclinação e Encolhimento da arma ao correr
+		if is_instance_valid(hand_with_pistol) and hand_pistol_pos_original != Vector3.ZERO:
+			var is_running = Input.is_action_pressed("ui_run") and velocity.length() > 0.1
+			var target_tilt = deg_to_rad(55.0) if is_running else 0.0 # Positivo no eixo X aponta a arma para BAIXO na Godot
+			var target_pos = hand_pistol_pos_original + (Vector3(0.0, -0.2, 0.2) if is_running else Vector3.ZERO)
+			
+			hand_with_pistol.rotation.x = lerp(hand_with_pistol.rotation.x, target_tilt, 12.0 * delta)
+			hand_with_pistol.position = hand_with_pistol.position.lerp(target_pos, 12.0 * delta)
 
 	# 9. FINALIZAÇÃO
 	move_and_slide()
@@ -657,8 +669,32 @@ func dash():
 		smoke_effect_back.play("smoke")	
 		
 	dash_effect.process_mode = Node.PROCESS_MODE_ALWAYS
-	dash_effect.pitch_scale = 1.0 / 0.2 # Substitua 0.2 pelo valor da sua camera lenta
+	dash_effect.pitch_scale = 0.4
 	dash_effect.play()
+	
+	# Efeito Global de Câmera Lenta no Áudio
+	var sfx_bus = AudioServer.get_bus_index("SFX")
+	var target_bus = sfx_bus if sfx_bus != -1 else 0 # Usa Master se SFX não existir
+	
+	# Adiciona pitch shift dinamicamente se não existir
+	var has_pitch = false
+	var effect_idx = -1
+	for i in range(AudioServer.get_bus_effect_count(target_bus)):
+		if AudioServer.get_bus_effect(target_bus, i) is AudioEffectPitchShift:
+			has_pitch = true
+			effect_idx = i
+			break
+			
+	if not has_pitch:
+		var pitch_effect = AudioEffectPitchShift.new()
+		AudioServer.add_bus_effect(target_bus, pitch_effect)
+		effect_idx = AudioServer.get_bus_effect_count(target_bus) - 1
+		
+	var effect = AudioServer.get_bus_effect(target_bus, effect_idx) as AudioEffectPitchShift
+	
+	var audio_tween = create_tween().set_parallel(true)
+	audio_tween.tween_property(effect, "pitch_scale", 0.4, 0.1)
+	audio_tween.chain().tween_property(effect, "pitch_scale", 1.0, DASH_DURATION)
 	
 	dash_effect_particles.emitting = true
 
