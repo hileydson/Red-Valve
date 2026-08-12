@@ -35,6 +35,23 @@ func _ready() -> void:
 			# Algumas peças giram mais rápido que as outras
 			data.multiplicador_velocidade = randf_range(0.5, 2.5)
 			
+			# Criação dinâmica do hitbox de dano para a peça
+			var area = Area3D.new()
+			area.collision_mask = 1 # Ouve colisões do ambiente/player
+			
+			var collision = CollisionShape3D.new()
+			var shape = SphereShape3D.new()
+			shape.radius = 0.8 # Área justa da peça
+			collision.shape = shape
+			
+			area.add_child(collision)
+			child.add_child(area)
+			
+			area.body_entered.connect(func(body: Node3D):
+				if body.is_in_group("player") and body.has_method("take_damage"):
+					body.take_damage(10)
+			)
+			
 			pecas_ativas.append(data)
 
 func _process(delta: float) -> void:
