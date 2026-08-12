@@ -109,6 +109,10 @@ var dash_direction : Vector3 = Vector3.ZERO
 @onready var modelo_visual = $maycow_lopes/Armature/Skeleton3D/char1
 
 
+# HAND ADJUSTMENTS
+@export_group("Left Hand Adjustments")
+@export var left_hand_idle_offset: Vector3 = Vector3(0.1, -0.35, 0.0)
+
 #ORIGINAL POSITION FOR THE LEFT HAND
 var magic_hand_pos_original
 var hand_magic_3d_pos_original: Vector3
@@ -147,7 +151,7 @@ func _ready():
 	magic_hand.visible = false
 	# Salva a posição original e define a posição de idle deslocada
 	hand_magic_3d_pos_original = hand_magic_3d.position
-	hand_magic_3d_pos_hidden = hand_magic_3d_pos_original + Vector3(0.65, -0.2, 0.0)
+	hand_magic_3d_pos_hidden = hand_magic_3d_pos_original + left_hand_idle_offset
 	hand_magic_3d.position = hand_magic_3d_pos_hidden
 	#hand_magic_3d.visible = false
 	
@@ -874,7 +878,7 @@ func reload():
 			await get_tree().create_timer(1.0).timeout
 			
 		# Atraso extra para a animação da mão mágica terminar com folga
-		await get_tree().create_timer(0.4).timeout
+		await get_tree().create_timer(0.8).timeout
 			
 		# Retorna para a posição de idle escondida lentamente e suave
 		if is_instance_valid(hand_magic_3d): 
@@ -928,9 +932,14 @@ func magic_hand_attack():
 	# 3. RETORNO
 	var tween_back = create_tween().set_parallel(true)
 	
-	# Volta a mão (3D)
-	tween_back.tween_property(hand_magic_3d, "position", hand_magic_3d_pos_hidden, 0.5)\
+	# Volta a mão (3D) com recuo e retorno lento
+	var tween_hand = create_tween()
+	var pos_recuo = hand_magic_3d_pos_original + Vector3(0.0, -0.4, 0.6) # Traz bem para baixo e para trás
+	tween_hand.tween_property(hand_magic_3d, "position", pos_recuo, 0.3)\
 		.set_delay(0.8)\
+		.set_trans(Tween.TRANS_QUAD)
+	tween_hand.tween_interval(1.2) # Fica segurando o recuo
+	tween_hand.tween_property(hand_magic_3d, "position", hand_magic_3d_pos_hidden, 1.5)\
 		.set_trans(Tween.TRANS_SINE)
 		
 	# Volta a lâmina
@@ -941,7 +950,7 @@ func magic_hand_attack():
 	# DESLIGA AS FAÍSCAS no meio do caminho de volta ou no fim
 	tween_back.tween_callback(func(): faiscas.emitting = false).set_delay(1.2)
 	
-	await tween_back.finished
+	await tween_hand.finished
 	crescent_cogblade.hide()
 	
 	is_magic_attacking = false
