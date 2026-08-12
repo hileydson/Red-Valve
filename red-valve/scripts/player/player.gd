@@ -68,7 +68,7 @@ const SENSITIVITY = 0.003 # Sensibilidade do mouse
 @export var RUN_SPEED = 7.5 # Velocidade maior para a corrida
 
 #CHANGE LATER - DYNAMICLY
-@export var damage_crescent_cogblade:int = 14
+@export var damage_crescent_cogblade:int = 20
 @export var damage_pistol:int = 10 #3 
 @export var damage_headshoot:int = 100
 var current_weapon #: AnimatedSprite2D
@@ -113,6 +113,11 @@ var dash_direction : Vector3 = Vector3.ZERO
 @export_group("Left Hand Adjustments")
 @export var left_hand_idle_offset: Vector3 = Vector3(0.1, -0.35, 0.0)
 
+@export_group("Cogblade Adjustments")
+@export var cogblade_tilt_x: float = 0.0 
+@export var cogblade_tilt_y: float = 0.0 
+@export var cogblade_tilt_z: float = 0.0 
+
 #ORIGINAL POSITION FOR THE LEFT HAND
 var magic_hand_pos_original
 var hand_magic_3d_pos_original: Vector3
@@ -120,6 +125,8 @@ var hand_pistol_pos_original: Vector3
 var pistol_2d_pos_original: Vector2
 var hand_magic_3d_pos_hidden: Vector3
 var is_magic_attacking: bool = false
+var is_blade_returning: bool = false
+var blade_return_speed: float = 15.0
 var is_reloading: bool = false
 var magic_blade_pos_original
 var camera_bullet_time_position
@@ -392,7 +399,7 @@ func _start_heartbeat_pulse() -> void:
 	
 
 func _input(event):
-	if camera_bullet_time_ON or is_magic_attacking:
+	if camera_bullet_time_ON:
 		return
 	
 	if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
@@ -453,10 +460,6 @@ func _physics_process(delta: float) -> void:
 			
 		point.visible = is_first_person
 		
-		# 2. TRAVA DE ATAQUE MÁGICO
-		if is_magic_attacking:
-			return 
-		
 		# 3. GRAVIDADE
 		if not is_on_floor():
 			velocity += get_gravity() * delta
@@ -466,10 +469,10 @@ func _physics_process(delta: float) -> void:
 			velocity.y = JUMP_VELOCITY
 			playback.travel("jump")
 			
-		if Input.is_action_just_pressed("ui_reload") and !transition_camera:
+		if Input.is_action_just_pressed("ui_reload") and !transition_camera and !is_magic_attacking:
 			reload()
 		
-		if Input.is_action_just_pressed("ui_shoot") and !transition_camera:
+		if Input.is_action_just_pressed("ui_shoot") and !transition_camera and !is_magic_attacking:
 			shoot(Input)
 		
 		if !is_magic_attacking and Input.is_action_just_pressed("ui_magic_attack") and !transition_camera and camera.current:
@@ -479,7 +482,7 @@ func _physics_process(delta: float) -> void:
 			return
 			
 		# 5. ROTAÇÃO DA CÂMERA (ANALÓGICO DIREITO)
-		if !camera_bullet_time_ON and !is_magic_attacking:
+		if !camera_bullet_time_ON:
 			var joy_dir = Input.get_vector("ui_look_left", "ui_look_right", "ui_look_up", "ui_look_down")
 			if joy_dir.length() > DEADZONE:
 				var camera_atual = get_viewport().get_camera_3d()
@@ -566,7 +569,7 @@ func _physics_process(delta: float) -> void:
 			velocity += get_gravity() * delta
 
 		# 5. ROTAÇÃO DA CÂMERA (ANALÓGICO DIREITO)
-		if !camera_bullet_time_ON and !is_magic_attacking:
+		if !camera_bullet_time_ON:
 			var joy_dir = Input.get_vector("ui_look_left", "ui_look_right", "ui_look_up", "ui_look_down")
 			if joy_dir.length() > DEADZONE:
 				var camera_atual = get_viewport().get_camera_3d()
@@ -658,6 +661,41 @@ func _physics_process(delta: float) -> void:
 	if head_bob_ON:
 		head_bob(delta) # Lembre-se de incluir a vibração dentro da sua função head_bob!
 
+
+	# GIRO DA COGBLADE
+	if is_instance_valid(crescent_cogblade) and crescent_cogblade.top_level:
+		# Usa o eixo Global Y para girar, assim a angulação do Inspector (Pitch) é preservada
+		# e a lâmina gira como um frisbee independentemente de quão tombada estiver
+		crescent_cogblade.global_rotate(Vector3.UP, 15.0 * delta)
+
+	# LÓGICA DO BUMERANGUE (COGBLADE RETORNANDO)
+	if is_blade_returning and is_instance_valid(crescent_cogblade):
+		# Alvo dinâmico é a mão do jogador atualizada em tempo real
+		var target_pos = camera.global_transform.origin + camera.global_transform.basis * magic_blade_pos_original
+		crescent_cogblade.global_transform.origin = crescent_cogblade.global_transform.origin.move_toward(target_pos, delta * blade_return_speed)
+		
+		if crescent_cogblade.global_transform.origin.distance_to(target_pos) < 0.8:
+			is_blade_returning = false
+			crescent_cogblade.top_level = false
+			crescent_cogblade.position = magic_blade_pos_original
+			crescent_cogblade.rotation = Vector3.ZERO # Reseta a rotação para ficar reta na mão
+			crescent_cogblade.hide()
+			
+			var bb = crescent_cogblade.get_node_or_null("blade_back")
+			if bb: bb.play()
+			
+			var faiscas = crescent_cogblade.get_node_or_null("Faiscas")
+			if faiscas: faiscas.emitting = false
+			
+			is_magic_attacking = false
+			if hand_magic_tree:
+				var pb = hand_magic_tree["parameters/playback"]
+				if pb: pb.travel("idle")
+				
+			# Mão volta para o Idle lentamente (Cooldown visual)
+			var tween_hand = create_tween()
+			tween_hand.tween_interval(0.2)
+			tween_hand.tween_property(hand_magic_3d, "position", hand_magic_3d_pos_hidden, 1.5).set_trans(Tween.TRANS_SINE)
 
 func dash():
 	
@@ -908,55 +946,38 @@ func magic_hand_attack():
 		.set_trans(Tween.TRANS_BACK)\
 		.set_ease(Tween.EASE_OUT)
 		
-	# 2. LANÇA A CRESCENT COGBLADE (3D)
+	# 2. LANÇA A CRESCENT COGBLADE (GLOBAL)
 	crescent_cogblade.show()
+	crescent_cogblade.top_level = true # Desprende da câmera fisicamente
 	
-	# LIGA AS FAÍSCAS (Certifique-se que o nó está dentro da cogblade)
-	# Exemplo: $Camera3D/crescent_cogblade/Faiscas
-	var faiscas = crescent_cogblade.get_node("Faiscas") 
-	faiscas.emitting = true
+	var faiscas = crescent_cogblade.get_node_or_null("Faiscas") 
+	if faiscas: faiscas.emitting = true
 	
-	# RESET: Posição original
-	crescent_cogblade.position = magic_blade_pos_original
+	# Força a lâmina a deitar usando a inclinação customizada no Inspector
+	# e aponta ela para a mesma direção que o jogador está olhando
+	crescent_cogblade.global_rotation_degrees = Vector3(cogblade_tilt_x, camera.global_rotation_degrees.y + cogblade_tilt_y, cogblade_tilt_z)
 	
-	var pos_final_local = magic_blade_pos_original + Vector3(0, 0, -5)
+	# Ponto final no espaço global (frente de onde o jogador está olhando)
+	var dir = -camera.global_transform.basis.z
+	var pos_final_global = crescent_cogblade.global_transform.origin + (dir * 11.0) # Distância intermediária
 	
-	# Tween de ida
-	tween_magic.tween_property(crescent_cogblade, "position", pos_final_local, 0.8)\
+	# Tween de ida (Global) - BEM mais lento
+	tween_magic.tween_property(crescent_cogblade, "global_transform:origin", pos_final_global, 1.2)\
 		.set_trans(Tween.TRANS_QUAD)\
 		.set_ease(Tween.EASE_OUT)
 	
-	# Giro 3x (Gira as faíscas junto se elas forem filhas do objeto)
-	tween_magic.tween_property(crescent_cogblade, "rotation:y", crescent_cogblade.rotation.y + deg_to_rad(1080), 0.8)
-
-	# 3. RETORNO
-	var tween_back = create_tween().set_parallel(true)
+	# Giro é controlado no _physics_process agora (para evitar problemas de interpolação de Euler)
 	
-	# Volta a mão (3D) com recuo e retorno lento
+	await tween_magic.finished
+	
+	# Inicia a fase de retorno bumerangue
+	is_blade_returning = true
+	
+	# Mão puxa (recuo) avisando que está puxando a lâmina de volta
 	var tween_hand = create_tween()
-	var pos_recuo = hand_magic_3d_pos_original + Vector3(0.0, -0.4, 0.6) # Traz bem para baixo e para trás
-	tween_hand.tween_property(hand_magic_3d, "position", pos_recuo, 0.3)\
-		.set_delay(0.8)\
+	var pos_recuo = hand_magic_3d_pos_original + Vector3(0.0, -0.4, 0.6)
+	tween_hand.tween_property(hand_magic_3d, "position", pos_recuo, 0.5)\
 		.set_trans(Tween.TRANS_QUAD)
-	tween_hand.tween_interval(1.2) # Fica segurando o recuo
-	tween_hand.tween_property(hand_magic_3d, "position", hand_magic_3d_pos_hidden, 1.5)\
-		.set_trans(Tween.TRANS_SINE)
-		
-	# Volta a lâmina
-	tween_back.tween_property(crescent_cogblade, "position", magic_blade_pos_original, 0.6)\
-		.set_delay(0.8)\
-		.set_trans(Tween.TRANS_SINE)
-	
-	# DESLIGA AS FAÍSCAS no meio do caminho de volta ou no fim
-	tween_back.tween_callback(func(): faiscas.emitting = false).set_delay(1.2)
-	
-	await tween_hand.finished
-	crescent_cogblade.hide()
-	
-	is_magic_attacking = false
-	if hand_magic_tree:
-		var pb = hand_magic_tree["parameters/playback"]
-		if pb: pb.travel("idle")
 
 func cast_spell():
 	# Reinicia o efeito
