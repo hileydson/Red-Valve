@@ -350,5 +350,8 @@ func execute_action() -> void:
 		close_action_menu()
 
 func close_menu() -> void:
+	await get_tree().process_frame
 	get_tree().paused = false
+	get_tree().call_group("player", "prevent_dash_leak")
+	get_tree().call_group("player", "update_equipment_visuals")
 	queue_free()

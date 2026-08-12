@@ -1134,3 +1134,10 @@ func _on_bullet_touch_body_entered(body: Node3D) -> void:
 	bullet.visible = false
 	#bullet_light.visible = false
 	spawn_blood_effect(body)
+
+func update_equipment_visuals() -> void:
+	if is_first_person and not is_reloading and control_weapons.visible:
+		hand_with_pistol.visible = SaveManager.is_equipped("pistol")
+
+func prevent_dash_leak() -> void:
+	dash_cooldown_timer = 0.2
