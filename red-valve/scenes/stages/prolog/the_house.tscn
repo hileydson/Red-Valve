@@ -35,6 +35,9 @@
 [ext_resource type="PackedScene" uid="uid://dy356o67p6jyn" path="res://scenes/configs/fade.tscn" id="29_arpac"]
 [ext_resource type="PackedScene" uid="uid://dmkdsu6tg34vu" path="res://assets/3d_model/stages/prolog/quadro_3d.glb" id="29_eubjm"]
 [ext_resource type="PackedScene" uid="uid://b1gfp3q3bgbfy" path="res://assets/3d_model/stages/prolog/mesa.glb" id="33_7l4xq"]
+[ext_resource type="Texture2D" uid="uid://buv0bg4mvto5r" path="res://assets/images/textures/wood_floor.png" id="tex_wood_floor"]
+[ext_resource type="Texture2D" uid="uid://bsp6rsxmhl1ts" path="res://assets/images/textures/wood_wall.png" id="tex_wood_wall"]
+[ext_resource type="Texture2D" path="res://assets/images/textures/wood_ceiling.png" id="tex_wood_ceiling"]
 
 [sub_resource type="Environment" id="Environment_pbbbw"]
 background_energy_multiplier = 0.69
@@ -164,26 +167,21 @@ uv1_scale = Vector3(0.5, 0.5, 0.5)
 uv1_triplanar = true
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_n3kvr"]
-emission_enabled = true
-emission = Color(1, 1, 1, 1)
-emission_energy_multiplier = 1.31
-
+albedo_texture = ExtResource("tex_wood_ceiling")
+uv1_triplanar = true
+uv1_scale = Vector3(0.5, 0.5, 0.5)
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7yhl5"]
-emission_enabled = true
-emission = Color(1, 1, 1, 1)
-emission_energy_multiplier = 0.05
-
+albedo_texture = ExtResource("tex_wood_ceiling")
+uv1_triplanar = true
+uv1_scale = Vector3(0.5, 0.5, 0.5)
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qysyv"]
-metallic = 0.67
-emission_enabled = true
-emission = Color(0.6255971, 0.6255971, 0.6255971, 1)
-emission_energy_multiplier = 0.28
-uv1_scale = Vector3(5, 5, 5)
-
+albedo_texture = ExtResource("tex_wood_wall")
+uv1_triplanar = true
+uv1_scale = Vector3(0.5, 0.5, 0.5)
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2vn28"]
-albedo_texture = ExtResource("13_qysyv")
-uv1_scale = Vector3(16, 16, 16)
-
+albedo_texture = ExtResource("tex_wood_floor")
+uv1_triplanar = true
+uv1_scale = Vector3(0.5, 0.5, 0.5)
 [sub_resource type="ArrayMesh" id="ArrayMesh_mlxvh"]
 _surfaces = [{
 "aabb": AABB(3.9286706, -229.84433, 144.15955, 1e-05, 459.68866, 247.43057),
@@ -860,6 +858,16 @@ shadow_mesh = SubResource("ArrayMesh_5llxv")
 [sub_resource type="BoxShape3D" id="BoxShape3D_dnyf3"]
 size = Vector3(2.0829468, 1, 2.142456)
 
+
+[sub_resource type="StandardMaterial3D" id="mat_wood_floor"]
+albedo_texture = ExtResource("tex_wood_floor")
+uv1_triplanar = true
+uv1_scale = Vector3(0.2, 0.2, 0.2)
+
+[sub_resource type="StandardMaterial3D" id="mat_wood_wall"]
+albedo_texture = ExtResource("tex_wood_wall")
+uv1_triplanar = true
+uv1_scale = Vector3(0.2, 0.2, 0.2)
 [node name="the_house" type="Node3D" unique_id=463009553]
 script = ExtResource("1_01ffe")
 tempo_para_telefone = 60.0
@@ -1026,6 +1034,7 @@ size = Vector3(14.917719, 1, 21.016237)
 material = SubResource("StandardMaterial3D_7yhl5")
 
 [node name="paredes" type="CSGCombiner3D" parent="ambient/casa" unique_id=512792956]
+material_override = SubResource("mat_wood_wall")
 
 [node name="parede" type="CSGBox3D" parent="ambient/casa/paredes" unique_id=1170777966]
 transform = Transform3D(1, 0, 0, 0, 1.8713276, 0, 0, 0, 1, 0.19678164, 3.201597, -3.3828583)
@@ -1102,6 +1111,7 @@ operation = 2
 size = Vector3(5.38144, 0.8872032, 1)
 
 [node name="chao" type="CSGBox3D" parent="ambient/casa" unique_id=405366250]
+material_override = SubResource("mat_wood_floor")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.004896, 0, -7.5341187)
 size = Vector3(15.970539, 1, 28.42273)
 material = SubResource("StandardMaterial3D_2vn28")
