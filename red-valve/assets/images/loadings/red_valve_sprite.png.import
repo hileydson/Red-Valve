@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c6u8um1qop47p"
-path="res://.godot/imported/red_valve_sprite.jpg-d8bbe01333a4ada422cc8dbabc888038.ctex"
+uid="uid://cqy8lquvaugsd"
+path="res://.godot/imported/red_valve_sprite.png-78387b87669c6c2008e45eb2af927d37.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/images/loadings/red_valve_sprite.jpg"
-dest_files=["res://.godot/imported/red_valve_sprite.jpg-d8bbe01333a4ada422cc8dbabc888038.ctex"]
+source_file="res://assets/images/loadings/red_valve_sprite.png"
+dest_files=["res://.godot/imported/red_valve_sprite.png-78387b87669c6c2008e45eb2af927d37.ctex"]
 
 [params]
 

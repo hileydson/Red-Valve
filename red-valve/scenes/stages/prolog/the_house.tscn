@@ -34,9 +34,9 @@
 [ext_resource type="PackedScene" uid="uid://dy356o67p6jyn" path="res://scenes/configs/fade.tscn" id="29_arpac"]
 [ext_resource type="PackedScene" uid="uid://dmkdsu6tg34vu" path="res://assets/3d_model/stages/prolog/quadro_3d.glb" id="29_eubjm"]
 [ext_resource type="PackedScene" uid="uid://b1gfp3q3bgbfy" path="res://assets/3d_model/stages/prolog/mesa.glb" id="33_7l4xq"]
+[ext_resource type="Texture2D" uid="uid://dnrfoykxfgqup" path="res://assets/images/textures/wood_ceiling.png" id="tex_wood_ceiling"]
 [ext_resource type="Texture2D" uid="uid://buv0bg4mvto5r" path="res://assets/images/textures/wood_floor.png" id="tex_wood_floor"]
 [ext_resource type="Texture2D" uid="uid://bsp6rsxmhl1ts" path="res://assets/images/textures/wood_wall.png" id="tex_wood_wall"]
-[ext_resource type="Texture2D" uid="uid://dnrfoykxfgqup" path="res://assets/images/textures/wood_ceiling.png" id="tex_wood_ceiling"]
 
 [sub_resource type="Environment" id="Environment_pbbbw"]
 background_energy_multiplier = 0.69
@@ -101,8 +101,8 @@ shader_parameter/cirrus_absorption = 2.0
 shader_parameter/cirrus_sky_tint_fade = 0.5
 shader_parameter/cirrus_size = 1.0
 shader_parameter/cirrus_uv = Vector2(0.16, 0.11)
-shader_parameter/cirrus_position1 = Vector2(0.94223446, 0.94223446)
-shader_parameter/cirrus_position2 = Vector2(0.94223446, 0.94223446)
+shader_parameter/cirrus_position1 = Vector2(0.29329342, 0.29329342)
+shader_parameter/cirrus_position2 = Vector2(0.29329342, 0.29329342)
 shader_parameter/cirrus_texture = ExtResource("3_01ffe")
 shader_parameter/cumulus_visible = true
 shader_parameter/cumulus_intensity = 0.6
@@ -112,7 +112,7 @@ shader_parameter/cumulus_absorption = 2.0
 shader_parameter/cumulus_noise_freq = 2.7
 shader_parameter/cumulus_sky_tint_fade = 0.0
 shader_parameter/cumulus_size = 0.5
-shader_parameter/cumulus_position = Vector2(4.711992, 4.711992)
+shader_parameter/cumulus_position = Vector2(1.4664111, 1.4664111)
 shader_parameter/cumulus_texture = ExtResource("4_qysyv")
 shader_parameter/cumulus_partial_mie_phase = Vector3(0.957564, 1.042436, 0.412)
 shader_parameter/cumulus_mie_intensity = 1.0
@@ -225,12 +225,12 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_mlxvh")
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_qlgbq"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_51fg8"]
 viewport_path = NodePath("SubViewport")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_51fg8"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ljprc"]
 resource_local_to_scene = true
-albedo_texture = SubResource("ViewportTexture_qlgbq")
+albedo_texture = SubResource("ViewportTexture_51fg8")
 emission = Color(0.7121294, 0.7121294, 0.71212935, 1)
 emission_energy_multiplier = 0.36
 uv1_scale = Vector3(-1, -1, -1)
@@ -1155,7 +1155,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 499.48547, 0, 0)
 [node name="Cube_003_Screen_0" parent="ambient/casa/itens_da_casa/tv/Sketchfab_model/5836d5dd2aa14c29a482c9966515dc07_fbx/RootNode/Cube_003" parent_id_path=PackedInt32Array(204035221, 465210600) index="2" unique_id=1168453161]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 499.48547, 0, 0)
 mesh = SubResource("ArrayMesh_m2pnx")
-surface_material_override/0 = SubResource("StandardMaterial3D_51fg8")
+surface_material_override/0 = SubResource("StandardMaterial3D_ljprc")
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="ambient/casa/itens_da_casa/tv/Sketchfab_model/5836d5dd2aa14c29a482c9966515dc07_fbx/RootNode/Cube_003/Cube_003_Screen_0" index="0" unique_id=1615021297]
 transform = Transform3D(204.10088, 0, 0, 0, 264.26242, 4.534737e-06, 0, 0, 250.71162, 0, 0, 0)

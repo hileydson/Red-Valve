@@ -9,7 +9,7 @@ extends CanvasLayer
 
 var loading_images: Array = [
 	preload("res://assets/images/loadings/anti-lopes.png"),
-	preload("res://assets/images/loadings/red_valve_sprite.jpg"),
+	preload("res://assets/images/loadings/red_valve_sprite.png"),
 	preload("res://assets/images/loadings/the_negotiator_V1_bullet.png"),
 	preload("res://assets/images/loadings/the_negotiator_V1.png"),
 	preload("res://assets/images/loadings/the_negotiator_V2.png")
