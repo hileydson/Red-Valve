@@ -668,11 +668,20 @@ func _physics_process(delta: float) -> void:
 				velocity.z = move_toward(velocity.z, 0, velocidade_atual)
 				if passos.playing: passos.stop()
 		
-		# FX DURANTE CORRIDA (FOV e Blur leve)
+		# FX DURANTE CORRIDA (FOV e Blur leve - Diferenciado para 1ª Pessoa e 3ª Pessoa)
 		var camera = get_viewport().get_camera_3d()
 		if camera and not is_dashing:
-			var is_running = Input.is_action_pressed("ui_run") and velocity.length() > 0.1 and current_stamina > 0 and not is_exhausted and not is_exhausted
-			var target_run_fov = 95.0 if is_running else 75.0
+			var is_running = Input.is_action_pressed("ui_run") and velocity.length() > 0.1 and current_stamina > 0 and not is_exhausted
+			var direction_check := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
+			var visao_frente = -global_transform.basis.z
+			var alinhamento = direction_check.dot(visao_frente) if direction_check else 0.0
+			
+			var target_run_fov = 75.0
+			if direction_check and alinhamento < -0.2:
+				target_run_fov = 73.0 if is_first_person else 70.0
+			elif is_running:
+				target_run_fov = 80.0 if is_first_person else 88.0
+				
 			camera.fov = lerp(camera.fov, target_run_fov, 5.0 * delta)
 			
 
@@ -731,12 +740,12 @@ func _physics_process(delta: float) -> void:
 				if alinhamento < -0.2:
 					# Movimento para trás
 					playback.travel("walk_back")
-					target_fov = 65.0
+					target_fov = 73.0 if is_first_person else 70.0
 				else:
 					# Movimento para frente ou corrida
 					if is_running:
 						playback.travel("run")
-						target_fov = 95.0
+						target_fov = 80.0 if is_first_person else 88.0
 					else:
 						playback.travel("walk")
 			
@@ -763,7 +772,7 @@ func _physics_process(delta: float) -> void:
 			if passos.playing: 
 				passos.stop()
 
-		var fov_lerp_speed = 1.0 if target_fov == 65.0 else 5.0
+		var fov_lerp_speed = 5.0
 		var camera = get_viewport().get_camera_3d()
 		if camera:
 			camera.fov = lerp(camera.fov, target_fov, fov_lerp_speed * delta)
@@ -904,11 +913,12 @@ func dash():
 		tween_blur.tween_property(motion_blur.material, "shader_parameter/blur_strength", 0.0, DASH_DURATION)
 		tween_blur.chain().tween_callback(func(): motion_blur.visible = false)
 		
-		# FOV Punch (Sensação de velocidade extra)
+		# FOV Punch (Sensação de velocidade extra - mais suave em 1ª Pessoa)
 		var camera = get_viewport().get_camera_3d()
 		if camera:
 			var base_fov = camera.fov
-			tween_blur.tween_property(camera, "fov", base_fov + 15.0, DASH_DURATION * 0.3).set_trans(Tween.TRANS_SINE)
+			var fov_boost = 6.0 if is_first_person else 12.0
+			tween_blur.tween_property(camera, "fov", base_fov + fov_boost, DASH_DURATION * 0.3).set_trans(Tween.TRANS_SINE)
 			tween_blur.tween_property(camera, "fov", base_fov, DASH_DURATION * 0.7).set_delay(DASH_DURATION * 0.3).set_trans(Tween.TRANS_SINE)
 		
 	is_dashing = true
