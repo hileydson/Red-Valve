@@ -296,13 +296,17 @@ func iniciar_cutscene() -> void:
 	is_starting = false
 	
 	# ---------------------------------------------------------
-	# FASE 1: Arremesso em 1ª Pessoa (Super Câmera Lenta + Blur + Som Lento)
+	# FASE 1: Arremesso em 1ª Pessoa (Voo + Inclinação fluida para o piso no final do arremesso)
 	# ---------------------------------------------------------
 	_ativar_motion_blur(true)
 	_aplicar_pitch_audio_lento(true, 0.5)
 	Engine.time_scale = 0.12
 	
 	var landing_pos = player_pos + Vector3(0, 0.3, 0)
+	# Olha intensamente para baixo, quase reto para o piso
+	var floor_look_target = landing_pos + (player_forward * 0.05) + Vector3(0, -2.0, 0)
+	
+	# Translação da câmera (arremesso)
 	var throw_tween = create_tween().set_parallel(true).set_ignore_time_scale(true)
 	throw_tween.tween_property(camera_oficina, "global_position", landing_pos, 3.5).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	
@@ -310,51 +314,113 @@ func iniciar_cutscene() -> void:
 		motion_blur_mat.set_shader_parameter("blur_strength", 1.4)
 		var blur_tween = create_tween().set_ignore_time_scale(true)
 		blur_tween.tween_property(motion_blur_mat, "shader_parameter/blur_strength", 0.0, 3.5).set_trans(Tween.TRANS_SINE)
-		
+	
+	# Nos últimos 1.2s do arremesso (aproximação do chão), desliga a trava no inimigo e inclina suavemente para o piso
+	await get_tree().create_timer(2.3, true, false, true).timeout
+	look_at_target = null
+	
+	var dummy_floor = Camera3D.new()
+	add_child(dummy_floor)
+	dummy_floor.global_position = landing_pos
+	dummy_floor.look_at(floor_look_target, Vector3.UP)
+	var floor_target_quat = dummy_floor.global_transform.basis.get_rotation_quaternion()
+	dummy_floor.queue_free()
+	
+	var start_floor_quat = camera_oficina.global_transform.basis.get_rotation_quaternion()
+	var tilt_floor_tween = create_tween().set_ignore_time_scale(true)
+	tilt_floor_tween.tween_method(func(t: float):
+		camera_oficina.global_transform.basis = Basis(start_floor_quat.slerp(floor_target_quat, t))
+	, 0.0, 1.0, 1.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	
 	await throw_tween.finished
 	
-	# Restaura velocidade e desliga o blur no baque
+	# Restaura velocidade e desliga o blur no baque exato do chão
 	Engine.time_scale = 1.0
 	_ativar_motion_blur(false)
 	_aplicar_pitch_audio_lento(false, 1.0)
 	
 	# ---------------------------------------------------------
-	# FASE 2: Olha LENTAMENTE para o chão e depois para o inimigo
+	# FASE 2: Balança a cabeça no chão (Sem subir a posição!)
+	# ---------------------------------------------------------
+	camera_oficina.global_position = landing_pos
+	camera_oficina.look_at(floor_look_target, Vector3.UP)
+	
+	var head_shake_tween = create_tween()
+	head_shake_tween.tween_property(camera_oficina, "rotation:z", deg_to_rad(14.0), 0.25)
+	head_shake_tween.tween_property(camera_oficina, "rotation:z", deg_to_rad(-14.0), 0.3)
+	head_shake_tween.tween_property(camera_oficina, "rotation:z", deg_to_rad(8.0), 0.25)
+	head_shake_tween.tween_property(camera_oficina, "rotation:z", deg_to_rad(-8.0), 0.25)
+	head_shake_tween.tween_property(camera_oficina, "rotation:z", 0.0, 0.25)
+	await head_shake_tween.finished
+	
+	# Pausa de impacto no chão
+	await get_tree().create_timer(0.8).timeout
+	
+	# ---------------------------------------------------------
+	# FASE 3: Olha pra frente BEM DEVAGAR em direção ao inimigo (Permanecendo no chão, sem subir!)
 	# ---------------------------------------------------------
 	look_at_target = null
-	var floor_look_target = landing_pos + (player_forward * 0.4) + Vector3(0, -0.8, 0)
+	var enemy_look_target = enemy_pos + Vector3(0, 1.5, 0)
 	
-	var dummy_cam = camera_oficina.duplicate()
-	dummy_cam.global_position = landing_pos
-	dummy_cam.look_at(floor_look_target, Vector3.UP)
-	dummy_cam.rotation.z = deg_to_rad(12.0)
-	var target_transform = dummy_cam.global_transform
-	dummy_cam.queue_free()
+	var dummy_ground_look = Camera3D.new()
+	add_child(dummy_ground_look)
+	dummy_ground_look.global_position = landing_pos
+	dummy_ground_look.look_at(enemy_look_target, Vector3.UP)
+	var ground_look_quat = dummy_ground_look.global_transform.basis.get_rotation_quaternion()
+	dummy_ground_look.queue_free()
 	
-	var floor_tween = create_tween()
-	floor_tween.tween_property(camera_oficina, "global_transform", target_transform, 1.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	await floor_tween.finished
-	
-	# Pausa no chão de impacto
-	await get_tree().create_timer(1.2).timeout
-	
-	# Levantando LENTAMENTE do chão (Volta a olhar pro Boss)
-	var stand_up_pos = player_pos + Vector3(0, 1.6, 0)
-	var stand_tween = create_tween().set_parallel(true)
-	stand_tween.tween_property(camera_oficina, "global_position", stand_up_pos, 2.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-	stand_tween.tween_property(camera_oficina, "rotation:z", 0.0, 2.5).set_trans(Tween.TRANS_SINE)
+	var start_enemy_quat = camera_oficina.global_transform.basis.get_rotation_quaternion()
+	var turn_to_enemy_tween = create_tween()
+	turn_to_enemy_tween.tween_method(func(t: float):
+		camera_oficina.global_transform.basis = Basis(start_enemy_quat.slerp(ground_look_quat, t))
+	, 0.0, 1.0, 4.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	await turn_to_enemy_tween.finished
 	
 	look_at_target = enemy
 	look_at_offset = Vector3(0, 1.5, 0)
-	
-	await stand_tween.finished
-	await get_tree().create_timer(1.5).timeout
+	await get_tree().create_timer(0.8).timeout
 	
 	# ---------------------------------------------------------
-	# FASE 3: Mostra o Player e Muda de Câmera
+	# FASE 4: Frase "O que acabou de acontecer?" (E aguarda sumir)
+	# ---------------------------------------------------------
+	label.text = "What just happened?" if SaveManager.config.get("language", "pt") == "en" else "O que acabou de acontecer?"
+	
+	var label_in_tween = create_tween()
+	label_in_tween.tween_property(label, "modulate:a", 1.0, 0.8).set_trans(Tween.TRANS_SINE)
+	await label_in_tween.finished
+	
+	await get_tree().create_timer(2.0).timeout
+	
+	var label_out_tween = create_tween()
+	label_out_tween.tween_property(label, "modulate:a", 0.0, 0.8).set_trans(Tween.TRANS_SINE)
+	await label_out_tween.finished
+	
+	# Somente depois de sumir a frase!
+	await get_tree().create_timer(0.5).timeout
+	
+	# ---------------------------------------------------------
+	# FASE 5: Câmera que roda o inimigo e vai para o player
 	# ---------------------------------------------------------
 	player.visible = true
 	
+	var orbit_radius = 4.0
+	var orbit_center = enemy_pos + Vector3(0, 1.5, 0)
+	var dir_enemy_to_player = (player_pos - enemy_pos).normalized()
+	var base_angle = atan2(dir_enemy_to_player.x, dir_enemy_to_player.z)
+	
+	look_at_target = null
+	
+	var orbit_tween = create_tween()
+	orbit_tween.tween_method(func(progress: float):
+		var angle = base_angle + (progress * TAU * 0.75)
+		var cam_pos = orbit_center + Vector3(sin(angle) * orbit_radius, 0.3, cos(angle) * orbit_radius)
+		camera_oficina.global_position = cam_pos
+		camera_oficina.look_at(orbit_center, Vector3.UP)
+	, 0.0, 1.0, 3.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	
+	await orbit_tween.finished
+	
+	# Transita da órbita para a frente do player
 	look_at_target = player
 	look_at_offset = Vector3(0, 0.4, 0)
 	
@@ -367,7 +433,7 @@ func iniciar_cutscene() -> void:
 	await get_tree().create_timer(1.0).timeout
 	
 	# ---------------------------------------------------------
-	# FASE 4: Fim do Filme (Fade Out e retoma controle)
+	# FASE 6: Fim do Filme (Fade Out e retoma controle)
 	# ---------------------------------------------------------
 	if fade:
 		fade.fade_out()
