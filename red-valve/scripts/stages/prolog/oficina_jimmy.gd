@@ -154,10 +154,97 @@ func _process(delta: float) -> void:
 		var et = enemy.get_node_or_null("enemy/enemy_model/AnimationTree")
 		if et and et.active: et.advance(delta * 0.15)
 
+var motion_blur_layer: CanvasLayer = null
+var motion_blur_overlay: ColorRect = null
+var motion_blur_mat: ShaderMaterial = null
+var slow_mo_audio_player: AudioStreamPlayer = null
+var pitch_effect: AudioEffectPitchShift = null
+
+func _aplicar_pitch_audio_lento(lento: bool, duracao: float = 1.0) -> void:
+	var target_bus = AudioServer.get_bus_index("Master")
+	pitch_effect = null
+	for i in AudioServer.get_bus_effect_count(target_bus):
+		var eff = AudioServer.get_bus_effect(target_bus, i)
+		if eff is AudioEffectPitchShift:
+			pitch_effect = eff
+			break
+			
+	if not pitch_effect:
+		pitch_effect = AudioEffectPitchShift.new()
+		AudioServer.add_bus_effect(target_bus, pitch_effect)
+		
+	var target_pitch = 0.45 if lento else 1.0
+	var audio_tween = create_tween().set_ignore_time_scale(true)
+	audio_tween.tween_property(pitch_effect, "pitch_scale", target_pitch, duracao)
+	
+	if lento:
+		if not slow_mo_audio_player:
+			slow_mo_audio_player = AudioStreamPlayer.new()
+			var sound = load("res://assets/sounds/player/dash_effect.mp3")
+			if sound:
+				slow_mo_audio_player.stream = sound
+				slow_mo_audio_player.pitch_scale = 0.35
+				slow_mo_audio_player.volume_db = 3.0
+				add_child(slow_mo_audio_player)
+		if slow_mo_audio_player:
+			slow_mo_audio_player.play()
+
+func _setup_motion_blur() -> void:
+	motion_blur_layer = CanvasLayer.new()
+	motion_blur_layer.layer = 110
+	add_child(motion_blur_layer)
+	
+	var back_buffer = BackBufferCopy.new()
+	back_buffer.copy_mode = BackBufferCopy.COPY_MODE_VIEWPORT
+	motion_blur_layer.add_child(back_buffer)
+
+	motion_blur_overlay = ColorRect.new()
+	motion_blur_overlay.name = "MotionBlurOverlay"
+	motion_blur_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	motion_blur_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	motion_blur_overlay.visible = false
+	
+	var blur_shader = Shader.new()
+	blur_shader.code = """
+	shader_type canvas_item;
+	uniform sampler2D screen_texture : hint_screen_texture, filter_linear_mipmap;
+	uniform float blur_strength = 0.0;
+	
+	void fragment() {
+		vec2 center = vec2(0.5, 0.5);
+		vec2 uv = SCREEN_UV;
+		vec2 dir = center - uv;
+		vec4 c = texture(screen_texture, uv);
+		c += texture(screen_texture, uv + dir * blur_strength * 0.05);
+		c += texture(screen_texture, uv + dir * blur_strength * 0.10);
+		c += texture(screen_texture, uv + dir * blur_strength * 0.15);
+		c += texture(screen_texture, uv + dir * blur_strength * 0.20);
+		c += texture(screen_texture, uv + dir * blur_strength * 0.25);
+		c += texture(screen_texture, uv + dir * blur_strength * 0.30);
+		c += texture(screen_texture, uv + dir * blur_strength * 0.35);
+		COLOR = c / 8.0;
+	}
+	"""
+	motion_blur_mat = ShaderMaterial.new()
+	motion_blur_mat.shader = blur_shader
+	motion_blur_mat.set_shader_parameter("blur_strength", 0.0)
+	motion_blur_overlay.material = motion_blur_mat
+	motion_blur_layer.add_child(motion_blur_overlay)
+
+func _ativar_motion_blur(ativar: bool) -> void:
+	if motion_blur_overlay:
+		motion_blur_overlay.visible = ativar
+
 func iniciar_cutscene() -> void:
 	if not enemy or not player:
 		return
 		
+	# Instancia o filtro de Motion Blur
+	_setup_motion_blur()
+	
+	# Esconde o player para o modo primeira pessoa inicial
+	player.visible = false
+	
 	# Camada de texto cinematográfica
 	var text_layer = CanvasLayer.new()
 	text_layer.layer = 120
@@ -175,149 +262,124 @@ func iniciar_cutscene() -> void:
 	var enemy_pos = enemy.global_position
 	var player_pos = player.global_position
 	
-	# Pega a direção para onde o player está olhando (o vetor -Z no Godot) e o vetor da direita (+X)
 	var player_forward = -player.global_transform.basis.z.normalized()
 	var player_right = player.global_transform.basis.x.normalized()
 	if player_forward.length() < 0.1: player_forward = Vector3.FORWARD
 	if player_right.length() < 0.1: player_right = Vector3.RIGHT
 	
-	# ---------------------------------------------------------
-	# FASE 0: Posicionamento Imediato (Antes do fade clarear)
-	# ---------------------------------------------------------
-	look_at_target = player
-	look_at_offset = Vector3(0, 0.25, 0) # Altura bem mais baixa, focando do peito pra baixo
-	
-	# Coloca a câmera mais na frente do player e um pouco à direita, e bem mais baixa
-	pos_inicial = player_pos + Vector3(0, 0.25, 0) + (player_right * 0.5) + (player_forward * 1.8)
-	camera_oficina.current = true
-	camera_oficina.global_position = pos_inicial
-	
-	# Desliga também a OmniLight3D nativa do inimigo (caso exista) para não vazar clarão
-	if enemy.has_node("enemy/OmniLight3D"):
-		enemy.get_node("enemy/OmniLight3D").visible = false
-		
-	# Desliga o VortexMagico original (que emite luz) embaixo do inimigo
-	var vortex = get_node_or_null("auto_pecas_jimmy/VortexMagico")
-	if vortex:
-		vortex.visible = false
-	
-	# Força a câmera a olhar pro player no mesmíssimo milissegundo para evitar o primeiro frame torto
-	camera_oficina.look_at(look_at_target.global_position + look_at_offset, Vector3.UP)
-	camera_oficina.make_current()
-	
-	# Ativa a trava agressiva do _process para garantir que nenhum outro frame pisque fora de lugar
-	is_starting = true
-		
-	# Espera inicial para o fade_in e estabilizar a engine
-	await get_tree().create_timer(1.0).timeout
-	
-	# Desliga a trava para podermos viajar livremente
-	is_starting = false
-	
-	# Sequência dos textos
-	var text_tween = create_tween()
-	label.text = tr("TXT_OFICINA_JIMMY_1")
-	text_tween.tween_property(label, "modulate:a", 1.0, 0.5)
-	text_tween.tween_interval(2.0)
-	text_tween.tween_property(label, "modulate:a", 0.0, 0.5)
-	text_tween.tween_callback(func(): 
-		label.text = tr("TXT_OFICINA_JIMMY_2")
-		label.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
-		label.offset_bottom = -100
-	)
-	text_tween.tween_property(label, "modulate:a", 1.0, 0.5)
-	text_tween.tween_interval(2.0)
-	text_tween.tween_property(label, "modulate:a", 0.0, 0.5)
-	
-	# ---------------------------------------------------------
-	# FASE 1: Gira de leve (drift) sem ir para as costas
-	# ---------------------------------------------------------
-	# Um movimento suave e muito curto pro lado, sem tentar ir para trás para não clipar na parede
-	var pos_drift = player_pos + Vector3(0, 0.25, 0) + (player_right * 0.9) + (player_forward * 1.5)
-	
-	var sweep_tween = create_tween()
-	sweep_tween.tween_property(camera_oficina, "global_position", pos_drift, 2.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	await sweep_tween.finished
-	
-	# Pequena pausa antes de viajar pro boss
-	await get_tree().create_timer(0.3).timeout
-	
-	# ---------------------------------------------------------
-	# FASE 2: Câmera viaja até o Inimigo (com Efeito de Zoom)
-	# ---------------------------------------------------------
-	look_at_target = enemy
-	look_at_offset = Vector3(0, 1.5, 0) # O Inimigo é maior, focamos mais alto
-	
-	# Cria e liga o fogo do inimigo EXATAMENTE agora, assim não tem como ele existir antes disso
+	# Liga as faíscas do inimigo e a iluminação
 	_criar_faiscas_inimigo()
-	# Liga a luz nativa do inimigo de volta e o vortex mágico original
 	if enemy.has_node("enemy/OmniLight3D"):
 		enemy.get_node("enemy/OmniLight3D").visible = true
-	vortex = get_node_or_null("auto_pecas_jimmy/VortexMagico")
+	var vortex = get_node_or_null("auto_pecas_jimmy/VortexMagico")
 	if vortex:
 		vortex.visible = true
 	
-	var pivot = Node3D.new()
-	pivot.global_position = enemy_pos + Vector3(0, 1.5, 0)
-	add_child(pivot)
+	# ---------------------------------------------------------
+	# FASE 0: Posicionamento Imediato no Boss (Antes do clarear)
+	# ---------------------------------------------------------
+	var dir_to_player = (player_pos - enemy_pos).normalized()
+	if dir_to_player.length() < 0.1: dir_to_player = Vector3.BACK
 	
-	var dir_to_enemy = (pivot.global_position - camera_oficina.global_position).normalized()
-	# Posição de chegada: uns 3.5 metros do inimigo para focar bem nele
-	var orbit_start_pos = pivot.global_position - (dir_to_enemy * 3.5)
+	pos_inicial = enemy_pos + (dir_to_player * 1.0) + Vector3(0, 1.5, 0)
 	
-	var travel_tween = create_tween().set_parallel(true)
-	travel_tween.tween_property(camera_oficina, "global_position", orbit_start_pos, 3.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	# Faz um "zoom in" abaixando o campo de visão (FOV) da câmera para dar um ar cinematográfico
-	travel_tween.tween_property(camera_oficina, "fov", 50.0, 3.0).set_trans(Tween.TRANS_SINE)
-	await travel_tween.finished
+	look_at_target = enemy
+	look_at_offset = Vector3(0, 1.5, 0)
+	
+	camera_oficina.current = true
+	camera_oficina.global_position = pos_inicial
+	camera_oficina.look_at(enemy_pos + look_at_offset, Vector3.UP)
+	camera_oficina.make_current()
+	
+	is_starting = true
+	await get_tree().create_timer(0.4).timeout
+	is_starting = false
 	
 	# ---------------------------------------------------------
-	# FASE 3: Orbita 360 graus envolta do inimigo
+	# FASE 1: Arremesso em 1ª Pessoa (Super Câmera Lenta + Blur + Som Lento)
 	# ---------------------------------------------------------
-	var cam_transform = camera_oficina.global_transform
-	camera_oficina.get_parent().remove_child(camera_oficina)
-	pivot.add_child(camera_oficina)
-	camera_oficina.global_transform = cam_transform
-	camera_oficina.make_current() # Impede roubo de câmera
+	_ativar_motion_blur(true)
+	_aplicar_pitch_audio_lento(true, 0.5)
+	Engine.time_scale = 0.12
 	
-	var orbit_tween = create_tween()
-	orbit_tween.tween_property(pivot, "rotation:y", PI * 2, 4.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	await orbit_tween.finished
+	var landing_pos = player_pos + Vector3(0, 0.3, 0)
+	var throw_tween = create_tween().set_parallel(true).set_ignore_time_scale(true)
+	throw_tween.tween_property(camera_oficina, "global_position", landing_pos, 3.5).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	
+	if motion_blur_mat:
+		motion_blur_mat.set_shader_parameter("blur_strength", 1.4)
+		var blur_tween = create_tween().set_ignore_time_scale(true)
+		blur_tween.tween_property(motion_blur_mat, "shader_parameter/blur_strength", 0.0, 3.5).set_trans(Tween.TRANS_SINE)
+		
+	await throw_tween.finished
+	
+	# Restaura velocidade e desliga o blur no baque
+	Engine.time_scale = 1.0
+	_ativar_motion_blur(false)
+	_aplicar_pitch_audio_lento(false, 1.0)
 	
 	# ---------------------------------------------------------
-	# FASE 4: Volta voando para o Player (Mais de perto e baixo)
+	# FASE 2: Olha LENTAMENTE para o chão e depois para o inimigo
 	# ---------------------------------------------------------
+	look_at_target = null
+	var floor_look_target = landing_pos + (player_forward * 0.4) + Vector3(0, -0.8, 0)
+	
+	var dummy_cam = camera_oficina.duplicate()
+	dummy_cam.global_position = landing_pos
+	dummy_cam.look_at(floor_look_target, Vector3.UP)
+	dummy_cam.rotation.z = deg_to_rad(12.0)
+	var target_transform = dummy_cam.global_transform
+	dummy_cam.queue_free()
+	
+	var floor_tween = create_tween()
+	floor_tween.tween_property(camera_oficina, "global_transform", target_transform, 1.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	await floor_tween.finished
+	
+	# Pausa no chão de impacto
+	await get_tree().create_timer(1.2).timeout
+	
+	# Levantando LENTAMENTE do chão (Volta a olhar pro Boss)
+	var stand_up_pos = player_pos + Vector3(0, 1.6, 0)
+	var stand_tween = create_tween().set_parallel(true)
+	stand_tween.tween_property(camera_oficina, "global_position", stand_up_pos, 2.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	stand_tween.tween_property(camera_oficina, "rotation:z", 0.0, 2.5).set_trans(Tween.TRANS_SINE)
+	
+	look_at_target = enemy
+	look_at_offset = Vector3(0, 1.5, 0)
+	
+	await stand_tween.finished
+	await get_tree().create_timer(1.5).timeout
+	
+	# ---------------------------------------------------------
+	# FASE 3: Mostra o Player e Muda de Câmera
+	# ---------------------------------------------------------
+	player.visible = true
+	
 	look_at_target = player
-	look_at_offset = Vector3(0, 0.4, 0) # Bem baixo pra dar tensão final no rosto
+	look_at_offset = Vector3(0, 0.4, 0)
 	
-	cam_transform = camera_oficina.global_transform
-	pivot.remove_child(camera_oficina)
-	add_child(camera_oficina)
-	camera_oficina.global_transform = cam_transform
-	camera_oficina.make_current() # Impede roubo de câmera
+	var frontal_pos = player_pos + Vector3(0, 0.4, 0) + (player_forward * 1.5)
+	var reveal_tween = create_tween().set_parallel(true)
+	reveal_tween.tween_property(camera_oficina, "global_position", frontal_pos, 1.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	reveal_tween.tween_property(camera_oficina, "fov", 45.0, 1.5).set_trans(Tween.TRANS_SINE)
+	await reveal_tween.finished
 	
-	var return_tween = create_tween().set_parallel(true)
-	# Posição final: de frente pro player, mais baixo (Y=0.4) e bem mais perto (1.5m)
-	var final_pos = player_pos + Vector3(0, 0.4, 0) + (player_forward * 1.5)
-	return_tween.tween_property(camera_oficina, "global_position", final_pos, 2.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	# Mais zoom no player
-	return_tween.tween_property(camera_oficina, "fov", 45.0, 2.5).set_trans(Tween.TRANS_SINE)
-	await return_tween.finished
+	await get_tree().create_timer(1.0).timeout
 	
 	# ---------------------------------------------------------
-	# FASE 5: Fim do Filme (Fade Out e retoma controle)
+	# FASE 4: Fim do Filme (Fade Out e retoma controle)
 	# ---------------------------------------------------------
 	if fade:
 		fade.fade_out()
 		await get_tree().create_timer(1.5).timeout
 		
-	pivot.queue_free()
 	look_at_target = null
+	Engine.time_scale = 1.0
+	_aplicar_pitch_audio_lento(false, 0.1)
 	
-	# Restaura controles e inteligência artificial soltando os processos base
+	# Restaura controles e inteligência artificial
 	if player:
 		player.process_mode = Node.PROCESS_MODE_INHERIT
-		# A câmera padrão de combate é a third_person, não a genérica
 		var player_cam = player.get_node_or_null("SpringArm3D/camera_third_person")
 		if not player_cam:
 			player_cam = player.get_node_or_null("Camera3D")
@@ -338,5 +400,8 @@ func iniciar_cutscene() -> void:
 		
 	if is_instance_valid(text_layer):
 		text_layer.queue_free()
+		
+	if is_instance_valid(motion_blur_layer):
+		motion_blur_layer.queue_free()
 		
 	camera_oficina.queue_free()
