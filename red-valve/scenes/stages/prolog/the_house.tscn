@@ -77,7 +77,7 @@ shader_parameter/moon_texture_flip_u = false
 shader_parameter/moon_texture_flip_v = false
 shader_parameter/moon_size = 0.07
 shader_parameter/atm_moon_mie_tint = Color(0.137255, 0.184314, 0.292196, 1)
-shader_parameter/atm_moon_mie_intensity = 0.5222020304203033
+shader_parameter/atm_moon_mie_intensity = 0.522202051281929
 shader_parameter/atm_moon_partial_mie_phase = Vector3(0.36, 1.64, 1.6)
 shader_parameter/starmap_color = Color(0.709804, 0.709804, 0.709804, 0.854902)
 shader_parameter/starmap_texture = ExtResource("8_avu31")
@@ -101,8 +101,8 @@ shader_parameter/cirrus_absorption = 2.0
 shader_parameter/cirrus_sky_tint_fade = 0.5
 shader_parameter/cirrus_size = 1.0
 shader_parameter/cirrus_uv = Vector2(0.16, 0.11)
-shader_parameter/cirrus_position1 = Vector2(0.9910408, 0.9910408)
-shader_parameter/cirrus_position2 = Vector2(0.9910408, 0.9910408)
+shader_parameter/cirrus_position1 = Vector2(0.010559444, 0.010559444)
+shader_parameter/cirrus_position2 = Vector2(0.010559444, 0.010559444)
 shader_parameter/cirrus_texture = ExtResource("3_01ffe")
 shader_parameter/cumulus_visible = true
 shader_parameter/cumulus_intensity = 0.6
@@ -112,7 +112,7 @@ shader_parameter/cumulus_absorption = 2.0
 shader_parameter/cumulus_noise_freq = 2.7
 shader_parameter/cumulus_sky_tint_fade = 0.0
 shader_parameter/cumulus_size = 0.5
-shader_parameter/cumulus_position = Vector2(4.956147, 4.956147)
+shader_parameter/cumulus_position = Vector2(0.05279707, 0.05279707)
 shader_parameter/cumulus_texture = ExtResource("4_qysyv")
 shader_parameter/cumulus_partial_mie_phase = Vector3(0.957564, 1.042436, 0.412)
 shader_parameter/cumulus_mie_intensity = 1.0
@@ -877,12 +877,25 @@ size = Vector3(2.0829468, 1, 2.142456)
 
 [node name="the_house" type="Node3D" unique_id=463009553]
 script = ExtResource("1_01ffe")
-tempo_para_telefone = 60.0
+tempo_para_telefone = 6.0
 
 [node name="Pause" parent="." unique_id=1267958209 instance=ExtResource("2_dnyf3")]
 
 [node name="Player" parent="." unique_id=448699446 instance=ExtResource("1_pbbbw")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8378088, 1.6337886, -12.337379)
+max_health = null
+damage_camera_shake_strength = null
+WALK_SPEED_NORMAL = null
+damage_crescent_cogblade = null
+damage_pistol = null
+damage_headshoot = null
+JOY_SENSITIVITY = null
+DEADZONE = null
+head_bob_ON = null
+DASH_SPEED = null
+DASH_DURATION = null
+DASH_COOLDOWN = null
+cogblade_tilt_y = null
 
 [node name="ambient" type="Node3D" parent="." unique_id=1364159059]
 

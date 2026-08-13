@@ -57,6 +57,7 @@ var max_stamina: float = 100.0
 var current_stamina: float = 100.0
 var stamina_bar: ProgressBar
 var stamina_fade_timer: float = 0.0
+var is_exhausted: bool = false
 var mp_bar: ProgressBar
 
 var hud_layer: CanvasLayer
@@ -70,9 +71,9 @@ var heartbeat_tween: Tween
 const SPEED = 5.0
 const JUMP_VELOCITY = 4.5
 const SENSITIVITY = 0.003 # Sensibilidade do mouse
-@export var WALK_SPEED = 4.0
-@export var WALK_SPEED_NORMAL = 2.8
-@export var RUN_SPEED = 7.5 # Velocidade maior para a corrida
+@export var WALK_SPEED: float = 4.0
+@export var WALK_SPEED_NORMAL: float = 2.8
+@export var RUN_SPEED: float = 7.5 # Velocidade maior para a corrida
 
 #CHANGE LATER - DYNAMICLY
 @export var damage_crescent_cogblade:int = 20
@@ -91,12 +92,12 @@ var ammo_label: Label
 var ammo_icon: TextureRect
 
 # CONFIGURACAO DO CONTROLE
-@export var JOY_SENSITIVITY = 0.04 # Sensibilidade para o analógico
-@export var DEADZONE = 0.1
+@export var JOY_SENSITIVITY: float = 0.04 # Sensibilidade para o analógico
+@export var DEADZONE: float = 0.1
 
 
 # Configurações do balanço da tela (Bobbing)
-@export var head_bob_ON = true
+@export var head_bob_ON: bool = true
 var bob_freq = 2.0      # Frequência (quão rápido balança)
 var bob_amp = 0.05      # Amplitude (quão longe a câmera vai)
 var t_bob = 0.0         # Contador de tempo para o cálculo do Seno
@@ -124,6 +125,10 @@ var dash_direction : Vector3 = Vector3.ZERO
 @export var cogblade_tilt_x: float = 0.0 
 @export var cogblade_tilt_y: float = 0.0 
 @export var cogblade_tilt_z: float = 0.0 
+
+@export_group("Normal Maycow Run Visuals")
+@export var normal_run_offset_x: float = -0.1
+@export var normal_run_offset_z: float = 0.85
 
 #ORIGINAL POSITION FOR THE LEFT HAND
 var magic_hand_pos_original
@@ -488,8 +493,18 @@ var limite_rotacao_lateral = deg_to_rad(15) # O máximo que ele pode "virar" (ex
 var velocidade_giro = 4.0
 func _physics_process(delta: float) -> void:
 
+	var is_in_house = get_tree().current_scene.name == "the_house" if get_tree() and get_tree().current_scene else false
+	var can_run_normal = GlobalEvents.is_maycow_normal and not is_in_house
+	var stamina_active = not GlobalEvents.is_maycow_normal or can_run_normal
+	
+	# --- STAMINA EXHAUSTION LOGIC ---
+	if current_stamina <= 0.5:
+		is_exhausted = true
+	elif current_stamina >= 25.0:
+		is_exhausted = false
+		
 	# --- STAMINA LOGIC ---
-	var is_running_stam = Input.is_action_pressed("ui_run") and velocity.length() > 0.1 and current_stamina > 0
+	var is_running_stam = Input.is_action_pressed("ui_run") and velocity.length() > 0.1 and current_stamina > 0 and stamina_active and not is_exhausted
 	if is_running_stam:
 		current_stamina -= 20.0 * delta
 		if current_stamina < 0: current_stamina = 0
@@ -509,7 +524,7 @@ func _physics_process(delta: float) -> void:
 					stamina_bar.modulate.a = move_toward(stamina_bar.modulate.a, 0.0, delta)
 	
 	if is_instance_valid(stamina_bar):
-		stamina_bar.visible = not GlobalEvents.is_maycow_normal
+		stamina_bar.visible = stamina_active
 		stamina_bar.max_value = max_stamina
 		stamina_bar.value = current_stamina
 		
@@ -620,7 +635,7 @@ func _physics_process(delta: float) -> void:
 				is_dashing = false
 		else:
 			# MOVIMENTO NORMAL (WALK/RUN)
-			var velocidade_atual = RUN_SPEED if (Input.is_action_pressed("ui_run") and current_stamina > 0) else WALK_SPEED
+			var velocidade_atual = RUN_SPEED if (Input.is_action_pressed("ui_run") and current_stamina > 0 and not is_exhausted) else WALK_SPEED
 			var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 			var velocity_Y_zero: bool = velocity.y <= 0
 
@@ -654,8 +669,8 @@ func _physics_process(delta: float) -> void:
 		# FX DURANTE CORRIDA (FOV e Blur leve)
 		var camera = get_viewport().get_camera_3d()
 		if camera and not is_dashing:
-			var is_running = Input.is_action_pressed("ui_run") and velocity.length() > 0.1 and current_stamina > 0
-			var target_run_fov = 85.0 if is_running else 75.0
+			var is_running = Input.is_action_pressed("ui_run") and velocity.length() > 0.1 and current_stamina > 0 and not is_exhausted and not is_exhausted
+			var target_run_fov = 95.0 if is_running else 75.0
 			camera.fov = lerp(camera.fov, target_run_fov, 5.0 * delta)
 			
 
@@ -699,7 +714,8 @@ func _physics_process(delta: float) -> void:
 		var input_dir := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 		
 		# MOVIMENTO NORMAL (WALK/RUN)
-		var velocidade_atual = WALK_SPEED_NORMAL
+		var is_running = Input.is_action_pressed("ui_run") and current_stamina > 0 and can_run_normal and not is_exhausted
+		var velocidade_atual = RUN_SPEED if is_running else WALK_SPEED_NORMAL
 		var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 		var velocity_Y_zero: bool = velocity.y <= 0
 		var target_fov: float = 75.0
@@ -710,22 +726,28 @@ func _physics_process(delta: float) -> void:
 			
 			if is_on_floor():
 				# Calcula se a direção do movimento é paralela ou oposta à frente do personagem
-				# transform.basis.z aponta para a "trás" padrão no Godot (ou ajustado ao seu modelo)
-				# O produto escalar nos dá um valor positivo se for para a frente e negativo se for para trás
 				if alinhamento < -0.2:
 					# Movimento para trás
 					playback.travel("walk_back")
 					target_fov = 55.0
 				else:
-					# Movimento para frente
-					playback.travel("walk")
+					# Movimento para frente ou corrida
+					if is_running:
+						playback.travel("run")
+						target_fov = 95.0
+					else:
+						playback.travel("walk")
 			
 			if !passos.playing and is_on_floor(): 
 				if alinhamento < -0.2:
 					passos.pitch_scale = randf_range(0.95, 1.05)
+					passos.volume_db = randf_range(-11.0, -8.0)
+				elif is_running:
+					passos.pitch_scale = randf_range(1.15, 1.3)
+					passos.volume_db = randf_range(-8.0, -5.0)
 				else:
 					passos.pitch_scale = randf_range(0.85, 0.95)
-				passos.volume_db = randf_range(-11.0, -8.0)
+					passos.volume_db = randf_range(-11.0, -8.0)
 				passos.play()
 			
 			velocity.x = direction.x * velocidade_atual
@@ -744,19 +766,23 @@ func _physics_process(delta: float) -> void:
 			camera.fov = lerp(camera.fov, target_fov, 5.0 * delta)
 
 
-		# 8. ROTAÇÃO VISUAL DO MODELO (MAYCOW LOPES NORMAL)
-		if input_dir.y <= 0.1: 
+		# 8. ROTAÇÃO VISUAL E POSIÇÃO DO MODELO (MAYCOW LOPES NORMAL)
+		var modelo = get_node_or_null("maycow_lopes_normal")
+		if modelo:
 			var alvo_y = 0.0
-			if input_dir.x > 0: alvo_y = -limite_rotacao_lateral 
-			elif input_dir.x < 0: alvo_y = limite_rotacao_lateral 
-
-			var modelo = get_node_or_null("maycow_lopes_normal")
-			if modelo:
-				modelo.rotation.y = lerp_angle(modelo.rotation.y, alvo_y, delta * velocidade_giro)
+			if input_dir.y <= 0.1: 
+				if input_dir.x > 0: alvo_y = -limite_rotacao_lateral 
+				elif input_dir.x < 0: alvo_y = limite_rotacao_lateral 
+			modelo.rotation.y = lerp_angle(modelo.rotation.y, alvo_y, delta * velocidade_giro)
+			
+			var target_pos_x = normal_run_offset_x if is_running else 0.0
+			var target_pos_z = normal_run_offset_z if is_running else 0.3995
+			modelo.position.x = lerp(modelo.position.x, target_pos_x, 5.0 * delta)
+			modelo.position.z = lerp(modelo.position.z, target_pos_z, 5.0 * delta)
 
 		# Inclinação e Encolhimento da arma 2D ao correr
 		if is_instance_valid(pistola) and typeof(pistol_2d_pos_original) == TYPE_VECTOR2:
-			var is_running = Input.is_action_pressed("ui_run") and velocity.length() > 0.1 and current_stamina > 0
+			is_running = Input.is_action_pressed("ui_run") and velocity.length() > 0.1 and current_stamina > 0 and not is_exhausted
 			# Rotação 2D (positivo = horário = descer ponta da arma) e empurrar para baixo/fora da tela
 			var target_tilt = deg_to_rad(35.0) if is_running else 0.0
 			var target_pos = pistol_2d_pos_original + (Vector2(50.0, 150.0) if is_running else Vector2.ZERO)

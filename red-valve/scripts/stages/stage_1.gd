@@ -13,6 +13,8 @@ var rain_scene = preload("res://scenes/effects/rain_effect.tscn")
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	if is_instance_valid(real_time_label):
+		real_time_label.queue_free()
 	SaveManager.save_game()
 	GlobalEvents.set_low_nevoa()
 	GlobalEvents.is_maycow_normal = true
@@ -67,7 +69,7 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	real_time_label.text = "Time: "+str(sky_3d.game_time)
+	#real_time_label.text = "Time: "+str(sky_3d.game_time)
 	
 	if player_na_oficina and Input.is_action_just_pressed("ui_accept"):
 		player_na_oficina = false
