@@ -484,8 +484,8 @@ func _input(event):
 # Adicione estas variáveis no topo do script (fora do _process) se ainda não tiver
 var hold_timer: float = 0.0
 var hold_threshold: float = 0.15 # 200 milisegundos para confirmar o "segurar"
-var limite_rotacao_lateral = deg_to_rad(35) # O máximo que ele pode "virar" (ex: 35 graus)
-var velocidade_giro = 8.0
+var limite_rotacao_lateral = deg_to_rad(15) # O máximo que ele pode "virar" (ex: 35 graus)
+var velocidade_giro = 4.0
 func _physics_process(delta: float) -> void:
 
 	# --- STAMINA LOGIC ---
@@ -715,7 +715,7 @@ func _physics_process(delta: float) -> void:
 				if alinhamento < -0.2:
 					# Movimento para trás
 					playback.travel("walk_back")
-					target_fov = 65.0
+					target_fov = 55.0
 				else:
 					# Movimento para frente
 					playback.travel("walk")
@@ -744,15 +744,15 @@ func _physics_process(delta: float) -> void:
 			camera.fov = lerp(camera.fov, target_fov, 5.0 * delta)
 
 
-		# 8. ROTAÇÃO VISUAL DO MODELO (MAYCOW LOPES)
-		#if input_dir.y <= 0.1: 
-			#var alvo_y = PI 
-			#if input_dir.x > 0: alvo_y = PI - limite_rotacao_lateral 
-			#elif input_dir.x < 0: alvo_y = PI + limite_rotacao_lateral 
-#
-			#var modelo = get_node_or_null("maycow_lopes_normal")
-			#if modelo:
-				#modelo.rotation.y = lerp_angle(modelo.rotation.y, alvo_y, delta * velocidade_giro)
+		# 8. ROTAÇÃO VISUAL DO MODELO (MAYCOW LOPES NORMAL)
+		if input_dir.y <= 0.1: 
+			var alvo_y = 0.0
+			if input_dir.x > 0: alvo_y = -limite_rotacao_lateral 
+			elif input_dir.x < 0: alvo_y = limite_rotacao_lateral 
+
+			var modelo = get_node_or_null("maycow_lopes_normal")
+			if modelo:
+				modelo.rotation.y = lerp_angle(modelo.rotation.y, alvo_y, delta * velocidade_giro)
 
 		# Inclinação e Encolhimento da arma 2D ao correr
 		if is_instance_valid(pistola) and typeof(pistol_2d_pos_original) == TYPE_VECTOR2:
