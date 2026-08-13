@@ -129,6 +129,8 @@ var dash_direction : Vector3 = Vector3.ZERO
 @export_group("Normal Maycow Run Visuals")
 @export var normal_run_offset_x: float = -0.1
 @export var normal_run_offset_z: float = 0.85
+@export var normal_walkback_offset_x: float = -0.05
+@export var normal_walkback_offset_z: float = 0.5
 
 #ORIGINAL POSITION FOR THE LEFT HAND
 var magic_hand_pos_original
@@ -729,7 +731,7 @@ func _physics_process(delta: float) -> void:
 				if alinhamento < -0.2:
 					# Movimento para trás
 					playback.travel("walk_back")
-					target_fov = 55.0
+					target_fov = 65.0
 				else:
 					# Movimento para frente ou corrida
 					if is_running:
@@ -761,9 +763,10 @@ func _physics_process(delta: float) -> void:
 			if passos.playing: 
 				passos.stop()
 
+		var fov_lerp_speed = 1.0 if target_fov == 65.0 else 5.0
 		var camera = get_viewport().get_camera_3d()
 		if camera:
-			camera.fov = lerp(camera.fov, target_fov, 5.0 * delta)
+			camera.fov = lerp(camera.fov, target_fov, fov_lerp_speed * delta)
 
 
 		# 8. ROTAÇÃO VISUAL E POSIÇÃO DO MODELO (MAYCOW LOPES NORMAL)
@@ -775,8 +778,15 @@ func _physics_process(delta: float) -> void:
 				elif input_dir.x < 0: alvo_y = limite_rotacao_lateral 
 			modelo.rotation.y = lerp_angle(modelo.rotation.y, alvo_y, delta * velocidade_giro)
 			
-			var target_pos_x = normal_run_offset_x if is_running else 0.0
-			var target_pos_z = normal_run_offset_z if is_running else 0.3995
+			var is_walking_back = direction and direction.dot(-global_transform.basis.z) < -0.2
+			var target_pos_x = 0.0
+			var target_pos_z = 0.3995
+			if is_running:
+				target_pos_x = normal_run_offset_x
+				target_pos_z = normal_run_offset_z
+			elif is_walking_back:
+				target_pos_x = normal_walkback_offset_x
+				target_pos_z = normal_walkback_offset_z
 			modelo.position.x = lerp(modelo.position.x, target_pos_x, 5.0 * delta)
 			modelo.position.z = lerp(modelo.position.z, target_pos_z, 5.0 * delta)
 
