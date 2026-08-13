@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dwq838axvh2l2"
-path="res://.godot/imported/with_power_5.png-990a4b1902d3e65c11923ee1a34fbc9c.ctex"
+uid="uid://dyff68q2h28ta"
+path="res://.godot/imported/scene_begin_3.png-c2ef9dd78337718019d861821c462581.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/cutscenes/prolog/fight_with_power/with_power_5.png"
-dest_files=["res://.godot/imported/with_power_5.png-990a4b1902d3e65c11923ee1a34fbc9c.ctex"]
+source_file="res://assets/cutscenes/prolog/scene_begin_3.png"
+dest_files=["res://.godot/imported/scene_begin_3.png-c2ef9dd78337718019d861821c462581.ctex"]
 
 [params]
 

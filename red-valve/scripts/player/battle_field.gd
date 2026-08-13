@@ -12,11 +12,7 @@ func _ready():
 func _physics_process(delta):
 	# ... seu código anterior ...
 	
-	if Input.is_action_just_pressed("ui_open_battle_field"):
-		toggle_battle_field(true)
-	
-	if Input.is_action_just_released("ui_open_battle_field"):
-		toggle_battle_field(false)
+	pass
 
 var tween_pulse: Tween # No topo do seu script
 func toggle_battle_field(open: bool):

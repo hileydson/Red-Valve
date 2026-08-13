@@ -8,11 +8,19 @@ extends Control
 var slides = [
 	{
 		"image_path": "res://assets/cutscenes/prolog/scene_begin_1.png",
-		"texts": ["PROLOG_BEGIN_1_1", "PROLOG_BEGIN_1_2"]
+		"texts": ["PROLOG_BEGIN_1_1", "PROLOG_BEGIN_1_2", "PROLOG_BEGIN_1_3", "PROLOG_BEGIN_1_4", "PROLOG_BEGIN_1_5"]
 	},
 	{
 		"image_path": "res://assets/cutscenes/prolog/scene_begin_2.png",
-		"texts": ["PROLOG_BEGIN_2_3", "PROLOG_BEGIN_2_4", "PROLOG_BEGIN_2_5"]
+		"texts": ["PROLOG_BEGIN_2_1"]
+	},
+	{
+		"image_path": "res://assets/cutscenes/prolog/scene_begin_3.png",
+		"texts": ["PROLOG_BEGIN_3_1", "PROLOG_BEGIN_3_2"]
+	},
+	{
+		"image_path": "res://assets/cutscenes/prolog/scene_begin_4.png",
+		"texts": ["PROLOG_BEGIN_4_1", "PROLOG_BEGIN_4_2", "PROLOG_BEGIN_4_3", "PROLOG_BEGIN_4_4"]
 	}
 ]
 

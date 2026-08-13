@@ -28,7 +28,7 @@ var next_scene_path: String = ""
 var is_loading: bool = false
 var progress_array: Array = []
 var elapsed_load_time: float = 0.0
-var min_load_time: float = 2.5 # Tempo mínimo garantido que a tela de loading vai ficar visível
+var min_load_time: float = 1.5 # Tempo mínimo garantido que a tela de loading vai ficar visível
 
 var original_master_volume: float = 0.0
 var master_bus_index: int = 0
@@ -39,7 +39,7 @@ func _ready() -> void:
 	visible = false
 	progress_bar.value = 0
 	
-	timer.wait_time = 4.0
+	timer.wait_time = 2.5
 	timer.timeout.connect(_on_timer_timeout)
 
 func load_scene(path: String) -> void:
@@ -54,17 +54,15 @@ func load_scene(path: String) -> void:
 	
 	# Fade in loading screen
 	visible = true
-	bg.modulate.a = 0.0
+	bg.modulate.a = 1.0
+	progress_bar.modulate.a = 1.0
+	title_label.modulate.a = 1.0
 	texture_rect.modulate.a = 0.0
-	progress_bar.modulate.a = 0.0
-	title_label.modulate.a = 0.0
 	desc_label.modulate.a = 0.0
+	
 	var tween = create_tween().set_parallel(true)
-	tween.tween_property(bg, "modulate:a", 1.0, 0.3)
-	tween.tween_property(texture_rect, "modulate:a", 1.0, 0.3)
-	tween.tween_property(progress_bar, "modulate:a", 1.0, 0.3)
-	tween.tween_property(title_label, "modulate:a", 1.0, 0.3)
-	tween.tween_property(desc_label, "modulate:a", 1.0, 0.3)
+	tween.tween_property(texture_rect, "modulate:a", 1.0, 0.5)
+	tween.tween_property(desc_label, "modulate:a", 1.0, 0.5)
 	
 	original_master_volume = AudioServer.get_bus_volume_db(master_bus_index)
 	tween.tween_method(func(v): AudioServer.set_bus_volume_db(master_bus_index, v), original_master_volume, -60.0, 0.3)
@@ -102,13 +100,17 @@ func _process(_delta: float) -> void:
 		
 		# Fade out loading screen
 		var tween = create_tween().set_parallel(true)
-		tween.tween_property(bg, "modulate:a", 0.0, 0.5)
-		tween.tween_property(texture_rect, "modulate:a", 0.0, 0.5)
-		tween.tween_property(progress_bar, "modulate:a", 0.0, 0.5)
-		tween.tween_property(title_label, "modulate:a", 0.0, 0.5)
-		tween.tween_property(desc_label, "modulate:a", 0.0, 0.5)
+		# Apenas as imagens e textos
+		tween.tween_property(texture_rect, "modulate:a", 0.0, 0.4)
+		tween.tween_property(desc_label, "modulate:a", 0.0, 0.4)
 		tween.tween_method(func(v): AudioServer.set_bus_volume_db(master_bus_index, v), -60.0, original_master_volume, 0.5)
-		tween.chain().tween_callback(func(): visible = false)
+		
+		tween.chain().tween_callback(func(): 
+			visible = false
+			bg.modulate.a = 1.0
+			progress_bar.modulate.a = 1.0
+			title_label.modulate.a = 1.0
+		)
 		
 	elif status == ResourceLoader.THREAD_LOAD_FAILED or status == ResourceLoader.THREAD_LOAD_INVALID_RESOURCE:
 		is_loading = false

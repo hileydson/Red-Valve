@@ -9,48 +9,28 @@ var slides = [
 	{
 		"image_path": "res://assets/cutscenes/prolog/fight_with_power/with_power_1.png",
 		"texts": [
-			"WITH_POWER_1_1", "WITH_POWER_1_2", "WITH_POWER_1_3", "WITH_POWER_1_4"
+			"WITH_POWER_1_1", "WITH_POWER_1_2", "WITH_POWER_1_3", "WITH_POWER_1_4",
+			"WITH_POWER_1_5"
 		]
 	},
 	{
 		"image_path": "res://assets/cutscenes/prolog/fight_with_power/with_power_2.png",
 		"texts": [
-			"WITH_POWER_2_1", "WITH_POWER_2_2", "WITH_POWER_2_3", "WITH_POWER_2_4", "WITH_POWER_2_5"
+			"WITH_POWER_2_1", "WITH_POWER_2_2", "WITH_POWER_2_3", "WITH_POWER_2_4",
+			"WITH_POWER_2_5", "WITH_POWER_2_6", "WITH_POWER_2_7"
 		]
 	},
 	{
 		"image_path": "res://assets/cutscenes/prolog/fight_with_power/with_power_3.png",
 		"texts": [
 			"WITH_POWER_3_1", "WITH_POWER_3_2", "WITH_POWER_3_3", "WITH_POWER_3_4",
-			"WITH_POWER_3_5", "WITH_POWER_3_6", "WITH_POWER_3_7", "WITH_POWER_3_8"
+			"WITH_POWER_3_5"
 		]
 	},
 	{
 		"image_path": "res://assets/cutscenes/prolog/fight_with_power/with_power_4.png",
 		"texts": [
 			"WITH_POWER_4_1", "WITH_POWER_4_2", "WITH_POWER_4_3"
-		]
-	},
-	{
-		"image_path": "res://assets/cutscenes/prolog/fight_with_power/with_power_5.png",
-		"texts": [
-			"WITH_POWER_5_1", "WITH_POWER_5_2", "WITH_POWER_5_3", "WITH_POWER_5_4",
-			"WITH_POWER_5_5", "WITH_POWER_5_6", "WITH_POWER_5_7"
-		]
-	},
-	{
-		"image_path": "res://assets/cutscenes/prolog/fight_with_power/with_power_6.png",
-		"texts": [
-			"WITH_POWER_6_1", "WITH_POWER_6_2", "WITH_POWER_6_3", "WITH_POWER_6_4",
-			"WITH_POWER_6_5", "WITH_POWER_6_6"
-		]
-	},
-	{
-		"image_path": "res://assets/cutscenes/prolog/fight_with_power/with_power_7.png",
-		"texts": [
-			"WITH_POWER_7_1", "WITH_POWER_7_2", "WITH_POWER_7_3", "WITH_POWER_7_4",
-			"WITH_POWER_7_5", "WITH_POWER_7_6", "WITH_POWER_7_7", "WITH_POWER_7_8",
-			"WITH_POWER_7_9"
 		]
 	}
 ]

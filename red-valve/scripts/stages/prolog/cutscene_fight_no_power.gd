@@ -9,36 +9,33 @@ var slides = [
 	{
 		"image_path": "res://assets/cutscenes/prolog/fight_no_power/no_power_1.png",
 		"texts": [
-			"NO_POWER_1_SUM_1", "NO_POWER_1_SUM_2", "NO_POWER_1_SUM_3"
+			"NO_POWER_1_1", "NO_POWER_1_2", "NO_POWER_1_3", "NO_POWER_1_4",
+			"NO_POWER_1_5", "NO_POWER_1_6"
 		]
 	},
 	{
 		"image_path": "res://assets/cutscenes/prolog/fight_no_power/no_power_2.png",
-		"texts": ["NO_POWER_2_01", "NO_POWER_2_02"]
+		"texts": [
+			"NO_POWER_2_1", "NO_POWER_2_2", "NO_POWER_2_3", "NO_POWER_2_4",
+			"NO_POWER_2_5"
+		]
 	},
 	{
 		"image_path": "res://assets/cutscenes/prolog/fight_no_power/no_power_3.png",
 		"texts": [
-			"NO_POWER_3_SUM_1", "NO_POWER_3_SUM_2", "NO_POWER_3_SUM_3", "NO_POWER_3_SUM_4"
+			"NO_POWER_3_1", "NO_POWER_3_2", "NO_POWER_3_3", "NO_POWER_3_4"
 		]
 	},
 	{
 		"image_path": "res://assets/cutscenes/prolog/fight_no_power/no_power_4.png",
 		"texts": [
-			"NO_POWER_4_01", "NO_POWER_4_02", "NO_POWER_4_03", "NO_POWER_4_04",
-			"NO_POWER_4_05", "NO_POWER_4_06", "NO_POWER_4_07"
+			"NO_POWER_4_1", "NO_POWER_4_2", "NO_POWER_4_3", "NO_POWER_4_4"
 		]
 	},
 	{
 		"image_path": "res://assets/cutscenes/prolog/fight_no_power/no_power_5.png",
 		"texts": [
-			"NO_POWER_5_SUM_1", "NO_POWER_5_SUM_2", "NO_POWER_5_SUM_3", "NO_POWER_5_SUM_4"
-		]
-	},
-	{
-		"image_path": "res://assets/cutscenes/prolog/fight_no_power/no_power_6.png",
-		"texts": [
-			"NO_POWER_6_SUM_1", "NO_POWER_6_SUM_2", "NO_POWER_6_SUM_3", "NO_POWER_6_SUM_4"
+			"NO_POWER_5_1", "NO_POWER_5_2", "NO_POWER_5_3", "NO_POWER_5_4"
 		]
 	}
 ]
