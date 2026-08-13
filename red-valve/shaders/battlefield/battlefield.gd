@@ -86,7 +86,7 @@ func _start_final_sequence() -> void:
 	
 	# 5. Restaura e vai para a Cutscene
 	Engine.time_scale = 1.0
-	get_tree().change_scene_to_file("res://scenes/stages/prolog/cutscene_end_first_fight.tscn")
+	get_tree().change_scene_to_file("res://scenes/stages/prolog/fight_with_power/cutscene_fight_with_power.tscn")
 
 
 func iniciar_cutscene() -> void:

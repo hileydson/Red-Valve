@@ -8,23 +8,30 @@ extends Control
 var slides = [
 	{
 		"image_path": "res://assets/cutscenes/prolog/end_first_fight/end_fight_1.png",
-		"texts": ["PROLOG_END_FIGHT_1_1", "PROLOG_END_FIGHT_1_2", "PROLOG_END_FIGHT_1_3"]
+		"texts": [
+			"END_FIGHT_1_1", "END_FIGHT_1_2", "END_FIGHT_1_3", "END_FIGHT_1_4",
+			"END_FIGHT_1_5"
+		]
 	},
 	{
 		"image_path": "res://assets/cutscenes/prolog/end_first_fight/end_fight_2.png",
-		"texts": ["PROLOG_END_FIGHT_2_1", "PROLOG_END_FIGHT_2_2"]
+		"texts": [
+			"END_FIGHT_2_1", "END_FIGHT_2_2", "END_FIGHT_2_3", "END_FIGHT_2_4",
+			"END_FIGHT_2_5", "END_FIGHT_2_6", "END_FIGHT_2_7"
+		]
 	},
 	{
 		"image_path": "res://assets/cutscenes/prolog/end_first_fight/end_fight_3.png",
-		"texts": ["PROLOG_END_FIGHT_3_1", "PROLOG_END_FIGHT_3_2", "PROLOG_END_FIGHT_3_3", "PROLOG_END_FIGHT_3_4"]
+		"texts": [
+			"END_FIGHT_3_1", "END_FIGHT_3_2", "END_FIGHT_3_3", "END_FIGHT_3_4",
+			"END_FIGHT_3_5"
+		]
 	},
 	{
 		"image_path": "res://assets/cutscenes/prolog/end_first_fight/end_fight_4.png",
-		"texts": ["PROLOG_END_FIGHT_4_1", "PROLOG_END_FIGHT_4_2", "PROLOG_END_FIGHT_4_3", "PROLOG_END_FIGHT_4_4"]
-	},
-	{
-		"image_path": "res://assets/cutscenes/prolog/end_first_fight/end_fight_5.png",
-		"texts": ["PROLOG_END_FIGHT_5_1", "PROLOG_END_FIGHT_5_2", "PROLOG_END_FIGHT_5_3", "PROLOG_END_FIGHT_5_4"]
+		"texts": [
+			"END_FIGHT_4_1", "END_FIGHT_4_2", "END_FIGHT_4_3"
+		]
 	}
 ]
 
@@ -37,6 +44,15 @@ var waiting_for_input: bool = false
 var finished: bool = false
 
 func _ready() -> void:
+	# -- INJEÇÃO DO FILTRO VHS --
+	var vhs_mat = ShaderMaterial.new()
+	vhs_mat.shader = load("res://shaders/vhs_filter.gdshader")
+	if "image_rect" in self and self.get("image_rect") != null:
+		self.get("image_rect").material = vhs_mat
+	elif has_node("ImageRect"):
+		get_node("ImageRect").material = vhs_mat
+	# ---------------------------
+
 	# Instancia o UI de Skip
 	var skip_layer = CanvasLayer.new()
 	skip_layer.layer = 128
@@ -163,8 +179,8 @@ func finish_cutscene() -> void:
 	# Despausa o jogo caso a cutscene estivesse pausada
 	get_tree().paused = false
 	
-	# Transição para a próxima cena (prolog_end)
-	get_tree().change_scene_to_file("res://scenes/stages/prolog/prolog_end.tscn")
+	# Transição para a próxima cena (battlefield_1)
+	get_tree().change_scene_to_file("res://scenes/stages/battlefield/battlefield_1.tscn")
 
 
 func _process(delta: float) -> void:

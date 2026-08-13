@@ -15,7 +15,7 @@ var slides = [
 		"texts": ["PROLOG_PHONE_2_1", "PROLOG_PHONE_2_2", "PROLOG_PHONE_2_3", "PROLOG_PHONE_2_4", "PROLOG_PHONE_2_5", "PROLOG_PHONE_2_6", "PROLOG_PHONE_2_7", "PROLOG_PHONE_2_8"]
 	},
 	{
-		"image_path": "res://assets/cutscenes/prolog/scene_telefone_3.png",
+		"image_path": "res://assets/cutscenes/prolog/scene_telefone_4.png",
 		"texts": ["PROLOG_PHONE_3_1", "PROLOG_PHONE_3_2", "PROLOG_PHONE_3_3", "PROLOG_PHONE_3_4"]
 	}
 ]
@@ -29,6 +29,15 @@ var waiting_for_input: bool = false
 var finished: bool = false
 
 func _ready() -> void:
+	# -- INJEÇÃO DO FILTRO VHS --
+	var vhs_mat = ShaderMaterial.new()
+	vhs_mat.shader = load("res://shaders/vhs_filter.gdshader")
+	if "image_rect" in self and self.get("image_rect") != null:
+		self.get("image_rect").material = vhs_mat
+	elif has_node("ImageRect"):
+		get_node("ImageRect").material = vhs_mat
+	# ---------------------------
+
 	GlobalEvents.in_cutscene = true
 	
 	# Instancia o UI de Skip

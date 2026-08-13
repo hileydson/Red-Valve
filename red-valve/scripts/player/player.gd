@@ -1405,7 +1405,7 @@ func _trigger_game_over() -> void:
 		if fade:
 			fade.fade_out()
 			await get_tree().create_timer(1.5).timeout
-		get_tree().change_scene_to_file("res://scenes/stages/prolog/fight_with_power/cutscene_fight_with_power.tscn")
+		get_tree().change_scene_to_file("res://scenes/stages/prolog/cutscene_end_first_fight.tscn")
 		return
 		
 	var game_over_script = load("res://scripts/ui/game_over.gd")

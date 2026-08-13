@@ -9,28 +9,25 @@ var slides = [
 	{
 		"image_path": "res://assets/cutscenes/prolog/fight_with_power/with_power_1.png",
 		"texts": [
-			"WITH_POWER_1_1", "WITH_POWER_1_2", "WITH_POWER_1_3", "WITH_POWER_1_4",
-			"WITH_POWER_1_5"
+			"WITH_POWER_1_1", "WITH_POWER_1_2", "WITH_POWER_1_3", "WITH_POWER_1_4"
 		]
 	},
 	{
 		"image_path": "res://assets/cutscenes/prolog/fight_with_power/with_power_2.png",
 		"texts": [
-			"WITH_POWER_2_1", "WITH_POWER_2_2", "WITH_POWER_2_3", "WITH_POWER_2_4",
-			"WITH_POWER_2_5", "WITH_POWER_2_6", "WITH_POWER_2_7"
+			"WITH_POWER_2_1", "WITH_POWER_2_2", "WITH_POWER_2_3"
 		]
 	},
 	{
 		"image_path": "res://assets/cutscenes/prolog/fight_with_power/with_power_3.png",
 		"texts": [
-			"WITH_POWER_3_1", "WITH_POWER_3_2", "WITH_POWER_3_3", "WITH_POWER_3_4",
-			"WITH_POWER_3_5"
+			"WITH_POWER_3_1", "WITH_POWER_3_2", "WITH_POWER_3_3"
 		]
 	},
 	{
 		"image_path": "res://assets/cutscenes/prolog/fight_with_power/with_power_4.png",
 		"texts": [
-			"WITH_POWER_4_1", "WITH_POWER_4_2", "WITH_POWER_4_3"
+			"WITH_POWER_4_1", "WITH_POWER_4_2", "WITH_POWER_4_3", "WITH_POWER_4_4"
 		]
 	}
 ]
@@ -44,6 +41,15 @@ var waiting_for_input: bool = false
 var finished: bool = false
 
 func _ready() -> void:
+	# -- INJEÇÃO DO FILTRO VHS --
+	var vhs_mat = ShaderMaterial.new()
+	vhs_mat.shader = load("res://shaders/vhs_filter.gdshader")
+	if "image_rect" in self and self.get("image_rect") != null:
+		self.get("image_rect").material = vhs_mat
+	elif has_node("ImageRect"):
+		get_node("ImageRect").material = vhs_mat
+	# ---------------------------
+
 	# Instancia o UI de Skip
 	var skip_layer = CanvasLayer.new()
 	skip_layer.layer = 128
@@ -157,8 +163,8 @@ func finish_cutscene() -> void:
 	fade.fade_out()
 	await get_tree().create_timer(2.0).timeout
 	
-	# Muda a cena diretamente para o battlefield_1
-	get_tree().change_scene_to_file("res://scenes/stages/battlefield/battlefield_1.tscn")
+	# Muda a cena para prolog_end
+	get_tree().change_scene_to_file("res://scenes/stages/prolog/prolog_end.tscn")
 
 func _process(delta: float) -> void:
 	if waiting_for_input and not is_transitioning:

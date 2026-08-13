@@ -49,6 +49,15 @@ var waiting_for_input: bool = false
 var finished: bool = false
 
 func _ready() -> void:
+	# -- INJEÇÃO DO FILTRO VHS --
+	var vhs_mat = ShaderMaterial.new()
+	vhs_mat.shader = load("res://shaders/vhs_filter.gdshader")
+	if "image_rect" in self and self.get("image_rect") != null:
+		self.get("image_rect").material = vhs_mat
+	elif has_node("ImageRect"):
+		get_node("ImageRect").material = vhs_mat
+	# ---------------------------
+
 	# Instancia o UI de Skip
 	var skip_layer = CanvasLayer.new()
 	skip_layer.layer = 128

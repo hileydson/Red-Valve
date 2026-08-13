@@ -26,8 +26,8 @@ func _ready() -> void:
 	ashen.volume_db = -80.0
 	fire.volume_db = -80.0
 	var audio_in_tween = create_tween().set_parallel(true)
-	audio_in_tween.tween_property(ashen, "volume_db", ashen_target, 4.0)
-	audio_in_tween.tween_property(fire, "volume_db", fire_target, 4.0)
+	audio_in_tween.tween_property(ashen, "volume_db", ashen_target, 8.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	audio_in_tween.tween_property(fire, "volume_db", fire_target, 0.8)
 	
 	var tween = create_tween().set_loops()
 	# TAU = 360 graus em radianos. 
