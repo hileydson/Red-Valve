@@ -16,11 +16,11 @@ var loading_images: Array = [
 ]
 
 var image_descriptions: Array = [
-	"Anti-Lopes: Criaturas que habitam os arredores esquecidos.",
-	"A Válvula Vermelha: O artefato que rasgou a realidade.",
-	"Projétil 'The Negotiator': Feito para perfurar qualquer armadura.",
-	"The Negotiator (V1): Uma arma poderosa e rústica.",
-	"The Negotiator (V2): A evolução do poder de fogo."
+	"LOADING_TEXT_1",
+	"LOADING_TEXT_2",
+	"LOADING_TEXT_3",
+	"LOADING_TEXT_4",
+	"LOADING_TEXT_5"
 ]
 
 var current_image_index: int = 0
@@ -46,7 +46,7 @@ func load_scene(path: String) -> void:
 	next_scene_path = path
 	current_image_index = randi() % loading_images.size()
 	texture_rect.texture = loading_images[current_image_index]
-	desc_label.text = image_descriptions[current_image_index]
+	desc_label.text = tr(image_descriptions[current_image_index])
 	
 	progress_bar.value = 0
 	progress_array.clear()
@@ -125,7 +125,7 @@ func _on_timer_timeout() -> void:
 	tween.tween_property(desc_label, "modulate:a", 0.0, 0.5)
 	tween.chain().tween_callback(func(): 
 		texture_rect.texture = loading_images[current_image_index]
-		desc_label.text = image_descriptions[current_image_index]
+		desc_label.text = tr(image_descriptions[current_image_index])
 	)
 	tween.tween_property(texture_rect, "modulate:a", 1.0, 0.5)
 	tween.parallel().tween_property(desc_label, "modulate:a", 1.0, 0.5)

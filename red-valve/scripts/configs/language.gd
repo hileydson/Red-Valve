@@ -22,9 +22,13 @@ func _process(delta: float) -> void:
 
 func _on_english_pressed() -> void:
 	TranslationServer.set_locale("en_US")
+	SaveManager.config["language"] = "en"
+	SaveManager.save_config()
 	get_tree().change_scene_to_file("res://scenes/configs/intro_godot_video.tscn")
 
 
 func _on_portuguese_pressed() -> void:
 	TranslationServer.set_locale("pt_BR")
+	SaveManager.config["language"] = "pt"
+	SaveManager.save_config()
 	get_tree().change_scene_to_file("res://scenes/configs/intro_godot_video.tscn")
