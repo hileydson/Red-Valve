@@ -399,11 +399,12 @@ func iniciar_cutscene() -> void:
 	await get_tree().create_timer(0.5).timeout
 	
 	# ---------------------------------------------------------
-	# FASE 5: Câmera que roda o inimigo e vai para o player
+	# FASE 5: Câmera que roda o inimigo e se aproxima
 	# ---------------------------------------------------------
 	player.visible = true
 	
-	var orbit_radius = 4.0
+	var start_orbit_radius = 4.0
+	var end_orbit_radius = 1.2
 	var orbit_center = enemy_pos + Vector3(0, 1.5, 0)
 	var dir_enemy_to_player = (player_pos - enemy_pos).normalized()
 	var base_angle = atan2(dir_enemy_to_player.x, dir_enemy_to_player.z)
@@ -413,7 +414,8 @@ func iniciar_cutscene() -> void:
 	var orbit_tween = create_tween()
 	orbit_tween.tween_method(func(progress: float):
 		var angle = base_angle + (progress * TAU * 0.75)
-		var cam_pos = orbit_center + Vector3(sin(angle) * orbit_radius, 0.3, cos(angle) * orbit_radius)
+		var current_radius = lerp(start_orbit_radius, end_orbit_radius, progress)
+		var cam_pos = orbit_center + Vector3(sin(angle) * current_radius, 0.3, cos(angle) * current_radius)
 		camera_oficina.global_position = cam_pos
 		camera_oficina.look_at(orbit_center, Vector3.UP)
 	, 0.0, 1.0, 3.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
