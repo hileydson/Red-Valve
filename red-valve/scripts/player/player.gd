@@ -1519,7 +1519,7 @@ func _on_bullet_touch_body_entered(body: Node3D) -> void:
 	spawn_blood_effect(body)
 	
 func add_cogblade_power(amount: float) -> void:
-	if GlobalEvents.is_maycow_normal or not cogblade_hud: return
+	if GlobalEvents.is_maycow_normal or not cogblade_hud or is_using_ultimate: return
 	cogblade_power_value = clamp(cogblade_power_value + amount, 0.0, 100.0)
 	if cogblade_hud: cogblade_hud.value = cogblade_power_value
 	
@@ -1567,6 +1567,14 @@ func update_equipment_visuals() -> void:
 
 func _activate_cogblade_ultimate() -> void:
 	is_using_ultimate = true
+	cogblade_power_value = 0.0
+	cogblade_pulsing = false
+	if cogblade_pulse_tween: cogblade_pulse_tween.kill()
+	if cogblade_particles: cogblade_particles.emitting = false
+	if cogblade_hud:
+		cogblade_hud.value = 0.0
+		cogblade_hud.tint_progress = Color(1, 1, 1, 1.0)
+		cogblade_hud.modulate = Color(1, 1, 1, 1.0)
 	
 	# Cancela a lâmina se estiver no ar/retornando (evita glitch de velocidade)
 	is_blade_returning = false
