@@ -20,19 +20,23 @@ func toogle_pause():
 	if get_tree().paused:
 		get_tree().paused = false
 		self.visible = false
+		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	else:
 		get_tree().paused = true
 		self.visible = true
+		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 		resume.grab_focus()
 
 func _on_resume_pressed() -> void:
 	get_tree().paused = false
 	self.visible = false
+	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 
 func _on_exit_pressed() -> void:
 	get_tree().paused = false
 	self.visible = false
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	get_tree().change_scene_to_file("res://scenes/configs/main_menu.tscn")
 
 func _on_config_pressed() -> void:

@@ -25,6 +25,8 @@ var controls_text: RichTextLabel
 
 # Video Tab
 var tab_video: MarginContainer
+var display_label: Label
+var display_option: OptionButton
 var res_label: Label
 var resolution_option: OptionButton
 var brightness_label: Label
@@ -33,11 +35,13 @@ var brightness_slider: HSlider
 func _ready() -> void:
 	self.layer = 130 # Fica acima de tudo
 	self.process_mode = Node.PROCESS_MODE_ALWAYS
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	
 	# Fundo
 	bg = ColorRect.new()
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
 	bg.color = Color(0, 0, 0, 0.95)
+	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(bg)
 	
 	# Container Principal Centralizado na tela toda
@@ -240,8 +244,28 @@ func _build_video_tab():
 	tab_video.add_theme_constant_override("margin_bottom", 30)
 	
 	var vbox = VBoxContainer.new()
-	vbox.add_theme_constant_override("separation", 25)
+	vbox.add_theme_constant_override("separation", 20)
 	tab_video.add_child(vbox)
+	
+	# Display Mode
+	display_label = Label.new()
+	display_label.text = tr("CONFIG_DISPLAY_MODE")
+	display_label.add_theme_font_size_override("font_size", 20)
+	vbox.add_child(display_label)
+	
+	display_option = OptionButton.new()
+	display_option.add_theme_font_size_override("font_size", 20)
+	display_option.add_item(tr("CONFIG_DISPLAY_FULLSCREEN"), 0)
+	display_option.add_item(tr("CONFIG_DISPLAY_WINDOWED"), 1)
+	
+	var cur_mode = SaveManager.config.get("display_mode", "windowed")
+	if cur_mode == "fullscreen":
+		display_option.select(0)
+	else:
+		display_option.select(1)
+		
+	display_option.item_selected.connect(_on_display_mode_selected)
+	vbox.add_child(display_option)
 	
 	# Resolution
 	res_label = Label.new()
@@ -279,6 +303,13 @@ func _build_video_tab():
 	
 	tab_container.add_child(tab_video)
 
+func _on_display_mode_selected(index: int):
+	if index == 0:
+		SaveManager.config["display_mode"] = "fullscreen"
+	else:
+		SaveManager.config["display_mode"] = "windowed"
+	SaveManager.apply_configs()
+
 func _on_resolution_selected(index: int):
 	if index == 0: SaveManager.config["resolution"] = "720p"
 	elif index == 1: SaveManager.config["resolution"] = "1080p"
@@ -306,6 +337,11 @@ func _on_lang_selected(index: int) -> void:
 	if is_instance_valid(sens_aim_label): sens_aim_label.text = tr("CONFIG_SENS_AIM")
 	if is_instance_valid(commands_label): commands_label.text = tr("CONFIG_MAPPED_CONTROLS")
 	if is_instance_valid(controls_text): _update_controls_text()
+	
+	if is_instance_valid(display_label): display_label.text = tr("CONFIG_DISPLAY_MODE")
+	if is_instance_valid(display_option):
+		display_option.set_item_text(0, tr("CONFIG_DISPLAY_FULLSCREEN"))
+		display_option.set_item_text(1, tr("CONFIG_DISPLAY_WINDOWED"))
 	
 	if is_instance_valid(res_label): res_label.text = tr("CONFIG_RESOLUTION")
 	if is_instance_valid(brightness_label): brightness_label.text = tr("CONFIG_BRIGHTNESS")

@@ -19,6 +19,7 @@ var default_config = {
 	"sensitivity_look": 1.0,
 	"sensitivity_aim": 0.4,
 	"resolution": "1080p",
+	"display_mode": "windowed",
 	"brightness": 1.0
 }
 
@@ -107,16 +108,21 @@ func _ready():
 func apply_configs() -> void:
 	TranslationServer.set_locale(config["language"])
 	
-	var res_map = {
-		"720p": Vector2i(1280, 720),
-		"1080p": Vector2i(1920, 1080),
-		"1440p": Vector2i(2560, 1440)
-	}
-	if config["resolution"] in res_map:
-		DisplayServer.window_set_size(res_map[config["resolution"]])
-		var screen_size = DisplayServer.screen_get_size()
-		var win_size = DisplayServer.window_get_size()
-		DisplayServer.window_set_position((screen_size - win_size) / 2)
+	var is_fullscreen = config.get("display_mode", "windowed") == "fullscreen"
+	if is_fullscreen:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN)
+	else:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+		var res_map = {
+			"720p": Vector2i(1280, 720),
+			"1080p": Vector2i(1920, 1080),
+			"1440p": Vector2i(2560, 1440)
+		}
+		if config["resolution"] in res_map:
+			DisplayServer.window_set_size(res_map[config["resolution"]])
+			var screen_size = DisplayServer.screen_get_size()
+			var win_size = DisplayServer.window_get_size()
+			DisplayServer.window_set_position((screen_size - win_size) / 2)
 		
 	var actions = ["ui_left", "ui_right", "ui_up", "ui_down", "ui_look_left", "ui_look_right", "ui_look_up", "ui_look_down"]
 	for action in actions:

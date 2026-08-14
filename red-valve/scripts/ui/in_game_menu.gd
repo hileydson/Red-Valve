@@ -30,11 +30,18 @@ func _ready() -> void:
 	self.layer = 129 # Acima das mensagens do jogo (128) e no mesmo nível do Pause
 	self.process_mode = Node.PROCESS_MODE_ALWAYS
 	get_tree().paused = true
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	
 	# Fundo
 	bg = ColorRect.new()
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
 	bg.color = Color(0, 0, 0, 0.7)
+	bg.mouse_filter = Control.MOUSE_FILTER_PASS
+	bg.gui_input.connect(func(event: InputEvent):
+		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			if action_menu_open:
+				close_action_menu()
+	)
 	add_child(bg)
 	
 	# Header Tabs Carousel
@@ -53,6 +60,16 @@ func _ready() -> void:
 		lbl.add_theme_font_size_override("font_size", 40)
 		lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		lbl.mouse_filter = Control.MOUSE_FILTER_STOP
+		var tab_idx = i
+		lbl.gui_input.connect(func(event: InputEvent):
+			if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+				if current_tab != tab_idx:
+					current_tab = tab_idx
+					if action_menu_open:
+						close_action_menu()
+					update_ui()
+		)
 		carousel_container.add_child(lbl)
 		carousel_labels.append(lbl)
 	
@@ -95,6 +112,7 @@ func _ready() -> void:
 	for i in range(grid_cols * grid_rows):
 		var slot = Panel.new()
 		slot.custom_minimum_size = Vector2(100, 100)
+		slot.mouse_filter = Control.MOUSE_FILTER_STOP
 		
 		# Estilo do painel
 		var style = StyleBoxFlat.new()
@@ -112,6 +130,7 @@ func _ready() -> void:
 		tex.set_anchors_preset(Control.PRESET_FULL_RECT)
 		tex.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		tex.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		tex.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		slot.add_child(tex)
 		
 		# Quantidade
@@ -123,6 +142,7 @@ func _ready() -> void:
 		qtd.offset_right = -5
 		qtd.offset_bottom = -5
 		qtd.add_theme_font_size_override("font_size", 18)
+		qtd.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		slot.add_child(qtd)
 		
 		# Indicador Equipado
@@ -137,7 +157,23 @@ func _ready() -> void:
 		equip.add_theme_color_override("font_color", Color(0.2, 1.0, 0.2))
 		equip.text = "E"
 		equip.visible = false
+		equip.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		slot.add_child(equip)
+		
+		var slot_idx = i
+		slot.gui_input.connect(func(event: InputEvent):
+			if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+				if current_slot == slot_idx:
+					if current_item_selected != null and not action_menu_open:
+						open_action_menu()
+					elif action_menu_open:
+						close_action_menu()
+				else:
+					current_slot = slot_idx
+					if action_menu_open:
+						close_action_menu()
+					update_ui()
+		)
 		
 		grid_container.add_child(slot)
 		slot_panels.append(slot)
@@ -156,21 +192,34 @@ func _create_action_menu() -> void:
 	style.border_color = Color(0.8, 0.8, 0.8, 1)
 	action_menu_panel.add_theme_stylebox_override("panel", style)
 	action_menu_panel.visible = false
+	action_menu_panel.z_index = 20
 	
 	action_menu_vbox = VBoxContainer.new()
 	action_menu_panel.add_child(action_menu_vbox)
 	add_child(action_menu_panel)
 	
 	var options = ["Usar", "Equipar", "Inspecionar"]
-	for opt in options:
-		var lbl = Label.new()
-		lbl.text = opt
-		lbl.add_theme_font_size_override("font_size", 24)
-		lbl.set_custom_minimum_size(Vector2(150, 30))
-		lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		action_menu_vbox.add_child(lbl)
-		action_options.append(lbl)
+	for i in range(options.size()):
+		var opt_idx = i
+		var btn = Button.new()
+		btn.text = options[i]
+		btn.flat = true
+		btn.mouse_filter = Control.MOUSE_FILTER_STOP
+		btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+		btn.add_theme_font_size_override("font_size", 22)
+		btn.set_custom_minimum_size(Vector2(160, 36))
+		
+		btn.mouse_entered.connect(func():
+			action_menu_index = opt_idx
+			_render_action_menu()
+		)
+		btn.pressed.connect(func():
+			action_menu_index = opt_idx
+			execute_action()
+		)
+		
+		action_menu_vbox.add_child(btn)
+		action_options.append(btn)
 
 func update_ui() -> void:
 	# Animação do Carrossel
@@ -265,6 +314,7 @@ func _render_action_menu() -> void:
 	if not db_info: return
 	
 	action_menu_panel.visible = true
+	action_menu_panel.move_to_front()
 	var slot = slot_panels[current_slot]
 	action_menu_panel.global_position = slot.global_position + Vector2(slot.size.x / 2, slot.size.y / 2)
 	
@@ -275,7 +325,7 @@ func _render_action_menu() -> void:
 	if SaveManager.is_equipped(current_item_selected["id"]):
 		opts[1] = "Remover"
 	for i in range(3):
-		var lbl = action_options[i]
+		var btn = action_options[i] as Button
 		var enabled = false
 		
 		if i == 0 and type == "usable": enabled = true
@@ -284,12 +334,16 @@ func _render_action_menu() -> void:
 		
 		if i == 1 and current_item_selected["id"] == "cogblade": enabled = false # Cogblade nao desequipa
 		
+		btn.text = opts[i]
+		btn.disabled = not enabled
 		if i == action_menu_index:
-			lbl.text = opts[i]
-			lbl.add_theme_color_override("font_color", Color(1.0, 1.0, 0.0) if enabled else Color(0.7, 0.7, 0.0))
+			btn.add_theme_color_override("font_color", Color(1.0, 1.0, 0.0) if enabled else Color(0.7, 0.7, 0.0))
+			btn.add_theme_color_override("font_hover_color", Color(1.0, 1.0, 0.0) if enabled else Color(0.7, 0.7, 0.0))
+			btn.add_theme_color_override("font_focus_color", Color(1.0, 1.0, 0.0) if enabled else Color(0.7, 0.7, 0.0))
 		else:
-			lbl.text = opts[i]
-			lbl.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8) if enabled else Color(0.4, 0.4, 0.4))
+			btn.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8) if enabled else Color(0.4, 0.4, 0.4))
+			btn.add_theme_color_override("font_hover_color", Color(1.0, 1.0, 0.8) if enabled else Color(0.4, 0.4, 0.4))
+			btn.add_theme_color_override("font_focus_color", Color(0.8, 0.8, 0.8) if enabled else Color(0.4, 0.4, 0.4))
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_menu_game") or event.is_action_pressed("ui_pause"):
@@ -298,17 +352,24 @@ func _input(event: InputEvent) -> void:
 		return
 		
 	if action_menu_open:
-		get_viewport().set_input_as_handled()
 		if event.is_action_pressed("ui_cancel") or event.is_action_pressed("ui_dash"):
+			get_viewport().set_input_as_handled()
 			close_action_menu()
+			return
 		elif event.is_action_pressed("ui_down"):
+			get_viewport().set_input_as_handled()
 			action_menu_index = (action_menu_index + 1) % 3
 			update_ui()
+			return
 		elif event.is_action_pressed("ui_up"):
+			get_viewport().set_input_as_handled()
 			action_menu_index = (action_menu_index - 1 + 3) % 3
 			update_ui()
+			return
 		elif event.is_action_pressed("ui_accept"):
+			get_viewport().set_input_as_handled()
 			execute_action()
+			return
 		return
 		
 	if event.is_action_pressed("ui_cancel") or event.is_action_pressed("ui_dash"):
@@ -351,6 +412,7 @@ func _input(event: InputEvent) -> void:
 func open_action_menu() -> void:
 	action_menu_open = true
 	action_menu_index = 0
+	action_menu_panel.move_to_front()
 	update_ui()
 
 func close_action_menu() -> void:
@@ -394,13 +456,17 @@ func execute_action() -> void:
 				# Esconde o inventário enquanto inspeciona
 				visible = false
 				get_tree().root.add_child(inspector)
-				inspector.inspector_closed.connect(func(): visible = true)
+				inspector.inspector_closed.connect(func():
+					visible = true
+					Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+				)
 				
 		close_action_menu()
 
 func close_menu() -> void:
 	await get_tree().process_frame
 	get_tree().paused = false
+	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	get_tree().call_group("player", "prevent_dash_leak")
 	get_tree().call_group("player", "update_equipment_visuals")
 	queue_free()

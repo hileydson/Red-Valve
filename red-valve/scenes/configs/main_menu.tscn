@@ -548,6 +548,7 @@ offset_left = 4.0
 offset_top = -29.0
 offset_right = 1917.0
 offset_bottom = 1429.0
+mouse_filter = 2
 stream = ExtResource("4_lodsn")
 volume_db = -80.0
 speed_scale = 0.723
@@ -563,6 +564,7 @@ offset_right = 2124.0
 offset_bottom = 1454.0
 rotation = -1.5673872
 scale = Vector2(1.7052422, 1.6597677)
+mouse_filter = 2
 
 [node name="SubViewport" type="SubViewport" parent="VideoStreamPlayer/SubViewportContainer" unique_id=2121288745]
 transparent_bg = true
@@ -588,6 +590,7 @@ texture = ExtResource("4_1yqn0")
 [node name="ColorRect" type="ColorRect" parent="." unique_id=1919552588]
 offset_right = 1929.0
 offset_bottom = 1092.0
+mouse_filter = 2
 color = Color(0.7882353, 0.3254902, 0.13725491, 0.2901961)
 
 [node name="red_valve_animation" type="AnimatedSprite2D" parent="." unique_id=2077542611]

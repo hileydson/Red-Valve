@@ -15,6 +15,7 @@ var input_locked: bool = true
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	start.grab_focus()
 	
 	if not FileAccess.file_exists("user://save_game.json"):
