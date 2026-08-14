@@ -73,8 +73,8 @@ func _ready() -> void:
 	# ==========================================
 	# IMPACT FRAME (MANCHA)
 	# ==========================================
-	mancha.modulate.a = 0.6
-	mancha.scale = Vector3(0.5, 0.5, 0.5)
+	mancha.modulate.a = 0.5
+	mancha.scale = Vector3(0.1, 0.1, 0.1) # Começa bem pequenina
 	
 	# Fazemos a mancha de chão também ignorar luz ambiente, se desejar:
 	var mancha_mat = StandardMaterial3D.new()
@@ -86,8 +86,8 @@ func _ready() -> void:
 		mancha.material_override = mancha_mat
 	
 	var tween = create_tween().set_parallel(true)
-	tween.tween_property(mancha, "modulate:a", 0.0, 0.2).set_ease(Tween.EASE_OUT)
-	tween.tween_property(mancha, "scale", Vector3(1.5, 1.5, 1.5), 0.2).set_ease(Tween.EASE_OUT)
+	tween.tween_property(mancha, "modulate:a", 0.0, 0.1).set_ease(Tween.EASE_OUT) # Sumindo mais rápido
+	tween.tween_property(mancha, "scale", Vector3(0.25, 0.25, 0.25), 0.1).set_ease(Tween.EASE_OUT) # Tamanho bem pequeno
 	
 	emitting = true
 	

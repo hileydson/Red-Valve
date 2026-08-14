@@ -66,6 +66,10 @@ func _process(delta: float) -> void:
 
 func _start_final_sequence() -> void:
 	final_sequence_started = true
+	GlobalEvents.in_cutscene = true
+	
+	if is_instance_valid(player):
+		player.process_mode = Node.PROCESS_MODE_DISABLED
 	
 	# 1. Ultra Câmera Lenta
 	Engine.time_scale = 0.15
@@ -86,6 +90,7 @@ func _start_final_sequence() -> void:
 	
 	# 5. Restaura e vai para a Cutscene
 	Engine.time_scale = 1.0
+	GlobalEvents.in_cutscene = false
 	get_tree().change_scene_to_file("res://scenes/stages/prolog/fight_with_power/cutscene_fight_with_power.tscn")
 
 
