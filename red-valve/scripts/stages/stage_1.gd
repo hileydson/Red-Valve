@@ -107,7 +107,8 @@ func _on_area_3d_jimmy_house_body_exited(body: Node3D) -> void:
 		prompt_label.visible = false
 
 func _play_intro_text() -> void:
-	if SaveManager.prolog_finished:
+	if GlobalEvents.entering_chapter_1:
+		GlobalEvents.entering_chapter_1 = false
 		# Exibe o título "CAPÍTULO 1" em vermelho bem grande no centro da tela (tamanho 120 como no splash)
 		await get_tree().create_timer(1.0).timeout
 		

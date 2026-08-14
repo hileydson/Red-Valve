@@ -10,6 +10,7 @@ var save_array = {}
 var default_language:String = language_pt_br
 
 var is_maycow_normal = false
+var entering_chapter_1: bool = false
 var game_weapon_events = {taken_pistol=false, taken_smg=false, taken_cogblade=false, taken_magic_hand_1=false}
 
 func _process(delta: float) -> void:
