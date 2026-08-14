@@ -168,6 +168,9 @@ func take_damage(amount):
 	current_health -= amount
 	current_health = clamp(current_health, 0, max_health)
 	
+	if is_instance_valid(player) and player.has_method("add_cogblade_power"):
+		player.add_cogblade_power(float(amount))
+	
 	# Aciona a UI Global de Chefe
 	var root = get_tree().root
 	var global_health_ui = root.get_node_or_null("GlobalEnemyHealthUI")

@@ -63,29 +63,6 @@ func _ready() -> void:
 	vbox.add_child(lang_option)
 	
 	# ==========================================
-	# MIRA
-	# ==========================================
-	var aim_label = Label.new()
-	aim_label.text = tr("CONFIG_AIM_MODE")
-	aim_label.add_theme_font_size_override("font_size", 24)
-	aim_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	vbox.add_child(aim_label)
-	
-	aim_option = OptionButton.new()
-	aim_option.add_theme_font_size_override("font_size", 24)
-	aim_option.add_item(tr("CONFIG_AIM_HOLD"), 0)
-	aim_option.add_item(tr("CONFIG_AIM_TOGGLE"), 1)
-	
-	# Sincroniza com a config
-	if SaveManager.config["aim_mode"] == "hold":
-		aim_option.select(0)
-	else:
-		aim_option.select(1)
-		
-	aim_option.item_selected.connect(_on_aim_selected)
-	vbox.add_child(aim_option)
-	
-	# ==========================================
 	# BOTÃO VOLTAR
 	# ==========================================
 	var spacer = Control.new()
@@ -116,16 +93,7 @@ func _on_lang_selected(index: int) -> void:
 	vbox.get_child(0).text = tr("CONFIG_LANGUAGE")
 	lang_option.set_item_text(0, tr("CONFIG_LANG_EN"))
 	lang_option.set_item_text(1, tr("CONFIG_LANG_PT"))
-	vbox.get_child(2).text = tr("CONFIG_AIM_MODE")
-	aim_option.set_item_text(0, tr("CONFIG_AIM_HOLD"))
-	aim_option.set_item_text(1, tr("CONFIG_AIM_TOGGLE"))
 	back_btn.text = tr("BTN_BACK")
-
-func _on_aim_selected(index: int) -> void:
-	if index == 0:
-		SaveManager.config["aim_mode"] = "hold"
-	else:
-		SaveManager.config["aim_mode"] = "toggle"
 
 func _on_back_pressed() -> void:
 	# Salva imediatamente no JSON as alterações feitas

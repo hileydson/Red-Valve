@@ -146,9 +146,17 @@ var is_reloading: bool = false
 var magic_blade_pos_original
 var camera_bullet_time_position
 var camera_bullet_time_ON = false
-
 var is_first_person = false
+
 var transition_camera = false
+var is_aiming = false
+
+var cogblade_hud: TextureProgressBar
+var cogblade_hud_label: Label
+var cogblade_power_value: float = 0.0
+var cogblade_pulsing: bool = false
+var cogblade_pulse_tween: Tween
+var cogblade_particles: CPUParticles2D
 
 var playback 
 
@@ -270,6 +278,31 @@ void fragment() {
 	heartbeat_hud.material = mat
 	
 	hud_layer.add_child(heartbeat_hud)
+	
+	if !GlobalEvents.is_maycow_normal:
+		cogblade_hud = TextureProgressBar.new()
+		cogblade_hud.texture_progress = load("res://assets/images/menu/itens/red_valve/cogblade.png")
+		cogblade_hud.fill_mode = TextureProgressBar.FILL_BOTTOM_TO_TOP
+		cogblade_hud.min_value = 0
+		cogblade_hud.max_value = 100
+		cogblade_hud.value = 0
+		cogblade_hud.anchor_left = 0.0
+		cogblade_hud.anchor_top = 0.0
+		cogblade_hud.anchor_right = 0.0
+		cogblade_hud.anchor_bottom = 0.0
+		cogblade_hud.offset_left = 20
+		cogblade_hud.offset_top = 20
+		cogblade_hud.scale = Vector2(0.4, 0.4)
+		cogblade_hud.modulate.a = 0.5 # Translucido/transparente
+		hud_layer.add_child(cogblade_hud)
+		
+		cogblade_hud_label = Label.new()
+		cogblade_hud_label.text = "PODER DA COGBLADE"
+		cogblade_hud_label.add_theme_font_size_override("font_size", 64)
+		cogblade_hud_label.add_theme_color_override("font_color", Color(1, 0, 0, 1))
+		cogblade_hud_label.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+		cogblade_hud_label.visible = false
+		hud_layer.add_child(cogblade_hud_label)
 
 	# Adicionando BackBufferCopy para garantir captura da tela
 	var back_buffer = BackBufferCopy.new()
@@ -475,17 +508,32 @@ func _input(event):
 		return
 	
 	if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+		var sens_mult = 0.4 if is_aiming else 1.0
+		
 		# Aplica a rotação horizontal no corpo (Maycow)
-		rotate_y(-event.relative.x * SENSITIVITY)
+		rotate_y(-event.relative.x * SENSITIVITY * sens_mult)
 		
 		# Aplica a rotação vertical na câmera atual
 		var camera_atual = get_viewport().get_camera_3d()
-		camera_atual.rotate_x(-event.relative.y * SENSITIVITY)
+		camera_atual.rotate_x(-event.relative.y * SENSITIVITY * sens_mult)
 		
 		# Trava o ângulo vertical
-		var v_down = -10 if camera_atual == camera_third_person else -80
-		var v_up = 20 if camera_atual == camera_third_person else 80
+		var v_down = -80
+		var v_up = 80
 		camera_atual.rotation.x = clamp(camera_atual.rotation.x, deg_to_rad(v_down), deg_to_rad(v_up))
+
+	if event.is_action_pressed("ui_cogblade_power") and !GlobalEvents.is_maycow_normal:
+		if cogblade_power_value >= 100.0:
+			cogblade_power_value = 0.0
+			cogblade_pulsing = false
+			if cogblade_pulse_tween: cogblade_pulse_tween.kill()
+			if cogblade_particles: cogblade_particles.emitting = false
+			if cogblade_hud: 
+				cogblade_hud.value = 0.0
+				cogblade_hud.modulate = Color(1, 1, 1, 0.5)
+			if is_instance_valid(cogblade_hud_label):
+				cogblade_hud_label.visible = true
+				get_tree().create_timer(3.0).timeout.connect(func(): if is_instance_valid(cogblade_hud_label): cogblade_hud_label.visible = false)
 
 
 # Adicione estas variáveis no topo do script (fora do _process) se ainda não tiver
@@ -550,36 +598,28 @@ func _physics_process(delta: float) -> void:
 	#somente poder executar ações do jogo se nao for prologo
 	if !GlobalEvents.is_maycow_normal:
 	
-		# 1. LÓGICA DE VISÃO (PRIMEIRA/TERCEIRA PESSOA)
-		var holding_view = false
+		# 1. LÓGICA DE MIRA (AIM/ZOOM EM PRIMEIRA PESSOA)
+		is_first_person = true # Sempre em primeira pessoa
 		
-		if SaveManager.config["aim_mode"] == "toggle":
-			if Input.is_action_just_pressed("ui_hold_first_person_view"):
-				is_toggle_aim_active = !is_toggle_aim_active
-			holding_view = is_toggle_aim_active
-			hold_timer = 0.0 # Reseta o timer pra não conflitar
-		else:
-			if Input.is_action_pressed("ui_hold_first_person_view"):
-				hold_timer += delta
-			else:
-				hold_timer = 0.0
-			holding_view = hold_timer >= hold_threshold
-
-		if holding_view and !is_first_person:
-			is_first_person = true
-			transicao_camera(camera_third_person, camera, camera_first_person_marker, true)
-		elif !holding_view and is_first_person:
-			is_first_person = false
-			transicao_camera(camera, camera_third_person, camera_third_person_marker, false)
+		# Força a câmera de 1ª pessoa a ser a atual se não for (ex: ao entrar na cena)
+		if not camera.current and not transition_camera:
+			camera.make_current()
+			if camera_third_person:
+				camera_third_person.current = false
+			control_weapons.visible = true
+			hand_with_pistol.visible = SaveManager.is_equipped("pistol")
+			if hand_with_magic: hand_with_magic.visible = true
+			control_magic.visible = true
 			
-		point.visible = is_first_person
+		is_aiming = Input.is_action_pressed("ui_hold_first_person_view")
+		point.visible = true
 		
 		# 3. GRAVIDADE
 		if not is_on_floor():
 			velocity += get_gravity() * delta
 
 		# 4. PULO E RECARGA
-		if Input.is_action_just_pressed("ui_accept") and is_on_floor() and !holding_view:
+		if Input.is_action_just_pressed("ui_accept") and is_on_floor():
 			velocity.y = JUMP_VELOCITY
 			playback.travel("jump")
 			
@@ -602,14 +642,15 @@ func _physics_process(delta: float) -> void:
 				var camera_atual = get_viewport().get_camera_3d()
 				
 				# Girar o corpo (Horizontal) - multiplicado por delta para suavidade
-				rotate_y(-joy_dir.x * JOY_SENSITIVITY * delta * 100)
+				var sens_mult = 0.4 if is_aiming else 1.0
+				rotate_y(-joy_dir.x * JOY_SENSITIVITY * sens_mult * delta * 100)
 				
 				# Girar a câmera (Vertical)
-				camera_atual.rotate_x(-joy_dir.y * JOY_SENSITIVITY * delta * 100)
+				camera_atual.rotate_x(-joy_dir.y * JOY_SENSITIVITY * sens_mult * delta * 100)
 				
 				# Trava o ângulo vertical (mesma lógica do mouse)
-				var v_down = -10 if camera_atual == camera_third_person else -80
-				var v_up = 20 if camera_atual == camera_third_person else 80
+				var v_down = -80
+				var v_up = 80
 				camera_atual.rotation.x = clamp(camera_atual.rotation.x, deg_to_rad(v_down), deg_to_rad(v_up))
 	
 		# 6. GESTÃO DO DASH (COOLDOWN E EXECUÇÃO)
@@ -637,13 +678,18 @@ func _physics_process(delta: float) -> void:
 				is_dashing = false
 		else:
 			# MOVIMENTO NORMAL (WALK/RUN)
-			var velocidade_atual = RUN_SPEED if (Input.is_action_pressed("ui_run") and current_stamina > 0 and not is_exhausted) else WALK_SPEED
+			var velocidade_atual = WALK_SPEED
+			if is_aiming:
+				velocidade_atual = WALK_SPEED * 0.4
+			elif Input.is_action_pressed("ui_run") and current_stamina > 0 and not is_exhausted:
+				velocidade_atual = RUN_SPEED
+				
 			var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 			var velocity_Y_zero: bool = velocity.y <= 0
 
 			if direction and !transition_camera:
 				# Animações e Sons
-				if Input.is_action_pressed("ui_run"):
+				if Input.is_action_pressed("ui_run") and not is_aiming:
 					if pistola.animation not in ["reload", "run"]: pistola.play("run")
 					if is_on_floor() and velocity_Y_zero: playback.travel("run")
 				else:
@@ -651,7 +697,7 @@ func _physics_process(delta: float) -> void:
 					if is_on_floor() and velocity_Y_zero: playback.travel("walk")
 				
 				if !passos.playing and is_on_floor():
-					if Input.is_action_pressed("ui_run"):
+					if Input.is_action_pressed("ui_run") and not is_aiming:
 						passos.pitch_scale = randf_range(1.15, 1.3)
 						passos.volume_db = randf_range(-8.0, -5.0)
 					else:
@@ -671,18 +717,20 @@ func _physics_process(delta: float) -> void:
 		# FX DURANTE CORRIDA (FOV e Blur leve - Diferenciado para 1ª Pessoa e 3ª Pessoa)
 		var camera = get_viewport().get_camera_3d()
 		if camera and not is_dashing:
-			var is_running = Input.is_action_pressed("ui_run") and velocity.length() > 0.1 and current_stamina > 0 and not is_exhausted
+			var is_running = Input.is_action_pressed("ui_run") and velocity.length() > 0.1 and current_stamina > 0 and not is_exhausted and not is_aiming
 			var direction_check := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 			var visao_frente = -global_transform.basis.z
 			var alinhamento = direction_check.dot(visao_frente) if direction_check else 0.0
 			
 			var target_run_fov = 75.0
-			if direction_check and alinhamento < -0.2:
+			if is_aiming:
+				target_run_fov = 50.0
+			elif direction_check and alinhamento < -0.2:
 				target_run_fov = 73.0 if is_first_person else 70.0
 			elif is_running:
 				target_run_fov = 80.0 if is_first_person else 88.0
 				
-			camera.fov = lerp(camera.fov, target_run_fov, 5.0 * delta)
+			camera.fov = lerp(camera.fov, target_run_fov, 8.0 * delta if is_aiming else 5.0 * delta)
 			
 
 
@@ -1250,6 +1298,7 @@ func raycast_process_shoot():
 			# Verifica se o que atingimos é um inimigo
 			if target.is_in_group("enemies"):
 				spawn_blood_raycast(ray_cast_3d.get_collision_point(), ray_cast_3d.get_collision_normal())
+				add_cogblade_power(10.0) # Adiciona 10 de poder por tiro
 		
 			var ponto_colisao = ray_cast_3d.get_collision_point()
 			# A distância entre a origem do RayCast e onde ele bateu
@@ -1450,6 +1499,49 @@ func _on_bullet_touch_body_entered(body: Node3D) -> void:
 	bullet.visible = false
 	#bullet_light.visible = false
 	spawn_blood_effect(body)
+	
+func add_cogblade_power(amount: float) -> void:
+	if GlobalEvents.is_maycow_normal or not cogblade_hud: return
+	cogblade_power_value = clamp(cogblade_power_value + amount, 0.0, 100.0)
+	if cogblade_hud: cogblade_hud.value = cogblade_power_value
+	
+	if cogblade_power_value >= 100.0 and not cogblade_pulsing:
+		cogblade_pulsing = true
+		_start_cogblade_pulse()
+
+func _start_cogblade_pulse() -> void:
+	if not cogblade_hud: return
+	
+	if cogblade_pulse_tween: cogblade_pulse_tween.kill()
+	cogblade_pulse_tween = create_tween().set_loops()
+	
+	# Pulsa vermelho
+	cogblade_pulse_tween.tween_property(cogblade_hud, "modulate", Color(1.0, 0.2, 0.2, 0.9), 0.5).set_trans(Tween.TRANS_SINE)
+	cogblade_pulse_tween.tween_property(cogblade_hud, "modulate", Color(1.0, 1.0, 1.0, 0.5), 0.5).set_trans(Tween.TRANS_SINE)
+	
+	# Partículas de sangue
+	if not cogblade_particles:
+		cogblade_particles = CPUParticles2D.new()
+		cogblade_particles.emitting = true
+		cogblade_particles.amount = 50 # Mais sangue
+		cogblade_particles.lifetime = 1.0
+		cogblade_particles.emission_shape = CPUParticles2D.EMISSION_SHAPE_RECTANGLE
+		
+		# Faz sair por toda a extensão da imagem
+		var w = cogblade_hud.texture_progress.get_width()
+		var h = cogblade_hud.texture_progress.get_height()
+		cogblade_particles.emission_rect_extents = Vector2(w / 2.0, h / 2.0)
+		
+		cogblade_particles.gravity = Vector2(0, 300)
+		cogblade_particles.color = Color(0.8, 0.0, 0.0, 0.8)
+		cogblade_particles.scale_amount_min = 3.0
+		cogblade_particles.scale_amount_max = 6.0
+		
+		cogblade_hud.add_child(cogblade_particles)
+		# Centraliza as emissões no meio da imagem
+		cogblade_particles.position = Vector2(w / 2.0, h / 2.0)
+	else:
+		cogblade_particles.emitting = true
 
 func update_equipment_visuals() -> void:
 	if is_first_person and not is_reloading and control_weapons.visible:
