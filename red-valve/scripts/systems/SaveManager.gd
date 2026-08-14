@@ -24,6 +24,8 @@ var default_config = {
 }
 
 var config = default_config.duplicate()
+var _last_applied_mode: String = ""
+var _last_applied_resolution: String = ""
 
 var inventory: Array:
 	get:
@@ -108,18 +110,28 @@ func _ready():
 func apply_configs() -> void:
 	TranslationServer.set_locale(config["language"])
 	
-	var is_fullscreen = config.get("display_mode", "windowed") == "fullscreen"
-	if is_fullscreen:
-		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN)
-	else:
-		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
-		var res_map = {
-			"720p": Vector2i(1280, 720),
-			"1080p": Vector2i(1920, 1080),
-			"1440p": Vector2i(2560, 1440)
-		}
-		if config["resolution"] in res_map:
-			DisplayServer.window_set_size(res_map[config["resolution"]])
+	var cur_mode = config.get("display_mode", "windowed")
+	var cur_res = config.get("resolution", "1080p")
+	
+	var res_map = {
+		"720p": Vector2i(1280, 720),
+		"1080p": Vector2i(1920, 1080),
+		"1440p": Vector2i(2560, 1440)
+	}
+	var target_res = res_map.get(cur_res, Vector2i(1920, 1080))
+	
+	if get_tree() and get_tree().root:
+		get_tree().root.content_scale_size = target_res
+	
+	if cur_mode != _last_applied_mode or cur_res != _last_applied_resolution:
+		_last_applied_mode = cur_mode
+		_last_applied_resolution = cur_res
+		
+		if cur_mode == "fullscreen":
+			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
+		else:
+			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+			DisplayServer.window_set_size(target_res)
 			var screen_size = DisplayServer.screen_get_size()
 			var win_size = DisplayServer.window_get_size()
 			DisplayServer.window_set_position((screen_size - win_size) / 2)

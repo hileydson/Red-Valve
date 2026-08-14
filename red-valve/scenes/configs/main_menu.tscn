@@ -618,6 +618,7 @@ offset_right = -378.0
 offset_bottom = 627.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
 [node name="BloodMark" type="Sprite2D" parent="Control" unique_id=1500276055]
 modulate = Color(0.7564044, 0.7564044, 0.7564044, 1)
