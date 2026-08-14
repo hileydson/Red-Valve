@@ -1810,10 +1810,12 @@ func _activate_cogblade_ultimate() -> void:
 			var blur = hud_layer.get_node_or_null("MotionBlurOverlay")
 			if blur: blur.visible = false
 			
-		# Aguarda 1.5 segundos em slow motion antes de devolver controle
+		# Aguarda 0.15 segundos em slow motion antes de devolver controle
 		var end_tween = create_tween()
 		end_tween.tween_interval(0.15) 
 		end_tween.tween_callback(func():
+			global_position = start_pos # Garante que o player não é empurrado
+			velocity = Vector3.ZERO
 			Engine.time_scale = 1.0
 			AudioServer.playback_speed_scale = 1.0
 			is_using_ultimate = false
@@ -1853,46 +1855,46 @@ func _spawn_explosion_vfx(pos: Vector3):
 	# Flash de Luz
 	var flash = OmniLight3D.new()
 	flash.light_color = Color(1.0, 0.4, 0.0)
-	flash.light_energy = 15.0
-	flash.omni_range = 25.0
+	flash.light_energy = 25.0
+	flash.omni_range = 40.0
 	flash.shadow_enabled = false # Garante que não calcule sombras pesadas
 	node.add_child(flash)
 	var tween_light = create_tween()
-	tween_light.tween_property(flash, "light_energy", 0.0, 1.0)
+	tween_light.tween_property(flash, "light_energy", 0.0, 1.2)
 	
-	# Sparks (Otimizado)
+	# Sparks (Fagulhas volumosas)
 	var sparks = CPUParticles3D.new()
 	sparks.emitting = true
 	sparks.one_shot = true
-	sparks.amount = 80 # Reduzido para performance
-	sparks.lifetime = 1.5
+	sparks.amount = 130
+	sparks.lifetime = 1.6
 	sparks.explosiveness = 1.0
 	sparks.spread = 180.0
-	sparks.initial_velocity_min = 15.0
-	sparks.initial_velocity_max = 35.0
+	sparks.initial_velocity_min = 20.0
+	sparks.initial_velocity_max = 45.0
 	var spark_mat = StandardMaterial3D.new()
-	spark_mat.albedo_color = Color(1.0, 0.3, 0.0)
+	spark_mat.albedo_color = Color(1.0, 0.35, 0.0)
 	spark_mat.emission_enabled = true
 	spark_mat.emission = Color(1.0, 0.4, 0.0)
-	spark_mat.emission_energy_multiplier = 8.0
+	spark_mat.emission_energy_multiplier = 10.0
 	var spark_mesh = SphereMesh.new()
-	spark_mesh.radius = 0.15 # Maior para compensar quantidade
-	spark_mesh.height = 0.3
+	spark_mesh.radius = 0.04 # Bolinhas voadoras bem pequeninas
+	spark_mesh.height = 0.08
 	spark_mesh.material = spark_mat
 	sparks.mesh = spark_mesh
 	node.add_child(sparks)
 	
-	# Smoke (Otimizado)
+	# Smoke (Fumaça expansiva e constante)
 	var smoke = CPUParticles3D.new()
 	smoke.emitting = true
 	smoke.one_shot = true
-	smoke.amount = 25 # Reduzido para evitar overdraw (lag de tela cheia)
-	smoke.lifetime = 1.0 # Reduzido drasticamente a pedido
+	smoke.amount = 40
+	smoke.lifetime = 1.2
 	smoke.explosiveness = 0.95
 	smoke.spread = 180.0
-	smoke.initial_velocity_min = 3.0
-	smoke.initial_velocity_max = 8.0
-	smoke.gravity = Vector3(0, 1.5, 0)
+	smoke.initial_velocity_min = 5.0
+	smoke.initial_velocity_max = 12.0
+	smoke.gravity = Vector3(0, 2.0, 0)
 	var smoke_mat = StandardMaterial3D.new()
 	var tex = load("res://assets/images/vfx/smoke.png")
 	if tex:
@@ -1900,7 +1902,7 @@ func _spawn_explosion_vfx(pos: Vector3):
 		smoke_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 		smoke_mat.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
 	var smoke_mesh = QuadMesh.new()
-	smoke_mesh.size = Vector2(12, 12) # Maior para cobrir a mesma área
+	smoke_mesh.size = Vector2(22, 22) # Tamanho expansivo padronizado para qualquer inimigo
 	smoke_mesh.material = smoke_mat
 	smoke.mesh = smoke_mesh
 	node.add_child(smoke)
