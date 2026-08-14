@@ -570,7 +570,7 @@ func _physics_process(delta: float) -> void:
 		is_exhausted = false
 		
 	# --- STAMINA LOGIC ---
-	var is_running_stam = Input.is_action_pressed("ui_run") and velocity.length() > 0.1 and current_stamina > 0 and stamina_active and not is_exhausted
+	var is_running_stam = Input.is_action_pressed("ui_run") and velocity.length() > 0.1 and current_stamina > 0 and stamina_active and not is_exhausted and not is_aiming
 	if is_running_stam:
 		current_stamina -= 20.0 * delta
 		if current_stamina < 0: current_stamina = 0
@@ -789,7 +789,7 @@ func _physics_process(delta: float) -> void:
 		var input_dir := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 		
 		# MOVIMENTO NORMAL (WALK/RUN)
-		var is_running = Input.is_action_pressed("ui_run") and current_stamina > 0 and can_run_normal and not is_exhausted
+		var is_running = Input.is_action_pressed("ui_run") and current_stamina > 0 and can_run_normal and not is_exhausted and not is_aiming
 		var velocidade_atual = RUN_SPEED if is_running else WALK_SPEED_NORMAL
 		var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 		var velocity_Y_zero: bool = velocity.y <= 0
@@ -863,9 +863,9 @@ func _physics_process(delta: float) -> void:
 			modelo.position.x = lerp(modelo.position.x, target_pos_x, 5.0 * delta)
 			modelo.position.z = lerp(modelo.position.z, target_pos_z, 5.0 * delta)
 
-		# Inclinação e Encolhimento da arma 2D ao correr
+		# Inclinação e Encolhimento da arma 2D ao correr (bloqueado ao mirar)
 		if is_instance_valid(pistola) and typeof(pistol_2d_pos_original) == TYPE_VECTOR2:
-			is_running = Input.is_action_pressed("ui_run") and velocity.length() > 0.1 and current_stamina > 0 and not is_exhausted
+			is_running = Input.is_action_pressed("ui_run") and velocity.length() > 0.1 and current_stamina > 0 and not is_exhausted and not is_aiming
 			# Rotação 2D (positivo = horário = descer ponta da arma) e empurrar para baixo/fora da tela
 			var target_tilt = deg_to_rad(35.0) if is_running else 0.0
 			var target_pos = pistol_2d_pos_original + (Vector2(50.0, 150.0) if is_running else Vector2.ZERO)
@@ -1033,7 +1033,7 @@ func head_bob(delta: float):
 		marker_referencia = camera_third_person_marker
 	
 	var ajuste_intensidade = 0.8
-	if Input.is_action_pressed("ui_run"):
+	if Input.is_action_pressed("ui_run") and not is_aiming:
 		bob_freq = 2.1
 		
 		if is_first_person:
@@ -1584,6 +1584,7 @@ func _activate_cogblade_ultimate() -> void:
 	control_weapons.visible = false
 	hand_with_pistol.visible = false
 	if hand_with_magic: hand_with_magic.visible = false
+	if point: point.visible = false # Esconde o ponto no meio da tela
 	
 	if hud_layer:
 		hud_layer.visible = false
@@ -1804,6 +1805,7 @@ func _activate_cogblade_ultimate() -> void:
 		control_weapons.visible = true
 		hand_with_pistol.visible = SaveManager.is_equipped("pistol")
 		if hand_with_magic: hand_with_magic.visible = true
+		if point: point.visible = true # Restaura o ponto no meio da tela
 		
 		if hud_layer:
 			hud_layer.visible = true
