@@ -8,6 +8,12 @@
 
 config_version=5
 
+[ambientcg]
+
+extract_path="res://AmbientCG/Extracted"
+material_file_directory="res://AmbientCG/Materials"
+environment_file_directory="res://AmbientCG/Environments"
+
 [animation]
 
 compatibility/default_parent_skeleton_in_mesh_instance_3d=true
@@ -33,17 +39,21 @@ GlobalUtils="*res://scripts/Global_Utils.gd"
 GlobalEvents="*uid://d3yfan1n0gd48"
 SaveManager="*res://scripts/systems/SaveManager.gd"
 LoadingScreen="*res://scenes/ui/loading_screen.tscn"
+AmbientAPI="*uid://cmbh88h6yljhy"
+AmbientParser="*uid://dcdrqnwmpgvk4"
+AmbientFileHandler="*uid://dnh8sqjyu74hs"
+AmbientMaterialMaker="*uid://nig0lamfd3mv"
 
 [display]
 
 window/size/viewport_width=1920
 window/size/viewport_height=1080
+window/subwindows/embed_subwindows=false
 window/stretch/mode="viewport"
-window/stretch/aspect="keep"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/SunshineClouds2/plugin.cfg", "res://addons/proton_scatter/plugin.cfg", "res://addons/sky_3d/plugin.cfg", "res://addons/terrain_3d/plugin.cfg")
+enabled=PackedStringArray("res://addons/SunshineClouds2/plugin.cfg", "res://addons/ambientcg/plugin.cfg", "res://addons/proton_scatter/plugin.cfg", "res://addons/sky_3d/plugin.cfg", "res://addons/terrain_3d/plugin.cfg")
 
 [file_customization]
 
