@@ -157,6 +157,7 @@ var cogblade_power_value: float = 0.0
 var cogblade_pulsing: bool = false
 var cogblade_pulse_tween: Tween
 var cogblade_particles: CPUParticles2D
+var is_using_ultimate: bool = false
 
 var playback 
 
@@ -504,9 +505,22 @@ func _start_heartbeat_pulse() -> void:
 	
 
 func _input(event):
+	if event.is_action_pressed("ui_cogblade_power") and !GlobalEvents.is_maycow_normal:
+		if cogblade_power_value >= 100.0 and not is_using_ultimate:
+			cogblade_power_value = 0.0
+			cogblade_pulsing = false
+			if cogblade_pulse_tween: cogblade_pulse_tween.kill()
+			if cogblade_particles: cogblade_particles.emitting = false
+			if cogblade_hud: 
+				cogblade_hud.value = 0.0
+				cogblade_hud.modulate = Color(1, 1, 1, 0.5)
+			_activate_cogblade_ultimate()
+
+	if is_using_ultimate:
+		return
 	if camera_bullet_time_ON:
 		return
-	
+		
 	if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 		var sens_mult = 0.4 if is_aiming else 1.0
 		
@@ -522,19 +536,6 @@ func _input(event):
 		var v_up = 80
 		camera_atual.rotation.x = clamp(camera_atual.rotation.x, deg_to_rad(v_down), deg_to_rad(v_up))
 
-	if event.is_action_pressed("ui_cogblade_power") and !GlobalEvents.is_maycow_normal:
-		if cogblade_power_value >= 100.0:
-			cogblade_power_value = 0.0
-			cogblade_pulsing = false
-			if cogblade_pulse_tween: cogblade_pulse_tween.kill()
-			if cogblade_particles: cogblade_particles.emitting = false
-			if cogblade_hud: 
-				cogblade_hud.value = 0.0
-				cogblade_hud.modulate = Color(1, 1, 1, 0.5)
-			if is_instance_valid(cogblade_hud_label):
-				cogblade_hud_label.visible = true
-				get_tree().create_timer(3.0).timeout.connect(func(): if is_instance_valid(cogblade_hud_label): cogblade_hud_label.visible = false)
-
 
 # Adicione estas variáveis no topo do script (fora do _process) se ainda não tiver
 var hold_timer: float = 0.0
@@ -542,6 +543,10 @@ var hold_threshold: float = 0.15 # 200 milisegundos para confirmar o "segurar"
 var limite_rotacao_lateral = deg_to_rad(15) # O máximo que ele pode "virar" (ex: 35 graus)
 var velocidade_giro = 4.0
 func _physics_process(delta: float) -> void:
+	if is_using_ultimate:
+		# Apenas processa a gravidade, caso ele estivesse caindo no momento, 
+		# mas normalmente a animação vai travar ele. Retorna para não mover.
+		return
 
 	var is_in_house = get_tree().current_scene.name == "the_house" if get_tree() and get_tree().current_scene else false
 	var can_run_normal = GlobalEvents.is_maycow_normal and not is_in_house
@@ -1407,6 +1412,8 @@ func spawn_blood_effect(body: Node3D):
 		
 		
 func take_damage(number:int):
+	if is_using_ultimate:
+		return
 	if current_health <= 0:
 		return
 		
@@ -1547,5 +1554,230 @@ func update_equipment_visuals() -> void:
 	if is_first_person and not is_reloading and control_weapons.visible:
 		hand_with_pistol.visible = SaveManager.is_equipped("pistol")
 
-func prevent_dash_leak() -> void:
-	dash_cooldown_timer = 0.2
+func _activate_cogblade_ultimate() -> void:
+	is_using_ultimate = true
+	
+	# 1. Preparação
+	Engine.time_scale = 0.1
+	AudioServer.playback_speed_scale = 0.5 # Deixa os sons graves/lentos
+	
+	control_magic.visible = false
+	control_weapons.visible = false
+	hand_with_pistol.visible = false
+	if hand_with_magic: hand_with_magic.visible = false
+	
+	if hud_layer:
+		hud_layer.visible = false
+		var blur = hud_layer.get_node_or_null("MotionBlurOverlay")
+		if blur:
+			blur.visible = true
+			blur.material.set_shader_parameter("blur_strength", 0.4) # Reduzido para não pesar
+			
+	# Para animações e zera a velocidade para não deslizar
+	playback.travel("idle")
+	velocity = Vector3.ZERO
+	
+	# Cria uma câmera temporária cinemática
+	var cine_cam = Camera3D.new()
+	get_tree().current_scene.add_child(cine_cam)
+	cine_cam.global_transform = camera.global_transform
+	cine_cam.make_current()
+	camera.current = false
+	
+	# Passo 1: Olhar para cima lentamente
+	var seq = create_tween()
+	var rot_look_up = cine_cam.global_rotation
+	rot_look_up.x = deg_to_rad(70) # Olha pro céu
+	seq.tween_property(cine_cam, "global_rotation:x", rot_look_up.x, 0.15)
+	
+	# Passo 2: O modelo e a câmera sobem juntos (o modelo sai do chão, aparecendo na câmera)
+	var start_pos = global_position
+	var sky_pos = start_pos + Vector3(0, 20.0, 0)
+	
+	var player_model = get_node_or_null("maycow_lopes")
+	if is_instance_valid(player_model):
+		seq.tween_callback(func():
+			player_model.visible = true
+			player_model.top_level = true
+			player_model.global_rotation = global_rotation
+			player_model.global_position = start_pos # Começa no chão
+		)
+		
+		# Posição final do modelo lá no céu
+		var model_up_pos = sky_pos - cine_cam.global_transform.basis.z * 1.8 + Vector3(0, -1.0, 0)
+		
+		# Câmera sobe
+		seq.tween_property(cine_cam, "global_position", sky_pos, 0.25).set_trans(Tween.TRANS_SINE)
+		# Modelo sobe exatamente ao mesmo tempo, aparecendo gradualmente no FOV
+		seq.parallel().tween_property(player_model, "global_position", model_up_pos, 0.25).set_trans(Tween.TRANS_SINE)
+	else:
+		seq.tween_property(cine_cam, "global_position", sky_pos, 0.25).set_trans(Tween.TRANS_SINE)
+	
+	# Quando chegar no céu, olha para baixo
+	seq.chain().tween_callback(func():
+		if is_instance_valid(player_model):
+			player_model.visible = false # Some pro mergulho em primeira pessoa
+			player_model.top_level = false
+			player_model.position = Vector3.ZERO
+	)
+	var down_rot = cine_cam.global_rotation
+	down_rot.x = deg_to_rad(-90) # 90 graus exatos pra baixo
+	seq.tween_property(cine_cam, "global_rotation", down_rot, 0.1)
+	
+	# A Cogblade surge apontada pra baixo!
+	seq.tween_callback(func():
+		crescent_cogblade.show()
+		crescent_cogblade.top_level = true
+		crescent_cogblade.global_position = cine_cam.global_position - cine_cam.global_transform.basis.z * 1.5
+		
+		# Fixa a rotação para ficar inclinada e mais fotogênica
+		crescent_cogblade.global_rotation = cine_cam.global_rotation
+		crescent_cogblade.rotate_object_local(Vector3(1,0,0), deg_to_rad(-60)) # Não totalmente 90 pra baixo
+		crescent_cogblade.rotate_object_local(Vector3(0,1,0), deg_to_rad(45))  # Levemente de lado pra mostrar a lâmina
+		crescent_cogblade.rotate_object_local(Vector3(0,0,1), deg_to_rad(160)) # Gira a lâmina para baixo
+		
+		var blade_audio = AudioStreamPlayer.new()
+		blade_audio.stream = load("res://assets/sounds/player/blade_out.mp3")
+		add_child(blade_audio)
+		blade_audio.play()
+	)
+	
+	seq.tween_interval(0.1)
+	
+	# Passo 5: O mergulho.
+	var impact_pos = start_pos + Vector3(0, 0.5, 0)
+	
+	# A câmera e a cogblade descem exatamete juntas
+	seq.tween_property(cine_cam, "global_position", impact_pos, 0.12).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+	seq.parallel().tween_property(crescent_cogblade, "global_position", impact_pos - cine_cam.global_transform.basis.z * 1.0, 0.12).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+	
+	# IMPACTO!
+	seq.tween_callback(func():
+		# Tremer tela pesado
+		GlobalUtils.shake_camera(2.0, 1.0)
+		
+		# Som de explosão
+		var boom = AudioStreamPlayer.new()
+		boom.stream = load("res://assets/sounds/common/explosao.mp3")
+		add_child(boom)
+		boom.play()
+		
+		# Partículas Explosão
+		_spawn_explosion_vfx(impact_pos)
+		
+		# Aplica dano AoE LENTAMENTE (um por um com pequeno atraso)
+		_apply_aoe_damage_slowly(impact_pos)
+		
+		# Esconde a cogblade
+		crescent_cogblade.hide()
+		crescent_cogblade.top_level = false
+		crescent_cogblade.position = magic_blade_pos_original
+		crescent_cogblade.rotation = Vector3.ZERO
+		
+		# Restaura câmera do player imediatamente após o impacto, mas MANTÉM a câmera lenta!
+		if is_instance_valid(cine_cam):
+			cine_cam.queue_free()
+		camera.make_current()
+		
+		control_magic.visible = true
+		control_weapons.visible = true
+		hand_with_pistol.visible = SaveManager.is_equipped("pistol")
+		if hand_with_magic: hand_with_magic.visible = true
+		
+		if hud_layer:
+			hud_layer.visible = true
+			var blur = hud_layer.get_node_or_null("MotionBlurOverlay")
+			if blur: blur.visible = false
+			
+		# Aguarda 1.5 segundos em slow motion antes de devolver controle
+		var end_tween = create_tween()
+		end_tween.tween_interval(0.15) 
+		end_tween.tween_callback(func():
+			Engine.time_scale = 1.0
+			AudioServer.playback_speed_scale = 1.0
+			is_using_ultimate = false
+		)
+	)
+
+func _apply_aoe_damage_slowly(pos: Vector3):
+	var inimigos = get_tree().get_nodes_in_group("enemies")
+	var afetados = []
+	for inimigo in inimigos:
+		if is_instance_valid(inimigo) and inimigo.has_method("take_damage"):
+			if inimigo.global_position.distance_to(pos) <= 15.0:
+				afetados.append(inimigo)
+				
+	# Aplica o dano em sequência para dar peso
+	for i in range(afetados.size()):
+		var inimigo = afetados[i]
+		var t = create_tween()
+		t.tween_interval(0.02 * i) # Intervalo minúsculo, mas perceptível no slow-mo
+		t.tween_callback(func():
+			if is_instance_valid(inimigo):
+				inimigo.take_damage(30)
+		)
+
+func _spawn_explosion_vfx(pos: Vector3):
+	var node = Node3D.new()
+	get_tree().current_scene.add_child(node)
+	node.global_position = pos
+	
+	# Flash de Luz
+	var flash = OmniLight3D.new()
+	flash.light_color = Color(1.0, 0.4, 0.0)
+	flash.light_energy = 15.0
+	flash.omni_range = 25.0
+	flash.shadow_enabled = false # Garante que não calcule sombras pesadas
+	node.add_child(flash)
+	var tween_light = create_tween()
+	tween_light.tween_property(flash, "light_energy", 0.0, 1.0)
+	
+	# Sparks (Otimizado)
+	var sparks = CPUParticles3D.new()
+	sparks.emitting = true
+	sparks.one_shot = true
+	sparks.amount = 80 # Reduzido para performance
+	sparks.lifetime = 1.5
+	sparks.explosiveness = 1.0
+	sparks.spread = 180.0
+	sparks.initial_velocity_min = 15.0
+	sparks.initial_velocity_max = 35.0
+	var spark_mat = StandardMaterial3D.new()
+	spark_mat.albedo_color = Color(1.0, 0.3, 0.0)
+	spark_mat.emission_enabled = true
+	spark_mat.emission = Color(1.0, 0.4, 0.0)
+	spark_mat.emission_energy_multiplier = 8.0
+	var spark_mesh = SphereMesh.new()
+	spark_mesh.radius = 0.15 # Maior para compensar quantidade
+	spark_mesh.height = 0.3
+	spark_mesh.material = spark_mat
+	sparks.mesh = spark_mesh
+	node.add_child(sparks)
+	
+	# Smoke (Otimizado)
+	var smoke = CPUParticles3D.new()
+	smoke.emitting = true
+	smoke.one_shot = true
+	smoke.amount = 25 # Reduzido para evitar overdraw (lag de tela cheia)
+	smoke.lifetime = 2.0 # Reduzido drasticamente a pedido
+	smoke.explosiveness = 0.95
+	smoke.spread = 180.0
+	smoke.initial_velocity_min = 3.0
+	smoke.initial_velocity_max = 8.0
+	smoke.gravity = Vector3(0, 1.5, 0)
+	var smoke_mat = StandardMaterial3D.new()
+	var tex = load("res://assets/images/vfx/smoke.png")
+	if tex:
+		smoke_mat.albedo_texture = tex
+		smoke_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		smoke_mat.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+	var smoke_mesh = QuadMesh.new()
+	smoke_mesh.size = Vector2(12, 12) # Maior para cobrir a mesma área
+	smoke_mesh.material = smoke_mat
+	smoke.mesh = smoke_mesh
+	node.add_child(smoke)
+	
+	get_tree().create_timer(6.0).timeout.connect(func(): 
+		if is_instance_valid(node): 
+			node.queue_free()
+	)
