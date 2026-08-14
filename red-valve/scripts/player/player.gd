@@ -1597,6 +1597,35 @@ func _activate_cogblade_ultimate() -> void:
 	rot_look_up.x = deg_to_rad(70) # Olha pro céu
 	seq.tween_property(cine_cam, "global_rotation:x", rot_look_up.x, 0.15)
 	
+	# Cria partículas de velocidade antes de subir
+	seq.tween_callback(func():
+		var speed_lines = CPUParticles3D.new()
+		speed_lines.name = "speed_lines"
+		speed_lines.amount = 400 # Várias partículas
+		speed_lines.lifetime = 0.2
+		speed_lines.emission_shape = CPUParticles3D.EMISSION_SHAPE_BOX
+		speed_lines.emission_box_extents = Vector3(4, 4, 4)
+		speed_lines.direction = Vector3(0, -1, 0) # Cai de cima pra baixo (ilusão de subir)
+		speed_lines.spread = 0.0
+		speed_lines.gravity = Vector3(0, -40, 0) 
+		speed_lines.initial_velocity_min = 10.0
+		speed_lines.initial_velocity_max = 20.0
+		
+		var mat = StandardMaterial3D.new()
+		mat.albedo_color = Color(1, 1, 1, 0.4)
+		mat.emission_enabled = true
+		mat.emission = Color(1, 1, 1)
+		mat.emission_energy_multiplier = 2.0
+		mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		var mesh = QuadMesh.new()
+		mesh.size = Vector2(0.01, 0.4) # Menores e mais sutis
+		mesh.material = mat
+		speed_lines.mesh = mesh
+		
+		cine_cam.add_child(speed_lines)
+		speed_lines.position = Vector3(0, 0, -3) # Um pouco na frente da câmera
+	)
+	
 	# Passo 2: Câmera começa a subir e o modelo aparece flutuando
 	var start_pos = global_position
 	var sky_pos = start_pos + Vector3(0, 20.0, 0)
@@ -1615,6 +1644,7 @@ func _activate_cogblade_ultimate() -> void:
 			player_model.top_level = true
 			player_model.global_rotation = global_rotation
 			player_model.rotate_y(deg_to_rad(180)) # Gira o modelo para ficar de costas para a câmera
+			player_model.scale = Vector3.ONE # Garante escala normal ao aparecer
 		)
 		
 		# Ele surge do chão e se ajusta à câmera que já está subindo
@@ -1628,13 +1658,26 @@ func _activate_cogblade_ultimate() -> void:
 		# Ele termina de subir até o céu junto com a câmera
 		var model_up_pos = sky_pos - cine_cam.global_transform.basis.z * ult_model_distance + Vector3(0, -1.0, 0)
 		model_tween.tween_property(player_model, "global_position", model_up_pos, 0.20).set_trans(Tween.TRANS_SINE)
+		
+		# Tween separado para encolher a escala bem rapidamente durante o voo
+		var scale_tween = create_tween()
+		scale_tween.tween_interval(0.18) # Começa quase instantaneamente assim que aparece na frente da câmera
+		scale_tween.tween_property(player_model, "scale", Vector3.ZERO, 0.05).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+		
+		# Assim que sumir, a câmera treme violentamente no trajeto final até o topo
+		scale_tween.tween_callback(func():
+			GlobalUtils.shake_camera(0.25, 1.2) # Duração suficiente para acabar exatamente no topo
+		)
 	
 	# Quando chegar no céu, olha para baixo
 	seq.chain().tween_callback(func():
+		# Mantemos as speed_lines ativas durante a queda!
+			
 		if is_instance_valid(player_model):
 			player_model.visible = false # Some pro mergulho em primeira pessoa
 			player_model.top_level = false
 			player_model.position = Vector3.ZERO
+			player_model.scale = Vector3.ONE # Restaura para o normal
 	)
 	var down_rot = cine_cam.global_rotation
 	down_rot.x = deg_to_rad(-90) # 90 graus exatos pra baixo
