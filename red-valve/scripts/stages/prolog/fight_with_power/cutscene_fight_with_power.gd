@@ -163,8 +163,10 @@ func finish_cutscene() -> void:
 	fade.fade_out()
 	await get_tree().create_timer(2.0).timeout
 	
-	# Muda a cena para prolog_end
-	get_tree().change_scene_to_file("res://scenes/stages/prolog/prolog_end.tscn")
+	# Salva o progresso indicando o fim do prólogo e transiciona para o Capítulo 1 (stage_1)
+	SaveManager.prolog_finished = true
+	SaveManager.save_game("res://scenes/stages/stage_1/stage_1.tscn")
+	LoadingScreen.load_scene("res://scenes/stages/stage_1/stage_1.tscn")
 
 func _process(delta: float) -> void:
 	if waiting_for_input and not is_transitioning:

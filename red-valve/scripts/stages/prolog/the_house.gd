@@ -53,7 +53,37 @@ func _play_phone_ring_after_delay() -> void:
 	phone_audio.finished.connect(phone_audio.queue_free)
 
 func _show_intro_text() -> void:
+	await get_tree().create_timer(1.0).timeout
+	
+	# Exibe o título "PRÓLOGO" em vermelho bem grande no centro da tela (tamanho 120 com a fonte Tiny5 do splash)
+	var title_label = Label.new()
+	title_label.text = tr("TXT_PROLOGUE").to_upper()
+	title_label.set_anchors_preset(Control.PRESET_FULL_RECT)
+	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	title_label.add_theme_font_size_override("font_size", 180)
+	title_label.add_theme_color_override("font_color", Color(0.705882, 0.0, 0.0))
+	
+	var custom_font = load("res://assets/fonts/Montserrat-ExtraBold.ttf")
+	if custom_font:
+		title_label.add_theme_font_override("font", custom_font)
+		
+	ui_layer.add_child(title_label)
+	
+	title_label.modulate.a = 0.0
+	var title_tween_in = create_tween()
+	title_tween_in.tween_property(title_label, "modulate:a", 1.0, 1.0)
+	await title_tween_in.finished
+	
 	await get_tree().create_timer(3.0).timeout
+	
+	if is_instance_valid(title_label):
+		var title_tween_out = create_tween()
+		title_tween_out.tween_property(title_label, "modulate:a", 0.0, 1.0)
+		await title_tween_out.finished
+		title_label.queue_free()
+	
+	await get_tree().create_timer(1.0).timeout
 	
 	var tv_label = Label.new()
 	tv_label.text = tr("TXT_HOUSE_TV")

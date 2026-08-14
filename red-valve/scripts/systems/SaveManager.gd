@@ -8,6 +8,7 @@ var inventory_combat: Array = []
 var equipped_items: Array = ["cogblade"] # Cogblade sempre equipada
 var max_mp: float = 30.0
 var current_mp: float = 30.0
+var prolog_finished: bool = false
 
 var brightness_rect: ColorRect
 
@@ -101,6 +102,7 @@ func _ready():
 				var data = json.get_data()
 				if typeof(data) == TYPE_DICTIONARY:
 					current_stage = data.get("current_stage", "")
+					prolog_finished = data.get("prolog_finished", false)
 					if data.has("config"):
 						for key in data["config"].keys():
 							config[key] = data["config"][key]
@@ -187,6 +189,7 @@ func save_game(scene_path: String = ""):
 		
 	var save_data = {
 		"current_stage": current_stage,
+		"prolog_finished": prolog_finished,
 		"inventory_normal": inventory_normal,
 		"inventory_combat": inventory_combat,
 		"equipped_items": equipped_items,
@@ -216,6 +219,7 @@ func load_game() -> bool:
 			var data = json.get_data()
 			if typeof(data) == TYPE_DICTIONARY:
 				current_stage = data.get("current_stage", "")
+				prolog_finished = data.get("prolog_finished", false)
 				inventory_normal = data.get("inventory_normal", [{"id": "maycow_watch", "amount": 1}])
 				inventory_combat = data.get("inventory_combat", [
 					{"id": "pistol", "amount": 1},

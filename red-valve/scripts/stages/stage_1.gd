@@ -107,6 +107,38 @@ func _on_area_3d_jimmy_house_body_exited(body: Node3D) -> void:
 		prompt_label.visible = false
 
 func _play_intro_text() -> void:
+	if SaveManager.prolog_finished:
+		# Exibe o título "CAPÍTULO 1" em vermelho bem grande no centro da tela (tamanho 120 como no splash)
+		await get_tree().create_timer(1.0).timeout
+		
+		var chapter_label = Label.new()
+		chapter_label.text = tr("TXT_CHAPTER_1").to_upper()
+		chapter_label.set_anchors_preset(Control.PRESET_FULL_RECT)
+		chapter_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		chapter_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		chapter_label.add_theme_font_size_override("font_size", 180)
+		chapter_label.add_theme_color_override("font_color", Color(0.705882, 0.0, 0.0))
+		
+		var custom_font = load("res://assets/fonts/Montserrat-ExtraBold.ttf")
+		if custom_font:
+			chapter_label.add_theme_font_override("font", custom_font)
+			
+		ui_layer.add_child(chapter_label)
+		
+		chapter_label.modulate.a = 0.0
+		var tween_in = create_tween()
+		tween_in.tween_property(chapter_label, "modulate:a", 1.0, 1.0)
+		await tween_in.finished
+		
+		await get_tree().create_timer(3.5).timeout
+		
+		if is_instance_valid(chapter_label):
+			var tween_out = create_tween()
+			tween_out.tween_property(chapter_label, "modulate:a", 0.0, 1.0)
+			await tween_out.finished
+			chapter_label.queue_free()
+		return
+
 	if GlobalEvents.get("has_seen_stage_1_intro") == true:
 		return
 	GlobalEvents.set("has_seen_stage_1_intro", true)
