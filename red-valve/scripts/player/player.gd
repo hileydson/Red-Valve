@@ -1650,27 +1650,26 @@ func _activate_cogblade_ultimate() -> void:
 			player_model.rotate_y(deg_to_rad(180)) # Gira o modelo para ficar de costas para a câmera
 			player_model.scale = Vector3.ONE # Garante escala normal ao aparecer
 			
-			# Rastro luminoso de energia no modelo 3D que se apaga por onde passa
+			# Rastro sutil em tons de cinza no modelo 3D que se apaga por onde passa
 			var model_trail = player_model.get_node_or_null("model_trail") as CPUParticles3D
 			if not is_instance_valid(model_trail):
 				model_trail = CPUParticles3D.new()
 				model_trail.name = "model_trail"
-				model_trail.amount = 80
-				model_trail.lifetime = 0.35
+				model_trail.amount = 120
+				model_trail.lifetime = 0.45
 				model_trail.local_coords = false # Partículas ficam fixas no espaço formando o rastro
 				model_trail.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
-				model_trail.emission_sphere_radius = 0.4
-				model_trail.gravity = Vector3.ZERO
+				model_trail.emission_sphere_radius = 0.08
+				model_trail.gravity = Vector3(0, 0.2, 0) # Leve subida de fumaça
 				
 				var mat = StandardMaterial3D.new()
-				mat.albedo_color = Color(1.0, 0.3, 0.1, 0.6)
-				mat.emission_enabled = true
-				mat.emission = Color(1.0, 0.4, 0.1)
-				mat.emission_energy_multiplier = 3.0
+				mat.albedo_color = Color(0.6, 0.6, 0.6, 0.18) # Fumaça translúcida bem suave
+				mat.emission_enabled = false # Sem brilho (aspecto de fumaça real)
 				mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+				mat.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES # Garante visibilidade pra câmera
 				
 				var mesh = QuadMesh.new()
-				mesh.size = Vector2(0.25, 0.25)
+				mesh.size = Vector2(0.04, 0.04) # Fumaça sutil
 				mesh.material = mat
 				model_trail.mesh = mesh
 				
@@ -1680,7 +1679,7 @@ func _activate_cogblade_ultimate() -> void:
 				model_trail.scale_amount_curve = scale_curve
 				
 				player_model.add_child(model_trail)
-				model_trail.position = Vector3(0, 1.0, 0)
+				model_trail.position = Vector3(0, 0.5, 0)
 			else:
 				model_trail.emitting = true
 		)
@@ -1737,10 +1736,10 @@ func _activate_cogblade_ultimate() -> void:
 		crescent_cogblade.rotate_object_local(Vector3(0,1,0), deg_to_rad(ult_cogblade_rot_y)) 
 		crescent_cogblade.rotate_object_local(Vector3(0,0,1), deg_to_rad(ult_cogblade_rot_z))
 		
-		# Posição final perfeita (1.5m na frente da câmera)
-		var final_blade_pos = cine_cam.global_position - cine_cam.global_transform.basis.z * 1.5
-		# Começa fora da tela por baixo e à direita
-		var start_blade_pos = cine_cam.global_position + (cine_cam.global_transform.basis.x * 1.5) - (cine_cam.global_transform.basis.y * 1.2) - (cine_cam.global_transform.basis.z * 1.2)
+		# Posição final perfeita (1.5m na frente da câmera e levemente à direita)
+		var final_blade_pos = cine_cam.global_position - cine_cam.global_transform.basis.z * 1.5 + cine_cam.global_transform.basis.x * 0.35
+		# Começa fora da tela por CIMA e à direita
+		var start_blade_pos = cine_cam.global_position + (cine_cam.global_transform.basis.x * 1.8) + (cine_cam.global_transform.basis.y * 1.5) - (cine_cam.global_transform.basis.z * 1.2)
 		crescent_cogblade.global_position = start_blade_pos
 		crescent_cogblade.scale = Vector3(0.5, 0.5, 0.5)
 		
@@ -1749,20 +1748,20 @@ func _activate_cogblade_ultimate() -> void:
 		add_child(blade_audio)
 		blade_audio.play()
 		
-		# Animação fluida de entrada vindo de baixo-direita para a posição final
+		# Animação fluida e mais rápida de entrada vindo de cima-direita para a posição final
 		var blade_tween = create_tween().set_parallel(true)
-		blade_tween.tween_property(crescent_cogblade, "global_position", final_blade_pos, 0.25).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-		blade_tween.tween_property(crescent_cogblade, "scale", Vector3.ONE, 0.25).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+		blade_tween.tween_property(crescent_cogblade, "global_position", final_blade_pos, 0.14).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+		blade_tween.tween_property(crescent_cogblade, "scale", Vector3.ONE, 0.14).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 	)
 	
-	seq.tween_interval(0.25)
+	seq.tween_interval(0.14)
 	
 	# Passo 5: O mergulho.
 	var impact_pos = start_pos + Vector3(0, 0.5, 0)
 	
-	# A câmera e a cogblade descem exatamete juntas
+	# A câmera e a cogblade descem exatamete juntas (com offset mantido)
 	seq.tween_property(cine_cam, "global_position", impact_pos, 0.12).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
-	seq.parallel().tween_property(crescent_cogblade, "global_position", impact_pos - cine_cam.global_transform.basis.z * 1.0, 0.12).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+	seq.parallel().tween_property(crescent_cogblade, "global_position", impact_pos - cine_cam.global_transform.basis.z * 1.0 + cine_cam.global_transform.basis.x * 0.35, 0.12).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
 	
 	# IMPACTO!
 	seq.tween_callback(func():
