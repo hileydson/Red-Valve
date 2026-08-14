@@ -283,19 +283,86 @@ func _throw_random_projectile() -> void:
 	
 	# Conecta o sinal de hit para causar dano
 	projectile.body_entered.connect(func(body):
-		if body == player:
+		if body == player and is_instance_valid(projectile):
 			player.take_damage(attack_damage)
 			# Tremor de câmera
 			GlobalUtils.shake_camera(0.2, 0.2)
-			projectile.queue_free()
+			_shatter_projectile(projectile)
 	)
 	
 	# Destrói automaticamente se não bater no player (depois de dar o tempo do tween + folga)
 	if not is_inside_tree() or get_tree() == null: return
-	get_tree().create_timer(1.5).timeout.connect(func():
+	get_tree().create_timer(1.0).timeout.connect(func():
 		if is_instance_valid(projectile):
-			projectile.queue_free()
+			_shatter_projectile(projectile)
 	)
+
+func _shatter_projectile(projectile: Node3D) -> void:
+	if not is_instance_valid(projectile) or not is_inside_tree() or get_tree() == null:
+		return
+		
+	var impact_pos = projectile.global_position
+	# Hide original mesh (if any)
+	for child in projectile.get_children():
+		if child is MeshInstance3D:
+			child.visible = false
+
+	# Explosion particles (dust)
+	var particles = CPUParticles3D.new()
+	particles.one_shot = true
+	particles.amount = 80
+	particles.lifetime = 40.0
+	particles.explosiveness = 0.9
+	particles.gravity = Vector3(0, -9.8, 0)
+	# Simple white texture could be set later; using default point
+	get_tree().current_scene.add_child(particles)
+	particles.global_position = impact_pos
+	particles.emitting = true
+	# Keep particles visible for ~35 seconds before cleanup
+	get_tree().create_timer(35.0).timeout.connect(func():
+		if is_instance_valid(particles):
+			particles.queue_free())
+
+	# Fragment shatter
+	var fragments = 30
+	for i in range(fragments):
+		var fragment = RigidBody3D.new()
+		# Random size
+		var size = randf_range(0.05, 0.12)
+		var box = BoxMesh.new()
+		box.size = Vector3(size, size, size)
+		# Material
+		var mat = StandardMaterial3D.new()
+		mat.albedo_color = Color(0.45, 0.38, 0.3)
+		mat.roughness = 0.9
+		box.material = mat
+		# MeshInstance
+		var mesh_inst = MeshInstance3D.new()
+		mesh_inst.mesh = box
+		fragment.add_child(mesh_inst)
+		# Collision shape
+		var col = CollisionShape3D.new()
+		var shape = BoxShape3D.new()
+		shape.size = Vector3(size, size, size)
+		col.shape = shape
+		fragment.add_child(col)
+		# Position
+		fragment.global_position = impact_pos
+		# Random impulse
+		var dir = Vector3(randf_range(-1,1), randf_range(0.5,1.5), randf_range(-1,1)).normalized()
+		var strength = randf_range(2.5, 6.0)
+		fragment.apply_impulse(Vector3.ZERO, dir * strength)
+		# Add to scene
+		get_tree().current_scene.add_child(fragment)
+		# Auto‑remove after short time
+		get_tree().create_timer(2.5).timeout.connect(func():
+			if is_instance_valid(fragment):
+				fragment.queue_free())
+
+	# Clean up original projectile after short delay to allow particles to play
+	get_tree().create_timer(0.2).timeout.connect(func():
+		if is_instance_valid(projectile):
+			projectile.queue_free())
 
 func _throw_fireball() -> void:
 	# O inimigo costuma bater, então vamos esperar 2.4s para sincronizar com o soco/animação

@@ -107,6 +107,22 @@ func _ready():
 						
 	apply_configs()
 
+func is_window_embedded() -> bool:
+	if Engine.has_method("is_embedded_in_editor") and Engine.is_embedded_in_editor():
+		return true
+	var win = get_window() if has_method("get_window") else null
+	if win:
+		if win.has_method("is_embedded") and win.is_embedded():
+			return true
+		if win.has_method("get_embedder") and win.get_embedder() != null:
+			return true
+	if get_tree() and get_tree().root:
+		if get_tree().root.has_method("is_embedded") and get_tree().root.is_embedded():
+			return true
+		if get_tree().root.has_method("get_embedder") and get_tree().root.get_embedder() != null:
+			return true
+	return false
+
 func apply_configs() -> void:
 	TranslationServer.set_locale(config["language"])
 	
@@ -120,21 +136,30 @@ func apply_configs() -> void:
 	}
 	var target_res = res_map.get(cur_res, Vector2i(1920, 1080))
 	
+	var res_scale_map = {
+		"720p": 0.5,
+		"1080p": 1.0,
+		"1440p": 1.5
+	}
+	var scale_3d = res_scale_map.get(cur_res, 1.0)
+	
 	if get_tree() and get_tree().root:
-		get_tree().root.content_scale_size = target_res
+		get_tree().root.content_scale_size = Vector2i(1920, 1080)
+		get_tree().root.scaling_3d_scale = scale_3d
 	
 	if cur_mode != _last_applied_mode or cur_res != _last_applied_resolution:
 		_last_applied_mode = cur_mode
 		_last_applied_resolution = cur_res
 		
-		if cur_mode == "fullscreen":
-			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
-		else:
-			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
-			DisplayServer.window_set_size(target_res)
-			var screen_size = DisplayServer.screen_get_size()
-			var win_size = DisplayServer.window_get_size()
-			DisplayServer.window_set_position((screen_size - win_size) / 2)
+		if not is_window_embedded():
+			if cur_mode == "fullscreen":
+				DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
+			else:
+				DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+				DisplayServer.window_set_size(target_res)
+				var screen_size = DisplayServer.screen_get_size()
+				var win_size = DisplayServer.window_get_size()
+				DisplayServer.window_set_position((screen_size - win_size) / 2)
 		
 	var actions = ["ui_left", "ui_right", "ui_up", "ui_down", "ui_look_left", "ui_look_right", "ui_look_up", "ui_look_down"]
 	for action in actions:
