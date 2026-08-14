@@ -516,7 +516,7 @@ func _start_heartbeat_pulse() -> void:
 
 func _input(event):
 	if event.is_action_pressed("ui_cogblade_power") and !GlobalEvents.is_maycow_normal:
-		if cogblade_power_value >= 100.0 and not is_using_ultimate:
+		if cogblade_power_value >= 100.0 and not is_using_ultimate and is_on_floor():
 			cogblade_power_value = 0.0
 			cogblade_pulsing = false
 			if cogblade_pulse_tween: cogblade_pulse_tween.kill()
@@ -1567,6 +1567,14 @@ func update_equipment_visuals() -> void:
 
 func _activate_cogblade_ultimate() -> void:
 	is_using_ultimate = true
+	
+	# Cancela a lâmina se estiver no ar/retornando (evita glitch de velocidade)
+	is_blade_returning = false
+	crescent_cogblade.top_level = false
+	crescent_cogblade.position = magic_blade_pos_original
+	crescent_cogblade.rotation = Vector3.ZERO
+	crescent_cogblade.scale = Vector3.ONE
+	crescent_cogblade.hide()
 	
 	# 1. Preparação
 	Engine.time_scale = 0.1
