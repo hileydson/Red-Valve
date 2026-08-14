@@ -54,7 +54,8 @@ func _process(delta):
 	# --- 3.5 LÓGICA DE CORRIDA (INCLINAÇÃO) ---
 	var run_offset_pos = Vector3.ZERO
 	var run_offset_rot = Vector3.ZERO
-	if player and Input.is_action_pressed("ui_run") and speed > 0.1:
+	var is_aiming = player.is_aiming if player and "is_aiming" in player else false
+	if player and Input.is_action_pressed("ui_run") and speed > 0.1 and not is_aiming:
 		run_offset_rot.x = deg_to_rad(50.0) # Pitch pra baixo
 		run_offset_pos = Vector3(0.0, -0.2, 0.15) # Abaixa e traz pra trás
 		
