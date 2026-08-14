@@ -289,7 +289,11 @@ void fragment() {
 	
 	if !GlobalEvents.is_maycow_normal:
 		cogblade_hud = TextureProgressBar.new()
-		cogblade_hud.texture_progress = load("res://assets/images/menu/itens/red_valve/cogblade.png")
+		var cog_tex = load("res://assets/images/menu/itens/red_valve/cogblade.png")
+		cogblade_hud.texture_under = cog_tex
+		cogblade_hud.texture_progress = cog_tex
+		cogblade_hud.tint_under = Color(1, 1, 1, 0.25) # Marca d'água permanente na tela
+		cogblade_hud.tint_progress = Color(1, 1, 1, 1.0) # Cor de preenchimento
 		cogblade_hud.fill_mode = TextureProgressBar.FILL_BOTTOM_TO_TOP
 		cogblade_hud.min_value = 0
 		cogblade_hud.max_value = 100
@@ -301,7 +305,6 @@ void fragment() {
 		cogblade_hud.offset_left = 20
 		cogblade_hud.offset_top = 20
 		cogblade_hud.scale = Vector2(0.4, 0.4)
-		cogblade_hud.modulate.a = 0.5 # Translucido/transparente
 		hud_layer.add_child(cogblade_hud)
 		
 		cogblade_hud_label = Label.new()
@@ -520,7 +523,8 @@ func _input(event):
 			if cogblade_particles: cogblade_particles.emitting = false
 			if cogblade_hud: 
 				cogblade_hud.value = 0.0
-				cogblade_hud.modulate = Color(1, 1, 1, 0.5)
+				cogblade_hud.tint_progress = Color(1, 1, 1, 1.0)
+				cogblade_hud.modulate = Color(1, 1, 1, 1.0)
 			_activate_cogblade_ultimate()
 
 	if is_using_ultimate:
@@ -1529,9 +1533,9 @@ func _start_cogblade_pulse() -> void:
 	if cogblade_pulse_tween: cogblade_pulse_tween.kill()
 	cogblade_pulse_tween = create_tween().set_loops()
 	
-	# Pulsa vermelho
-	cogblade_pulse_tween.tween_property(cogblade_hud, "modulate", Color(1.0, 0.2, 0.2, 0.9), 0.5).set_trans(Tween.TRANS_SINE)
-	cogblade_pulse_tween.tween_property(cogblade_hud, "modulate", Color(1.0, 1.0, 1.0, 0.5), 0.5).set_trans(Tween.TRANS_SINE)
+	# Pulsa vermelho no preenchimento
+	cogblade_pulse_tween.tween_property(cogblade_hud, "tint_progress", Color(1.0, 0.2, 0.2, 1.0), 0.5).set_trans(Tween.TRANS_SINE)
+	cogblade_pulse_tween.tween_property(cogblade_hud, "tint_progress", Color(1.0, 1.0, 1.0, 1.0), 0.5).set_trans(Tween.TRANS_SINE)
 	
 	# Partículas de sangue
 	if not cogblade_particles:
