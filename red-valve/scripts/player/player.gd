@@ -1672,6 +1672,9 @@ func _activate_cogblade_ultimate() -> void:
 	# Quando chegar no céu, olha para baixo
 	seq.chain().tween_callback(func():
 		# Mantemos as speed_lines ativas durante a queda!
+		
+		# Tremidinha leve no topo indicando a suspensão no ar antes da queda
+		GlobalUtils.shake_camera(0.2, 0.2)
 			
 		if is_instance_valid(player_model):
 			player_model.visible = false # Some pro mergulho em primeira pessoa
