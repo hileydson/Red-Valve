@@ -1582,7 +1582,7 @@ func _activate_cogblade_ultimate() -> void:
 		var blur = hud_layer.get_node_or_null("MotionBlurOverlay")
 		if blur:
 			blur.visible = true
-			blur.material.set_shader_parameter("blur_strength", 0.4) # Reduzido para não pesar
+			blur.material.set_shader_parameter("blur_strength", 0.2) # Motion blur bem sutil
 			
 	# Para animações e zera a velocidade para não deslizar
 	playback.travel("idle")
@@ -1649,6 +1649,40 @@ func _activate_cogblade_ultimate() -> void:
 			player_model.global_rotation = global_rotation
 			player_model.rotate_y(deg_to_rad(180)) # Gira o modelo para ficar de costas para a câmera
 			player_model.scale = Vector3.ONE # Garante escala normal ao aparecer
+			
+			# Rastro luminoso de energia no modelo 3D que se apaga por onde passa
+			var model_trail = player_model.get_node_or_null("model_trail") as CPUParticles3D
+			if not is_instance_valid(model_trail):
+				model_trail = CPUParticles3D.new()
+				model_trail.name = "model_trail"
+				model_trail.amount = 80
+				model_trail.lifetime = 0.35
+				model_trail.local_coords = false # Partículas ficam fixas no espaço formando o rastro
+				model_trail.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
+				model_trail.emission_sphere_radius = 0.4
+				model_trail.gravity = Vector3.ZERO
+				
+				var mat = StandardMaterial3D.new()
+				mat.albedo_color = Color(1.0, 0.3, 0.1, 0.6)
+				mat.emission_enabled = true
+				mat.emission = Color(1.0, 0.4, 0.1)
+				mat.emission_energy_multiplier = 3.0
+				mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+				
+				var mesh = QuadMesh.new()
+				mesh.size = Vector2(0.25, 0.25)
+				mesh.material = mat
+				model_trail.mesh = mesh
+				
+				var scale_curve = Curve.new()
+				scale_curve.add_point(Vector2(0, 1.0))
+				scale_curve.add_point(Vector2(1.0, 0.0)) # Apaga suavemente
+				model_trail.scale_amount_curve = scale_curve
+				
+				player_model.add_child(model_trail)
+				model_trail.position = Vector3(0, 1.0, 0)
+			else:
+				model_trail.emitting = true
 		)
 		
 		# Ele surge do chão e se ajusta à câmera que já está subindo
@@ -1681,6 +1715,8 @@ func _activate_cogblade_ultimate() -> void:
 		GlobalUtils.shake_camera(0.2, 0.2)
 			
 		if is_instance_valid(player_model):
+			var model_trail = player_model.get_node_or_null("model_trail")
+			if is_instance_valid(model_trail): model_trail.queue_free()
 			player_model.visible = false # Some pro mergulho em primeira pessoa
 			player_model.top_level = false
 			player_model.position = Vector3.ZERO
@@ -1690,25 +1726,36 @@ func _activate_cogblade_ultimate() -> void:
 	down_rot.x = deg_to_rad(-90) # 90 graus exatos pra baixo
 	seq.tween_property(cine_cam, "global_rotation", down_rot, 0.1)
 	
-	# A Cogblade surge apontada pra baixo!
+	# A Cogblade surge e desliza suavemente para a posição ideal na tela
 	seq.tween_callback(func():
 		crescent_cogblade.show()
 		crescent_cogblade.top_level = true
-		crescent_cogblade.global_position = cine_cam.global_position - cine_cam.global_transform.basis.z * 1.5
 		
-		# Fixa a rotação para ficar apontada exatamente para baixo, focada no cabo
+		# Rotação fixa virada para baixo
 		crescent_cogblade.global_rotation = cine_cam.global_rotation
 		crescent_cogblade.rotate_object_local(Vector3(1,0,0), deg_to_rad(ult_cogblade_rot_x)) 
 		crescent_cogblade.rotate_object_local(Vector3(0,1,0), deg_to_rad(ult_cogblade_rot_y)) 
 		crescent_cogblade.rotate_object_local(Vector3(0,0,1), deg_to_rad(ult_cogblade_rot_z))
 		
+		# Posição final perfeita (1.5m na frente da câmera)
+		var final_blade_pos = cine_cam.global_position - cine_cam.global_transform.basis.z * 1.5
+		# Começa fora da tela por baixo e à direita
+		var start_blade_pos = cine_cam.global_position + (cine_cam.global_transform.basis.x * 1.5) - (cine_cam.global_transform.basis.y * 1.2) - (cine_cam.global_transform.basis.z * 1.2)
+		crescent_cogblade.global_position = start_blade_pos
+		crescent_cogblade.scale = Vector3(0.5, 0.5, 0.5)
+		
 		var blade_audio = AudioStreamPlayer.new()
 		blade_audio.stream = load("res://assets/sounds/player/blade_out.mp3")
 		add_child(blade_audio)
 		blade_audio.play()
+		
+		# Animação fluida de entrada vindo de baixo-direita para a posição final
+		var blade_tween = create_tween().set_parallel(true)
+		blade_tween.tween_property(crescent_cogblade, "global_position", final_blade_pos, 0.25).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+		blade_tween.tween_property(crescent_cogblade, "scale", Vector3.ONE, 0.25).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 	)
 	
-	seq.tween_interval(0.1)
+	seq.tween_interval(0.25)
 	
 	# Passo 5: O mergulho.
 	var impact_pos = start_pos + Vector3(0, 0.5, 0)
@@ -1739,6 +1786,7 @@ func _activate_cogblade_ultimate() -> void:
 		crescent_cogblade.top_level = false
 		crescent_cogblade.position = magic_blade_pos_original
 		crescent_cogblade.rotation = Vector3.ZERO
+		crescent_cogblade.scale = Vector3.ONE
 		
 		# Restaura câmera do player imediatamente após o impacto, mas MANTÉM a câmera lenta!
 		if is_instance_valid(cine_cam):
