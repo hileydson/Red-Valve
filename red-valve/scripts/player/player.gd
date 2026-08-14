@@ -58,6 +58,13 @@ var current_stamina: float = 100.0
 var stamina_bar: ProgressBar
 var stamina_fade_timer: float = 0.0
 var is_exhausted: bool = false
+
+# --- ULTIMATE CINEMÁTICA ---
+@export_group("Ultimate Cinemática")
+@export var ult_model_distance: float = 1.7
+@export var ult_cogblade_rot_x: float = -70.0
+@export var ult_cogblade_rot_y: float = -90.0
+@export var ult_cogblade_rot_z: float = 0.0
 var mp_bar: ProgressBar
 
 var hud_layer: CanvasLayer
@@ -1590,28 +1597,37 @@ func _activate_cogblade_ultimate() -> void:
 	rot_look_up.x = deg_to_rad(70) # Olha pro céu
 	seq.tween_property(cine_cam, "global_rotation:x", rot_look_up.x, 0.15)
 	
-	# Passo 2: O modelo e a câmera sobem juntos (o modelo sai do chão, aparecendo na câmera)
+	# Passo 2: Câmera começa a subir e o modelo aparece flutuando
 	var start_pos = global_position
 	var sky_pos = start_pos + Vector3(0, 20.0, 0)
 	
+	# A câmera começa a subir
+	seq.tween_property(cine_cam, "global_position", sky_pos, 0.35).set_trans(Tween.TRANS_SINE)
+	
 	var player_model = get_node_or_null("maycow_lopes")
 	if is_instance_valid(player_model):
-		seq.tween_callback(func():
+		# Cria um tween separado para o modelo agir de forma perfeitamente simultânea à subida
+		var model_tween = create_tween()
+		# Aguarda a câmera olhar para o céu (0.15s) que está no seq
+		model_tween.tween_interval(0.15)
+		model_tween.tween_callback(func():
 			player_model.visible = true
 			player_model.top_level = true
 			player_model.global_rotation = global_rotation
-			player_model.global_position = start_pos # Começa no chão
+			player_model.rotate_y(deg_to_rad(180)) # Gira o modelo para ficar de costas para a câmera
 		)
 		
-		# Posição final do modelo lá no céu
-		var model_up_pos = sky_pos - cine_cam.global_transform.basis.z * 1.8 + Vector3(0, -1.0, 0)
+		# Ele surge do chão e se ajusta à câmera que já está subindo
+		model_tween.tween_method(func(progress: float):
+			if is_instance_valid(player_model) and is_instance_valid(cine_cam):
+				# Posição na frente da câmera (distância editável no Inspector)
+				var front_target = cine_cam.global_position - cine_cam.global_transform.basis.z * ult_model_distance + Vector3(0, -1.0, 0)
+				player_model.global_position = start_pos.lerp(front_target, progress)
+		, 0.0, 1.0, 0.15).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
 		
-		# Câmera sobe
-		seq.tween_property(cine_cam, "global_position", sky_pos, 0.25).set_trans(Tween.TRANS_SINE)
-		# Modelo sobe exatamente ao mesmo tempo, aparecendo gradualmente no FOV
-		seq.parallel().tween_property(player_model, "global_position", model_up_pos, 0.25).set_trans(Tween.TRANS_SINE)
-	else:
-		seq.tween_property(cine_cam, "global_position", sky_pos, 0.25).set_trans(Tween.TRANS_SINE)
+		# Ele termina de subir até o céu junto com a câmera
+		var model_up_pos = sky_pos - cine_cam.global_transform.basis.z * ult_model_distance + Vector3(0, -1.0, 0)
+		model_tween.tween_property(player_model, "global_position", model_up_pos, 0.20).set_trans(Tween.TRANS_SINE)
 	
 	# Quando chegar no céu, olha para baixo
 	seq.chain().tween_callback(func():
@@ -1630,11 +1646,11 @@ func _activate_cogblade_ultimate() -> void:
 		crescent_cogblade.top_level = true
 		crescent_cogblade.global_position = cine_cam.global_position - cine_cam.global_transform.basis.z * 1.5
 		
-		# Fixa a rotação para ficar inclinada e mais fotogênica
+		# Fixa a rotação para ficar apontada exatamente para baixo, focada no cabo
 		crescent_cogblade.global_rotation = cine_cam.global_rotation
-		crescent_cogblade.rotate_object_local(Vector3(1,0,0), deg_to_rad(-60)) # Não totalmente 90 pra baixo
-		crescent_cogblade.rotate_object_local(Vector3(0,1,0), deg_to_rad(45))  # Levemente de lado pra mostrar a lâmina
-		crescent_cogblade.rotate_object_local(Vector3(0,0,1), deg_to_rad(160)) # Gira a lâmina para baixo
+		crescent_cogblade.rotate_object_local(Vector3(1,0,0), deg_to_rad(ult_cogblade_rot_x)) 
+		crescent_cogblade.rotate_object_local(Vector3(0,1,0), deg_to_rad(ult_cogblade_rot_y)) 
+		crescent_cogblade.rotate_object_local(Vector3(0,0,1), deg_to_rad(ult_cogblade_rot_z))
 		
 		var blade_audio = AudioStreamPlayer.new()
 		blade_audio.stream = load("res://assets/sounds/player/blade_out.mp3")
@@ -1715,6 +1731,13 @@ func _apply_aoe_damage_slowly(pos: Vector3):
 		t.tween_callback(func():
 			if is_instance_valid(inimigo):
 				inimigo.take_damage(30)
+				
+				# Efeito de Knockback
+				var dir_away = (inimigo.global_position - pos).normalized()
+				dir_away.y = 0
+				var push_pos = inimigo.global_position + dir_away * 2.5
+				var pt = create_tween()
+				pt.tween_property(inimigo, "global_position", push_pos, 0.2).set_trans(Tween.TRANS_EXPO)
 		)
 
 func _spawn_explosion_vfx(pos: Vector3):
@@ -1759,7 +1782,7 @@ func _spawn_explosion_vfx(pos: Vector3):
 	smoke.emitting = true
 	smoke.one_shot = true
 	smoke.amount = 25 # Reduzido para evitar overdraw (lag de tela cheia)
-	smoke.lifetime = 2.0 # Reduzido drasticamente a pedido
+	smoke.lifetime = 1.0 # Reduzido drasticamente a pedido
 	smoke.explosiveness = 0.95
 	smoke.spread = 180.0
 	smoke.initial_velocity_min = 3.0
