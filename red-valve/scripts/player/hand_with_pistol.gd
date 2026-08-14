@@ -30,7 +30,10 @@ func _process(delta):
 	
 	# Se houver input do analógico, somamos ao mouse_input simulando um movimento relativo
 	if joy_input.length() > 0.1:
-		mouse_input += joy_input * stick_sensitivity
+		var player = owner
+		var is_aiming = player.is_aiming if player and "is_aiming" in player else false
+		var sens_mult = SaveManager.config.get("sensitivity_aim", 0.4) if is_aiming else SaveManager.config.get("sensitivity_look", 1.0)
+		mouse_input += joy_input * stick_sensitivity * sens_mult
 
 	# --- 2. LÓGICA DO BOBBING (Passos) ---
 	var player = owner 
@@ -55,7 +58,8 @@ func _process(delta):
 	var run_offset_pos = Vector3.ZERO
 	var run_offset_rot = Vector3.ZERO
 	var is_aiming = player.is_aiming if player and "is_aiming" in player else false
-	if player and Input.is_action_pressed("ui_run") and speed > 0.1 and not is_aiming:
+	var is_running = player._run_toggle_active if player and "_run_toggle_active" in player else Input.is_action_pressed("ui_run")
+	if player and is_running and speed > 0.1 and not is_aiming:
 		run_offset_rot.x = deg_to_rad(50.0) # Pitch pra baixo
 		run_offset_pos = Vector3(0.0, -0.2, 0.15) # Abaixa e traz pra trás
 		

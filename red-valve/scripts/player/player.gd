@@ -156,7 +156,9 @@ var camera_bullet_time_ON = false
 var is_first_person = false
 
 var transition_camera = false
+
 var is_aiming = false
+var _run_toggle_active: bool = false
 
 var cogblade_hud: TextureProgressBar
 var cogblade_hud_label: Label
@@ -535,7 +537,7 @@ func _input(event):
 		return
 		
 	if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
-		var sens_mult = 0.4 if is_aiming else 1.0
+		var sens_mult = SaveManager.config.get("sensitivity_aim", 0.4) if is_aiming else SaveManager.config.get("sensitivity_look", 1.0)
 		
 		# Aplica a rotação horizontal no corpo (Maycow)
 		rotate_y(-event.relative.x * SENSITIVITY * sens_mult)
@@ -565,6 +567,15 @@ func _physics_process(delta: float) -> void:
 	var can_run_normal = GlobalEvents.is_maycow_normal and not is_in_house
 	var stamina_active = not GlobalEvents.is_maycow_normal or can_run_normal
 	
+	if SaveManager.config.get("run_mode", "hold") == "toggle":
+		if Input.is_action_just_pressed("ui_run"):
+			_run_toggle_active = not _run_toggle_active
+		if velocity.length() < 0.1 or is_aiming or is_exhausted or current_stamina <= 0:
+			_run_toggle_active = false
+	else:
+		_run_toggle_active = Input.is_action_pressed("ui_run")
+
+	
 	# --- STAMINA EXHAUSTION LOGIC ---
 	if current_stamina <= 0.5:
 		is_exhausted = true
@@ -572,7 +583,7 @@ func _physics_process(delta: float) -> void:
 		is_exhausted = false
 		
 	# --- STAMINA LOGIC ---
-	var is_running_stam = Input.is_action_pressed("ui_run") and velocity.length() > 0.1 and current_stamina > 0 and stamina_active and not is_exhausted and not is_aiming
+	var is_running_stam = _run_toggle_active and velocity.length() > 0.1 and current_stamina > 0 and stamina_active and not is_exhausted and not is_aiming
 	if is_running_stam:
 		current_stamina -= 20.0 * delta
 		if current_stamina < 0: current_stamina = 0
@@ -660,7 +671,7 @@ func _physics_process(delta: float) -> void:
 				var camera_atual = get_viewport().get_camera_3d()
 				
 				# Girar o corpo (Horizontal) - multiplicado por delta para suavidade
-				var sens_mult = 0.4 if is_aiming else 1.0
+				var sens_mult = SaveManager.config.get("sensitivity_aim", 0.4) if is_aiming else SaveManager.config.get("sensitivity_look", 1.0)
 				rotate_y(-joy_dir.x * JOY_SENSITIVITY * sens_mult * delta * 100)
 				
 				# Girar a câmera (Vertical)
@@ -699,7 +710,7 @@ func _physics_process(delta: float) -> void:
 			var velocidade_atual = WALK_SPEED
 			if is_aiming:
 				velocidade_atual = WALK_SPEED * 0.4
-			elif Input.is_action_pressed("ui_run") and current_stamina > 0 and not is_exhausted:
+			elif _run_toggle_active and current_stamina > 0 and not is_exhausted:
 				velocidade_atual = RUN_SPEED
 				
 			var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
@@ -707,7 +718,7 @@ func _physics_process(delta: float) -> void:
 
 			if direction and !transition_camera:
 				# Animações e Sons
-				if Input.is_action_pressed("ui_run") and not is_aiming:
+				if _run_toggle_active and not is_aiming:
 					if pistola.animation not in ["reload", "run"]: pistola.play("run")
 					if is_on_floor() and velocity_Y_zero: playback.travel("run")
 				else:
@@ -715,7 +726,7 @@ func _physics_process(delta: float) -> void:
 					if is_on_floor() and velocity_Y_zero: playback.travel("walk")
 				
 				if !passos.playing and is_on_floor():
-					if Input.is_action_pressed("ui_run") and not is_aiming:
+					if _run_toggle_active and not is_aiming:
 						passos.pitch_scale = randf_range(1.15, 1.3)
 						passos.volume_db = randf_range(-8.0, -5.0)
 					else:
@@ -735,7 +746,7 @@ func _physics_process(delta: float) -> void:
 		# FX DURANTE CORRIDA (FOV e Blur leve - Diferenciado para 1ª Pessoa e 3ª Pessoa)
 		var camera = get_viewport().get_camera_3d()
 		if camera and not is_dashing:
-			var is_running = Input.is_action_pressed("ui_run") and velocity.length() > 0.1 and current_stamina > 0 and not is_exhausted and not is_aiming
+			var is_running = _run_toggle_active and velocity.length() > 0.1 and current_stamina > 0 and not is_exhausted and not is_aiming
 			var direction_check := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 			var visao_frente = -global_transform.basis.z
 			var alinhamento = direction_check.dot(visao_frente) if direction_check else 0.0
@@ -774,12 +785,13 @@ func _physics_process(delta: float) -> void:
 			var joy_dir = Input.get_vector("ui_look_left", "ui_look_right", "ui_look_up", "ui_look_down")
 			if joy_dir.length() > DEADZONE:
 				var camera_atual = get_viewport().get_camera_3d()
+				var sens_mult = SaveManager.config.get("sensitivity_look", 1.0)
 				
 				# Girar o corpo (Horizontal) - multiplicado por delta para suavidade
-				rotate_y(-joy_dir.x * JOY_SENSITIVITY * delta * 100)
+				rotate_y(-joy_dir.x * JOY_SENSITIVITY * sens_mult * delta * 100)
 				
 				# Girar a câmera (Vertical)
-				camera_atual.rotate_x(-joy_dir.y * JOY_SENSITIVITY * delta * 100)
+				camera_atual.rotate_x(-joy_dir.y * JOY_SENSITIVITY * sens_mult * delta * 100)
 				
 				# Trava o ângulo vertical (mesma lógica do mouse)
 				var v_down = -10 if camera_atual == camera_third_person else -80
@@ -791,7 +803,7 @@ func _physics_process(delta: float) -> void:
 		var input_dir := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 		
 		# MOVIMENTO NORMAL (WALK/RUN)
-		var is_running = Input.is_action_pressed("ui_run") and current_stamina > 0 and can_run_normal and not is_exhausted and not is_aiming
+		var is_running = _run_toggle_active and current_stamina > 0 and can_run_normal and not is_exhausted and not is_aiming
 		var velocidade_atual = RUN_SPEED if is_running else WALK_SPEED_NORMAL
 		var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 		var velocity_Y_zero: bool = velocity.y <= 0
@@ -867,7 +879,7 @@ func _physics_process(delta: float) -> void:
 
 		# Inclinação e Encolhimento da arma 2D ao correr (bloqueado ao mirar)
 		if is_instance_valid(pistola) and typeof(pistol_2d_pos_original) == TYPE_VECTOR2:
-			is_running = Input.is_action_pressed("ui_run") and velocity.length() > 0.1 and current_stamina > 0 and not is_exhausted and not is_aiming
+			is_running = _run_toggle_active and velocity.length() > 0.1 and current_stamina > 0 and not is_exhausted and not is_aiming
 			# Rotação 2D (positivo = horário = descer ponta da arma) e empurrar para baixo/fora da tela
 			var target_tilt = deg_to_rad(35.0) if is_running else 0.0
 			var target_pos = pistol_2d_pos_original + (Vector2(50.0, 150.0) if is_running else Vector2.ZERO)
@@ -1035,7 +1047,7 @@ func head_bob(delta: float):
 		marker_referencia = camera_third_person_marker
 	
 	var ajuste_intensidade = 0.8
-	if Input.is_action_pressed("ui_run") and not is_aiming:
+	if _run_toggle_active and not is_aiming:
 		bob_freq = 2.1
 		
 		if is_first_person:
@@ -1452,7 +1464,7 @@ func take_damage(number:int):
 			damage_blur_timer = 0.4
 			var tween_blur = create_tween().set_parallel(true)
 			tween_blur.tween_property(motion_blur.material, "shader_parameter/blur_strength", 0.0, 0.4)
-			tween_blur.chain().tween_callback(func(): if not Input.is_action_pressed("ui_run"): motion_blur.visible = false)
+			tween_blur.chain().tween_callback(func(): if not _run_toggle_active: motion_blur.visible = false)
 	
 	print("Damage taken by the player: "+str(number) + " | HP: " + str(current_health))
 	

@@ -9,10 +9,20 @@ var equipped_items: Array = ["cogblade"] # Cogblade sempre equipada
 var max_mp: float = 30.0
 var current_mp: float = 30.0
 
-var config = {
+var brightness_rect: ColorRect
+
+var default_config = {
 	"aim_mode": "hold",
-	"language": "pt"
+	"language": "pt",
+	"run_mode": "hold",
+	"deadzone": 0.2,
+	"sensitivity_look": 1.0,
+	"sensitivity_aim": 0.4,
+	"resolution": "1080p",
+	"brightness": 1.0
 }
+
+var config = default_config.duplicate()
 
 var inventory: Array:
 	get:
@@ -60,6 +70,16 @@ var item_db = {
 
 func _ready():
 	self.process_mode = Node.PROCESS_MODE_ALWAYS
+	
+	var canvas = CanvasLayer.new()
+	canvas.layer = 125
+	add_child(canvas)
+	brightness_rect = ColorRect.new()
+	brightness_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	brightness_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	brightness_rect.color = Color(0, 0, 0, 0)
+	canvas.add_child(brightness_rect)
+	
 	if inventory_normal.is_empty():
 		inventory_normal.append({"id": "maycow_watch", "amount": 1})
 	if inventory_combat.is_empty():
@@ -79,9 +99,36 @@ func _ready():
 				if typeof(data) == TYPE_DICTIONARY:
 					current_stage = data.get("current_stage", "")
 					if data.has("config"):
-						config = data["config"]
+						for key in data["config"].keys():
+							config[key] = data["config"][key]
 						
+	apply_configs()
+
+func apply_configs() -> void:
 	TranslationServer.set_locale(config["language"])
+	
+	var res_map = {
+		"720p": Vector2i(1280, 720),
+		"1080p": Vector2i(1920, 1080),
+		"1440p": Vector2i(2560, 1440)
+	}
+	if config["resolution"] in res_map:
+		DisplayServer.window_set_size(res_map[config["resolution"]])
+		var screen_size = DisplayServer.screen_get_size()
+		var win_size = DisplayServer.window_get_size()
+		DisplayServer.window_set_position((screen_size - win_size) / 2)
+		
+	var actions = ["ui_left", "ui_right", "ui_up", "ui_down", "ui_look_left", "ui_look_right", "ui_look_up", "ui_look_down"]
+	for action in actions:
+		if InputMap.has_action(action):
+			InputMap.action_set_deadzone(action, config["deadzone"])
+			
+	if is_instance_valid(brightness_rect):
+		var b = clamp(config["brightness"], 0.1, 2.0)
+		if b <= 1.0:
+			brightness_rect.color = Color(0, 0, 0, 1.0 - b)
+		else:
+			brightness_rect.color = Color(1, 1, 1, (b - 1.0) * 0.5)
 
 func save_game(scene_path: String = ""):
 	var temp_stage = current_stage
@@ -137,8 +184,9 @@ func load_game() -> bool:
 				current_mp = data.get("current_mp", 30.0)
 				
 				if data.has("config"):
-					config = data["config"]
-				TranslationServer.set_locale(config["language"])
+					for key in data["config"].keys():
+						config[key] = data["config"][key]
+				apply_configs()
 				
 				if current_stage != "" and ResourceLoader.exists(current_stage):
 					print("Game Loaded! ", current_stage)
