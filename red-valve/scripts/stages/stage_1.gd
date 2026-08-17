@@ -49,7 +49,8 @@ func setup_player_spawn() -> void:
 		var spawn_point = get_node_or_null("itens_caminho_jimmy/auto_pecas_jimmy/maykow_capitulo_1_inicio")
 		var player = get_node_or_null("Player")
 		if player and spawn_point:
-			player.global_transform.origin = spawn_point.global_transform.origin
+			player.global_position = spawn_point.global_position
+			player.global_rotation.y = spawn_point.global_rotation.y + PI
 
 	prompt_label = Label.new()
 	prompt_label.text = tr("PROMPT_ENTER_WORKSHOP")
@@ -104,12 +105,16 @@ func _on_camera_2_body_entered(body: Node3D) -> void:
 
 
 func _on_area_3d_jimmy_house_body_entered(body: Node3D) -> void:
+	if SaveManager.prolog_finished:
+		return
 	if body.name == "player" or body.is_in_group("player"):
 		player_na_oficina = true
 		prompt_label.visible = true
 
 
 func _on_area_3d_jimmy_house_body_exited(body: Node3D) -> void:
+	if SaveManager.prolog_finished:
+		return
 	if body.name == "player" or body.is_in_group("player"):
 		player_na_oficina = false
 		prompt_label.visible = false
