@@ -52,6 +52,12 @@ func setup_player_spawn() -> void:
 			player.global_position = spawn_point.global_position
 			player.global_rotation.y = spawn_point.global_rotation.y + PI
 
+		var bloqueio = get_node_or_null("bloqueio_prologo_oficina_jimmy")
+		if not bloqueio:
+			bloqueio = find_child("bloqueio_prologo_oficina_jimmy", true, false)
+		if bloqueio:
+			bloqueio.queue_free()
+
 	prompt_label = Label.new()
 	prompt_label.text = tr("PROMPT_ENTER_WORKSHOP")
 	prompt_label.visible = false
