@@ -42,7 +42,15 @@ func _ready() -> void:
 	ui_layer = CanvasLayer.new()
 	ui_layer.layer = 128
 	add_child(ui_layer)
-	
+	setup_player_spawn()
+
+func setup_player_spawn() -> void:
+	if GlobalEvents.entering_chapter_1:
+		var spawn_point = get_node_or_null("itens_caminho_jimmy/auto_pecas_jimmy/maykow_capitulo_1_inicio")
+		var player = get_node_or_null("Player")
+		if player and spawn_point:
+			player.global_transform.origin = spawn_point.global_transform.origin
+
 	prompt_label = Label.new()
 	prompt_label.text = tr("PROMPT_ENTER_WORKSHOP")
 	prompt_label.visible = false

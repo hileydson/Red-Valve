@@ -96,8 +96,8 @@ shader_parameter/cirrus_absorption = 2.0
 shader_parameter/cirrus_sky_tint_fade = 0.5
 shader_parameter/cirrus_size = 1.0
 shader_parameter/cirrus_uv = Vector2(0.16, 0.11)
-shader_parameter/cirrus_position1 = Vector2(0.68518287, 0.68518287)
-shader_parameter/cirrus_position2 = Vector2(0.68518287, 0.68518287)
+shader_parameter/cirrus_position1 = Vector2(0.3668903, 0.3668903)
+shader_parameter/cirrus_position2 = Vector2(0.3668903, 0.3668903)
 shader_parameter/cirrus_texture = ExtResource("11_biy32")
 shader_parameter/cumulus_visible = true
 shader_parameter/cumulus_intensity = 0.6
@@ -107,7 +107,7 @@ shader_parameter/cumulus_absorption = 2.0
 shader_parameter/cumulus_noise_freq = 2.7
 shader_parameter/cumulus_sky_tint_fade = 0.0
 shader_parameter/cumulus_size = 0.5
-shader_parameter/cumulus_position = Vector2(3.4260828, 3.4260828)
+shader_parameter/cumulus_position = Vector2(1.8344886, 1.8344886)
 shader_parameter/cumulus_texture = ExtResource("12_jf8my")
 shader_parameter/cumulus_partial_mie_phase = Vector3(0.957564, 1.042436, 0.412)
 shader_parameter/cumulus_mie_intensity = 1.0
@@ -310,7 +310,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.7227616, 0.46179056, -7.934
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2390218, 7.056343)
 
 [node name="TheCobaltHusker" parent="." unique_id=669848176 instance=ExtResource("19_til2i")]
-transform = Transform3D(-0.99247795, 0, -0.12242371, 0, 1, 0, 0.12242371, 0, -0.99247795, -1.1572628, 0.09136772, -6.906843)
+transform = Transform3D(-0.99247795, 0, -0.12242371, 0, 1, 0, 0.12242371, 0, -0.99247795, -2.4458094, 0.09136677, -4.0442276)
 
 [node name="Zombie" parent="." unique_id=1033063307 instance=ExtResource("20_7p3s1")]
-transform = Transform3D(-0.7421747, 0, -0.6702065, 0, 1, 0, 0.6702065, 0, -0.7421747, 4.8399506, 0, -5.5232954)
+transform = Transform3D(-0.7421747, 0, -0.6702065, 0, 1, 0, 0.6702065, 0, -0.7421747, 7.0156875, 4.7683716e-07, -5.421212)
