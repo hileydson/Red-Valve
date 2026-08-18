@@ -3,6 +3,61 @@ extends Node
 
 var current_time_tween: Tween = null
 
+# --- SISTEMA DE MENSAGENS CENTRAIS GLOBAIS ---
+var message_canvas_layer: CanvasLayer
+var message_vbox: VBoxContainer
+var active_messages: Dictionary = {}
+
+func _ready() -> void:
+	message_canvas_layer = CanvasLayer.new()
+	message_canvas_layer.layer = 128
+	add_child(message_canvas_layer)
+	
+	message_vbox = VBoxContainer.new()
+	message_vbox.set_anchors_preset(Control.PRESET_CENTER)
+	message_vbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	message_vbox.add_theme_constant_override("separation", 20)
+	message_canvas_layer.add_child(message_vbox)
+
+func show_center_message(message_id: String, text: String, font_size: int = 18, duration: float = 0.0) -> void:
+	var label: Label
+	if active_messages.has(message_id):
+		label = active_messages[message_id]
+	else:
+		label = Label.new()
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		label.autowrap_mode = TextServer.AUTOWRAP_WORD
+		label.custom_minimum_size = Vector2(800, 0)
+		label.add_theme_constant_override("outline_size", 5)
+		label.modulate.a = 0.0
+		message_vbox.add_child(label)
+		active_messages[message_id] = label
+		
+		# Animação de entrada
+		var tween = create_tween()
+		tween.tween_property(label, "modulate:a", 1.0, 0.5)
+
+	label.text = text
+	label.add_theme_font_size_override("font_size", font_size)
+	
+	if duration > 0.0:
+		# Verifica se a label ainda existe e se o ID não foi sobrescrito ou apagado nesse meio tempo
+		await get_tree().create_timer(duration).timeout
+		hide_center_message(message_id)
+
+func hide_center_message(message_id: String) -> void:
+	if active_messages.has(message_id):
+		var label = active_messages[message_id]
+		active_messages.erase(message_id)
+		
+		if is_instance_valid(label):
+			var tween = create_tween()
+			tween.tween_property(label, "modulate:a", 0.0, 0.5)
+			await tween.finished
+			if is_instance_valid(label):
+				label.queue_free()
+
 func ativar_camera_lenta(escala: float, duracao: float, sound:bool):
 	Engine.time_scale = escala
 	

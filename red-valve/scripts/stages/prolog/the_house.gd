@@ -8,7 +8,6 @@ var player_na_tv: bool = false
 var telefone_tocando: bool = false
 var telefone_atendido: bool = false
 var tv_ligada: bool = true
-var prompt_label: Label
 var phone_audio: AudioStreamPlayer
 var ui_layer: CanvasLayer
 
@@ -22,18 +21,6 @@ func _ready() -> void:
 	ui_layer = CanvasLayer.new()
 	ui_layer.layer = 128
 	add_child(ui_layer)
-	
-	# Cria o prompt visual por código
-	prompt_label = Label.new()
-	prompt_label.text = tr("PROMPT_LEAVE_HOUSE")
-	prompt_label.visible = false
-	prompt_label.set_anchors_preset(Control.PRESET_CENTER)
-	prompt_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	# Aumentando o tamanho da fonte para melhor leitura
-	prompt_label.add_theme_font_size_override("font_size", 16)
-	# Adicionando um contorno na fonte para destacar na cena
-	prompt_label.add_theme_constant_override("outline_size", 4)
-	ui_layer.add_child(prompt_label)
 	
 	_show_intro_text()
 	_play_phone_ring_after_delay()
@@ -85,29 +72,7 @@ func _show_intro_text() -> void:
 	
 	await get_tree().create_timer(1.0).timeout
 	
-	var tv_label = Label.new()
-	tv_label.text = tr("TXT_HOUSE_TV")
-	tv_label.set_anchors_preset(Control.PRESET_CENTER)
-	tv_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	# Fonte levemente maior para esse texto narrativo
-	tv_label.add_theme_font_size_override("font_size", 18)
-	tv_label.add_theme_constant_override("outline_size", 4)
-	ui_layer.add_child(tv_label)
-	
-	# Efeito de Fade In suave
-	tv_label.modulate.a = 0
-	var tween_in = create_tween()
-	tween_in.tween_property(tv_label, "modulate:a", 1.0, 1.0)
-	await tween_in.finished
-	
-	# Fica na tela por 3 segundos
-	await get_tree().create_timer(3.0).timeout
-	
-	# Efeito de Fade Out e remove da memória
-	var tween_out = create_tween()
-	tween_out.tween_property(tv_label, "modulate:a", 0.0, 1.0)
-	await tween_out.finished
-	tv_label.queue_free()
+	GlobalUtils.show_center_message("narrativa_tv", tr("TXT_HOUSE_TV"), 18, 4.0)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -116,7 +81,7 @@ func _process(delta: float) -> void:
 		if player_na_porta:
 			# Previne que o jogador aperte o botão várias vezes
 			player_na_porta = false
-			prompt_label.visible = false
+			GlobalUtils.hide_center_message("interacao_casa")
 			
 			# Chama o efeito de fade out
 			$ambient/fade.fade_out()
@@ -130,7 +95,7 @@ func _process(delta: float) -> void:
 			player_no_telefone = false
 			telefone_tocando = false
 			telefone_atendido = true
-			prompt_label.visible = false
+			GlobalUtils.hide_center_message("interacao_casa")
 			
 			if is_instance_valid(phone_audio):
 				phone_audio.stop()
@@ -178,20 +143,16 @@ func _process(delta: float) -> void:
 
 
 func _update_prompt() -> void:
+	GlobalUtils.hide_center_message("interacao_casa")
 	if player_na_porta:
-		prompt_label.text = tr("PROMPT_LEAVE_HOUSE")
-		prompt_label.visible = true
+		GlobalUtils.show_center_message("interacao_casa", tr("PROMPT_LEAVE_HOUSE"), 16)
 	elif player_no_telefone and telefone_tocando:
-		prompt_label.text = tr("PROMPT_ANSWER_PHONE")
-		prompt_label.visible = true
+		GlobalUtils.show_center_message("interacao_casa", tr("PROMPT_ANSWER_PHONE"), 16)
 	elif player_na_tv:
 		if tv_ligada:
-			prompt_label.text = tr("PROMPT_TURN_OFF_TV")
+			GlobalUtils.show_center_message("interacao_casa", tr("PROMPT_TURN_OFF_TV"), 16)
 		else:
-			prompt_label.text = tr("PROMPT_TURN_ON_TV")
-		prompt_label.visible = true
-	else:
-		prompt_label.visible = false
+			GlobalUtils.show_center_message("interacao_casa", tr("PROMPT_TURN_ON_TV"), 16)
 
 
 func _on_area_3d_body_entered(body: Node3D) -> void:
