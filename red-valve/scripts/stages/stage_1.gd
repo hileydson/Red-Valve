@@ -57,26 +57,30 @@ func setup_player_spawn() -> void:
 			bloqueio = find_child("bloqueio_prologo_oficina_jimmy", true, false)
 		if bloqueio:
 			bloqueio.queue_free()
+	var vbox = VBoxContainer.new()
+	vbox.set_anchors_preset(Control.PRESET_CENTER)
+	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	vbox.add_theme_constant_override("separation", 20)
+	ui_layer.add_child(vbox)
+	
+	intro_label = Label.new()
+	intro_label.text = ""
+	intro_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	intro_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	intro_label.autowrap_mode = TextServer.AUTOWRAP_WORD
+	intro_label.custom_minimum_size = Vector2(800, 0)
+	intro_label.add_theme_font_size_override("font_size", 18)
+	intro_label.add_theme_constant_override("outline_size", 5)
+	intro_label.modulate.a = 0.0
+	vbox.add_child(intro_label)
 
 	prompt_label = Label.new()
 	prompt_label.text = tr("PROMPT_ENTER_WORKSHOP")
 	prompt_label.visible = false
-	prompt_label.set_anchors_preset(Control.PRESET_CENTER)
 	prompt_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	prompt_label.add_theme_font_size_override("font_size", 16)
 	prompt_label.add_theme_constant_override("outline_size", 4)
-	ui_layer.add_child(prompt_label)
-	
-	intro_label = Label.new()
-	intro_label.text = ""
-	intro_label.set_anchors_preset(Control.PRESET_FULL_RECT)
-	intro_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	intro_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	intro_label.autowrap_mode = TextServer.AUTOWRAP_WORD
-	intro_label.add_theme_font_size_override("font_size", 18)
-	intro_label.add_theme_constant_override("outline_size", 5)
-	intro_label.modulate.a = 0.0
-	ui_layer.add_child(intro_label)
+	vbox.add_child(prompt_label)
 	
 	# Inicia a exibição do texto introdutório
 	_play_intro_text()
