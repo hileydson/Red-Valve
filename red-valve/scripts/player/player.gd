@@ -887,12 +887,14 @@ func _physics_process(delta: float) -> void:
 				if alinhamento < -0.2:
 					# Movimento para trás
 					playback.travel("walk_back")
-					target_fov = 73.0 if is_first_person else 70.0
+					if not is_aiming:
+						target_fov = 73.0 if is_first_person else 70.0
 				else:
 					# Movimento para frente ou corrida
 					if is_running:
 						playback.travel("run")
-						target_fov = 80.0 if is_first_person else 88.0
+						if not is_aiming:
+							target_fov = 80.0 if is_first_person else 88.0
 					else:
 						playback.travel("walk")
 			
