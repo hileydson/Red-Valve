@@ -68,6 +68,8 @@ var is_exhausted: bool = false
 var mp_bar: ProgressBar
 
 var hud_layer: CanvasLayer
+
+var is_teleporting_enemies: bool = false
 var heartbeat_tween: Tween
 
 @export_group("Damage Feedback")
@@ -831,8 +833,8 @@ func _physics_process(delta: float) -> void:
 				# para que o lerp normal faça o zoom out suave até o FOV padrão (75)
 				camera_third_person.fov = 40.0
 			_on_amulet_magic_released()
-			if not is_inside_tree():
-				return
+			if is_teleporting_enemies: return
+			if not is_inside_tree(): return
 
 		if Input.is_action_pressed("ui_hold_first_person_view"):
 			is_aiming = true
@@ -844,6 +846,7 @@ func _physics_process(delta: float) -> void:
 					camera.fov = 75.0 # Primeira pessoa não tem zoom distorcido
 				if camera_third_person: camera_third_person.current = false
 				if hand_with_magic: hand_with_magic.visible = true
+				if point: point.visible = true
 				_process_amulet_magic(delta)
 				_process_amulet_targeting()
 			else:
@@ -852,6 +855,7 @@ func _physics_process(delta: float) -> void:
 				if camera_third_person and not camera_third_person.current:
 					camera_third_person.make_current()
 				if hand_with_magic: hand_with_magic.visible = false
+				if point: point.visible = false
 				_hide_amulet_magic()
 				_clear_amulet_hover()
 		else:
@@ -860,6 +864,7 @@ func _physics_process(delta: float) -> void:
 			if camera_third_person and not camera_third_person.current:
 				camera_third_person.make_current()
 			if hand_with_magic: hand_with_magic.visible = false
+			if point: point.visible = false
 			
 			_hide_amulet_magic()
 			_clear_amulet_hover()
@@ -2203,14 +2208,67 @@ func _on_amulet_magic_released() -> void:
 			camera_third_person.fov = 75.0
 		if is_instance_valid(hand_with_magic):
 			hand_with_magic.visible = false
+		if point: point.visible = false
 		_hide_amulet_magic()
 		
 		GlobalEvents.previous_is_maycow_normal = GlobalEvents.is_maycow_normal
 		
-		# Faz a transição para a Arena
+		is_teleporting_enemies = true
+		
 		var tree = get_tree()
 		var root = tree.root
 		var current = tree.current_scene
+		
+		# ---- TRANSIÇÃO CINEMÁTICA DIMENSIONAL ----
+		process_mode = Node.PROCESS_MODE_DISABLED
+		Engine.time_scale = 0.2 # Slow motion global
+		
+		var cine_cam = Camera3D.new()
+		var cam_attr = CameraAttributesPractical.new()
+		cam_attr.dof_blur_far_enabled = true
+		cam_attr.dof_blur_far_distance = 1.0
+		cam_attr.dof_blur_far_transition = 10.0 # Motion blur pesado artificial
+		cine_cam.attributes = cam_attr
+		cine_cam.fov = 95.0
+		
+		var center_pos = Vector3.ZERO
+		for e in GlobalEvents.amulet_captured_enemies:
+			center_pos += e.global_position
+		center_pos /= GlobalEvents.amulet_captured_enemies.size()
+		
+		cine_cam.global_position = center_pos + Vector3(0, 1.5, 4.5)
+		current.add_child(cine_cam)
+		cine_cam.look_at(center_pos + Vector3(0, 1.0, 0), Vector3.UP)
+		cine_cam.make_current()
+		
+		var tween = tree.create_tween().set_parallel(true).set_ignore_time_scale(true)
+		var anim_time = 1.2
+		for e in GlobalEvents.amulet_captured_enemies:
+			if is_instance_valid(e):
+				e.process_mode = Node.PROCESS_MODE_DISABLED
+				var target_y = e.global_position.y + 35.0
+				tween.tween_property(e, "global_position:y", target_y, anim_time).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+				tween.tween_property(e, "rotation:y", e.rotation.y + deg_to_rad(1080), anim_time).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+				tween.tween_property(e, "scale", Vector3(0.05, 5.0, 0.05), anim_time).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+
+		tween.tween_property(cine_cam, "global_position:y", cine_cam.global_position.y + 35.0, anim_time).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+		tween.tween_property(cine_cam, "fov", 130.0, anim_time).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+		
+		await tween.finished
+		
+		for e in GlobalEvents.amulet_captured_enemies:
+			if is_instance_valid(e):
+				e.scale = Vector3.ONE
+				e.rotation.x = 0
+				e.rotation.z = 0
+				
+		if is_instance_valid(cine_cam):
+			cine_cam.queue_free()
+			
+		process_mode = Node.PROCESS_MODE_INHERIT
+		Engine.time_scale = 1.0 # Retorna ao normal
+		
+		is_teleporting_enemies = false
 		
 		# Instancia o campo de batalha antes de removermos a nós mesmos da árvore
 		var battlefield_scene = load("res://scenes/stages/battlefield/battlefield_1.tscn").instantiate()
