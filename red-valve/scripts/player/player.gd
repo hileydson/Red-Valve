@@ -2226,12 +2226,15 @@ func _process_amulet_targeting() -> void:
 	if is_instance_valid(amulet_hovered_enemy) and amulet_hovered_enemy not in amulet_selected_enemies:
 		_apply_silhouette(amulet_hovered_enemy, Color(0.8, 0.2, 1.0, 0.35)) # Roxo translucido
 		
-	# Ação de Selecionar (Tiro)
+	# Ação de Selecionar/Deselecionar (Tiro)
 	if Input.is_action_just_pressed("ui_shoot"):
-		if is_instance_valid(amulet_hovered_enemy) and not (amulet_hovered_enemy in amulet_selected_enemies):
-			amulet_selected_enemies.append(amulet_hovered_enemy)
-			_apply_silhouette(amulet_hovered_enemy, Color(1.0, 0.0, 0.0, 0.6)) # Destaca vermelho a seleção
-			
+		if is_instance_valid(amulet_hovered_enemy):
+			if not (amulet_hovered_enemy in amulet_selected_enemies):
+				amulet_selected_enemies.append(amulet_hovered_enemy)
+				_apply_silhouette(amulet_hovered_enemy, Color(1.0, 0.0, 0.0, 0.6)) # Destaca vermelho a seleção
+			else:
+				amulet_selected_enemies.erase(amulet_hovered_enemy)
+				_apply_silhouette(amulet_hovered_enemy, Color(0.8, 0.2, 1.0, 0.35)) # Volta pro Roxo Translúcido de mira
 	if is_instance_valid(amulet_counter_label):
 		if amulet_selected_enemies.size() > 0:
 			amulet_counter_label.text = str(amulet_selected_enemies.size()) + " ALVOS"
@@ -2310,6 +2313,10 @@ func _on_amulet_magic_released() -> void:
 		GlobalEvents.previous_is_maycow_normal = GlobalEvents.is_maycow_normal
 		
 		is_teleporting_enemies = true
+		
+		# --- HACK TEMPORÁRIO (CONFORME PEDIDO) ---
+		SaveManager.add_item("pistol_ammo", 25)
+		SaveManager.current_mp = SaveManager.max_mp
 		
 		var tree = get_tree()
 		var root = tree.root
