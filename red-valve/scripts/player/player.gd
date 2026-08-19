@@ -897,6 +897,14 @@ func _physics_process(delta: float) -> void:
 				if hand_with_magic: hand_with_magic.visible = true
 				if is_instance_valid(amulet_crosshair): amulet_crosshair.visible = true
 				if point: point.visible = false # Esconde a mira normal
+				
+				# Ativa o Motion Blur forte
+				if is_instance_valid(hud_layer):
+					var motion_blur = hud_layer.get_node_or_null("MotionBlurOverlay")
+					if motion_blur:
+						motion_blur.visible = true
+						motion_blur.material.set_shader_parameter("blur_strength", 0.08)
+						
 				_process_amulet_magic(delta)
 				_process_amulet_targeting()
 			else:
@@ -906,6 +914,14 @@ func _physics_process(delta: float) -> void:
 					camera_third_person.make_current()
 				if hand_with_magic: hand_with_magic.visible = false
 				if is_instance_valid(amulet_crosshair): amulet_crosshair.visible = false
+				
+				# Desativa o Motion Blur
+				if is_instance_valid(hud_layer):
+					var motion_blur = hud_layer.get_node_or_null("MotionBlurOverlay")
+					if motion_blur:
+						motion_blur.material.set_shader_parameter("blur_strength", 0.0)
+						motion_blur.visible = false
+						
 				_hide_amulet_magic()
 				_clear_amulet_hover()
 		else:
@@ -916,6 +932,13 @@ func _physics_process(delta: float) -> void:
 			if hand_with_magic: hand_with_magic.visible = false
 			if is_instance_valid(amulet_crosshair): amulet_crosshair.visible = false
 			
+			# Desativa o Motion Blur
+			if is_instance_valid(hud_layer):
+				var motion_blur = hud_layer.get_node_or_null("MotionBlurOverlay")
+				if motion_blur:
+					motion_blur.material.set_shader_parameter("blur_strength", 0.0)
+					motion_blur.visible = false
+					
 			_hide_amulet_magic()
 			_clear_amulet_hover()
 		
@@ -2270,6 +2293,14 @@ func _on_amulet_magic_released() -> void:
 		if is_instance_valid(amulet_crosshair): amulet_crosshair.visible = false
 		if point: point.visible = false
 		if is_instance_valid(amulet_counter_label): amulet_counter_label.visible = false
+		
+		# Desativa o Motion Blur ao sair
+		if is_instance_valid(hud_layer):
+			var motion_blur = hud_layer.get_node_or_null("MotionBlurOverlay")
+			if motion_blur:
+				motion_blur.material.set_shader_parameter("blur_strength", 0.0)
+				motion_blur.visible = false
+				
 		_hide_amulet_magic()
 		
 		GlobalEvents.previous_is_maycow_normal = GlobalEvents.is_maycow_normal
