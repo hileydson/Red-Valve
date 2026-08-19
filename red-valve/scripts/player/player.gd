@@ -72,6 +72,7 @@ var amulet_counter_label: Label
 var amulet_crosshair: Panel
 
 var is_teleporting_enemies: bool = false
+var is_playing_return_effect: bool = false
 var heartbeat_tween: Tween
 
 @export_group("Damage Feedback")
@@ -619,6 +620,7 @@ var hold_threshold: float = 0.15 # 200 milisegundos para confirmar o "segurar"
 var limite_rotacao_lateral = deg_to_rad(15) # O máximo que ele pode "virar" (ex: 35 graus)
 var velocidade_giro = 4.0
 func _physics_process(delta: float) -> void:
+	if not is_inside_tree() or get_tree() == null: return
 	if GlobalEvents.in_cutscene:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 		velocity.z = move_toward(velocity.z, 0, SPEED)
@@ -916,7 +918,7 @@ func _physics_process(delta: float) -> void:
 				if is_instance_valid(amulet_crosshair): amulet_crosshair.visible = false
 				
 				# Desativa o Motion Blur
-				if is_instance_valid(hud_layer):
+				if is_instance_valid(hud_layer) and not is_playing_return_effect:
 					var motion_blur = hud_layer.get_node_or_null("MotionBlurOverlay")
 					if motion_blur:
 						motion_blur.material.set_shader_parameter("blur_strength", 0.0)
@@ -933,7 +935,7 @@ func _physics_process(delta: float) -> void:
 			if is_instance_valid(amulet_crosshair): amulet_crosshair.visible = false
 			
 			# Desativa o Motion Blur
-			if is_instance_valid(hud_layer):
+			if is_instance_valid(hud_layer) and not is_playing_return_effect:
 				var motion_blur = hud_layer.get_node_or_null("MotionBlurOverlay")
 				if motion_blur:
 					motion_blur.material.set_shader_parameter("blur_strength", 0.0)
@@ -2200,6 +2202,8 @@ func _hide_amulet_magic() -> void:
 			amuleto_particles.emitting = false
 
 func _process_amulet_targeting() -> void:
+	if not is_inside_tree() or get_tree() == null: return
+	
 	var prev_hovered = amulet_hovered_enemy
 	amulet_hovered_enemy = null
 	
@@ -2373,12 +2377,15 @@ func _on_amulet_magic_released() -> void:
 		tree.current_scene = battlefield_scene
 
 func play_return_from_arena_effect() -> void:
+	is_playing_return_effect = true
 	GlobalUtils.shake_camera(0.6, 1.0)
 	
 	if is_instance_valid(hud_layer):
+		hud_layer.visible = true
 		var motion_blur = hud_layer.get_node_or_null("MotionBlurOverlay")
 		if motion_blur:
 			motion_blur.visible = true
 			motion_blur.material.set_shader_parameter("blur_strength", 1.8)
 			var tween = create_tween()
 			tween.tween_property(motion_blur.material, "shader_parameter/blur_strength", 0.0, 2.5).set_trans(Tween.TRANS_SINE)
+			tween.finished.connect(func(): is_playing_return_effect = false)

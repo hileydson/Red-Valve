@@ -329,7 +329,7 @@ func _start_final_sequence() -> void:
 			tree.current_scene = GlobalEvents.paused_scene_for_amulet
 			
 			# Toca o efeito de retorno na câmera da cena restaurada
-			var p = tree.get_first_node_in_group("player")
+			var p = _find_player_recursive(GlobalEvents.paused_scene_for_amulet)
 			if p and p.has_method("play_return_from_arena_effect"):
 				p.play_return_from_arena_effect()
 			
@@ -339,6 +339,14 @@ func _start_final_sequence() -> void:
 			GlobalEvents.paused_scene_for_amulet = null
 		else:
 			get_tree().change_scene_to_file("res://scenes/stages/stage_1.tscn")
+
+func _find_player_recursive(node: Node) -> Node:
+	if node.is_in_group("player") or node.name == "player":
+		return node
+	for child in node.get_children():
+		var found = _find_player_recursive(child)
+		if found: return found
+	return null
 
 
 func iniciar_cutscene() -> void:

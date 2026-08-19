@@ -264,7 +264,7 @@ func _throw_random_projectile() -> void:
 	projectile.add_child(clone)
 	clone.position = Vector3.ZERO # Reseta a posição local do clone para ficar centralizado na colisão
 	
-	# Adiciona à cena principal
+	if not is_inside_tree() or get_tree() == null or get_tree().current_scene == null: return
 	get_tree().current_scene.add_child(projectile)
 	
 	# Posição de disparo (um pouco acima e à frente do chefe)
@@ -314,7 +314,7 @@ func _shatter_projectile(projectile: Node3D) -> void:
 	particles.lifetime = 40.0
 	particles.explosiveness = 0.9
 	particles.gravity = Vector3(0, -9.8, 0)
-	# Simple white texture could be set later; using default point
+	# Simple white texture could be set later;	if not is_inside_tree() or get_tree() == null or get_tree().current_scene == null: return
 	get_tree().current_scene.add_child(particles)
 	particles.global_position = impact_pos
 	particles.emitting = true
@@ -353,6 +353,7 @@ func _shatter_projectile(projectile: Node3D) -> void:
 		var strength = randf_range(2.5, 6.0)
 		fragment.apply_impulse(Vector3.ZERO, dir * strength)
 		# Add to scene
+		if not is_inside_tree() or get_tree() == null or get_tree().current_scene == null: return
 		get_tree().current_scene.add_child(fragment)
 		# Auto‑remove after short time
 		get_tree().create_timer(2.5).timeout.connect(func():
@@ -379,8 +380,9 @@ func _throw_fireball() -> void:
 	var projectile = fireball_script.new()
 	projectile.target_player = player
 	
-	# Posição Inicial: Bem acima, para vir de cima para baixo
+	if not is_inside_tree() or get_tree() == null or get_tree().current_scene == null: return
 	get_tree().current_scene.add_child(projectile)
 	
+	# Posição Inicial: Bem acima, para vir de cima para baixo
 	var forward_dir = global_transform.basis.z.normalized()
 	projectile.global_position = global_position + Vector3(0, 2.8, 0) + (forward_dir * 1.0)
