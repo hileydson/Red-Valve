@@ -172,6 +172,9 @@ var cogblade_particles: CPUParticles2D
 var is_using_ultimate: bool = false
 var amuleto_node: Node3D
 var amuleto_particles: CPUParticles3D
+var amulet_hovered_enemy: Node3D = null
+var amulet_selected_enemies: Array[Node3D] = []
+var amulet_hover_marker: MeshInstance3D = null
 
 var playback 
 
@@ -828,6 +831,7 @@ func _physics_process(delta: float) -> void:
 				# Estava na primeira pessoa. Retorna para a 3ª pessoa já com zoom in, 
 				# para que o lerp normal faça o zoom out suave até o FOV padrão (75)
 				camera_third_person.fov = 40.0
+			_on_amulet_magic_released()
 
 		if Input.is_action_pressed("ui_hold_first_person_view"):
 			is_aiming = true
@@ -840,6 +844,7 @@ func _physics_process(delta: float) -> void:
 				if camera_third_person: camera_third_person.current = false
 				if hand_with_magic: hand_with_magic.visible = true
 				_process_amulet_magic(delta)
+				_process_amulet_targeting()
 			else:
 				# Ainda no processo de zoom in na 3ª pessoa
 				is_first_person = false
@@ -847,6 +852,7 @@ func _physics_process(delta: float) -> void:
 					camera_third_person.make_current()
 				if hand_with_magic: hand_with_magic.visible = false
 				_hide_amulet_magic()
+				_clear_amulet_hover()
 		else:
 			is_aiming = false
 			is_first_person = false
@@ -855,6 +861,7 @@ func _physics_process(delta: float) -> void:
 			if hand_with_magic: hand_with_magic.visible = false
 			
 			_hide_amulet_magic()
+			_clear_amulet_hover()
 		
 		# 3. GRAVIDADE
 		if not is_on_floor():
@@ -2112,3 +2119,86 @@ func _hide_amulet_magic() -> void:
 		amuleto_node.visible = false
 		if amuleto_particles:
 			amuleto_particles.emitting = false
+
+func _process_amulet_targeting() -> void:
+	if not is_instance_valid(amulet_hover_marker):
+		amulet_hover_marker = MeshInstance3D.new()
+		var tmesh = TorusMesh.new()
+		tmesh.inner_radius = 0.8
+		tmesh.outer_radius = 1.0
+		var tmat = StandardMaterial3D.new()
+		tmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		tmat.albedo_color = Color(0.8, 0.2, 1.0, 0.6) # Roxo translúcido pra o hover
+		tmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		tmesh.material = tmat
+		amulet_hover_marker.mesh = tmesh
+		get_tree().current_scene.add_child(amulet_hover_marker)
+	
+	amulet_hovered_enemy = null
+	amulet_hover_marker.visible = false
+	
+	# Detecta o inimigo na mira (usando ray_cast_3d)
+	if ray_cast_3d and ray_cast_3d.is_colliding():
+		var target = ray_cast_3d.get_collider()
+		var current_enemy = target
+		while is_instance_valid(current_enemy) and current_enemy != get_tree().current_scene:
+			if current_enemy.is_in_group("enemies") or current_enemy.has_method("take_damage"):
+				amulet_hovered_enemy = current_enemy
+				break
+			current_enemy = current_enemy.get_parent()
+	
+	# Exibe anel de mira se estiver olhando para um que não foi selecionado
+	if is_instance_valid(amulet_hovered_enemy) and amulet_hovered_enemy not in amulet_selected_enemies:
+		amulet_hover_marker.global_position = amulet_hovered_enemy.global_position + Vector3(0, 0.2, 0)
+		amulet_hover_marker.visible = true
+		
+	# Ação de Selecionar (Tiro)
+	if Input.is_action_just_pressed("ui_shoot"):
+		if is_instance_valid(amulet_hovered_enemy) and amulet_hovered_enemy not in amulet_selected_enemies:
+			amulet_selected_enemies.append(amulet_hovered_enemy)
+			print(">>> INIMIGO SELECIONADO: ", amulet_hovered_enemy.name)
+			_create_amulet_persistent_mark(amulet_hovered_enemy)
+
+func _clear_amulet_hover() -> void:
+	if is_instance_valid(amulet_hover_marker):
+		amulet_hover_marker.visible = false
+	amulet_hovered_enemy = null
+
+func _create_amulet_persistent_mark(enemy: Node3D) -> void:
+	var mark = MeshInstance3D.new()
+	var tmesh = TorusMesh.new()
+	tmesh.inner_radius = 0.8
+	tmesh.outer_radius = 1.0
+	var tmat = StandardMaterial3D.new()
+	tmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	tmat.albedo_color = Color(1.0, 0.0, 0.0, 0.8) # Vermelho marcante
+	tmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	tmesh.material = tmat
+	mark.mesh = tmesh
+	
+	enemy.add_child(mark)
+	mark.position = Vector3(0, 0.2, 0)
+	
+	var marks = enemy.get_meta("amulet_marks", [])
+	marks.append(mark)
+	enemy.set_meta("amulet_marks", marks)
+
+func _on_amulet_magic_released() -> void:
+	if amulet_selected_enemies.size() > 0:
+		print("--------------------------------------------------")
+		print("AMULETO LIBERADO! INIMIGOS SELECIONADOS PARA LEVAR A BATALHA: ", amulet_selected_enemies.size())
+		for e in amulet_selected_enemies:
+			if is_instance_valid(e):
+				print(" -> ", e.name)
+		print("--------------------------------------------------")
+		
+		# (Opcional) Limpar as marcas vermelhas e a lista agora ou apenas limpar a lista e manter as marcas?
+		# Mantendo as marcas limpas após o processo (já que será feito o teleporte depois)
+		for e in amulet_selected_enemies:
+			if is_instance_valid(e):
+				var marks = e.get_meta("amulet_marks", [])
+				for m in marks:
+					if is_instance_valid(m): m.queue_free()
+				e.set_meta("amulet_marks", [])
+				
+		amulet_selected_enemies.clear()

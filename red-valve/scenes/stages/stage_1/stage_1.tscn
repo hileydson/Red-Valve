@@ -127,8 +127,8 @@ shader_parameter/cirrus_absorption = 2.0
 shader_parameter/cirrus_sky_tint_fade = 0.5
 shader_parameter/cirrus_size = 1.0
 shader_parameter/cirrus_uv = Vector2(0.16, 0.11)
-shader_parameter/cirrus_position1 = Vector2(0.9753561, 0.9753561)
-shader_parameter/cirrus_position2 = Vector2(0.9753561, 0.9753561)
+shader_parameter/cirrus_position1 = Vector2(0.6562859, 0.6562859)
+shader_parameter/cirrus_position2 = Vector2(0.6562859, 0.6562859)
 shader_parameter/cirrus_texture = ExtResource("3_kvc23")
 shader_parameter/cumulus_visible = true
 shader_parameter/cumulus_intensity = 9.245
@@ -138,7 +138,7 @@ shader_parameter/cumulus_absorption = 2.0
 shader_parameter/cumulus_noise_freq = 2.7
 shader_parameter/cumulus_sky_tint_fade = 0.0
 shader_parameter/cumulus_size = 0.5
-shader_parameter/cumulus_position = Vector2(4.8765306, 4.8765306)
+shader_parameter/cumulus_position = Vector2(3.2812843, 3.2812843)
 shader_parameter/cumulus_texture = ExtResource("4_2wkc3")
 shader_parameter/cumulus_partial_mie_phase = Vector3(0.957564, 1.042436, 0.412)
 shader_parameter/cumulus_mie_intensity = 1.0
@@ -670,7 +670,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 714.9369, 2.015886, 441.17017
 transform = Transform3D(0.059585143, 0, -0.99822325, 0, 1, 0, 0.99822325, 0, 0.059585143, 9.039856, 0, -31.930176)
 
 [node name="Zombie11" parent="enemies" unique_id=1180939023 instance=ExtResource("18_2ux1o")]
-transform = Transform3D(0.059585143, 0, -0.99822325, 0, 1, 0, 0.99822325, 0, 0.059585143, -241.52228, 1.2822897, -30.722595)
+transform = Transform3D(0.059585143, 0, -0.99822325, 0, 1, 0, 0.99822325, 0, 0.059585143, -223.76907, 1.2822897, -68.37259)
 
 [node name="Zombie12" parent="enemies" unique_id=847067742 instance=ExtResource("18_2ux1o")]
 transform = Transform3D(0.059585143, 0, -0.99822325, 0, 1, 0, 0.99822325, 0, 0.059585143, 24.594727, -348.8473, -204.39526)
@@ -742,7 +742,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -150.35925, -0.35303092, -357
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -54.415344, -0.35303092, -276.01453)
 
 [node name="TheCobaltHusker7" parent="enemies" unique_id=2003257009 instance=ExtResource("3_hdpfd")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -218.69482, -0.35303092, -45.167236)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -171.6748, -0.35303092, -67.56857)
 
 [node name="TheCobaltHusker2" parent="enemies" unique_id=766406895 instance=ExtResource("3_hdpfd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -360.23825, -0.35303092, -338.0939)
