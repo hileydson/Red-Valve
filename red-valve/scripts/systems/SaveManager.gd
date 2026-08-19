@@ -9,6 +9,7 @@ var equipped_items: Array = ["cogblade"] # Cogblade sempre equipada
 var max_mp: float = 30.0
 var current_mp: float = 30.0
 var prolog_finished: bool = false
+var battlefield_1_intro_played: bool = false
 
 var brightness_rect: ColorRect
 
@@ -103,6 +104,7 @@ func _ready():
 				if typeof(data) == TYPE_DICTIONARY:
 					current_stage = data.get("current_stage", "")
 					prolog_finished = data.get("prolog_finished", false)
+					battlefield_1_intro_played = data.get("battlefield_1_intro_played", false)
 					if data.has("config"):
 						for key in data["config"].keys():
 							config[key] = data["config"][key]
@@ -190,6 +192,7 @@ func save_game(scene_path: String = ""):
 	var save_data = {
 		"current_stage": current_stage,
 		"prolog_finished": prolog_finished,
+		"battlefield_1_intro_played": battlefield_1_intro_played,
 		"inventory_normal": inventory_normal,
 		"inventory_combat": inventory_combat,
 		"equipped_items": equipped_items,
@@ -220,6 +223,7 @@ func load_game() -> bool:
 			if typeof(data) == TYPE_DICTIONARY:
 				current_stage = data.get("current_stage", "")
 				prolog_finished = data.get("prolog_finished", false)
+				battlefield_1_intro_played = data.get("battlefield_1_intro_played", false)
 				inventory_normal = data.get("inventory_normal", [{"id": "maycow_watch", "amount": 1}])
 				inventory_combat = data.get("inventory_combat", [
 					{"id": "pistol", "amount": 1},
@@ -301,6 +305,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		var players = get_tree().get_nodes_in_group("player")
 		if players.size() == 0:
 			return # Só abre o inventário se o Player estiver presente na cena
+			
+		var player = players[0]
+		if "is_using_ultimate" in player and player.is_using_ultimate:
+			return # Não abre menu durante o ultimate da cogblade
 			
 		if menu_instance == null or not is_instance_valid(menu_instance):
 			if get_tree().paused:

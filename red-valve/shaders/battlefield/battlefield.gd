@@ -20,19 +20,36 @@ func _ready() -> void:
 	enemies = get_tree().get_nodes_in_group("enemies")
 	
 	if player:
-		# Código comentado para teste: pular a primeira cutscene
+		# Trava a cena para modo cutscene
 		player.process_mode = Node.PROCESS_MODE_DISABLED
-		# camera_intro = Camera3D.new()
-		# add_child(camera_intro)
 		for enemy in enemies:
 			if is_instance_valid(enemy):
 				enemy.process_mode = Node.PROCESS_MODE_DISABLED
 		GlobalEvents.in_cutscene = true
-		# INICIA INTRO SOMENTE UMA VEZ
-		animation_intro.play("intro_first_time")
+		
+		# Define qual animação tocar
 		camera_intro_2.make_current()
-		# iniciar_cutscene()
-		pass
+		if not SaveManager.battlefield_1_intro_played:
+			animation_intro.play("intro_first_time")
+			SaveManager.battlefield_1_intro_played = true
+			SaveManager.save_game()
+		else:
+			animation_intro.play("intro_capitulo_1")
+			
+		# Aguarda a animação terminar
+		await animation_intro.animation_finished
+		
+		# Restaura os controles e física
+		if is_instance_valid(player):
+			player.process_mode = Node.PROCESS_MODE_INHERIT
+			if "camera_third_person" in player and is_instance_valid(player.camera_third_person):
+				player.camera_third_person.make_current()
+				
+		for enemy in enemies:
+			if is_instance_valid(enemy):
+				enemy.process_mode = Node.PROCESS_MODE_INHERIT
+				
+		GlobalEvents.in_cutscene = false
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -99,34 +116,21 @@ func _start_final_sequence() -> void:
 func iniciar_cutscene() -> void:
 	if not player or not camera_intro: return
 	
-	var player_pos = player.global_position
-	look_at_target = player
-	look_at_offset = Vector3(0, 1.0, 0) # Foca no tronco do player
-	
-	# FASE 1: Posição super alta para visão panorâmica
-	# Reduzida a altura (Y) de 30 para 18 e o raio para não ficar tão longe
-	var pos_alto = player_pos + Vector3(15.0, 18.0, 12.0)
-	camera_intro.global_position = pos_alto
 	camera_intro.make_current()
 	
-	await get_tree().create_timer(1.0).timeout
-	
-	# FASE 2: Giro suave no alto para ver o campo de batalha
-	var pos_giro = player_pos + Vector3(-12.0, 15.0, 15.0)
-	var sweep_tween = create_tween()
-	sweep_tween.tween_property(camera_intro, "global_position", pos_giro, 4.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	await sweep_tween.finished
-	
-	# FASE 3: Mergulho até o player
-	var player_forward = -player.global_transform.basis.z.normalized()
-	if player_forward.length() < 0.1: player_forward = Vector3.FORWARD
-	
-	# Posição final próxima das costas do player
-	var pos_costas = player_pos - player_forward * 2.5 + Vector3(0, 2.0, 0)
-	
-	var dive_tween = create_tween()
-	dive_tween.tween_property(camera_intro, "global_position", pos_costas, 1.5).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-	await dive_tween.finished
+	var anim_player = get_tree().current_scene.get_node_or_null("intro_camera/animation_intro")
+	if anim_player:
+		if not SaveManager.battlefield_1_intro_played:
+			anim_player.play("intro_first_time")
+			SaveManager.battlefield_1_intro_played = true
+			SaveManager.save_game()
+		else:
+			anim_player.play("intro_capitulo_1")
+			
+		await anim_player.animation_finished
+	else:
+		# Fallback se não encontrar a animação
+		await get_tree().create_timer(1.0).timeout
 	
 	# Encerramento: Restaura física e controles
 	if is_instance_valid(player):
@@ -139,7 +143,8 @@ func iniciar_cutscene() -> void:
 			enemy.process_mode = Node.PROCESS_MODE_INHERIT
 			
 	GlobalEvents.in_cutscene = false
-	if is_instance_valid(camera_intro):
+	# Opcional: deletar a câmera de intro apenas se nós a criamos por código
+	if is_instance_valid(camera_intro) and not get_tree().current_scene.get_node_or_null("intro_camera/camera_intro_4"):
 		camera_intro.queue_free()
 
 
