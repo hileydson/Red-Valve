@@ -59,6 +59,14 @@ func setup_player_spawn() -> void:
 	if bloqueio:
 		bloqueio.queue_free()
 		
+	# Remove os inimigos imediatamente se ainda estiver no prólogo
+	if not GlobalEvents.entering_chapter_1:
+		var enemies_node = get_node_or_null("enemies")
+		if not enemies_node:
+			enemies_node = find_child("enemies", true, false)
+		if enemies_node:
+			enemies_node.queue_free()
+		
 	if not is_instance_valid(prompt_label):
 		prompt_label = Label.new()
 		prompt_label.text = tr("PROMPT_ENTER_WORKSHOP")
