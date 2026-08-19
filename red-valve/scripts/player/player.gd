@@ -783,13 +783,13 @@ func _physics_process(delta: float) -> void:
 			elif is_running:
 				target_run_fov = 80.0 if is_first_person else 88.0
 				
-			if input_dir.length() < 0.1 and not is_aiming:
+			if not is_first_person and input_dir.length() < 0.1 and not is_aiming:
 				target_run_fov -= 12.0
 				
 			var cur_fov_speed = 5.0
 			if is_aiming:
 				cur_fov_speed = 8.0
-			elif not is_running:
+			elif not is_running and not is_first_person:
 				cur_fov_speed = 0.8
 				
 			camera.fov = lerp(camera.fov, target_run_fov, cur_fov_speed * delta)
@@ -897,12 +897,12 @@ func _physics_process(delta: float) -> void:
 				passos.stop()
 
 		var fov_lerp_speed = 5.0
-		if not is_running:
+		if not is_running and not is_first_person:
 			fov_lerp_speed = 0.8
 			
 		var camera = get_viewport().get_camera_3d()
 		if camera:
-			if input_dir.length() < 0.1 and not is_aiming:
+			if not is_first_person and input_dir.length() < 0.1 and not is_aiming:
 				target_fov -= 12.0
 			camera.fov = lerp(camera.fov, target_fov, fov_lerp_speed * delta)
 
