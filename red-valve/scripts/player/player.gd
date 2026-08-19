@@ -91,6 +91,9 @@ var can_shoot_again:bool = true
 var is_falling_dead: bool = false
 var fall_cam: Camera3D = null
 
+var last_rotation_y: float = 0.0
+var last_camera_rot_x: float = 0.0
+
 var is_toggle_aim_active: bool = false
 
 var clip_pistol_ammo: int = 5
@@ -373,7 +376,7 @@ void fragment() {
 	var blood_mat = ShaderMaterial.new()
 	blood_mat.shader = blood_shader
 	blood_overlay.material = blood_mat
-	hud_layer.add_child(blood_overlay)
+	#hud_layer.add_child(blood_overlay) # Removido a marca de sangue conforme pedido
 
 	# Blur Setup
 	
@@ -517,6 +520,9 @@ func _start_heartbeat_pulse() -> void:
 	
 
 func _input(event):
+	if GlobalEvents.in_cutscene:
+		return
+		
 	if event.is_action_pressed("ui_cogblade_power") and !GlobalEvents.is_maycow_normal:
 		if GlobalEvents.in_cutscene or process_mode == Node.PROCESS_MODE_DISABLED:
 			return
@@ -547,8 +553,8 @@ func _input(event):
 		camera_atual.rotate_x(-event.relative.y * SENSITIVITY * sens_mult)
 		
 		# Trava o ângulo vertical
-		var v_down = -80
-		var v_up = 80
+		var v_down = -25 if camera_atual == camera_third_person else -80
+		var v_up = 20 if camera_atual == camera_third_person else 80
 		camera_atual.rotation.x = clamp(camera_atual.rotation.x, deg_to_rad(v_down), deg_to_rad(v_up))
 
 
@@ -558,6 +564,14 @@ var hold_threshold: float = 0.15 # 200 milisegundos para confirmar o "segurar"
 var limite_rotacao_lateral = deg_to_rad(15) # O máximo que ele pode "virar" (ex: 35 graus)
 var velocidade_giro = 4.0
 func _physics_process(delta: float) -> void:
+	if GlobalEvents.in_cutscene:
+		velocity.x = move_toward(velocity.x, 0, SPEED)
+		velocity.z = move_toward(velocity.z, 0, SPEED)
+		if not is_on_floor():
+			velocity += get_gravity() * delta
+		move_and_slide()
+		return
+
 	if is_using_ultimate:
 		# Apenas processa a gravidade, caso ele estivesse caindo no momento, 
 		# mas normalmente a animação vai travar ele. Retorna para não mover.
@@ -566,6 +580,12 @@ func _physics_process(delta: float) -> void:
 	var is_in_house = get_tree().current_scene.name == "the_house" if get_tree() and get_tree().current_scene else false
 	var can_run_normal = GlobalEvents.is_maycow_normal and not is_in_house
 	var stamina_active = not GlobalEvents.is_maycow_normal or can_run_normal
+	
+	var camera_atual_check = get_viewport().get_camera_3d()
+	var current_camera_rot_x = camera_atual_check.rotation.x if camera_atual_check else 0.0
+	var is_turning_camera = abs(rotation.y - last_rotation_y) > 0.001 or abs(current_camera_rot_x - last_camera_rot_x) > 0.001
+	last_rotation_y = rotation.y
+	last_camera_rot_x = current_camera_rot_x
 	
 	if SaveManager.config.get("run_mode", "hold") == "toggle":
 		if Input.is_action_just_pressed("ui_run"):
@@ -678,8 +698,8 @@ func _physics_process(delta: float) -> void:
 				camera_atual.rotate_x(-joy_dir.y * JOY_SENSITIVITY * sens_mult * delta * 100)
 				
 				# Trava o ângulo vertical (mesma lógica do mouse)
-				var v_down = -80
-				var v_up = 80
+				var v_down = -25 if camera_atual == camera_third_person else -80
+				var v_up = 20 if camera_atual == camera_third_person else 80
 				camera_atual.rotation.x = clamp(camera_atual.rotation.x, deg_to_rad(v_down), deg_to_rad(v_up))
 	
 		# 6. GESTÃO DO DASH (COOLDOWN E EXECUÇÃO)
@@ -712,6 +732,10 @@ func _physics_process(delta: float) -> void:
 				velocidade_atual = WALK_SPEED * 0.4
 			elif _run_toggle_active and current_stamina > 0 and not is_exhausted:
 				velocidade_atual = RUN_SPEED
+			
+			# Mais lento ao andar para trás
+			if input_dir.y > 0.1:
+				velocidade_atual *= 0.5
 				
 			var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 			var velocity_Y_zero: bool = velocity.y <= 0
@@ -759,19 +783,39 @@ func _physics_process(delta: float) -> void:
 			elif is_running:
 				target_run_fov = 80.0 if is_first_person else 88.0
 				
-			camera.fov = lerp(camera.fov, target_run_fov, 8.0 * delta if is_aiming else 5.0 * delta)
+			if input_dir.length() < 0.1 and not is_aiming:
+				target_run_fov -= 12.0
+				
+			var cur_fov_speed = 5.0
+			if is_aiming:
+				cur_fov_speed = 8.0
+			elif not is_running:
+				cur_fov_speed = 0.8
+				
+			camera.fov = lerp(camera.fov, target_run_fov, cur_fov_speed * delta)
 			
 
 
 		# 8. ROTAÇÃO VISUAL DO MODELO (MAYCOW LOPES)
 		if input_dir.y <= 0.1: 
 			var alvo_y = PI 
-			if input_dir.x > 0: alvo_y = PI - limite_rotacao_lateral 
-			elif input_dir.x < 0: alvo_y = PI + limite_rotacao_lateral 
+			var alvo_pos_x = 0.0
+			var speed_y = 0.6
+			var speed_x = 5.0
+			if input_dir.x > 0: 
+				alvo_y = PI - (limite_rotacao_lateral * 1.5) 
+			elif input_dir.x < -0.1: 
+				alvo_y = PI + (limite_rotacao_lateral * 1.8) 
+				speed_y = 0.6
+				speed_x = 1.5
+				var current_is_running = _run_toggle_active and velocity.length() > 0.1 and current_stamina > 0 and not is_exhausted and not is_aiming
+				if not current_is_running:
+					alvo_pos_x = -0.15
 
 			var modelo = get_node_or_null("maycow_lopes")
 			if modelo:
-				modelo.rotation.y = lerp_angle(modelo.rotation.y, alvo_y, delta * velocidade_giro)
+				modelo.rotation.y = lerp_angle(modelo.rotation.y, alvo_y, delta * velocidade_giro * speed_y)
+				modelo.position.x = lerp(modelo.position.x, alvo_pos_x, speed_x * delta)
 		
 	# DAQUI PRA FRENTE É O MAYCOW SEM PODERES 	
 	else:
@@ -794,7 +838,7 @@ func _physics_process(delta: float) -> void:
 				camera_atual.rotate_x(-joy_dir.y * JOY_SENSITIVITY * sens_mult * delta * 100)
 				
 				# Trava o ângulo vertical (mesma lógica do mouse)
-				var v_down = -10 if camera_atual == camera_third_person else -80
+				var v_down = -25 if camera_atual == camera_third_person else -80
 				var v_up = 20 if camera_atual == camera_third_person else 80
 				camera_atual.rotation.x = clamp(camera_atual.rotation.x, deg_to_rad(v_down), deg_to_rad(v_up))
 			
@@ -805,6 +849,8 @@ func _physics_process(delta: float) -> void:
 		# MOVIMENTO NORMAL (WALK/RUN)
 		var is_running = _run_toggle_active and current_stamina > 0 and can_run_normal and not is_exhausted and not is_aiming
 		var velocidade_atual = RUN_SPEED if is_running else WALK_SPEED_NORMAL
+		if input_dir.y > 0.1:
+			velocidade_atual *= 0.5
 		var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 		var velocity_Y_zero: bool = velocity.y <= 0
 		var target_fov: float = 75.0
@@ -851,8 +897,13 @@ func _physics_process(delta: float) -> void:
 				passos.stop()
 
 		var fov_lerp_speed = 5.0
+		if not is_running:
+			fov_lerp_speed = 0.8
+			
 		var camera = get_viewport().get_camera_3d()
 		if camera:
+			if input_dir.length() < 0.1 and not is_aiming:
+				target_fov -= 12.0
 			camera.fov = lerp(camera.fov, target_fov, fov_lerp_speed * delta)
 
 
@@ -860,10 +911,14 @@ func _physics_process(delta: float) -> void:
 		var modelo = get_node_or_null("maycow_lopes_normal")
 		if modelo:
 			var alvo_y = 0.0
+			var speed_y = 0.6
 			if input_dir.y <= 0.1: 
-				if input_dir.x > 0: alvo_y = -limite_rotacao_lateral 
-				elif input_dir.x < 0: alvo_y = limite_rotacao_lateral 
-			modelo.rotation.y = lerp_angle(modelo.rotation.y, alvo_y, delta * velocidade_giro)
+				if input_dir.x > 0: 
+					alvo_y = -(limite_rotacao_lateral * 1.5) 
+				elif input_dir.x < -0.1: 
+					alvo_y = (limite_rotacao_lateral * 1.8) 
+					speed_y = 0.6
+			modelo.rotation.y = lerp_angle(modelo.rotation.y, alvo_y, delta * velocidade_giro * speed_y)
 			
 			var is_walking_back = direction and direction.dot(-global_transform.basis.z) < -0.2
 			var target_pos_x = 0.0
@@ -874,7 +929,14 @@ func _physics_process(delta: float) -> void:
 			elif is_walking_back:
 				target_pos_x = normal_walkback_offset_x
 				target_pos_z = normal_walkback_offset_z
-			modelo.position.x = lerp(modelo.position.x, target_pos_x, 5.0 * delta)
+				
+			var speed_x = 5.0
+			if input_dir.x < -0.1:
+				speed_x = 1.5
+				if not is_running:
+					target_pos_x -= 0.15
+				
+			modelo.position.x = lerp(modelo.position.x, target_pos_x, speed_x * delta)
 			modelo.position.z = lerp(modelo.position.z, target_pos_z, 5.0 * delta)
 
 		# Inclinação e Encolhimento da arma 2D ao correr (bloqueado ao mirar)
@@ -1149,7 +1211,7 @@ func reload():
 			await get_tree().create_timer(1.0).timeout
 			
 		# Atraso extra para a animação da mão mágica terminar com folga
-		await get_tree().create_timer(0.8).timeout
+		await get_tree().create_timer(0.2).timeout
 			
 		# Retorna para a posição de idle escondida lentamente e suave
 		if is_instance_valid(hand_magic_3d): 

@@ -81,6 +81,7 @@ func _process(delta: float) -> void:
 		if player_na_porta:
 			# Previne que o jogador aperte o botão várias vezes
 			player_na_porta = false
+			GlobalEvents.in_cutscene = true
 			GlobalUtils.hide_center_message("interacao_casa")
 			
 			# Chama o efeito de fade out
@@ -95,6 +96,7 @@ func _process(delta: float) -> void:
 			player_no_telefone = false
 			telefone_tocando = false
 			telefone_atendido = true
+			GlobalEvents.in_cutscene = true
 			GlobalUtils.hide_center_message("interacao_casa")
 			
 			if is_instance_valid(phone_audio):

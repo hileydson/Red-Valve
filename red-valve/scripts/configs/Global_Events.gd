@@ -5,7 +5,11 @@ const language_en = "EN"
 
 # data to be saved
 var can_load:bool = false
-var in_cutscene:bool = false
+var in_cutscene:bool = false:
+	set(val):
+		in_cutscene = val
+		if val and GlobalUtils:
+			GlobalUtils.clear_all_messages()
 var save_array = {}
 var default_language:String = language_pt_br
 

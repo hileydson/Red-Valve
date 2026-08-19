@@ -13,6 +13,7 @@ var rain_scene = preload("res://scenes/effects/rain_effect.tscn")
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	GlobalEvents.in_cutscene = false
 	if is_instance_valid(real_time_label):
 		real_time_label.queue_free()
 	SaveManager.save_game()
@@ -52,35 +53,22 @@ func setup_player_spawn() -> void:
 			player.global_position = spawn_point.global_position
 			player.global_rotation.y = spawn_point.global_rotation.y + PI
 
-		var bloqueio = get_node_or_null("bloqueio_prologo_oficina_jimmy")
-		if not bloqueio:
-			bloqueio = find_child("bloqueio_prologo_oficina_jimmy", true, false)
-		if bloqueio:
-			bloqueio.queue_free()
-	var vbox = VBoxContainer.new()
-	vbox.set_anchors_preset(Control.PRESET_CENTER)
-	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
-	vbox.add_theme_constant_override("separation", 20)
-	ui_layer.add_child(vbox)
-	
-	intro_label = Label.new()
-	intro_label.text = ""
-	intro_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	intro_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	intro_label.autowrap_mode = TextServer.AUTOWRAP_WORD
-	intro_label.custom_minimum_size = Vector2(800, 0)
-	intro_label.add_theme_font_size_override("font_size", 18)
-	intro_label.add_theme_constant_override("outline_size", 5)
-	intro_label.modulate.a = 0.0
-	vbox.add_child(intro_label)
-
-	prompt_label = Label.new()
-	prompt_label.text = tr("PROMPT_ENTER_WORKSHOP")
-	prompt_label.visible = false
-	prompt_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	prompt_label.add_theme_font_size_override("font_size", 16)
-	prompt_label.add_theme_constant_override("outline_size", 4)
-	vbox.add_child(prompt_label)
+	var bloqueio = get_node_or_null("bloqueio_prologo_oficina_jimmy")
+	if not bloqueio:
+		bloqueio = find_child("bloqueio_prologo_oficina_jimmy", true, false)
+	if bloqueio:
+		bloqueio.queue_free()
+		
+	if not is_instance_valid(prompt_label):
+		prompt_label = Label.new()
+		prompt_label.text = tr("PROMPT_ENTER_WORKSHOP")
+		prompt_label.visible = false
+		prompt_label.set_anchors_preset(Control.PRESET_CENTER)
+		prompt_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		prompt_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		prompt_label.add_theme_font_size_override("font_size", 16)
+		prompt_label.add_theme_constant_override("outline_size", 4)
+		ui_layer.add_child(prompt_label)
 	
 	# Inicia a exibição do texto introdutório
 	_play_intro_text()
@@ -92,7 +80,8 @@ func _process(delta: float) -> void:
 	
 	if player_na_oficina and Input.is_action_just_pressed("ui_accept"):
 		player_na_oficina = false
-		prompt_label.visible = false
+		if is_instance_valid(prompt_label):
+			prompt_label.visible = false
 		
 		$fade.fade_out()
 		await get_tree().create_timer(2.0).timeout
@@ -115,19 +104,21 @@ func _on_camera_2_body_entered(body: Node3D) -> void:
 
 
 func _on_area_3d_jimmy_house_body_entered(body: Node3D) -> void:
-	if SaveManager.prolog_finished:
-		return
-	if body.name == "player" or body.is_in_group("player"):
+	#if SaveManager.prolog_finished:
+	#	return
+	if body.name.to_lower() == "player" or body.is_in_group("player"):
 		player_na_oficina = true
-		prompt_label.visible = true
+		if is_instance_valid(prompt_label):
+			prompt_label.visible = true
 
 
 func _on_area_3d_jimmy_house_body_exited(body: Node3D) -> void:
-	if SaveManager.prolog_finished:
-		return
-	if body.name == "player" or body.is_in_group("player"):
+	#if SaveManager.prolog_finished:
+	#	return
+	if body.name.to_lower() == "player" or body.is_in_group("player"):
 		player_na_oficina = false
-		prompt_label.visible = false
+		if is_instance_valid(prompt_label):
+			prompt_label.visible = false
 
 func _play_intro_text() -> void:
 	if GlobalEvents.entering_chapter_1:
@@ -176,25 +167,7 @@ func _play_intro_text() -> void:
 	]
 	
 	for key in intro_keys:
-		if not is_instance_valid(intro_label):
-			return
-			
-		intro_label.text = tr(key)
-		intro_label.modulate.a = 0.0
-		
-		var tween_in = create_tween()
-		tween_in.tween_property(intro_label, "modulate:a", 1.0, 0.5)
-		await tween_in.finished
-		
-		# Mantém a frase na tela por 4 segundos
-		await get_tree().create_timer(4.0).timeout
-		
-		if not is_instance_valid(intro_label):
-			return
-			
-		var tween_out = create_tween()
-		tween_out.tween_property(intro_label, "modulate:a", 0.0, 0.5)
-		await tween_out.finished
-		
-		# Pequena pausa entre uma frase e outra
+		GlobalUtils.show_center_message("intro_stage_1", tr(key), 18)
+		await get_tree().create_timer(4.5).timeout
+		GlobalUtils.hide_center_message("intro_stage_1")
 		await get_tree().create_timer(0.5).timeout

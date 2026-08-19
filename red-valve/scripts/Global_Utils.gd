@@ -58,6 +58,13 @@ func hide_center_message(message_id: String) -> void:
 			if is_instance_valid(label):
 				label.queue_free()
 
+func clear_all_messages() -> void:
+	for id in active_messages.keys():
+		var label = active_messages[id]
+		if is_instance_valid(label):
+			label.queue_free()
+	active_messages.clear()
+
 func ativar_camera_lenta(escala: float, duracao: float, sound:bool):
 	Engine.time_scale = escala
 	

@@ -29,6 +29,7 @@ func _ready() -> void:
 		var enemy_node = enemy.get_node_or_null("enemy")
 		if enemy_node:
 			enemy_node.is_ranged_attacker = true
+			enemy_node.shoots_fireball = false
 			enemy_node.projectile_source = pecas
 			enemy_node.ranged_attack_cooldown = 6.0
 			enemy_node.attack_damage = 20
