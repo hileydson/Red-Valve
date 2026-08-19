@@ -22,6 +22,7 @@ var sens_aim_label: Label
 var sens_aim_slider: HSlider
 var commands_label: Label
 var controls_text: RichTextLabel
+var controls_scroll: ScrollContainer
 
 # Video Tab
 var tab_video: MarginContainer
@@ -105,6 +106,12 @@ func _input(event: InputEvent) -> void:
 		_on_back_pressed()
 		get_viewport().set_input_as_handled()
 
+func _process(delta: float) -> void:
+	if tab_container.current_tab == 1 and is_instance_valid(controls_scroll):
+		var joy_y = Input.get_axis("ui_look_up", "ui_look_down")
+		if abs(joy_y) > 0.1:
+			controls_scroll.scroll_vertical += int(joy_y * 600 * delta)
+
 func _update_tab_titles():
 	tab_container.set_tab_title(0, tr("CONFIG_TAB_GAMEPLAY"))
 	tab_container.set_tab_title(1, tr("CONFIG_TAB_CONTROLS"))
@@ -162,14 +169,15 @@ func _build_controls_tab():
 	tab_controls.add_theme_constant_override("margin_top", 20)
 	tab_controls.add_theme_constant_override("margin_bottom", 20)
 	
-	var scroll = ScrollContainer.new()
-	scroll.custom_minimum_size = Vector2(770, 440)
-	tab_controls.add_child(scroll)
+	controls_scroll = ScrollContainer.new()
+	controls_scroll.custom_minimum_size = Vector2(770, 440)
+	controls_scroll.follow_focus = true
+	tab_controls.add_child(controls_scroll)
 	
 	var vbox = VBoxContainer.new()
 	vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	vbox.add_theme_constant_override("separation", 15)
-	scroll.add_child(vbox)
+	controls_scroll.add_child(vbox)
 	
 	# Deadzone
 	deadzone_label = Label.new()

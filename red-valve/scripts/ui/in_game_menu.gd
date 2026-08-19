@@ -198,7 +198,7 @@ func _create_action_menu() -> void:
 	action_menu_panel.add_child(action_menu_vbox)
 	add_child(action_menu_panel)
 	
-	var options = ["Usar", "Equipar", "Inspecionar"]
+	var options = [tr("ACTION_USE"), tr("ACTION_EQUIP"), tr("ACTION_INSPECT")]
 	for i in range(options.size()):
 		var opt_idx = i
 		var btn = Button.new()
@@ -321,9 +321,9 @@ func _render_action_menu() -> void:
 	# Usar [0], Equipar [1], Inspecionar [2]
 	var type = db_info.get("type", "")
 	
-	var opts = ["Usar", "Equipar", "Inspecionar"]
+	var opts = [tr("ACTION_USE"), tr("ACTION_EQUIP"), tr("ACTION_INSPECT")]
 	if SaveManager.is_equipped(current_item_selected["id"]):
-		opts[1] = "Remover"
+		opts[1] = tr("ACTION_UNEQUIP")
 	for i in range(3):
 		var btn = action_options[i] as Button
 		var enabled = false
@@ -334,16 +334,27 @@ func _render_action_menu() -> void:
 		
 		if i == 1 and current_item_selected["id"] == "cogblade": enabled = false # Cogblade nao desequipa
 		
-		btn.text = opts[i]
 		btn.disabled = not enabled
+		
+		var style = StyleBoxFlat.new()
+		
 		if i == action_menu_index:
+			btn.text = "> " + opts[i]
 			btn.add_theme_color_override("font_color", Color(1.0, 1.0, 0.0) if enabled else Color(0.7, 0.7, 0.0))
 			btn.add_theme_color_override("font_hover_color", Color(1.0, 1.0, 0.0) if enabled else Color(0.7, 0.7, 0.0))
 			btn.add_theme_color_override("font_focus_color", Color(1.0, 1.0, 0.0) if enabled else Color(0.7, 0.7, 0.0))
+			style.bg_color = Color(1, 1, 1, 0.2)
 		else:
+			btn.text = "  " + opts[i]
 			btn.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8) if enabled else Color(0.4, 0.4, 0.4))
 			btn.add_theme_color_override("font_hover_color", Color(1.0, 1.0, 0.8) if enabled else Color(0.4, 0.4, 0.4))
 			btn.add_theme_color_override("font_focus_color", Color(0.8, 0.8, 0.8) if enabled else Color(0.4, 0.4, 0.4))
+			style.bg_color = Color(0, 0, 0, 0)
+			
+		btn.add_theme_stylebox_override("normal", style)
+		btn.add_theme_stylebox_override("hover", style)
+		btn.add_theme_stylebox_override("focus", style)
+		btn.add_theme_stylebox_override("disabled", style)
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_menu_game") or event.is_action_pressed("ui_pause"):

@@ -2315,8 +2315,17 @@ func _on_amulet_magic_released() -> void:
 		is_teleporting_enemies = true
 		
 		# --- HACK TEMPORÁRIO (CONFORME PEDIDO) ---
-		SaveManager.add_item("pistol_ammo", 25)
+		var found_ammo = false
+		for item in SaveManager.inventory_combat:
+			if item["id"] == "pistol_ammo":
+				item["amount"] += 25
+				found_ammo = true
+				break
+		if not found_ammo:
+			SaveManager.inventory_combat.append({"id": "pistol_ammo", "amount": 25})
+			
 		SaveManager.current_mp = SaveManager.max_mp
+		# -----------------------------------------
 		
 		var tree = get_tree()
 		var root = tree.root
