@@ -328,6 +328,11 @@ func _start_final_sequence() -> void:
 			root.add_child(GlobalEvents.paused_scene_for_amulet)
 			tree.current_scene = GlobalEvents.paused_scene_for_amulet
 			
+			# Toca o efeito de retorno na câmera da cena restaurada
+			var p = tree.get_first_node_in_group("player")
+			if p and p.has_method("play_return_from_arena_effect"):
+				p.play_return_from_arena_effect()
+			
 			# Restaura o estado normal/combat do jogador
 			GlobalEvents.is_maycow_normal = GlobalEvents.previous_is_maycow_normal
 			

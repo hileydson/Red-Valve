@@ -68,6 +68,7 @@ var is_exhausted: bool = false
 var mp_bar: ProgressBar
 
 var hud_layer: CanvasLayer
+var amulet_counter_label: Label
 
 var is_teleporting_enemies: bool = false
 var heartbeat_tween: Tween
@@ -474,6 +475,27 @@ void fragment() {
 	st_bg.corner_radius_bottom_right = 2
 	stamina_bar.add_theme_stylebox_override("background", st_bg)
 	hud_layer.add_child(stamina_bar)
+	
+	# Amulet Counter Label
+	amulet_counter_label = Label.new()
+	amulet_counter_label.add_theme_font_size_override("font_size", 54)
+	amulet_counter_label.add_theme_color_override("font_color", Color(1, 0, 0, 1))
+	amulet_counter_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
+	amulet_counter_label.add_theme_constant_override("outline_size", 10)
+	amulet_counter_label.anchor_left = 1.0
+	amulet_counter_label.anchor_right = 1.0
+	amulet_counter_label.offset_left = -250
+	amulet_counter_label.offset_top = 40
+	amulet_counter_label.offset_right = -40
+	amulet_counter_label.offset_bottom = 150
+	amulet_counter_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	amulet_counter_label.visible = false
+	hud_layer.add_child(amulet_counter_label)
+	
+	# Piscar em tons de vermelho
+	var counter_tween = create_tween().set_loops()
+	counter_tween.tween_property(amulet_counter_label, "theme_override_colors/font_color", Color(1.0, 0.2, 0.2, 1.0), 0.4)
+	counter_tween.tween_property(amulet_counter_label, "theme_override_colors/font_color", Color(0.5, 0.0, 0.0, 1.0), 0.4)
 	
 	_start_heartbeat_pulse()
 
@@ -2151,10 +2173,19 @@ func _process_amulet_targeting() -> void:
 		
 	# Ação de Selecionar (Tiro)
 	if Input.is_action_just_pressed("ui_shoot"):
-		if is_instance_valid(amulet_hovered_enemy) and amulet_hovered_enemy not in amulet_selected_enemies:
+		if is_instance_valid(amulet_hovered_enemy) and not (amulet_hovered_enemy in amulet_selected_enemies):
 			amulet_selected_enemies.append(amulet_hovered_enemy)
-			print(">>> INIMIGO SELECIONADO: ", amulet_hovered_enemy.name)
-			_apply_silhouette(amulet_hovered_enemy, Color(1.0, 0.0, 0.0, 0.6)) # Vermelho destacando a seleção
+			_apply_silhouette(amulet_hovered_enemy, Color(1.0, 0.0, 0.0, 0.6)) # Destaca vermelho a seleção
+			
+	if is_instance_valid(amulet_counter_label):
+		if amulet_selected_enemies.size() > 0:
+			amulet_counter_label.text = str(amulet_selected_enemies.size()) + " ALVOS"
+			amulet_counter_label.visible = true
+			# Pulsar vermelho
+			var pulse = 0.5 + 0.5 * sin(Time.get_ticks_msec() / 200.0)
+			amulet_counter_label.modulate = Color(1.0, pulse, pulse)
+		else:
+			amulet_counter_label.visible = false
 
 func _clear_amulet_hover() -> void:
 	if is_instance_valid(amulet_hovered_enemy) and amulet_hovered_enemy not in amulet_selected_enemies:
@@ -2209,6 +2240,7 @@ func _on_amulet_magic_released() -> void:
 		if is_instance_valid(hand_with_magic):
 			hand_with_magic.visible = false
 		if point: point.visible = false
+		if is_instance_valid(amulet_counter_label): amulet_counter_label.visible = false
 		_hide_amulet_magic()
 		
 		GlobalEvents.previous_is_maycow_normal = GlobalEvents.is_maycow_normal
@@ -2279,3 +2311,14 @@ func _on_amulet_magic_released() -> void:
 		
 		root.add_child(battlefield_scene)
 		tree.current_scene = battlefield_scene
+
+func play_return_from_arena_effect() -> void:
+	GlobalUtils.shake_camera(0.6, 1.0)
+	
+	if is_instance_valid(hud_layer):
+		var motion_blur = hud_layer.get_node_or_null("MotionBlurOverlay")
+		if motion_blur:
+			motion_blur.visible = true
+			motion_blur.material.set_shader_parameter("blur_strength", 1.8)
+			var tween = create_tween()
+			tween.tween_property(motion_blur.material, "shader_parameter/blur_strength", 0.0, 2.5).set_trans(Tween.TRANS_SINE)
