@@ -170,6 +170,8 @@ var cogblade_pulsing: bool = false
 var cogblade_pulse_tween: Tween
 var cogblade_particles: CPUParticles2D
 var is_using_ultimate: bool = false
+var amuleto_node: Node3D
+var amuleto_particles: CPUParticles3D
 
 var playback 
 
@@ -820,6 +822,25 @@ func _physics_process(delta: float) -> void:
 	# DAQUI PRA FRENTE É O MAYCOW SEM PODERES 	
 	else:
 		
+		# 2.5 LÓGICA DO AMULETO (PRIMEIRA PESSOA)
+		if Input.is_action_pressed("ui_hold_first_person_view"):
+			is_aiming = true
+			is_first_person = true
+			if not camera.current:
+				camera.make_current()
+			if camera_third_person: camera_third_person.current = false
+			if hand_with_magic: hand_with_magic.visible = true
+			
+			_process_amulet_magic(delta)
+		else:
+			is_aiming = false
+			is_first_person = false
+			if camera_third_person and not camera_third_person.current:
+				camera_third_person.make_current()
+			if hand_with_magic: hand_with_magic.visible = false
+			
+			_hide_amulet_magic()
+		
 		# 3. GRAVIDADE
 		if not is_on_floor():
 			velocity += get_gravity() * delta
@@ -854,6 +875,8 @@ func _physics_process(delta: float) -> void:
 		var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 		var velocity_Y_zero: bool = velocity.y <= 0
 		var target_fov: float = 75.0
+		if is_aiming:
+			target_fov = 100.0 # Aumenta FOV no modo amuleto
 
 		if direction:
 			var visao_frente = -global_transform.basis.z
@@ -897,7 +920,9 @@ func _physics_process(delta: float) -> void:
 				passos.stop()
 
 		var fov_lerp_speed = 5.0
-		if not is_running and not is_first_person:
+		if is_aiming:
+			fov_lerp_speed = 8.0
+		elif not is_running and not is_first_person:
 			fov_lerp_speed = 0.8
 			
 		var camera = get_viewport().get_camera_3d()
@@ -1997,3 +2022,59 @@ func _spawn_explosion_vfx(pos: Vector3):
 		if is_instance_valid(node): 
 			node.queue_free()
 	)
+
+func _process_amulet_magic(delta: float) -> void:
+	if not is_instance_valid(amuleto_node):
+		var amuleto_scene = load("res://assets/3d_model/player/Maycow Lopes/amuleto_power.glb")
+		if amuleto_scene:
+			amuleto_node = amuleto_scene.instantiate()
+			if hand_with_magic:
+				hand_with_magic.add_child(amuleto_node)
+				amuleto_node.position = Vector3(-0.06, 0.15, -0.15) # Em cima da mão esquerda
+				amuleto_node.scale = Vector3(0.3, 0.3, 0.3)
+				
+				amuleto_particles = CPUParticles3D.new()
+				amuleto_particles.amount = 120
+				amuleto_particles.lifetime = 1.0
+				amuleto_particles.local_coords = false # Partículas se espalham no ar independente do giro do amuleto
+				amuleto_particles.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
+				amuleto_particles.emission_sphere_radius = 0.2
+				amuleto_particles.direction = Vector3.UP
+				amuleto_particles.spread = 180.0
+				amuleto_particles.gravity = Vector3(0, 0.5, 0)
+				amuleto_particles.initial_velocity_min = 0.5
+				amuleto_particles.initial_velocity_max = 2.0
+				
+				var grad = Gradient.new()
+				grad.offsets = [0.0, 0.5, 1.0]
+				grad.colors = [Color(0.8, 0.0, 1.0, 0.0), Color(0.6, 0.1, 1.0, 1.0), Color(0.3, 0.0, 0.8, 0.0)]
+				amuleto_particles.color_ramp = grad
+				
+				var scale_curve = Curve.new()
+				scale_curve.add_point(Vector2(0.0, 0.8))
+				scale_curve.add_point(Vector2(1.0, 0.0))
+				amuleto_particles.scale_amount_curve = scale_curve
+				
+				var pmat = StandardMaterial3D.new()
+				pmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+				pmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+				pmat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+				var pmesh = SphereMesh.new()
+				pmesh.radius = 0.04
+				pmesh.height = 0.08
+				pmesh.material = pmat
+				amuleto_particles.mesh = pmesh
+				
+				amuleto_node.add_child(amuleto_particles)
+				
+	if is_instance_valid(amuleto_node):
+		amuleto_node.visible = true
+		amuleto_node.rotate_y(8.0 * delta) # Amuleto girando rapidamente
+		if amuleto_particles:
+			amuleto_particles.emitting = true
+
+func _hide_amulet_magic() -> void:
+	if is_instance_valid(amuleto_node):
+		amuleto_node.visible = false
+		if amuleto_particles:
+			amuleto_particles.emitting = false
