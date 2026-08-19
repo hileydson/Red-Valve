@@ -80,7 +80,30 @@ func _ready() -> void:
 	back_btn.pressed.connect(_on_back_pressed)
 	main_vbox.add_child(back_btn)
 	
-	tab_container.grab_focus()
+	tab_container.tab_changed.connect(func(_idx): _focus_first_item())
+	_focus_first_item()
+
+func _focus_first_item() -> void:
+	await get_tree().process_frame # Espera um frame para garantir que os nós estão prontos
+	if tab_container.current_tab == 0 and is_instance_valid(lang_option):
+		lang_option.grab_focus()
+	elif tab_container.current_tab == 1 and is_instance_valid(deadzone_slider):
+		deadzone_slider.grab_focus()
+	elif tab_container.current_tab == 2 and is_instance_valid(display_option):
+		display_option.grab_focus()
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventJoypadButton and event.pressed:
+		if event.button_index == JOY_BUTTON_LEFT_SHOULDER:
+			tab_container.current_tab = max(0, tab_container.current_tab - 1)
+			get_viewport().set_input_as_handled()
+		elif event.button_index == JOY_BUTTON_RIGHT_SHOULDER:
+			tab_container.current_tab = min(tab_container.get_tab_count() - 1, tab_container.current_tab + 1)
+			get_viewport().set_input_as_handled()
+			
+	if event.is_action_pressed("ui_cancel"):
+		_on_back_pressed()
+		get_viewport().set_input_as_handled()
 
 func _update_tab_titles():
 	tab_container.set_tab_title(0, tr("CONFIG_TAB_GAMEPLAY"))
