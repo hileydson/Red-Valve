@@ -735,7 +735,7 @@ func _physics_process(delta: float) -> void:
 			
 			# Mais lento ao andar para trás
 			if input_dir.y > 0.1:
-				velocidade_atual *= 0.5
+				velocidade_atual *= 0.65
 				
 			var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 			var velocity_Y_zero: bool = velocity.y <= 0
@@ -850,7 +850,7 @@ func _physics_process(delta: float) -> void:
 		var is_running = _run_toggle_active and current_stamina > 0 and can_run_normal and not is_exhausted and not is_aiming
 		var velocidade_atual = RUN_SPEED if is_running else WALK_SPEED_NORMAL
 		if input_dir.y > 0.1:
-			velocidade_atual *= 0.5
+			velocidade_atual *= 0.65
 		var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 		var velocity_Y_zero: bool = velocity.y <= 0
 		var target_fov: float = 75.0

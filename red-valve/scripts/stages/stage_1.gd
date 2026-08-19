@@ -104,8 +104,8 @@ func _on_camera_2_body_entered(body: Node3D) -> void:
 
 
 func _on_area_3d_jimmy_house_body_entered(body: Node3D) -> void:
-	#if SaveManager.prolog_finished:
-	#	return
+	if SaveManager.prolog_finished:
+		return
 	if body.name.to_lower() == "player" or body.is_in_group("player"):
 		player_na_oficina = true
 		if is_instance_valid(prompt_label):
@@ -113,8 +113,8 @@ func _on_area_3d_jimmy_house_body_entered(body: Node3D) -> void:
 
 
 func _on_area_3d_jimmy_house_body_exited(body: Node3D) -> void:
-	#if SaveManager.prolog_finished:
-	#	return
+	if SaveManager.prolog_finished:
+		return
 	if body.name.to_lower() == "player" or body.is_in_group("player"):
 		player_na_oficina = false
 		if is_instance_valid(prompt_label):
