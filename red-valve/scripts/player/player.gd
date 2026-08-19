@@ -822,16 +822,31 @@ func _physics_process(delta: float) -> void:
 	# DAQUI PRA FRENTE É O MAYCOW SEM PODERES 	
 	else:
 		
-		# 2.5 LÓGICA DO AMULETO (PRIMEIRA PESSOA)
+		# 2.5 LÓGICA DO AMULETO (PRIMEIRA PESSOA COM ZOOM EM 3ª PESSOA)
+		if Input.is_action_just_released("ui_hold_first_person_view"):
+			if is_first_person and is_instance_valid(camera_third_person):
+				# Estava na primeira pessoa. Retorna para a 3ª pessoa já com zoom in, 
+				# para que o lerp normal faça o zoom out suave até o FOV padrão (75)
+				camera_third_person.fov = 40.0
+
 		if Input.is_action_pressed("ui_hold_first_person_view"):
 			is_aiming = true
-			is_first_person = true
-			if not camera.current:
-				camera.make_current()
-			if camera_third_person: camera_third_person.current = false
-			if hand_with_magic: hand_with_magic.visible = true
-			
-			_process_amulet_magic(delta)
+			if is_instance_valid(camera_third_person) and camera_third_person.fov <= 55.0:
+				# O zoom da 3ª pessoa chegou perto o suficiente. Pula para a 1ª pessoa.
+				is_first_person = true
+				if not camera.current:
+					camera.make_current()
+					camera.fov = 75.0 # Primeira pessoa não tem zoom distorcido
+				if camera_third_person: camera_third_person.current = false
+				if hand_with_magic: hand_with_magic.visible = true
+				_process_amulet_magic(delta)
+			else:
+				# Ainda no processo de zoom in na 3ª pessoa
+				is_first_person = false
+				if camera_third_person and not camera_third_person.current:
+					camera_third_person.make_current()
+				if hand_with_magic: hand_with_magic.visible = false
+				_hide_amulet_magic()
 		else:
 			is_aiming = false
 			is_first_person = false
@@ -876,7 +891,10 @@ func _physics_process(delta: float) -> void:
 		var velocity_Y_zero: bool = velocity.y <= 0
 		var target_fov: float = 75.0
 		if is_aiming:
-			target_fov = 100.0 # Aumenta FOV no modo amuleto
+			if is_first_person:
+				target_fov = 75.0 # Primeira pessoa fica com FOV normal
+			else:
+				target_fov = 40.0 # Zoom IN pesado na terceira pessoa (alvo)
 
 		if direction:
 			var visao_frente = -global_transform.basis.z
@@ -923,7 +941,7 @@ func _physics_process(delta: float) -> void:
 
 		var fov_lerp_speed = 5.0
 		if is_aiming:
-			fov_lerp_speed = 8.0
+			fov_lerp_speed = 12.0
 		elif not is_running and not is_first_person:
 			fov_lerp_speed = 0.8
 			
@@ -2047,10 +2065,23 @@ func _process_amulet_magic(delta: float) -> void:
 				amuleto_particles.initial_velocity_min = 0.5
 				amuleto_particles.initial_velocity_max = 2.0
 				
-				var grad = Gradient.new()
-				grad.offsets = [0.0, 0.5, 1.0]
-				grad.colors = [Color(0.8, 0.0, 1.0, 0.0), Color(0.6, 0.1, 1.0, 1.0), Color(0.3, 0.0, 0.8, 0.0)]
-				amuleto_particles.color_ramp = grad
+				# Variação de tons: roxos, brancos e vermelhos
+				var initial_grad = Gradient.new()
+				initial_grad.offsets = [0.0, 0.25, 0.5, 0.75, 1.0]
+				initial_grad.colors = [
+					Color(0.5, 0.0, 1.0, 1.0), # Roxo puro brilhante
+					Color(1.0, 1.0, 1.0, 1.0), # Branco mágico
+					Color(0.8, 0.2, 1.0, 1.0), # Lilás/Rosa
+					Color(1.0, 0.0, 0.0, 1.0), # Vermelho sangue
+					Color(0.3, 0.0, 0.6, 1.0)  # Roxo escuro
+				]
+				amuleto_particles.color_initial_ramp = initial_grad
+				
+				# Fade in e fade out no ciclo de vida
+				var alpha_grad = Gradient.new()
+				alpha_grad.offsets = [0.0, 0.2, 0.8, 1.0]
+				alpha_grad.colors = [Color(1,1,1,0), Color(1,1,1,1), Color(1,1,1,1), Color(1,1,1,0)]
+				amuleto_particles.color_ramp = alpha_grad
 				
 				var scale_curve = Curve.new()
 				scale_curve.add_point(Vector2(0.0, 0.8))
@@ -2061,6 +2092,7 @@ func _process_amulet_magic(delta: float) -> void:
 				pmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 				pmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 				pmat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+				pmat.vertex_color_use_as_albedo = true # OBRIGATÓRIO para a cor do Gradient funcionar!
 				var pmesh = SphereMesh.new()
 				pmesh.radius = 0.04
 				pmesh.height = 0.08
