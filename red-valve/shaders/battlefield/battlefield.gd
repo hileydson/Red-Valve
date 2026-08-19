@@ -6,12 +6,16 @@ extends Node
 var player: CharacterBody3D
 var enemies: Array = []
 var camera_intro: Camera3D
+@export var hurricane_particle_size_multiplier: float = 1.0
+
 var look_at_target: Node3D
 var look_at_offset: Vector3 = Vector3.ZERO
 var final_sequence_started: bool = false
+var hurricane_node: Node3D
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	_spawn_arena_hurricane()
 	SaveManager.save_game()
 	GlobalEvents.set_high_nevoa()
 	GlobalEvents.is_maycow_normal = false
@@ -212,6 +216,10 @@ func _process(delta: float) -> void:
 	if look_at_target and is_instance_valid(camera_intro) and camera_intro.current:
 		camera_intro.look_at(look_at_target.global_position + look_at_offset, Vector3.UP)
 		
+	if is_instance_valid(hurricane_node):
+		# Gira o furacão constantemente em torno do eixo Y
+		hurricane_node.rotate_y(deg_to_rad(30.0) * delta)
+		
 	# Avança as animações manualmente
 	if player and player.process_mode == Node.PROCESS_MODE_DISABLED:
 		var pt1 = player.get_node_or_null("maycow_lopes_normal/AnimationTree")
@@ -304,3 +312,120 @@ func _on_animation_intro_animation_finished(anim_name: StringName) -> void:
 	# O controle de câmera e física agora é feito no final da corrotina _ready()
 	# Isso garante que a explosão e o slow motion rodem por completo antes do Player assumir.
 	pass
+
+func _spawn_arena_hurricane() -> void:
+	hurricane_node = Node3D.new()
+	hurricane_node.name = "ArenaHurricane"
+	get_tree().current_scene.add_child.call_deferred(hurricane_node)
+	hurricane_node.global_position = Vector3(0, -1.0, 0) # Pouco abaixo do chão
+	
+	# Curva de tamanho: começa grande e afina/encolhe lá no alto
+	var scale_curve = Curve.new()
+	scale_curve.add_point(Vector2(0.0, 1.0))
+	scale_curve.add_point(Vector2(1.0, 0.1))
+	
+	# Sorteador de Tons de Vermelho iniciais (cada partícula nasce com uma cor dessas)
+	var initial_color_grad = Gradient.new()
+	initial_color_grad.offsets = [0.0, 0.3, 0.6, 1.0]
+	initial_color_grad.colors = [
+		Color(1.0, 0.0, 0.0, 1.0),   # Vermelho puro
+		Color(1.0, 0.2, 0.0, 1.0),   # Laranja avermelhado
+		Color(0.8, 0.0, 0.1, 1.0),   # Carmim brilhante
+		Color(0.5, 0.0, 0.0, 1.0)    # Vermelho escuro/Vinho
+	]
+	
+	# Curva de Alpha (Vida da partícula: nasce invisível, brilha, e morre invisível)
+	var alpha_grad = Gradient.new()
+	alpha_grad.offsets = [0.0, 0.2, 0.8, 1.0]
+	alpha_grad.colors = [
+		Color(1.0, 1.0, 1.0, 0.0),
+		Color(1.0, 1.0, 1.0, 1.0),
+		Color(1.0, 1.0, 1.0, 1.0),
+		Color(1.0, 1.0, 1.0, 0.0)
+	]
+	
+	var particles = CPUParticles3D.new()
+	particles.amount = 400
+	particles.lifetime = 6.0
+	particles.local_coords = true # Girar junto com o Node pai!
+	
+	particles.emission_shape = CPUParticles3D.EMISSION_SHAPE_RING
+	particles.emission_ring_radius = 16.0 # Fora da arena
+	particles.emission_ring_inner_radius = 13.0
+	particles.emission_ring_height = 2.0
+	particles.emission_ring_axis = Vector3.UP
+	
+	particles.direction = Vector3.UP
+	particles.spread = 15.0
+	particles.gravity = Vector3(0, 1.5, 0)
+	particles.initial_velocity_min = 2.0
+	particles.initial_velocity_max = 6.0
+	
+	particles.scale_amount_min = 0.5 * hurricane_particle_size_multiplier
+	particles.scale_amount_max = 1.5 * hurricane_particle_size_multiplier
+	particles.scale_amount_curve = scale_curve
+	
+	particles.color_initial_ramp = initial_color_grad
+	particles.color_ramp = alpha_grad
+	
+	var mat = StandardMaterial3D.new()
+	mat.albedo_color = Color(1, 1, 1, 1)
+	mat.emission_enabled = true
+	mat.emission = Color(1.0, 0.1, 0.0)
+	mat.emission_energy_multiplier = 4.0
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	
+	var mesh = SphereMesh.new()
+	mesh.radius = 0.2
+	mesh.height = 0.4
+	mesh.material = mat
+	particles.mesh = mesh
+	
+	hurricane_node.add_child(particles)
+	
+	# Fumaça do furacão
+	var smoke = CPUParticles3D.new()
+	smoke.amount = 250
+	smoke.lifetime = 8.0
+	smoke.local_coords = true
+	smoke.emission_shape = CPUParticles3D.EMISSION_SHAPE_RING
+	smoke.emission_ring_radius = 15.0
+	smoke.emission_ring_inner_radius = 12.0
+	smoke.emission_ring_height = 4.0
+	smoke.emission_ring_axis = Vector3.UP
+	
+	smoke.direction = Vector3.UP
+	smoke.spread = 20.0
+	smoke.gravity = Vector3(0, 1.2, 0)
+	smoke.initial_velocity_min = 1.0
+	smoke.initial_velocity_max = 4.0
+	
+	smoke.scale_amount_min = 3.0 * hurricane_particle_size_multiplier
+	smoke.scale_amount_max = 6.0 * hurricane_particle_size_multiplier
+	smoke.scale_amount_curve = scale_curve
+	
+	# Fumaça também ganha variação de vermelhos e o mesmo comportamento de alpha
+	smoke.color_initial_ramp = initial_color_grad
+	smoke.color_ramp = alpha_grad
+	
+	var smoke_mat = StandardMaterial3D.new()
+	smoke_mat.albedo_color = Color(1.0, 1.0, 1.0, 0.4) # Fumaça mais translúcida
+	var tex = load("res://assets/images/vfx/smoke.png")
+	if tex:
+		smoke_mat.albedo_texture = tex
+	smoke_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	smoke_mat.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+	smoke_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	
+	# Novo Shape da fumaça: Usando SphereMesh de baixa resolução (fumaça mais volumétrica)
+	var smoke_mesh = SphereMesh.new()
+	smoke_mesh.radius = 1.0
+	smoke_mesh.height = 2.0
+	smoke_mesh.radial_segments = 8
+	smoke_mesh.rings = 6
+	smoke_mesh.material = smoke_mat
+	smoke.mesh = smoke_mesh
+	
+	hurricane_node.add_child(smoke)

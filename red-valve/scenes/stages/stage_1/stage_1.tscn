@@ -103,7 +103,7 @@ shader_parameter/moon_texture_flip_u = false
 shader_parameter/moon_texture_flip_v = false
 shader_parameter/moon_size = 0.07
 shader_parameter/atm_moon_mie_tint = Color(0.137255, 0.184314, 0.292196, 1)
-shader_parameter/atm_moon_mie_intensity = 0.2555983608961105
+shader_parameter/atm_moon_mie_intensity = 0.2555983556807041
 shader_parameter/atm_moon_partial_mie_phase = Vector3(0.36, 1.64, 1.6)
 shader_parameter/starmap_color = Color(0.709804, 0.709804, 0.709804, 0.854902)
 shader_parameter/starmap_texture = ExtResource("8_3oxtr")
@@ -127,8 +127,8 @@ shader_parameter/cirrus_absorption = 2.0
 shader_parameter/cirrus_sky_tint_fade = 0.5
 shader_parameter/cirrus_size = 1.0
 shader_parameter/cirrus_uv = Vector2(0.16, 0.11)
-shader_parameter/cirrus_position1 = Vector2(0.8590171, 0.8590171)
-shader_parameter/cirrus_position2 = Vector2(0.8590171, 0.8590171)
+shader_parameter/cirrus_position1 = Vector2(0.9753561, 0.9753561)
+shader_parameter/cirrus_position2 = Vector2(0.9753561, 0.9753561)
 shader_parameter/cirrus_texture = ExtResource("3_kvc23")
 shader_parameter/cumulus_visible = true
 shader_parameter/cumulus_intensity = 9.245
@@ -138,7 +138,7 @@ shader_parameter/cumulus_absorption = 2.0
 shader_parameter/cumulus_noise_freq = 2.7
 shader_parameter/cumulus_sky_tint_fade = 0.0
 shader_parameter/cumulus_size = 0.5
-shader_parameter/cumulus_position = Vector2(4.2948737, 4.2948737)
+shader_parameter/cumulus_position = Vector2(4.8765306, 4.8765306)
 shader_parameter/cumulus_texture = ExtResource("4_2wkc3")
 shader_parameter/cumulus_partial_mie_phase = Vector3(0.957564, 1.042436, 0.412)
 shader_parameter/cumulus_mie_intensity = 1.0
@@ -670,10 +670,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 714.9369, 2.015886, 441.17017
 transform = Transform3D(0.059585143, 0, -0.99822325, 0, 1, 0, 0.99822325, 0, 0.059585143, 9.039856, 0, -31.930176)
 
 [node name="Zombie11" parent="enemies" unique_id=1180939023 instance=ExtResource("18_2ux1o")]
-transform = Transform3D(0.059585143, 0, -0.99822325, 0, 1, 0, 0.99822325, 0, 0.059585143, -0.98150635, 1.2822897, -5.4069214)
+transform = Transform3D(0.059585143, 0, -0.99822325, 0, 1, 0, 0.99822325, 0, 0.059585143, -241.52228, 1.2822897, -30.722595)
 
 [node name="Zombie12" parent="enemies" unique_id=847067742 instance=ExtResource("18_2ux1o")]
-transform = Transform3D(0.059585143, 0, -0.99822325, 0, 1, 0, 0.99822325, 0, 0.059585143, 24.594727, 1.2822897, -117.54193)
+transform = Transform3D(0.059585143, 0, -0.99822325, 0, 1, 0, 0.99822325, 0, 0.059585143, 24.594727, -348.8473, -204.39526)
 
 [node name="Zombie13" parent="enemies" unique_id=1786986666 instance=ExtResource("18_2ux1o")]
 transform = Transform3D(0.059585143, 0, -0.99822325, 0, 1, 0, 0.99822325, 0, 0.059585143, -27.598572, 1.2822897, -143.93347)
@@ -718,7 +718,7 @@ transform = Transform3D(0.059585143, 0, -0.99822325, 0, 1, 0, 0.99822325, 0, 0.0
 transform = Transform3D(0.059585143, 0, -0.99822325, 0, 1, 0, 0.99822325, 0, 0.059585143, -51.057617, 0, -81.61841)
 
 [node name="Zombie6" parent="enemies" unique_id=183051955 instance=ExtResource("18_2ux1o")]
-transform = Transform3D(0.059585143, 0, -0.99822325, 0, 1, 0, 0.99822325, 0, 0.059585143, -133.71954, -1.5258789e-05, -246.30254)
+transform = Transform3D(0.059585143, 0, -0.99822325, 0, 1, 0, 0.99822325, 0, 0.059585143, -272.2672, -1.5258789e-05, -42.93866)
 
 [node name="Zombie7" parent="enemies" unique_id=520376463 instance=ExtResource("18_2ux1o")]
 transform = Transform3D(0.059585143, 0, -0.99822325, 0, 1, 0, 0.99822325, 0, 0.059585143, -47.110962, -1.5258789e-05, -229.2785)
@@ -733,7 +733,7 @@ transform = Transform3D(0.059585143, 0, -0.99822325, 0, 1, 0, 0.99822325, 0, 0.0
 transform = Transform3D(0.059585143, 0, -0.99822325, 0, 1, 0, 0.99822325, 0, 0.059585143, -206.41092, -6.1035156e-05, -412.10077)
 
 [node name="TheCobaltHusker4" parent="enemies" unique_id=1100274870 instance=ExtResource("3_hdpfd")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -401.54126, -0.35303092, -326.00882)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -251.07544, -0.35303092, -59.262512)
 
 [node name="TheCobaltHusker5" parent="enemies" unique_id=694384561 instance=ExtResource("3_hdpfd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -150.35925, -0.35303092, -357.5286)
@@ -742,7 +742,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -150.35925, -0.35303092, -357
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -54.415344, -0.35303092, -276.01453)
 
 [node name="TheCobaltHusker7" parent="enemies" unique_id=2003257009 instance=ExtResource("3_hdpfd")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -114.415344, -0.35303092, -240.01453)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -218.69482, -0.35303092, -45.167236)
 
 [node name="TheCobaltHusker2" parent="enemies" unique_id=766406895 instance=ExtResource("3_hdpfd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -360.23825, -0.35303092, -338.0939)
