@@ -1,4 +1,7 @@
 extends Node
+@onready var animation_intro: AnimationPlayer = $intro_camera/animation_intro
+@onready var camera_intro_2: Camera3D = $intro_camera/camera_intro_2
+
 
 var player: CharacterBody3D
 var enemies: Array = []
@@ -17,20 +20,19 @@ func _ready() -> void:
 	enemies = get_tree().get_nodes_in_group("enemies")
 	
 	if player:
-		# Trava a cena para modo cutscene
+		# Código comentado para teste: pular a primeira cutscene
 		player.process_mode = Node.PROCESS_MODE_DISABLED
-		
-		# Cria a câmera da introdução
-		camera_intro = Camera3D.new()
-		add_child(camera_intro)
-		
-		# Coloca todos os inimigos em slow motion
+		# camera_intro = Camera3D.new()
+		# add_child(camera_intro)
 		for enemy in enemies:
 			if is_instance_valid(enemy):
 				enemy.process_mode = Node.PROCESS_MODE_DISABLED
-				
 		GlobalEvents.in_cutscene = true
-		iniciar_cutscene()
+		# INICIA INTRO SOMENTE UMA VEZ
+		animation_intro.play("intro_first_time")
+		camera_intro_2.make_current()
+		# iniciar_cutscene()
+		pass
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -127,6 +129,22 @@ func iniciar_cutscene() -> void:
 	await dive_tween.finished
 	
 	# Encerramento: Restaura física e controles
+	if is_instance_valid(player):
+		player.process_mode = Node.PROCESS_MODE_INHERIT
+		if "camera_third_person" in player and is_instance_valid(player.camera_third_person):
+			player.camera_third_person.make_current()
+			
+	for enemy in enemies:
+		if is_instance_valid(enemy):
+			enemy.process_mode = Node.PROCESS_MODE_INHERIT
+			
+	GlobalEvents.in_cutscene = false
+	if is_instance_valid(camera_intro):
+		camera_intro.queue_free()
+
+
+func _on_animation_intro_animation_finished(anim_name: StringName) -> void:
+		# Encerramento: Restaura física e controles
 	if is_instance_valid(player):
 		player.process_mode = Node.PROCESS_MODE_INHERIT
 		if "camera_third_person" in player and is_instance_valid(player.camera_third_person):
