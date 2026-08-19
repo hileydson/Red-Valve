@@ -72,7 +72,7 @@ func _ready() -> void:
 				enemy.process_mode = Node.PROCESS_MODE_DISABLED
 		GlobalEvents.in_cutscene = true
 		
-		var is_first_time = not SaveManager.battlefield_1_intro_played
+		var is_first_time = not SaveManager.prolog_finished
 		
 		# Define qual animação tocar e impede que a câmera desligue no final
 		if is_first_time:
