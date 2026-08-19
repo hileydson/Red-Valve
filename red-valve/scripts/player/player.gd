@@ -69,6 +69,7 @@ var mp_bar: ProgressBar
 
 var hud_layer: CanvasLayer
 var amulet_counter_label: Label
+var amulet_crosshair: Panel
 
 var is_teleporting_enemies: bool = false
 var heartbeat_tween: Tween
@@ -476,6 +477,32 @@ void fragment() {
 	stamina_bar.add_theme_stylebox_override("background", st_bg)
 	hud_layer.add_child(stamina_bar)
 	
+	# Mira do Amuleto (Círculo Estilo DOOM)
+	amulet_crosshair = Panel.new()
+	amulet_crosshair.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+	amulet_crosshair.custom_minimum_size = Vector2(32, 32)
+	amulet_crosshair.offset_left = -16
+	amulet_crosshair.offset_top = -16
+	amulet_crosshair.offset_right = 16
+	amulet_crosshair.offset_bottom = 16
+	amulet_crosshair.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	
+	var style = StyleBoxFlat.new()
+	style.bg_color = Color(0, 0, 0, 0) # Transparente no meio
+	style.border_width_left = 3
+	style.border_width_right = 3
+	style.border_width_top = 3
+	style.border_width_bottom = 3
+	style.border_color = Color(0.9, 0.2, 1.0, 0.8) # Roxo/Magia
+	style.corner_radius_top_left = 16
+	style.corner_radius_top_right = 16
+	style.corner_radius_bottom_left = 16
+	style.corner_radius_bottom_right = 16
+	style.anti_aliasing = true
+	amulet_crosshair.add_theme_stylebox_override("panel", style)
+	amulet_crosshair.visible = false
+	hud_layer.add_child(amulet_crosshair)
+	
 	# Amulet Counter Label
 	amulet_counter_label = Label.new()
 	amulet_counter_label.add_theme_font_size_override("font_size", 54)
@@ -868,7 +895,8 @@ func _physics_process(delta: float) -> void:
 					camera.fov = 75.0 # Primeira pessoa não tem zoom distorcido
 				if camera_third_person: camera_third_person.current = false
 				if hand_with_magic: hand_with_magic.visible = true
-				if point: point.visible = true
+				if is_instance_valid(amulet_crosshair): amulet_crosshair.visible = true
+				if point: point.visible = false # Esconde a mira normal
 				_process_amulet_magic(delta)
 				_process_amulet_targeting()
 			else:
@@ -877,7 +905,7 @@ func _physics_process(delta: float) -> void:
 				if camera_third_person and not camera_third_person.current:
 					camera_third_person.make_current()
 				if hand_with_magic: hand_with_magic.visible = false
-				if point: point.visible = false
+				if is_instance_valid(amulet_crosshair): amulet_crosshair.visible = false
 				_hide_amulet_magic()
 				_clear_amulet_hover()
 		else:
@@ -886,7 +914,7 @@ func _physics_process(delta: float) -> void:
 			if camera_third_person and not camera_third_person.current:
 				camera_third_person.make_current()
 			if hand_with_magic: hand_with_magic.visible = false
-			if point: point.visible = false
+			if is_instance_valid(amulet_crosshair): amulet_crosshair.visible = false
 			
 			_hide_amulet_magic()
 			_clear_amulet_hover()
@@ -2239,6 +2267,7 @@ func _on_amulet_magic_released() -> void:
 			camera_third_person.fov = 75.0
 		if is_instance_valid(hand_with_magic):
 			hand_with_magic.visible = false
+		if is_instance_valid(amulet_crosshair): amulet_crosshair.visible = false
 		if point: point.visible = false
 		if is_instance_valid(amulet_counter_label): amulet_counter_label.visible = false
 		_hide_amulet_magic()
