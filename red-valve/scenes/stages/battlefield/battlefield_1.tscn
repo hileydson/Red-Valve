@@ -19,8 +19,6 @@
 [ext_resource type="Script" uid="uid://deo0gxkmk2ahd" path="res://addons/sky_3d/src/Sky3D.gd" id="17_k2rox"]
 [ext_resource type="Script" uid="uid://b4tkplvh7fq40" path="res://addons/sky_3d/src/SkyDome.gd" id="18_cthop"]
 [ext_resource type="Script" uid="uid://cjmkcj8hwm7ts" path="res://addons/sky_3d/src/TimeOfDay.gd" id="19_3ud14"]
-[ext_resource type="PackedScene" uid="uid://xf6qeqrya6pi" path="res://scenes/enemies/the_cobalt_husker.tscn" id="19_til2i"]
-[ext_resource type="PackedScene" uid="uid://klurx8hfjyr3" path="res://scenes/enemies/zombie_1.tscn" id="20_7p3s1"]
 
 [sub_resource type="Animation" id="Animation_7p3s1"]
 length = 0.001
@@ -354,8 +352,8 @@ shader_parameter/cirrus_absorption = 2.0
 shader_parameter/cirrus_sky_tint_fade = 0.5
 shader_parameter/cirrus_size = 1.0
 shader_parameter/cirrus_uv = Vector2(0.16, 0.11)
-shader_parameter/cirrus_position1 = Vector2(0.73108053, 0.73108053)
-shader_parameter/cirrus_position2 = Vector2(0.73108053, 0.73108053)
+shader_parameter/cirrus_position1 = Vector2(0.4838627, 0.4838627)
+shader_parameter/cirrus_position2 = Vector2(0.4838627, 0.4838627)
 shader_parameter/cirrus_texture = ExtResource("11_biy32")
 shader_parameter/cumulus_visible = true
 shader_parameter/cumulus_intensity = 0.6
@@ -365,7 +363,7 @@ shader_parameter/cumulus_absorption = 2.0
 shader_parameter/cumulus_noise_freq = 2.7
 shader_parameter/cumulus_sky_tint_fade = 0.0
 shader_parameter/cumulus_size = 0.5
-shader_parameter/cumulus_position = Vector2(93.024475, 93.024475)
+shader_parameter/cumulus_position = Vector2(2.4190743, 2.4190743)
 shader_parameter/cumulus_texture = ExtResource("12_jf8my")
 shader_parameter/cumulus_partial_mie_phase = Vector3(0.957564, 1.042436, 0.412)
 shader_parameter/cumulus_mie_intensity = 1.0
@@ -582,11 +580,5 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.7227616, 0.46179056, -7.934
 
 [node name="Player" parent="." unique_id=635962461 instance=ExtResource("3_665qe")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0610838, 7.056343)
-
-[node name="TheCobaltHusker" parent="." unique_id=669848176 instance=ExtResource("19_til2i")]
-transform = Transform3D(-0.99247795, 0, -0.12242371, 0, 1, 0, 0.12242371, 0, -0.99247795, -2.4458094, -0.1506666, -4.0442276)
-
-[node name="Zombie" parent="." unique_id=1033063307 instance=ExtResource("20_7p3s1")]
-transform = Transform3D(-0.7421747, 0, -0.6702065, 0, 1, 0, 0.6702065, 0, -0.7421747, 7.0156875, -0.015111446, -5.421212)
 
 [connection signal="animation_finished" from="intro_camera/animation_intro" to="." method="_on_animation_intro_animation_finished"]

@@ -831,6 +831,8 @@ func _physics_process(delta: float) -> void:
 				# para que o lerp normal faça o zoom out suave até o FOV padrão (75)
 				camera_third_person.fov = 40.0
 			_on_amulet_magic_released()
+			if not is_inside_tree():
+				return
 
 		if Input.is_action_pressed("ui_hold_first_person_view"):
 			is_aiming = true
@@ -2182,16 +2184,40 @@ func _get_all_meshes(node: Node) -> Array:
 
 func _on_amulet_magic_released() -> void:
 	if amulet_selected_enemies.size() > 0:
-		print("--------------------------------------------------")
-		print("AMULETO LIBERADO! INIMIGOS SELECIONADOS PARA LEVAR A BATALHA: ", amulet_selected_enemies.size())
-		for e in amulet_selected_enemies:
-			if is_instance_valid(e):
-				print(" -> ", e.name)
-		print("--------------------------------------------------")
 		
-		# Limpar as silhuetas vermelhas e a lista (pronto para outra rodada ou pra quando for implementado o teleporte)
+		# Guardamos os inimigos para transferir
+		GlobalEvents.amulet_captured_enemies.clear()
 		for e in amulet_selected_enemies:
 			if is_instance_valid(e):
 				_remove_silhouette(e)
+				GlobalEvents.amulet_captured_enemies.append(e)
 				
 		amulet_selected_enemies.clear()
+		_clear_amulet_hover()
+		
+		# Limpa os estados do Player para quando voltar da Arena
+		is_aiming = false
+		is_first_person = false
+		if is_instance_valid(camera_third_person):
+			camera_third_person.make_current()
+			camera_third_person.fov = 75.0
+		if is_instance_valid(hand_with_magic):
+			hand_with_magic.visible = false
+		_hide_amulet_magic()
+		
+		GlobalEvents.previous_is_maycow_normal = GlobalEvents.is_maycow_normal
+		
+		# Faz a transição para a Arena
+		var tree = get_tree()
+		var root = tree.root
+		var current = tree.current_scene
+		
+		# Instancia o campo de batalha antes de removermos a nós mesmos da árvore
+		var battlefield_scene = load("res://scenes/stages/battlefield/battlefield_1.tscn").instantiate()
+		
+		# Pausa a cena atual tirando ela da árvore
+		root.remove_child(current)
+		GlobalEvents.paused_scene_for_amulet = current
+		
+		root.add_child(battlefield_scene)
+		tree.current_scene = battlefield_scene

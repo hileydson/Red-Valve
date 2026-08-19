@@ -20,6 +20,32 @@ func _ready() -> void:
 	GlobalEvents.set_high_nevoa()
 	GlobalEvents.is_maycow_normal = false
 	
+	# Transporta os inimigos capturados pelo amuleto
+	if GlobalEvents.amulet_captured_enemies.size() > 0:
+		var enemies_node = get_node_or_null("enemies")
+		if not enemies_node:
+			enemies_node = Node3D.new()
+			enemies_node.name = "enemies"
+			add_child(enemies_node)
+		else:
+			for child in enemies_node.get_children():
+				child.queue_free()
+				
+		for e in GlobalEvents.amulet_captured_enemies:
+			if is_instance_valid(e):
+				if e.get_parent():
+					e.get_parent().remove_child(e)
+				enemies_node.add_child(e)
+				
+				var angle = randf() * PI * 2
+				var radius = randf_range(2.0, 8.0) # Distribui aleatoriamente na arena
+				e.global_position = Vector3(cos(angle) * radius, 0.5, sin(angle) * radius)
+				
+				if not e.is_in_group("enemies"):
+					e.add_to_group("enemies")
+					
+		GlobalEvents.amulet_captured_enemies.clear()
+
 	player = get_tree().get_first_node_in_group("player")
 	enemies = get_tree().get_nodes_in_group("enemies")
 	
@@ -60,7 +86,7 @@ func _ready() -> void:
 			
 			# Aplica Blur na câmera para simular Motion Blur (Aplica na última câmera usada na animação)
 			if last_cam_path != "":
-				var cam_final = get_tree().current_scene.get_node_or_null(last_cam_path)
+				var cam_final = get_node_or_null(last_cam_path)
 				if cam_final:
 					var blur_attr = CameraAttributesPractical.new()
 					blur_attr.dof_blur_far_enabled = true
@@ -84,7 +110,7 @@ func _ready() -> void:
 				if str(anim.track_get_path(i)).ends_with(":current"):
 					last_cam_path = str(anim.track_get_path(i)).replace(":current", "")
 					
-			var cam_final = get_tree().current_scene.get_node_or_null(last_cam_path)
+			var cam_final = get_node_or_null(last_cam_path)
 			if cam_final:
 				cam_final.attributes = null # Remove o blur
 			
@@ -143,7 +169,7 @@ func _ready() -> void:
 
 func _spawn_red_explosion_vfx(pos: Vector3):
 	var node = Node3D.new()
-	get_tree().current_scene.add_child(node)
+	add_child(node)
 	node.global_position = pos
 	
 	# Flash de Luz Vermelha
@@ -258,7 +284,7 @@ func _start_final_sequence() -> void:
 	if ui: ui.queue_free()
 	
 	# 3. Faz o Fade Out super lento (ignorando time_scale)
-	var fade = get_tree().current_scene.get_node_or_null("fade")
+	var fade = get_node_or_null("fade")
 	if fade:
 		fade.modulate.a = 0.0
 		var tween = create_tween().set_ignore_time_scale(true)
@@ -270,7 +296,26 @@ func _start_final_sequence() -> void:
 	# 5. Restaura e vai para a Cutscene
 	Engine.time_scale = 1.0
 	GlobalEvents.in_cutscene = false
-	get_tree().change_scene_to_file("res://scenes/stages/prolog/fight_with_power/cutscene_fight_with_power.tscn")
+	if not SaveManager.prolog_finished:
+		get_tree().change_scene_to_file("res://scenes/stages/prolog/fight_with_power/cutscene_fight_with_power.tscn")
+	else:
+		if is_instance_valid(GlobalEvents.paused_scene_for_amulet):
+			var tree = get_tree()
+			var root = tree.root
+			var current = tree.current_scene
+			
+			root.remove_child(current)
+			current.queue_free()
+			
+			root.add_child(GlobalEvents.paused_scene_for_amulet)
+			tree.current_scene = GlobalEvents.paused_scene_for_amulet
+			
+			# Restaura o estado normal/combat do jogador
+			GlobalEvents.is_maycow_normal = GlobalEvents.previous_is_maycow_normal
+			
+			GlobalEvents.paused_scene_for_amulet = null
+		else:
+			get_tree().change_scene_to_file("res://scenes/stages/stage_1.tscn")
 
 
 func iniciar_cutscene() -> void:
@@ -278,7 +323,7 @@ func iniciar_cutscene() -> void:
 	
 	camera_intro.make_current()
 	
-	var anim_player = get_tree().current_scene.get_node_or_null("intro_camera/animation_intro")
+	var anim_player = get_node_or_null("intro_camera/animation_intro")
 	if anim_player:
 		if not SaveManager.battlefield_1_intro_played:
 			anim_player.play("intro_first_time")
@@ -304,7 +349,7 @@ func iniciar_cutscene() -> void:
 			
 	GlobalEvents.in_cutscene = false
 	# Opcional: deletar a câmera de intro apenas se nós a criamos por código
-	if is_instance_valid(camera_intro) and not get_tree().current_scene.get_node_or_null("intro_camera/camera_intro_4"):
+	if is_instance_valid(camera_intro) and not get_node_or_null("intro_camera/camera_intro_4"):
 		camera_intro.queue_free()
 
 
@@ -316,7 +361,7 @@ func _on_animation_intro_animation_finished(anim_name: StringName) -> void:
 func _spawn_arena_hurricane() -> void:
 	hurricane_node = Node3D.new()
 	hurricane_node.name = "ArenaHurricane"
-	get_tree().current_scene.add_child.call_deferred(hurricane_node)
+	add_child.call_deferred(hurricane_node)
 	hurricane_node.global_position = Vector3(0, -1.0, 0) # Pouco abaixo do chão
 	
 	# Curva de tamanho: começa grande e afina/encolhe lá no alto

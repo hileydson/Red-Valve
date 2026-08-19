@@ -17,6 +17,10 @@ var is_maycow_normal = false
 var entering_chapter_1: bool = false
 var game_weapon_events = {taken_pistol=false, taken_smg=false, taken_cogblade=false, taken_magic_hand_1=false}
 
+var paused_scene_for_amulet: Node = null
+var amulet_captured_enemies: Array[Node] = []
+var previous_is_maycow_normal: bool = false
+
 func _process(delta: float) -> void:
 	pass #print(back_caminho_das_pedras)
 
