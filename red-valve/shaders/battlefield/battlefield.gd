@@ -69,6 +69,9 @@ func _ready() -> void:
 		player.process_mode = Node.PROCESS_MODE_DISABLED
 		for enemy in enemies:
 			if is_instance_valid(enemy):
+				# Atualiza a referência do player para que os inimigos teleportados não persigam o player da cena pausada
+				if "player" in enemy:
+					enemy.player = player
 				enemy.process_mode = Node.PROCESS_MODE_DISABLED
 		GlobalEvents.in_cutscene = true
 		
