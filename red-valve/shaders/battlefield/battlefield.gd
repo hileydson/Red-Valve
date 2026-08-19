@@ -20,31 +20,46 @@ func _ready() -> void:
 	GlobalEvents.set_high_nevoa()
 	GlobalEvents.is_maycow_normal = false
 	
-	# Transporta os inimigos capturados pelo amuleto
-	if GlobalEvents.amulet_captured_enemies.size() > 0:
-		var enemies_node = get_node_or_null("enemies")
-		if not enemies_node:
-			enemies_node = Node3D.new()
-			enemies_node.name = "enemies"
-			add_child(enemies_node)
-		else:
-			for child in enemies_node.get_children():
-				child.queue_free()
-				
-		for e in GlobalEvents.amulet_captured_enemies:
-			if is_instance_valid(e):
-				if e.get_parent():
-					e.get_parent().remove_child(e)
-				enemies_node.add_child(e)
-				
-				var angle = randf() * PI * 2
-				var radius = randf_range(2.0, 8.0) # Distribui aleatoriamente na arena
-				e.global_position = Vector3(cos(angle) * radius, 0.5, sin(angle) * radius)
-				
-				if not e.is_in_group("enemies"):
-					e.add_to_group("enemies")
+	var enemies_node = get_node_or_null("enemies")
+	if not enemies_node:
+		enemies_node = Node3D.new()
+		enemies_node.name = "enemies"
+		add_child(enemies_node)
+		
+	# Limpa inimigos do editor sem apagar os marcadores (Marker3D)
+	for child in enemies_node.get_children():
+		if child.is_in_group("enemies") or child.has_method("take_damage"):
+			child.queue_free()
+
+	if not SaveManager.prolog_finished:
+		# Prólogo: Spawna o TheCobaltHusker no marker "enemy_2"
+		var marker = enemies_node.get_node_or_null("enemy_2")
+		if marker:
+			var enemy_scene = load("res://scenes/enemies/the_cobalt_husker.tscn")
+			if enemy_scene:
+				var enemy_inst = enemy_scene.instantiate()
+				enemies_node.add_child(enemy_inst)
+				enemy_inst.global_position = marker.global_position
+				enemy_inst.global_rotation = marker.global_rotation
+				if not enemy_inst.is_in_group("enemies"):
+					enemy_inst.add_to_group("enemies")
+	else:
+		# Pós-Prólogo: Transporta os inimigos capturados pelo amuleto
+		if GlobalEvents.amulet_captured_enemies.size() > 0:
+			for e in GlobalEvents.amulet_captured_enemies:
+				if is_instance_valid(e):
+					if e.get_parent():
+						e.get_parent().remove_child(e)
+					enemies_node.add_child(e)
 					
-		GlobalEvents.amulet_captured_enemies.clear()
+					var angle = randf() * PI * 2
+					var radius = randf_range(2.0, 8.0) # Distribui aleatoriamente na arena
+					e.global_position = Vector3(cos(angle) * radius, 0.5, sin(angle) * radius)
+					
+					if not e.is_in_group("enemies"):
+						e.add_to_group("enemies")
+						
+			GlobalEvents.amulet_captured_enemies.clear()
 
 	player = get_tree().get_first_node_in_group("player")
 	enemies = get_tree().get_nodes_in_group("enemies")
