@@ -64,8 +64,13 @@ func _ready() -> void:
 					blur_attr.dof_blur_far_transition = 5.0
 					cam_final.attributes = blur_attr
 			
-		# Aguarda a animação terminar
-		await animation_intro.animation_finished
+		if is_first_time:
+			await animation_intro.animation_finished
+		else:
+			var anim = animation_intro.get_animation("intro_capitulo_1")
+			# Dispara a explosão 0.4 segundos ANTES da animação terminar
+			var wait_time = max(0.01, anim.length - 0.4)
+			await get_tree().create_timer(wait_time).timeout
 		
 		if not is_first_time:
 			# Descobre qual foi a câmera final da animação
@@ -112,6 +117,10 @@ func _ready() -> void:
 			var time_tween = create_tween().set_ignore_time_scale(true)
 			time_tween.tween_property(Engine, "time_scale", 1.0, 0.5)
 			await time_tween.finished
+			
+			# Se a animação ainda estiver rolando (por causa do slow mo), garante que termine
+			if animation_intro.is_playing():
+				await animation_intro.animation_finished
 			
 			exp_sound.queue_free()
 			
