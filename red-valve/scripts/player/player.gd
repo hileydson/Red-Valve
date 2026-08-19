@@ -651,7 +651,7 @@ func _physics_process(delta: float) -> void:
 		is_first_person = true # Sempre em primeira pessoa
 		
 		# Força a câmera de 1ª pessoa a ser a atual se não for (ex: ao entrar na cena)
-		if not camera.current and not transition_camera:
+		if not camera.current and not transition_camera and not camera_bullet_time_ON:
 			camera.make_current()
 			if camera_third_person:
 				camera_third_person.current = false
