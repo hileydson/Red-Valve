@@ -878,7 +878,13 @@ func _physics_process(delta: float) -> void:
 	else:
 		
 		# 2.5 LÓGICA DO AMULETO (PRIMEIRA PESSOA COM ZOOM EM 3ª PESSOA)
+		if Input.is_action_just_pressed("ui_hold_first_person_view"):
+			AudioServer.playback_speed_scale = 0.5
+			
 		if Input.is_action_just_released("ui_hold_first_person_view"):
+			if amulet_selected_enemies.size() == 0:
+				AudioServer.playback_speed_scale = 1.0
+				
 			if is_first_person and is_instance_valid(camera_third_person):
 				# Estava na primeira pessoa. Retorna para a 3ª pessoa já com zoom in, 
 				# para que o lerp normal faça o zoom out suave até o FOV padrão (75)
