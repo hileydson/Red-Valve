@@ -1646,6 +1646,7 @@ func take_damage(number:int):
 	current_health -= number
 	if current_health <= 0:
 		current_health = 0
+		_play_death_sound()
 		_trigger_game_over()
 		
 	GlobalUtils.vibrate_controller(Input, 0.5, 0.5, 0.2)
@@ -1676,6 +1677,7 @@ func _trigger_fall_death() -> void:
 	if is_falling_dead: return
 	is_falling_dead = true
 	current_health = 0
+	_play_death_sound()
 	
 	# Cria uma câmera estática acompanhando a queda lá de cima
 	fall_cam = Camera3D.new()
@@ -1690,6 +1692,18 @@ func _trigger_fall_death() -> void:
 		
 	await get_tree().create_timer(3.0).timeout
 	_trigger_game_over()
+
+func _play_death_sound() -> void:
+	var death_audio = AudioStreamPlayer.new()
+	var sound_path = "res://assets/sounds/player/player_death_groan.wav"
+	if ResourceLoader.exists(sound_path):
+		death_audio.stream = load(sound_path)
+		death_audio.volume_db = 2.0
+		death_audio.process_mode = Node.PROCESS_MODE_ALWAYS # IMPEDE QUE A TELA DE GAME OVER PAUSE O SOM
+		get_tree().root.add_child(death_audio)
+		death_audio.play()
+		# Opcional: auto limpar depois de tocar
+		death_audio.finished.connect(func(): death_audio.queue_free())
 
 func _trigger_game_over() -> void:
 	if SaveManager.current_stage.contains("oficina_jimmy") or (get_tree().current_scene and get_tree().current_scene.scene_file_path.contains("oficina_jimmy")):
