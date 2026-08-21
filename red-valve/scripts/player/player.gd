@@ -8,7 +8,7 @@ extends CharacterBody3D
 @onready var gun_load: AudioStreamPlayer = $sounds/GunLoad
 @onready var load_gun: AudioStreamPlayer = $sounds/LoadGun
 @onready var gun_shot: AudioStreamPlayer = $sounds/GunShot
-@onready var passos: AudioStreamPlayer = $sounds/Passos
+@onready var passos: AudioStreamPlayer3D = $sounds_3d/Passos
 @onready var pistola: AnimatedSprite2D = $Camera3D/CanvasLayer/control_weapons/pistola
 @onready var faisca: GPUParticles3D = $Camera3D/hand_with_pistol/faisca
 @onready var fire: AnimatedSprite3D = $Camera3D/hand_with_pistol/fire
@@ -182,6 +182,17 @@ var amulet_selected_enemies: Array[Node3D] = []
 
 var playback 
 
+# --- CUTSCENE HELPER VARS ---
+var _cutscene_inputs_disabled: bool = false
+var _cutscene_auto_walk: bool = false
+var _cutscene_auto_run: bool = false
+var _cutscene_camera_shake_intensity: float = 0.0
+var _cutscene_shake_h_base: float = 0.0
+var _cutscene_shake_v_base: float = 0.0
+var _is_cutscene_shaking: bool = false
+var _cutscene_hud_hidden: bool = false
+var _cutscene_camera_disabled: bool = false
+
 func _ready():
 	$CollisionShape3D.scale = Vector3(1, 1, 1) # Corrigir colisão oval travando nas quinas
 		
@@ -247,7 +258,10 @@ func _setup_health_hud() -> void:
 	var sc = GDScript.new()
 	sc.source_code = "extends CanvasLayer
 func _process(delta):
-	visible = not GlobalEvents.in_cutscene"
+	if get_parent()._cutscene_hud_hidden:
+		visible = false
+	else:
+		visible = not GlobalEvents.in_cutscene"
 	sc.reload()
 	hud_layer.set_script(sc)
 	add_child(hud_layer)
@@ -576,7 +590,7 @@ func _start_heartbeat_pulse() -> void:
 	
 
 func _input(event):
-	if GlobalEvents.in_cutscene:
+	if GlobalEvents.in_cutscene or _cutscene_inputs_disabled:
 		return
 		
 	if event.is_action_pressed("ui_cogblade_power") and !GlobalEvents.is_maycow_normal:
@@ -621,7 +635,23 @@ var limite_rotacao_lateral = deg_to_rad(15) # O máximo que ele pode "virar" (ex
 var velocidade_giro = 4.0
 func _physics_process(delta: float) -> void:
 	if not is_inside_tree() or get_tree() == null: return
-	if GlobalEvents.in_cutscene:
+	
+	# --- CUTSCENE CAMERA SHAKE ---
+	if _cutscene_camera_shake_intensity > 0.0 and is_instance_valid(camera_third_person):
+		if not _is_cutscene_shaking:
+			_cutscene_shake_h_base = camera_third_person.h_offset
+			_cutscene_shake_v_base = camera_third_person.v_offset
+			_is_cutscene_shaking = true
+		
+		var forca = _cutscene_camera_shake_intensity * 0.1
+		camera_third_person.h_offset = _cutscene_shake_h_base + randf_range(-forca, forca)
+		camera_third_person.v_offset = _cutscene_shake_v_base + randf_range(-forca, forca)
+	elif _is_cutscene_shaking and is_instance_valid(camera_third_person):
+		_is_cutscene_shaking = false
+		camera_third_person.h_offset = _cutscene_shake_h_base
+		camera_third_person.v_offset = _cutscene_shake_v_base
+		
+	if GlobalEvents.in_cutscene and not (_cutscene_auto_walk or _cutscene_auto_run):
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 		velocity.z = move_toward(velocity.z, 0, SPEED)
 		if not is_on_floor():
@@ -708,7 +738,7 @@ func _physics_process(delta: float) -> void:
 		is_first_person = true # Sempre em primeira pessoa
 		
 		# Força a câmera de 1ª pessoa a ser a atual se não for (ex: ao entrar na cena)
-		if not camera.current and not transition_camera and not camera_bullet_time_ON:
+		if not _cutscene_camera_disabled and not camera.current and not transition_camera and not camera_bullet_time_ON:
 			camera.make_current()
 			if camera_third_person:
 				camera_third_person.current = false
@@ -725,18 +755,19 @@ func _physics_process(delta: float) -> void:
 			velocity += get_gravity() * delta
 
 		# 4. PULO E RECARGA
-		if Input.is_action_just_pressed("ui_accept") and is_on_floor():
-			velocity.y = JUMP_VELOCITY
-			playback.travel("jump")
+		if not _cutscene_inputs_disabled:
+			if Input.is_action_just_pressed("ui_accept") and is_on_floor():
+				velocity.y = JUMP_VELOCITY
+				playback.travel("jump")
+				
+			if Input.is_action_just_pressed("ui_reload") and !transition_camera and !is_magic_attacking:
+				reload()
 			
-		if Input.is_action_just_pressed("ui_reload") and !transition_camera and !is_magic_attacking:
-			reload()
-		
-		if Input.is_action_just_pressed("ui_shoot") and !transition_camera and !is_magic_attacking:
-			shoot(Input)
-		
-		if !is_magic_attacking and Input.is_action_just_pressed("ui_magic_attack") and !transition_camera and camera.current and SaveManager.current_mp >= 10.0:
-			magic_hand_attack()
+			if Input.is_action_just_pressed("ui_shoot") and !transition_camera and !is_magic_attacking:
+				shoot(Input)
+			
+			if !is_magic_attacking and Input.is_action_just_pressed("ui_magic_attack") and !transition_camera and camera.current and SaveManager.current_mp >= 10.0:
+				magic_hand_attack()
 			
 		if camera_bullet_time_ON:
 			return
@@ -763,7 +794,7 @@ func _physics_process(delta: float) -> void:
 		if dash_cooldown_timer > 0:
 			dash_cooldown_timer -= delta
 
-		if Input.is_action_just_pressed("ui_dash") and not is_dashing and dash_cooldown_timer <= 0 and current_stamina >= 30.0:
+		if not _cutscene_inputs_disabled and Input.is_action_just_pressed("ui_dash") and not is_dashing and dash_cooldown_timer <= 0 and current_stamina >= 30.0:
 			current_stamina -= 30.0
 			stamina_fade_timer = 2.0
 			stamina_bar.modulate.a = 1.0
@@ -772,6 +803,16 @@ func _physics_process(delta: float) -> void:
 
 		# 7. MOVIMENTAÇÃO (DASH VS CAMINHADA)
 		var input_dir := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+		
+		# --- CUTSCENE INPUT OVERRIDES ---
+		if GlobalEvents.in_cutscene or _cutscene_inputs_disabled:
+			input_dir = Vector2.ZERO
+		if _cutscene_auto_walk:
+			input_dir.y = -1.0
+			_run_toggle_active = false
+		if _cutscene_auto_run:
+			input_dir.y = -1.0
+			_run_toggle_active = true
 		
 		# No seu item 7 do _physics_process:
 		if is_dashing:
@@ -898,7 +939,7 @@ func _physics_process(delta: float) -> void:
 			if is_instance_valid(camera_third_person) and camera_third_person.fov <= 55.0:
 				# O zoom da 3ª pessoa chegou perto o suficiente. Pula para a 1ª pessoa.
 				is_first_person = true
-				if not camera.current:
+				if not _cutscene_camera_disabled and not camera.current:
 					camera.make_current()
 					camera.fov = 75.0 # Primeira pessoa não tem zoom distorcido
 				if camera_third_person: camera_third_person.current = false
@@ -918,7 +959,7 @@ func _physics_process(delta: float) -> void:
 			else:
 				# Ainda no processo de zoom in na 3ª pessoa
 				is_first_person = false
-				if camera_third_person and not camera_third_person.current:
+				if not _cutscene_camera_disabled and camera_third_person and not camera_third_person.current:
 					camera_third_person.make_current()
 				if hand_with_magic: hand_with_magic.visible = false
 				if is_instance_valid(amulet_crosshair): amulet_crosshair.visible = false
@@ -935,7 +976,7 @@ func _physics_process(delta: float) -> void:
 		else:
 			is_aiming = false
 			is_first_person = false
-			if camera_third_person and not camera_third_person.current:
+			if not _cutscene_camera_disabled and camera_third_person and not camera_third_person.current:
 				camera_third_person.make_current()
 			if hand_with_magic: hand_with_magic.visible = false
 			if is_instance_valid(amulet_crosshair): amulet_crosshair.visible = false
@@ -2425,3 +2466,66 @@ func play_return_from_arena_effect() -> void:
 			var tween = create_tween()
 			tween.tween_property(motion_blur.material, "shader_parameter/blur_strength", 0.0, 2.5).set_trans(Tween.TRANS_SINE)
 			tween.finished.connect(func(): is_playing_return_effect = false)
+
+
+# ==============================================================================
+# CUTSCENE HELPER METHODS
+# ==============================================================================
+
+func cutscene_set_hud_enabled(enabled: bool) -> void:
+	_cutscene_hud_hidden = not enabled
+	if is_instance_valid(hud_layer):
+		hud_layer.visible = enabled
+	if "point" in self and is_instance_valid(point):
+		point.visible = enabled
+	if "control_weapons" in self and is_instance_valid(control_weapons):
+		control_weapons.visible = enabled
+	if "stamina_bar" in self and is_instance_valid(stamina_bar):
+		stamina_bar.visible = enabled
+
+func cutscene_set_player_control(enabled: bool) -> void:
+	_cutscene_inputs_disabled = not enabled
+
+func cutscene_set_auto_walk(enabled: bool) -> void:
+	_cutscene_auto_walk = enabled
+
+func cutscene_set_auto_run(enabled: bool) -> void:
+	_cutscene_auto_run = enabled
+
+func cutscene_set_motion_blur(intensity_percent: int) -> void:
+	var strength = clamp(intensity_percent / 100.0, 0.0, 1.0)
+	if is_instance_valid(hud_layer):
+		var blur_overlay = hud_layer.get_node_or_null("MotionBlurOverlay")
+		if blur_overlay and blur_overlay.material:
+			blur_overlay.material.set_shader_parameter("blur_strength", strength * 1.5) # Aumentando o multiplicador pra notar mais o efeito
+			blur_overlay.visible = (strength > 0.0)
+
+func cutscene_set_slow_motion(intensity_percent: int) -> void:
+	if intensity_percent <= 0:
+		Engine.time_scale = 1.0
+		AudioServer.set_playback_speed_scale(1.0)
+	else:
+		var scale = 1.0 - clamp(intensity_percent / 100.0, 0.0, 0.99)
+		Engine.time_scale = scale
+		AudioServer.set_playback_speed_scale(scale)
+
+func cutscene_set_slow_motion_no_audio(intensity_percent: int) -> void:
+	if intensity_percent <= 0:
+		Engine.time_scale = 1.0
+	else:
+		var scale = 1.0 - clamp(intensity_percent / 100.0, 0.0, 0.99)
+		Engine.time_scale = scale
+
+func cutscene_set_camera_shake(intensity_percent: int) -> void:
+	_cutscene_camera_shake_intensity = clamp(intensity_percent / 100.0, 0.0, 1.0)
+
+func cutscene_set_camera_current(is_current: bool) -> void:
+	_cutscene_camera_disabled = not is_current
+	if is_current:
+		if is_instance_valid(camera_third_person):
+			camera_third_person.make_current()
+	else:
+		if is_instance_valid(camera_third_person):
+			camera_third_person.current = false
+		if is_instance_valid(camera):
+			camera.current = false
