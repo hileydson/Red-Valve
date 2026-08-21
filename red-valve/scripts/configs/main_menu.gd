@@ -65,7 +65,7 @@ func _on_start_pressed() -> void:
 	
 	$fade.fade_out()
 	await get_tree().create_timer(2.0).timeout
-	get_tree().change_scene_to_file("res://scenes/stages/prolog/cutscene_prolog.tscn")
+	get_tree().change_scene_to_file("res://scenes/stages/stage_1/stage_1_cutscene_prologo.tscn")
 
 func _on_config_pressed() -> void:
 	if input_locked: return
