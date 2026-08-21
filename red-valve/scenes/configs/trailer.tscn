@@ -3,7 +3,6 @@
 [ext_resource type="Script" uid="uid://dtkgse1bq64fn" path="res://scripts/configs/trailer.gd" id="1_qnddk"]
 [ext_resource type="Texture2D" uid="uid://ddprscrpsofah" path="res://demo/assets/textures/ground037_alb_ht.png" id="1_ypori"]
 [ext_resource type="Texture2D" uid="uid://c88j3oj0lf6om" path="res://demo/assets/textures/rock023_alb_ht.png" id="2_qnddk"]
-[ext_resource type="PackedScene" uid="uid://cluvbknxfjx2k" path="res://scenes/player/player.tscn" id="3_8aqow"]
 [ext_resource type="Texture2D" uid="uid://eh8s01w38gp4" path="res://assets/terrain3d/textures/RealisticTexturePack/ground.png" id="4_8aqow"]
 [ext_resource type="Script" uid="uid://uysankokmyu3" path="res://scripts/configs/camera_current.gd" id="6_dnp2e"]
 
@@ -87,111 +86,85 @@ tracks/5/keys = {
 [sub_resource type="Animation" id="Animation_8aqow"]
 resource_name = "intro"
 length = 10.3
-tracks/0/type = "method"
+tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Player")
+tracks/0/path = NodePath("camera_1:position")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0.033333335, 0.033433337, 0.1, 0.2, 0.33333334),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
-"values": [{
-"args": [false],
-"method": &"cutscene_set_hud_enabled"
-}, {
-"args": [false],
-"method": &"cutscene_set_camera_current"
-}, {
-"args": [true],
-"method": &"cutscene_set_auto_walk"
-}, {
-"args": [10],
-"method": &"cutscene_set_motion_blur"
-}, {
-"args": [false],
-"method": &"cutscene_set_player_control"
-}]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("camera_1:position")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
 "times": PackedFloat32Array(0.033333335, 6.133333),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [Vector3(0, 1.024332, 110.464676), Vector3(0, 2.5422726, 98.23543)]
 }
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("camera_1:scale")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("camera_1:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
 "times": PackedFloat32Array(0, 6.1666665),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [Vector3(1, 1, 1), Vector3(1, 1, 1)]
 }
-tracks/3/type = "value"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("camera_1:rotation")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("camera_1:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
 "times": PackedFloat32Array(0, 6.133333),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [Vector3(-0.71956664, -2.8371387, -0.049493834), Vector3(-0.71956664, -2.8371387, -0.04949383)]
 }
-tracks/4/type = "value"
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/path = NodePath("camera_2:position")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/keys = {
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("camera_2:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
 "times": PackedFloat32Array(1.6333333, 3.8666666),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [Vector3(-13.305771, 6.2426553, 112.70579), Vector3(-13.305771, 6.2426553, 93.9428)]
 }
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("camera_2:rotation")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(1.6, 3.8666666),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(-0.31736597, -0.4211849, -0.28893352), Vector3(-0.31736597, -0.42118502, -0.28893352)]
+}
 tracks/5/type = "value"
 tracks/5/imported = false
 tracks/5/enabled = true
-tracks/5/path = NodePath("camera_2:rotation")
+tracks/5/path = NodePath("camera_2:scale")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/keys = {
 "times": PackedFloat32Array(1.6, 3.8666666),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [Vector3(-0.31736597, -0.4211849, -0.28893352), Vector3(-0.31736597, -0.42118502, -0.28893352)]
+"values": [Vector3(0.99999994, 1, 1.0000001), Vector3(1, 1, 1)]
 }
-tracks/6/type = "value"
+tracks/6/type = "method"
 tracks/6/imported = false
 tracks/6/enabled = true
-tracks/6/path = NodePath("camera_2:scale")
+tracks/6/path = NodePath(".")
 tracks/6/interp = 1
 tracks/6/loop_wrap = true
 tracks/6/keys = {
-"times": PackedFloat32Array(1.6, 3.8666666),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector3(0.99999994, 1, 1.0000001), Vector3(1, 1, 1)]
-}
-tracks/7/type = "method"
-tracks/7/imported = false
-tracks/7/enabled = true
-tracks/7/path = NodePath(".")
-tracks/7/interp = 1
-tracks/7/loop_wrap = true
-tracks/7/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "values": [{
@@ -199,13 +172,13 @@ tracks/7/keys = {
 "method": &"cutscene_force_maycow_lopes_only"
 }]
 }
-tracks/8/type = "method"
-tracks/8/imported = false
-tracks/8/enabled = true
-tracks/8/path = NodePath("camera_1")
-tracks/8/interp = 1
-tracks/8/loop_wrap = true
-tracks/8/keys = {
+tracks/7/type = "method"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("camera_1")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
 "times": PackedFloat32Array(0.1),
 "transitions": PackedFloat32Array(1),
 "values": [{
@@ -213,13 +186,13 @@ tracks/8/keys = {
 "method": &"executa_make_current"
 }]
 }
-tracks/9/type = "method"
-tracks/9/imported = false
-tracks/9/enabled = true
-tracks/9/path = NodePath("camera_2")
-tracks/9/interp = 1
-tracks/9/loop_wrap = true
-tracks/9/keys = {
+tracks/8/type = "method"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("camera_2")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
 "times": PackedFloat32Array(3.8333333),
 "transitions": PackedFloat32Array(1),
 "values": [{
@@ -227,25 +200,25 @@ tracks/9/keys = {
 "method": &"executa_make_current"
 }]
 }
-tracks/10/type = "value"
-tracks/10/imported = false
-tracks/10/enabled = true
-tracks/10/path = NodePath("camera_1:current")
-tracks/10/interp = 1
-tracks/10/loop_wrap = true
-tracks/10/keys = {
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("camera_1:current")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
 "times": PackedFloat32Array(),
 "transitions": PackedFloat32Array(),
 "update": 1,
 "values": []
 }
-tracks/11/type = "value"
-tracks/11/imported = false
-tracks/11/enabled = true
-tracks/11/path = NodePath("camera_2:current")
-tracks/11/interp = 1
-tracks/11/loop_wrap = true
-tracks/11/keys = {
+tracks/10/type = "value"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("camera_2:current")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
 "times": PackedFloat32Array(),
 "transitions": PackedFloat32Array(),
 "update": 1,
@@ -387,7 +360,6 @@ environment = SubResource("Environment_8aqow")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=687241519]
 libraries/ = SubResource("AnimationLibrary_dnp2e")
-autoplay = &"intro"
 
 [node name="Terrain3D" type="Terrain3D" parent="." unique_id=1307891669]
 data_directory = "res://assets/terrain3d/trailer"
@@ -397,61 +369,6 @@ collision_layer = 2
 collision_mask = 0
 top_level = true
 metadata/_edit_lock_ = true
-
-[node name="Player" parent="." unique_id=448699446 instance=ExtResource("3_8aqow")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1128244, 111.53467)
-
-[node name="Skeleton3D" parent="Player/maycow_lopes_normal/Armature" parent_id_path=PackedInt32Array(448699446, 1097582912, 1092024336) index="0" unique_id=976653220]
-bones/0/position = Vector3(-2.8821268, 98.13605, 0.7192614)
-bones/0/rotation = Quaternion(0.15647976, -0.009306516, 0.072406895, 0.9849796)
-bones/1/rotation = Quaternion(0.9364829, -0.007317309, -0.12450787, 0.32778654)
-bones/2/rotation = Quaternion(0.3104707, 0.021670317, -0.008569689, 0.9502973)
-bones/3/rotation = Quaternion(-0.4932092, -0.15920554, 0.020483661, 0.8549729)
-bones/4/rotation = Quaternion(-0.42828697, -0.07228437, 0.027587717, 0.9003245)
-bones/5/rotation = Quaternion(0.93314034, -0.0697162, 0.19997472, 0.2905148)
-bones/6/rotation = Quaternion(0.35380474, -0.01124343, 0.018496597, 0.93506885)
-bones/7/rotation = Quaternion(-0.59013987, 0.11673285, -0.051332243, 0.7971659)
-bones/9/rotation = Quaternion(-0.074317895, -0.03908425, -0.054472525, 0.9949784)
-bones/10/rotation = Quaternion(-0.012481992, 0.03442901, 0.008435284, 0.9992936)
-bones/11/rotation = Quaternion(-0.06641265, 0.0034887178, -0.0012542956, 0.9977854)
-bones/12/rotation = Quaternion(0.5855929, 0.52015316, -0.36456615, 0.5036002)
-bones/13/rotation = Quaternion(0.6038501, 0.4569137, 0.20818514, 0.61907506)
-bones/14/rotation = Quaternion(-0.33656302, -0.13617341, 0.08730755, 0.92766356)
-bones/15/rotation = Quaternion(-0.0040663686, 0.10973984, 0.12290701, 0.9863237)
-bones/16/rotation = Quaternion(-0.61467427, 0.48758933, -0.3667792, -0.4999053)
-bones/17/rotation = Quaternion(0.54962116, -0.49623638, -0.20518123, 0.639974)
-bones/18/rotation = Quaternion(-0.36267272, 0.15535109, -0.07480403, 0.9158269)
-bones/19/rotation = Quaternion(-0.068323284, -0.44978258, -0.12355465, 0.8819081)
-bones/20/rotation = Quaternion(0.100004345, 0.032766167, 0.016165314, 0.994316)
-bones/21/rotation = Quaternion(0.253923, -0.025067294, -0.0196254, 0.9667004)
-
-[node name="Skeleton3D" parent="Player/maycow_lopes/Armature" parent_id_path=PackedInt32Array(448699446, 664068214, 781139471) index="0" unique_id=378682240]
-bones/0/position = Vector3(-1.1434395, 84.11284, 9.039664)
-bones/0/rotation = Quaternion(-0.038056154, 0.04137664, -0.15537593, 0.9862546)
-bones/1/rotation = Quaternion(0.94026756, 0.25207865, -0.11861852, 0.19566037)
-bones/2/rotation = Quaternion(0.31870145, 0.092417136, 0.04401336, 0.94231176)
-bones/3/rotation = Quaternion(-0.4744525, -0.07886682, 0.014750957, 0.87661695)
-bones/4/rotation = Quaternion(-0.44603786, -0.07970939, 0.030648215, 0.8909307)
-bones/5/rotation = Quaternion(0.9213915, 0.030520719, 0.38116366, -0.069431365)
-bones/6/rotation = Quaternion(0.23302758, -0.08059763, -0.027294708, 0.96874005)
-bones/7/rotation = Quaternion(-0.5202547, 0.036399256, -0.034730207, 0.85252804)
-bones/8/rotation = Quaternion(-0.48394737, 0.08959941, -0.02982572, 0.869987)
-bones/9/rotation = Quaternion(0.1100334, -0.10879846, 0.14759305, 0.97686845)
-bones/10/rotation = Quaternion(-0.058051884, 0.033502646, 0.009236785, 0.99770856)
-bones/11/rotation = Quaternion(-0.029013049, 0.0064327247, -0.0006415272, 0.99955815)
-bones/12/rotation = Quaternion(0.51075566, 0.549921, -0.44283813, 0.4905202)
-bones/13/rotation = Quaternion(0.67408925, 0.35794786, 0.16118781, 0.625696)
-bones/14/rotation = Quaternion(-0.1311159, -0.0699267, 0.029977547, 0.9884434)
-bones/15/rotation = Quaternion(0.07738402, 0.14359732, 0.10194318, 0.9813252)
-bones/16/rotation = Quaternion(-0.5679897, 0.48932174, -0.43836296, -0.495772)
-bones/17/rotation = Quaternion(0.6315387, -0.37896064, -0.21822453, 0.6402546)
-bones/18/rotation = Quaternion(-0.18191464, 0.10623801, -0.0017261843, 0.977557)
-bones/19/rotation = Quaternion(-0.014094501, -0.47344038, -0.023199106, 0.8804075)
-bones/20/rotation = Quaternion(0.014927044, 0.031086722, 0.017778212, 0.99924713)
-bones/21/rotation = Quaternion(0.41069597, 0.004344593, -0.034364283, 0.9111142)
-
-[node name="hand_with_pistol" parent="Player/Camera3D" parent_id_path=PackedInt32Array(448699446, 1378119187) index="7" unique_id=1109781536]
-transform = Transform3D(-0.011178756, 0.03977711, -0.3627109, 0.0060710586, 0.3527789, 0.04058655, 0.25817004, -0.0065735094, -0.016659796, 0.31141216, -0.24224794, -0.5220645)
 
 [node name="camera_1" type="Camera3D" parent="." unique_id=1566422516]
 transform = Transform3D(-0.9626169, 0.15012729, -0.2254562, -0.03720869, 0.7511704, 0.6590588, 0.26829872, 0.64281005, -0.7175033, 0, 1.024332, 110.464676)
@@ -463,9 +380,8 @@ transform = Transform3D(-0.9626169, 0.15012728, -0.2254562, -0.037208684, 0.7511
 fov = 46.5
 script = ExtResource("6_dnp2e")
 
-[editable path="Player"]
-[editable path="Player/maycow_lopes_normal"]
-[editable path="Player/maycow_lopes"]
-[editable path="Player/Camera3D/hand_with_magic/hand_magic"]
-[editable path="Player/Camera3D/hand_with_pistol"]
-[editable path="Player/Camera3D/Crescent Cogblade"]
+[node name="inicio" type="Marker3D" parent="." unique_id=1672857390]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 121.468254)
+
+[node name="fim" type="Marker3D" parent="." unique_id=1878825551]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.42811, 0, -235.99194)
