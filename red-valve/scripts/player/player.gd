@@ -443,8 +443,42 @@ func _physics_process(delta: float) -> void:
 			if hand_with_magic: hand_with_magic.visible = true
 			control_magic.visible = true
 			
+		if Input.is_action_just_released("ui_hold_first_person_view"):
+			if amulet_selected_enemies.size() == 0:
+				AudioServer.playback_speed_scale = 1.0
+			_on_amulet_magic_released()
+
 		is_aiming = Input.is_action_pressed("ui_hold_first_person_view")
-		point.visible = true
+		
+		if is_aiming:
+			if Input.is_action_just_pressed("ui_hold_first_person_view"):
+				AudioServer.playback_speed_scale = 0.5
+				
+			if is_instance_valid(amulet_crosshair): amulet_crosshair.visible = true
+			if point: point.visible = false # Esconde a mira normal
+			
+			# Ativa o Motion Blur forte
+			if is_instance_valid(hud_layer):
+				var motion_blur = hud_layer.get_node_or_null("MotionBlurOverlay")
+				if motion_blur:
+					motion_blur.visible = true
+					motion_blur.material.set_shader_parameter("blur_strength", 0.08)
+					
+			_process_amulet_magic(delta)
+			_process_amulet_targeting()
+		else:
+			if is_instance_valid(amulet_crosshair): amulet_crosshair.visible = false
+			if point: point.visible = true
+			
+			# Desativa o Motion Blur
+			if is_instance_valid(hud_layer) and not is_playing_return_effect:
+				var motion_blur = hud_layer.get_node_or_null("MotionBlurOverlay")
+				if motion_blur:
+					motion_blur.material.set_shader_parameter("blur_strength", 0.0)
+					motion_blur.visible = false
+					
+			_hide_amulet_magic()
+			_clear_amulet_hover()
 		
 		# 3. GRAVIDADE
 		if not is_on_floor():
@@ -613,79 +647,20 @@ func _physics_process(delta: float) -> void:
 		
 	# DAQUI PRA FRENTE É O MAYCOW SEM PODERES 	
 	else:
-		
-		# 2.5 LÓGICA DO AMULETO (PRIMEIRA PESSOA COM ZOOM EM 3ª PESSOA)
-		if Input.is_action_just_pressed("ui_hold_first_person_view"):
-			AudioServer.playback_speed_scale = 0.5
+		is_aiming = false
+		is_first_person = false
+		if not _cutscene_camera_disabled and camera_third_person and not camera_third_person.current:
+			camera_third_person.make_current()
 			
-		if Input.is_action_just_released("ui_hold_first_person_view"):
-			if amulet_selected_enemies.size() == 0:
-				AudioServer.playback_speed_scale = 1.0
+		# Desativa o Motion Blur
+		if is_instance_valid(hud_layer) and not is_playing_return_effect:
+			var motion_blur = hud_layer.get_node_or_null("MotionBlurOverlay")
+			if motion_blur:
+				motion_blur.material.set_shader_parameter("blur_strength", 0.0)
+				motion_blur.visible = false
 				
-			if is_first_person and is_instance_valid(camera_third_person):
-				# Estava na primeira pessoa. Retorna para a 3ª pessoa já com zoom in, 
-				# para que o lerp normal faça o zoom out suave até o FOV padrão (75)
-				camera_third_person.fov = 40.0
-			_on_amulet_magic_released()
-			if is_teleporting_enemies: return
-			if not is_inside_tree(): return
-
-		if Input.is_action_pressed("ui_hold_first_person_view"):
-			is_aiming = true
-			if is_instance_valid(camera_third_person) and camera_third_person.fov <= 55.0:
-				# O zoom da 3ª pessoa chegou perto o suficiente. Pula para a 1ª pessoa.
-				is_first_person = true
-				if not _cutscene_camera_disabled and not camera.current:
-					camera.make_current()
-					camera.fov = 75.0 # Primeira pessoa não tem zoom distorcido
-				if camera_third_person: camera_third_person.current = false
-				if hand_with_magic: hand_with_magic.visible = true
-				if is_instance_valid(amulet_crosshair): amulet_crosshair.visible = true
-				if point: point.visible = false # Esconde a mira normal
-				
-				# Ativa o Motion Blur forte
-				if is_instance_valid(hud_layer):
-					var motion_blur = hud_layer.get_node_or_null("MotionBlurOverlay")
-					if motion_blur:
-						motion_blur.visible = true
-						motion_blur.material.set_shader_parameter("blur_strength", 0.08)
-						
-				_process_amulet_magic(delta)
-				_process_amulet_targeting()
-			else:
-				# Ainda no processo de zoom in na 3ª pessoa
-				is_first_person = false
-				if not _cutscene_camera_disabled and camera_third_person and not camera_third_person.current:
-					camera_third_person.make_current()
-				if hand_with_magic: hand_with_magic.visible = false
-				if is_instance_valid(amulet_crosshair): amulet_crosshair.visible = false
-				
-				# Desativa o Motion Blur
-				if is_instance_valid(hud_layer) and not is_playing_return_effect:
-					var motion_blur = hud_layer.get_node_or_null("MotionBlurOverlay")
-					if motion_blur:
-						motion_blur.material.set_shader_parameter("blur_strength", 0.0)
-						motion_blur.visible = false
-						
-				_hide_amulet_magic()
-				_clear_amulet_hover()
-		else:
-			is_aiming = false
-			is_first_person = false
-			if not _cutscene_camera_disabled and camera_third_person and not camera_third_person.current:
-				camera_third_person.make_current()
-			if hand_with_magic: hand_with_magic.visible = false
-			if is_instance_valid(amulet_crosshair): amulet_crosshair.visible = false
-			
-			# Desativa o Motion Blur
-			if is_instance_valid(hud_layer) and not is_playing_return_effect:
-				var motion_blur = hud_layer.get_node_or_null("MotionBlurOverlay")
-				if motion_blur:
-					motion_blur.material.set_shader_parameter("blur_strength", 0.0)
-					motion_blur.visible = false
-					
-			_hide_amulet_magic()
-			_clear_amulet_hover()
+		_hide_amulet_magic()
+		_clear_amulet_hover()
 		
 		# 3. GRAVIDADE
 		if not is_on_floor():

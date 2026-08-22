@@ -118,8 +118,8 @@ func remover_camera_lenta():
 	#    tween_tempo.kill()
 	
 
-func vibrate_controller(input:Variant, low_strengh:float, high_strengh:float, time:float):
-	input.start_joy_vibration(0,low_strengh, high_strengh, time)
+func vibrate_controller(input_obj:Variant, low_strengh:float, high_strengh:float, time:float):
+	Input.start_joy_vibration(0,low_strengh, high_strengh, time)
 	
 var current_shake_tween: Tween = null
 var base_h_offset: float = 0.0
