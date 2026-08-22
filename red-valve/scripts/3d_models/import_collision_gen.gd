@@ -2,6 +2,9 @@
 extends EditorScenePostImport
 
 func _post_import(scene):
+	var src_file = get_source_file()
+	if "assets/3d_model/player/" in src_file or "player" in src_file.to_lower():
+		return scene
 	# Chamamos a função recursiva para varrer toda a cena importada
 	iterate(scene)
 	return scene # Retorna a cena modificada

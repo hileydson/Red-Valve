@@ -179,6 +179,7 @@ var amuleto_node: Node3D
 var amuleto_particles: CPUParticles3D
 var amulet_hovered_enemy: Node3D = null
 var amulet_selected_enemies: Array[Node3D] = []
+var amulet_magic_active: bool = false
 
 var playback 
 
