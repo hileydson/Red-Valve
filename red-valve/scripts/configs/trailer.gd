@@ -243,6 +243,13 @@ func _setup_anti_lopes() -> void:
 		# 1. Iniciar animação Spear_Walk imediatamente ao carregar a cena
 		var anim_player = anti_lopes_ref.find_child("AnimationPlayer", true, false) as AnimationPlayer
 		if anim_player:
+			# Remove as trilhas de escala das animações para evitar que o monstro fique gigante ao dar play
+			for anim_name in anim_player.get_animation_list():
+				var anim = anim_player.get_animation(anim_name)
+				for i in range(anim.get_track_count() - 1, -1, -1):
+					if anim.track_get_type(i) == Animation.TYPE_SCALE_3D:
+						anim.remove_track(i)
+						
 			if anim_player.has_animation("Spear_Walk"):
 				anim_player.autoplay = "Spear_Walk"
 				anim_player.play("Spear_Walk")
@@ -648,6 +655,9 @@ func cutscene_trailer_sequence() -> void:
 	# --------------------------------------------------------------------------
 	print("Take 4: Arrancada final até a porta portal_red_valve...")
 	
+	# Parar de spawnar novos cometas a partir do Take 4
+	loop_bolas_fogo = false
+	
 	_iniciar_som_velocidade_continuo()
 	_set_motion_blur_strength(0.35)
 	
@@ -843,46 +853,53 @@ func _criar_bola_de_fogo(start_pos: Vector3, end_pos: Vector3, duration: float) 
 	fireball.add_child(audio_swoosh)
 	audio_swoosh.play()
 	
-	# Particulas de rastro volumoso (esféricas em vez de quadradas)
+	# Luz forte na ponta do cometa
+	var light = OmniLight3D.new()
+	light.light_color = Color(1.0, 0.7, 0.3)
+	light.light_energy = 15.0
+	light.omni_range = 50.0
+	fireball.add_child(light)
+	
+	# Particulas de rastro volumoso (menores e menos intensas)
 	var parts = CPUParticles3D.new()
-	parts.amount = 800
-	parts.lifetime = 2.0
+	parts.amount = 400
+	parts.lifetime = 1.5
 	parts.local_coords = false
 	parts.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
-	parts.emission_sphere_radius = 5.0
+	parts.emission_sphere_radius = 2.0
 	parts.gravity = Vector3(0, 5, 0)
 	var pmesh = SphereMesh.new()
-	pmesh.radius = 2.5
-	pmesh.height = 5.0
+	pmesh.radius = 1.0
+	pmesh.height = 2.0
 	var pmat = StandardMaterial3D.new()
 	pmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	pmat.albedo_color = Color(1.0, 0.4, 0.0, 0.8)
+	pmat.albedo_color = Color(1.0, 0.5, 0.1, 0.35) # Menos intensa e mais transparente
 	pmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	pmesh.material = pmat
 	parts.mesh = pmesh
 	fireball.add_child(parts)
 	
-	# Partículas de faíscas explosivas (Sparks - esféricas menores)
+	# Partículas de faíscas explosivas (Sparks - menores)
 	var sparks = CPUParticles3D.new()
-	sparks.amount = 500
-	sparks.lifetime = 2.5
+	sparks.amount = 300
+	sparks.lifetime = 2.0
 	sparks.local_coords = false
 	sparks.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
-	sparks.emission_sphere_radius = 6.0
+	sparks.emission_sphere_radius = 2.5
 	sparks.direction = Vector3(0, -1, 0)
 	sparks.spread = 180.0
-	sparks.initial_velocity_min = 10.0
-	sparks.initial_velocity_max = 25.0
+	sparks.initial_velocity_min = 5.0
+	sparks.initial_velocity_max = 15.0
 	sparks.gravity = Vector3(0, -9.8, 0)
 	var smesh = SphereMesh.new()
-	smesh.radius = 0.4
-	smesh.height = 0.8
+	smesh.radius = 0.2
+	smesh.height = 0.4
 	var smat = StandardMaterial3D.new()
 	smat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	smat.albedo_color = Color(1.0, 0.8, 0.2, 1.0)
+	smat.albedo_color = Color(1.0, 0.8, 0.2, 0.8)
 	smat.emission_enabled = true
-	smat.emission = Color(1.0, 0.5, 0.0)
-	smat.emission_energy_multiplier = 15.0
+	smat.emission = Color(1.0, 0.6, 0.1)
+	smat.emission_energy_multiplier = 8.0 # Menos intenso
 	smesh.material = smat
 	sparks.mesh = smesh
 	fireball.add_child(sparks)
