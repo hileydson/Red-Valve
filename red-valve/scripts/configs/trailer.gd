@@ -565,7 +565,8 @@ func cutscene_trailer_sequence() -> void:
 	if is_instance_valid(active_cam):
 		var tween_zoom_take1 = create_tween()
 		tween_zoom_take1.tween_interval(4.5)
-		tween_zoom_take1.tween_property(active_cam, "fov", 35.0, 3.5).set_trans(Tween.TRANS_SINE)
+		tween_zoom_take1.tween_property(active_cam, "fov", 35.0, 3.0).set_trans(Tween.TRANS_SINE)
+		tween_zoom_take1.tween_property(active_cam, "fov", 15.0, 0.5).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
 	
 	await get_tree().create_timer(8.0).timeout
 	print("... Take 1 concluído!")
@@ -762,7 +763,6 @@ func cutscene_trailer_sequence() -> void:
 	if is_instance_valid(anti_lopes_ref):
 		anti_lopes_ref.visible = true
 		_apply_transparency_to_node(anti_lopes_ref, 1.0) # Remove a transparência
-		anti_lopes_ref.scale = Vector3(1.0, 1.0, 1.0)
 	
 	var anim_player = get_tree().current_scene.find_child("AnimationPlayer", true, false)
 	if anim_player and anim_player is AnimationPlayer:
@@ -825,95 +825,96 @@ func _criar_bola_de_fogo(start_pos: Vector3, end_pos: Vector3, duration: float) 
 	add_child(fireball)
 	fireball.global_position = start_pos
 	
-	# Mesh da bola (núcleo incandescente)
-	var mesh_inst = MeshInstance3D.new()
-	var sphere = SphereMesh.new()
-	sphere.radius = 4.0
-	sphere.height = 8.0
-	var mat = StandardMaterial3D.new()
-	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	mat.albedo_color = Color(1.0, 0.6, 0.1)
-	mat.emission_enabled = true
-	mat.emission = Color(1.0, 0.3, 0.0)
-	mat.emission_energy_multiplier = 8.0
-	mesh_inst.mesh = sphere
-	mesh_inst.set_surface_override_material(0, mat)
-	fireball.add_child(mesh_inst)
-	
-	# Som 1 (Estrondo)
+	# Som 1 (Cometa) - 3D Positional Audio grave
 	var audio = AudioStreamPlayer3D.new()
-	audio.stream = load("res://assets/sounds/common/explosao.mp3")
-	audio.pitch_scale = randf_range(1.2, 1.5)
-	audio.volume_db = 8.0
-	audio.max_distance = 300.0
-	audio.doppler_tracking = AudioStreamPlayer3D.DOPPLER_TRACKING_PHYSICS_STEP
+	audio.stream = load("res://assets/sounds/episodios/trailer/som_cometa.mp3")
+	audio.pitch_scale = randf_range(0.5, 0.7) # Grave
+	audio.max_db = 6.0
+	audio.unit_size = 50.0 # Para ouvir de longe
 	fireball.add_child(audio)
 	audio.play()
 	
-	# Som 2 (Rasgando ar - Swoosh)
+	# Som 2 (Rasgando ar - Swoosh) - Também posicional
 	var audio_swoosh = AudioStreamPlayer3D.new()
 	audio_swoosh.stream = load("res://assets/sounds/player/dash_effect.mp3")
 	audio_swoosh.pitch_scale = randf_range(0.8, 1.1)
-	audio_swoosh.volume_db = 10.0
-	audio_swoosh.max_distance = 300.0
-	audio_swoosh.doppler_tracking = AudioStreamPlayer3D.DOPPLER_TRACKING_PHYSICS_STEP
+	audio_swoosh.max_db = 3.0
+	audio_swoosh.unit_size = 30.0
 	fireball.add_child(audio_swoosh)
 	audio_swoosh.play()
 	
-	# Particulas de rastro volumoso
+	# Particulas de rastro volumoso (esféricas em vez de quadradas)
 	var parts = CPUParticles3D.new()
-	parts.amount = 400
-	parts.lifetime = 1.5
+	parts.amount = 800
+	parts.lifetime = 2.0
 	parts.local_coords = false
 	parts.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
-	parts.emission_sphere_radius = 4.0
+	parts.emission_sphere_radius = 5.0
 	parts.gravity = Vector3(0, 5, 0)
-	var pmesh = QuadMesh.new()
-	pmesh.size = Vector2(2.5, 2.5)
+	var pmesh = SphereMesh.new()
+	pmesh.radius = 2.5
+	pmesh.height = 5.0
 	var pmat = StandardMaterial3D.new()
 	pmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	pmat.albedo_color = Color(1.0, 0.3, 0.0, 0.7)
-	pmat.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+	pmat.albedo_color = Color(1.0, 0.4, 0.0, 0.8)
 	pmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	pmesh.material = pmat
 	parts.mesh = pmesh
 	fireball.add_child(parts)
 	
-	# Partículas de faíscas explosivas (Sparks)
+	# Partículas de faíscas explosivas (Sparks - esféricas menores)
 	var sparks = CPUParticles3D.new()
-	sparks.amount = 300
-	sparks.lifetime = 2.0
+	sparks.amount = 500
+	sparks.lifetime = 2.5
 	sparks.local_coords = false
 	sparks.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
-	sparks.emission_sphere_radius = 4.5
+	sparks.emission_sphere_radius = 6.0
 	sparks.direction = Vector3(0, -1, 0)
 	sparks.spread = 180.0
-	sparks.initial_velocity_min = 5.0
-	sparks.initial_velocity_max = 15.0
+	sparks.initial_velocity_min = 10.0
+	sparks.initial_velocity_max = 25.0
 	sparks.gravity = Vector3(0, -9.8, 0)
-	var smesh = QuadMesh.new()
-	smesh.size = Vector2(0.4, 0.4)
+	var smesh = SphereMesh.new()
+	smesh.radius = 0.4
+	smesh.height = 0.8
 	var smat = StandardMaterial3D.new()
 	smat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	smat.albedo_color = Color(1.0, 0.8, 0.2, 1.0)
 	smat.emission_enabled = true
 	smat.emission = Color(1.0, 0.5, 0.0)
-	smat.emission_energy_multiplier = 10.0
-	smat.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+	smat.emission_energy_multiplier = 15.0
 	smesh.material = smat
 	sparks.mesh = smesh
 	fireball.add_child(sparks)
 	
-	var tween = create_tween()
-	tween.tween_property(fireball, "global_position", end_pos, duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
-	await tween.finished
+	# Tremer a camera no momento aproximado que ela passa (menos intenso)
+	get_tree().create_timer(duration * 0.4).timeout.connect(_shake_camera.bind(0.12, 0.6))
+	
+	# Curva de movimento mais orgânica / menos linear e robótica
+	var tween = create_tween().set_parallel(true)
+	tween.tween_property(fireball, "global_position:x", end_pos.x, duration).set_trans(Tween.TRANS_LINEAR)
+	tween.tween_property(fireball, "global_position:z", end_pos.z, duration).set_trans(Tween.TRANS_LINEAR)
+	tween.tween_property(fireball, "global_position:y", end_pos.y, duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	
+	await get_tree().create_timer(duration).timeout
 	
 	# Desativa as emissões e deixa o som/partículas sumirem naturalmente
-	mesh_inst.visible = false
 	parts.emitting = false
 	sparks.emitting = false
 	await get_tree().create_timer(3.0).timeout
 	fireball.queue_free()
+
+func _shake_camera(intensity: float, duration: float) -> void:
+	if not is_instance_valid(active_cam): return
+	var original_h_offset = active_cam.h_offset
+	var original_v_offset = active_cam.v_offset
+	var shake_tween = create_tween()
+	var steps = int(duration * 20.0)
+	for i in range(steps):
+		shake_tween.tween_property(active_cam, "h_offset", original_h_offset + randf_range(-intensity, intensity), 0.05)
+		shake_tween.tween_property(active_cam, "v_offset", original_v_offset + randf_range(-intensity, intensity), 0.05)
+	shake_tween.tween_property(active_cam, "h_offset", original_h_offset, 0.05)
+	shake_tween.tween_property(active_cam, "v_offset", original_v_offset, 0.05)
 
 func _loop_bolas_de_fogo() -> void:
 	loop_bolas_fogo = true
