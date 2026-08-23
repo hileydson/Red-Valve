@@ -86,9 +86,10 @@ func _ready() -> void:
 	cutscene_trailer_sequence()
 
 func _process(delta: float) -> void:
-	# Trava o the_anti_lopes no local exato do cenário sem descimento
+	# Trava o the_anti_lopes no local exato do cenário e força a escala microscópica (0.005, 0.005, 0.005) para compensar a escala base gigante de 100x do GLB
 	if is_instance_valid(anti_lopes_ref):
 		anti_lopes_ref.global_position = anti_lopes_fixed_pos
+		anti_lopes_ref.scale = Vector3(0.005, 0.005, 0.005)
 
 	if not is_instance_valid(player_ref) or not is_instance_valid(active_cam):
 		return
@@ -239,11 +240,13 @@ func _setup_anti_lopes() -> void:
 	anti_lopes_ref = get_tree().current_scene.find_child("the_anti_lopes", true, false) as Node3D
 	if is_instance_valid(anti_lopes_ref):
 		anti_lopes_fixed_pos = anti_lopes_ref.global_position
+		# Força o tamanho microscópico (0.005, 0.005, 0.005) para compensar a escala base de 100x do arquivo .glb
+		anti_lopes_ref.scale = Vector3(0.005, 0.005, 0.005)
 		
 		# 1. Iniciar animação Spear_Walk imediatamente ao carregar a cena
 		var anim_player = anti_lopes_ref.find_child("AnimationPlayer", true, false) as AnimationPlayer
 		if anim_player:
-			# Remove as trilhas de escala das animações para evitar que o monstro fique gigante ao dar play
+			# Remove as trilhas de escala das animações para evitar que o monstro altere o tamanho ao dar play
 			for anim_name in anim_player.get_animation_list():
 				var anim = anim_player.get_animation(anim_name)
 				for i in range(anim.get_track_count() - 1, -1, -1):
@@ -353,44 +356,54 @@ func _setup_old_film_filter() -> void:
 	shader_type canvas_item;
 
 	uniform sampler2D screen_texture : hint_screen_texture, filter_linear_mipmap;
-	uniform float sepia_amount : hint_range(0.0, 1.0) = 0.35;
-	uniform float grain_amount : hint_range(0.0, 1.0) = 0.18;
-	uniform float scratch_amount : hint_range(0.0, 1.0) = 0.35;
-	uniform float vignette_amount : hint_range(0.0, 1.0) = 0.65;
-	uniform float flicker_amount : hint_range(0.0, 1.0) = 0.08;
+	uniform float vhs_noise_intensity : hint_range(0.0, 1.0) = 0.08;
+	uniform float rgb_shift_amount : hint_range(0.0, 1.0) = 0.12;
+	uniform float tracking_noise : hint_range(0.0, 1.0) = 0.08;
 
-	float rand(vec2 co) {
-		return fract(sin(dot(co, vec2(12.9898, 78.233))) * 43758.5453);
+	float hash(vec2 p) {
+		return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
 	}
 
 	void fragment() {
 		vec2 uv = SCREEN_UV;
-		vec4 color = texture(screen_texture, uv);
+		float time = TIME * 2.0;
 		
-		vec3 sepia = vec3(
-			dot(color.rgb, vec3(0.393, 0.769, 0.189)),
-			dot(color.rgb, vec3(0.349, 0.686, 0.168)),
-			dot(color.rgb, vec3(0.272, 0.534, 0.131))
-		);
-		color.rgb = mix(color.rgb, sepia, sepia_amount);
-		
-		float noise = rand(uv + vec2(TIME * 18.0, TIME * 33.0));
-		color.rgb += (noise - 0.5) * grain_amount;
-		
-		float scratch_rand = rand(vec2(floor(uv.x * 250.0), floor(TIME * 12.0)));
-		if (scratch_rand > (1.0 - scratch_amount * 0.04)) {
-			float scratch_int = rand(vec2(uv.x, TIME * 5.0));
-			color.rgb -= vec3(scratch_int * 0.35);
+		// 1. VHS Tape Tracking Distortions (jitter suave de fita)
+		float line_noise = hash(vec2(floor(uv.y * 100.0), floor(time * 12.0)));
+		if (line_noise > 0.985) {
+			uv.x += (hash(vec2(time, uv.y)) - 0.5) * 0.01 * tracking_noise;
 		}
 		
+		// Faixa horizontal suave de erro de fita
+		float tracking_line = smoothstep(0.02, 0.0, abs(uv.y - fract(time * 0.08)));
+		uv.x += sin(uv.y * 50.0 + time * 10.0) * 0.0015 * tracking_line;
+		
+		// 2. Chromatic Aberration / RGB Shift (Desvio de cor suave)
+		float shift = 0.001 * rgb_shift_amount + tracking_line * 0.002;
+		float r = texture(screen_texture, vec2(uv.x + shift, uv.y)).r;
+		float g = texture(screen_texture, uv).g;
+		float b = texture(screen_texture, vec2(uv.x - shift, uv.y)).b;
+		vec3 color = vec3(r, g, b);
+		
+		// 3. Linhas de Varredura VHS (Scanlines muito sutis)
+		float scanline = sin(uv.y * 500.0) * 0.015;
+		color -= scanline;
+		
+		// 4. Granulação / Estática VHS suave
+		float static_noise = (hash(uv + vec2(time * 19.0, time * 47.0)) - 0.5) * 0.03 * vhs_noise_intensity;
+		color += static_noise;
+		
+		// 5. Ajuste Retro NTSC suave
+		color = mix(color, vec3(dot(color, vec3(0.299, 0.587, 0.114))), 0.05);
+		color.r *= 1.02;
+		color.b *= 0.98;
+		
+		// 6. Vignette leve
 		float dist = distance(uv, vec2(0.5, 0.5));
-		float vignette = smoothstep(0.85, 0.25, dist * vignette_amount);
-		color.rgb *= mix(1.0, vignette, vignette_amount);
+		float vignette = smoothstep(0.85, 0.4, dist);
+		color *= mix(1.0, vignette, 0.25);
 		
-		float flicker = sin(TIME * 35.0) * 0.5 + 0.5;
-		color.rgb *= (1.0 - flicker * flicker_amount);
-		
-		COLOR = color;
+		COLOR = vec4(color, 1.0);
 	}
 	"""
 	var shader = Shader.new()

@@ -78,8 +78,8 @@ shader_parameter/cirrus_absorption = 2.0
 shader_parameter/cirrus_sky_tint_fade = 0.5
 shader_parameter/cirrus_size = 1.0
 shader_parameter/cirrus_uv = Vector2(0.16, 0.11)
-shader_parameter/cirrus_position1 = Vector2(0.052744307, 0.052744307)
-shader_parameter/cirrus_position2 = Vector2(0.052744307, 0.052744307)
+shader_parameter/cirrus_position1 = Vector2(0.81104875, 0.81104875)
+shader_parameter/cirrus_position2 = Vector2(0.81104875, 0.81104875)
 shader_parameter/cirrus_texture = ExtResource("4_0otj5")
 shader_parameter/cumulus_visible = true
 shader_parameter/cumulus_intensity = 9.245
@@ -89,7 +89,7 @@ shader_parameter/cumulus_absorption = 2.0
 shader_parameter/cumulus_noise_freq = 2.7
 shader_parameter/cumulus_sky_tint_fade = 0.0
 shader_parameter/cumulus_size = 0.5
-shader_parameter/cumulus_position = Vector2(60.287533, 60.287533)
+shader_parameter/cumulus_position = Vector2(89.09241, 89.09241)
 shader_parameter/cumulus_texture = ExtResource("5_ahyst")
 shader_parameter/cumulus_partial_mie_phase = Vector3(0.957564, 1.042436, 0.412)
 shader_parameter/cumulus_mie_intensity = 1.0
@@ -694,7 +694,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.42811, 0, -235.99194)
 [node name="final" type="Node3D" parent="." unique_id=2056723904]
 
 [node name="camera_final" type="Camera3D" parent="final" unique_id=321980557]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.601997, 1.6562791, -236.18431)
+transform = Transform3D(0.6127001, 0, 0.7903155, 0, 1, 0, -0.7903155, 0, 0.6127001, -8.601997, 1.6562791, -236.18431)
 
 [editable path="portal_red_valve"]
 [editable path="portal_red_valve/the_anti_lopes"]
