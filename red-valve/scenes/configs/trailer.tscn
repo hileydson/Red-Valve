@@ -77,8 +77,8 @@ shader_parameter/cirrus_absorption = 2.0
 shader_parameter/cirrus_sky_tint_fade = 0.5
 shader_parameter/cirrus_size = 1.0
 shader_parameter/cirrus_uv = Vector2(0.16, 0.11)
-shader_parameter/cirrus_position1 = Vector2(0.7640808, 0.7640808)
-shader_parameter/cirrus_position2 = Vector2(0.7640808, 0.7640808)
+shader_parameter/cirrus_position1 = Vector2(0.776881, 0.776881)
+shader_parameter/cirrus_position2 = Vector2(0.776881, 0.776881)
 shader_parameter/cirrus_texture = ExtResource("4_0otj5")
 shader_parameter/cumulus_visible = true
 shader_parameter/cumulus_intensity = 9.245
@@ -88,7 +88,7 @@ shader_parameter/cumulus_absorption = 2.0
 shader_parameter/cumulus_noise_freq = 2.7
 shader_parameter/cumulus_sky_tint_fade = 0.0
 shader_parameter/cumulus_size = 0.5
-shader_parameter/cumulus_position = Vector2(93.85978, 93.85978)
+shader_parameter/cumulus_position = Vector2(128.93214, 128.93214)
 shader_parameter/cumulus_texture = ExtResource("5_ahyst")
 shader_parameter/cumulus_partial_mie_phase = Vector3(0.957564, 1.042436, 0.412)
 shader_parameter/cumulus_mie_intensity = 1.0
@@ -565,6 +565,9 @@ material_override = SubResource("StandardMaterial3D_mu1kp")
 
 [node name="OmniLight3D" type="OmniLight3D" parent="portal_red_valve" unique_id=1553090659]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.33622742)
+
+[node name="OmniLight3D2" type="OmniLight3D" parent="portal_red_valve" unique_id=429502884]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.6897776, 0.33622742)
 
 [node name="the_anti_lopes" parent="portal_red_valve" unique_id=436535712 instance=ExtResource("19_1hqbt")]
 transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0, -0.92475736, -1.4068756)

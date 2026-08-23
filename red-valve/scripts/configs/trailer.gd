@@ -488,70 +488,63 @@ func cutscene_trailer_sequence() -> void:
 	player.cutscene_set_auto_walk(true)
 	
 	# --------------------------------------------------------------------------
-	# TAKE 1: CÂMERA DE CIMA (OVERHEAD) COM ROTAÇÃO E SEGUIMENTO SOLTO (8s)
+	# TAKE 1: CÂMERA DE CIMA (OVERHEAD) COMEÇANDO DE BAIXO E SUBINDO (8s)
 	# --------------------------------------------------------------------------
-	print("Take 1: Câmera de CIMA solta com giro lento (8s)...")
-	_switch_to_loose_camera(Vector3(0, 7.5, 0.5), Vector3(-80, 0, 0), 3.5, 2.5)
+	print("Take 1: Câmera de CIMA solta começando de baixo e subindo (8s)...")
+	_switch_to_loose_camera(Vector3(0, 1.0, 2.5), Vector3(-20, 0, 0), 3.5, 2.5)
 	
-	var tween_rot1 = create_tween()
-	tween_rot1.tween_property(self, "target_local_rot:y", 15.0, 8.0).set_trans(Tween.TRANS_SINE)
+	var tween_take1 = create_tween().set_parallel(true)
+	tween_take1.tween_property(self, "target_local_rot:x", -80.0, 8.0).set_trans(Tween.TRANS_SINE)
+	tween_take1.tween_property(self, "target_local_pos:y", 7.5, 8.0).set_trans(Tween.TRANS_SINE)
+	tween_take1.tween_property(self, "target_local_pos:z", 0.5, 8.0).set_trans(Tween.TRANS_SINE)
+	
+	# Dar um zoom no final do take para dar a sensação de que vamos para 1ª pessoa
+	if is_instance_valid(active_cam):
+		var tween_zoom_take1 = create_tween()
+		tween_zoom_take1.tween_interval(6.0)
+		tween_zoom_take1.tween_property(active_cam, "fov", 30.0, 2.0).set_trans(Tween.TRANS_SINE)
 	
 	await get_tree().create_timer(8.0).timeout
 	print("... Take 1 concluído!")
 	
 	# --------------------------------------------------------------------------
-	# TAKE 2: DE LONGE OLHANDO PARA O MAYCOW DE FRENTE (DE CIMA PARA BAIXO) (3s)
+	# TAKE 2: PRIMEIRA PESSOA - OLHANDO PARA DIREITA E CIMA (CÉU) (6s)
 	# --------------------------------------------------------------------------
-	print("Take 2: De longe, olhando de frente para o Maycow (3s)...")
+	print("Take 2: Primeira pessoa, olhando para direita e para o céu (6s)...")
 	is_loose_camera_active = false
 	if is_instance_valid(active_cam): active_cam.queue_free()
 	
-	var cam_take2 = Camera3D.new()
-	add_child(cam_take2)
-	# Posiciona 7 metros NA FRENTE do player (-7 em Z local) e 5m acima
-	cam_take2.global_transform = player.global_transform * Transform3D(Basis(), Vector3(0, 5.0, -7.0))
-	cam_take2.make_current()
-	active_cam = cam_take2
+	var cam_fps_sky = Camera3D.new()
+	add_child(cam_fps_sky)
+	cam_fps_sky.global_transform = player.global_transform * Transform3D(Basis(), Vector3(0, 1.6, 0))
+	cam_fps_sky.make_current()
+	active_cam = cam_fps_sky
 	
-	var elapsed_take2 = 0.0
-	while elapsed_take2 < 3.0:
-		if is_instance_valid(cam_take2) and is_instance_valid(player):
-			cam_take2.look_at(player.global_position + Vector3(0, 1.0, 0), Vector3.UP)
-		await get_tree().process_frame
-		elapsed_take2 += get_process_delta_time()
+	if model:
+		model.visible = false
+		
+	is_head_bob_active = true
+	head_bob_intensity = 0.5
+	
+	# Maycow olha pra direita (-45 em Y) e pra cima (+60 em X) 
+	var tween_look_sky = create_tween().set_parallel(true)
+	tween_look_sky.tween_property(cam_fps_sky, "rotation_degrees:y", -45.0, 3.0).set_trans(Tween.TRANS_SINE)
+	tween_look_sky.tween_property(cam_fps_sky, "rotation_degrees:x", 60.0, 3.0).set_trans(Tween.TRANS_SINE)
+	
+	await get_tree().create_timer(6.0).timeout
+	
+	# Volta a rotação
+	cam_fps_sky.rotation_degrees = Vector3.ZERO
+	
+	if model:
+		model.visible = true
 		
 	print("... Take 2 concluído!")
 	
 	# --------------------------------------------------------------------------
-	# TAKE 3: CÂMERA DE COSTAS AUMENTANDO FOV (3s)
+	# TAKE 3: PRIMEIRA PESSOA ANDANDO - OLHANDO PARA CIMA E VOLTANDO (4s)
 	# --------------------------------------------------------------------------
-	print("Take 3: Câmera de costas acompanhando e aumentando FOV (3s)...")
-	_switch_to_loose_camera(Vector3(0, 2.0, 3.5), Vector3(-10, 0, 0), 4.0, 2.0)
-	
-	if is_instance_valid(active_cam):
-		var tween_fov3 = create_tween()
-		tween_fov3.tween_property(active_cam, "fov", 100.0, 3.0).set_trans(Tween.TRANS_SINE)
-		
-	await get_tree().create_timer(3.0).timeout
-	print("... Take 3 concluído!")
-	
-
-	# --------------------------------------------------------------------------
-	# TAKE 4: CÂMERA DE COSTAS SOLTA COM ROTAÇÃO LENTA (5s)
-	# --------------------------------------------------------------------------
-	print("Take 4: Câmera de COSTAS acompanhando com movimento solto (5s)...")
-	_switch_to_loose_camera(Vector3(0, 1.8, 3.2), Vector3(-8, 0, 0), 3.5, 2.5)
-	
-	var tween_rot5 = create_tween()
-	tween_rot5.tween_property(self, "target_local_rot:y", 12.0, 5.0).set_trans(Tween.TRANS_SINE)
-	
-	await get_tree().create_timer(5.0).timeout
-	print("... Take 4 concluído!")
-	
-	# --------------------------------------------------------------------------
-	# TAKE 5: PRIMEIRA PESSOA ANDANDO - OLHANDO PARA CIMA E VOLTANDO (4s)
-	# --------------------------------------------------------------------------
-	print("Take 5: Primeira pessoa ANDANDO com olhar para cima em direção à cabeça do enemy (4s)...")
+	print("Take 3: Primeira pessoa ANDANDO com olhar para cima em direção à cabeça do enemy (4s)...")
 	is_loose_camera_active = false
 	if is_instance_valid(active_cam): active_cam.queue_free()
 	
@@ -574,12 +567,12 @@ func cutscene_trailer_sequence() -> void:
 	tween_look_up.tween_property(cam_fps_walk, "rotation_degrees:x", 0.0, 1.4).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	
 	await get_tree().create_timer(4.0).timeout
-	print("... Take 5 concluído!")
+	print("... Take 3 concluído!")
 	
 	# --------------------------------------------------------------------------
-	# TAKE 6: ARRANCADA FINAL + ZOOM LEVE NA VÁLVULA + MÃO EM DIREÇÃO À VÁLVULA
+	# TAKE 4: ARRANCADA FINAL + ZOOM LEVE NA VÁLVULA + MÃO EM DIREÇÃO À VÁLVULA
 	# --------------------------------------------------------------------------
-	print("Take 6: Arrancada final até a porta portal_red_valve...")
+	print("Take 4: Arrancada final até a porta portal_red_valve...")
 	
 	_iniciar_som_velocidade_continuo()
 	_set_motion_blur_strength(0.35)
@@ -605,10 +598,10 @@ func cutscene_trailer_sequence() -> void:
 	is_head_bob_active = false
 	_set_motion_blur_strength(0.0)
 	
-	# 1. ZOOM MODERADO NA VÁLVULA (distância de 3.0m, FOV 55.0)
-	var target_zoom_fov = 55.0
-	var zoom_duration = 2.5
-	var valve_cam_pos = fim.global_position + Vector3(0, 1.4, 3.0)
+	# 1. ZOOM MODERADO NA VÁLVULA
+	var target_zoom_fov = 45.0
+	var zoom_duration = 3.5
+	var valve_cam_pos = fim.global_position + Vector3(0, 1.4, 2.0)
 	
 	var tween_zoom_door = create_tween().set_parallel(true)
 	tween_zoom_door.tween_property(cam_fps_walk, "fov", target_zoom_fov, zoom_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
@@ -646,16 +639,16 @@ func cutscene_trailer_sequence() -> void:
 		cam_fps_walk.add_child(hand_3d)
 		_set_visible_recursive(hand_3d, true)
 		
-		# Escala normal para hand_with_magic.glb (escala de UI reduzida)
-		hand_3d.scale = Vector3(0.18, 0.18, 0.18)
+		# Escala 1.0 para hand_with_magic.glb para não ficar microscópica
+		hand_3d.scale = Vector3.ONE
 		
-		# Começa bem por baixo e à esquerda da tela
-		hand_3d.transform.origin = Vector3(-0.35, -0.65, -0.25)
-		hand_3d.rotation_degrees = Vector3(10, -15, 10)
+		# Começa bem por baixo e na FRENTE da câmera
+		hand_3d.transform.origin = Vector3(0, -0.60, -0.40)
+		hand_3d.rotation_degrees = Vector3(10, 0, 10)
 		
 		# Sobe devagarzinho em direção à válvula
 		var tween_hand = create_tween()
-		tween_hand.tween_property(hand_3d, "transform:origin", Vector3(-0.15, -0.20, -0.40), 2.4).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		tween_hand.tween_property(hand_3d, "transform:origin", Vector3(0, -0.15, -0.40), 3.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 		
 	# Espera um pouco mais durante o foco na porta e movimento da mão
 	await get_tree().create_timer(3.0).timeout
@@ -686,6 +679,12 @@ func cutscene_trailer_sequence() -> void:
 		_apply_transparency_to_node(anti_lopes_ref, 1.0)
 		anti_lopes_ref.scale = Vector3.ONE
 		
+		# Reparenteia o the_anti_lopes para a cena principal para não ser escondido junto com o stage_1
+		var anti_parent = anti_lopes_ref.get_parent()
+		if anti_parent != get_tree().current_scene:
+			anti_parent.remove_child(anti_lopes_ref)
+			get_tree().current_scene.add_child(anti_lopes_ref)
+			
 		# Esconder o cenário inteiro para garantir fundo totalmente preto e sem obstáculos na frente
 		var root_children = get_tree().current_scene.get_children()
 		for child in root_children:
@@ -710,7 +709,13 @@ func cutscene_trailer_sequence() -> void:
 		var cam_anti = Camera3D.new()
 		add_child(cam_anti)
 		
-		# Câmera posicionada no eixo frontal (+Z) a 3.0m dos pés e 2.0m do rosto virada PARA o modelo
+		# Adicionar luz direcionada para o monstro para que ele não fique totalmente preto e invisível no void
+		var anti_light = DirectionalLight3D.new()
+		anti_light.light_energy = 2.0
+		anti_light.rotation_degrees = Vector3(-45, 45, 0)
+		cam_anti.add_child(anti_light)
+		
+		# Posicionar a câmera 5 metros de distância do rosto do anti_lopes (+Z) a 3.0m dos pés e 2.0m do rosto virada PARA o modelo
 		var pos_feet = anti_origin + Vector3(0, 0.3, 3.0)
 		var pos_face = anti_origin + Vector3(0, 1.6, 2.0)
 		
