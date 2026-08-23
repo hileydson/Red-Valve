@@ -78,6 +78,7 @@ func _ready() -> void:
 		
 	_setup_audio_system()
 	_setup_rain_particles()
+	_setup_comet_particles()
 	_setup_lightning_light()
 	_setup_anti_lopes()
 	
@@ -175,6 +176,36 @@ func _setup_rain_particles() -> void:
 	rain_particles.mesh = mesh
 	add_child(rain_particles)
 
+func _setup_comet_particles() -> void:
+	var comet_particles = CPUParticles3D.new()
+	comet_particles.amount = 35
+	comet_particles.lifetime = 6.0
+	comet_particles.emission_shape = CPUParticles3D.EMISSION_SHAPE_BOX
+	comet_particles.emission_box_extents = Vector3(150, 40, 150)
+	comet_particles.direction = Vector3(-1.0, -0.6, 0.0).normalized() # Da direita pra esquerda e caindo
+	comet_particles.spread = 15.0
+	comet_particles.gravity = Vector3(0, -6.0, 0)
+	comet_particles.initial_velocity_min = 35.0
+	comet_particles.initial_velocity_max = 50.0
+	
+	var mat = StandardMaterial3D.new()
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.albedo_color = Color(1.0, 0.35, 0.05, 1.0)
+	mat.emission_enabled = true
+	mat.emission = Color(1.0, 0.2, 0.0)
+	mat.emission_energy_multiplier = 4.0
+	mat.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+	mat.billboard_keep_scale = true
+	
+	var mesh = QuadMesh.new()
+	mesh.size = Vector2(1.5, 4.0) # Forma alongada como um rastro
+	mesh.material = mat
+	comet_particles.mesh = mesh
+	
+	# Posiciona globalmente no alto para cobrir toda a área do trailer de longe
+	comet_particles.global_position = Vector3(120, 80, -30)
+	add_child(comet_particles)
+
 func _setup_lightning_light() -> void:
 	lightning_light = DirectionalLight3D.new()
 	lightning_light.light_color = Color(0.85, 0.92, 1.0)
@@ -237,7 +268,10 @@ func _apply_transparency_to_node(node: Node, alpha: float = 0.2) -> void:
 			if orig_mat:
 				var new_mat = orig_mat.duplicate()
 				if new_mat is BaseMaterial3D:
-					new_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+					if alpha >= 0.99:
+						new_mat.transparency = BaseMaterial3D.TRANSPARENCY_DISABLED
+					else:
+						new_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 					new_mat.albedo_color.a = alpha
 					mesh_inst.set_surface_override_material(i, new_mat)
 				elif "albedo_color" in new_mat:
@@ -245,10 +279,13 @@ func _apply_transparency_to_node(node: Node, alpha: float = 0.2) -> void:
 					mesh_inst.set_surface_override_material(i, new_mat)
 			else:
 				var std_mat = StandardMaterial3D.new()
-				std_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+				if alpha >= 0.99:
+					std_mat.transparency = BaseMaterial3D.TRANSPARENCY_DISABLED
+				else:
+					std_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 				std_mat.albedo_color = Color(1.0, 1.0, 1.0, alpha)
 				mesh_inst.set_surface_override_material(i, std_mat)
-				
+	
 	for child in node.get_children():
 		_apply_transparency_to_node(child, alpha)
 
@@ -488,21 +525,42 @@ func cutscene_trailer_sequence() -> void:
 	player.cutscene_set_auto_walk(true)
 	
 	# --------------------------------------------------------------------------
-	# TAKE 1: CÂMERA DE CIMA (OVERHEAD) COMEÇANDO DE BAIXO E SUBINDO (8s)
+	# TAKE 1: CÂMERA DE CIMA COMEÇANDO DA POSIÇÃO EXATA DA CAMERA_1 NO EDITOR
 	# --------------------------------------------------------------------------
-	print("Take 1: Câmera de CIMA solta começando de baixo e subindo (8s)...")
-	_switch_to_loose_camera(Vector3(0, 1.0, 2.5), Vector3(-20, 0, 0), 3.5, 2.5)
+	print("Take 1: Câmera começando da posição configurada no editor (camera_1)...")
 	
+	var cam_1 = get_tree().current_scene.get_node_or_null("camera_1") as Camera3D
+	var start_local_pos = Vector3(0, 0.2, 2.5)
+	var start_local_rot = Vector3(-10, 0, 0)
+	
+	if cam_1:
+		# Pega a posição e rotação relativas ao player exatamente como estão no editor
+		var cam_local_trans = player.global_transform.affine_inverse() * cam_1.global_transform
+		start_local_pos = cam_local_trans.origin
+		
+		var euler = cam_local_trans.basis.get_euler()
+		start_local_rot = Vector3(rad_to_deg(euler.x), rad_to_deg(euler.y), rad_to_deg(euler.z))
+	
+	_switch_to_loose_camera(start_local_pos, start_local_rot, 3.5, 2.5)
+	
+	# Take 1: Começa da camera_1 e sobe 6 metros
 	var tween_take1 = create_tween().set_parallel(true)
-	tween_take1.tween_property(self, "target_local_rot:x", -80.0, 8.0).set_trans(Tween.TRANS_SINE)
-	tween_take1.tween_property(self, "target_local_pos:y", 7.5, 8.0).set_trans(Tween.TRANS_SINE)
-	tween_take1.tween_property(self, "target_local_pos:z", 0.5, 8.0).set_trans(Tween.TRANS_SINE)
+	tween_take1.tween_property(self, "target_local_rot:x", -70.0, 4.0).set_trans(Tween.TRANS_SINE)
+	tween_take1.tween_property(self, "target_local_pos:y", start_local_pos.y + 6.0, 4.0).set_trans(Tween.TRANS_SINE)
+	tween_take1.tween_property(self, "target_local_pos:z", start_local_pos.z, 4.0).set_trans(Tween.TRANS_SINE)
 	
-	# Dar um zoom no final do take para dar a sensação de que vamos para 1ª pessoa
+	# Segunda metade do take 1: mergulha na cabeça do player
+	var tween_take1_p2 = create_tween().set_parallel(true)
+	tween_take1_p2.tween_interval(4.5)
+	tween_take1_p2.chain().tween_property(self, "target_local_rot:x", 0.0, 3.5).set_trans(Tween.TRANS_SINE)
+	tween_take1_p2.parallel().tween_property(self, "target_local_pos:y", 1.6, 3.5).set_trans(Tween.TRANS_SINE)
+	tween_take1_p2.parallel().tween_property(self, "target_local_pos:z", -0.5, 3.5).set_trans(Tween.TRANS_SINE)
+	
+	# Zoom extra de FOV na câmera solta
 	if is_instance_valid(active_cam):
 		var tween_zoom_take1 = create_tween()
-		tween_zoom_take1.tween_interval(6.0)
-		tween_zoom_take1.tween_property(active_cam, "fov", 30.0, 2.0).set_trans(Tween.TRANS_SINE)
+		tween_zoom_take1.tween_interval(4.5)
+		tween_zoom_take1.tween_property(active_cam, "fov", 35.0, 3.5).set_trans(Tween.TRANS_SINE)
 	
 	await get_tree().create_timer(8.0).timeout
 	print("... Take 1 concluído!")
@@ -620,35 +678,37 @@ func cutscene_trailer_sequence() -> void:
 	door_spot.spot_angle = 35.0
 	door_spot.light_energy = 5.0
 	cam_fps_walk.add_child(door_spot)
-	
 	# Diminuir som de velocidade mas MANTER chuva e relâmpagos ativos!
 	if is_instance_valid(zoom_sound_player):
-		tween_zoom_door.tween_property(zoom_sound_player, "volume_db", -60.0, zoom_duration)
+		pass
 		
-	# Motion blur momentâneo durante o zoom
-	var tween_blur = create_tween()
-	tween_blur.tween_method(_set_motion_blur_strength, 0.0, 0.5, 1.25)
-	tween_blur.tween_method(_set_motion_blur_strength, 0.5, 0.0, 1.25)
-		
-	# 2. INSTANCIAR A MÃO MAGIC 3D SUBINDO DEVAGARZINHO PELA ESQUERDA
-	var hand_scene = load("res://assets/3d_model/player/hands/hand_with_magic.glb") as PackedScene
+	# 1. ZOOM NA PORTA DA FRENTE (FOV 45) DURANTE 3 SEGUNDOS E A MÃO APARECE
+	var tween_cam = create_tween()
+	tween_cam.tween_property(cam_fps_walk, "fov", 45.0, 3.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	
-	var hand_3d: Node3D = null
-	if hand_scene:
-		hand_3d = hand_scene.instantiate() as Node3D
+	var player_hand = player_ref.find_child("hand_with_magic", true, false)
+	if player_hand:
+		var hand_3d = player_hand.duplicate()
 		cam_fps_walk.add_child(hand_3d)
 		_set_visible_recursive(hand_3d, true)
 		
-		# Escala 1.0 para hand_with_magic.glb para não ficar microscópica
-		hand_3d.scale = Vector3.ONE
+		# Inicia abaixo da tela, mas com a posição ALVO alterada (MAIS PARA A DIREITA)
+		var target_trans = hand_3d.transform
+		target_trans.origin.x += 0.55 # BEM mais para a direita
+		target_trans.origin.y -= 0.35 # Mais para baixo
 		
-		# Começa bem por baixo e na FRENTE da câmera
-		hand_3d.transform.origin = Vector3(0, -0.60, -0.40)
-		hand_3d.rotation_degrees = Vector3(10, 0, 10)
+		# A posição INICIAL é ainda mais para baixo (para dar o efeito de subir durante o tween)
+		hand_3d.transform = target_trans
+		hand_3d.transform.origin.y -= 0.7
 		
 		# Sobe devagarzinho em direção à válvula
 		var tween_hand = create_tween()
-		tween_hand.tween_property(hand_3d, "transform:origin", Vector3(0, -0.15, -0.40), 3.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		tween_hand.tween_property(hand_3d, "transform", target_trans, 3.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		
+	# Diminuir som de velocidade mas MANTER chuva e relâmpagos ativos!
+	if is_instance_valid(zoom_sound_player):
+		var tween_audio = create_tween()
+		tween_audio.tween_property(zoom_sound_player, "volume_db", -60.0, 3.0)
 		
 	# Espera um pouco mais durante o foco na porta e movimento da mão
 	await get_tree().create_timer(3.0).timeout
@@ -673,11 +733,12 @@ func cutscene_trailer_sequence() -> void:
 		
 	await get_tree().create_timer(1.5).timeout
 	
-	# 5. REVELAÇÃO DO THE_ANTI_LOPES NO ESCURO TOTAL E TAMANHO NORMAL
-	print("Revelando the_anti_lopes no fundo preto (caixa de void) com tamanho normal...")
+	# 5. REVELAÇÃO DO THE_ANTI_LOPES NO ESCURO TOTAL E TAMANHO DOBRADO
+	print("Revelando the_anti_lopes no fundo preto (caixa de void) com tamanho dobrado (escala 2)...")
 	if is_instance_valid(anti_lopes_ref):
+		anti_lopes_ref.visible = true
 		_apply_transparency_to_node(anti_lopes_ref, 1.0)
-		anti_lopes_ref.scale = Vector3.ONE
+		anti_lopes_ref.scale = Vector3(2.0, 2.0, 2.0)
 		
 		# Reparenteia o the_anti_lopes para a cena principal para não ser escondido junto com o stage_1
 		var anti_parent = anti_lopes_ref.get_parent()
@@ -693,34 +754,40 @@ func cutscene_trailer_sequence() -> void:
 				
 		var anti_origin = anti_lopes_ref.global_position
 		
-		# Criar um cubo gigante PRETO (Void Box) atrás e em volta dele
-		var void_box = MeshInstance3D.new()
-		var box_mesh = BoxMesh.new()
-		box_mesh.size = Vector3(40, 40, 40)
-		void_box.mesh = box_mesh
-		var box_mat = StandardMaterial3D.new()
-		box_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-		box_mat.albedo_color = Color.BLACK
-		box_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
-		void_box.set_surface_override_material(0, box_mat)
-		void_box.global_position = anti_origin
-		add_child(void_box)
-		
+		# Criar ambiente 100% escuro para a câmera (não precisamos de Mesh Box)
 		var cam_anti = Camera3D.new()
+		var anti_env = Environment.new()
+		anti_env.background_mode = Environment.BG_COLOR
+		anti_env.background_color = Color.BLACK
+		anti_env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+		anti_env.ambient_light_color = Color.BLACK
+		cam_anti.environment = anti_env
 		add_child(cam_anti)
 		
-		# Adicionar luz direcionada para o monstro para que ele não fique totalmente preto e invisível no void
-		var anti_light = DirectionalLight3D.new()
-		anti_light.light_energy = 2.0
-		anti_light.rotation_degrees = Vector3(-45, 45, 0)
-		cam_anti.add_child(anti_light)
+		# Adicionar luz direcionada para o monstro para que ele não fique totalmente preto e invisível
+		var dir_light = DirectionalLight3D.new()
+		dir_light.light_color = Color(0.8, 0.9, 1.0)
+		dir_light.light_energy = 2.0
+		dir_light.rotation_degrees = Vector3(-30, 45, 0)
+		cam_anti.add_child(dir_light)
 		
-		# Posicionar a câmera 5 metros de distância do rosto do anti_lopes (+Z) a 3.0m dos pés e 2.0m do rosto virada PARA o modelo
-		var pos_feet = anti_origin + Vector3(0, 0.3, 3.0)
-		var pos_face = anti_origin + Vector3(0, 1.6, 2.0)
+		# Uma luz de spot extra focada no rosto para garantir visibilidade total
+		var spot = SpotLight3D.new()
+		spot.light_color = Color(1.0, 0.8, 0.6)
+		spot.light_energy = 4.0
+		spot.spot_range = 10.0
+		spot.transform.origin = Vector3(0, 0, 0) # na câmera
+		cam_anti.add_child(spot)
 		
-		cam_anti.global_position = pos_feet
-		cam_anti.look_at(anti_origin + Vector3(0, 0.5, 0), Vector3.UP)
+		# Posicionar a câmera MAIS PARA CIMA e olhando para baixo
+		var pos_face = anti_origin + Vector3(0, 4.5, 2.5) # Câmera muito mais alta (4.5) e um pouco afastada (2.5)
+		cam_anti.global_position = pos_face
+		
+		# Aponta a câmera para o the_anti_lopes
+		cam_anti.look_at(anti_origin + Vector3(0, 1.5, 0), Vector3.UP)
+		
+		# Dá um zoom violento no monstro
+		cam_anti.fov = 25.0
 		cam_anti.make_current()
 		
 		# Luz dramática frontal ajustada para o tamanho normal (escala 1)
