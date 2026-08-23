@@ -8,6 +8,7 @@
 [ext_resource type="AudioStream" uid="uid://baf3avsmaerc3" path="res://assets/sounds/enemies/Iron Goblins/iron_goblins_growl.mp3" id="3_mu1kp"]
 [ext_resource type="Texture2D" uid="uid://cfqk60lpl5ljv" path="res://addons/sky_3d/assets/resources/SNoise.tres" id="4_0otj5"]
 [ext_resource type="Texture2D" uid="uid://eh8s01w38gp4" path="res://assets/terrain3d/textures/RealisticTexturePack/ground.png" id="4_8aqow"]
+[ext_resource type="AudioStream" uid="uid://derqonxkdoy1u" path="res://assets/sounds/episodios/trailer/storms.mp3" id="4_yb25t"]
 [ext_resource type="Texture2D" uid="uid://cecwdqjol0ckd" path="res://addons/sky_3d/assets/textures/noiseClouds.png" id="5_ahyst"]
 [ext_resource type="Texture2D" uid="uid://2r8ylu6rg5dp" path="res://addons/sky_3d/assets/thirdparty/textures/moon/MoonMap.png" id="6_1hqbt"]
 [ext_resource type="Script" uid="uid://uysankokmyu3" path="res://scripts/configs/camera_current.gd" id="6_dnp2e"]
@@ -76,8 +77,8 @@ shader_parameter/cirrus_absorption = 2.0
 shader_parameter/cirrus_sky_tint_fade = 0.5
 shader_parameter/cirrus_size = 1.0
 shader_parameter/cirrus_uv = Vector2(0.16, 0.11)
-shader_parameter/cirrus_position1 = Vector2(0.7713871, 0.7713871)
-shader_parameter/cirrus_position2 = Vector2(0.7713871, 0.7713871)
+shader_parameter/cirrus_position1 = Vector2(0.7640808, 0.7640808)
+shader_parameter/cirrus_position2 = Vector2(0.7640808, 0.7640808)
 shader_parameter/cirrus_texture = ExtResource("4_0otj5")
 shader_parameter/cumulus_visible = true
 shader_parameter/cumulus_intensity = 9.245
@@ -87,7 +88,7 @@ shader_parameter/cumulus_absorption = 2.0
 shader_parameter/cumulus_noise_freq = 2.7
 shader_parameter/cumulus_sky_tint_fade = 0.0
 shader_parameter/cumulus_size = 0.5
-shader_parameter/cumulus_position = Vector2(53.877773, 53.877773)
+shader_parameter/cumulus_position = Vector2(93.85978, 93.85978)
 shader_parameter/cumulus_texture = ExtResource("5_ahyst")
 shader_parameter/cumulus_partial_mie_phase = Vector3(0.957564, 1.042436, 0.412)
 shader_parameter/cumulus_mie_intensity = 1.0
@@ -475,6 +476,10 @@ script = ExtResource("1_qnddk")
 [node name="IronGoblinsGrowl" type="AudioStreamPlayer" parent="." unique_id=1702506078]
 stream = ExtResource("3_mu1kp")
 pitch_scale = 0.54
+
+[node name="Storms" type="AudioStreamPlayer" parent="." unique_id=2109021185]
+stream = ExtResource("4_yb25t")
+autoplay = true
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1368177264]
 environment = SubResource("Environment_8aqow")

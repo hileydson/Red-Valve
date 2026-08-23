@@ -270,16 +270,6 @@ func _disparar_relampago() -> void:
 	
 	lightning_light.light_energy = 0.0
 	lightning_flash_rect.modulate.a = 0.0
-	
-	# Trovão sonoro apenas em no máximo 2 relâmpagos em toda a cutscene!
-	if thunder_sounds_played < 2:
-		thunder_sounds_played += 1
-		await get_tree().create_timer(randf_range(0.12, 0.35)).timeout
-		if is_instance_valid(thunder_audio_player) and thunder_audio_player.stream:
-			thunder_audio_player.pitch_scale = randf_range(0.28, 0.38)
-			thunder_audio_player.volume_db = randf_range(1.0, 3.5)
-			thunder_audio_player.play()
-
 func _iniciar_som_velocidade_continuo() -> void:
 	if is_instance_valid(zoom_sound_player) and zoom_sound_player.stream:
 		if not zoom_sound_player.finished.is_connected(_on_zoom_sound_finished):
@@ -510,40 +500,52 @@ func cutscene_trailer_sequence() -> void:
 	print("... Take 1 concluído!")
 	
 	# --------------------------------------------------------------------------
-	# TAKE 3 (AGORA O 2º TAKE): CÂMERA DE LONGE E DE LADO COM GIRO MAIOR (3s)
+	# TAKE 2: DE LONGE OLHANDO PARA O MAYCOW DE FRENTE (DE CIMA PARA BAIXO) (3s)
 	# --------------------------------------------------------------------------
-	print("Take 3 (2º Take): Câmera de LONGE e de LADO acompanhando com giro maior (3s)...")
-	_switch_to_loose_camera(Vector3(-4.8, 1.6, -1.2), Vector3(-6, -82, 0), 3.0, 2.0)
+	print("Take 2: De longe, olhando de frente para o Maycow (3s)...")
+	is_loose_camera_active = false
+	if is_instance_valid(active_cam): active_cam.queue_free()
 	
-	var tween_lado = create_tween().set_parallel(true)
-	tween_lado.tween_property(self, "target_local_rot:y", -145.0, 3.0).set_trans(Tween.TRANS_SINE)
-	tween_lado.tween_property(self, "target_local_pos:z", 1.8, 3.0).set_trans(Tween.TRANS_SINE)
+	var cam_take2 = Camera3D.new()
+	add_child(cam_take2)
+	# Posiciona 7 metros NA FRENTE do player (-7 em Z local) e 5m acima
+	cam_take2.global_transform = player.global_transform * Transform3D(Basis(), Vector3(0, 5.0, -7.0))
+	cam_take2.make_current()
+	active_cam = cam_take2
 	
-	await get_tree().create_timer(3.0).timeout
-	print("... Take 3 concluído!")
-	
-	# --------------------------------------------------------------------------
-	# TAKE 2 (3º TAKE): VISÃO LÁ DE CIMA DA CABEÇA DO THE_ANTI_LOPES OLHANDO O MAYCOW (4s)
-	# --------------------------------------------------------------------------
-	print("Take 2 (3º Take): Visão lá de cima (cabeça do enemy) olhando para o Maycow (4s)...")
-	_switch_to_loose_camera(Vector3(0.0, 5.5, -8.0), Vector3(-32, 180, 0), 4.0, 2.5)
-	
-	var tween_head_pov = create_tween()
-	tween_head_pov.tween_property(self, "target_local_rot:x", -15.0, 4.0).set_trans(Tween.TRANS_SINE)
-	
-	await get_tree().create_timer(4.0).timeout
+	var elapsed_take2 = 0.0
+	while elapsed_take2 < 3.0:
+		if is_instance_valid(cam_take2) and is_instance_valid(player):
+			cam_take2.look_at(player.global_position + Vector3(0, 1.0, 0), Vector3.UP)
+		await get_tree().process_frame
+		elapsed_take2 += get_process_delta_time()
+		
 	print("... Take 2 concluído!")
 	
 	# --------------------------------------------------------------------------
-	# TAKE 4: CÂMERA DE COSTAS SOLTA COM ROTAÇÃO LENTA (8s)
+	# TAKE 3: CÂMERA DE COSTAS AUMENTANDO FOV (3s)
 	# --------------------------------------------------------------------------
-	print("Take 4: Câmera de COSTAS acompanhando com movimento solto (8s)...")
+	print("Take 3: Câmera de costas acompanhando e aumentando FOV (3s)...")
+	_switch_to_loose_camera(Vector3(0, 2.0, 3.5), Vector3(-10, 0, 0), 4.0, 2.0)
+	
+	if is_instance_valid(active_cam):
+		var tween_fov3 = create_tween()
+		tween_fov3.tween_property(active_cam, "fov", 100.0, 3.0).set_trans(Tween.TRANS_SINE)
+		
+	await get_tree().create_timer(3.0).timeout
+	print("... Take 3 concluído!")
+	
+
+	# --------------------------------------------------------------------------
+	# TAKE 4: CÂMERA DE COSTAS SOLTA COM ROTAÇÃO LENTA (5s)
+	# --------------------------------------------------------------------------
+	print("Take 4: Câmera de COSTAS acompanhando com movimento solto (5s)...")
 	_switch_to_loose_camera(Vector3(0, 1.8, 3.2), Vector3(-8, 0, 0), 3.5, 2.5)
 	
 	var tween_rot5 = create_tween()
-	tween_rot5.tween_property(self, "target_local_rot:y", 12.0, 8.0).set_trans(Tween.TRANS_SINE)
+	tween_rot5.tween_property(self, "target_local_rot:y", 12.0, 5.0).set_trans(Tween.TRANS_SINE)
 	
-	await get_tree().create_timer(8.0).timeout
+	await get_tree().create_timer(5.0).timeout
 	print("... Take 4 concluído!")
 	
 	# --------------------------------------------------------------------------
@@ -603,42 +605,60 @@ func cutscene_trailer_sequence() -> void:
 	is_head_bob_active = false
 	_set_motion_blur_strength(0.0)
 	
-	# 1. ZOOM BEM MAIS LEVE NA VÁLVULA (distância de 4.0m, FOV 70.0)
-	var target_zoom_fov = 70.0
+	# 1. ZOOM MODERADO NA VÁLVULA (distância de 3.0m, FOV 55.0)
+	var target_zoom_fov = 55.0
 	var zoom_duration = 2.5
-	var valve_cam_pos = fim.global_position + Vector3(0, 1.4, 4.0)
+	var valve_cam_pos = fim.global_position + Vector3(0, 1.4, 3.0)
 	
 	var tween_zoom_door = create_tween().set_parallel(true)
 	tween_zoom_door.tween_property(cam_fps_walk, "fov", target_zoom_fov, zoom_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 	tween_zoom_door.tween_property(cam_fps_walk, "global_position", valve_cam_pos, zoom_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 	
+	# Criar ambiente escuro e holofote focando na porta durante o zoom
+	var dark_env = Environment.new()
+	dark_env.background_mode = Environment.BG_COLOR
+	dark_env.background_color = Color.BLACK
+	dark_env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+	dark_env.ambient_light_color = Color.BLACK
+	cam_fps_walk.environment = dark_env
+	
+	var door_spot = SpotLight3D.new()
+	door_spot.spot_range = 10.0
+	door_spot.spot_angle = 35.0
+	door_spot.light_energy = 5.0
+	cam_fps_walk.add_child(door_spot)
+	
 	# Diminuir som de velocidade mas MANTER chuva e relâmpagos ativos!
 	if is_instance_valid(zoom_sound_player):
 		tween_zoom_door.tween_property(zoom_sound_player, "volume_db", -60.0, zoom_duration)
 		
-	# 2. INSTANCIAR A OUTRA MÃO 3D (ESPELHADA NA ESQUERDA) SUBINDO DEVAGARZINHO POR BAIXO
-	var hand_scene = load("res://assets/3d_model/player/hands/hand_with_pistol.glb") as PackedScene
-	if not hand_scene:
-		hand_scene = load("res://assets/3d_model/player/hands/hand_with_magic.glb") as PackedScene
+	# Motion blur momentâneo durante o zoom
+	var tween_blur = create_tween()
+	tween_blur.tween_method(_set_motion_blur_strength, 0.0, 0.5, 1.25)
+	tween_blur.tween_method(_set_motion_blur_strength, 0.5, 0.0, 1.25)
 		
+	# 2. INSTANCIAR A MÃO MAGIC 3D SUBINDO DEVAGARZINHO PELA ESQUERDA
+	var hand_scene = load("res://assets/3d_model/player/hands/hand_with_magic.glb") as PackedScene
+	
 	var hand_3d: Node3D = null
 	if hand_scene:
 		hand_3d = hand_scene.instantiate() as Node3D
 		cam_fps_walk.add_child(hand_3d)
 		_set_visible_recursive(hand_3d, true)
 		
-		# Espelhar X para ser a OUTRA mão (mão esquerda), com escala bem menor (0.18) para não ocupar a tela
-		hand_3d.scale = Vector3(-0.18, 0.18, 0.18)
+		# Escala normal para hand_with_magic.glb (escala de UI reduzida)
+		hand_3d.scale = Vector3(0.18, 0.18, 0.18)
 		
-		# Começa bem por baixo da tela
-		hand_3d.transform.origin = Vector3(-0.18, -0.55, -0.15)
-		hand_3d.rotation_degrees = Vector3(15, 20, -10)
+		# Começa bem por baixo e à esquerda da tela
+		hand_3d.transform.origin = Vector3(-0.35, -0.65, -0.25)
+		hand_3d.rotation_degrees = Vector3(10, -15, 10)
 		
-		# Sobe devagarzinho em direção à válvula por baixo
+		# Sobe devagarzinho em direção à válvula
 		var tween_hand = create_tween()
-		tween_hand.tween_property(hand_3d, "transform:origin", Vector3(-0.08, -0.18, -0.32), 2.4).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		tween_hand.tween_property(hand_3d, "transform:origin", Vector3(-0.15, -0.20, -0.40), 2.4).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 		
-	await get_tree().create_timer(1.5).timeout
+	# Espera um pouco mais durante o foco na porta e movimento da mão
+	await get_tree().create_timer(3.0).timeout
 	
 	# 3. FADE OUT PARA PRETO ENQUANTO A MÃO SE APROXIMA DA VÁLVULA
 	var tween_fade_door = create_tween()
@@ -661,15 +681,31 @@ func cutscene_trailer_sequence() -> void:
 	await get_tree().create_timer(1.5).timeout
 	
 	# 5. REVELAÇÃO DO THE_ANTI_LOPES NO ESCURO TOTAL E TAMANHO NORMAL
-	print("Revelando the_anti_lopes no fundo preto (y=-500) com tamanho normal...")
+	print("Revelando the_anti_lopes no fundo preto (caixa de void) com tamanho normal...")
 	if is_instance_valid(anti_lopes_ref):
 		_apply_transparency_to_node(anti_lopes_ref, 1.0)
 		anti_lopes_ref.scale = Vector3.ONE
 		
-		# Move o inimigo bem para baixo para garantir escuridão absoluta (fundo preto sem cenário)
+		# Esconder o cenário inteiro para garantir fundo totalmente preto e sem obstáculos na frente
+		var root_children = get_tree().current_scene.get_children()
+		for child in root_children:
+			if child != self and child != anti_lopes_ref and child.name != "UI" and child is Node3D:
+				child.visible = false
+				
 		var anti_origin = anti_lopes_ref.global_position
-		anti_origin.y -= 500.0
-		anti_lopes_ref.global_position = anti_origin
+		
+		# Criar um cubo gigante PRETO (Void Box) atrás e em volta dele
+		var void_box = MeshInstance3D.new()
+		var box_mesh = BoxMesh.new()
+		box_mesh.size = Vector3(40, 40, 40)
+		void_box.mesh = box_mesh
+		var box_mat = StandardMaterial3D.new()
+		box_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		box_mat.albedo_color = Color.BLACK
+		box_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+		void_box.set_surface_override_material(0, box_mat)
+		void_box.global_position = anti_origin
+		add_child(void_box)
 		
 		var cam_anti = Camera3D.new()
 		add_child(cam_anti)
