@@ -7,7 +7,7 @@ extends Node3D
 
 func _ready():
 	battle_field.visible = false
-	battle_field.scale = Vector3.ZERO # Começa minúsculo
+	battle_field.scale = Vector3(0.1, 0.1, 0.1) # Começa minúsculo, mas não ZERO para evitar det==0 na física
 
 func _physics_process(delta):
 	# ... seu código anterior ...
@@ -55,7 +55,7 @@ func toggle_battle_field(open: bool):
 		var tween_close = create_tween()
 		
 		# Primeiro diminui (Seu código original)
-		tween_close.tween_property(battle_field, "scale", Vector3.ZERO, 0.2)\
+		tween_close.tween_property(battle_field, "scale", Vector3(0.1, 0.1, 0.1), 0.2)\
 			.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 		
 		# Garante que o Alpha volte ao normal para a próxima vez que abrir

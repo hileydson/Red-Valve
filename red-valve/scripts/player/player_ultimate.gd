@@ -20,7 +20,7 @@ func _activate_cogblade_ultimate() -> void:
 	var old_speed = player.SPEED
 	player.SPEED = 0.0
 	
-	var old_pos = player.hand_magic_3d.position
+	var _old_pos = player.hand_magic_3d.position
 	var tween_prep = create_tween().set_parallel(true)
 	
 	# Aproxima muito a câmera e a arma para dar sensação de foco
@@ -65,9 +65,9 @@ func _activate_cogblade_ultimate() -> void:
 		.set_ease(Tween.EASE_OUT)
 		
 	# Fazer a câmera olhar para a cogblade no ar
-	var tween_cam = create_tween()
+	var _tween_cam = create_tween()
 	# Precisamos calcular a rotação necessária pra olhar pra cima
-	var target_look = player.crescent_cogblade.global_transform.origin
+	var _target_look = player.crescent_cogblade.global_transform.origin
 	# Não podemos usar look_at direto na câmera durante o processo de física de forma limpa, vamos interpolar a rotação
 	
 	await tween_magic.finished

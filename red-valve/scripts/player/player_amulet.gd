@@ -5,8 +5,8 @@ var player: CharacterBody3D
 func _ready() -> void:
 	player = get_parent()
 
-func _process_amulet_magic(delta: float) -> void:
-	if not player.is_first_person or player.is_reloading or player.is_using_ultimate:
+func _process_amulet_magic(_delta: float) -> void:
+	if GlobalEvents.is_maycow_normal or not player.is_first_person or player.is_reloading or player.is_using_ultimate:
 		_hide_amulet_magic()
 		return
 		
@@ -117,7 +117,7 @@ func _apply_silhouette(enemy: Node, cor: Color) -> void:
 			mat_dict[m] = m.material_override
 		enemy.set_meta("original_materials", mat_dict)
 		
-	var meshes = _get_all_meshes(enemy)
+	var all_meshes = _get_all_meshes(enemy)
 	var sil_mat = StandardMaterial3D.new()
 	sil_mat.albedo_color = cor
 	sil_mat.emission_enabled = true
@@ -125,7 +125,7 @@ func _apply_silhouette(enemy: Node, cor: Color) -> void:
 	sil_mat.emission_energy_multiplier = 2.0
 	sil_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	
-	for m in meshes:
+	for m in all_meshes:
 		m.material_override = sil_mat
 
 func _remove_silhouette(enemy: Node) -> void:

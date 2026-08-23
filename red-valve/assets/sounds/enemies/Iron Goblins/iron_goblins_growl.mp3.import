@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://baf3avsmaerc3"
+path="res://.godot/imported/iron_goblins_growl.mp3-21471ce263a76a924f68f7e27c32fbde.mp3str"
+
+[deps]
+
+source_file="res://assets/sounds/enemies/Iron Goblins/iron_goblins_growl.mp3"
+dest_files=["res://.godot/imported/iron_goblins_growl.mp3-21471ce263a76a924f68f7e27c32fbde.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

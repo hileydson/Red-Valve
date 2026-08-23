@@ -41,7 +41,7 @@ extends CharacterBody3D
 @onready var smoke_effect_back: AnimatedSprite2D = $Camera3D/CanvasLayer/smoke_effect_back
 @onready var dash_effect: AudioStreamPlayer = $sounds/DashEffect
 @onready var dash_effect_particles: GPUParticles3D = $dash_effect_particles
-@onready var screen_shader: MeshInstance3D = $camera_third_person/screen_shader
+# @onready var screen_shader: MeshInstance3D = $camera_third_person/screen_shader
 
 var blood_effect = preload("res://scenes/enemies/blood.tscn")
 var capsula_scene = preload("res://scenes/effects/capsula.tscn")
@@ -434,7 +434,7 @@ func _physics_process(delta: float) -> void:
 		is_first_person = true # Sempre em primeira pessoa
 		
 		# Força a câmera de 1ª pessoa a ser a atual se não for (ex: ao entrar na cena)
-		if not _cutscene_camera_disabled and not camera.current and not transition_camera and not camera_bullet_time_ON:
+		if not GlobalEvents.in_cutscene and not _cutscene_camera_disabled and not camera.current and not transition_camera and not camera_bullet_time_ON:
 			camera.make_current()
 			if camera_third_person:
 				camera_third_person.current = false
@@ -556,7 +556,9 @@ func _physics_process(delta: float) -> void:
 		else:
 			# MOVIMENTO NORMAL (WALK/RUN)
 			var velocidade_atual = WALK_SPEED
-			if is_aiming:
+			if GlobalEvents.in_cutscene and _cutscene_auto_walk:
+				velocidade_atual = WALK_SPEED * 0.45
+			elif is_aiming:
 				velocidade_atual = WALK_SPEED * 0.4
 			elif _run_toggle_active and current_stamina > 0 and not is_exhausted:
 				velocidade_atual = RUN_SPEED
@@ -649,7 +651,7 @@ func _physics_process(delta: float) -> void:
 	else:
 		is_aiming = false
 		is_first_person = false
-		if not _cutscene_camera_disabled and camera_third_person and not camera_third_person.current:
+		if not GlobalEvents.in_cutscene and not _cutscene_camera_disabled and camera_third_person and not camera_third_person.current:
 			camera_third_person.make_current()
 			
 		# Desativa o Motion Blur
@@ -696,7 +698,7 @@ func _physics_process(delta: float) -> void:
 		var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 		var velocity_Y_zero: bool = velocity.y <= 0
 		var target_fov: float = 75.0
-		if is_aiming:
+		if is_aiming and not GlobalEvents.is_maycow_normal:
 			if is_first_person:
 				target_fov = 75.0 # Primeira pessoa fica com FOV normal
 			else:
@@ -969,9 +971,8 @@ func _trigger_fall_death() -> void:
 	_play_death_sound()
 	
 	fall_cam = Camera3D.new()
-	fall_cam.global_position = Vector3(global_position.x, 20.0, global_position.z + 12.0)
-	
 	get_tree().current_scene.add_child(fall_cam)
+	fall_cam.global_position = Vector3(global_position.x, 20.0, global_position.z + 12.0)
 	fall_cam.make_current()
 	
 	if is_instance_valid(camera_third_person):
@@ -1084,18 +1085,24 @@ func play_return_from_arena_effect() -> void:
 	var comp = get_node_or_null("PlayerAmulet")
 	if comp: comp.play_return_from_arena_effect()
 func cutscene_set_hud_enabled(enabled: bool) -> void:
+	_cutscene_hud_hidden = not enabled
+	if is_instance_valid(hud_layer):
+		hud_layer.visible = enabled
 	var comp = get_node_or_null("PlayerCutscene")
 	if comp: comp.cutscene_set_hud_enabled(enabled)
 
 func cutscene_set_player_control(enabled: bool) -> void:
+	_cutscene_inputs_disabled = not enabled
 	var comp = get_node_or_null("PlayerCutscene")
 	if comp: comp.cutscene_set_player_control(enabled)
 
 func cutscene_set_auto_walk(enabled: bool) -> void:
+	_cutscene_auto_walk = enabled
 	var comp = get_node_or_null("PlayerCutscene")
 	if comp: comp.cutscene_set_auto_walk(enabled)
 
 func cutscene_set_auto_run(enabled: bool) -> void:
+	_cutscene_auto_run = enabled
 	var comp = get_node_or_null("PlayerCutscene")
 	if comp: comp.cutscene_set_auto_run(enabled)
 
@@ -1116,5 +1123,6 @@ func cutscene_set_camera_shake(intensity_percent: int) -> void:
 	if comp: comp.cutscene_set_camera_shake(intensity_percent)
 
 func cutscene_set_camera_current(is_current: bool) -> void:
+	_cutscene_camera_disabled = not is_current
 	var comp = get_node_or_null("PlayerCutscene")
 	if comp: comp.cutscene_set_camera_current(is_current)

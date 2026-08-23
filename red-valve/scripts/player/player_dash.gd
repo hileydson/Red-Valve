@@ -6,7 +6,7 @@ func _ready() -> void:
 	player = get_parent()
 
 func dash() -> void:
-	var tween = create_tween()
+	var _tween = create_tween()
 	if player.trail_particles:
 		player.trail_particles.emitting = true
 		

@@ -236,7 +236,7 @@ func raycast_process_shoot() -> void:
 					.set_ease(Tween.EASE_OUT)
 
 				tween_cam.parallel().tween_method(
-				func(pos): player.camera_3d_bullet_time.look_at(alvo_ajustado),
+				func(_pos): player.camera_3d_bullet_time.look_at(alvo_ajustado),
 					0.0, 1.0, 0.9
 				)
 

@@ -43,6 +43,7 @@ AmbientAPI="*uid://cmbh88h6yljhy"
 AmbientParser="*uid://dcdrqnwmpgvk4"
 AmbientFileHandler="*uid://dnh8sqjyu74hs"
 AmbientMaterialMaker="*uid://nig0lamfd3mv"
+_mcp_game_helper="*res://addons/godot_ai/runtime/game_helper.gd"
 
 [display]
 
