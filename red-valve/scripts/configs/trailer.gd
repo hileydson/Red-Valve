@@ -510,29 +510,29 @@ func cutscene_trailer_sequence() -> void:
 	print("... Take 1 concluído!")
 	
 	# --------------------------------------------------------------------------
-	# TAKE 2: CÂMERA NOS PÉS (MAIS BAIXA y=0.12) COM SEGUIMENTO SOLTO (8s)
+	# TAKE 3 (AGORA O 2º TAKE): CÂMERA DE LONGE E DE LADO COM GIRO MAIOR (3s)
 	# --------------------------------------------------------------------------
-	print("Take 2: Câmera nos PÉS (mais baixa, y=0.12) com giro lento (8s)...")
-	_switch_to_loose_camera(Vector3(0.35, 0.12, 1.1), Vector3(-5, 10, 0), 4.5, 3.0)
+	print("Take 3 (2º Take): Câmera de LONGE e de LADO acompanhando com giro maior (3s)...")
+	_switch_to_loose_camera(Vector3(-4.8, 1.6, -1.2), Vector3(-6, -82, 0), 3.0, 2.0)
 	
-	var tween_rot3 = create_tween()
-	tween_rot3.tween_property(self, "target_local_rot:y", -8.0, 8.0).set_trans(Tween.TRANS_SINE)
+	var tween_lado = create_tween().set_parallel(true)
+	tween_lado.tween_property(self, "target_local_rot:y", -145.0, 3.0).set_trans(Tween.TRANS_SINE)
+	tween_lado.tween_property(self, "target_local_pos:z", 1.8, 3.0).set_trans(Tween.TRANS_SINE)
 	
-	await get_tree().create_timer(8.0).timeout
-	print("... Take 2 concluído!")
-	
-	# --------------------------------------------------------------------------
-	# TAKE 3: VISÃO DE FRENTE DESCENDO ATÉ O CHÃO (y=0.15) (8s)
-	# --------------------------------------------------------------------------
-	print("Take 3: Visão de FRENTE descendo até o nível dos tornozelos (8s)...")
-	_switch_to_loose_camera(Vector3(0.0, 2.4, -2.5), Vector3(-10, 180, 0), 4.0, 3.0)
-	
-	var tween_frente = create_tween().set_parallel(true)
-	tween_frente.tween_property(self, "target_local_pos:y", 0.15, 8.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	tween_frente.tween_property(self, "target_local_rot:y", 192.0, 8.0).set_trans(Tween.TRANS_SINE)
-	
-	await get_tree().create_timer(8.0).timeout
+	await get_tree().create_timer(3.0).timeout
 	print("... Take 3 concluído!")
+	
+	# --------------------------------------------------------------------------
+	# TAKE 2 (3º TAKE): VISÃO LÁ DE CIMA DA CABEÇA DO THE_ANTI_LOPES OLHANDO O MAYCOW (4s)
+	# --------------------------------------------------------------------------
+	print("Take 2 (3º Take): Visão lá de cima (cabeça do enemy) olhando para o Maycow (4s)...")
+	_switch_to_loose_camera(Vector3(0.0, 5.5, -8.0), Vector3(-32, 180, 0), 4.0, 2.5)
+	
+	var tween_head_pov = create_tween()
+	tween_head_pov.tween_property(self, "target_local_rot:x", -15.0, 4.0).set_trans(Tween.TRANS_SINE)
+	
+	await get_tree().create_timer(4.0).timeout
+	print("... Take 2 concluído!")
 	
 	# --------------------------------------------------------------------------
 	# TAKE 4: CÂMERA DE COSTAS SOLTA COM ROTAÇÃO LENTA (8s)
@@ -547,9 +547,9 @@ func cutscene_trailer_sequence() -> void:
 	print("... Take 4 concluído!")
 	
 	# --------------------------------------------------------------------------
-	# TAKE 5: PRIMEIRA PESSOA ANDANDO COM BALANÇO SUAVE REDUZIDO (8s)
+	# TAKE 5: PRIMEIRA PESSOA ANDANDO - OLHANDO PARA CIMA E VOLTANDO (4s)
 	# --------------------------------------------------------------------------
-	print("Take 5: Primeira pessoa ANDANDO com balanço leve de cabeça (8s)...")
+	print("Take 5: Primeira pessoa ANDANDO com olhar para cima em direção à cabeça do enemy (4s)...")
 	is_loose_camera_active = false
 	if is_instance_valid(active_cam): active_cam.queue_free()
 	
@@ -565,13 +565,19 @@ func cutscene_trailer_sequence() -> void:
 	is_head_bob_active = true
 	head_bob_intensity = 0.1
 	
-	await get_tree().create_timer(8.0).timeout
+	# Maycow olha para cima (em direção à cabeça do enemy) e depois volta a olhar pra frente
+	var tween_look_up = create_tween()
+	tween_look_up.tween_property(cam_fps_walk, "rotation_degrees:x", 26.0, 1.4).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	tween_look_up.tween_interval(0.4)
+	tween_look_up.tween_property(cam_fps_walk, "rotation_degrees:x", 0.0, 1.4).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	
+	await get_tree().create_timer(4.0).timeout
 	print("... Take 5 concluído!")
 	
 	# --------------------------------------------------------------------------
-	# TAKE 6: PRIMEIRA PESSOA CORRENDO COM BALANÇO FORTE + SOM CONTINUO + BLUR
+	# TAKE 6: ARRANCADA FINAL + ZOOM LEVE NA VÁLVULA + MÃO EM DIREÇÃO À VÁLVULA
 	# --------------------------------------------------------------------------
-	print("Take 6: Arrancada final com BALANÇO FORTE de corrida, som contínuo e blur...")
+	print("Take 6: Arrancada final até a porta portal_red_valve...")
 	
 	_iniciar_som_velocidade_continuo()
 	_set_motion_blur_strength(0.35)
@@ -589,28 +595,170 @@ func cutscene_trailer_sequence() -> void:
 	tween_fov.tween_property(cam_fps_walk, "fov", 92.0, tempo_sprint).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	
 	await tween_corrida.finished
-	print("Fim da corrida extrema alcançado!")
+	print("Chegou à porta! Iniciando zoom LEVE no portal_red_valve...")
 	
-	# --------------------------------------------------------------------------
-	# FADE OUT FINAL E LIMPEZA
-	# --------------------------------------------------------------------------
-	print("Iniciando Fade Out final...")
+	# Desativa corrida e balanço extremo
+	player.cutscene_set_auto_run(false)
+	player.cutscene_set_auto_walk(false)
 	is_head_bob_active = false
-	lightning_loop_active = false
+	_set_motion_blur_strength(0.0)
 	
-	var tween_fade = create_tween()
-	tween_fade.tween_property(ui_fader, "modulate:a", 1.0, 0.5)
+	# 1. ZOOM BEM MAIS LEVE NA VÁLVULA (distância de 4.0m, FOV 70.0)
+	var target_zoom_fov = 70.0
+	var zoom_duration = 2.5
+	var valve_cam_pos = fim.global_position + Vector3(0, 1.4, 4.0)
 	
-	await tween_fade.finished
+	var tween_zoom_door = create_tween().set_parallel(true)
+	tween_zoom_door.tween_property(cam_fps_walk, "fov", target_zoom_fov, zoom_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tween_zoom_door.tween_property(cam_fps_walk, "global_position", valve_cam_pos, zoom_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 	
+	# Diminuir som de velocidade mas MANTER chuva e relâmpagos ativos!
+	if is_instance_valid(zoom_sound_player):
+		tween_zoom_door.tween_property(zoom_sound_player, "volume_db", -60.0, zoom_duration)
+		
+	# 2. INSTANCIAR A OUTRA MÃO 3D (ESPELHADA NA ESQUERDA) SUBINDO DEVAGARZINHO POR BAIXO
+	var hand_scene = load("res://assets/3d_model/player/hands/hand_with_pistol.glb") as PackedScene
+	if not hand_scene:
+		hand_scene = load("res://assets/3d_model/player/hands/hand_with_magic.glb") as PackedScene
+		
+	var hand_3d: Node3D = null
+	if hand_scene:
+		hand_3d = hand_scene.instantiate() as Node3D
+		cam_fps_walk.add_child(hand_3d)
+		_set_visible_recursive(hand_3d, true)
+		
+		# Espelhar X para ser a OUTRA mão (mão esquerda), com escala bem menor (0.18) para não ocupar a tela
+		hand_3d.scale = Vector3(-0.18, 0.18, 0.18)
+		
+		# Começa bem por baixo da tela
+		hand_3d.transform.origin = Vector3(-0.18, -0.55, -0.15)
+		hand_3d.rotation_degrees = Vector3(15, 20, -10)
+		
+		# Sobe devagarzinho em direção à válvula por baixo
+		var tween_hand = create_tween()
+		tween_hand.tween_property(hand_3d, "transform:origin", Vector3(-0.08, -0.18, -0.32), 2.4).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		
+	await get_tree().create_timer(1.5).timeout
+	
+	# 3. FADE OUT PARA PRETO ENQUANTO A MÃO SE APROXIMA DA VÁLVULA
+	var tween_fade_door = create_tween()
+	tween_fade_door.tween_property(ui_fader, "modulate:a", 1.0, 1.2)
+	await tween_fade_door.finished
+	
+	# 4. TELA FICA PRETA + SOM iron_goblins_growl (CHUVA E RELÂMPAGOS MANTIDOS ATIVOS!)
 	_parar_som_velocidade()
+	
+	print("Tela preta com chuva/relâmpagos: Tocando iron_goblins_growl...")
+	var growl_player = AudioStreamPlayer.new()
+	var growl_stream = load("res://assets/sounds/enemies/Iron Goblins/iron_goblins_growl.mp3")
+	if growl_stream:
+		growl_player.stream = growl_stream
+		growl_player.pitch_scale = 0.88
+		growl_player.volume_db = 4.0
+		add_child(growl_player)
+		growl_player.play()
+		
+	await get_tree().create_timer(1.5).timeout
+	
+	# 5. REVELAÇÃO DO THE_ANTI_LOPES NO ESCURO TOTAL E TAMANHO NORMAL
+	print("Revelando the_anti_lopes no fundo preto (y=-500) com tamanho normal...")
+	if is_instance_valid(anti_lopes_ref):
+		_apply_transparency_to_node(anti_lopes_ref, 1.0)
+		anti_lopes_ref.scale = Vector3.ONE
+		
+		# Move o inimigo bem para baixo para garantir escuridão absoluta (fundo preto sem cenário)
+		var anti_origin = anti_lopes_ref.global_position
+		anti_origin.y -= 500.0
+		anti_lopes_ref.global_position = anti_origin
+		
+		var cam_anti = Camera3D.new()
+		add_child(cam_anti)
+		
+		# Câmera posicionada no eixo frontal (+Z) a 3.0m dos pés e 2.0m do rosto virada PARA o modelo
+		var pos_feet = anti_origin + Vector3(0, 0.3, 3.0)
+		var pos_face = anti_origin + Vector3(0, 1.6, 2.0)
+		
+		cam_anti.global_position = pos_feet
+		cam_anti.look_at(anti_origin + Vector3(0, 0.5, 0), Vector3.UP)
+		cam_anti.make_current()
+		
+		# Luz dramática frontal ajustada para o tamanho normal (escala 1)
+		var anti_spot = SpotLight3D.new()
+		anti_spot.spot_range = 10.0
+		anti_spot.spot_angle = 50.0
+		anti_spot.light_energy = 8.0
+		anti_spot.light_color = Color(1.0, 0.25, 0.25)
+		anti_spot.global_position = anti_origin + Vector3(0, 2.5, 2.2)
+		anti_spot.look_at(anti_origin + Vector3(0, 1.0, 0), Vector3.UP)
+		add_child(anti_spot)
+		
+		var tween_reveal_fade = create_tween()
+		tween_reveal_fade.tween_property(ui_fader, "modulate:a", 0.08, 1.0)
+		
+		var tween_anti_cam = create_tween().set_parallel(true)
+		tween_anti_cam.tween_property(cam_anti, "global_position", pos_face, 5.0).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
+		
+		await tween_anti_cam.finished
+		cam_anti.look_at(anti_origin + Vector3(0, 1.6, 0), Vector3.UP)
+		
+		await get_tree().create_timer(2.0).timeout
+		
+	# 6. EFEITO PISCANTE NEON DO NOME DO JOGO "RED VALVE" (LETRAS MAIORES E SEM BORDA PRETA)
+	print("Exibindo logo 'Red Valve' em letras gigantes (200px) sem borda piscando no centro da tela...")
+	var title_canvas = CanvasLayer.new()
+	title_canvas.layer = 150
+	add_child(title_canvas)
+	
+	var title_label = Label.new()
+	title_label.text = "RED VALVE"
+	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	title_label.set_anchors_preset(Control.PRESET_CENTER)
+	title_label.position = Vector2(-600, -130)
+	title_label.size = Vector2(1200, 260)
+	
+	var font_file = load("res://assets/fonts/Montserrat-ExtraBold.ttf")
+	if font_file:
+		title_label.add_theme_font_override("font", font_file)
+	title_label.add_theme_font_size_override("font_size", 200)
+	title_label.add_theme_color_override("font_color", Color(1.0, 0.08, 0.08, 1.0))
+	title_label.modulate.a = 0.0
+	title_canvas.add_child(title_label)
+	
+	_flicker_title_effect(title_label, 4.5)
+	
+	await get_tree().create_timer(5.0).timeout
+	
+	# Fade Out Final
+	var tween_final = create_tween()
+	tween_final.tween_property(ui_fader, "modulate:a", 1.0, 1.0)
+	await tween_final.finished
+	
+	lightning_loop_active = false
 	if is_instance_valid(rain_audio_player): rain_audio_player.stop()
 	if is_instance_valid(old_film_layer): old_film_layer.queue_free()
 	if is_instance_valid(motion_blur_layer): motion_blur_layer.queue_free()
 	if is_instance_valid(rain_particles): rain_particles.queue_free()
 	
 	GlobalEvents.in_cutscene = false
-	print("--- CUTSCENE TRAILER FINALIZADA ---")
+	print("--- CUTSCENE TRAILER FINALIZADA COM SUCESSO ---")
+
+func _flicker_title_effect(label: Label, duration: float) -> void:
+	if not is_instance_valid(label): return
+	label.pivot_offset = label.size / 2.0
+	label.scale = Vector2.ONE
+	var elapsed: float = 0.0
+	while elapsed < duration:
+		if not is_instance_valid(label): break
+		var base_alpha = clamp(elapsed / (duration * 0.6), 0.0, 1.0)
+		var flicker_factor = 0.1 if randf() < 0.2 else randf_range(0.65, 1.0)
+		label.modulate.a = base_alpha * flicker_factor
+		var step = randf_range(0.04, 0.1)
+		elapsed += step
+		await get_tree().create_timer(step).timeout
+	if is_instance_valid(label):
+		label.modulate.a = 1.0
+		label.scale = Vector2.ONE
 
 func cutscene_force_maycow_lopes_only() -> void:
 	if not is_instance_valid(player_ref):

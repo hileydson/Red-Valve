@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://dy356o67p6jyn" path="res://scenes/configs/fade.tscn" id="2_dnp2e"]
 [ext_resource type="Texture2D" uid="uid://c88j3oj0lf6om" path="res://demo/assets/textures/rock023_alb_ht.png" id="2_qnddk"]
 [ext_resource type="Shader" uid="uid://cvd0x7lon1ur6" path="res://addons/sky_3d/shaders/SkyMaterial.gdshader" id="3_7i5dk"]
+[ext_resource type="AudioStream" uid="uid://baf3avsmaerc3" path="res://assets/sounds/enemies/Iron Goblins/iron_goblins_growl.mp3" id="3_mu1kp"]
 [ext_resource type="Texture2D" uid="uid://cfqk60lpl5ljv" path="res://addons/sky_3d/assets/resources/SNoise.tres" id="4_0otj5"]
 [ext_resource type="Texture2D" uid="uid://eh8s01w38gp4" path="res://assets/terrain3d/textures/RealisticTexturePack/ground.png" id="4_8aqow"]
 [ext_resource type="Texture2D" uid="uid://cecwdqjol0ckd" path="res://addons/sky_3d/assets/textures/noiseClouds.png" id="5_ahyst"]
@@ -75,8 +76,8 @@ shader_parameter/cirrus_absorption = 2.0
 shader_parameter/cirrus_sky_tint_fade = 0.5
 shader_parameter/cirrus_size = 1.0
 shader_parameter/cirrus_uv = Vector2(0.16, 0.11)
-shader_parameter/cirrus_position1 = Vector2(0.3437031, 0.3437031)
-shader_parameter/cirrus_position2 = Vector2(0.3437031, 0.3437031)
+shader_parameter/cirrus_position1 = Vector2(0.7713871, 0.7713871)
+shader_parameter/cirrus_position2 = Vector2(0.7713871, 0.7713871)
 shader_parameter/cirrus_texture = ExtResource("4_0otj5")
 shader_parameter/cumulus_visible = true
 shader_parameter/cumulus_intensity = 9.245
@@ -86,7 +87,7 @@ shader_parameter/cumulus_absorption = 2.0
 shader_parameter/cumulus_noise_freq = 2.7
 shader_parameter/cumulus_sky_tint_fade = 0.0
 shader_parameter/cumulus_size = 0.5
-shader_parameter/cumulus_position = Vector2(41.73373, 41.73373)
+shader_parameter/cumulus_position = Vector2(53.877773, 53.877773)
 shader_parameter/cumulus_texture = ExtResource("5_ahyst")
 shader_parameter/cumulus_partial_mie_phase = Vector3(0.957564, 1.042436, 0.412)
 shader_parameter/cumulus_mie_intensity = 1.0
@@ -470,6 +471,10 @@ emission_enabled = true
 script = ExtResource("1_qnddk")
 
 [node name="fade" parent="." unique_id=158118564 instance=ExtResource("2_dnp2e")]
+
+[node name="IronGoblinsGrowl" type="AudioStreamPlayer" parent="." unique_id=1702506078]
+stream = ExtResource("3_mu1kp")
+pitch_scale = 0.54
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1368177264]
 environment = SubResource("Environment_8aqow")

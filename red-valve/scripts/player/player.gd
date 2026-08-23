@@ -468,7 +468,7 @@ func _physics_process(delta: float) -> void:
 			_process_amulet_targeting()
 		else:
 			if is_instance_valid(amulet_crosshair): amulet_crosshair.visible = false
-			if point: point.visible = true
+			if point: point.visible = not GlobalEvents.in_cutscene and not _cutscene_hud_hidden
 			
 			# Desativa o Motion Blur
 			if is_instance_valid(hud_layer) and not is_playing_return_effect:
