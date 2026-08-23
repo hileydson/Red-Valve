@@ -750,6 +750,15 @@ func cutscene_trailer_sequence() -> void:
 	
 	# 5. REVELAÇÃO DO THE_ANTI_LOPES E ANIMAÇÃO FINAL
 	print("Removendo transparência e tocando animação 'final'...")
+	
+	# Mudar para a camera_final
+	var cam_final = get_tree().current_scene.get_node_or_null("camera_final")
+	if cam_final and cam_final is Camera3D:
+		cam_final.make_current()
+	else:
+		push_warning("camera_final não encontrada na cena.")
+		
+	# Remover a transparência
 	if is_instance_valid(anti_lopes_ref):
 		anti_lopes_ref.visible = true
 		_apply_transparency_to_node(anti_lopes_ref, 1.0) # Remove a transparência
@@ -763,8 +772,38 @@ func cutscene_trailer_sequence() -> void:
 		else:
 			push_error("Animação 'final' não encontrada no AnimationPlayer da cena!")
 	
-	# Aguarda um tempo para a animação final tocar antes do encerramento
-	await get_tree().create_timer(7.0).timeout
+	# Faz a tela escura sumir revelando a cena no take final
+	var tween_reveal = create_tween()
+	tween_reveal.tween_property(ui_fader, "modulate:a", 0.0, 1.0)
+	
+	await get_tree().create_timer(3.0).timeout
+	
+	# 6. EFEITO PISCANTE NEON DO NOME DO JOGO "RED VALVE" (LETRAS MAIORES E SEM BORDA PRETA)
+	print("Exibindo logo 'Red Valve' em letras gigantes (200px) sem borda piscando no centro da tela...")
+	var title_canvas = CanvasLayer.new()
+	title_canvas.layer = 150
+	add_child(title_canvas)
+	
+	var title_label = Label.new()
+	title_label.text = "RED VALVE"
+	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	title_label.set_anchors_preset(Control.PRESET_CENTER)
+	title_label.position = Vector2(-600, -130)
+	title_label.size = Vector2(1200, 260)
+	
+	var font_file = load("res://assets/fonts/Montserrat-ExtraBold.ttf")
+	if font_file:
+		title_label.add_theme_font_override("font", font_file)
+	title_label.add_theme_font_size_override("font_size", 200)
+	title_label.add_theme_color_override("font_color", Color(1.0, 0.08, 0.08, 1.0))
+	title_label.modulate.a = 0.0
+	title_canvas.add_child(title_label)
+	
+	_flicker_title_effect(title_label, 4.5)
+	
+	# Aguarda o final
+	await get_tree().create_timer(4.5).timeout
 	
 	# Fade Out Final
 	var tween_final = create_tween()
@@ -786,66 +825,109 @@ func _criar_bola_de_fogo(start_pos: Vector3, end_pos: Vector3, duration: float) 
 	add_child(fireball)
 	fireball.global_position = start_pos
 	
-	# Mesh da bola
+	# Mesh da bola (núcleo incandescente)
 	var mesh_inst = MeshInstance3D.new()
 	var sphere = SphereMesh.new()
-	sphere.radius = 2.0
-	sphere.height = 4.0
+	sphere.radius = 4.0
+	sphere.height = 8.0
 	var mat = StandardMaterial3D.new()
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	mat.albedo_color = Color(1.0, 0.4, 0.0)
+	mat.albedo_color = Color(1.0, 0.6, 0.1)
 	mat.emission_enabled = true
-	mat.emission = Color(1.0, 0.2, 0.0)
-	mat.emission_energy_multiplier = 5.0
+	mat.emission = Color(1.0, 0.3, 0.0)
+	mat.emission_energy_multiplier = 8.0
 	mesh_inst.mesh = sphere
 	mesh_inst.set_surface_override_material(0, mat)
 	fireball.add_child(mesh_inst)
 	
-	# Som
+	# Som 1 (Estrondo)
 	var audio = AudioStreamPlayer3D.new()
 	audio.stream = load("res://assets/sounds/common/explosao.mp3")
-	audio.pitch_scale = randf_range(1.5, 2.0)
-	audio.volume_db = 0.0
+	audio.pitch_scale = randf_range(1.2, 1.5)
+	audio.volume_db = 8.0
+	audio.max_distance = 300.0
+	audio.doppler_tracking = AudioStreamPlayer3D.DOPPLER_TRACKING_PHYSICS_STEP
 	fireball.add_child(audio)
 	audio.play()
 	
-	# Particulas de rastro
+	# Som 2 (Rasgando ar - Swoosh)
+	var audio_swoosh = AudioStreamPlayer3D.new()
+	audio_swoosh.stream = load("res://assets/sounds/player/dash_effect.mp3")
+	audio_swoosh.pitch_scale = randf_range(0.8, 1.1)
+	audio_swoosh.volume_db = 10.0
+	audio_swoosh.max_distance = 300.0
+	audio_swoosh.doppler_tracking = AudioStreamPlayer3D.DOPPLER_TRACKING_PHYSICS_STEP
+	fireball.add_child(audio_swoosh)
+	audio_swoosh.play()
+	
+	# Particulas de rastro volumoso
 	var parts = CPUParticles3D.new()
-	parts.amount = 100
-	parts.lifetime = 1.0
+	parts.amount = 400
+	parts.lifetime = 1.5
 	parts.local_coords = false
 	parts.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
-	parts.emission_sphere_radius = 2.0
-	parts.gravity = Vector3(0, 0, 0)
+	parts.emission_sphere_radius = 4.0
+	parts.gravity = Vector3(0, 5, 0)
 	var pmesh = QuadMesh.new()
-	pmesh.size = Vector2(1, 1)
+	pmesh.size = Vector2(2.5, 2.5)
 	var pmat = StandardMaterial3D.new()
 	pmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	pmat.albedo_color = Color(1.0, 0.5, 0.0, 0.5)
+	pmat.albedo_color = Color(1.0, 0.3, 0.0, 0.7)
 	pmat.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
 	pmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	pmesh.material = pmat
 	parts.mesh = pmesh
 	fireball.add_child(parts)
 	
+	# Partículas de faíscas explosivas (Sparks)
+	var sparks = CPUParticles3D.new()
+	sparks.amount = 300
+	sparks.lifetime = 2.0
+	sparks.local_coords = false
+	sparks.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
+	sparks.emission_sphere_radius = 4.5
+	sparks.direction = Vector3(0, -1, 0)
+	sparks.spread = 180.0
+	sparks.initial_velocity_min = 5.0
+	sparks.initial_velocity_max = 15.0
+	sparks.gravity = Vector3(0, -9.8, 0)
+	var smesh = QuadMesh.new()
+	smesh.size = Vector2(0.4, 0.4)
+	var smat = StandardMaterial3D.new()
+	smat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	smat.albedo_color = Color(1.0, 0.8, 0.2, 1.0)
+	smat.emission_enabled = true
+	smat.emission = Color(1.0, 0.5, 0.0)
+	smat.emission_energy_multiplier = 10.0
+	smat.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+	smesh.material = smat
+	sparks.mesh = smesh
+	fireball.add_child(sparks)
+	
 	var tween = create_tween()
-	tween.tween_property(fireball, "global_position", end_pos, duration).set_trans(Tween.TRANS_LINEAR)
+	tween.tween_property(fireball, "global_position", end_pos, duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 	await tween.finished
+	
+	# Desativa as emissões e deixa o som/partículas sumirem naturalmente
+	mesh_inst.visible = false
+	parts.emitting = false
+	sparks.emitting = false
+	await get_tree().create_timer(3.0).timeout
 	fireball.queue_free()
 
 func _loop_bolas_de_fogo() -> void:
 	loop_bolas_fogo = true
 	while loop_bolas_fogo and GlobalEvents.in_cutscene:
-		await get_tree().create_timer(randf_range(1.0, 3.0)).timeout
+		await get_tree().create_timer(randf_range(1.5, 3.5)).timeout
 		if not loop_bolas_fogo: break
 		
 		var player_pos = player_ref.global_position if is_instance_valid(player_ref) else Vector3.ZERO
-		var start_x = player_pos.x + randf_range(20, 80)
-		var start_z = player_pos.z + randf_range(-50, 20)
-		var start_pos = Vector3(start_x, 10, start_z)
-		var end_pos = start_pos + Vector3(-50, 200, -50)
+		var start_x = player_pos.x + randf_range(30, 120)
+		var start_z = player_pos.z + randf_range(-100, 30)
+		var start_pos = Vector3(start_x, -10, start_z)
+		var end_pos = start_pos + Vector3(-120, 450, -100)
 		
-		_criar_bola_de_fogo(start_pos, end_pos, randf_range(2.0, 4.0))
+		_criar_bola_de_fogo(start_pos, end_pos, randf_range(4.0, 7.0))
 
 func _flicker_title_effect(label: Label, duration: float) -> void:
 	if not is_instance_valid(label): return
