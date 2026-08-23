@@ -24,6 +24,7 @@ var lightning_light: DirectionalLight3D = null
 var lightning_loop_active: bool = false
 
 # Controle de câmera dinâmica ("solta" / assíncrona)
+var loop_bolas_fogo: bool = false
 var active_cam: Camera3D = null
 var target_local_pos: Vector3 = Vector3.ZERO
 var target_local_rot: Vector3 = Vector3.ZERO
@@ -250,8 +251,8 @@ func _setup_anti_lopes() -> void:
 				if anims.size() > 0:
 					anim_player.play(anims[0])
 					
-		# 2. Tornar o modelo quase transparente (efeito fantasma com alpha 0.2)
-		_apply_transparency_to_node(anti_lopes_ref, 0.2)
+		# 2. Tornar o modelo meio transparente (efeito com alpha 0.45)
+		_apply_transparency_to_node(anti_lopes_ref, 0.45)
 
 func _apply_transparency_to_node(node: Node, alpha: float = 0.2) -> void:
 	if node is MeshInstance3D:
@@ -541,12 +542,16 @@ func cutscene_trailer_sequence() -> void:
 		var euler = cam_local_trans.basis.get_euler()
 		start_local_rot = Vector3(rad_to_deg(euler.x), rad_to_deg(euler.y), rad_to_deg(euler.z))
 	
+	# Força a câmera começar mais de baixo
+	var target_final_y = start_local_pos.y + 6.0
+	start_local_pos.y -= 4.0
+	
 	_switch_to_loose_camera(start_local_pos, start_local_rot, 3.5, 2.5)
 	
-	# Take 1: Começa da camera_1 e sobe 6 metros
+	# Take 1: Começa de baixo e sobe devagar
 	var tween_take1 = create_tween().set_parallel(true)
 	tween_take1.tween_property(self, "target_local_rot:x", -70.0, 4.0).set_trans(Tween.TRANS_SINE)
-	tween_take1.tween_property(self, "target_local_pos:y", start_local_pos.y + 6.0, 4.0).set_trans(Tween.TRANS_SINE)
+	tween_take1.tween_property(self, "target_local_pos:y", target_final_y, 4.0).set_trans(Tween.TRANS_SINE)
 	tween_take1.tween_property(self, "target_local_pos:z", start_local_pos.z, 4.0).set_trans(Tween.TRANS_SINE)
 	
 	# Segunda metade do take 1: mergulha na cabeça do player
@@ -586,13 +591,23 @@ func cutscene_trailer_sequence() -> void:
 	
 	# Maycow olha pra direita (-45 em Y) e pra cima (+60 em X) 
 	var tween_look_sky = create_tween().set_parallel(true)
-	tween_look_sky.tween_property(cam_fps_sky, "rotation_degrees:y", -45.0, 3.0).set_trans(Tween.TRANS_SINE)
-	tween_look_sky.tween_property(cam_fps_sky, "rotation_degrees:x", 60.0, 3.0).set_trans(Tween.TRANS_SINE)
+	tween_look_sky.tween_property(cam_fps_sky, "rotation_degrees:y", -45.0, 2.0).set_trans(Tween.TRANS_SINE)
+	tween_look_sky.tween_property(cam_fps_sky, "rotation_degrees:x", 60.0, 2.0).set_trans(Tween.TRANS_SINE)
 	
-	await get_tree().create_timer(6.0).timeout
+	# Lança a primeira bola de fogo que passa em direção ao céu
+	await get_tree().create_timer(1.0).timeout
+	var start_pos_fogo = player.global_position + Vector3(30, -5, -10)
+	var end_pos_fogo = start_pos_fogo + Vector3(10, 150, -40)
+	_criar_bola_de_fogo(start_pos_fogo, end_pos_fogo, 1.5)
+	_loop_bolas_de_fogo()
 	
-	# Volta a rotação
-	cam_fps_sky.rotation_degrees = Vector3.ZERO
+	await get_tree().create_timer(2.5).timeout
+	
+	# Volta a câmera para onde iniciou o take (olhando pra frente)
+	var tween_look_back = create_tween().set_parallel(true)
+	tween_look_back.tween_property(cam_fps_sky, "rotation_degrees:y", 0.0, 2.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	tween_look_back.tween_property(cam_fps_sky, "rotation_degrees:x", 0.0, 2.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	await tween_look_back.finished
 	
 	if model:
 		model.visible = true
@@ -733,115 +748,30 @@ func cutscene_trailer_sequence() -> void:
 		
 	await get_tree().create_timer(1.5).timeout
 	
-	# 5. REVELAÇÃO DO THE_ANTI_LOPES NO ESCURO TOTAL E TAMANHO DOBRADO
-	print("Revelando the_anti_lopes no fundo preto (caixa de void) com tamanho dobrado (escala 2)...")
+	# 5. REVELAÇÃO DO THE_ANTI_LOPES E ANIMAÇÃO FINAL
+	print("Removendo transparência e tocando animação 'final'...")
 	if is_instance_valid(anti_lopes_ref):
 		anti_lopes_ref.visible = true
-		_apply_transparency_to_node(anti_lopes_ref, 1.0)
-		anti_lopes_ref.scale = Vector3(2.0, 2.0, 2.0)
-		
-		# Reparenteia o the_anti_lopes para a cena principal para não ser escondido junto com o stage_1
-		var anti_parent = anti_lopes_ref.get_parent()
-		if anti_parent != get_tree().current_scene:
-			anti_parent.remove_child(anti_lopes_ref)
-			get_tree().current_scene.add_child(anti_lopes_ref)
-			
-		# Esconder o cenário inteiro para garantir fundo totalmente preto e sem obstáculos na frente
-		var root_children = get_tree().current_scene.get_children()
-		for child in root_children:
-			if child != self and child != anti_lopes_ref and child.name != "UI" and child is Node3D:
-				child.visible = false
-				
-		var anti_origin = anti_lopes_ref.global_position
-		
-		# Criar ambiente 100% escuro para a câmera (não precisamos de Mesh Box)
-		var cam_anti = Camera3D.new()
-		var anti_env = Environment.new()
-		anti_env.background_mode = Environment.BG_COLOR
-		anti_env.background_color = Color.BLACK
-		anti_env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-		anti_env.ambient_light_color = Color.BLACK
-		cam_anti.environment = anti_env
-		add_child(cam_anti)
-		
-		# Adicionar luz direcionada para o monstro para que ele não fique totalmente preto e invisível
-		var dir_light = DirectionalLight3D.new()
-		dir_light.light_color = Color(0.8, 0.9, 1.0)
-		dir_light.light_energy = 2.0
-		dir_light.rotation_degrees = Vector3(-30, 45, 0)
-		cam_anti.add_child(dir_light)
-		
-		# Uma luz de spot extra focada no rosto para garantir visibilidade total
-		var spot = SpotLight3D.new()
-		spot.light_color = Color(1.0, 0.8, 0.6)
-		spot.light_energy = 4.0
-		spot.spot_range = 10.0
-		spot.transform.origin = Vector3(0, 0, 0) # na câmera
-		cam_anti.add_child(spot)
-		
-		# Posicionar a câmera MAIS PARA CIMA e olhando para baixo
-		var pos_face = anti_origin + Vector3(0, 4.5, 2.5) # Câmera muito mais alta (4.5) e um pouco afastada (2.5)
-		cam_anti.global_position = pos_face
-		
-		# Aponta a câmera para o the_anti_lopes
-		cam_anti.look_at(anti_origin + Vector3(0, 1.5, 0), Vector3.UP)
-		
-		# Dá um zoom violento no monstro
-		cam_anti.fov = 25.0
-		cam_anti.make_current()
-		
-		# Luz dramática frontal ajustada para o tamanho normal (escala 1)
-		var anti_spot = SpotLight3D.new()
-		anti_spot.spot_range = 10.0
-		anti_spot.spot_angle = 50.0
-		anti_spot.light_energy = 8.0
-		anti_spot.light_color = Color(1.0, 0.25, 0.25)
-		anti_spot.global_position = anti_origin + Vector3(0, 2.5, 2.2)
-		anti_spot.look_at(anti_origin + Vector3(0, 1.0, 0), Vector3.UP)
-		add_child(anti_spot)
-		
-		var tween_reveal_fade = create_tween()
-		tween_reveal_fade.tween_property(ui_fader, "modulate:a", 0.08, 1.0)
-		
-		var tween_anti_cam = create_tween().set_parallel(true)
-		tween_anti_cam.tween_property(cam_anti, "global_position", pos_face, 5.0).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
-		
-		await tween_anti_cam.finished
-		cam_anti.look_at(anti_origin + Vector3(0, 1.6, 0), Vector3.UP)
-		
-		await get_tree().create_timer(2.0).timeout
-		
-	# 6. EFEITO PISCANTE NEON DO NOME DO JOGO "RED VALVE" (LETRAS MAIORES E SEM BORDA PRETA)
-	print("Exibindo logo 'Red Valve' em letras gigantes (200px) sem borda piscando no centro da tela...")
-	var title_canvas = CanvasLayer.new()
-	title_canvas.layer = 150
-	add_child(title_canvas)
+		_apply_transparency_to_node(anti_lopes_ref, 1.0) # Remove a transparência
+		anti_lopes_ref.scale = Vector3(1.0, 1.0, 1.0)
 	
-	var title_label = Label.new()
-	title_label.text = "RED VALVE"
-	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	title_label.set_anchors_preset(Control.PRESET_CENTER)
-	title_label.position = Vector2(-600, -130)
-	title_label.size = Vector2(1200, 260)
+	var anim_player = get_tree().current_scene.find_child("AnimationPlayer", true, false)
+	if anim_player and anim_player is AnimationPlayer:
+		anim_player.active = true
+		if anim_player.has_animation("final"):
+			anim_player.play("final")
+		else:
+			push_error("Animação 'final' não encontrada no AnimationPlayer da cena!")
 	
-	var font_file = load("res://assets/fonts/Montserrat-ExtraBold.ttf")
-	if font_file:
-		title_label.add_theme_font_override("font", font_file)
-	title_label.add_theme_font_size_override("font_size", 200)
-	title_label.add_theme_color_override("font_color", Color(1.0, 0.08, 0.08, 1.0))
-	title_label.modulate.a = 0.0
-	title_canvas.add_child(title_label)
-	
-	_flicker_title_effect(title_label, 4.5)
-	
-	await get_tree().create_timer(5.0).timeout
+	# Aguarda um tempo para a animação final tocar antes do encerramento
+	await get_tree().create_timer(7.0).timeout
 	
 	# Fade Out Final
 	var tween_final = create_tween()
 	tween_final.tween_property(ui_fader, "modulate:a", 1.0, 1.0)
 	await tween_final.finished
 	
+	loop_bolas_fogo = false
 	lightning_loop_active = false
 	if is_instance_valid(rain_audio_player): rain_audio_player.stop()
 	if is_instance_valid(old_film_layer): old_film_layer.queue_free()
@@ -850,6 +780,72 @@ func cutscene_trailer_sequence() -> void:
 	
 	GlobalEvents.in_cutscene = false
 	print("--- CUTSCENE TRAILER FINALIZADA COM SUCESSO ---")
+
+func _criar_bola_de_fogo(start_pos: Vector3, end_pos: Vector3, duration: float) -> void:
+	var fireball = Node3D.new()
+	add_child(fireball)
+	fireball.global_position = start_pos
+	
+	# Mesh da bola
+	var mesh_inst = MeshInstance3D.new()
+	var sphere = SphereMesh.new()
+	sphere.radius = 2.0
+	sphere.height = 4.0
+	var mat = StandardMaterial3D.new()
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.albedo_color = Color(1.0, 0.4, 0.0)
+	mat.emission_enabled = true
+	mat.emission = Color(1.0, 0.2, 0.0)
+	mat.emission_energy_multiplier = 5.0
+	mesh_inst.mesh = sphere
+	mesh_inst.set_surface_override_material(0, mat)
+	fireball.add_child(mesh_inst)
+	
+	# Som
+	var audio = AudioStreamPlayer3D.new()
+	audio.stream = load("res://assets/sounds/common/explosao.mp3")
+	audio.pitch_scale = randf_range(1.5, 2.0)
+	audio.volume_db = 0.0
+	fireball.add_child(audio)
+	audio.play()
+	
+	# Particulas de rastro
+	var parts = CPUParticles3D.new()
+	parts.amount = 100
+	parts.lifetime = 1.0
+	parts.local_coords = false
+	parts.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
+	parts.emission_sphere_radius = 2.0
+	parts.gravity = Vector3(0, 0, 0)
+	var pmesh = QuadMesh.new()
+	pmesh.size = Vector2(1, 1)
+	var pmat = StandardMaterial3D.new()
+	pmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	pmat.albedo_color = Color(1.0, 0.5, 0.0, 0.5)
+	pmat.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+	pmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	pmesh.material = pmat
+	parts.mesh = pmesh
+	fireball.add_child(parts)
+	
+	var tween = create_tween()
+	tween.tween_property(fireball, "global_position", end_pos, duration).set_trans(Tween.TRANS_LINEAR)
+	await tween.finished
+	fireball.queue_free()
+
+func _loop_bolas_de_fogo() -> void:
+	loop_bolas_fogo = true
+	while loop_bolas_fogo and GlobalEvents.in_cutscene:
+		await get_tree().create_timer(randf_range(1.0, 3.0)).timeout
+		if not loop_bolas_fogo: break
+		
+		var player_pos = player_ref.global_position if is_instance_valid(player_ref) else Vector3.ZERO
+		var start_x = player_pos.x + randf_range(20, 80)
+		var start_z = player_pos.z + randf_range(-50, 20)
+		var start_pos = Vector3(start_x, 10, start_z)
+		var end_pos = start_pos + Vector3(-50, 200, -50)
+		
+		_criar_bola_de_fogo(start_pos, end_pos, randf_range(2.0, 4.0))
 
 func _flicker_title_effect(label: Label, duration: float) -> void:
 	if not is_instance_valid(label): return
