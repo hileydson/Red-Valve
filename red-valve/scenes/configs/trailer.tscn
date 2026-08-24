@@ -23,7 +23,7 @@
 [ext_resource type="Texture2D" uid="uid://coe5bubbnvun" path="res://assets/3d_model/objects/portal_red_valve_Baked_BaseColor.png" id="18_1hqbt"]
 [ext_resource type="PackedScene" uid="uid://d161j6fsgneyo" path="res://assets/3d_model/enemies/the_anti_lopes.glb" id="19_1hqbt"]
 [ext_resource type="Texture2D" uid="uid://dxegk2o7j8ne6" path="res://assets/3d_model/enemies/the_anti_lopes_texture_0.png" id="22_iwubk"]
-[ext_resource type="PackedScene" uid="uid://bp3g31bhehe2p" path="res://assets/3d_model/enemies/the_anti_lopes_fbx/Meshy_AI_Anti_Lopes_biped_Character_output.fbx" id="22_netvv"]
+[ext_resource type="PackedScene" uid="uid://b3nsanvhd148v" path="res://assets/3d_model/enemies/the_anti_lopes_fbx/Meshy_AI_Anti_Lopes_biped_Animation_Idle_11_withSkin.fbx" id="23_6n8aq"]
 
 [sub_resource type="Environment" id="Environment_8aqow"]
 
@@ -80,8 +80,8 @@ shader_parameter/cirrus_absorption = 2.0
 shader_parameter/cirrus_sky_tint_fade = 0.5
 shader_parameter/cirrus_size = 1.0
 shader_parameter/cirrus_uv = Vector2(0.16, 0.11)
-shader_parameter/cirrus_position1 = Vector2(0.25183588, 0.25183588)
-shader_parameter/cirrus_position2 = Vector2(0.25183588, 0.25183588)
+shader_parameter/cirrus_position1 = Vector2(0.26120263, 0.26120263)
+shader_parameter/cirrus_position2 = Vector2(0.26120263, 0.26120263)
 shader_parameter/cirrus_texture = ExtResource("4_0otj5")
 shader_parameter/cumulus_visible = true
 shader_parameter/cumulus_intensity = 9.245
@@ -91,7 +91,7 @@ shader_parameter/cumulus_absorption = 2.0
 shader_parameter/cumulus_noise_freq = 2.7
 shader_parameter/cumulus_sky_tint_fade = 0.0
 shader_parameter/cumulus_size = 0.5
-shader_parameter/cumulus_position = Vector2(106.30434, 106.30434)
+shader_parameter/cumulus_position = Vector2(835.4314, 835.4314)
 shader_parameter/cumulus_texture = ExtResource("5_ahyst")
 shader_parameter/cumulus_partial_mie_phase = Vector3(0.957564, 1.042436, 0.412)
 shader_parameter/cumulus_mie_intensity = 1.0
@@ -216,42 +216,13 @@ tracks/7/keys = {
 "update": 1,
 "values": [true]
 }
-tracks/8/type = "value"
+tracks/8/type = "scale_3d"
 tracks/8/imported = false
 tracks/8/enabled = true
-tracks/8/path = NodePath("portal_red_valve/the_anti_lopes/Armature/GeneralSkeleton/char1/char1:transparency")
+tracks/8/path = NodePath("portal_red_valve/the_anti_lopes_fbx")
 tracks/8/interp = 1
 tracks/8/loop_wrap = true
-tracks/8/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [0.0]
-}
-tracks/9/type = "value"
-tracks/9/imported = false
-tracks/9/enabled = true
-tracks/9/path = NodePath("final/camera_final:current")
-tracks/9/interp = 1
-tracks/9/loop_wrap = true
-tracks/9/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
-tracks/10/type = "value"
-tracks/10/imported = false
-tracks/10/enabled = true
-tracks/10/path = NodePath("portal_red_valve/the_anti_lopes_fbx:visible")
-tracks/10/interp = 1
-tracks/10/loop_wrap = true
-tracks/10/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
+tracks/8/keys = PackedFloat32Array(0, 1, 1, 1, 1)
 
 [sub_resource type="Animation" id="Animation_yb25t"]
 resource_name = "final"
@@ -289,42 +260,13 @@ tracks/3/keys = {
 "update": 1,
 "values": [false]
 }
-tracks/4/type = "value"
+tracks/4/type = "scale_3d"
 tracks/4/imported = false
 tracks/4/enabled = true
-tracks/4/path = NodePath("portal_red_valve/the_anti_lopes/Armature/GeneralSkeleton/char1/char1:transparency")
+tracks/4/path = NodePath("portal_red_valve/the_anti_lopes_fbx")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
-tracks/4/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [0.0]
-}
-tracks/5/type = "value"
-tracks/5/imported = false
-tracks/5/enabled = true
-tracks/5/path = NodePath("final/camera_final:current")
-tracks/5/interp = 1
-tracks/5/loop_wrap = true
-tracks/5/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-tracks/6/type = "value"
-tracks/6/imported = false
-tracks/6/enabled = true
-tracks/6/path = NodePath("portal_red_valve/the_anti_lopes_fbx:visible")
-tracks/6/interp = 1
-tracks/6/loop_wrap = true
-tracks/6/keys = {
-"times": PackedFloat32Array(0.033333335),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
+tracks/4/keys = PackedFloat32Array(0.033333335, 1, 0.001, 0.001, 0.001, 7.7, 1, 0.001, 0.001, 0.001, 7.8333335, 1, 7, 7, 7)
 
 [sub_resource type="Animation" id="Animation_8aqow"]
 resource_name = "intro"
@@ -708,12 +650,55 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.33622742)
 [node name="OmniLight3D2" type="OmniLight3D" parent="portal_red_valve" unique_id=429502884]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.6897776, 0.33622742)
 
-[node name="the_anti_lopes_fbx" parent="portal_red_valve" unique_id=334487649 instance=ExtResource("22_netvv")]
-transform = Transform3D(6, 0, 0, 0, 6, 0, 0, 0, 6, 0, -0.73817384, -0.9794159)
-visible = false
+[node name="the_anti_lopes_fbx" parent="portal_red_valve" unique_id=1244123182 instance=ExtResource("23_6n8aq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.63094884, -0.9794159)
 
 [node name="the_anti_lopes" parent="portal_red_valve" unique_id=436535712 instance=ExtResource("19_1hqbt")]
 transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0, -0.92475736, -1.4068756)
+
+[node name="GeneralSkeleton" parent="portal_red_valve/the_anti_lopes/Armature" parent_id_path=PackedInt32Array(436535712, 1015054220) index="0" unique_id=1375841020]
+bones/0/position = Vector3(-1.4708925, 53.31974, 3.5152068)
+bones/0/rotation = Quaternion(0.85073394, -0.45266938, -0.16484724, -0.21016128)
+bones/1/position = Vector3(12.65081, -6.07885, 0.8047638)
+bones/1/rotation = Quaternion(-0.6011451, -0.42564067, -0.52910376, 0.42131197)
+bones/2/position = Vector3(4.480502e-06, 22.75544, -1.0423522e-05)
+bones/2/rotation = Quaternion(0.6694306, 0.15000743, -0.068884216, 0.7243035)
+bones/3/rotation = Quaternion(-0.5905546, 0.039327852, 0.27664006, 0.75707924)
+bones/4/rotation = Quaternion(-0.5273496, -0.065484606, 0.001557705, 0.8471197)
+bones/5/rotation = Quaternion(-0.46686745, 0.5031849, -0.095543005, 0.72091013)
+bones/6/position = Vector3(8.49229e-06, 22.550047, 8.355437e-06)
+bones/6/rotation = Quaternion(0.5402653, -0.112978, 0.036510486, 0.8330764)
+bones/7/rotation = Quaternion(-0.3396347, 0.07858645, -0.2668417, 0.8984809)
+bones/8/position = Vector3(-2.5670408e-07, 15.406781, -4.991947e-06)
+bones/8/rotation = Quaternion(-0.51885116, 0.052783974, 0.004766489, 0.8532202)
+bones/9/rotation = Quaternion(0.8473873, -0.38120142, 0.028312424, 0.36853564)
+bones/10/position = Vector3(5.5507076e-07, 14.955979, 6.9662974e-07)
+bones/10/rotation = Quaternion(0.18554477, -0.0022343916, 0.003724291, 0.9826263)
+bones/11/position = Vector3(2.1836303e-07, 14.955981, -2.3476546e-06)
+bones/11/rotation = Quaternion(-0.10754188, 0.0057194, -0.0052854843, 0.99417007)
+bones/12/position = Vector3(4.8404274, 5.427477, -1.0168989)
+bones/12/rotation = Quaternion(0.58922637, 0.5508628, -0.25636813, 0.5325767)
+bones/13/position = Vector3(2.0611826e-06, 20.000368, 1.3570148e-06)
+bones/13/rotation = Quaternion(-0.06101004, 0.5457372, 0.6235952, 0.5563972)
+bones/14/position = Vector3(7.894473e-07, 24.980486, 5.4597863e-06)
+bones/14/rotation = Quaternion(-0.295327, -0.14373912, -0.04616624, 0.9433927)
+bones/15/position = Vector3(4.0587565e-07, 20.881632, -3.8606363e-06)
+bones/15/rotation = Quaternion(0.24922988, -0.015500149, 0.13937882, 0.9582369)
+bones/16/position = Vector3(-4.763896, 5.174075, -1.3869581)
+bones/16/rotation = Quaternion(-0.64686906, 0.50885135, -0.30781206, -0.4773705)
+bones/17/position = Vector3(1.206364e-07, 18.982414, 1.907447e-06)
+bones/17/rotation = Quaternion(-0.3245544, 0.55222756, 0.49201497, -0.58960193)
+bones/18/position = Vector3(6.2103254e-07, 24.970549, -3.1207683e-06)
+bones/18/rotation = Quaternion(-0.5318585, 0.12764305, -0.037192836, 0.83633155)
+bones/19/position = Vector3(-2.8522456e-06, 21.226469, -1.9886927e-06)
+bones/19/rotation = Quaternion(-0.07446483, 0.35040745, 0.19924061, 0.91212547)
+bones/20/position = Vector3(-0.07653329, 12.048318, 2.4038665)
+bones/20/rotation = Quaternion(0.033009525, -0.14335965, 0.055611044, 0.9875555)
+bones/21/position = Vector3(1.4091215e-06, 6.948782, -5.586877e-06)
+bones/21/rotation = Quaternion(0.67358625, -0.066292524, 0.08970878, 0.73064303)
+bones/22/position = Vector3(0.21692832, 2.7789242, -8.353628)
+bones/22/rotation = Quaternion(-0.5847998, -1.7741085e-08, -0.015186035, 0.8110355)
+bones/23/rotation = Quaternion(0.1535666, -8.42561e-08, 0.003987809, 0.9881303)
 
 [node name="char1" parent="portal_red_valve/the_anti_lopes/Armature/GeneralSkeleton/char1" parent_id_path=PackedInt32Array(436535712, 1345097819) index="0" unique_id=1538079516]
 material_override = SubResource("StandardMaterial3D_bqph1")
@@ -727,7 +712,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.42811, 0, -235.99194)
 [node name="final" type="Node3D" parent="." unique_id=2056723904]
 
 [node name="camera_final" type="Camera3D" parent="final" unique_id=321980557]
-transform = Transform3D(0.6127001, 0, 0.7903155, 0, 1, 0, -0.7903155, 0, 0.6127001, -8.601997, 1.6562791, -236.18431)
+transform = Transform3D(0.61312675, 0, 0.7899845, 0, 1, 0, -0.7899845, 0, 0.61312675, -8.601997, 1.6562791, -236.18431)
+current = true
+
+[node name="camera_pose_monstro" type="Camera3D" parent="final" unique_id=772639244]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.394175, 3.0895414, -235.36383)
 
 [editable path="portal_red_valve"]
 [editable path="portal_red_valve/the_anti_lopes"]
