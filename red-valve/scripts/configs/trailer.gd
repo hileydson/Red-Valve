@@ -97,15 +97,20 @@ func _process(delta: float) -> void:
 	if is_instance_valid(rain_particles):
 		rain_particles.global_position = active_cam.global_position + Vector3(0, 8.0, 0)
 
-	# 1. Movimento de câmera solta com assincronia / atraso orgânico (Lerp Damping)
+	# 1. Movimento de câmera solta com assincronia / atraso orgânico (Lerp Damping) e balanço suave de caminhada
 	if is_loose_camera_active:
+		head_bob_time += delta * 4.5
+		var sway_x = cos(head_bob_time) * 0.012
+		var sway_y = sin(head_bob_time * 2.0) * 0.012
+		var sway_rot_z = cos(head_bob_time) * 0.15
+		
 		var target_world_trans = player_ref.global_transform * Transform3D(
 			Basis.from_euler(Vector3(
 				deg_to_rad(target_local_rot.x),
 				deg_to_rad(target_local_rot.y),
-				deg_to_rad(target_local_rot.z)
+				deg_to_rad(target_local_rot.z + sway_rot_z)
 			)),
-			target_local_pos
+			target_local_pos + Vector3(sway_x, sway_y, 0)
 		)
 		active_cam.global_position = active_cam.global_position.lerp(target_world_trans.origin, delta * cam_follow_speed)
 		active_cam.global_basis = active_cam.global_basis.slerp(target_world_trans.basis, delta * cam_rot_speed)
@@ -115,9 +120,10 @@ func _process(delta: float) -> void:
 		var is_running = (head_bob_intensity > 0.5)
 		head_bob_time += delta * (14.0 if is_running else 4.5)
 		
-		var amp_y = 0.08 if is_running else 0.01
-		var amp_x = 0.05 if is_running else 0.005
-		var amp_z = 3.0 if is_running else 0.25
+		var walking_mult = clamp(head_bob_intensity, 0.05, 1.0)
+		var amp_y = 0.08 if is_running else (0.008 * walking_mult)
+		var amp_x = 0.05 if is_running else (0.004 * walking_mult)
+		var amp_z = 3.0 if is_running else (0.15 * walking_mult)
 		
 		var offset_y = sin(head_bob_time * 2.0) * amp_y
 		var offset_x = cos(head_bob_time) * amp_x
@@ -568,10 +574,13 @@ func cutscene_trailer_sequence() -> void:
 	tween_take1_p2.parallel().tween_property(self, "target_local_pos:y", 1.6, 3.5).set_trans(Tween.TRANS_SINE)
 	tween_take1_p2.parallel().tween_property(self, "target_local_pos:z", -0.5, 3.5).set_trans(Tween.TRANS_SINE)
 	
-	# Zoom extra de FOV na câmera solta
+	# Zoom sutil contínuo desde o início do Take 1
 	if is_instance_valid(active_cam):
+		active_cam.fov = 70.0
 		var tween_zoom_take1 = create_tween()
-		tween_zoom_take1.tween_interval(4.5)
+		# Primeira parte (0s a 4.5s): zoom sutil de 70 para 55 enquanto sobe
+		tween_zoom_take1.tween_property(active_cam, "fov", 55.0, 4.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		# Segunda parte (4.5s a 8.0s): mergulho na cabeça em 1ª pessoa, de 55 para 35 e finaliza em 15
 		tween_zoom_take1.tween_property(active_cam, "fov", 35.0, 3.0).set_trans(Tween.TRANS_SINE)
 		tween_zoom_take1.tween_property(active_cam, "fov", 15.0, 0.5).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
 	
@@ -584,6 +593,12 @@ func cutscene_trailer_sequence() -> void:
 	print("Take 2: Primeira pessoa, olhando para direita e para o céu (6s)...")
 	is_loose_camera_active = false
 	if is_instance_valid(active_cam): active_cam.queue_free()
+	
+	if is_instance_valid(player):
+		player.velocity = Vector3.ZERO
+		if player.global_position.y < inicio.global_position.y:
+			player.global_position.y = inicio.global_position.y
+		player.apply_floor_snap()
 	
 	var cam_fps_sky = Camera3D.new()
 	add_child(cam_fps_sky)
@@ -672,6 +687,13 @@ func cutscene_trailer_sequence() -> void:
 	
 	var tween_fov = create_tween()
 	tween_fov.tween_property(cam_fps_walk, "fov", 92.0, tempo_sprint).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	
+	# Toca os nós de som 'AntesFinal' e 'FinalZoom' presentes na cena na aproximação da corrida
+	var tween_som_final = create_tween()
+	tween_som_final.tween_interval(2.4)
+	tween_som_final.tween_callback(func():
+		_tocar_sons_simultaneos("AntesFinal", "FinalZoom")
+	)
 	
 	await tween_corrida.finished
 	print("Chegou à porta! Iniciando zoom LEVE no portal_red_valve...")
@@ -840,6 +862,9 @@ func cutscene_trailer_sequence() -> void:
 	title_label.modulate.a = 0.0
 	title_canvas.add_child(title_label)
 	
+	# Toca os nós de som 'LabelFinal' e 'Glitch' da cena no momento exato em que a frase "RED VALVE" aparece
+	_tocar_sons_simultaneos("LabelFinal", "Glitch")
+	
 	_flicker_title_effect(title_label, 4.5)
 	
 	# Aguarda o final
@@ -976,6 +1001,31 @@ func _loop_bolas_de_fogo() -> void:
 		var end_pos = start_pos + Vector3(-120, 450, -100)
 		
 		_criar_bola_de_fogo(start_pos, end_pos, randf_range(4.0, 7.0))
+
+func _tocar_sons_simultaneos(val1: String, val2: String, volume_db: float = 0.0) -> void:
+	_tocar_som(val1, volume_db)
+	_tocar_som(val2, volume_db)
+
+func _tocar_som(val: String, volume_db: float = 0.0) -> void:
+	# 1. Tenta buscar pelo nome do nó na cena (ex: "LabelFinal", "Glitch", "AntesFinal", "FinalZoom")
+	var sound_node = get_node_or_null(val)
+	if not sound_node and get_tree() and get_tree().current_scene:
+		sound_node = get_tree().current_scene.find_child(val, true, false)
+	
+	if sound_node and sound_node.has_method("play"):
+		sound_node.play()
+		return
+		
+	# 2. Se não for um nó e sim um caminho "res://...", carrega o stream como fallback
+	if val.begins_with("res://"):
+		var stream = load(val)
+		if stream:
+			var p = AudioStreamPlayer.new()
+			p.stream = stream
+			p.volume_db = volume_db
+			add_child(p)
+			p.play()
+			p.finished.connect(p.queue_free)
 
 func _flicker_title_effect(label: Label, duration: float) -> void:
 	if not is_instance_valid(label): return

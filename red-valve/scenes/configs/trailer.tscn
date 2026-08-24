@@ -12,9 +12,13 @@
 [ext_resource type="AudioStream" uid="uid://derqonxkdoy1u" path="res://assets/sounds/episodios/trailer/storms.mp3" id="4_yb25t"]
 [ext_resource type="Texture2D" uid="uid://cecwdqjol0ckd" path="res://addons/sky_3d/assets/textures/noiseClouds.png" id="5_ahyst"]
 [ext_resource type="Texture2D" uid="uid://2r8ylu6rg5dp" path="res://addons/sky_3d/assets/thirdparty/textures/moon/MoonMap.png" id="6_1hqbt"]
+[ext_resource type="AudioStream" uid="uid://dbvjx2b5wjw0i" path="res://assets/sounds/episodios/trailer/antes_final.mp3" id="6_60478"]
 [ext_resource type="Script" uid="uid://uysankokmyu3" path="res://scripts/configs/camera_current.gd" id="6_dnp2e"]
 [ext_resource type="Texture2D" uid="uid://djpfuyxkryegn" path="res://addons/sky_3d/assets/textures/noise.jpg" id="7_mu1kp"]
+[ext_resource type="AudioStream" uid="uid://dgqrd7k5nlf82" path="res://assets/sounds/episodios/trailer/final_zoom.mp3" id="7_txgwe"]
 [ext_resource type="Texture2D" uid="uid://bm7dot7t7u1q4" path="res://addons/sky_3d/assets/thirdparty/textures/milkyway/StarField.jpg" id="8_yb25t"]
+[ext_resource type="AudioStream" uid="uid://b4ja02qdbbr2f" path="res://assets/sounds/episodios/trailer/glitch.mp3" id="8_ykhks"]
+[ext_resource type="AudioStream" uid="uid://dwg2ywvxystxk" path="res://assets/sounds/episodios/trailer/label_final.mp3" id="9_6jj2y"]
 [ext_resource type="Texture2D" uid="uid://c1vwcdcdvb74a" path="res://addons/sky_3d/assets/thirdparty/textures/milkyway/Milkyway.jpg" id="9_iwubk"]
 [ext_resource type="Script" uid="uid://deo0gxkmk2ahd" path="res://addons/sky_3d/src/Sky3D.gd" id="10_bqph1"]
 [ext_resource type="Script" uid="uid://b4tkplvh7fq40" path="res://addons/sky_3d/src/SkyDome.gd" id="11_netvv"]
@@ -80,8 +84,8 @@ shader_parameter/cirrus_absorption = 2.0
 shader_parameter/cirrus_sky_tint_fade = 0.5
 shader_parameter/cirrus_size = 1.0
 shader_parameter/cirrus_uv = Vector2(0.16, 0.11)
-shader_parameter/cirrus_position1 = Vector2(0.26120263, 0.26120263)
-shader_parameter/cirrus_position2 = Vector2(0.26120263, 0.26120263)
+shader_parameter/cirrus_position1 = Vector2(0.1481563, 0.1481563)
+shader_parameter/cirrus_position2 = Vector2(0.1481563, 0.1481563)
 shader_parameter/cirrus_texture = ExtResource("4_0otj5")
 shader_parameter/cumulus_visible = true
 shader_parameter/cumulus_intensity = 9.245
@@ -91,7 +95,7 @@ shader_parameter/cumulus_absorption = 2.0
 shader_parameter/cumulus_noise_freq = 2.7
 shader_parameter/cumulus_sky_tint_fade = 0.0
 shader_parameter/cumulus_size = 0.5
-shader_parameter/cumulus_position = Vector2(835.4314, 835.4314)
+shader_parameter/cumulus_position = Vector2(930.7039, 930.7039)
 shader_parameter/cumulus_texture = ExtResource("5_ahyst")
 shader_parameter/cumulus_partial_mie_phase = Vector3(0.957564, 1.042436, 0.412)
 shader_parameter/cumulus_mie_intensity = 1.0
@@ -223,6 +227,13 @@ tracks/8/path = NodePath("portal_red_valve/the_anti_lopes_fbx")
 tracks/8/interp = 1
 tracks/8/loop_wrap = true
 tracks/8/keys = PackedFloat32Array(0, 1, 1, 1, 1)
+tracks/9/type = "scale_3d"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("portal_red_valve/the_anti_lopes")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = PackedFloat32Array(0, 1, 1, 1, 1)
 
 [sub_resource type="Animation" id="Animation_yb25t"]
 resource_name = "final"
@@ -266,7 +277,14 @@ tracks/4/enabled = true
 tracks/4/path = NodePath("portal_red_valve/the_anti_lopes_fbx")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
-tracks/4/keys = PackedFloat32Array(0.033333335, 1, 0.001, 0.001, 0.001, 7.7, 1, 0.001, 0.001, 0.001, 7.8333335, 1, 7, 7, 7)
+tracks/4/keys = PackedFloat32Array(0, 1, 0.001, 0.001, 0.001, 0.03333333, 1, 7, 7, 7)
+tracks/5/type = "scale_3d"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("portal_red_valve/the_anti_lopes")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = PackedFloat32Array(0, 1, 1, 1, 1, 0.03333333, 1, 0.001, 0.001, 0.001)
 
 [sub_resource type="Animation" id="Animation_8aqow"]
 resource_name = "intro"
@@ -560,7 +578,24 @@ pitch_scale = 0.54
 
 [node name="Storms" type="AudioStreamPlayer" parent="." unique_id=2109021185]
 stream = ExtResource("4_yb25t")
+volume_db = -1.486
 autoplay = true
+
+[node name="AntesFinal" type="AudioStreamPlayer" parent="." unique_id=866739584]
+stream = ExtResource("6_60478")
+
+[node name="FinalZoom" type="AudioStreamPlayer" parent="." unique_id=1417639414]
+stream = ExtResource("7_txgwe")
+volume_db = 4.457
+pitch_scale = 0.41
+
+[node name="Glitch" type="AudioStreamPlayer" parent="." unique_id=1683670720]
+stream = ExtResource("8_ykhks")
+volume_db = 2.229
+
+[node name="LabelFinal" type="AudioStreamPlayer" parent="." unique_id=1088075584]
+stream = ExtResource("9_6jj2y")
+pitch_scale = 1.21
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1368177264]
 environment = SubResource("Environment_8aqow")
@@ -651,10 +686,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.33622742)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.6897776, 0.33622742)
 
 [node name="the_anti_lopes_fbx" parent="portal_red_valve" unique_id=1244123182 instance=ExtResource("23_6n8aq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.63094884, -0.9794159)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5412552, -0.7593994)
 
 [node name="the_anti_lopes" parent="portal_red_valve" unique_id=436535712 instance=ExtResource("19_1hqbt")]
-transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0, -0.92475736, -1.4068756)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.92475736, -1.4068756)
 
 [node name="GeneralSkeleton" parent="portal_red_valve/the_anti_lopes/Armature" parent_id_path=PackedInt32Array(436535712, 1015054220) index="0" unique_id=1375841020]
 bones/0/position = Vector3(-1.4708925, 53.31974, 3.5152068)
@@ -712,11 +747,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.42811, 0, -235.99194)
 [node name="final" type="Node3D" parent="." unique_id=2056723904]
 
 [node name="camera_final" type="Camera3D" parent="final" unique_id=321980557]
-transform = Transform3D(0.61312675, 0, 0.7899845, 0, 1, 0, -0.7899845, 0, 0.61312675, -8.601997, 1.6562791, -236.18431)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.601997, 1.6562791, -236.18431)
 current = true
 
 [node name="camera_pose_monstro" type="Camera3D" parent="final" unique_id=772639244]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.394175, 3.0895414, -235.36383)
+transform = Transform3D(0.69371617, 0, -0.7202485, 0, 1, 0, 0.7202485, 0, 0.69371617, -8.8749485, 3.3308191, -236.27185)
+
+[node name="OmniLight3D" type="OmniLight3D" parent="final/camera_pose_monstro" unique_id=1430594082]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5651093, 0.17366123, -1.4246216)
 
 [editable path="portal_red_valve"]
 [editable path="portal_red_valve/the_anti_lopes"]
