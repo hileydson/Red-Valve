@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://b7pdlllpih4yc"]
+
+[ext_resource type="PackedScene" uid="uid://dy356o67p6jyn" path="res://scenes/configs/fade.tscn" id="1_ugcn7"]
+
+[node name="cutscene" type="Node2D" unique_id=796399776]
+
+[node name="fade" parent="." unique_id=158118564 instance=ExtResource("1_ugcn7")]
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=533281826]
+offset_right = 1939.0
+offset_bottom = 157.0
+color = Color(0, 0, 0, 1)
+
+[node name="ColorRect2" type="ColorRect" parent="." unique_id=771182458]
+offset_left = -6.0
+offset_top = 938.0
+offset_right = 1933.0
+offset_bottom = 1095.0
+color = Color(0, 0, 0, 1)
