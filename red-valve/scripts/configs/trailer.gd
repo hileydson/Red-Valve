@@ -762,8 +762,8 @@ func cutscene_trailer_sequence() -> void:
 	# 5. REVELAÇÃO DO THE_ANTI_LOPES E ANIMAÇÃO FINAL
 	print("Removendo transparência e tocando animação 'final'...")
 	
-	# Mudar para a camera_final
-	var cam_final = get_tree().current_scene.get_node_or_null("camera_final") as Camera3D
+	# Mudar para a camera_final (usando find_child para encontrar em $final/camera_final)
+	var cam_final = get_tree().current_scene.find_child("camera_final", true, false) as Camera3D
 	if cam_final and cam_final is Camera3D:
 		cam_final.make_current()
 	else:
@@ -774,7 +774,7 @@ func cutscene_trailer_sequence() -> void:
 		anti_lopes_ref.visible = true
 		_apply_transparency_to_node(anti_lopes_ref, 1.0) # Remove a transparência
 	
-	var anim_player = get_tree().current_scene.find_child("AnimationPlayer", true, false)
+	var anim_player = get_tree().current_scene.find_child("AnimationPlayer", true, false) as AnimationPlayer
 	if anim_player and anim_player is AnimationPlayer:
 		anim_player.active = true
 		if anim_player.has_animation("final"):
@@ -783,30 +783,34 @@ func cutscene_trailer_sequence() -> void:
 				var track_path = String(anim.track_get_path(i))
 				if "camera_final" in track_path:
 					anim.track_set_enabled(i, false)
-			$final/camera_final.make_current()
 			anim_player.play("final")
 		else:
 			push_error("Animação 'final' não encontrada no AnimationPlayer da cena!")
 	
-	# Órbita da câmera em volta do the_anti_lopes no take final
+	# Reforça make_current logo após disparar a animação
+	if is_instance_valid(cam_final):
+		cam_final.make_current()
+	
+	# Órbita ampla da câmera em volta do monstro gigante the_anti_lopes (escala 3x)
 	if is_instance_valid(anti_lopes_ref) and is_instance_valid(cam_final):
-		var target_center = anti_lopes_ref.global_position + Vector3(0, 1.6, 0)
+		var target_center = anti_lopes_ref.global_position + Vector3(0, 4.5, 0)
 		var rel_vec = cam_final.global_position - target_center
 		var radius = Vector2(rel_vec.x, rel_vec.z).length()
-		if radius < 1.0:
-			radius = 4.5
+		if radius < 6.0:
+			radius = 8.5 # Raio amplo para envolver o monstro gigante
+			
 		var start_angle = atan2(rel_vec.x, rel_vec.z)
-		var height_offset = cam_final.global_position.y - target_center.y
+		var height_offset = 2.0 # Levemente elevado focando o tórax/cabeça
 		
 		var orbit_duration = 7.5
 		var orbit_tween = create_tween().set_parallel(true)
 		orbit_tween.tween_method(func(ang: float):
 			if is_instance_valid(cam_final) and is_instance_valid(anti_lopes_ref):
-				var center = anti_lopes_ref.global_position + Vector3(0, 1.6, 0)
+				var center = anti_lopes_ref.global_position + Vector3(0, 4.5, 0)
 				var new_pos = center + Vector3(sin(ang) * radius, height_offset, cos(ang) * radius)
 				cam_final.global_position = new_pos
 				cam_final.look_at(center, Vector3.UP)
-		, start_angle, start_angle + deg_to_rad(180.0), orbit_duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		, start_angle, start_angle + deg_to_rad(240.0), orbit_duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	
 	# Faz a tela escura sumir revelando a cena no take final
 	var tween_reveal = create_tween()

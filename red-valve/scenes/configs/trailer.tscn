@@ -80,8 +80,8 @@ shader_parameter/cirrus_absorption = 2.0
 shader_parameter/cirrus_sky_tint_fade = 0.5
 shader_parameter/cirrus_size = 1.0
 shader_parameter/cirrus_uv = Vector2(0.16, 0.11)
-shader_parameter/cirrus_position1 = Vector2(0.6505666, 0.6505666)
-shader_parameter/cirrus_position2 = Vector2(0.6505666, 0.6505666)
+shader_parameter/cirrus_position1 = Vector2(0.25183588, 0.25183588)
+shader_parameter/cirrus_position2 = Vector2(0.25183588, 0.25183588)
 shader_parameter/cirrus_texture = ExtResource("4_0otj5")
 shader_parameter/cumulus_visible = true
 shader_parameter/cumulus_intensity = 9.245
@@ -91,7 +91,7 @@ shader_parameter/cumulus_absorption = 2.0
 shader_parameter/cumulus_noise_freq = 2.7
 shader_parameter/cumulus_sky_tint_fade = 0.0
 shader_parameter/cumulus_size = 0.5
-shader_parameter/cumulus_position = Vector2(83.28731, 83.28731)
+shader_parameter/cumulus_position = Vector2(106.30434, 106.30434)
 shader_parameter/cumulus_texture = ExtResource("5_ahyst")
 shader_parameter/cumulus_partial_mie_phase = Vector3(0.957564, 1.042436, 0.412)
 shader_parameter/cumulus_mie_intensity = 1.0
@@ -315,7 +315,7 @@ tracks/5/keys = {
 }
 tracks/6/type = "value"
 tracks/6/imported = false
-tracks/6/enabled = false
+tracks/6/enabled = true
 tracks/6/path = NodePath("portal_red_valve/the_anti_lopes_fbx:visible")
 tracks/6/interp = 1
 tracks/6/loop_wrap = true
@@ -709,7 +709,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.33622742)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.6897776, 0.33622742)
 
 [node name="the_anti_lopes_fbx" parent="portal_red_valve" unique_id=334487649 instance=ExtResource("22_netvv")]
-transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0, -0.73817384, -0.9794159)
+transform = Transform3D(6, 0, 0, 0, 6, 0, 0, 0, 6, 0, -0.73817384, -0.9794159)
 visible = false
 
 [node name="the_anti_lopes" parent="portal_red_valve" unique_id=436535712 instance=ExtResource("19_1hqbt")]
