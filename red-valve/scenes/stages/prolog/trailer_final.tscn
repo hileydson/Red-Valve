@@ -1,11 +1,11 @@
 [gd_scene format=3 uid="uid://bagmr36u0yar0"]
 
+[ext_resource type="PackedScene" uid="uid://d161j6fsgneyo" path="res://assets/3d_model/enemies/the_anti_lopes.glb" id="1_1tj1s"]
 [ext_resource type="Script" uid="uid://b1tdhs50yxqyh" path="res://scripts/stages/prolog/trailer_final.gd" id="1_iom4l"]
-[ext_resource type="PackedScene" uid="uid://crkxxi1o4ijrv" path="res://scenes/enemies/the_anti_lopes.tscn" id="2_1tj1s"]
+[ext_resource type="Texture2D" uid="uid://cnl060wwqxao2" path="res://assets/3d_model/enemies/the_anti_lopes_texture_0_1.png" id="3_iom4l"]
 
 [sub_resource type="Environment" id="Environment_default"]
 background_mode = 1
-background_color = Color(0.33660764, 0.3366076, 0.3366076, 1)
 ambient_light_source = 2
 ambient_light_color = Color(0.15, 0.15, 0.15, 1)
 
@@ -51,13 +51,11 @@ _data = {
 &"final": SubResource("Animation_1aeem")
 }
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_iom4l"]
-size = Vector3(7.763916, 1, 8.272339)
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_uk6nh"]
+albedo_texture = ExtResource("3_iom4l")
 
 [node name="trailer_final" type="Node3D" unique_id=1270647500]
 script = ExtResource("1_iom4l")
-
-[node name="the_anti_lopes" parent="." unique_id=142957354 instance=ExtResource("2_1tj1s")]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1319742707]
 environment = SubResource("Environment_default")
@@ -79,13 +77,13 @@ libraries/ = SubResource("AnimationLibrary_ruh4j")
 autoplay = &"final"
 
 [node name="camera_final" type="Camera3D" parent="." unique_id=1069107752]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9555913, 4.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 4.5)
 current = true
 
-[node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=1783591006]
-collision_layer = 7
-collision_mask = 7
+[node name="the_anti_lopes" parent="." unique_id=436535712 instance=ExtResource("1_1tj1s")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=1490655837]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8111572, 0, 3.6361694)
-shape = SubResource("BoxShape3D_iom4l")
+[node name="char1" parent="the_anti_lopes/Armature/GeneralSkeleton/char1" parent_id_path=PackedInt32Array(436535712, 895530055) index="0" unique_id=149700768]
+material_override = SubResource("StandardMaterial3D_uk6nh")
+
+[editable path="the_anti_lopes"]
