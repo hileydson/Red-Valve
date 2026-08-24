@@ -1,0 +1,91 @@
+[gd_scene format=3 uid="uid://dcj1wphufpcap"]
+
+[ext_resource type="Script" path="res://scripts/stages/prolog/trailer_final.gd" id="1_iom4l"]
+[ext_resource type="PackedScene" uid="uid://cmarh053v7v8r" path="res://scenes/enemies/the_anti_lopes.tscn" id="2_1tj1s"]
+
+[sub_resource type="Environment" id="Environment_default"]
+background_mode = 1
+background_color = Color(0.33660764, 0.3366076, 0.3366076, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.15, 0.15, 0.15, 1)
+
+[sub_resource type="Animation" id="Animation_1aeem"]
+resource_name = "final"
+length = 11.033334
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("camera_final")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 0, 1.2, 4.5, 5, 1, 0, 1.5, 4, 10, 1, 0, 1.7, 4.2)
+tracks/1/type = "rotation_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("camera_final")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, 0, 0, 0, 1, 5, 1, 0, 0, 0, 1, 10, 1, 0, 0, 0, 1)
+tracks/2/type = "scale_3d"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("camera_final")
+tracks/2/interp = 2
+tracks/2/loop_wrap = true
+tracks/2/keys = PackedFloat32Array(0, 1, 1, 1, 1, 5, 1, 1, 1, 1, 10, 1, 1, 1, 1)
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("camera_final:current")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_ruh4j"]
+_data = {
+&"final": SubResource("Animation_1aeem")
+}
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_iom4l"]
+size = Vector3(7.763916, 1, 8.272339)
+
+[node name="trailer_final" type="Node3D" unique_id=1270647500]
+script = ExtResource("1_iom4l")
+
+[node name="the_anti_lopes" parent="." unique_id=142957354 instance=ExtResource("2_1tj1s")]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1319742707]
+environment = SubResource("Environment_default")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=673590402]
+transform = Transform3D(0.866025, -0.25, 0.433013, 0, 0.866025, 0.5, -0.5, -0.433013, 0.75, 0, 5, 0)
+light_color = Color(1, 0.95, 0.9, 1)
+light_energy = 1.5
+shadow_enabled = true
+
+[node name="SpotLight3D" type="SpotLight3D" parent="." unique_id=1968875484]
+transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 0, 3, 4)
+light_color = Color(0.9, 0.95, 1, 1)
+light_energy = 3.0
+spot_range = 10.0
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=376023064]
+libraries/ = SubResource("AnimationLibrary_ruh4j")
+autoplay = &"final"
+
+[node name="camera_final" type="Camera3D" parent="." unique_id=1069107752]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9555913, 4.5)
+current = true
+
+[node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=1783591006]
+collision_layer = 7
+collision_mask = 7
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=1490655837]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8111572, 0, 3.6361694)
+shape = SubResource("BoxShape3D_iom4l")
