@@ -952,38 +952,38 @@ func cutscene_trailer_sequence() -> void:
 		if "playback" in player_ref:
 			player_ref.playback.travel("idle")
 			
-		var target_center = player_ref.global_position + Vector3(0, 0.7, 0) # Foco mais baixo para o personagem "subir" na tela
+		# O pivot do jogador costuma ficar no centro (Y=1.0). Para abaixar a câmera, precisamos SUBTRAIR desse valor.
+		var target_center = player_ref.global_position + Vector3(0, 0.4, 0) 
 		var rel_vec = cam_final.global_position - target_center
-		var radius = Vector2(rel_vec.x, rel_vec.z).length()
+		var start_radius = Vector2(rel_vec.x, rel_vec.z).length()
+		var end_radius = 1.3 # Zoom bem perto nas costas
 		
-		# Zoom ainda MAIOR (raio bem perto = 1.3)
-		if radius < 0.5 or radius > 3.0:
-			radius = 1.3
-			
 		var start_angle = atan2(rel_vec.x, rel_vec.z)
 		
-		# Calcula a frente do Maycow (-Z)
-		var forward_dir = -player_ref.global_transform.basis.z
-		var front_angle = atan2(forward_dir.x, forward_dir.z)
+		# Calcula a direção das COSTAS do Maycow (+Z)
+		var back_dir = player_ref.global_transform.basis.z
+		var back_angle = atan2(back_dir.x, back_dir.z)
 		
-		# Ajusta para girar de forma suave sempre em um sentido
-		while front_angle < start_angle:
-			front_angle += TAU
+		# Pega o caminho mais curto para as costas (gira no máximo 180 graus)
+		while back_angle - start_angle > PI:
+			back_angle -= TAU
+		while back_angle - start_angle < -PI:
+			back_angle += TAU
 			
-		# Adiciona sempre uma volta extra para garantir um giro longo e cinemático
-		front_angle += TAU
-			
-		var height_offset = 0.6 # Câmera fica mais alta (1.3m) e olha para baixo (0.7m), o que empurra o modelo para cima na tela
+		var height_offset = 0.0 
 		
-		var orbit_duration = 15.0
+		# Gira e dá zoom ao mesmo tempo durante os primeiros 5 segundos, depois para e foca nas costas
+		var orbit_duration = 5.0 
 		var orbit_tween = create_tween().set_parallel(true)
-		orbit_tween.tween_method(func(ang: float):
+		orbit_tween.tween_method(func(progress: float):
 			if is_instance_valid(cam_final) and is_instance_valid(player_ref):
-				var center = player_ref.global_position + Vector3(0, 1.0, 0)
-				var new_pos = center + Vector3(sin(ang) * radius, height_offset, cos(ang) * radius)
+				var center = player_ref.global_position + Vector3(0, 0.4, 0)
+				var current_angle = lerp(start_angle, back_angle, progress)
+				var current_radius = lerp(start_radius, end_radius, progress)
+				var new_pos = center + Vector3(sin(current_angle) * current_radius, height_offset, cos(current_angle) * current_radius)
 				cam_final.global_position = new_pos
 				cam_final.look_at(center, Vector3.UP)
-		, start_angle, front_angle, orbit_duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		, 0.0, 1.0, orbit_duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	
 	# Faz a tela escura sumir revelando a cena no take final
 	var tween_reveal = create_tween()
