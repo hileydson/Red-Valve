@@ -82,40 +82,44 @@ func _start_menu_loop() -> void:
 	if not maycow or not cam:
 		return
 	
-	# Cria um pivot no centro (mesma posicao inicial do maycow)
+	# 1. Primeiro move para a esquerda e dá um pequeno zoom.
+	var move_duration = 6.0
+	var maycow_target_pos = maycow.position + Vector3(0.85, -0.65, 0)
+	
+	var intro_tween = create_tween()
+	intro_tween.tween_property(maycow, "position", maycow_target_pos, move_duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	
+	# Zoom - camera olha para +Z (Z=-1.3 para Z=-0.9)
+	var cam_target_pos = cam.position + Vector3(0, 0, 0.45)
+	intro_tween.parallel().tween_property(cam, "position", cam_target_pos, move_duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	
+	await intro_tween.finished
+	
+	# 2. Depois de ir para a esquerda, começa o loop de girar a camera em volta do modelo.
 	var pivot = Node3D.new()
 	add_child(pivot)
-	pivot.global_position = Vector3(0, 0, 0)
+	pivot.global_position = maycow.global_position
 	
-	# Reparenta a camera para o pivot para fazer orbita facilmente
+	var cam_global = cam.global_transform
 	cam.get_parent().remove_child(cam)
 	pivot.add_child(cam)
+	cam.global_transform = cam_global
 	
-	var duration = 14.0
-	var pause_duration = 4.0
-	
-	var maycow_orig_pos = maycow.position
-	# Move para a esquerda na visão da camera (a camera olha para +Z, logo a esquerda dela é +X)
-	var maycow_target_pos = maycow_orig_pos + Vector3(0.5, 0, 0)
+	var duration_loop = 16.0
+	var pause_duration = 3.0
 	
 	var pivot_orig_rot = pivot.rotation
-	# Gira a camera para a direita (negativo no eixo Y)
-	var pivot_target_rot = pivot_orig_rot + Vector3(0, -0.4, 0)
+	# Gira levemente para revelar o perfil (0.6 radianos em vez de 1.57 que era 90 graus)
+	var pivot_target_rot = pivot_orig_rot + Vector3(0, 0.6, 0)
 	
 	var loop_tween = create_tween().set_loops()
 	
-	# Vai devagar e gradual
-	loop_tween.tween_property(maycow, "position", maycow_target_pos, duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	loop_tween.parallel().tween_property(pivot, "rotation", pivot_target_rot, duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	
-	# Espera
+	# Vai devagar em volta do modelo 3d
+	loop_tween.tween_property(pivot, "rotation", pivot_target_rot, duration_loop).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	loop_tween.tween_interval(pause_duration)
 	
 	# Volta
-	loop_tween.tween_property(maycow, "position", maycow_orig_pos, duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	loop_tween.parallel().tween_property(pivot, "rotation", pivot_orig_rot, duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	
-	# Espera
+	loop_tween.tween_property(pivot, "rotation", pivot_orig_rot, duration_loop).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	loop_tween.tween_interval(pause_duration)
 
 func _ready() -> void:
@@ -130,18 +134,21 @@ func _ready() -> void:
 	var audio_in_tween = create_tween()
 	audio_in_tween.tween_property(ashen, "volume_db", ashen_target, 8.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	
-	# Tocar idle
+	# Tocar talk_passionately
 	var maycow = get_node_or_null("maycow_lopes")
 	if maycow and maycow.has_node("AnimationPlayer"):
 		var ap = maycow.get_node("AnimationPlayer")
-		if ap.has_animation("idle"):
-			ap.play("idle")
+		for anim in ap.get_animation_list():
+			if "talk_passionately" in anim.to_lower():
+				ap.get_animation(anim).loop_mode = 1 # Animation.LOOP_LINEAR
+				ap.play(anim)
+				break
+				
+	_setup_old_film_filter()
+	_start_menu_loop()
 	
 	await get_tree().create_timer(2.0).timeout
 	input_locked = false
-
-	_setup_old_film_filter()
-	_start_menu_loop()
 
 
 func _on_load_pressed() -> void:
