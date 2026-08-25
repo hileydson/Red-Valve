@@ -319,8 +319,8 @@ func _input(event):
 		var camera_atual = get_viewport().get_camera_3d()
 		
 		# Trava o ângulo vertical (modifica rotation.x diretamente para evitar 'flip' do Euler)
-		var v_down = -25 if camera_atual == camera_third_person else -75
-		var v_up = 20 if camera_atual == camera_third_person else 75
+		var v_down = -25 if camera_atual == camera_third_person else -60
+		var v_up = 20 if camera_atual == camera_third_person else 60
 		
 		var target_pitch = camera_atual.rotation.x - (event.relative.y * SENSITIVITY * sens_mult)
 		camera_atual.rotation.x = clamp(target_pitch, deg_to_rad(v_down), deg_to_rad(v_up))
@@ -515,8 +515,8 @@ func _physics_process(delta: float) -> void:
 				rotate_y(-joy_dir.x * JOY_SENSITIVITY * sens_mult * delta * 100)
 				
 				# Girar a câmera (Vertical) evitando flip
-				var v_down = -25 if camera_atual == camera_third_person else -75
-				var v_up = 20 if camera_atual == camera_third_person else 75
+				var v_down = -25 if camera_atual == camera_third_person else -60
+				var v_up = 20 if camera_atual == camera_third_person else 60
 				
 				var target_pitch = camera_atual.rotation.x - (joy_dir.y * JOY_SENSITIVITY * sens_mult * delta * 100)
 				camera_atual.rotation.x = clamp(target_pitch, deg_to_rad(v_down), deg_to_rad(v_up))
@@ -572,8 +572,10 @@ func _physics_process(delta: float) -> void:
 			var velocity_Y_zero: bool = velocity.y <= 0
 
 			if direction and !transition_camera:
+				var is_actually_running = _run_toggle_active and current_stamina > 0 and not is_exhausted and not is_aiming
+
 				# Animações e Sons
-				if _run_toggle_active and not is_aiming:
+				if is_actually_running:
 					if pistola.animation not in ["reload", "run"]: pistola.play("run")
 					if is_on_floor() and velocity_Y_zero: playback.travel("run")
 				else:
@@ -581,7 +583,7 @@ func _physics_process(delta: float) -> void:
 					if is_on_floor() and velocity_Y_zero: playback.travel("walk")
 				
 				if !passos.playing and is_on_floor():
-					if _run_toggle_active and not is_aiming:
+					if is_actually_running:
 						passos.pitch_scale = randf_range(1.15, 1.3)
 						passos.volume_db = randf_range(-8.0, -5.0)
 					else:
@@ -680,8 +682,8 @@ func _physics_process(delta: float) -> void:
 				rotate_y(-joy_dir.x * JOY_SENSITIVITY * sens_mult * delta * 100)
 				
 				# Girar a câmera (Vertical) evitando flip
-				var v_down = -25 if camera_atual == camera_third_person else -75
-				var v_up = 20 if camera_atual == camera_third_person else 75
+				var v_down = -25 if camera_atual == camera_third_person else -60
+				var v_up = 20 if camera_atual == camera_third_person else 60
 				
 				var target_pitch = camera_atual.rotation.x - (joy_dir.y * JOY_SENSITIVITY * sens_mult * delta * 100)
 				camera_atual.rotation.x = clamp(target_pitch, deg_to_rad(v_down), deg_to_rad(v_up))
