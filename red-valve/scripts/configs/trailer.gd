@@ -807,13 +807,15 @@ func cutscene_trailer_sequence() -> void:
 
 	# Quase no final do zoom (quando a cena já está escura), oculta os elementos externos do mapa
 	get_tree().create_timer(zoom_duration - 0.3).timeout.connect(func():
-		for child in get_tree().current_scene.get_children():
-			if child == door_node or child == cam_fps_walk or child == player_ref:
+		for child in get_tree().current_scene.find_children("*", "Node3D", true, false):
+			if door_node and (child == door_node or door_node.is_ancestor_of(child)):
 				continue
-			if child is AudioStreamPlayer or child is AudioStreamPlayer3D or child is CanvasLayer or child.name.to_lower().contains("fade"):
+			if cam_fps_walk and (child == cam_fps_walk or cam_fps_walk.is_ancestor_of(child)):
 				continue
-			if "visible" in child:
-				child.visible = false
+			if player_ref and (child == player_ref or player_ref.is_ancestor_of(child)):
+				continue
+			
+			child.visible = false
 
 		if door_node:
 			door_node.visible = true
