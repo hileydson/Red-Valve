@@ -118,6 +118,7 @@ var bob_amp = 0.05      # Amplitude (quão longe a câmera vai)
 var t_bob = 0.0         # Contador de tempo para o cálculo do Seno
 
 
+
 # DASH
 @export_group("Dash Settings")
 @export var DASH_SPEED : float = 30.0    # Velocidade durante o dash
@@ -806,7 +807,7 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 	if head_bob_ON:
-		head_bob(delta) # Lembre-se de incluir a vibração dentro da sua função head_bob!
+		head_bob(delta)
 
 
 	var combat_comp = get_node_or_null("PlayerCombat")
@@ -816,6 +817,7 @@ func _physics_process(delta: float) -> void:
 func dash():
 	var comp = get_node_or_null("PlayerDash")
 	if comp: comp.dash()
+
 func head_bob(delta: float):
 	t_bob += delta * velocity.length() * float(is_on_floor())
 	
@@ -829,23 +831,22 @@ func head_bob(delta: float):
 		cam_atual = camera_third_person
 		marker_referencia = camera_third_person_marker
 	
-	var ajuste_intensidade = 0.8
+	var ajuste_intensidade = 0.3 # Bem suave para caminhada padrão
 	if _run_toggle_active and not is_aiming:
 		bob_freq = 2.1
 		
 		if is_first_person:
-			ajuste_intensidade = 1.0
-			bob_freq = 4.5
+			ajuste_intensidade = 0.7 # Corrida mais suave, menos violenta
+			bob_freq = 3.0           # Frequência reduzida para balançar mais lentamente
 	else:
-		bob_freq = 2.0 # Voltei para 2.0 porque 1.0 é muito lento
-
+		bob_freq = 2.0
+		
 	var pos_bob = Vector3.ZERO
 	if is_on_floor() and velocity.length() > 0.1:
 		pos_bob.y = sin(t_bob * bob_freq) * bob_amp * ajuste_intensidade
 		pos_bob.x = cos(t_bob * bob_freq * 0.5) * bob_amp * 0.5 * ajuste_intensidade
 	
-	# O SEGREDO: A posição da câmera deve ser a posição do MARKER + o balanço
-	# Se não estiver em transição, mantemos a câmera colada no marker com o balanço
+	# Mantém a câmera colada no marker com o balanço
 	if !transition_camera:
 		cam_atual.global_transform.origin = marker_referencia.global_transform.origin + pos_bob
 	

@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://cr5lsc68c7hnq"]
 
 [ext_resource type="Script" uid="uid://bbiirr1ctb1od" path="res://scripts/tools/city_generator.gd" id="1_citygen"]
+[ext_resource type="PackedScene" uid="uid://cluvbknxfjx2k" path="res://scenes/player/player.tscn" id="2_w3j7k"]
 
 [sub_resource type="Environment" id="Environment_s04yr"]
 background_mode = 1
@@ -44,6 +45,9 @@ albedo_color = Color(0.75, 0.08, 0.08, 1)
 [node name="CityGenerator" type="Node3D" unique_id=1345033285]
 script = ExtResource("1_citygen")
 
+[node name="Player" parent="." unique_id=448699446 instance=ExtResource("2_w3j7k")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -26.5475, 12.383763, 94.185)
+
 [node name="@DirectionalLight3D@29655" type="DirectionalLight3D" parent="." unique_id=1660428845]
 transform = Transform3D(0.76604444, -0.24079247, 0.59598225, 0, 0.92718387, 0.3746066, -0.6427876, -0.2869653, 0.710264, 0, 0, 0)
 light_color = Color(1, 0.82, 0.48, 1)
@@ -55,6 +59,9 @@ environment = SubResource("Environment_s04yr")
 
 [node name="@CSGBox3D@29657" type="CSGBox3D" parent="." unique_id=1486443373]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
+use_collision = true
+collision_layer = 2
+collision_mask = 5
 size = Vector3(240, 0.4, 240)
 material = SubResource("StandardMaterial3D_w3j7k")
 
