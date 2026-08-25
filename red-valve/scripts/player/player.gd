@@ -317,12 +317,13 @@ func _input(event):
 		
 		# Aplica a rotação vertical na câmera atual
 		var camera_atual = get_viewport().get_camera_3d()
-		camera_atual.rotate_x(-event.relative.y * SENSITIVITY * sens_mult)
 		
-		# Trava o ângulo vertical
-		var v_down = -25 if camera_atual == camera_third_person else -80
-		var v_up = 20 if camera_atual == camera_third_person else 80
-		camera_atual.rotation.x = clamp(camera_atual.rotation.x, deg_to_rad(v_down), deg_to_rad(v_up))
+		# Trava o ângulo vertical (modifica rotation.x diretamente para evitar 'flip' do Euler)
+		var v_down = -25 if camera_atual == camera_third_person else -75
+		var v_up = 20 if camera_atual == camera_third_person else 75
+		
+		var target_pitch = camera_atual.rotation.x - (event.relative.y * SENSITIVITY * sens_mult)
+		camera_atual.rotation.x = clamp(target_pitch, deg_to_rad(v_down), deg_to_rad(v_up))
 
 
 # Adicione estas variáveis no topo do script (fora do _process) se ainda não tiver
@@ -513,13 +514,12 @@ func _physics_process(delta: float) -> void:
 				var sens_mult = SaveManager.config.get("sensitivity_aim", 0.4) if is_aiming else SaveManager.config.get("sensitivity_look", 1.0)
 				rotate_y(-joy_dir.x * JOY_SENSITIVITY * sens_mult * delta * 100)
 				
-				# Girar a câmera (Vertical)
-				camera_atual.rotate_x(-joy_dir.y * JOY_SENSITIVITY * sens_mult * delta * 100)
+				# Girar a câmera (Vertical) evitando flip
+				var v_down = -25 if camera_atual == camera_third_person else -75
+				var v_up = 20 if camera_atual == camera_third_person else 75
 				
-				# Trava o ângulo vertical (mesma lógica do mouse)
-				var v_down = -25 if camera_atual == camera_third_person else -80
-				var v_up = 20 if camera_atual == camera_third_person else 80
-				camera_atual.rotation.x = clamp(camera_atual.rotation.x, deg_to_rad(v_down), deg_to_rad(v_up))
+				var target_pitch = camera_atual.rotation.x - (joy_dir.y * JOY_SENSITIVITY * sens_mult * delta * 100)
+				camera_atual.rotation.x = clamp(target_pitch, deg_to_rad(v_down), deg_to_rad(v_up))
 	
 		# 6. GESTÃO DO DASH (COOLDOWN E EXECUÇÃO)
 		if dash_cooldown_timer > 0:
@@ -679,13 +679,12 @@ func _physics_process(delta: float) -> void:
 				# Girar o corpo (Horizontal) - multiplicado por delta para suavidade
 				rotate_y(-joy_dir.x * JOY_SENSITIVITY * sens_mult * delta * 100)
 				
-				# Girar a câmera (Vertical)
-				camera_atual.rotate_x(-joy_dir.y * JOY_SENSITIVITY * sens_mult * delta * 100)
+				# Girar a câmera (Vertical) evitando flip
+				var v_down = -25 if camera_atual == camera_third_person else -75
+				var v_up = 20 if camera_atual == camera_third_person else 75
 				
-				# Trava o ângulo vertical (mesma lógica do mouse)
-				var v_down = -25 if camera_atual == camera_third_person else -80
-				var v_up = 20 if camera_atual == camera_third_person else 80
-				camera_atual.rotation.x = clamp(camera_atual.rotation.x, deg_to_rad(v_down), deg_to_rad(v_up))
+				var target_pitch = camera_atual.rotation.x - (joy_dir.y * JOY_SENSITIVITY * sens_mult * delta * 100)
+				camera_atual.rotation.x = clamp(target_pitch, deg_to_rad(v_down), deg_to_rad(v_up))
 			
 
 		# 7. MOVIMENTAÇÃO (DASH VS CAMINHADA)
