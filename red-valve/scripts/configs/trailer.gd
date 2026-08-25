@@ -1039,8 +1039,7 @@ func cutscene_trailer_sequence() -> void:
 	
 	GlobalEvents.in_cutscene = false
 	print("--- CUTSCENE TRAILER FINALIZADA COM SUCESSO, INDO PARA MAIN MENU ---")
-	
-	get_tree().change_scene_to_file("res://scenes/configs/main_menu.tscn")
+	get_tree().change_scene_to_file("res://scenes/configs/main_menu_v2.tscn")
 
 func _criar_bola_de_fogo(start_pos: Vector3, end_pos: Vector3, duration: float) -> void:
 	var fireball = Node3D.new()
