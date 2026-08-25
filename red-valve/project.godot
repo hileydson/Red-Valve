@@ -54,7 +54,7 @@ window/stretch/mode="viewport"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/SunshineClouds2/plugin.cfg", "res://addons/ambientcg/plugin.cfg", "res://addons/proton_scatter/plugin.cfg", "res://addons/sky_3d/plugin.cfg", "res://addons/terrain_3d/plugin.cfg")
+enabled=PackedStringArray("res://addons/SunshineClouds2/plugin.cfg", "res://addons/ambientcg/plugin.cfg", "res://addons/godot_ai/plugin.cfg", "res://addons/proton_scatter/plugin.cfg", "res://addons/sky_3d/plugin.cfg", "res://addons/terrain_3d/plugin.cfg")
 
 [file_customization]
 

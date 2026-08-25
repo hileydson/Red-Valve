@@ -1,6 +1,5 @@
 [gd_scene format=3 uid="uid://dcj1wphufpcap"]
 
-[ext_resource type="Script" path="res://scripts/stages/prolog/trailer_final.gd" id="1_iom4l"]
 [ext_resource type="PackedScene" uid="uid://cmarh053v7v8r" path="res://scenes/enemies/the_anti_lopes.tscn" id="2_1tj1s"]
 
 [sub_resource type="Environment" id="Environment_default"]
@@ -55,7 +54,6 @@ _data = {
 size = Vector3(7.763916, 1, 8.272339)
 
 [node name="trailer_final" type="Node3D" unique_id=1270647500]
-script = ExtResource("1_iom4l")
 
 [node name="the_anti_lopes" parent="." unique_id=142957354 instance=ExtResource("2_1tj1s")]
 
