@@ -704,7 +704,7 @@ func cutscene_trailer_sequence() -> void:
 	is_head_bob_active = false
 	_set_motion_blur_strength(0.0)
 	
-	# 1. ZOOM MODERADO NA VÁLVULA
+	# 1. ZOOM MODERADO NA VÁLVULA E ESCURECIMENTO CONFORME SE APROXIMA DA PORTA NO ZOOM
 	var target_zoom_fov = 45.0
 	var zoom_duration = 3.5
 	var valve_cam_pos = fim.global_position + Vector3(0, 1.4, 2.0)
@@ -713,22 +713,60 @@ func cutscene_trailer_sequence() -> void:
 	tween_zoom_door.tween_property(cam_fps_walk, "fov", target_zoom_fov, zoom_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 	tween_zoom_door.tween_property(cam_fps_walk, "global_position", valve_cam_pos, zoom_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 	
-	# Criar ambiente escuro e holofote focando na porta durante o zoom
+	# Prepara o holofote da câmera que acenderá suavemente focando a porta no final do zoom
+	var door_spot = SpotLight3D.new()
+	door_spot.spot_range = 14.0
+	door_spot.spot_angle = 45.0
+	door_spot.light_energy = 0.0
+	door_spot.light_color = Color(1.0, 0.95, 0.9)
+	cam_fps_walk.add_child(door_spot)
+
+	# Prepara o ambiente para escurecimento na câmera
 	var dark_env = Environment.new()
 	dark_env.background_mode = Environment.BG_COLOR
 	dark_env.background_color = Color.BLACK
 	dark_env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	dark_env.ambient_light_color = Color.BLACK
+	dark_env.ambient_light_energy = 1.0
 	cam_fps_walk.environment = dark_env
-	
-	var door_spot = SpotLight3D.new()
-	door_spot.spot_range = 10.0
-	door_spot.spot_angle = 35.0
-	door_spot.light_energy = 5.0
-	cam_fps_walk.add_child(door_spot)
-	# Diminuir som de velocidade mas MANTER chuva e relâmpagos ativos!
-	if is_instance_valid(zoom_sound_player):
-		pass
+
+	# Encontra a porta e todas as luzes da cena para a transição suave de iluminação
+	var door_node = get_tree().current_scene.get_node_or_null("portal_red_valve")
+	if not door_node:
+		door_node = get_tree().current_scene.find_child("portal_red_valve", true, false)
+
+	# ESCURECIMENTO SUAVE DURANTE O ZOOM DA PORTA (EASE_IN: começa discreto e escurece perto do final do zoom)
+	var tween_escurecer = create_tween().set_parallel(true)
+	tween_escurecer.tween_property(dark_env, "ambient_light_energy", 0.0, zoom_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	tween_escurecer.tween_property(door_spot, "light_energy", 10.0, zoom_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+
+	for light in get_tree().current_scene.find_children("*", "Light3D", true, false):
+		if light == door_spot:
+			continue
+		if door_node and door_node.is_ancestor_of(light):
+			continue
+		if "light_energy" in light:
+			tween_escurecer.tween_property(light, "light_energy", 0.0, zoom_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+
+	# Quase no final do zoom (quando a cena já está escura), oculta os elementos externos do mapa
+	get_tree().create_timer(zoom_duration - 0.3).timeout.connect(func():
+		for child in get_tree().current_scene.get_children():
+			if child == door_node or child == cam_fps_walk or child == player_ref:
+				continue
+			if child is AudioStreamPlayer or child is AudioStreamPlayer3D or child is CanvasLayer or child.name.to_lower().contains("fade"):
+				continue
+			if "visible" in child:
+				child.visible = false
+
+		if door_node:
+			door_node.visible = true
+			_set_visible_recursive(door_node, true)
+			for sub in door_node.get_children():
+				var sname = sub.name.to_lower()
+				if "anti_lopes" in sname or "monster" in sname or "goblin" in sname:
+					sub.visible = false
+					_set_visible_recursive(sub, false)
+	)
 		
 	# 1. ZOOM NA PORTA DA FRENTE (FOV 45) DURANTE 3 SEGUNDOS E A MÃO APARECE
 	var tween_cam = create_tween()
