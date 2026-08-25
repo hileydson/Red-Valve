@@ -460,6 +460,56 @@ func _set_motion_blur_strength(strength: float) -> void:
 		motion_blur_mat.set_shader_parameter("blur_strength", strength)
 		motion_blur_rect.visible = (strength > 0.0)
 
+# ==============================================================================
+# LETREIROS "R" e "V" GIGANTES NOS TAKES ESPECÍFICOS
+# ==============================================================================
+var text_canvas: CanvasLayer
+var flash_label: Label
+
+func _setup_trailer_title() -> void:
+	text_canvas = CanvasLayer.new()
+	text_canvas.layer = 150 # Por cima de tudo
+	add_child(text_canvas)
+	
+	var center = CenterContainer.new()
+	center.set_anchors_preset(Control.PRESET_FULL_RECT)
+	text_canvas.add_child(center)
+	
+	flash_label = Label.new()
+	
+	var font = load("res://assets/fonts/Montserrat-ExtraBold.ttf")
+	if font:
+		flash_label.add_theme_font_override("font", font)
+		
+	flash_label.add_theme_font_size_override("font_size", 650) # AINDA MAIOR
+	flash_label.add_theme_color_override("font_color", Color(0.85, 0.0, 0.0))
+	flash_label.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.8))
+	flash_label.add_theme_constant_override("outline_size", 8)
+	
+	flash_label.modulate.a = 0.0 # Começa invisível
+	center.add_child(flash_label)
+
+func _start_title_sequence() -> void:
+	# MEIO DO TAKE 1 (4.0s de cena)
+	await get_tree().create_timer(4.0).timeout
+	if not GlobalEvents.in_cutscene: return
+	
+	flash_label.text = "R"
+	flash_label.modulate.a = 0.12 # Muito mais transparente
+	var t1 = create_tween()
+	t1.tween_property(flash_label, "modulate:a", 0.0, 4.0).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	
+	# TAKE 3 (Cometa) começa aos 14.0s. 
+	# Já esperamos 4s, então esperamos mais 11.5s para bater 15.5s (meio do take 3)
+	await get_tree().create_timer(11.5).timeout
+	if not GlobalEvents.in_cutscene: return
+	
+	flash_label.text = "V"
+	flash_label.modulate.a = 0.12 # Muito mais transparente
+	var t2 = create_tween()
+	t2.tween_property(flash_label, "modulate:a", 0.0, 4.0).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+
+
 # Helper para instanciar a câmera solta (loose tracking)
 func _switch_to_loose_camera(initial_local_pos: Vector3, initial_local_rot: Vector3, follow_spd: float = 4.0, rot_spd: float = 3.0) -> Camera3D:
 	is_head_bob_active = false
@@ -520,6 +570,9 @@ func cutscene_trailer_sequence() -> void:
 	_setup_old_film_filter()
 	_setup_motion_blur_filter()
 	_iniciar_chuva_e_relampagos()
+	
+	_setup_trailer_title()
+	_start_title_sequence()
 	
 	cutscene_force_maycow_lopes_only()
 	player.cutscene_set_hud_enabled(false)
