@@ -780,6 +780,14 @@ func cutscene_trailer_sequence() -> void:
 	if player_hand:
 		var hand_3d = player_hand.duplicate()
 		_set_visible_recursive(hand_3d, true)
+		
+		# Para qualquer AnimationPlayer na mão clonada para que a animação (ex: idle)
+		# não puxe a mão de volta para a posição original quando o tween acabar
+		hand_3d.set_script(null)
+		for anim in hand_3d.find_children("*", "AnimationPlayer", true, false):
+			anim.stop()
+			anim.active = false
+			
 		if hand_start_marker and hand_end_marker:
 			# Adiciona a mão na câmera (para não ser oculta pelo script que apaga o cenário),
 			# mas tweena o global_transform para ela seguir exatamente os markers!
