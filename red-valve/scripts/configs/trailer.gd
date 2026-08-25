@@ -885,6 +885,7 @@ func cutscene_trailer_sequence() -> void:
 	
 	# 4. TELA FICA PRETA + SOM iron_goblins_growl (CHUVA E RELÂMPAGOS MANTIDOS ATIVOS!)
 	_parar_som_velocidade()
+	player.cutscene_set_auto_walk(false)
 	
 	print("Tela preta com chuva/relâmpagos: Tocando iron_goblins_growl...")
 	var growl_player = AudioStreamPlayer.new()
@@ -912,6 +913,22 @@ func cutscene_trailer_sequence() -> void:
 	if is_instance_valid(anti_lopes_ref):
 		anti_lopes_ref.visible = true
 		_apply_transparency_to_node(anti_lopes_ref, 1.0) # Remove a transparência
+		
+	# Restaurar luzes e visibilidade do Maycow, deletar a mão flutuante do Take 4
+	for light in get_tree().current_scene.find_children("*", "Light3D", true, false):
+		if "light_energy" in light:
+			create_tween().tween_property(light, "light_energy", 1.0, 1.5)
+			
+	if is_instance_valid(player_ref):
+		var maycow_model = player_ref.get_node_or_null("maycow_lopes")
+		if maycow_model:
+			maycow_model.visible = true
+			_set_visible_recursive(maycow_model, true)
+			
+	if is_instance_valid(cam_fps_walk):
+		for child in cam_fps_walk.get_children():
+			if "hand" in child.name.to_lower():
+				child.queue_free()
 	
 	var anim_player = get_tree().current_scene.find_child("AnimationPlayer", true, false) as AnimationPlayer
 	if anim_player and anim_player is AnimationPlayer:
@@ -932,12 +949,16 @@ func cutscene_trailer_sequence() -> void:
 	
 	# Órbita da câmera em volta do modelo 3d do maycow parando de frente para ele
 	if is_instance_valid(player_ref) and is_instance_valid(cam_final):
-		var target_center = player_ref.global_position + Vector3(0, 1.4, 0)
+		if "playback" in player_ref:
+			player_ref.playback.travel("idle")
+			
+		var target_center = player_ref.global_position + Vector3(0, 1.0, 0) # Foco no centro do corpo para subir o Maycow na tela
 		var rel_vec = cam_final.global_position - target_center
 		var radius = Vector2(rel_vec.x, rel_vec.z).length()
 		
-		if radius < 2.0 or radius > 5.0:
-			radius = 3.5 # Raio apropriado para o player
+		# Zoom maior (raio menor = 2.0)
+		if radius < 1.0 or radius > 3.0:
+			radius = 2.0
 			
 		var start_angle = atan2(rel_vec.x, rel_vec.z)
 		
@@ -949,17 +970,16 @@ func cutscene_trailer_sequence() -> void:
 		while front_angle < start_angle:
 			front_angle += TAU
 			
-		# Adiciona uma volta se o giro for muito curto para ficar cinemático
-		if (front_angle - start_angle) < PI:
-			front_angle += TAU
+		# Adiciona sempre uma volta extra para garantir um giro longo e cinemático
+		front_angle += TAU
 			
-		var height_offset = 0.2 # Na altura do rosto (pois target_center tem +1.4)
+		var height_offset = 0.4 # Câmera um pouco acima do target_center (1.4m total)
 		
-		var orbit_duration = 7.5
+		var orbit_duration = 15.0
 		var orbit_tween = create_tween().set_parallel(true)
 		orbit_tween.tween_method(func(ang: float):
 			if is_instance_valid(cam_final) and is_instance_valid(player_ref):
-				var center = player_ref.global_position + Vector3(0, 1.4, 0)
+				var center = player_ref.global_position + Vector3(0, 1.0, 0)
 				var new_pos = center + Vector3(sin(ang) * radius, height_offset, cos(ang) * radius)
 				cam_final.global_position = new_pos
 				cam_final.look_at(center, Vector3.UP)
