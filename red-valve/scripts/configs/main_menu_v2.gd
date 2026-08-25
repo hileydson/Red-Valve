@@ -11,7 +11,7 @@ var old_film_layer: CanvasLayer = null
 
 func _setup_old_film_filter() -> void:
 	old_film_layer = CanvasLayer.new()
-	old_film_layer.layer = 110
+	old_film_layer.layer = 0
 	add_child(old_film_layer)
 	
 	var back_buffer = BackBufferCopy.new()
@@ -93,6 +93,13 @@ func _start_menu_loop() -> void:
 	var cam_target_pos = cam.position + Vector3(0, 0, 0.45)
 	intro_tween.parallel().tween_property(cam, "position", cam_target_pos, move_duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	
+	# Move o titulo
+	var title = get_node_or_null("UI/TitleLabel")
+	if title:
+		# Valores aumentados para ir mais para a direita (260) e mais para cima (-100)
+		var title_target_pos = title.position + Vector2(260, -100)
+		intro_tween.parallel().tween_property(title, "position", title_target_pos, move_duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	
 	await intro_tween.finished
 	
 	# 2. Depois de ir para a esquerda, começa o loop de girar a camera em volta do modelo.
@@ -109,8 +116,8 @@ func _start_menu_loop() -> void:
 	var pause_duration = 3.0
 	
 	var pivot_orig_rot = pivot.rotation
-	# Gira levemente para revelar o perfil (0.6 radianos em vez de 1.57 que era 90 graus)
-	var pivot_target_rot = pivot_orig_rot + Vector3(0, 0.6, 0)
+	# Gira levemente para revelar o perfil
+	var pivot_target_rot = pivot_orig_rot + Vector3(0, 0.3, 0)
 	
 	var loop_tween = create_tween().set_loops()
 	
@@ -132,7 +139,7 @@ func _ready() -> void:
 	var ashen_target = ashen.volume_db
 	ashen.volume_db = -80.0
 	var audio_in_tween = create_tween()
-	audio_in_tween.tween_property(ashen, "volume_db", ashen_target, 8.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	audio_in_tween.tween_property(ashen, "volume_db", ashen_target, 3.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	
 	# Tocar talk_passionately
 	var maycow = get_node_or_null("maycow_lopes")
