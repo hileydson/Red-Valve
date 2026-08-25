@@ -37,4 +37,4 @@ func _ready() -> void:
 		await get_tree().create_timer(2.0).timeout
 		
 	# Redireciona para o Menu Principal
-	get_tree().change_scene_to_file("res://scenes/configs/main_menu.tscn")
+	get_tree().change_scene_to_file("res://scenes/configs/main_menu_v2.tscn")

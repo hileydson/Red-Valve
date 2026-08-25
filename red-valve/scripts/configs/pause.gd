@@ -37,7 +37,7 @@ func _on_exit_pressed() -> void:
 	get_tree().paused = false
 	self.visible = false
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-	get_tree().change_scene_to_file("res://scenes/configs/main_menu.tscn")
+	get_tree().change_scene_to_file("res://scenes/configs/main_menu_v2.tscn")
 
 func _on_config_pressed() -> void:
 	var config_script = load("res://scripts/ui/config_menu.gd")

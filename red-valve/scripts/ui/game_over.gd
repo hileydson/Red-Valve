@@ -134,5 +134,5 @@ void fragment() {
 	print("Fade out completo. Retornando ao menu...")
 	
 	get_tree().paused = false
-	get_tree().change_scene_to_file("res://scenes/configs/main_menu.tscn")
+	get_tree().change_scene_to_file("res://scenes/configs/main_menu_v2.tscn")
 	queue_free()

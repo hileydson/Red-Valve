@@ -103,7 +103,7 @@ func _input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 			
 	if event.is_action_pressed("ui_cancel"):
-		_on_back_pressed()
+		back_btn.pressed.emit()
 		get_viewport().set_input_as_handled()
 
 func _process(delta: float) -> void:
