@@ -952,13 +952,13 @@ func cutscene_trailer_sequence() -> void:
 		if "playback" in player_ref:
 			player_ref.playback.travel("idle")
 			
-		var target_center = player_ref.global_position + Vector3(0, 1.0, 0) # Foco no centro do corpo para subir o Maycow na tela
+		var target_center = player_ref.global_position + Vector3(0, 0.7, 0) # Foco mais baixo para o personagem "subir" na tela
 		var rel_vec = cam_final.global_position - target_center
 		var radius = Vector2(rel_vec.x, rel_vec.z).length()
 		
-		# Zoom maior (raio menor = 2.0)
-		if radius < 1.0 or radius > 3.0:
-			radius = 2.0
+		# Zoom ainda MAIOR (raio bem perto = 1.3)
+		if radius < 0.5 or radius > 3.0:
+			radius = 1.3
 			
 		var start_angle = atan2(rel_vec.x, rel_vec.z)
 		
@@ -973,7 +973,7 @@ func cutscene_trailer_sequence() -> void:
 		# Adiciona sempre uma volta extra para garantir um giro longo e cinemático
 		front_angle += TAU
 			
-		var height_offset = 0.4 # Câmera um pouco acima do target_center (1.4m total)
+		var height_offset = 0.6 # Câmera fica mais alta (1.3m) e olha para baixo (0.7m), o que empurra o modelo para cima na tela
 		
 		var orbit_duration = 15.0
 		var orbit_tween = create_tween().set_parallel(true)
@@ -1018,12 +1018,16 @@ func cutscene_trailer_sequence() -> void:
 	
 	_flicker_title_effect(title_label, 4.5)
 	
-	# Aguarda o final
-	await get_tree().create_timer(4.5).timeout
+	# Aguarda a tela final rolar por mais tempo
+	await get_tree().create_timer(7.0).timeout
 	
-	# Fade Out Final
-	var tween_final = create_tween()
-	tween_final.tween_property(ui_fader, "modulate:a", 1.0, 1.0)
+	# Fade Out Final Imagem e Áudio
+	var tween_final = create_tween().set_parallel(true)
+	tween_final.tween_property(ui_fader, "modulate:a", 1.0, 2.5)
+	
+	for audio in get_tree().current_scene.find_children("*", "AudioStreamPlayer", true, false):
+		tween_final.tween_property(audio, "volume_db", -60.0, 2.5)
+		
 	await tween_final.finished
 	
 	loop_bolas_fogo = false
@@ -1034,7 +1038,9 @@ func cutscene_trailer_sequence() -> void:
 	if is_instance_valid(rain_particles): rain_particles.queue_free()
 	
 	GlobalEvents.in_cutscene = false
-	print("--- CUTSCENE TRAILER FINALIZADA COM SUCESSO ---")
+	print("--- CUTSCENE TRAILER FINALIZADA COM SUCESSO, INDO PARA MAIN MENU ---")
+	
+	get_tree().change_scene_to_file("res://scenes/configs/main_menu.tscn")
 
 func _criar_bola_de_fogo(start_pos: Vector3, end_pos: Vector3, duration: float) -> void:
 	var fireball = Node3D.new()
