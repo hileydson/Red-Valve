@@ -930,26 +930,40 @@ func cutscene_trailer_sequence() -> void:
 	if is_instance_valid(cam_final):
 		cam_final.make_current()
 	
-	# Órbita ampla da câmera em volta do monstro gigante the_anti_lopes (escala 3x)
-	if is_instance_valid(anti_lopes_ref) and is_instance_valid(cam_final):
-		var target_center = anti_lopes_ref.global_position + Vector3(0, 4.5, 0)
+	# Órbita da câmera em volta do modelo 3d do maycow parando de frente para ele
+	if is_instance_valid(player_ref) and is_instance_valid(cam_final):
+		var target_center = player_ref.global_position + Vector3(0, 1.4, 0)
 		var rel_vec = cam_final.global_position - target_center
 		var radius = Vector2(rel_vec.x, rel_vec.z).length()
-		if radius < 6.0:
-			radius = 8.5 # Raio amplo para envolver o monstro gigante
+		
+		if radius < 2.0 or radius > 5.0:
+			radius = 3.5 # Raio apropriado para o player
 			
 		var start_angle = atan2(rel_vec.x, rel_vec.z)
-		var height_offset = 2.0 # Levemente elevado focando o tórax/cabeça
+		
+		# Calcula a frente do Maycow (-Z)
+		var forward_dir = -player_ref.global_transform.basis.z
+		var front_angle = atan2(forward_dir.x, forward_dir.z)
+		
+		# Ajusta para girar de forma suave sempre em um sentido
+		while front_angle < start_angle:
+			front_angle += TAU
+			
+		# Adiciona uma volta se o giro for muito curto para ficar cinemático
+		if (front_angle - start_angle) < PI:
+			front_angle += TAU
+			
+		var height_offset = 0.2 # Na altura do rosto (pois target_center tem +1.4)
 		
 		var orbit_duration = 7.5
 		var orbit_tween = create_tween().set_parallel(true)
 		orbit_tween.tween_method(func(ang: float):
-			if is_instance_valid(cam_final) and is_instance_valid(anti_lopes_ref):
-				var center = anti_lopes_ref.global_position + Vector3(0, 4.5, 0)
+			if is_instance_valid(cam_final) and is_instance_valid(player_ref):
+				var center = player_ref.global_position + Vector3(0, 1.4, 0)
 				var new_pos = center + Vector3(sin(ang) * radius, height_offset, cos(ang) * radius)
 				cam_final.global_position = new_pos
 				cam_final.look_at(center, Vector3.UP)
-		, start_angle, start_angle + deg_to_rad(240.0), orbit_duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		, start_angle, front_angle, orbit_duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	
 	# Faz a tela escura sumir revelando a cena no take final
 	var tween_reveal = create_tween()
