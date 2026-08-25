@@ -1,44 +1,43 @@
-[gd_scene format=3 uid="uid://cnew_menu123"]
+[gd_scene format=3 uid="uid://b0f405k1uaetv"]
 
-[ext_resource type="Script" uid="uid://cnew_menu_script" path="res://scripts/configs/main_menu_v2.gd" id="1_menu"]
+[ext_resource type="Script" uid="uid://b2q0ihedmhbib" path="res://scripts/configs/main_menu_v2.gd" id="1_menu"]
 [ext_resource type="AudioStream" uid="uid://d34lkiwwli5f0" path="res://assets/sounds/menu/Ashen_Serenity.mp3" id="2_audio"]
 [ext_resource type="Texture2D" uid="uid://bvgwpas0j658a" path="res://assets/images/enemies/blood_mark.png" id="3_blood"]
 [ext_resource type="PackedScene" uid="uid://dy356o67p6jyn" path="res://scenes/configs/fade.tscn" id="4_fade"]
 [ext_resource type="PackedScene" uid="uid://36xyu24cj8b6" path="res://assets/3d_model/player/Maycow Lopes/maycow_lopes.glb" id="5_maycow"]
-[ext_resource type="FontFile" uid="uid://bx5lqom14sryx" path="res://assets/fonts/Montserrat-ExtraBold.ttf" id="6_font"]
+[ext_resource type="FontFile" uid="uid://5rc24n3t0r0o" path="res://assets/fonts/Montserrat-ExtraBold.ttf" id="6_font"]
 
 [sub_resource type="Environment" id="Environment_menu"]
 background_mode = 1
 background_color = Color(0.15, 0.15, 0.15, 1)
 
-[node name="Main_Menu_V2" type="Node3D"]
+[node name="Main_Menu_V2" type="Node3D" unique_id=2026192596]
 script = ExtResource("1_menu")
 
-[node name="AshenSerenity" type="AudioStreamPlayer" parent="."]
+[node name="AshenSerenity" type="AudioStreamPlayer" parent="." unique_id=784837585]
 stream = ExtResource("2_audio")
 volume_db = -4.208
 pitch_scale = 0.45
 autoplay = true
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1070784761]
 environment = SubResource("Environment_menu")
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1480013134]
 transform = Transform3D(0.866025, -0.25, 0.433013, 0, 0.866025, 0.5, -0.5, -0.433013, 0.75, 0, 5, 0)
 light_color = Color(1, 0.95, 0.9, 1)
 light_energy = 0.5
 shadow_enabled = true
 
-[node name="maycow_lopes" parent="." instance=ExtResource("5_maycow")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+[node name="maycow_lopes" parent="." unique_id=251316611 instance=ExtResource("5_maycow")]
 
-[node name="Camera3D" type="Camera3D" parent="."]
+[node name="Camera3D" type="Camera3D" parent="." unique_id=8387141]
 transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, 0.9, -1.3)
 current = true
 
-[node name="UI" type="CanvasLayer" parent="."]
+[node name="UI" type="CanvasLayer" parent="." unique_id=813422535]
 
-[node name="TitleLabel" type="Label" parent="UI"]
+[node name="TitleLabel" type="Label" parent="UI" unique_id=38879123]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -57,51 +56,50 @@ text = "RED VALVE"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Control" type="Control" parent="UI"]
+[node name="Control" type="Control" parent="UI" unique_id=1622758789]
 layout_mode = 3
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -300.0
-offset_top = -300.0
-offset_right = 0.0
-offset_bottom = 0.0
+offset_left = -432.0
+offset_top = -335.0
+offset_right = -132.0
+offset_bottom = -35.0
 grow_horizontal = 0
 grow_vertical = 0
 mouse_filter = 2
 
-[node name="BloodMark" type="Sprite2D" parent="UI/Control"]
+[node name="BloodMark" type="Sprite2D" parent="UI/Control" unique_id=660632935]
 modulate = Color(0.7564044, 0.7564044, 0.7564044, 1)
 position = Vector2(82, 138)
 scale = Vector2(0.73162943, 0.6501597)
 texture = ExtResource("3_blood")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/Control"]
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/Control" unique_id=1410523597]
 layout_mode = 0
-offset_left = 0.0
 offset_top = 56.0
 offset_right = 144.0
 offset_bottom = 192.0
 
-[node name="start" type="Button" parent="UI/Control/VBoxContainer"]
+[node name="start" type="Button" parent="UI/Control/VBoxContainer" unique_id=1722963886]
 layout_mode = 2
 text = "BTN_START"
 
-[node name="load" type="Button" parent="UI/Control/VBoxContainer"]
+[node name="load" type="Button" parent="UI/Control/VBoxContainer" unique_id=1901162516]
 layout_mode = 2
 text = "BTN_LOAD_GAME"
 
-[node name="config" type="Button" parent="UI/Control/VBoxContainer"]
+[node name="config" type="Button" parent="UI/Control/VBoxContainer" unique_id=1367834087]
 layout_mode = 2
 text = "MENU_CONFIG"
 
-[node name="exit" type="Button" parent="UI/Control/VBoxContainer"]
+[node name="exit" type="Button" parent="UI/Control/VBoxContainer" unique_id=1329891265]
 layout_mode = 2
 text = "BTN_EXIT"
 
-[node name="fade" parent="UI" instance=ExtResource("4_fade")]
+[node name="fade" parent="UI" unique_id=13596553 instance=ExtResource("4_fade")]
 
 [connection signal="pressed" from="UI/Control/VBoxContainer/start" to="." method="_on_start_pressed"]
 [connection signal="pressed" from="UI/Control/VBoxContainer/load" to="." method="_on_load_pressed"]

@@ -128,6 +128,28 @@ func _start_menu_loop() -> void:
 	# Volta
 	loop_tween.tween_property(pivot, "rotation", pivot_orig_rot, duration_loop).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	loop_tween.tween_interval(pause_duration)
+	
+	# === Efeito do Amuleto Fantasma ===
+	var amulet_scene = load("res://assets/3d_model/player/Maycow Lopes/amuleto_power.glb")
+	if amulet_scene:
+		var amulet = amulet_scene.instantiate()
+		cam.add_child(amulet)
+		# Posiciona na frente da câmera
+		amulet.position = Vector3(0, 0, -1.5)
+		amulet.scale = Vector3(1.0, 1.0, 1.0)
+		
+		var mat = StandardMaterial3D.new()
+		mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		mat.albedo_color = Color(0.3, 0.3, 0.3, 0.35) # Menos transparente (de 0.15 para 0.35)
+		mat.emission_enabled = true
+		mat.emission = Color(0.1, 0.1, 0.1) # Brilho cinza
+		
+		# Aplica o material em todos os meshes do amuleto
+		for child in amulet.find_children("*", "MeshInstance3D"):
+			child.material_override = mat
+			
+		var amulet_tween = create_tween().set_loops()
+		amulet_tween.tween_property(amulet, "rotation:y", TAU, 20.0).as_relative()
 
 func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
