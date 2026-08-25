@@ -138,15 +138,21 @@ func _start_menu_loop() -> void:
 		amulet.position = Vector3(0, 0, -1.5)
 		amulet.scale = Vector3(1.0, 1.0, 1.0)
 		
+		# Volta o material fantasma cinza e transparente
 		var mat = StandardMaterial3D.new()
 		mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-		mat.albedo_color = Color(0.3, 0.3, 0.3, 0.35) # Menos transparente (de 0.15 para 0.35)
+		mat.albedo_color = Color(0.3, 0.3, 0.3, 0.0) # Começa totalmente invisível (0.0)
 		mat.emission_enabled = true
 		mat.emission = Color(0.1, 0.1, 0.1) # Brilho cinza
 		
 		# Aplica o material em todos os meshes do amuleto
 		for child in amulet.find_children("*", "MeshInstance3D"):
 			child.material_override = mat
+			
+		# Fade-in um pouco mais rápido (5 segundos) até 35% de opacidade
+		var fade_duration = 5.0
+		var fade_tween = create_tween()
+		fade_tween.tween_property(mat, "albedo_color:a", 0.35, fade_duration).set_trans(Tween.TRANS_SINE)
 			
 		var amulet_tween = create_tween().set_loops()
 		amulet_tween.tween_property(amulet, "rotation:y", TAU, 20.0).as_relative()
