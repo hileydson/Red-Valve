@@ -84,8 +84,8 @@ shader_parameter/cirrus_absorption = 2.0
 shader_parameter/cirrus_sky_tint_fade = 0.5
 shader_parameter/cirrus_size = 1.0
 shader_parameter/cirrus_uv = Vector2(0.16, 0.11)
-shader_parameter/cirrus_position1 = Vector2(0.17815538, 0.17815538)
-shader_parameter/cirrus_position2 = Vector2(0.17815538, 0.17815538)
+shader_parameter/cirrus_position1 = Vector2(0.08886326, 0.08886326)
+shader_parameter/cirrus_position2 = Vector2(0.08886326, 0.08886326)
 shader_parameter/cirrus_texture = ExtResource("4_0otj5")
 shader_parameter/cumulus_visible = true
 shader_parameter/cumulus_intensity = 9.245
@@ -95,7 +95,7 @@ shader_parameter/cumulus_absorption = 2.0
 shader_parameter/cumulus_noise_freq = 2.7
 shader_parameter/cumulus_sky_tint_fade = 0.0
 shader_parameter/cumulus_size = 0.5
-shader_parameter/cumulus_position = Vector2(60.91489, 60.91489)
+shader_parameter/cumulus_position = Vector2(175.12222, 175.12222)
 shader_parameter/cumulus_texture = ExtResource("5_ahyst")
 shader_parameter/cumulus_partial_mie_phase = Vector3(0.957564, 1.042436, 0.412)
 shader_parameter/cumulus_mie_intensity = 1.0
@@ -564,8 +564,11 @@ emission_enabled = true
 transparency = 1
 albedo_texture = ExtResource("22_iwubk")
 
-[node name="trailer" type="Node3D" unique_id=501448064]
+[node name="trailer" type="Node3D" unique_id=501448064 node_paths=PackedStringArray("hand_start_marker", "hand_end_marker")]
 script = ExtResource("1_qnddk")
+hand_start_marker = NodePath("inicio_mao")
+hand_end_marker = NodePath("inicio_fim")
+hand_rotation_offset = Vector3(0, 60, -25)
 
 [node name="cutscene" parent="." unique_id=796399776 instance=ExtResource("2_bqph1")]
 position = Vector2(-6, -11)
@@ -672,6 +675,12 @@ script = ExtResource("6_dnp2e")
 transform = Transform3D(-0.9626169, 0.15012728, -0.2254562, -0.037208684, 0.75117034, 0.6590588, 0.26829872, 0.64281, -0.7175033, 0, 2.3680825, 99.63879)
 fov = 46.5
 script = ExtResource("6_dnp2e")
+
+[node name="inicio_mao" type="Marker3D" parent="." unique_id=670122311]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.366089, 1.0961996, -232.31824)
+
+[node name="inicio_fim" type="Marker3D" parent="." unique_id=20982923]
+transform = Transform3D(-0.41354948, 0.91048163, 0, -0.91048163, -0.41354948, 0, 0, 0, 1, -7.868984, 1.7152565, -234.73424)
 
 [node name="portal_red_valve" parent="." unique_id=1307033612 instance=ExtResource("17_ahyst")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.42811, 1.1004367, -235.99194)

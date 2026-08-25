@@ -2,6 +2,10 @@ extends Node3D
 
 @export var inicio: Marker3D
 @export var fim: Marker3D
+@export_group("Take Final - Mao")
+@export var hand_start_marker: Marker3D
+@export var hand_end_marker: Marker3D
+@export var hand_rotation_offset: Vector3 = Vector3.ZERO
 var ui_fader: ColorRect
 var lightning_flash_rect: ColorRect
 
@@ -775,21 +779,33 @@ func cutscene_trailer_sequence() -> void:
 	var player_hand = player_ref.find_child("hand_with_magic", true, false)
 	if player_hand:
 		var hand_3d = player_hand.duplicate()
-		cam_fps_walk.add_child(hand_3d)
 		_set_visible_recursive(hand_3d, true)
-		
-		# Inicia abaixo da tela, mas com a posição ALVO alterada (MAIS PARA A DIREITA)
-		var target_trans = hand_3d.transform
-		target_trans.origin.x += 0.55 # BEM mais para a direita
-		target_trans.origin.y -= 0.35 # Mais para baixo
-		
-		# A posição INICIAL é ainda mais para baixo (para dar o efeito de subir durante o tween)
-		hand_3d.transform = target_trans
-		hand_3d.transform.origin.y -= 0.7
-		
-		# Sobe devagarzinho em direção à válvula
-		var tween_hand = create_tween()
-		tween_hand.tween_property(hand_3d, "transform", target_trans, 3.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		if hand_start_marker and hand_end_marker:
+			# Adiciona a mão na câmera (para não ser oculta pelo script que apaga o cenário),
+			# mas tweena o global_transform para ela seguir exatamente os markers!
+			cam_fps_walk.add_child(hand_3d)
+			
+			var rot_offset = Basis.from_euler(Vector3(deg_to_rad(hand_rotation_offset.x), deg_to_rad(hand_rotation_offset.y), deg_to_rad(hand_rotation_offset.z)))
+			
+			var start_trans = hand_start_marker.global_transform
+			start_trans.basis = start_trans.basis * rot_offset
+			
+			var end_trans = hand_end_marker.global_transform
+			end_trans.basis = end_trans.basis * rot_offset
+			
+			hand_3d.global_transform = start_trans
+			
+			var tween_hand = create_tween()
+			tween_hand.tween_property(hand_3d, "global_transform", end_trans, 3.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		else:
+			# Fallback caso os marcadores não tenham sido configurados no inspetor
+			cam_fps_walk.add_child(hand_3d)
+			var target_trans = hand_3d.transform
+			target_trans.origin = Vector3(0.0, -0.2, -0.8)
+			hand_3d.transform.origin = Vector3(0.0, -0.8, 0.2)
+			
+			var tween_hand = create_tween()
+			tween_hand.tween_property(hand_3d, "transform", target_trans, 3.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 		
 	# Diminuir som de velocidade mas MANTER chuva e relâmpagos ativos!
 	if is_instance_valid(zoom_sound_player):
