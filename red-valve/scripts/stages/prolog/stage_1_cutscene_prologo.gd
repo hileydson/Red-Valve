@@ -17,6 +17,8 @@ var cutscene_finished: bool = false
 var ui_layer: CanvasLayer
 var label: Label
 var cut_fade_rect: ColorRect
+var title_label: Label
+var title_active: bool = false
 
 # Cutscene Actors & Elements
 var maycow_model: Node3D
@@ -193,7 +195,7 @@ func _build_ui():
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	
 	label.add_theme_font_override("font", load("res://assets/fonts/Montserrat-ExtraBold.ttf"))
-	label.add_theme_font_size_override("font_size", 28)
+	label.add_theme_font_size_override("font_size", 22)
 	label.add_theme_color_override("font_color", Color(1, 1, 1, 1))
 	label.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.9))
 	label.add_theme_constant_override("shadow_offset_x", 3)
@@ -202,6 +204,20 @@ func _build_ui():
 	label.modulate.a = 0.0
 	
 	ui_layer.add_child(label)
+	
+	title_label = Label.new()
+	title_label.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+	title_label.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	title_label.grow_vertical = Control.GROW_DIRECTION_BOTH
+	title_label.add_theme_font_override("font", load("res://assets/fonts/Montserrat-ExtraBold.ttf"))
+	title_label.add_theme_font_size_override("font_size", 160)
+	title_label.add_theme_color_override("font_color", Color(0.8, 0.0, 0.0, 1.0))
+	title_label.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 1.0))
+	title_label.add_theme_constant_override("outline_size", 8)
+	title_label.modulate.a = 0.0
+	title_label.text = "RED VALVE"
+	title_label.visible = false
+	ui_layer.add_child(title_label)
 	
 	var skip_ui = load("res://scripts/ui/skip_cutscene_ui.gd").new()
 	ui_layer.add_child(skip_ui)
@@ -274,6 +290,18 @@ func _process(delta: float) -> void:
 		
 		maycow_model.global_position += dir * 1.5 * delta
 
+	if title_active and title_label:
+		if randf() > 0.4:
+			title_label.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+			title_label.position += Vector2(randf_range(-40, 40), randf_range(-30, 30))
+			title_label.modulate.a = randf_range(0.2, 0.8)
+			title_label.add_theme_color_override("font_color", Color(randf_range(0.6, 1.0), 0.0, 0.0, 1.0))
+			title_label.visible = randf() > 0.2
+		else:
+			title_label.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+			title_label.modulate.a = 0.4
+			title_label.visible = true
+
 func load_chunk() -> void:
 	if current_chunk_index >= text_chunks.size():
 		finish_cutscene()
@@ -323,15 +351,14 @@ func load_chunk() -> void:
 		maycow_model.visible = false
 		
 	# Alterna o alinhamento do texto a cada take para dar dinamismo
-	if current_chunk_index % 2 == 0:
-		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	else:
-		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-		
-	# Coloca o texto no topo apenas no take 3 (index 2)
 	if current_chunk_index == 2:
-		label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	else:
+		if current_chunk_index % 2 == 0:
+			label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		else:
+			label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 		label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		
 	# Fade in da cena (mantendo texto invisivel por enquanto)
@@ -420,13 +447,35 @@ func finish_cutscene() -> void:
 	var hide_tween = create_tween()
 	hide_tween.tween_property(label, "modulate:a", 0.0, 0.5)
 	
-	if cut_fade_rect:
-		hide_tween.parallel().tween_property(cut_fade_rect, "modulate:a", 1.0, 1.5)
+	# Sequência do título RED VALVE
+	title_label.visible = true
+	title_label.modulate.a = 0.0
 	
-	if fade_node and fade_node.has_method("fade_out"):
-		fade_node.fade_out()
+	var t = create_tween()
+	# Pisca lento e transparente
+	for i in range(4):
+		t.tween_property(title_label, "modulate:a", 0.35, 0.2)
+		t.tween_interval(0.15)
+		t.tween_property(title_label, "modulate:a", 0.0, 0.2)
+		t.tween_interval(0.2)
 		
-	await get_tree().create_timer(3.5).timeout
-	LoadingScreen.load_scene("res://scenes/stages/prolog/the_house.tscn")
+	# Glitch forte
+	t.tween_callback(func(): title_active = true)
+	t.tween_interval(1.2)
+	
+	# Corta de vez (Black screen imediata)
+	t.tween_callback(func():
+		title_active = false
+		title_label.visible = false
+		if cut_fade_rect:
+			cut_fade_rect.modulate.a = 1.0 # Preto instantâneo
+		
+		if fade_node and fade_node.has_method("fade_out"):
+			fade_node.fade_out()
+	)
+	
+	# Aguarda um tempinho antes de carregar a próxima cena
+	t.tween_interval(3.0)
+	t.tween_callback(func(): LoadingScreen.load_scene("res://scenes/stages/prolog/the_house.tscn"))
 
 
