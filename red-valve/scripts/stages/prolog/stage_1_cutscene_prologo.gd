@@ -23,6 +23,7 @@ var title_active: bool = false
 # Cutscene Actors & Elements
 var maycow_model: Node3D
 var anim_player: AnimationPlayer
+var choque_audio: AudioStreamPlayer
 var cameras: Array[Camera3D] = []
 var fade_node: Node
 var rain_instance: Node3D
@@ -103,6 +104,10 @@ func _ready() -> void:
 
 	# 5. Create Cinematic Cameras
 	_create_cinematic_cameras()
+	
+	choque_audio = AudioStreamPlayer.new()
+	choque_audio.stream = load("res://assets/sounds/episodios/prologo/choque.mp3")
+	add_child(choque_audio)
 	
 	# 6. Build UI for Texts
 	_build_ui()
@@ -210,10 +215,12 @@ func _build_ui():
 	title_label.grow_horizontal = Control.GROW_DIRECTION_BOTH
 	title_label.grow_vertical = Control.GROW_DIRECTION_BOTH
 	title_label.add_theme_font_override("font", load("res://assets/fonts/Montserrat-ExtraBold.ttf"))
-	title_label.add_theme_font_size_override("font_size", 160)
-	title_label.add_theme_color_override("font_color", Color(0.8, 0.0, 0.0, 1.0))
+	title_label.add_theme_font_size_override("font_size", 220)
+	title_label.add_theme_color_override("font_color", Color(0.25, 0.25, 0.25, 1.0)) # Cinza grafite
 	title_label.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 1.0))
-	title_label.add_theme_constant_override("outline_size", 8)
+	title_label.add_theme_constant_override("outline_size", 4)
+	title_label.offset_top -= 150
+	title_label.offset_bottom -= 150
 	title_label.modulate.a = 0.0
 	title_label.text = "RED VALVE"
 	title_label.visible = false
@@ -292,15 +299,10 @@ func _process(delta: float) -> void:
 
 	if title_active and title_label:
 		if randf() > 0.4:
-			title_label.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
-			title_label.position += Vector2(randf_range(-40, 40), randf_range(-30, 30))
-			title_label.modulate.a = randf_range(0.2, 0.8)
-			title_label.add_theme_color_override("font_color", Color(randf_range(0.6, 1.0), 0.0, 0.0, 1.0))
-			title_label.visible = randf() > 0.2
-		else:
-			title_label.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
-			title_label.modulate.a = 0.4
 			title_label.visible = true
+			title_label.modulate.a = randf_range(0.01, 0.12)
+		else:
+			title_label.visible = false
 
 func load_chunk() -> void:
 	if current_chunk_index >= text_chunks.size():
@@ -398,6 +400,13 @@ func show_text() -> void:
 		label.modulate.a = 0.0
 		text_tween.tween_property(label, "modulate:a", 1.0, fade_time)
 		
+		# Dispara o glitch na última frase do take 4
+		if current_chunk_index == 3 and current_text_index == chunk.size() - 1:
+			text_tween.tween_callback(func(): 
+				title_active = true
+				if choque_audio: choque_audio.play()
+			)
+		
 		# Tempo de leitura
 		text_tween.tween_interval(read_time)
 		
@@ -447,35 +456,19 @@ func finish_cutscene() -> void:
 	var hide_tween = create_tween()
 	hide_tween.tween_property(label, "modulate:a", 0.0, 0.5)
 	
-	# Sequência do título RED VALVE
-	title_label.visible = true
-	title_label.modulate.a = 0.0
-	
-	var t = create_tween()
-	# Pisca lento e transparente
-	for i in range(4):
-		t.tween_property(title_label, "modulate:a", 0.35, 0.2)
-		t.tween_interval(0.15)
-		t.tween_property(title_label, "modulate:a", 0.0, 0.2)
-		t.tween_interval(0.2)
-		
-	# Glitch forte
-	t.tween_callback(func(): title_active = true)
-	t.tween_interval(1.2)
-	
-	# Corta de vez (Black screen imediata)
-	t.tween_callback(func():
-		title_active = false
+	title_active = false
+	if title_label:
 		title_label.visible = false
-		if cut_fade_rect:
-			cut_fade_rect.modulate.a = 1.0 # Preto instantâneo
 		
-		if fade_node and fade_node.has_method("fade_out"):
-			fade_node.fade_out()
-	)
+	# Corta de vez (Black screen imediata)
+	if cut_fade_rect:
+		cut_fade_rect.modulate.a = 1.0
+		
+	if fade_node and fade_node.has_method("fade_out"):
+		fade_node.fade_out()
 	
 	# Aguarda um tempinho antes de carregar a próxima cena
-	t.tween_interval(3.0)
-	t.tween_callback(func(): LoadingScreen.load_scene("res://scenes/stages/prolog/the_house.tscn"))
+	await get_tree().create_timer(3.0).timeout
+	LoadingScreen.load_scene("res://scenes/stages/prolog/the_house.tscn")
 
 
