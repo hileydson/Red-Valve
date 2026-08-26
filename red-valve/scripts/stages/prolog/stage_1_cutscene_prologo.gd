@@ -241,8 +241,8 @@ func _process(delta: float) -> void:
 	elif cam3.current:
 		# 3ª Pessoa no ambiente - Caminhando e câmera girando suavemente para a direita
 		cam3_orbit_angle += delta * 0.15
-		maycow_model.global_position += maycow_model.transform.basis.z * -1.0 * 2.5 * delta
-		var offset = Vector3(sin(cam3_orbit_angle) * 2.0, 1.2, cos(cam3_orbit_angle) * 1.5)
+		maycow_model.global_position += maycow_model.transform.basis.z * 2.5 * delta
+		var offset = Vector3(sin(cam3_orbit_angle) * 2.0, 1.2, cos(cam3_orbit_angle) * -1.5)
 		var rotated_offset = offset.rotated(Vector3.UP, maycow_model.rotation.y)
 		var cam3_target = maycow_model.global_position + rotated_offset
 		cam3.global_position = cam3.global_position.lerp(cam3_target, delta * 5.0)
@@ -287,6 +287,7 @@ func load_chunk() -> void:
 		maycow_model.global_position = cam2_base_pos + dir * 2.0
 		maycow_model.global_position.y = cam2_base_pos.y - 0.5
 		maycow_model.look_at(target_pos, Vector3.UP)
+		maycow_model.rotate_y(PI)
 		get_viewport().use_taa = true
 	elif current_chunk_index == 3:
 		get_viewport().use_taa = false
