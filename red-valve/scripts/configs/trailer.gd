@@ -329,6 +329,33 @@ func _disparar_relampago() -> void:
 	
 	lightning_light.light_energy = 0.0
 	lightning_flash_rect.modulate.a = 0.0
+
+func _disparar_relampago_longo() -> void:
+	if not is_instance_valid(lightning_light): return
+	
+	# Sequência de relâmpago mais longa e intensa (transição)
+	lightning_light.light_energy = 10.0
+	lightning_flash_rect.modulate.a = 0.8
+	await get_tree().create_timer(0.08).timeout
+	
+	lightning_light.light_energy = 4.0
+	lightning_flash_rect.modulate.a = 0.3
+	await get_tree().create_timer(0.06).timeout
+	
+	lightning_light.light_energy = 12.0
+	lightning_flash_rect.modulate.a = 0.95
+	await get_tree().create_timer(0.12).timeout
+	
+	lightning_light.light_energy = 5.0
+	lightning_flash_rect.modulate.a = 0.4
+	await get_tree().create_timer(0.05).timeout
+	
+	lightning_light.light_energy = 10.0
+	lightning_flash_rect.modulate.a = 0.75
+	await get_tree().create_timer(0.18).timeout
+	
+	lightning_light.light_energy = 0.0
+	lightning_flash_rect.modulate.a = 0.0
 func _iniciar_som_velocidade_continuo() -> void:
 	if is_instance_valid(zoom_sound_player) and zoom_sound_player.stream:
 		if not zoom_sound_player.finished.is_connected(_on_zoom_sound_finished):
@@ -746,6 +773,7 @@ func cutscene_trailer_sequence() -> void:
 	# TAKE 2: PRIMEIRA PESSOA - OLHANDO PARA DIREITA E CIMA (CÉU) (6s)
 	# --------------------------------------------------------------------------
 	print("Take 2: Primeira pessoa, olhando para direita e para o céu (6s)...")
+	_disparar_relampago_longo()
 	is_loose_camera_active = false
 	if is_instance_valid(active_cam): active_cam.queue_free()
 	
