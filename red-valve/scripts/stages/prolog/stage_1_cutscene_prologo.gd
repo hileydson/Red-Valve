@@ -105,6 +105,15 @@ func _ready() -> void:
 	# 6. Build UI for Texts
 	_build_ui()
 	
+	# Reparent the cinematic black bars ('cutscene' Node2D) to our ui_layer 
+	# so it renders above the rain (which is CanvasLayer 50)
+	var cinematic_bars = find_child("cutscene", true, false)
+	if not cinematic_bars and has_node("cutscene"):
+		cinematic_bars = get_node("cutscene")
+	if cinematic_bars:
+		cinematic_bars.get_parent().remove_child(cinematic_bars)
+		ui_layer.add_child(cinematic_bars)
+	
 	# 7. Check for Fade node
 	fade_node = find_child("fade", true, false)
 	if not fade_node and has_node("fade"):
@@ -141,9 +150,9 @@ func _create_cinematic_cameras():
 	# Câmera 2: 1ª Pessoa simulando caminhada (head bobbing)
 	var cam2 = Camera3D.new()
 	add_child(cam2)
-	cam2_base_pos = start_pos + dir * 2.0 + Vector3(0, -1.2, 0)
+	cam2_base_pos = start_pos + dir * 2.0 + Vector3(0, -1.6, 0)
 	cam2.global_position = cam2_base_pos
-	cam2.look_at(target_pos + Vector3(0, -1.2, 0), Vector3.UP)
+	cam2.look_at(target_pos + Vector3(0, -1.6, 0), Vector3.UP)
 	cameras.append(cam2)
 	
 	# Câmera 3: Take 3ª pessoa acompanhando o Maycow
@@ -154,7 +163,7 @@ func _create_cinematic_cameras():
 	# Câmera 4: Chão olhando para o céu (chuva caindo)
 	var cam4 = Camera3D.new()
 	add_child(cam4)
-	cam4.global_position = target_pos - dir * 25.0 + Vector3(0, 1.0, 0)
+	cam4.global_position = target_pos - dir * 25.0 + Vector3(0, 0.2, 0)
 	# Olha levemente pra frente e para o céu para vermos o chão de relance
 	cam4.look_at(cam4.global_position + dir * 5.0 + Vector3(0, 2.5, 0), Vector3.UP)
 	cameras.append(cam4)
