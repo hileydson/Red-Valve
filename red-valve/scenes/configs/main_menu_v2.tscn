@@ -72,9 +72,9 @@ grow_vertical = 0
 mouse_filter = 2
 
 [node name="BloodMark" type="Sprite2D" parent="UI/Control" unique_id=660632935]
-modulate = Color(0.7564044, 0.7564044, 0.7564044, 1)
-position = Vector2(82, 138)
-scale = Vector2(0.73162943, 0.6501597)
+modulate = Color(0, 0.17254902, 0.17254902, 0.57254905)
+position = Vector2(104.50008, 132.56252)
+scale = Vector2(1.0111821, 0.9279153)
 texture = ExtResource("3_blood")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="UI/Control" unique_id=1410523597]

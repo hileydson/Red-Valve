@@ -6,8 +6,15 @@ extends Node3D
 
 var input_locked: bool = true
 
-
 var old_film_layer: CanvasLayer = null
+var amulet_node: Node3D = null
+var amulet_spin_velocity: float = 0.3
+
+func _process(delta: float) -> void:
+	if amulet_node:
+		amulet_node.rotation.y += amulet_spin_velocity * delta
+		# Desacelera suavemente de volta para a velocidade base (0.3)
+		amulet_spin_velocity = lerp(amulet_spin_velocity, 0.3, delta * 4.0)
 
 func _setup_old_film_filter() -> void:
 	old_film_layer = CanvasLayer.new()
@@ -154,8 +161,19 @@ func _start_menu_loop() -> void:
 		var fade_tween = create_tween()
 		fade_tween.tween_property(mat, "albedo_color:a", 0.35, fade_duration).set_trans(Tween.TRANS_SINE)
 			
-		var amulet_tween = create_tween().set_loops()
-		amulet_tween.tween_property(amulet, "rotation:y", TAU, 20.0).as_relative()
+		amulet_node = amulet
+
+func _on_button_focus(btn: Button) -> void:
+	if input_locked: return
+	
+	# Dá um impulso no giro do amuleto (agora menos rápido e mais curto)
+	amulet_spin_velocity = 2.0
+	
+	# Efeito de "pulo" no botão
+	btn.pivot_offset = btn.size / 2.0
+	var tween = create_tween()
+	btn.scale = Vector2(1.15, 1.15)
+	tween.tween_property(btn, "scale", Vector2(1.0, 1.0), 0.4).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
 
 func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
@@ -179,6 +197,43 @@ func _ready() -> void:
 				ap.play(anim)
 				break
 				
+	# === Estilizar as Opções do Menu ===
+	var vbox = $UI/Control/VBoxContainer
+	if vbox:
+		for btn in vbox.get_children():
+			if btn is Button:
+				# Criar os estilos customizados em vermelho
+				var style_normal = StyleBoxEmpty.new()
+				
+				var style_focus = StyleBoxFlat.new()
+				style_focus.bg_color = Color(0.6, 0.0, 0.0, 0.4) # Vermelho translúcido
+				style_focus.border_color = Color(1.0, 0.1, 0.1, 0.8) # Borda vermelha brilhante
+				style_focus.set_border_width_all(0)
+				style_focus.border_width_left = 6
+				style_focus.corner_radius_top_right = 5
+				style_focus.corner_radius_bottom_right = 5
+				
+				var style_hover = style_focus.duplicate()
+				style_hover.bg_color = Color(0.8, 0.0, 0.0, 0.2)
+				
+				var style_pressed = style_focus.duplicate()
+				style_pressed.bg_color = Color(1.0, 0.0, 0.0, 0.6)
+				
+				# Aplicar os estilos
+				btn.add_theme_stylebox_override("normal", style_normal)
+				btn.add_theme_stylebox_override("focus", style_focus)
+				btn.add_theme_stylebox_override("hover", style_hover)
+				btn.add_theme_stylebox_override("pressed", style_pressed)
+				
+				# Mudar cor e tamanho da fonte para destacar
+				btn.add_theme_color_override("font_focus_color", Color(1.0, 0.8, 0.8))
+				btn.add_theme_color_override("font_hover_color", Color(1.0, 0.8, 0.8))
+				btn.add_theme_font_size_override("font_size", 22)
+				
+				# Conectar sinais para efeito de foco
+				btn.focus_entered.connect(func(): _on_button_focus(btn))
+				btn.mouse_entered.connect(func(): btn.grab_focus())
+
 	_setup_old_film_filter()
 	_start_menu_loop()
 	

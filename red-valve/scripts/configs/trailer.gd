@@ -351,7 +351,7 @@ func _parar_som_velocidade() -> void:
 
 func _setup_old_film_filter() -> void:
 	old_film_layer = CanvasLayer.new()
-	old_film_layer.layer = 110
+	old_film_layer.layer = -1
 	add_child(old_film_layer)
 	
 	var back_buffer = BackBufferCopy.new()
@@ -417,7 +417,7 @@ func _setup_old_film_filter() -> void:
 
 func _setup_vhs_filter() -> void:
 	vhs_layer = CanvasLayer.new()
-	vhs_layer.layer = 111 # Acima do old film
+	vhs_layer.layer = -1
 	add_child(vhs_layer)
 	
 	var back_buffer = BackBufferCopy.new()
@@ -457,7 +457,7 @@ func _setup_vhs_filter() -> void:
 		vec2 uv = SCREEN_UV;
 		
 		float tracking_pos = fract(TIME * 0.1);
-		if (abs(uv.y - tracking_pos) < 0.02) {
+		if (abs(uv.y - tracking_pos) < 0.001) {
 			uv.x += (rand(uv * TIME) - 0.5) * tracking_noise;
 		}
 		
@@ -497,7 +497,7 @@ func _setup_vhs_filter() -> void:
 
 func _setup_motion_blur_filter() -> void:
 	motion_blur_layer = CanvasLayer.new()
-	motion_blur_layer.layer = 112
+	motion_blur_layer.layer = -1
 	add_child(motion_blur_layer)
 	
 	var back_buffer = BackBufferCopy.new()
