@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://bw32xy0twgeqd"]
 
 [ext_resource type="Script" uid="uid://cgdqqptk1tski" path="res://scripts/stages/prolog/stage_1_cutscene_prologo.gd" id="1_fakdg"]
+[ext_resource type="PackedScene" uid="uid://b7pdlllpih4yc" path="res://scenes/configs/cutscene_takes.tscn" id="2_73cdy"]
 [ext_resource type="PackedScene" uid="uid://dy356o67p6jyn" path="res://scenes/configs/fade.tscn" id="2_qtypj"]
 [ext_resource type="PackedScene" uid="uid://bft8djb3rtxlx" path="res://shaders/post_process/shader_fumaca.tscn" id="3_egmip"]
 [ext_resource type="Shader" uid="uid://b0u6pdfmaoegw" path="res://shaders/battlefield/battlefield.gdshader" id="4_u2vx7"]
@@ -123,8 +124,8 @@ shader_parameter/cirrus_absorption = 2.0
 shader_parameter/cirrus_sky_tint_fade = 0.5
 shader_parameter/cirrus_size = 1.0
 shader_parameter/cirrus_uv = Vector2(0.16, 0.11)
-shader_parameter/cirrus_position1 = Vector2(0.64253175, 0.64253175)
-shader_parameter/cirrus_position2 = Vector2(0.64253175, 0.64253175)
+shader_parameter/cirrus_position1 = Vector2(0.7759666, 0.7759666)
+shader_parameter/cirrus_position2 = Vector2(0.7759666, 0.7759666)
 shader_parameter/cirrus_texture = ExtResource("12_6fsl6")
 shader_parameter/cumulus_visible = true
 shader_parameter/cumulus_intensity = 9.245
@@ -134,7 +135,7 @@ shader_parameter/cumulus_absorption = 2.0
 shader_parameter/cumulus_noise_freq = 2.7
 shader_parameter/cumulus_sky_tint_fade = 0.0
 shader_parameter/cumulus_size = 0.5
-shader_parameter/cumulus_position = Vector2(8.212322, 8.212322)
+shader_parameter/cumulus_position = Vector2(173.57016, 173.57016)
 shader_parameter/cumulus_texture = ExtResource("13_48rmv")
 shader_parameter/cumulus_partial_mie_phase = Vector3(0.957564, 1.042436, 0.412)
 shader_parameter/cumulus_mie_intensity = 1.0
@@ -284,6 +285,8 @@ size = Vector3(2.3670502, 1, 1.4061279)
 
 [node name="Stage1" type="Node3D" unique_id=162527]
 script = ExtResource("1_fakdg")
+
+[node name="cutscene" parent="." unique_id=796399776 instance=ExtResource("2_73cdy")]
 
 [node name="fade" parent="." unique_id=158118564 instance=ExtResource("2_qtypj")]
 

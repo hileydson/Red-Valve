@@ -16,6 +16,7 @@ var cutscene_finished: bool = false
 # UI Elements
 var ui_layer: CanvasLayer
 var label: Label
+var cut_fade_rect: ColorRect
 
 # Cutscene Actors & Elements
 var maycow_model: Node3D
@@ -165,6 +166,11 @@ func _build_ui():
 	ui_layer.layer = 100
 	add_child(ui_layer)
 	
+	cut_fade_rect = ColorRect.new()
+	cut_fade_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	cut_fade_rect.color = Color(0, 0, 0, 1)
+	ui_layer.add_child(cut_fade_rect)
+	
 	label = Label.new()
 	label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	# Margens para não colar nas bordas
@@ -288,6 +294,14 @@ func load_chunk() -> void:
 		maycow_model.global_position.y = cam2_base_pos.y - 0.5
 		maycow_model.look_at(target_pos, Vector3.UP)
 		maycow_model.rotate_y(PI)
+		
+		# Evitar que a cam3 voe da origem para o target rapidamente, inicializando-a na posicao certa
+		cam3_orbit_angle = 0.0
+		var offset = Vector3(sin(cam3_orbit_angle) * 2.0, 1.2, cos(cam3_orbit_angle) * -1.5)
+		var rotated_offset = offset.rotated(Vector3.UP, maycow_model.rotation.y)
+		cameras[2].global_position = maycow_model.global_position + rotated_offset
+		cameras[2].look_at(maycow_model.global_position + Vector3(0, 1.2, 0), Vector3.UP)
+		
 		get_viewport().use_taa = true
 	elif current_chunk_index == 3:
 		get_viewport().use_taa = false
@@ -295,6 +309,7 @@ func load_chunk() -> void:
 		maycow_model.visible = true
 		maycow_model.global_position = target_pos - dir * 4.0
 		maycow_model.look_at(target_pos, Vector3.UP)
+		maycow_model.rotate_y(PI)
 	else:
 		maycow_model.visible = false
 		
@@ -310,7 +325,13 @@ func load_chunk() -> void:
 	else:
 		label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		
-	show_text()
+	# Fade in da cena (mantendo texto invisivel por enquanto)
+	if cut_fade_rect:
+		var t = create_tween()
+		t.tween_property(cut_fade_rect, "modulate:a", 0.0, 1.0)
+		t.tween_callback(show_text)
+	else:
+		show_text()
 
 func show_text() -> void:
 	var chunk = text_chunks[current_chunk_index]
@@ -362,9 +383,23 @@ func show_text() -> void:
 		next_chunk()
 
 func next_chunk() -> void:
+	if current_chunk_index >= text_chunks.size() - 1:
+		finish_cutscene()
+		return
+		
 	is_transitioning = true
-	current_chunk_index += 1
-	load_chunk()
+	
+	# Fade out da cena 3D (para a transicao)
+	if cut_fade_rect:
+		var t = create_tween()
+		t.tween_property(cut_fade_rect, "modulate:a", 1.0, 1.0)
+		t.tween_callback(func():
+			current_chunk_index += 1
+			load_chunk()
+		)
+	else:
+		current_chunk_index += 1
+		load_chunk()
 
 func finish_cutscene() -> void:
 	if cutscene_finished: return
@@ -375,6 +410,9 @@ func finish_cutscene() -> void:
 	
 	var hide_tween = create_tween()
 	hide_tween.tween_property(label, "modulate:a", 0.0, 0.5)
+	
+	if cut_fade_rect:
+		hide_tween.parallel().tween_property(cut_fade_rect, "modulate:a", 1.0, 1.5)
 	
 	if fade_node and fade_node.has_method("fade_out"):
 		fade_node.fade_out()
