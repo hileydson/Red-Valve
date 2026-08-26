@@ -464,11 +464,20 @@ func finish_cutscene() -> void:
 	if cut_fade_rect:
 		cut_fade_rect.modulate.a = 1.0
 		
+	# Para todos os sons de forma abrupta
+	_stop_all_audio(get_tree().root)
+		
 	if fade_node and fade_node.has_method("fade_out"):
 		fade_node.fade_out()
 	
 	# Aguarda um tempinho antes de carregar a próxima cena
 	await get_tree().create_timer(3.0).timeout
 	LoadingScreen.load_scene("res://scenes/stages/prolog/the_house.tscn")
+
+func _stop_all_audio(node: Node) -> void:
+	if node is AudioStreamPlayer or node is AudioStreamPlayer2D or node is AudioStreamPlayer3D:
+		node.stop()
+	for child in node.get_children():
+		_stop_all_audio(child)
 
 
