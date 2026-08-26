@@ -34,7 +34,7 @@ var walk_time: float = 0.0
 var cam2_base_pos: Vector3
 var take2_time: float = 0.0
 var cam4_rot_time: float = 0.0
-var global_dir_lights: Array = []
+var cam3_orbit_angle: float = 0.0
 
 func _ready() -> void:
 	# 1. Hide/Disable the actual Player if it exists in the scene
@@ -109,19 +109,10 @@ func _ready() -> void:
 	if not fade_node and has_node("fade"):
 		fade_node = get_node("fade")
 		
-	# Store directional lights to disable in void
-	_find_directional_lights(get_tree().root)
-		
 	Engine.time_scale = 1.0 # Velocidade normal
 	
 	await get_tree().create_timer(1.0).timeout
 	load_chunk()
-
-func _find_directional_lights(node: Node):
-	if node is DirectionalLight3D:
-		global_dir_lights.append(node)
-	for child in node.get_children():
-		_find_directional_lights(child)
 
 func _fix_maycow_materials(node: Node):
 	var tex = load("res://assets/3d_model/player/Maycow Lopes/maycow_normal/maycow_normal_rigged_texture_0.png")
@@ -149,33 +140,15 @@ func _create_cinematic_cameras():
 	# Câmera 2: 1ª Pessoa simulando caminhada (head bobbing)
 	var cam2 = Camera3D.new()
 	add_child(cam2)
-	cam2_base_pos = start_pos + dir * 2.0 + Vector3(0, 0.4, 0)
+	cam2_base_pos = start_pos + dir * 2.0 + Vector3(0, -1.2, 0)
 	cam2.global_position = cam2_base_pos
-	cam2.look_at(target_pos + Vector3(0, 0.4, 0), Vector3.UP)
+	cam2.look_at(target_pos + Vector3(0, -1.2, 0), Vector3.UP)
 	cameras.append(cam2)
 	
-	# Câmera 3: Take 3ª pessoa acompanhando o Maycow no vazio (Void escuro)
+	# Câmera 3: Take 3ª pessoa acompanhando o Maycow
 	var cam3 = Camera3D.new()
 	add_child(cam3)
-	cam3.global_position = Vector3(0, 10001, -1.2)
-	cam3.look_at(Vector3(0, 10001, 10), Vector3.UP)
-	
-	var void_env = Environment.new()
-	void_env.background_mode = Environment.BG_COLOR
-	void_env.background_color = Color(0, 0, 0, 1)
-	void_env.ambient_light_source = Environment.AMBIENT_SOURCE_DISABLED
-	void_env.ambient_light_color = Color(0, 0, 0, 1)
-	cam3.environment = void_env
-	
 	cameras.append(cam3)
-	
-	# Luz pontual apenas para destacar o modelo no escuro
-	var void_light = OmniLight3D.new()
-	void_light.light_color = Color(0.8, 0.8, 1.0)
-	void_light.light_energy = 2.0
-	void_light.omni_range = 10.0
-	cam3.add_child(void_light)
-	void_light.position = Vector3(0, 1.0, -1.0)
 	
 	# Câmera 4: Chão olhando para o céu (chuva caindo)
 	var cam4 = Camera3D.new()
@@ -205,7 +178,7 @@ func _build_ui():
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	
 	label.add_theme_font_override("font", load("res://assets/fonts/Montserrat-ExtraBold.ttf"))
-	label.add_theme_font_size_override("font_size", 42)
+	label.add_theme_font_size_override("font_size", 28)
 	label.add_theme_color_override("font_color", Color(1, 1, 1, 1))
 	label.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.9))
 	label.add_theme_constant_override("shadow_offset_x", 3)
@@ -266,11 +239,14 @@ func _process(delta: float) -> void:
 		cam2.look_at(look_target, Vector3.UP)
 		
 	elif cam3.current:
-		# 3ª Pessoa - Caminhando de costas, zoom bem perto
-		maycow_model.global_position += Vector3(0, 0, -1).normalized() * 2.0 * delta
-		var cam3_target = maycow_model.global_position + Vector3(0.0, 1.0, 1.2)
+		# 3ª Pessoa no ambiente - Caminhando e câmera girando suavemente para a direita
+		cam3_orbit_angle += delta * 0.15
+		maycow_model.global_position += maycow_model.transform.basis.z * -1.0 * 2.5 * delta
+		var offset = Vector3(sin(cam3_orbit_angle) * 2.0, 1.2, cos(cam3_orbit_angle) * 1.5)
+		var rotated_offset = offset.rotated(Vector3.UP, maycow_model.rotation.y)
+		var cam3_target = maycow_model.global_position + rotated_offset
 		cam3.global_position = cam3.global_position.lerp(cam3_target, delta * 5.0)
-		cam3.look_at(maycow_model.global_position + Vector3(0, 1.1, 0), Vector3.UP)
+		cam3.look_at(maycow_model.global_position + Vector3(0, 1.2, 0), Vector3.UP)
 		
 	elif cam4.current:
 		# Foco no céu/chuva girando levemente e parando
@@ -308,13 +284,12 @@ func load_chunk() -> void:
 	# Atualiza o estado do modelo
 	if current_chunk_index == 2:
 		maycow_model.visible = true
-		maycow_model.global_position = Vector3(0, 10000, 0)
-		maycow_model.rotation = Vector3(0, PI, 0)
-		for l in global_dir_lights: l.visible = false
+		maycow_model.global_position = cam2_base_pos + dir * 2.0
+		maycow_model.global_position.y = cam2_base_pos.y - 0.5
+		maycow_model.look_at(target_pos, Vector3.UP)
 		get_viewport().use_taa = true
 	elif current_chunk_index == 3:
 		get_viewport().use_taa = false
-		for l in global_dir_lights: l.visible = true
 		# Mostra no take 4 de longe
 		maycow_model.visible = true
 		maycow_model.global_position = target_pos - dir * 4.0
@@ -327,6 +302,12 @@ func load_chunk() -> void:
 		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	else:
 		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+		
+	# Coloca o texto no topo apenas no take 3 (index 2)
+	if current_chunk_index == 2:
+		label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
+	else:
+		label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		
 	show_text()
 
