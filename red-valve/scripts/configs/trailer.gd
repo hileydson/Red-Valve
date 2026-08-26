@@ -50,6 +50,7 @@ func _enter_tree() -> void:
 	GlobalEvents.is_maycow_normal = false
 
 func _ready() -> void:
+	RenderingServer.set_default_clear_color(Color(0.3, 0.3, 0.3, 1.0))
 	# Canvas Layer para Fader e Clarão do Relâmpago
 	var canvas = CanvasLayer.new()
 	canvas.layer = 120
@@ -481,8 +482,8 @@ func _setup_trailer_title() -> void:
 	if font:
 		flash_label.add_theme_font_override("font", font)
 		
-	flash_label.add_theme_font_size_override("font_size", 650) # AINDA MAIOR
-	flash_label.add_theme_color_override("font_color", Color(0.85, 0.0, 0.0))
+	flash_label.add_theme_font_size_override("font_size", 900) # AINDA MAIOR
+	flash_label.add_theme_color_override("font_color", Color(0.65, 0.65, 0.65))
 	flash_label.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.8))
 	flash_label.add_theme_constant_override("outline_size", 8)
 	
@@ -494,8 +495,9 @@ func _start_title_sequence() -> void:
 	await get_tree().create_timer(4.0).timeout
 	if not GlobalEvents.in_cutscene: return
 	
+	_tocar_trovao_e_relampago()
 	flash_label.text = "R"
-	flash_label.modulate.a = 0.12 # Muito mais transparente
+	flash_label.modulate.a = 0.08 # Um pouquinho menos transparente que 0.05
 	var t1 = create_tween()
 	t1.tween_property(flash_label, "modulate:a", 0.0, 4.0).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	
@@ -504,10 +506,16 @@ func _start_title_sequence() -> void:
 	await get_tree().create_timer(11.5).timeout
 	if not GlobalEvents.in_cutscene: return
 	
+	_tocar_trovao_e_relampago()
 	flash_label.text = "V"
-	flash_label.modulate.a = 0.12 # Muito mais transparente
+	flash_label.modulate.a = 0.08 # Um pouquinho menos transparente que 0.05
 	var t2 = create_tween()
 	t2.tween_property(flash_label, "modulate:a", 0.0, 4.0).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+
+func _tocar_trovao_e_relampago() -> void:
+	if is_instance_valid(thunder_audio_player):
+		thunder_audio_player.play()
+	_disparar_relampago()
 
 
 # Helper para instanciar a câmera solta (loose tracking)
@@ -1050,7 +1058,8 @@ func _criar_bola_de_fogo(start_pos: Vector3, end_pos: Vector3, duration: float) 
 	var audio = AudioStreamPlayer3D.new()
 	audio.stream = load("res://assets/sounds/episodios/trailer/som_cometa.mp3")
 	audio.pitch_scale = randf_range(0.5, 0.7) # Grave
-	audio.max_db = 6.0
+	audio.volume_db = 15.0
+	audio.max_db = 15.0
 	audio.unit_size = 50.0 # Para ouvir de longe
 	fireball.add_child(audio)
 	audio.play()

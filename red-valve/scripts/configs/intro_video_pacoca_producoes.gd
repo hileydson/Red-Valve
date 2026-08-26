@@ -16,4 +16,5 @@ func _process(delta: float) -> void:
 
 func _on_finished() -> void:
 	await get_tree().create_timer(2.0).timeout 
+	RenderingServer.set_default_clear_color(Color.BLACK)
 	get_tree().change_scene_to_file("res://scenes/configs/trailer.tscn")
