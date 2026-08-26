@@ -11,6 +11,9 @@ var lightning_flash_rect: ColorRect
 
 # Canvas layers para filtros visuais
 var old_film_layer: CanvasLayer = null
+var old_film_mat: ShaderMaterial = null
+var vhs_layer: CanvasLayer = null
+var vhs_mat: ShaderMaterial = null
 var motion_blur_layer: CanvasLayer = null
 var motion_blur_rect: ColorRect = null
 var motion_blur_mat: ShaderMaterial = null
@@ -407,10 +410,90 @@ func _setup_old_film_filter() -> void:
 	var shader = Shader.new()
 	shader.code = shader_code
 	
-	var mat = ShaderMaterial.new()
-	mat.shader = shader
-	film_rect.material = mat
+	old_film_mat = ShaderMaterial.new()
+	old_film_mat.shader = shader
+	film_rect.material = old_film_mat
 	old_film_layer.add_child(film_rect)
+
+func _setup_vhs_filter() -> void:
+	vhs_layer = CanvasLayer.new()
+	vhs_layer.layer = 111 # Acima do old film
+	add_child(vhs_layer)
+	
+	var back_buffer = BackBufferCopy.new()
+	back_buffer.copy_mode = BackBufferCopy.COPY_MODE_VIEWPORT
+	vhs_layer.add_child(back_buffer)
+	
+	var vhs_rect = ColorRect.new()
+	vhs_rect.name = "VHSOverlay"
+	vhs_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	vhs_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	
+	var shader_code: String = """
+	shader_type canvas_item;
+
+	uniform sampler2D screen_texture : hint_screen_texture, filter_linear_mipmap;
+	uniform float smear : hint_range(0.0, 1.0) = 0.8;
+	uniform float tracking_noise : hint_range(0.0, 1.0) = 0.15;
+	uniform float chromatic_aberration : hint_range(0.0, 0.02) = 0.004;
+
+	const mat3 RGB_TO_YIQ = mat3(
+		vec3(0.299, 0.587, 0.114),
+		vec3(0.5959, -0.2746, -0.3213),
+		vec3(0.2115, -0.5227, 0.3112)
+	);
+
+	const mat3 YIQ_TO_RGB = mat3(
+		vec3(1.0, 0.956, 0.621),
+		vec3(1.0, -0.272, -0.647),
+		vec3(1.0, -1.106, 1.703)
+	);
+
+	float rand(vec2 co) {
+		return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+	}
+
+	void fragment() {
+		vec2 uv = SCREEN_UV;
+		
+		float tracking_pos = fract(TIME * 0.1);
+		if (abs(uv.y - tracking_pos) < 0.02) {
+			uv.x += (rand(uv * TIME) - 0.5) * tracking_noise;
+		}
+		
+		if (rand(vec2(TIME)) > 0.97) {
+			uv.y += (rand(vec2(TIME * 2.0)) - 0.5) * 0.008;
+		}
+
+		vec3 color;
+		color.r = texture(screen_texture, uv + vec2(chromatic_aberration, 0.0)).r;
+		color.g = texture(screen_texture, uv).g;
+		color.b = texture(screen_texture, uv - vec2(chromatic_aberration, 0.0)).b;
+		
+		vec3 yiq = RGB_TO_YIQ * color;
+		
+		float smear_dist = smear * 0.01;
+		vec3 yiq_smear1 = RGB_TO_YIQ * texture(screen_texture, uv - vec2(smear_dist, 0.0)).rgb;
+		vec3 yiq_smear2 = RGB_TO_YIQ * texture(screen_texture, uv - vec2(smear_dist * 2.0, 0.0)).rgb;
+		
+		yiq.y = (yiq.y + yiq_smear1.y + yiq_smear2.y) / 3.0;
+		yiq.z = (yiq.z + yiq_smear1.z + yiq_smear2.z) / 3.0;
+		
+		color = YIQ_TO_RGB * yiq;
+		
+		color -= sin(uv.y * 900.0) * 0.035;
+		color -= rand(uv + TIME) * 0.05;
+		
+		COLOR = vec4(color, 1.0);
+	}
+	"""
+	var shader = Shader.new()
+	shader.code = shader_code
+	
+	vhs_mat = ShaderMaterial.new()
+	vhs_mat.shader = shader
+	vhs_rect.material = vhs_mat
+	vhs_layer.add_child(vhs_rect)
 
 func _setup_motion_blur_filter() -> void:
 	motion_blur_layer = CanvasLayer.new()
@@ -576,6 +659,13 @@ func cutscene_trailer_sequence() -> void:
 		
 	player_ref = player
 	_setup_old_film_filter()
+	_setup_vhs_filter()
+	
+	if old_film_layer:
+		old_film_layer.visible = false
+	if vhs_layer:
+		vhs_layer.visible = true
+		
 	_setup_motion_blur_filter()
 	_iniciar_chuva_e_relampagos()
 	
@@ -906,6 +996,12 @@ func cutscene_trailer_sequence() -> void:
 		growl_player.play()
 		
 	await get_tree().create_timer(1.5).timeout
+	
+	# Desativa o filtro VHS e ativa o filtro de filme velho para o último take
+	if vhs_layer:
+		vhs_layer.visible = false
+	if old_film_layer:
+		old_film_layer.visible = true
 	
 	# 5. REVELAÇÃO DO THE_ANTI_LOPES E ANIMAÇÃO FINAL
 	print("Removendo transparência e tocando animação 'final'...")
