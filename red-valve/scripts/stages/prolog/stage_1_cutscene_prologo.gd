@@ -1,16 +1,17 @@
 extends Node3D
 
 var text_chunks = [
-	["PROLOG_BEGIN_1_1", "PROLOG_BEGIN_1_2", "PROLOG_BEGIN_1_3", "PROLOG_BEGIN_1_4", "PROLOG_BEGIN_1_5"],
-	["PROLOG_BEGIN_2_1"],
-	["PROLOG_BEGIN_3_1", "PROLOG_BEGIN_3_2"],
-	["PROLOG_BEGIN_4_1", "PROLOG_BEGIN_4_2", "PROLOG_BEGIN_4_3", "PROLOG_BEGIN_4_4"]
+	["PROLOG_BEGIN_1_1", "PROLOG_BEGIN_1_2", "PROLOG_BEGIN_1_3"],
+	["PROLOG_BEGIN_1_4", "PROLOG_BEGIN_1_5", "PROLOG_BEGIN_2_1"],
+	["PROLOG_BEGIN_3_1", "PROLOG_BEGIN_3_2", "PROLOG_BEGIN_4_1", "PROLOG_BEGIN_4_2"],
+	["PROLOG_BEGIN_4_3", "PROLOG_BEGIN_4_4"]
 ]
 
 var current_chunk_index: int = 0
 var current_text_index: int = 0
 var text_tween: Tween
 var is_transitioning: bool = false
+var cutscene_finished: bool = false
 
 # UI Elements
 var ui_layer: CanvasLayer
@@ -28,6 +29,13 @@ var start_pos: Vector3
 var target_pos: Vector3
 var dir: Vector3
 
+# Cinematic vars
+var walk_time: float = 0.0
+var cam2_base_pos: Vector3
+var take2_time: float = 0.0
+var cam4_rot_time: float = 0.0
+var global_dir_lights: Array = []
+
 func _ready() -> void:
 	# 1. Hide/Disable the actual Player if it exists in the scene
 	var real_player = find_child("Player", true, false)
@@ -36,6 +44,8 @@ func _ready() -> void:
 	if real_player:
 		real_player.process_mode = Node.PROCESS_MODE_DISABLED
 		real_player.visible = false
+		for canvas in real_player.find_children("*", "CanvasLayer", true, false):
+			canvas.visible = false
 			
 	# 2. Get the references to the buildings
 	var jimmy = find_child("auto_pecas_jimmy*", true, false)
@@ -50,37 +60,43 @@ func _ready() -> void:
 		
 	dir = (target_pos - start_pos).normalized()
 
-	# 3. Spawn Maycow
+	# 3. Spawn Maycow (Initially hidden)
 	var maycow_scene = load("res://assets/3d_model/player/Maycow Lopes/maycow_normal/maycow_normal_rigged.glb")
 	if maycow_scene:
 		maycow_model = maycow_scene.instantiate()
 		add_child(maycow_model)
-		maycow_model.global_position = start_pos
-		maycow_model.look_at(target_pos, Vector3.UP)
-		maycow_model.rotate_y(PI) # Gira 180 graus para consertar o modelo invertido
+		# Vai ficar escondido no "vazio" pro take 3
+		maycow_model.global_position = Vector3(0, 10000, 0)
+		maycow_model.rotation = Vector3(0, PI, 0)
+		maycow_model.visible = false
+		
+		_fix_maycow_materials(maycow_model)
 		
 		anim_player = maycow_model.find_child("AnimationPlayer", true, false)
 		if anim_player:
 			var anim_list = anim_player.get_animation_list()
 			var walk_anim = ""
-			for a in anim_list:
-				if "walk" in a.to_lower() or "andar" in a.to_lower():
-					walk_anim = a
-					break
+			
+			if anim_list.has("Walking"):
+				walk_anim = "Walking"
+			else:
+				for a in anim_list:
+					if "walk" in a.to_lower() or "andar" in a.to_lower():
+						walk_anim = a
+						break
+			
 			if walk_anim == "" and anim_list.size() > 0:
 				walk_anim = anim_list[0]
 			
 			if walk_anim != "":
 				anim_player.play(walk_anim)
-				anim_player.speed_scale = 0.5 
+				anim_player.speed_scale = 0.8 
 
 	# 4. Load Rain Effect
 	var rain_scene = load("res://scenes/effects/rain_effect.tscn")
 	if rain_scene:
 		rain_instance = rain_scene.instantiate()
 		add_child(rain_instance)
-		# Define o 'player' da chuva como o nosso modelo da cutscene para ela seguir ele
-		rain_instance.player = maycow_model
 
 	# 5. Create Cinematic Cameras
 	_create_cinematic_cameras()
@@ -93,38 +109,80 @@ func _ready() -> void:
 	if not fade_node and has_node("fade"):
 		fade_node = get_node("fade")
 		
-	Engine.time_scale = 0.6
+	# Store directional lights to disable in void
+	_find_directional_lights(get_tree().root)
+		
+	Engine.time_scale = 1.0 # Velocidade normal
 	
 	await get_tree().create_timer(1.0).timeout
 	load_chunk()
 
+func _find_directional_lights(node: Node):
+	if node is DirectionalLight3D:
+		global_dir_lights.append(node)
+	for child in node.get_children():
+		_find_directional_lights(child)
+
+func _fix_maycow_materials(node: Node):
+	var tex = load("res://assets/3d_model/player/Maycow Lopes/maycow_normal/maycow_normal_rigged_texture_0.png")
+	if tex:
+		var mat = StandardMaterial3D.new()
+		mat.albedo_texture = tex
+		mat.specular_mode = BaseMaterial3D.SPECULAR_DISABLED
+		_apply_material_recursive(node, mat)
+
+func _apply_material_recursive(node: Node, mat: Material):
+	if node is MeshInstance3D:
+		for i in range(node.mesh.get_surface_count()):
+			node.set_surface_override_material(i, mat)
+	for child in node.get_children():
+		_apply_material_recursive(child, mat)
+
 func _create_cinematic_cameras():
-	# Câmera 1: Parada na frente, vendo ele andar na direção dela
+	# Câmera 1: Take da oficina (panorâmica girando devagar)
 	var cam1 = Camera3D.new()
 	add_child(cam1)
-	cam1.global_position = start_pos + dir * 8.0 + Vector3(0, 1.5, 0)
-	cam1.look_at(start_pos + Vector3(0, 1.0, 0), Vector3.UP)
+	cam1.global_position = start_pos + dir * 8.0 + Vector3(0, 2.5, 0)
+	cam1.look_at(start_pos + Vector3(0, 2.0, 0), Vector3.UP)
 	cameras.append(cam1)
 	
-	# Câmera 2: Vai andar junto do modelo (tracking side profile)
+	# Câmera 2: 1ª Pessoa simulando caminhada (head bobbing)
 	var cam2 = Camera3D.new()
 	add_child(cam2)
-	cam2.global_position = start_pos + dir.cross(Vector3.UP).normalized() * 3.0 + dir * 1.5 + Vector3(0, 1.2, 0)
-	cam2.look_at(start_pos + Vector3(0, 1.2, 0), Vector3.UP)
+	cam2_base_pos = start_pos + dir * 2.0 + Vector3(0, 0.4, 0)
+	cam2.global_position = cam2_base_pos
+	cam2.look_at(target_pos + Vector3(0, 0.4, 0), Vector3.UP)
 	cameras.append(cam2)
 	
-	# Câmera 3: De cima, seguindo ele
+	# Câmera 3: Take 3ª pessoa acompanhando o Maycow no vazio (Void escuro)
 	var cam3 = Camera3D.new()
 	add_child(cam3)
-	cam3.global_position = start_pos + Vector3(0, 8.0, 0) - dir * 2.0
-	cam3.look_at(start_pos, Vector3.UP)
+	cam3.global_position = Vector3(0, 10001, -1.2)
+	cam3.look_at(Vector3(0, 10001, 10), Vector3.UP)
+	
+	var void_env = Environment.new()
+	void_env.background_mode = Environment.BG_COLOR
+	void_env.background_color = Color(0, 0, 0, 1)
+	void_env.ambient_light_source = Environment.AMBIENT_SOURCE_DISABLED
+	void_env.ambient_light_color = Color(0, 0, 0, 1)
+	cam3.environment = void_env
+	
 	cameras.append(cam3)
 	
-	# Câmera 4: Perto da casa, vendo ele chegar (ângulo melhor)
+	# Luz pontual apenas para destacar o modelo no escuro
+	var void_light = OmniLight3D.new()
+	void_light.light_color = Color(0.8, 0.8, 1.0)
+	void_light.light_energy = 2.0
+	void_light.omni_range = 10.0
+	cam3.add_child(void_light)
+	void_light.position = Vector3(0, 1.0, -1.0)
+	
+	# Câmera 4: Chão olhando para o céu (chuva caindo)
 	var cam4 = Camera3D.new()
 	add_child(cam4)
-	cam4.global_position = target_pos + dir * 4.0 + Vector3(2.0, 1.2, -1.0)
-	cam4.look_at(target_pos - dir * 3.0, Vector3.UP)
+	cam4.global_position = target_pos - dir * 25.0 + Vector3(0, 1.0, 0)
+	# Olha levemente pra frente e para o céu para vermos o chão de relance
+	cam4.look_at(cam4.global_position + dir * 5.0 + Vector3(0, 2.5, 0), Vector3.UP)
 	cameras.append(cam4)
 	
 	cam1.current = true
@@ -136,18 +194,23 @@ func _build_ui():
 	
 	label = Label.new()
 	label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	# Margens para não colar nas bordas
+	label.offset_left = 60
+	label.offset_right = -60
+	label.offset_top = 40
+	label.offset_bottom = -40
+	
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	
-	# Estilo cinematográfico no meio da tela com texto grande
 	label.add_theme_font_override("font", load("res://assets/fonts/Montserrat-ExtraBold.ttf"))
-	label.add_theme_font_size_override("font_size", 54)
+	label.add_theme_font_size_override("font_size", 42)
 	label.add_theme_color_override("font_color", Color(1, 1, 1, 1))
-	label.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.8))
-	label.add_theme_constant_override("shadow_offset_x", 4)
-	label.add_theme_constant_override("shadow_offset_y", 4)
-	label.add_theme_constant_override("shadow_outline_size", 8)
+	label.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.9))
+	label.add_theme_constant_override("shadow_offset_x", 3)
+	label.add_theme_constant_override("shadow_offset_y", 3)
+	label.add_theme_constant_override("shadow_outline_size", 6)
 	label.modulate.a = 0.0
 	
 	ui_layer.add_child(label)
@@ -157,27 +220,68 @@ func _build_ui():
 	skip_ui.skipped.connect(finish_cutscene)
 
 func _process(delta: float) -> void:
-	if maycow_model:
-		# Mova o modelo a frente
-		maycow_model.global_position += dir * 1.5 * delta
+	if not maycow_model: return
+	
+	var cam1 = cameras[0]
+	var cam2 = cameras[1]
+	var cam3 = cameras[2]
+	var cam4 = cameras[3]
+	
+	if cam1.current:
+		# Movimento suave de pan na oficina
+		cam1.global_position += (dir.cross(Vector3.UP).normalized() * 0.4) * delta
+		cam1.look_at(start_pos + Vector3(0, 2.0, 0), Vector3.UP)
 		
-		# Movimentação dinâmica das câmeras
-		if cameras.size() > 1 and cameras[1].current:
-			# Segue o jogador de lado
-			var side_offset = dir.cross(Vector3.UP).normalized() * 3.0
-			var cam2_target = maycow_model.global_position + side_offset + dir * 1.5 + Vector3(0, 1.2, 0)
-			cameras[1].global_position = cameras[1].global_position.lerp(cam2_target, delta * 3.0)
-			cameras[1].look_at(maycow_model.global_position + Vector3(0, 1.2, 0), Vector3.UP)
+	elif cam2.current:
+		take2_time += delta
+		# 1ª Pessoa - Caminhada, head bobbing e olhando em volta
+		walk_time += delta * 3.5 # velocidade dos passos
+		cam2_base_pos += dir * 2.0 * delta
+		var head_bob_y = sin(walk_time * 2.0) * 0.05
+		var head_bob_x = cos(walk_time) * 0.03
+		var right = dir.cross(Vector3.UP).normalized()
+		cam2.global_position = cam2_base_pos + Vector3(0, head_bob_y, 0) + right * head_bob_x
+		
+		var current_dir = dir
+		if take2_time > 6.0 and take2_time < 12.0:
+			var t = 0.0
+			if take2_time < 7.5:
+				t = (take2_time - 6.0) / 1.5
+			elif take2_time < 10.5:
+				t = 1.0
+			else:
+				t = 1.0 - ((take2_time - 10.5) / 1.5)
+			t = smoothstep(0.0, 1.0, t)
+			var q_forward = Quaternion(Vector3.UP, 0)
+			var q_back = Quaternion(Vector3.UP, PI * 0.95) # Quase 180 graus
+			var q_current = q_forward.slerp(q_back, t)
+			current_dir = q_current * dir
+		
+		# Simula olhar para a chuva e depois para a casa
+		var look_target = cam2_base_pos + current_dir * 5.0
+		# Dá uma leve levantada na cabeça para ver a chuva e desce depois
+		var tilt = sin(walk_time * 0.25) * 0.6 
+		look_target.y += tilt
+		
+		cam2.look_at(look_target, Vector3.UP)
+		
+	elif cam3.current:
+		# 3ª Pessoa - Caminhando de costas, zoom bem perto
+		maycow_model.global_position += Vector3(0, 0, -1).normalized() * 2.0 * delta
+		var cam3_target = maycow_model.global_position + Vector3(0.0, 1.0, 1.2)
+		cam3.global_position = cam3.global_position.lerp(cam3_target, delta * 5.0)
+		cam3.look_at(maycow_model.global_position + Vector3(0, 1.1, 0), Vector3.UP)
+		
+	elif cam4.current:
+		# Foco no céu/chuva girando levemente e parando
+		cam4_rot_time += delta
+		if cam4_rot_time < 3.0:
+			cam4.rotate_z(0.015 * delta)
 			
-		if cameras.size() > 2 and cameras[2].current:
-			# Segue o jogador de cima
-			var cam3_target = maycow_model.global_position + Vector3(0, 7.0, 0) - dir * 1.5
-			cameras[2].global_position = cameras[2].global_position.lerp(cam3_target, delta * 2.0)
-			cameras[2].look_at(maycow_model.global_position, Vector3.UP)
-			
-		if cameras.size() > 3 and cameras[3].current:
-			# Câmera estática acompanhando ele chegando na casa
-			cameras[3].look_at(maycow_model.global_position + Vector3(0, 1.0, 0), Vector3.UP)
+		# Camera indo para tras suavemente
+		cam4.global_position -= dir * 0.5 * delta
+		
+		maycow_model.global_position += dir * 1.5 * delta
 
 func load_chunk() -> void:
 	if current_chunk_index >= text_chunks.size():
@@ -187,10 +291,42 @@ func load_chunk() -> void:
 	is_transitioning = true
 	current_text_index = 0
 	
+	if current_chunk_index == 1:
+		take2_time = 0.0
+		
+	# Atualiza Câmera
 	if current_chunk_index < cameras.size():
 		for c in cameras:
 			c.current = false
 		cameras[current_chunk_index].current = true
+		
+		if rain_instance:
+			rain_instance.player = cameras[current_chunk_index]
+			# Ocultar a chuva no take 3 (vazio)
+			rain_instance.visible = (current_chunk_index != 2)
+		
+	# Atualiza o estado do modelo
+	if current_chunk_index == 2:
+		maycow_model.visible = true
+		maycow_model.global_position = Vector3(0, 10000, 0)
+		maycow_model.rotation = Vector3(0, PI, 0)
+		for l in global_dir_lights: l.visible = false
+		get_viewport().use_taa = true
+	elif current_chunk_index == 3:
+		get_viewport().use_taa = false
+		for l in global_dir_lights: l.visible = true
+		# Mostra no take 4 de longe
+		maycow_model.visible = true
+		maycow_model.global_position = target_pos - dir * 4.0
+		maycow_model.look_at(target_pos, Vector3.UP)
+	else:
+		maycow_model.visible = false
+		
+	# Alterna o alinhamento do texto a cada take para dar dinamismo
+	if current_chunk_index % 2 == 0:
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	else:
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 		
 	show_text()
 
@@ -200,23 +336,42 @@ func show_text() -> void:
 		var text_key = chunk[current_text_index]
 		label.text = tr(text_key)
 		
-		# Calcula tempo de leitura baseado no tamanho do texto
-		var read_time = max(2.5, label.text.length() * 0.07)
+		# Textos mais lentos no geral
+		var read_time = max(3.0, label.text.length() * 0.08)
+		var fade_time = 0.8
+		
+		if current_chunk_index == 0:
+			# Take 1: Bem menor
+			read_time = max(1.5, label.text.length() * 0.05)
+			fade_time = 0.4
+		elif current_chunk_index == 2:
+			# Take 3: Volta a ficar um pouco maior
+			read_time = max(1.5, label.text.length() * 0.05)
+			fade_time = 0.4
+		elif current_chunk_index == 1:
+			# Take 2: Tempo padrão, sem extensão exagerada
+			pass
 		
 		if text_tween: text_tween.kill()
 		text_tween = create_tween()
 		
 		# Fade in
 		label.modulate.a = 0.0
-		text_tween.tween_property(label, "modulate:a", 1.0, 1.0)
+		text_tween.tween_property(label, "modulate:a", 1.0, fade_time)
 		
 		# Tempo de leitura
 		text_tween.tween_interval(read_time)
 		
 		# Fade out
-		text_tween.tween_property(label, "modulate:a", 0.0, 1.0)
+		text_tween.tween_property(label, "modulate:a", 0.0, fade_time)
 		
-		# Chama a próxima fala automaticamente
+		# Pausa para o Take 4 e pro Take 3
+		if current_chunk_index == 2 and current_text_index == chunk.size() - 1:
+			text_tween.tween_interval(1.5) # Deixa somente um pouquinho depois da ultima frase
+		elif current_chunk_index == 3 and current_text_index == chunk.size() - 1:
+			text_tween.tween_interval(3.0) # Tempo extra na última frase antes de sumir tudo
+		
+		# Próxima fala
 		text_tween.tween_callback(func():
 			current_text_index += 1
 			show_text()
@@ -230,10 +385,10 @@ func next_chunk() -> void:
 	load_chunk()
 
 func finish_cutscene() -> void:
-	if is_transitioning and current_chunk_index >= text_chunks.size(): return
+	if cutscene_finished: return
+	cutscene_finished = true
 	is_transitioning = true
 	
-	Engine.time_scale = 1.0
 	if text_tween: text_tween.kill()
 	
 	var hide_tween = create_tween()
@@ -242,5 +397,7 @@ func finish_cutscene() -> void:
 	if fade_node and fade_node.has_method("fade_out"):
 		fade_node.fade_out()
 		
-	await get_tree().create_timer(2.0).timeout
+	await get_tree().create_timer(3.5).timeout
 	LoadingScreen.load_scene("res://scenes/stages/prolog/the_house.tscn")
+
+
