@@ -405,6 +405,11 @@ func show_text() -> void:
 			text_tween.tween_callback(func(): 
 				title_active = true
 				if choque_audio: choque_audio.play()
+				
+				# Configura o pivô para o centro para poder dar zoom
+				title_label.pivot_offset = title_label.size / 2.0
+				var slow_zoom = create_tween()
+				slow_zoom.tween_property(title_label, "scale", Vector2(1.2, 1.2), read_time + fade_time + 2.8)
 			)
 		
 		# Tempo de leitura
@@ -417,7 +422,21 @@ func show_text() -> void:
 		if current_chunk_index == 2 and current_text_index == chunk.size() - 1:
 			text_tween.tween_interval(1.5) # Deixa somente um pouquinho depois da ultima frase
 		elif current_chunk_index == 3 and current_text_index == chunk.size() - 1:
-			text_tween.tween_interval(3.0) # Tempo extra na última frase antes de sumir tudo
+			text_tween.tween_interval(2.8) 
+			
+			# Super zoom no final
+			text_tween.tween_callback(func():
+				title_active = false
+				title_label.visible = true
+				title_label.modulate.a = 0.25 # Mais visível para o susto
+				
+				var fast_zoom = create_tween()
+				fast_zoom.set_parallel(true)
+				fast_zoom.tween_property(title_label, "scale", Vector2(25.0, 25.0), 0.2).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+				if cameras.size() > 3:
+					fast_zoom.tween_property(cameras[3], "fov", 30.0, 0.2).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+			)
+			text_tween.tween_interval(0.2)
 		
 		# Próxima fala
 		text_tween.tween_callback(func():
