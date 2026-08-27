@@ -56,6 +56,10 @@ func _finalizar_cutscene_tudo() -> void:
 		enemy.visible = true
 		enemy.process_mode = Node.PROCESS_MODE_INHERIT
 		
+	var sub = get_node_or_null("CutsceneSubSceneJimmy")
+	if is_instance_valid(sub):
+		sub.queue_free()
+		
 	GlobalEvents.in_cutscene = false
 	
 	var cutscene_bars = get_node_or_null("cutscene")
@@ -413,9 +417,9 @@ func iniciar_cutscene() -> void:
 	move_tween.tween_property(camera_inicio, "global_position:x", target_pos.x, move_duration).set_trans(Tween.TRANS_LINEAR)
 	move_tween.tween_property(camera_inicio, "global_position:z", target_pos.z, move_duration).set_trans(Tween.TRANS_LINEAR)
 	
-	var bob_tween = create_tween().set_loops(int(move_duration / 1.2))
+	var bob_tween = create_tween().set_loops(int(move_duration / 1.8))
 	var base_y = camera_inicio.global_position.y
-	bob_tween.tween_property(camera_inicio, "global_position:y", base_y + 0.1, 0.6).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	bob_tween.tween_property(camera_inicio, "global_position:y", base_y + 0.15, 0.9).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	bob_tween.tween_callback(func():
 		if player:
 			var p = player.get_node_or_null("sounds/Passos__")
@@ -423,7 +427,7 @@ func iniciar_cutscene() -> void:
 				p.pitch_scale = randf_range(0.85, 1.15)
 				p.play()
 	)
-	bob_tween.tween_property(camera_inicio, "global_position:y", base_y, 0.6).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	bob_tween.tween_property(camera_inicio, "global_position:y", base_y, 0.9).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	bob_tween.tween_callback(func():
 		if player:
 			var p = player.get_node_or_null("sounds/Passos__")
@@ -482,7 +486,7 @@ func iniciar_cutscene() -> void:
 	var temp_audio = AudioStreamPlayer.new()
 	temp_audio.stream = load("res://assets/sounds/player/dash_effect.mp3") 
 	temp_audio.volume_db = 5.0
-	temp_audio.pitch_scale = 0.6
+	temp_audio.pitch_scale = 0.4
 	add_child(temp_audio)
 	temp_audio.play()
 	
@@ -515,6 +519,32 @@ func iniciar_cutscene() -> void:
 		fade.fade_out()
 	await get_tree().create_timer(2.0).timeout
 	if cutscene_skipped: return
+	
+	# --- NOVA SUB-SCENE ---
+	var sub_scene_res = load("res://scenes/stages/prolog/cutscene_sub_scene_portal_jimmy.tscn")
+	if sub_scene_res:
+		var sub_scene = sub_scene_res.instantiate()
+		sub_scene.name = "CutsceneSubSceneJimmy"
+		add_child(sub_scene)
+		
+		var sub_cam = sub_scene.get_node_or_null("Camera3D")
+		if sub_cam:
+			sub_cam.current = true
+			
+		if fade:
+			fade.fade_in()
+			
+		await get_tree().create_timer(7.6).timeout
+		if cutscene_skipped: return
+		
+		if fade:
+			fade.fade_out()
+		await get_tree().create_timer(2.0).timeout
+		if cutscene_skipped: return
+		
+		if is_instance_valid(sub_scene):
+			sub_scene.queue_free()
+	# --- FIM NOVA SUB-SCENE ---
 		
 	# Restaura elementos ocultos
 	if is_instance_valid(enemy):
