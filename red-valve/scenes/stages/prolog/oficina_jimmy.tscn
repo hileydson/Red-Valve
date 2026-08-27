@@ -76,13 +76,13 @@ visible = false
 
 [node name="FireCracling" type="AudioStreamPlayer" parent="." unique_id=1778625709]
 stream = ExtResource("2_oc6fq")
-volume_db = -9.018
+volume_db = -17.492
 autoplay = true
 parameters/looping = true
 
 [node name="SongFirstBattle" type="AudioStreamPlayer" parent="." unique_id=467169788]
 stream = ExtResource("3_e7swq")
-volume_db = -6.012
+volume_db = -4.471
 parameters/looping = true
 
 [node name="AmbientNoiseSlow" type="AudioStreamPlayer" parent="." unique_id=346077798]
@@ -141,16 +141,16 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.034958, -4.39374, 2.290752
 transform = Transform3D(-0.041526932, 0, -0.9991374, 0, 1, 0, 0.9991374, 0, -0.041526932, -8.569721, -4.39374, -1.0755305)
 
 [node name="oficina_jimmy_peca_3" parent="pecas" unique_id=1059152765 instance=ExtResource("9_ixu7l")]
-transform = Transform3D(-0.46035376, 0, 0, 0, 0.41921884, 0, 0, 0, 0.4763551, -0.12563503, -4.3685236, -4.0875187)
+transform = Transform3D(-0.46035376, 0, 0, 0, 0.41921884, 0, 0, 0, 0.4763551, 0.5617777, -4.901072, -4.718685)
 
 [node name="oficina_jimmy_peca_2" parent="pecas" unique_id=1792194529 instance=ExtResource("10_5tdqg")]
-transform = Transform3D(-0.928563, 0, 0.40958273, 0, 1.7874265, 0, -0.120319225, 0, -3.1609526, -5.51892, -3.9341364, -3.5559688)
+transform = Transform3D(-0.928563, 0, 0.40958273, 0, 1.7874265, 0, -0.120319225, 0, -3.1609526, -5.51892, -3.9341364, -2.7507043)
 
 [node name="oficina_jimmy_peca_1" parent="pecas" unique_id=562929052 instance=ExtResource("11_oc6fq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6207197, -4.4285827, -6.5256596)
 
 [node name="oficina_jimmy_peca_8" parent="pecas" unique_id=1390271073 instance=ExtResource("11_oc6fq")]
-transform = Transform3D(0.11356744, 0, 0.9935303, 0, 1, 0, -0.9935303, 0, 0.11356744, -8.948151, -4.4285827, -5.5349755)
+transform = Transform3D(0.11356744, 0, 0.9935303, 0, 1, 0, -0.9935303, 0, 0.11356744, -8.948151, -4.4285827, -4.3664436)
 
 [node name="oficina_jimmy_peca_7" parent="pecas" unique_id=1726708629 instance=ExtResource("11_oc6fq")]
 transform = Transform3D(0.06883367, 0, 0.99762815, 0, 1, 0, -0.99762815, 0, 0.06883367, -4.595435, -4.428582, 0.25828552)
@@ -165,13 +165,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.4188294, -4.3606133, -6.48
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="portal/portal_red_valve" unique_id=1585019630]
 stream = ExtResource("19_q0ggi")
-volume_db = -7.5
+volume_db = -11.25
 pitch_scale = 0.63
 autoplay = true
 parameters/looping = true
 
 [node name="armario" parent="portal" unique_id=1420347684 instance=ExtResource("17_jcde1")]
-transform = Transform3D(1.3046626, 0, 0, 0, 1, 0, 0, 0, 1.2915719, -6.161995, -4.3687277, -6.011673)
+transform = Transform3D(1.6344355, 0, 0, 0, 1.1668708, 0, 0, 0, 1.3613855, -6.161995, -4.201392, -6.011673)
 
 [node name="camera_inicio_cutscene" type="Camera3D" parent="portal" unique_id=544353729]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.9424763, -3.723655, 1.61424)

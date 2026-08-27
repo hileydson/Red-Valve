@@ -12,6 +12,66 @@ var is_starting: bool = false
 var pos_inicial: Vector3 = Vector3.ZERO
 var time_passed: float = 0.0
 
+var cutscene_skipped: bool = false
+var skip_ui_instance: Node = null
+
+func skip_cutscene() -> void:
+	if cutscene_skipped: return
+	cutscene_skipped = true
+	
+	if is_instance_valid(skip_ui_instance):
+		skip_ui_instance.queue_free()
+		skip_ui_instance = null
+		
+	if fade:
+		fade.fade_out()
+		await get_tree().create_timer(1.0).timeout
+		
+	_finalizar_cutscene_tudo()
+
+func _finalizar_cutscene_tudo() -> void:
+	look_at_target = null
+	Engine.time_scale = 1.0
+	_aplicar_pitch_audio_lento(false, 0.1)
+	
+	# Restaura controles e inteligência artificial
+	if player:
+		player.visible = true
+		player.process_mode = Node.PROCESS_MODE_INHERIT
+		var player_cam = player.get_node_or_null("SpringArm3D/camera_third_person")
+		if not player_cam:
+			player_cam = player.get_node_or_null("Camera3D")
+			
+		if player_cam:
+			player_cam.make_current()
+			
+	if pecas:
+		pecas.process_mode = Node.PROCESS_MODE_INHERIT
+		
+	var vortex = get_node_or_null("auto_pecas_jimmy/VortexMagico")
+	if vortex:
+		vortex.visible = true
+		
+	if enemy:
+		enemy.visible = true
+		enemy.process_mode = Node.PROCESS_MODE_INHERIT
+		
+	GlobalEvents.in_cutscene = false
+	
+	var cutscene_bars = get_node_or_null("cutscene")
+	if cutscene_bars:
+		cutscene_bars.visible = false
+		
+	if fade:
+		fade.fade_in()
+		
+	for child in get_children():
+		if child is CanvasLayer and child.name != "cutscene" and child.name != "fade":
+			child.queue_free()
+			
+	if is_instance_valid(camera_oficina):
+		camera_oficina.queue_free()
+
 func _ready() -> void:
 	GlobalEvents.in_cutscene = true
 	SaveManager.save_game()
@@ -250,7 +310,16 @@ func iniciar_cutscene() -> void:
 	var cutscene_bars = get_node_or_null("cutscene")
 	if cutscene_bars:
 		cutscene_bars.visible = true
-		cutscene_bars.z_index = 100
+		
+	# Instancia o UI de Skip
+	var skip_layer = CanvasLayer.new()
+	skip_layer.layer = 155
+	skip_layer.name = "skip_layer"
+	var skip_ui = load("res://scripts/ui/skip_cutscene_ui.gd").new()
+	skip_layer.add_child(skip_ui)
+	add_child(skip_layer)
+	skip_ui_instance = skip_layer
+	skip_ui.skipped.connect(skip_cutscene)
 		
 	var camera_inicio = get_node_or_null("portal/camera_inicio_cutscene")
 	
@@ -278,6 +347,7 @@ func iniciar_cutscene() -> void:
 	var is_en = SaveManager.config.get("language", "pt") == "en"
 	
 	await get_tree().create_timer(0.2).timeout
+	if cutscene_skipped: return
 	
 	# Frase 1
 	label.text = "What happened here?" if is_en else "O que houve aqui?"
@@ -289,11 +359,14 @@ func iniciar_cutscene() -> void:
 	t_rot.tween_property(camera_inicio, "rotation:y", camera_inicio.rotation.y + deg_to_rad(15.0), 3.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	
 	await t1.finished
+	if cutscene_skipped: return
 	await get_tree().create_timer(2.2).timeout # Total ~3 seconds
+	if cutscene_skipped: return
 	
 	var t2 = create_tween()
 	t2.tween_property(label, "modulate:a", 0.0, 0.8)
 	await t2.finished
+	if cutscene_skipped: return
 	
 	# Rodando a camera para a porta/portal no final do cenario
 	var vortex_pos = Vector3.ZERO
@@ -320,6 +393,7 @@ func iniciar_cutscene() -> void:
 			camera_inicio.global_transform.basis = Basis(start_quat.slerp(target_quat, t))
 	, 0.0, 1.0, 3.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	await turn_tween.finished
+	if cutscene_skipped: return
 	
 	# Olhar para a esquerda e para a direita (mais rapidamente)
 	var look_tween = create_tween()
@@ -327,23 +401,39 @@ func iniciar_cutscene() -> void:
 	look_tween.tween_property(camera_inicio, "rotation_degrees:y", camera_inicio.rotation_degrees.y - 15.0, 1.4).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	look_tween.tween_property(camera_inicio, "rotation_degrees:y", camera_inicio.rotation_degrees.y, 0.7).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	await look_tween.finished
+	if cutscene_skipped: return
 	
 	# Mover devagar simulando caminhada (head bobbing)
 	var dir_to_vortex = (vortex_pos - camera_inicio.global_position).normalized()
 	var dist_to_vortex = camera_inicio.global_position.distance_to(vortex_pos)
-	var target_pos = camera_inicio.global_position + dir_to_vortex * (dist_to_vortex - 3.5)
+	var target_pos = camera_inicio.global_position + dir_to_vortex * (dist_to_vortex - 2.0)
 	
-	var move_duration = 8.0
+	var move_duration = 12.0
 	var move_tween = create_tween().set_parallel(true)
 	move_tween.tween_property(camera_inicio, "global_position:x", target_pos.x, move_duration).set_trans(Tween.TRANS_LINEAR)
 	move_tween.tween_property(camera_inicio, "global_position:z", target_pos.z, move_duration).set_trans(Tween.TRANS_LINEAR)
 	
-	var bob_tween = create_tween().set_loops(int(move_duration / 1.0))
+	var bob_tween = create_tween().set_loops(int(move_duration / 1.2))
 	var base_y = camera_inicio.global_position.y
-	bob_tween.tween_property(camera_inicio, "global_position:y", base_y + 0.1, 0.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	bob_tween.tween_property(camera_inicio, "global_position:y", base_y, 0.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	bob_tween.tween_property(camera_inicio, "global_position:y", base_y + 0.1, 0.6).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	bob_tween.tween_callback(func():
+		if player:
+			var p = player.get_node_or_null("sounds/Passos__")
+			if p:
+				p.pitch_scale = randf_range(0.85, 1.15)
+				p.play()
+	)
+	bob_tween.tween_property(camera_inicio, "global_position:y", base_y, 0.6).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	bob_tween.tween_callback(func():
+		if player:
+			var p = player.get_node_or_null("sounds/Passos__")
+			if p:
+				p.pitch_scale = randf_range(0.85, 1.15)
+				p.play()
+	)
 	
 	await move_tween.finished
+	if cutscene_skipped: return
 	bob_tween.kill() # Para o balanço
 	
 	# Ajusta Y para garantir que fica reto após caminhar
@@ -352,37 +442,47 @@ func iniciar_cutscene() -> void:
 	
 	# Parado de frente pra porta, mostra o texto imediatamente após chegar
 	await get_tree().create_timer(0.1).timeout
+	if cutscene_skipped: return
 	label.text = "There is something wrong with this place..." if is_en else "Tem algo errado nesse lugar..."
 	var t3 = create_tween()
 	t3.tween_property(label, "modulate:a", 1.0, 0.8)
 	await t3.finished
+	if cutscene_skipped: return
 	await get_tree().create_timer(2.2).timeout
+	if cutscene_skipped: return
 	
 	var t4 = create_tween()
 	t4.tween_property(label, "modulate:a", 0.0, 0.5)
 	await t4.finished
+	if cutscene_skipped: return
 	
 	await get_tree().create_timer(0.3).timeout
+	if cutscene_skipped: return
 	
 	label.text = "I'll push this bookcase... this noise is coming from there..." if is_en else "Vou empurrar essa estante... esse barulho está vindo dai..."
 	var t5 = create_tween()
 	t5.tween_property(label, "modulate:a", 1.0, 0.8)
 	await t5.finished
+	if cutscene_skipped: return
 	await get_tree().create_timer(2.5).timeout
+	if cutscene_skipped: return
 	
 	var t6 = create_tween()
 	t6.tween_property(label, "modulate:a", 0.0, 0.8)
 	await t6.finished
+	if cutscene_skipped: return
 	
 	# Escurece a tela para o evento de arrastar estante
 	if fade:
 		fade.fade_out()
 	await get_tree().create_timer(2.0).timeout
+	if cutscene_skipped: return
 	
 	# Placeholder de Áudio de Móvel Arrastando
 	var temp_audio = AudioStreamPlayer.new()
 	temp_audio.stream = load("res://assets/sounds/player/dash_effect.mp3") 
 	temp_audio.volume_db = 5.0
+	temp_audio.pitch_scale = 0.6
 	add_child(temp_audio)
 	temp_audio.play()
 	
@@ -393,6 +493,7 @@ func iniciar_cutscene() -> void:
 		armario.global_position -= armario.global_transform.basis.x * 2.5
 	
 	await get_tree().create_timer(1.5).timeout
+	if cutscene_skipped: return
 	if is_instance_valid(temp_audio):
 		temp_audio.queue_free()
 		
@@ -400,17 +501,20 @@ func iniciar_cutscene() -> void:
 	if fade:
 		fade.fade_in()
 	await get_tree().create_timer(2.0).timeout
+	if cutscene_skipped: return
 	
 	# Anda em direção ao portal revelado (zoom um pouco menor)
 	var t_final_move = create_tween()
 	var p_final = camera_inicio.global_position + dir_to_vortex * 1.5
 	t_final_move.tween_property(camera_inicio, "global_position", p_final, 3.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	await t_final_move.finished
+	if cutscene_skipped: return
 	
 	# Escurece novamente pra iniciar a cutscene antiga
 	if fade:
 		fade.fade_out()
 	await get_tree().create_timer(2.0).timeout
+	if cutscene_skipped: return
 		
 	# Restaura elementos ocultos
 	if is_instance_valid(enemy):
@@ -428,6 +532,7 @@ func iniciar_cutscene() -> void:
 		camera_inicio.clear_current()
 		
 	await get_tree().process_frame
+	if cutscene_skipped: return
 	
 	# Transição pra cutscene antiga abrindo do preto
 	if fade:
@@ -436,6 +541,8 @@ func iniciar_cutscene() -> void:
 	iniciar_cutscene_antiga()
 
 func iniciar_cutscene_antiga() -> void:
+	if cutscene_skipped: return
+	
 	if not enemy or not player:
 		return
 		
@@ -501,6 +608,7 @@ func iniciar_cutscene_antiga() -> void:
 	
 	is_starting = true
 	await get_tree().create_timer(0.4).timeout
+	if cutscene_skipped: return
 	is_starting = false
 	
 	# ---------------------------------------------------------
@@ -525,6 +633,7 @@ func iniciar_cutscene_antiga() -> void:
 	
 	# Nos últimos 1.2s do arremesso (aproximação do chão), desliga a trava no inimigo e inclina suavemente para o piso
 	await get_tree().create_timer(2.3, true, false, true).timeout
+	if cutscene_skipped: return
 	look_at_target = null
 	
 	var dummy_floor = Camera3D.new()
@@ -541,6 +650,7 @@ func iniciar_cutscene_antiga() -> void:
 	, 0.0, 1.0, 1.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	
 	await throw_tween.finished
+	if cutscene_skipped: return
 	
 	# Restaura velocidade e desliga o blur no baque exato do chão
 	Engine.time_scale = 1.0
@@ -560,9 +670,11 @@ func iniciar_cutscene_antiga() -> void:
 	head_shake_tween.tween_property(camera_oficina, "rotation:z", deg_to_rad(-8.0), 0.25)
 	head_shake_tween.tween_property(camera_oficina, "rotation:z", 0.0, 0.25)
 	await head_shake_tween.finished
+	if cutscene_skipped: return
 	
 	# Pausa de impacto no chão
 	await get_tree().create_timer(0.8).timeout
+	if cutscene_skipped: return
 	
 	# ---------------------------------------------------------
 	# FASE 3: Olha pra frente BEM DEVAGAR em direção ao inimigo (Permanecendo no chão, sem subir!)
@@ -583,10 +695,12 @@ func iniciar_cutscene_antiga() -> void:
 		camera_oficina.global_transform.basis = Basis(start_enemy_quat.slerp(ground_look_quat, t))
 	, 0.0, 1.0, 4.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	await turn_to_enemy_tween.finished
+	if cutscene_skipped: return
 	
 	look_at_target = enemy
 	look_at_offset = Vector3(0, 1.5, 0)
 	await get_tree().create_timer(0.8).timeout
+	if cutscene_skipped: return
 	
 	# ---------------------------------------------------------
 	# FASE 4: Frase "O que acabou de acontecer?" (E aguarda sumir)
@@ -596,15 +710,19 @@ func iniciar_cutscene_antiga() -> void:
 	var label_in_tween = create_tween()
 	label_in_tween.tween_property(label, "modulate:a", 1.0, 0.8).set_trans(Tween.TRANS_SINE)
 	await label_in_tween.finished
+	if cutscene_skipped: return
 	
 	await get_tree().create_timer(2.0).timeout
+	if cutscene_skipped: return
 	
 	var label_out_tween = create_tween()
 	label_out_tween.tween_property(label, "modulate:a", 0.0, 0.8).set_trans(Tween.TRANS_SINE)
 	await label_out_tween.finished
+	if cutscene_skipped: return
 	
 	# Somente depois de sumir a frase!
 	await get_tree().create_timer(0.5).timeout
+	if cutscene_skipped: return
 	
 	# ---------------------------------------------------------
 	# FASE 5: Câmera que roda o inimigo e se aproxima
@@ -629,6 +747,7 @@ func iniciar_cutscene_antiga() -> void:
 	, 0.0, 1.0, 3.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	
 	await orbit_tween.finished
+	if cutscene_skipped: return
 	
 	# Transita da órbita para a frente do player
 	look_at_target = player
@@ -639,8 +758,10 @@ func iniciar_cutscene_antiga() -> void:
 	reveal_tween.tween_property(camera_oficina, "global_position", frontal_pos, 1.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	reveal_tween.tween_property(camera_oficina, "fov", 45.0, 1.5).set_trans(Tween.TRANS_SINE)
 	await reveal_tween.finished
+	if cutscene_skipped: return
 	
 	await get_tree().create_timer(1.0).timeout
+	if cutscene_skipped: return
 	
 	# ---------------------------------------------------------
 	# FASE 6: Fim do Filme (Fade Out e retoma controle)
@@ -648,40 +769,10 @@ func iniciar_cutscene_antiga() -> void:
 	if fade:
 		fade.fade_out()
 		await get_tree().create_timer(1.5).timeout
+	if cutscene_skipped: return
 		
-	look_at_target = null
-	Engine.time_scale = 1.0
-	_aplicar_pitch_audio_lento(false, 0.1)
-	
-	# Restaura controles e inteligência artificial
-	if player:
-		player.process_mode = Node.PROCESS_MODE_INHERIT
-		var player_cam = player.get_node_or_null("SpringArm3D/camera_third_person")
-		if not player_cam:
-			player_cam = player.get_node_or_null("Camera3D")
-			
-		if player_cam:
-			player_cam.make_current()
-			
-	if pecas:
-		pecas.process_mode = Node.PROCESS_MODE_INHERIT
+	if is_instance_valid(skip_ui_instance):
+		skip_ui_instance.queue_free()
+		skip_ui_instance = null
 		
-	if enemy:
-		enemy.process_mode = Node.PROCESS_MODE_INHERIT
-		
-	GlobalEvents.in_cutscene = false
-	
-	var cutscene_bars = get_node_or_null("cutscene")
-	if cutscene_bars:
-		cutscene_bars.visible = false
-		
-	if fade:
-		fade.fade_in()
-		
-	if is_instance_valid(text_layer):
-		text_layer.queue_free()
-		
-	if is_instance_valid(motion_blur_layer):
-		motion_blur_layer.queue_free()
-		
-	camera_oficina.queue_free()
+	_finalizar_cutscene_tudo()

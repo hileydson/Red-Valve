@@ -9,10 +9,8 @@ func _ready() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_pause"):
-		if GlobalEvents.in_cutscene:
-			return
-		if not self.visible and get_tree().paused:
-			return # Não abre se já estiver pausado (ex: Inventário aberto)
+		if not self.visible and (get_tree().paused or GlobalEvents.in_cutscene):
+			return # Não abre se já estiver pausado (ex: Inventário aberto) ou em cutscene
 		toogle_pause()
 		
 

@@ -2,7 +2,8 @@
 
 [ext_resource type="PackedScene" uid="uid://dy356o67p6jyn" path="res://scenes/configs/fade.tscn" id="1_ugcn7"]
 
-[node name="cutscene" type="Node2D" unique_id=796399776]
+[node name="cutscene" type="CanvasLayer" unique_id=796399776]
+layer = 150
 
 [node name="fade" parent="." unique_id=158118564 instance=ExtResource("1_ugcn7")]
 
