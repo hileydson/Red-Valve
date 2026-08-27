@@ -23,9 +23,26 @@ func skip_cutscene() -> void:
 		skip_ui_instance.queue_free()
 		skip_ui_instance = null
 		
+	# Cria um CanvasLayer temporário com layer alto para cobrir tudo (incluindo textos)
+	var skip_fade_canvas = CanvasLayer.new()
+	skip_fade_canvas.layer = 200
+	var skip_fade_rect = ColorRect.new()
+	skip_fade_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	skip_fade_rect.color = Color(0, 0, 0, 0)
+	skip_fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	skip_fade_canvas.add_child(skip_fade_rect)
+	add_child(skip_fade_canvas)
+	
+	var t = create_tween()
+	t.tween_property(skip_fade_rect, "color:a", 1.0, 3.0)
+	await t.finished
+	
+	# Prepara o fade original para estar totalmente preto antes de remover a tela de skip
 	if fade:
-		fade.fade_out()
-		await get_tree().create_timer(1.0).timeout
+		fade.visible = true
+		fade.modulate.a = 1.0
+		
+	skip_fade_canvas.queue_free()
 		
 	_finalizar_cutscene_tudo()
 
@@ -62,6 +79,13 @@ func _finalizar_cutscene_tudo() -> void:
 		
 	GlobalEvents.in_cutscene = false
 	
+	var ambient = get_node_or_null("AmbientNoiseSlow")
+	if ambient:
+		ambient.stream_paused = true
+	var battle_song = get_node_or_null("SongFirstBattle")
+	if battle_song and not battle_song.playing:
+		battle_song.play()
+	
 	var cutscene_bars = get_node_or_null("cutscene")
 	if cutscene_bars:
 		cutscene_bars.visible = false
@@ -70,7 +94,7 @@ func _finalizar_cutscene_tudo() -> void:
 		fade.fade_in()
 		
 	for child in get_children():
-		if child is CanvasLayer and child.name != "cutscene" and child.name != "fade":
+		if child is CanvasLayer and child.name != "cutscene" and child.name != "fade" and child.name != "Pause":
 			child.queue_free()
 			
 	if is_instance_valid(camera_oficina):
