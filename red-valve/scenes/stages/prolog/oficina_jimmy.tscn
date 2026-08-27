@@ -25,14 +25,14 @@
 offsets = PackedFloat32Array(0, 0.1, 0.4, 0.7, 1)
 colors = PackedColorArray(0.1, 0.5, 2, 0, 1, 0.1, 0.1, 0, 1.5, 0.2, 2, 1.2, 2.5, 0.1, 0.5, 1.2, 1, 1, 1, 1)
 
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_63lqe"]
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_xddky"]
 gradient = SubResource("Gradient_6q8v1")
 
 [sub_resource type="Curve" id="Curve_17iq3"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.2, 1), 0.0, 0.0, 0, 0, Vector2(0.8, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 4
 
-[sub_resource type="CurveTexture" id="CurveTexture_nim6l"]
+[sub_resource type="CurveTexture" id="CurveTexture_q0ggi"]
 curve = SubResource("Curve_17iq3")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_tpw8k"]
@@ -49,13 +49,13 @@ radial_velocity_max = -1.0
 gravity = Vector3(0, 2, 0)
 scale_min = 50000.0
 scale_max = 150000.0
-scale_curve = SubResource("CurveTexture_nim6l")
-color_ramp = SubResource("GradientTexture1D_63lqe")
+scale_curve = SubResource("CurveTexture_q0ggi")
+color_ramp = SubResource("GradientTexture1D_xddky")
 turbulence_enabled = true
 turbulence_noise_strength = 1.5
 turbulence_noise_scale = 3.0
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qa4ps"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wt114"]
 blend_mode = 1
 shading_mode = 0
 vertex_color_use_as_albedo = true
@@ -65,7 +65,7 @@ particles_anim_v_frames = 1
 particles_anim_loop = false
 
 [sub_resource type="QuadMesh" id="QuadMesh_fu0a6"]
-material = SubResource("StandardMaterial3D_qa4ps")
+material = SubResource("StandardMaterial3D_wt114")
 size = Vector2(0.06, 0.06)
 
 [node name="oficina_jimmy" type="Node3D" unique_id=2029993664]
@@ -87,7 +87,7 @@ parameters/looping = true
 
 [node name="AmbientNoiseSlow" type="AudioStreamPlayer" parent="." unique_id=346077798]
 stream = ExtResource("5_xddky")
-volume_db = -7.704
+volume_db = -9.245
 pitch_scale = 0.32
 autoplay = true
 parameters/looping = true
@@ -165,7 +165,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.4188294, -4.3606133, -6.48
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="portal/portal_red_valve" unique_id=1585019630]
 stream = ExtResource("19_q0ggi")
-volume_db = -11.25
+volume_db = -6.25
 pitch_scale = 0.63
 autoplay = true
 parameters/looping = true

@@ -254,6 +254,7 @@ func _aplicar_pitch_audio_lento(lento: bool, duracao: float = 1.0) -> void:
 			slow_mo_audio_player.play()
 
 func _setup_motion_blur() -> void:
+	if is_instance_valid(motion_blur_layer): return
 	motion_blur_layer = CanvasLayer.new()
 	motion_blur_layer.layer = 110
 	add_child(motion_blur_layer)
@@ -300,6 +301,8 @@ func _ativar_motion_blur(ativar: bool) -> void:
 		motion_blur_overlay.visible = ativar
 
 func iniciar_cutscene() -> void:
+	_setup_motion_blur()
+	
 	if not enemy or not player:
 		return
 		
@@ -448,15 +451,7 @@ func iniciar_cutscene() -> void:
 	await get_tree().create_timer(0.1).timeout
 	if cutscene_skipped: return
 	
-	# Olha para cima e para baixo sutilmente
-	var look_up_down = create_tween()
-	var base_x_rot = camera_inicio.rotation_degrees.x
-	look_up_down.tween_property(camera_inicio, "rotation_degrees:x", base_x_rot + 12.0, 1.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	look_up_down.tween_property(camera_inicio, "rotation_degrees:x", base_x_rot - 12.0, 1.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	look_up_down.tween_property(camera_inicio, "rotation_degrees:x", base_x_rot, 1.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	await look_up_down.finished
-	if cutscene_skipped: return
-	
+
 	label.text = "There is something wrong with this place..." if is_en else "Tem algo errado nesse lugar..."
 	var t3 = create_tween()
 	t3.tween_property(label, "modulate:a", 1.0, 0.8)
@@ -476,6 +471,12 @@ func iniciar_cutscene() -> void:
 	label.text = "I'll push this bookcase... this noise is coming from there..." if is_en else "Vou empurrar essa estante... esse barulho está vindo dai..."
 	var t5 = create_tween()
 	t5.tween_property(label, "modulate:a", 1.0, 0.8)
+	
+	var look_down_up = create_tween()
+	var base_x_rot = camera_inicio.rotation_degrees.x
+	look_down_up.tween_property(camera_inicio, "rotation_degrees:x", base_x_rot - 10.0, 1.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	look_down_up.tween_property(camera_inicio, "rotation_degrees:x", base_x_rot, 1.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	
 	await t5.finished
 	if cutscene_skipped: return
 	await get_tree().create_timer(2.5).timeout
@@ -496,7 +497,7 @@ func iniciar_cutscene() -> void:
 	var temp_audio = AudioStreamPlayer.new()
 	temp_audio.stream = load("res://assets/sounds/player/dash_effect.mp3") 
 	temp_audio.volume_db = 5.0
-	temp_audio.pitch_scale = 0.4
+	temp_audio.pitch_scale = 0.3
 	add_child(temp_audio)
 	temp_audio.play()
 	
@@ -504,7 +505,7 @@ func iniciar_cutscene() -> void:
 	var armario = get_node_or_null("portal/armario")
 	if armario:
 		# Arrastar pro lado (baseado na orientação local)
-		armario.global_position -= armario.global_transform.basis.x * 2.5
+		armario.global_position -= armario.global_transform.basis.x * 1.9
 	
 	await get_tree().create_timer(1.5).timeout
 	if cutscene_skipped: return
@@ -517,10 +518,14 @@ func iniciar_cutscene() -> void:
 	await get_tree().create_timer(2.0).timeout
 	if cutscene_skipped: return
 	
-	# Anda em direção ao portal revelado (zoom um pouco menor)
-	var t_final_move = create_tween()
+	# Anda em direção ao portal revelado (zoom um pouco menor e gira um pouco pra direita)
+	var t_final_move = create_tween().set_parallel(true)
 	var p_final = camera_inicio.global_position + dir_to_vortex * 0.7
 	t_final_move.tween_property(camera_inicio, "global_position", p_final, 3.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	t_final_move.tween_property(camera_inicio, "rotation_degrees:y", camera_inicio.rotation_degrees.y - 6.0, 3.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	
+	# Usa finished para o tween que roda por último (eles tem mesma duração)
+	t_final_move.chain().tween_callback(func(): pass) # Apenas para o await funcionar melhor caso precise
 	await t_final_move.finished
 	if cutscene_skipped: return
 	
@@ -544,8 +549,19 @@ func iniciar_cutscene() -> void:
 		if fade:
 			fade.fade_in()
 			
-		await get_tree().create_timer(7.6).timeout
+		_ativar_motion_blur(true)
+		if motion_blur_mat:
+			motion_blur_mat.set_shader_parameter("blur_strength", 0.8)
+			
+		await get_tree().create_timer(6.6).timeout
 		if cutscene_skipped: return
+		
+		_disparar_relampago_sub_scene()
+		
+		await get_tree().create_timer(1.0).timeout
+		if cutscene_skipped: return
+		
+		_ativar_motion_blur(false)
 		
 		if fade:
 			fade.fade_out()
@@ -579,6 +595,27 @@ func iniciar_cutscene() -> void:
 		fade.fade_in()
 		
 	iniciar_cutscene_antiga()
+
+func _disparar_relampago_sub_scene() -> void:
+	var flash_rect = ColorRect.new()
+	flash_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	flash_rect.color = Color(1, 1, 1, 0)
+	flash_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var canvas = CanvasLayer.new()
+	canvas.layer = 150
+	canvas.add_child(flash_rect)
+	add_child(canvas)
+	
+	var t = create_tween()
+	t.tween_property(flash_rect, "color:a", 0.6, 0.04)
+	t.tween_property(flash_rect, "color:a", 0.1, 0.03)
+	t.tween_property(flash_rect, "color:a", 0.8, 0.06)
+	t.tween_property(flash_rect, "color:a", 0.0, 0.2)
+	
+	t.tween_callback(func():
+		if is_instance_valid(canvas):
+			canvas.queue_free()
+	)
 
 func iniciar_cutscene_antiga() -> void:
 	if cutscene_skipped: return
