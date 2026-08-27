@@ -11,6 +11,18 @@ var tv_ligada: bool = true
 var phone_audio: AudioStreamPlayer
 var ui_layer: CanvasLayer
 
+# --- Váriaveis da Cutscene do Telefone em Tempo Real ---
+var in_phone_cutscene: bool = false
+var current_phone_text_index: int = 0
+var phone_overlay: ColorRect
+var phone_label: Label
+var is_text_transitioning: bool = false
+var phone_texts = [
+	"PROLOG_PHONE_1_1", "PROLOG_PHONE_1_2", "PROLOG_PHONE_1_3", "PROLOG_PHONE_1_4", "PROLOG_PHONE_1_5", "PROLOG_PHONE_1_6", "PROLOG_PHONE_1_7",
+	"PROLOG_PHONE_2_1", "PROLOG_PHONE_2_2", "PROLOG_PHONE_2_3", "PROLOG_PHONE_2_4", "PROLOG_PHONE_2_5", "PROLOG_PHONE_2_6", "PROLOG_PHONE_2_7", "PROLOG_PHONE_2_8",
+	"PROLOG_PHONE_3_1", "PROLOG_PHONE_3_2", "PROLOG_PHONE_3_3", "PROLOG_PHONE_3_4"
+]
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	SaveManager.prolog_finished = false
@@ -78,6 +90,11 @@ func _show_intro_text() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	if in_phone_cutscene:
+		if Input.is_action_just_pressed("ui_accept") and not is_text_transitioning:
+			_next_phone_text()
+		return
+		
 	if Input.is_action_just_pressed("ui_accept"):
 		if player_na_porta:
 			# Previne que o jogador aperte o botão várias vezes
@@ -104,27 +121,8 @@ func _process(delta: float) -> void:
 				phone_audio.stop()
 				phone_audio.queue_free()
 			
-			# Fade out antes de pausar
-			$ambient/fade.fade_out()
-			await get_tree().create_timer(2.0).timeout
-			
-			var cutscene_scene = load("res://scenes/stages/prolog/cutscene_telefone.tscn")
-			var cutscene_instance = cutscene_scene.instantiate()
-			
-			# Cria um CanvasLayer para renderizar acima do fade e independente da pausa
-			var canvas = CanvasLayer.new()
-			canvas.layer = 100
-			canvas.process_mode = Node.PROCESS_MODE_ALWAYS
-			canvas.add_child(cutscene_instance)
-			get_tree().root.add_child(canvas)
-			
-			get_tree().paused = true
-			
-			# Aguarda a cutscene se destruir para voltar o jogo
-			await cutscene_instance.tree_exited
-			
-			# O jogo já foi despausado pela cutscene, fazemos o fade in para revelar a sala
-			$ambient/fade.fade_in()
+			# Inicia cutscene em tempo real
+			_start_phone_cutscene()
 		elif player_na_tv:
 			tv_ligada = not tv_ligada
 			_update_prompt()
@@ -191,3 +189,100 @@ func _on_area_3d_tv_body_exited(body: Node3D) -> void:
 	if body.name == "player" or body.is_in_group("player"):
 		player_na_tv = false
 		_update_prompt()
+
+# --- Funções da Cutscene do Telefone em Tempo Real ---
+
+func _start_phone_cutscene() -> void:
+	in_phone_cutscene = true
+	is_text_transitioning = true
+	
+	$ambient/fade.fade_out()
+	await get_tree().create_timer(2.0).timeout
+	
+	var cam_telefone = find_child("camera_telefone", true, false)
+	if cam_telefone:
+		cam_telefone.make_current()
+		
+	var cutscene_bars = find_child("cutscene", true, false)
+	if cutscene_bars:
+		cutscene_bars.visible = true
+		
+	_setup_phone_cutscene_ui()
+	current_phone_text_index = 0
+	
+	$ambient/fade.fade_in()
+	await get_tree().create_timer(1.0).timeout
+	_show_phone_text()
+
+func _setup_phone_cutscene_ui() -> void:
+	if not phone_overlay:
+		phone_overlay = ColorRect.new()
+		phone_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		phone_overlay.color = Color(0.1, 0.1, 0.1, 0.5)
+		phone_overlay.modulate.a = 0.0
+		ui_layer.add_child(phone_overlay)
+		
+		phone_label = Label.new()
+		phone_label.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+		phone_label.grow_horizontal = Control.GROW_DIRECTION_BOTH
+		phone_label.grow_vertical = Control.GROW_DIRECTION_BOTH
+		phone_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		phone_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		phone_label.add_theme_font_override("font", load("res://assets/fonts/Montserrat-ExtraBold.ttf"))
+		phone_label.add_theme_font_size_override("font_size", 28)
+		phone_label.add_theme_color_override("font_color", Color.WHITE)
+		phone_label.add_theme_color_override("font_shadow_color", Color.BLACK)
+		phone_label.add_theme_constant_override("shadow_outline_size", 4)
+		phone_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		phone_label.custom_minimum_size = Vector2(800, 0)
+		phone_label.modulate.a = 0.0
+		ui_layer.add_child(phone_label)
+		
+	var t = create_tween()
+	t.tween_property(phone_overlay, "modulate:a", 1.0, 1.0)
+
+func _show_phone_text() -> void:
+	if current_phone_text_index < phone_texts.size():
+		phone_label.text = tr(phone_texts[current_phone_text_index])
+		is_text_transitioning = true
+		
+		var t = create_tween()
+		t.tween_property(phone_label, "modulate:a", 1.0, 0.5)
+		await t.finished
+		is_text_transitioning = false
+	else:
+		_end_phone_cutscene()
+
+func _next_phone_text() -> void:
+	is_text_transitioning = true
+	var t = create_tween()
+	t.tween_property(phone_label, "modulate:a", 0.0, 0.3)
+	await t.finished
+	
+	current_phone_text_index += 1
+	_show_phone_text()
+
+func _end_phone_cutscene() -> void:
+	is_text_transitioning = true
+	
+	$ambient/fade.fade_out()
+	await get_tree().create_timer(2.0).timeout
+	
+	if phone_overlay: phone_overlay.modulate.a = 0.0
+	if phone_label: phone_label.modulate.a = 0.0
+	
+	var cutscene_bars = find_child("cutscene", true, false)
+	if cutscene_bars:
+		cutscene_bars.visible = false
+		
+	var player = find_child("player", true, false)
+	if player:
+		var cam = player.find_child("Camera3D", true, false)
+		if cam:
+			cam.make_current()
+	
+	$ambient/fade.fade_in()
+	
+	in_phone_cutscene = false
+	GlobalEvents.in_cutscene = false
+
