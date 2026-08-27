@@ -94,9 +94,8 @@ func _init():
 	var packed = PackedScene.new()
 	packed.pack(root)
 	
-	var dir = DirAccess.new()
-	if not dir.dir_exists("res://scenes/effects"):
-		dir.make_dir_recursive("res://scenes/effects")
+	if not DirAccess.dir_exists_absolute("res://scenes/effects"):
+		DirAccess.make_dir_recursive_absolute("res://scenes/effects")
 	
 	var err = ResourceSaver.save(packed, "res://scenes/effects/vortex_magico.tscn")
 	if err == OK:

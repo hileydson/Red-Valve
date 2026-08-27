@@ -130,17 +130,16 @@ func _process(delta: float) -> void:
 		active_cam.h_offset = sin(time_passed * 2.0) * 0.04
 		active_cam.v_offset = cos(time_passed * 2.5) * 0.04
 		
-	# Trava absoluta e agressiva nos primeiros segundos para evitar pulos de tela (Frame 0 glitch)
-	if is_starting:
-		if camera_oficina and look_at_target:
-			camera_oficina.make_current()
-			camera_oficina.global_position = pos_inicial
-			camera_oficina.look_at(look_at_target.global_position + look_at_offset, Vector3.UP)
-		return
-		
-	# A câmera sempre olha fixamente para o alvo atual
-	if look_at_target:
-		camera_oficina.look_at(look_at_target.global_position + look_at_offset, Vector3.UP)
+		# Trava absoluta e agressiva nos primeiros segundos para evitar pulos de tela (Frame 0 glitch)
+		if is_starting:
+			active_cam.global_position = pos_inicial
+			if look_at_target:
+				active_cam.look_at(look_at_target.global_position + look_at_offset, Vector3.UP)
+			return
+			
+		# A câmera sempre olha fixamente para o alvo atual
+		if look_at_target:
+			active_cam.look_at(look_at_target.global_position + look_at_offset, Vector3.UP)
 		
 	# Avança as animações manualmente já que os scripts e físicas estão pausados
 	if player and player.process_mode == Node.PROCESS_MODE_DISABLED:
@@ -237,6 +236,152 @@ func _ativar_motion_blur(ativar: bool) -> void:
 		motion_blur_overlay.visible = ativar
 
 func iniciar_cutscene() -> void:
+	if not enemy or not player:
+		return
+		
+	# Esconde o player, inimigo e vortex temporariamente
+	player.visible = false
+	enemy.visible = false
+	var vortex = get_node_or_null("auto_pecas_jimmy/VortexMagico")
+	if vortex:
+		vortex.visible = false
+		
+	# Barra da cutscene
+	var cutscene_bars = get_node_or_null("cutscene")
+	if cutscene_bars:
+		cutscene_bars.visible = true
+		cutscene_bars.z_index = 100
+		
+	var camera_inicio = get_node_or_null("portal/camera_inicio_cutscene")
+	
+	if not camera_inicio:
+		iniciar_cutscene_antiga()
+		return
+		
+	camera_inicio.make_current()
+	look_at_target = null
+	
+	# Camada de texto
+	var text_layer = CanvasLayer.new()
+	text_layer.layer = 120
+	add_child(text_layer)
+	
+	var label = Label.new()
+	label.set_anchors_preset(Control.PRESET_CENTER)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.add_theme_font_size_override("font_size", 20)
+	label.add_theme_constant_override("outline_size", 6)
+	label.modulate.a = 0.0
+	text_layer.add_child(label)
+	
+	var is_en = SaveManager.config.get("language", "pt") == "en"
+	
+	await get_tree().create_timer(1.0).timeout
+	
+	# Frase 1
+	label.text = "What happened here?" if is_en else "O que houve aqui?"
+	var t1 = create_tween()
+	t1.tween_property(label, "modulate:a", 1.0, 0.8)
+	
+	# Inclinada suave na rotacao pra esquerda
+	var t_rot = create_tween()
+	t_rot.tween_property(camera_inicio, "rotation:y", camera_inicio.rotation.y + deg_to_rad(15.0), 3.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	
+	await t1.finished
+	await get_tree().create_timer(2.2).timeout # Total ~3 seconds
+	
+	var t2 = create_tween()
+	t2.tween_property(label, "modulate:a", 0.0, 0.8)
+	await t2.finished
+	
+	# Rodando a camera para a porta/portal no final do cenario
+	var vortex_pos = Vector3.ZERO
+	var portal_rv = get_node_or_null("portal/portal_red_valve")
+	if portal_rv:
+		vortex_pos = portal_rv.global_position
+	elif vortex:
+		vortex_pos = vortex.global_position
+	else:
+		var p = get_node_or_null("portal")
+		if p: vortex_pos = p.global_position
+		
+	var dummy_rot = Camera3D.new()
+	add_child(dummy_rot)
+	dummy_rot.global_transform = camera_inicio.global_transform
+	dummy_rot.look_at(vortex_pos + Vector3(0, 1.0, 0), Vector3.UP)
+	var target_quat = dummy_rot.global_transform.basis.get_rotation_quaternion()
+	dummy_rot.queue_free()
+	
+	var start_quat = camera_inicio.global_transform.basis.get_rotation_quaternion()
+	var turn_tween = create_tween()
+	turn_tween.tween_method(func(t: float):
+		if is_instance_valid(camera_inicio):
+			camera_inicio.global_transform.basis = Basis(start_quat.slerp(target_quat, t))
+	, 0.0, 1.0, 3.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	
+	await turn_tween.finished
+	
+	# Mover devagar proximo da porta, ao redor de onde esta o vortex
+	var dir_to_vortex = (vortex_pos - camera_inicio.global_position).normalized()
+	var dist_to_vortex = camera_inicio.global_position.distance_to(vortex_pos)
+	var target_pos = camera_inicio.global_position + dir_to_vortex * (dist_to_vortex - 2.0)
+	
+	var move_tween = create_tween()
+	move_tween.tween_property(camera_inicio, "global_position", target_pos, 10.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	
+	# Durante o trajeto, colocar o texto
+	await get_tree().create_timer(1.0).timeout
+	label.text = "There is something wrong with this place..." if is_en else "Tem algo errado nesse lugar..."
+	var t3 = create_tween()
+	t3.tween_property(label, "modulate:a", 1.0, 0.8)
+	await t3.finished
+	
+	await get_tree().create_timer(3.0).timeout
+	
+	var t4 = create_tween()
+	t4.tween_property(label, "modulate:a", 0.0, 0.8)
+	await t4.finished
+	
+	# Espere mais alguns segundos
+	await get_tree().create_timer(1.5).timeout
+	
+	# Então mostre
+	label.text = "I need to find out what it is" if is_en else "Eu preciso descobrir o que é"
+	var t5 = create_tween()
+	t5.tween_property(label, "modulate:a", 1.0, 0.8)
+	await t5.finished
+	
+	await get_tree().create_timer(2.5).timeout
+	
+	var t6 = create_tween()
+	t6.tween_property(label, "modulate:a", 0.0, 0.8)
+	await t6.finished
+	
+	if move_tween.is_running():
+		await move_tween.finished
+		
+	# Restaura elementos
+	if is_instance_valid(enemy):
+		enemy.visible = true
+	if is_instance_valid(player):
+		player.visible = true
+	if is_instance_valid(vortex):
+		vortex.visible = true
+	
+	# Inicia cutscene antiga
+	if is_instance_valid(text_layer):
+		text_layer.queue_free()
+		
+	if is_instance_valid(camera_inicio):
+		camera_inicio.current = false
+		camera_inicio.clear_current()
+		
+	await get_tree().process_frame
+	
+	iniciar_cutscene_antiga()
+
+func iniciar_cutscene_antiga() -> void:
 	if not enemy or not player:
 		return
 		

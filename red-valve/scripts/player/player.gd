@@ -236,7 +236,8 @@ func _ready():
 	control_weapons.visible = false
 	hand_with_pistol.visible = false
 	if hand_with_magic: hand_with_magic.visible = false
-	camera_third_person.make_current()
+	if not GlobalEvents.in_cutscene:
+		camera_third_person.make_current()
 	#camera_top_view.make_current()
 	point.visible = false
 	

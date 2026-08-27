@@ -1,11 +1,12 @@
 [gd_scene format=3 uid="uid://c4ko48jpe1vms"]
 
 [ext_resource type="Script" uid="uid://ya6fe0yegmsa" path="res://scripts/stages/prolog/oficina_jimmy.gd" id="1_17iq3"]
-[ext_resource type="PackedScene" path="res://scenes/effects/heat_distortion_filter.tscn" id="1_63lqe"]
+[ext_resource type="PackedScene" uid="uid://bnjk8up77e563" path="res://scenes/effects/heat_distortion_filter.tscn" id="1_63lqe"]
 [ext_resource type="PackedScene" uid="uid://bhyhnppiawn07" path="res://scenes/configs/pause.tscn" id="1_b8np8"]
 [ext_resource type="PackedScene" uid="uid://bjlae2i2x8twg" path="res://assets/3d_model/stages/prolog/auto_pecas_jimmy.glb" id="1_q6dip"]
 [ext_resource type="PackedScene" uid="uid://dy356o67p6jyn" path="res://scenes/configs/fade.tscn" id="2_6q8v1"]
 [ext_resource type="PackedScene" uid="uid://cluvbknxfjx2k" path="res://scenes/player/player.tscn" id="2_falgx"]
+[ext_resource type="PackedScene" uid="uid://b7pdlllpih4yc" path="res://scenes/configs/cutscene_takes.tscn" id="2_jcde1"]
 [ext_resource type="AudioStream" uid="uid://cl5shgtn61go3" path="res://assets/sounds/common/fire_cracling.mp3" id="2_oc6fq"]
 [ext_resource type="PackedScene" uid="uid://cv4f2h7vortex" path="res://scenes/effects/vortex_magico.tscn" id="3_6q8v1"]
 [ext_resource type="AudioStream" uid="uid://fj4slbstwq3d" path="res://assets/cutscenes/sound/song_first_battle.mp3" id="3_e7swq"]
@@ -15,6 +16,8 @@
 [ext_resource type="PackedScene" uid="uid://dhkec8411f51e" path="res://assets/3d_model/stages/prolog/oficina_jimmy_peca_3.glb" id="9_ixu7l"]
 [ext_resource type="PackedScene" uid="uid://bqavl5m1blf5b" path="res://assets/3d_model/stages/prolog/oficina_jimmy_peca_2.glb" id="10_5tdqg"]
 [ext_resource type="PackedScene" uid="uid://cao7ykq68lbsl" path="res://assets/3d_model/stages/prolog/oficina_jimmy_peca_1.glb" id="11_oc6fq"]
+[ext_resource type="PackedScene" uid="uid://dtqgby062bw1n" path="res://assets/3d_model/objects/portal_red_valve.glb" id="16_vy4g6"]
+[ext_resource type="PackedScene" uid="uid://b3xg324lfskhi" path="res://assets/3d_model/stages/prolog/armario.glb" id="17_jcde1"]
 
 [sub_resource type="Gradient" id="Gradient_6q8v1"]
 offsets = PackedFloat32Array(0, 0.1, 0.4, 0.7, 1)
@@ -65,6 +68,9 @@ size = Vector2(0.06, 0.06)
 
 [node name="oficina_jimmy" type="Node3D" unique_id=2029993664]
 script = ExtResource("1_17iq3")
+
+[node name="cutscene" parent="." unique_id=796399776 instance=ExtResource("2_jcde1")]
+visible = false
 
 [node name="FireCracling" type="AudioStreamPlayer" parent="." unique_id=1778625709]
 stream = ExtResource("2_oc6fq")
@@ -117,10 +123,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.538715, -4.2253184, 2.90948
 [node name="TheCobaltHusker" parent="." unique_id=669848176 instance=ExtResource("8_5tdqg")]
 transform = Transform3D(-0.33241317, 0, -0.7181764, 0, 0.73305094, 0, 0.61932474, 0, -0.38547027, -1.4511609, -5.5814867, -1.2733573)
 
-[node name="enemy" parent="TheCobaltHusker" index="0"]
-shoots_fireball = false
-is_ranged_attacker = true
-
 [node name="pecas" type="Node3D" parent="." unique_id=1518424243]
 script = ExtResource("8_ixu7l")
 
@@ -139,10 +141,24 @@ transform = Transform3D(-0.928563, 0, 0.40958273, 0, 1.7874265, 0, -0.120319225,
 [node name="oficina_jimmy_peca_1" parent="pecas" unique_id=562929052 instance=ExtResource("11_oc6fq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6207197, -4.4285827, -6.5256596)
 
+[node name="oficina_jimmy_peca_8" parent="pecas" unique_id=1390271073 instance=ExtResource("11_oc6fq")]
+transform = Transform3D(0.11356744, 0, 0.9935303, 0, 1, 0, -0.9935303, 0, 0.11356744, -8.948151, -4.4285827, -5.5349755)
+
 [node name="oficina_jimmy_peca_7" parent="pecas" unique_id=1726708629 instance=ExtResource("11_oc6fq")]
 transform = Transform3D(0.06883367, 0, 0.99762815, 0, 1, 0, -0.99762815, 0, 0.06883367, -4.595435, -4.428582, 0.25828552)
 
 [node name="oficina_jimmy_peca_6" parent="pecas" unique_id=1147850552 instance=ExtResource("11_oc6fq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.9328327, -4.428582, 3.5379272)
+
+[node name="portal" type="Node3D" parent="." unique_id=1086288297]
+
+[node name="portal_red_valve" parent="portal" unique_id=1307033612 instance=ExtResource("16_vy4g6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.4188294, -4.3606133, -6.4884176)
+
+[node name="armario" parent="portal" unique_id=1420347684 instance=ExtResource("17_jcde1")]
+transform = Transform3D(1.3046626, 0, 0, 0, 1, 0, 0, 0, 1.2915719, -6.161995, -4.3687277, -6.011673)
+
+[node name="camera_inicio_cutscene" type="Camera3D" parent="portal" unique_id=544353729]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.9424763, -3.723655, 1.61424)
 
 [editable path="auto_pecas_jimmy"]
