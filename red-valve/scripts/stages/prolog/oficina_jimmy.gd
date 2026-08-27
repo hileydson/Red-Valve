@@ -455,6 +455,32 @@ func iniciar_cutscene() -> void:
 	label.text = "There is something wrong with this place..." if is_en else "Tem algo errado nesse lugar..."
 	var t3 = create_tween()
 	t3.tween_property(label, "modulate:a", 1.0, 0.8)
+	
+	var back_duration = 1.8
+	var back_pos = camera_inicio.global_position - dir_to_vortex * 1.5
+	
+	var move_back_tween = create_tween().set_parallel(true)
+	move_back_tween.tween_property(camera_inicio, "global_position:x", back_pos.x, back_duration).set_trans(Tween.TRANS_LINEAR)
+	move_back_tween.tween_property(camera_inicio, "global_position:z", back_pos.z, back_duration).set_trans(Tween.TRANS_LINEAR)
+	
+	var bob_back = create_tween().set_loops(2)
+	bob_back.tween_property(camera_inicio, "global_position:y", base_y + 0.12, 0.45).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	bob_back.tween_callback(func():
+		if player:
+			var p = player.get_node_or_null("sounds/Passos__")
+			if p:
+				p.pitch_scale = randf_range(0.85, 1.15)
+				p.play()
+	)
+	bob_back.tween_property(camera_inicio, "global_position:y", base_y, 0.45).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	bob_back.tween_callback(func():
+		if player:
+			var p = player.get_node_or_null("sounds/Passos__")
+			if p:
+				p.pitch_scale = randf_range(0.85, 1.15)
+				p.play()
+	)
+	
 	await t3.finished
 	if cutscene_skipped: return
 	await get_tree().create_timer(2.2).timeout
@@ -551,7 +577,7 @@ func iniciar_cutscene() -> void:
 			
 		_ativar_motion_blur(true)
 		if motion_blur_mat:
-			motion_blur_mat.set_shader_parameter("blur_strength", 0.8)
+			motion_blur_mat.set_shader_parameter("blur_strength", 0.3)
 			
 		await get_tree().create_timer(6.6).timeout
 		if cutscene_skipped: return
