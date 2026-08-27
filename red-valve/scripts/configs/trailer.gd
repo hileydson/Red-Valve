@@ -93,7 +93,44 @@ func _ready() -> void:
 	
 	cutscene_trailer_sequence()
 
+var cutscene_skipped: bool = false
+var skip_fade_canvas: CanvasLayer = null
+
+func skip_cutscene() -> void:
+	if cutscene_skipped: return
+	cutscene_skipped = true
+	
+	skip_fade_canvas = CanvasLayer.new()
+	skip_fade_canvas.layer = 200
+	var skip_fade_rect = ColorRect.new()
+	skip_fade_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	skip_fade_rect.color = Color(0, 0, 0, 0)
+	skip_fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	skip_fade_canvas.add_child(skip_fade_rect)
+	add_child(skip_fade_canvas)
+	
+	# Faz o som ir reduzindo aos poucos
+	var t = create_tween().set_parallel(true)
+	t.tween_property(skip_fade_rect, "color:a", 1.0, 2.0)
+	for audio in get_tree().current_scene.find_children("*", "AudioStreamPlayer", true, false):
+		t.tween_property(audio, "volume_db", -60.0, 2.0)
+	await t.finished
+	
+	loop_bolas_fogo = false
+	lightning_loop_active = false
+	if is_instance_valid(rain_audio_player): rain_audio_player.stop()
+	if is_instance_valid(old_film_layer): old_film_layer.queue_free()
+	if is_instance_valid(motion_blur_layer): motion_blur_layer.queue_free()
+	if is_instance_valid(rain_particles): rain_particles.queue_free()
+	
+	GlobalEvents.in_cutscene = false
+	print("--- CUTSCENE TRAILER SKIPPADA COM SUCESSO, INDO PARA MAIN MENU ---")
+	get_tree().change_scene_to_file("res://scenes/configs/main_menu_v2.tscn")
+
 func _process(delta: float) -> void:
+	if not cutscene_skipped and (Input.is_action_just_pressed("ui_accept") or Input.is_action_just_pressed("ui_cancel") or Input.is_action_just_pressed("ui_menu_game")):
+		skip_cutscene()
+
 	# Trava o the_anti_lopes no local exato do cenário sem descimento
 	if is_instance_valid(anti_lopes_ref):
 		anti_lopes_ref.global_position = anti_lopes_fixed_pos
@@ -721,50 +758,12 @@ func cutscene_trailer_sequence() -> void:
 	player.cutscene_set_auto_walk(true)
 	
 	# --------------------------------------------------------------------------
-	# TAKE 1: CÂMERA DE CIMA COMEÇANDO DA POSIÇÃO EXATA DA CAMERA_1 NO EDITOR
+	# TAKE 1: CÂMERA DO PLAYER
 	# --------------------------------------------------------------------------
-	print("Take 1: Câmera começando da posição configurada no editor (camera_1)...")
+	print("Take 1: Câmera terceira pessoa do player (8s)...")
 	
-	var cam_1 = get_tree().current_scene.get_node_or_null("camera_1") as Camera3D
-	var start_local_pos = Vector3(0, 0.2, 2.5)
-	var start_local_rot = Vector3(-10, 0, 0)
-	
-	if cam_1:
-		# Pega a posição e rotação relativas ao player exatamente como estão no editor
-		var cam_local_trans = player.global_transform.affine_inverse() * cam_1.global_transform
-		start_local_pos = cam_local_trans.origin
-		
-		var euler = cam_local_trans.basis.get_euler()
-		start_local_rot = Vector3(rad_to_deg(euler.x), rad_to_deg(euler.y), rad_to_deg(euler.z))
-	
-	# Força a câmera começar mais de baixo
-	var target_final_y = start_local_pos.y + 6.0
-	start_local_pos.y -= 4.0
-	
-	_switch_to_loose_camera(start_local_pos, start_local_rot, 3.5, 2.5)
-	
-	# Take 1: Começa de baixo e sobe devagar
-	var tween_take1 = create_tween().set_parallel(true)
-	tween_take1.tween_property(self, "target_local_rot:x", -70.0, 4.0).set_trans(Tween.TRANS_SINE)
-	tween_take1.tween_property(self, "target_local_pos:y", target_final_y, 4.0).set_trans(Tween.TRANS_SINE)
-	tween_take1.tween_property(self, "target_local_pos:z", start_local_pos.z, 4.0).set_trans(Tween.TRANS_SINE)
-	
-	# Segunda metade do take 1: mergulha na cabeça do player
-	var tween_take1_p2 = create_tween().set_parallel(true)
-	tween_take1_p2.tween_interval(4.5)
-	tween_take1_p2.chain().tween_property(self, "target_local_rot:x", 0.0, 3.5).set_trans(Tween.TRANS_SINE)
-	tween_take1_p2.parallel().tween_property(self, "target_local_pos:y", 1.6, 3.5).set_trans(Tween.TRANS_SINE)
-	tween_take1_p2.parallel().tween_property(self, "target_local_pos:z", -0.5, 3.5).set_trans(Tween.TRANS_SINE)
-	
-	# Zoom sutil contínuo desde o início do Take 1
-	if is_instance_valid(active_cam):
-		active_cam.fov = 70.0
-		var tween_zoom_take1 = create_tween()
-		# Primeira parte (0s a 4.5s): zoom sutil de 70 para 55 enquanto sobe
-		tween_zoom_take1.tween_property(active_cam, "fov", 55.0, 4.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-		# Segunda parte (4.5s a 8.0s): mergulho na cabeça em 1ª pessoa, de 55 para 35 e finaliza em 15
-		tween_zoom_take1.tween_property(active_cam, "fov", 35.0, 3.0).set_trans(Tween.TRANS_SINE)
-		tween_zoom_take1.tween_property(active_cam, "fov", 15.0, 0.5).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+	if is_instance_valid(player):
+		player.cutscene_set_camera_current(true)
 	
 	await get_tree().create_timer(8.0).timeout
 	print("... Take 1 concluído!")

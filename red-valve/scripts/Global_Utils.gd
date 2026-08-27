@@ -177,15 +177,19 @@ func show_cutscene_bars() -> void:
 		_cutscene_bars_node = get_tree().current_scene.find_child("cutscene", true, false)
 		if _cutscene_bars_node:
 			_cutscene_bars_node.visible = true
-			_cutscene_bars_node.modulate.a = 0.0
-			var t = create_tween()
-			t.tween_property(_cutscene_bars_node, "modulate:a", 1.0, 1.0)
+			var t = create_tween().set_parallel(true)
+			for child in _cutscene_bars_node.get_children():
+				if child is ColorRect and child.name != "fade":
+					child.modulate.a = 0.0
+					t.tween_property(child, "modulate:a", 1.0, 1.0)
 
 func hide_cutscene_bars() -> void:
 	if _cutscene_bars_node:
-		var t = create_tween()
-		t.tween_property(_cutscene_bars_node, "modulate:a", 0.0, 1.0)
-		t.finished.connect(func():
+		var t = create_tween().set_parallel(true)
+		for child in _cutscene_bars_node.get_children():
+			if child is ColorRect and child.name != "fade":
+				t.tween_property(child, "modulate:a", 0.0, 1.0)
+		t.chain().tween_callback(func():
 			if is_instance_valid(_cutscene_bars_node):
 				_cutscene_bars_node.visible = false
 				_cutscene_bars_node = null

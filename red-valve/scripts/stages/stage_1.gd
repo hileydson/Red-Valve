@@ -93,7 +93,7 @@ func _process(delta: float) -> void:
 		
 		$fade.fade_out()
 		await get_tree().create_timer(2.0).timeout
-		get_tree().change_scene_to_file("res://scenes/stages/prolog/cutscene_fight_no_power.tscn")
+		get_tree().change_scene_to_file("res://scenes/stages/prolog/oficina_jimmy.tscn")
 
 
 func _on_timer_timeout() -> void:

@@ -77,6 +77,14 @@ func _finalizar_cutscene_tudo() -> void:
 	if is_instance_valid(sub):
 		sub.queue_free()
 		
+	var text_layer_node = get_node_or_null("CutsceneTextLayer")
+	if is_instance_valid(text_layer_node):
+		text_layer_node.queue_free()
+		
+	if is_instance_valid(motion_blur_layer):
+		motion_blur_layer.queue_free()
+		motion_blur_layer = null
+		
 	GlobalEvents.in_cutscene = false
 	
 	var ambient = get_node_or_null("AmbientNoiseSlow")
@@ -92,10 +100,6 @@ func _finalizar_cutscene_tudo() -> void:
 		
 	if fade:
 		fade.fade_in()
-		
-	for child in get_children():
-		if child is CanvasLayer and child.name != "cutscene" and child.name != "fade" and child.name != "Pause":
-			child.queue_free()
 			
 	if is_instance_valid(camera_oficina):
 		camera_oficina.queue_free()
@@ -364,6 +368,7 @@ func iniciar_cutscene() -> void:
 	# Camada de texto
 	var text_layer = CanvasLayer.new()
 	text_layer.layer = 120
+	text_layer.name = "CutsceneTextLayer"
 	add_child(text_layer)
 	
 	var label = Label.new()
@@ -690,6 +695,7 @@ func iniciar_cutscene_antiga() -> void:
 	# Camada de texto cinematográfica
 	var text_layer = CanvasLayer.new()
 	text_layer.layer = 120
+	text_layer.name = "CutsceneTextLayer"
 	add_child(text_layer)
 	
 	var label = Label.new()
