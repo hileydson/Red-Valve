@@ -10,6 +10,7 @@
 [ext_resource type="AudioStream" uid="uid://cl5shgtn61go3" path="res://assets/sounds/common/fire_cracling.mp3" id="2_oc6fq"]
 [ext_resource type="PackedScene" uid="uid://cv4f2h7vortex" path="res://scenes/effects/vortex_magico.tscn" id="3_6q8v1"]
 [ext_resource type="AudioStream" uid="uid://fj4slbstwq3d" path="res://assets/cutscenes/sound/song_first_battle.mp3" id="3_e7swq"]
+[ext_resource type="AudioStream" uid="uid://d2ot3qcslngxq" path="res://assets/sounds/episodios/ambient_noise_slow.mp3" id="5_xddky"]
 [ext_resource type="PackedScene" uid="uid://xf6qeqrya6pi" path="res://scenes/enemies/the_cobalt_husker.tscn" id="8_5tdqg"]
 [ext_resource type="PackedScene" uid="uid://cl5veaedywunh" path="res://assets/3d_model/stages/prolog/oficina_jimmy_peca_4.glb" id="8_fu0a6"]
 [ext_resource type="Script" uid="uid://dev7jghc8pt3g" path="res://scripts/stages/prolog/flutuar_pecas.gd" id="8_ixu7l"]
@@ -18,6 +19,7 @@
 [ext_resource type="PackedScene" uid="uid://cao7ykq68lbsl" path="res://assets/3d_model/stages/prolog/oficina_jimmy_peca_1.glb" id="11_oc6fq"]
 [ext_resource type="PackedScene" uid="uid://dtqgby062bw1n" path="res://assets/3d_model/objects/portal_red_valve.glb" id="16_vy4g6"]
 [ext_resource type="PackedScene" uid="uid://b3xg324lfskhi" path="res://assets/3d_model/stages/prolog/armario.glb" id="17_jcde1"]
+[ext_resource type="AudioStream" uid="uid://5a1hffxew2cf" path="res://assets/sounds/episodios/red_valve_noise.mp3" id="19_q0ggi"]
 
 [sub_resource type="Gradient" id="Gradient_6q8v1"]
 offsets = PackedFloat32Array(0, 0.1, 0.4, 0.7, 1)
@@ -81,6 +83,12 @@ parameters/looping = true
 [node name="SongFirstBattle" type="AudioStreamPlayer" parent="." unique_id=467169788]
 stream = ExtResource("3_e7swq")
 volume_db = -6.012
+parameters/looping = true
+
+[node name="AmbientNoiseSlow" type="AudioStreamPlayer" parent="." unique_id=346077798]
+stream = ExtResource("5_xddky")
+volume_db = -7.704
+pitch_scale = 0.32
 autoplay = true
 parameters/looping = true
 
@@ -154,6 +162,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.9328327, -4.428582, 3.5379
 
 [node name="portal_red_valve" parent="portal" unique_id=1307033612 instance=ExtResource("16_vy4g6")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.4188294, -4.3606133, -6.4884176)
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="portal/portal_red_valve" unique_id=1585019630]
+stream = ExtResource("19_q0ggi")
+volume_db = -7.5
+pitch_scale = 0.63
+autoplay = true
+parameters/looping = true
 
 [node name="armario" parent="portal" unique_id=1420347684 instance=ExtResource("17_jcde1")]
 transform = Transform3D(1.3046626, 0, 0, 0, 1, 0, 0, 0, 1.2915719, -6.161995, -4.3687277, -6.011673)

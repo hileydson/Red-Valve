@@ -277,7 +277,7 @@ func iniciar_cutscene() -> void:
 	
 	var is_en = SaveManager.config.get("language", "pt") == "en"
 	
-	await get_tree().create_timer(1.0).timeout
+	await get_tree().create_timer(0.2).timeout
 	
 	# Frase 1
 	label.text = "What happened here?" if is_en else "O que houve aqui?"
@@ -309,7 +309,7 @@ func iniciar_cutscene() -> void:
 	var dummy_rot = Camera3D.new()
 	add_child(dummy_rot)
 	dummy_rot.global_transform = camera_inicio.global_transform
-	dummy_rot.look_at(vortex_pos + Vector3(0, 1.0, 0), Vector3.UP)
+	dummy_rot.look_at(vortex_pos + Vector3(0, 1.4, 0), Vector3.UP)
 	var target_quat = dummy_rot.global_transform.basis.get_rotation_quaternion()
 	dummy_rot.queue_free()
 	
@@ -321,11 +321,11 @@ func iniciar_cutscene() -> void:
 	, 0.0, 1.0, 3.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	await turn_tween.finished
 	
-	# Olhar para a esquerda e para a direita
+	# Olhar para a esquerda e para a direita (mais rapidamente)
 	var look_tween = create_tween()
-	look_tween.tween_property(camera_inicio, "rotation_degrees:y", camera_inicio.rotation_degrees.y + 15.0, 2.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	look_tween.tween_property(camera_inicio, "rotation_degrees:y", camera_inicio.rotation_degrees.y - 15.0, 4.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	look_tween.tween_property(camera_inicio, "rotation_degrees:y", camera_inicio.rotation_degrees.y, 2.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	look_tween.tween_property(camera_inicio, "rotation_degrees:y", camera_inicio.rotation_degrees.y + 15.0, 0.7).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	look_tween.tween_property(camera_inicio, "rotation_degrees:y", camera_inicio.rotation_degrees.y - 15.0, 1.4).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	look_tween.tween_property(camera_inicio, "rotation_degrees:y", camera_inicio.rotation_degrees.y, 0.7).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	await look_tween.finished
 	
 	# Mover devagar simulando caminhada (head bobbing)
@@ -349,22 +349,22 @@ func iniciar_cutscene() -> void:
 	# Ajusta Y para garantir que fica reto após caminhar
 	var adjust_tween = create_tween()
 	adjust_tween.tween_property(camera_inicio, "global_position:y", base_y, 0.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-	await adjust_tween.finished
 	
-	# Parado de frente pra porta, mostra o texto
+	# Parado de frente pra porta, mostra o texto imediatamente após chegar
+	await get_tree().create_timer(0.1).timeout
 	label.text = "There is something wrong with this place..." if is_en else "Tem algo errado nesse lugar..."
 	var t3 = create_tween()
 	t3.tween_property(label, "modulate:a", 1.0, 0.8)
 	await t3.finished
-	await get_tree().create_timer(3.0).timeout
+	await get_tree().create_timer(2.2).timeout
 	
 	var t4 = create_tween()
-	t4.tween_property(label, "modulate:a", 0.0, 0.8)
+	t4.tween_property(label, "modulate:a", 0.0, 0.5)
 	await t4.finished
 	
-	await get_tree().create_timer(1.0).timeout
+	await get_tree().create_timer(0.3).timeout
 	
-	label.text = "I need to find out what it is" if is_en else "Eu preciso descobrir o que é"
+	label.text = "I'll push this bookcase... this noise is coming from there..." if is_en else "Vou empurrar essa estante... esse barulho está vindo dai..."
 	var t5 = create_tween()
 	t5.tween_property(label, "modulate:a", 1.0, 0.8)
 	await t5.finished
@@ -401,9 +401,9 @@ func iniciar_cutscene() -> void:
 		fade.fade_in()
 	await get_tree().create_timer(2.0).timeout
 	
-	# Anda em direção ao portal revelado
+	# Anda em direção ao portal revelado (zoom um pouco menor)
 	var t_final_move = create_tween()
-	var p_final = camera_inicio.global_position + dir_to_vortex * 3.0
+	var p_final = camera_inicio.global_position + dir_to_vortex * 1.5
 	t_final_move.tween_property(camera_inicio, "global_position", p_final, 3.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	await t_final_move.finished
 	
@@ -438,6 +438,14 @@ func iniciar_cutscene() -> void:
 func iniciar_cutscene_antiga() -> void:
 	if not enemy or not player:
 		return
+		
+	# Muta o noise e toca a musica de batalha
+	var ambient = get_node_or_null("AmbientNoiseSlow")
+	if ambient:
+		ambient.stream_paused = true
+	var battle_song = get_node_or_null("SongFirstBattle")
+	if battle_song:
+		battle_song.play()
 		
 	# Instancia o filtro de Motion Blur
 	_setup_motion_blur()
@@ -662,6 +670,10 @@ func iniciar_cutscene_antiga() -> void:
 		enemy.process_mode = Node.PROCESS_MODE_INHERIT
 		
 	GlobalEvents.in_cutscene = false
+	
+	var cutscene_bars = get_node_or_null("cutscene")
+	if cutscene_bars:
+		cutscene_bars.visible = false
 		
 	if fade:
 		fade.fade_in()
