@@ -17,6 +17,8 @@ var current_phone_text_index: int = 0
 var phone_overlay: ColorRect
 var phone_label: Label
 var is_text_transitioning: bool = false
+var current_text_generation: int = 0
+var phone_typing_audio: AudioStreamPlayer
 var phone_texts = [
 	"PROLOG_PHONE_1_1", "PROLOG_PHONE_1_2", "PROLOG_PHONE_1_3", "PROLOG_PHONE_1_4", "PROLOG_PHONE_1_5", "PROLOG_PHONE_1_6", "PROLOG_PHONE_1_7",
 	"PROLOG_PHONE_2_1", "PROLOG_PHONE_2_2", "PROLOG_PHONE_2_3", "PROLOG_PHONE_2_4", "PROLOG_PHONE_2_5", "PROLOG_PHONE_2_6", "PROLOG_PHONE_2_7", "PROLOG_PHONE_2_8",
@@ -91,8 +93,13 @@ func _show_intro_text() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	if in_phone_cutscene:
-		if Input.is_action_just_pressed("ui_accept") and not is_text_transitioning:
-			_next_phone_text()
+		if Input.is_action_just_pressed("ui_accept"):
+			if is_text_transitioning and phone_label and phone_label.visible_characters < phone_label.text.length():
+				# Pula a digitação
+				phone_label.visible_characters = phone_label.text.length()
+				is_text_transitioning = false
+			elif not is_text_transitioning:
+				_next_phone_text()
 		return
 		
 	if Input.is_action_just_pressed("ui_accept"):
@@ -215,10 +222,18 @@ func _start_phone_cutscene() -> void:
 	_show_phone_text()
 
 func _setup_phone_cutscene_ui() -> void:
+	if not phone_typing_audio:
+		phone_typing_audio = AudioStreamPlayer.new()
+		phone_typing_audio.volume_db = -5.0
+		var typing_sound_path = "res://assets/sounds/episodios/prologo/typing.mp3"
+		if ResourceLoader.exists(typing_sound_path):
+			phone_typing_audio.stream = load(typing_sound_path)
+		add_child(phone_typing_audio)
+
 	if not phone_overlay:
 		phone_overlay = ColorRect.new()
 		phone_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		phone_overlay.color = Color(0.1, 0.1, 0.1, 0.5)
+		phone_overlay.color = Color(0.05, 0.05, 0.05, 0.85)
 		phone_overlay.modulate.a = 0.0
 		ui_layer.add_child(phone_overlay)
 		
@@ -243,12 +258,29 @@ func _setup_phone_cutscene_ui() -> void:
 
 func _show_phone_text() -> void:
 	if current_phone_text_index < phone_texts.size():
-		phone_label.text = tr(phone_texts[current_phone_text_index])
-		is_text_transitioning = true
+		var full_text = tr(phone_texts[current_phone_text_index])
+		phone_label.text = full_text
+		phone_label.visible_characters = 0
+		phone_label.modulate.a = 1.0
 		
-		var t = create_tween()
-		t.tween_property(phone_label, "modulate:a", 1.0, 0.5)
-		await t.finished
+		is_text_transitioning = true
+		current_text_generation += 1
+		var my_generation = current_text_generation
+		
+		for i in range(full_text.length()):
+			if my_generation != current_text_generation:
+				return # Loop cancelado por outra chamada
+			if phone_label.visible_characters >= full_text.length():
+				break # Skipped pelo usuário
+				
+			phone_label.visible_characters += 1
+			if full_text[i] != " " and is_instance_valid(phone_typing_audio) and phone_typing_audio.stream != null:
+				# Varia sutilmente o pitch para o som não ficar artificial
+				phone_typing_audio.pitch_scale = randf_range(0.95, 1.05)
+				phone_typing_audio.play()
+			
+			await get_tree().create_timer(0.05).timeout
+			
 		is_text_transitioning = false
 	else:
 		_end_phone_cutscene()
