@@ -319,49 +319,100 @@ func iniciar_cutscene() -> void:
 		if is_instance_valid(camera_inicio):
 			camera_inicio.global_transform.basis = Basis(start_quat.slerp(target_quat, t))
 	, 0.0, 1.0, 3.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	
 	await turn_tween.finished
 	
-	# Mover devagar proximo da porta, ao redor de onde esta o vortex
+	# Olhar para a esquerda e para a direita
+	var look_tween = create_tween()
+	look_tween.tween_property(camera_inicio, "rotation_degrees:y", camera_inicio.rotation_degrees.y + 15.0, 2.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	look_tween.tween_property(camera_inicio, "rotation_degrees:y", camera_inicio.rotation_degrees.y - 15.0, 4.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	look_tween.tween_property(camera_inicio, "rotation_degrees:y", camera_inicio.rotation_degrees.y, 2.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	await look_tween.finished
+	
+	# Mover devagar simulando caminhada (head bobbing)
 	var dir_to_vortex = (vortex_pos - camera_inicio.global_position).normalized()
 	var dist_to_vortex = camera_inicio.global_position.distance_to(vortex_pos)
-	var target_pos = camera_inicio.global_position + dir_to_vortex * (dist_to_vortex - 2.0)
+	var target_pos = camera_inicio.global_position + dir_to_vortex * (dist_to_vortex - 3.5)
 	
-	var move_tween = create_tween()
-	move_tween.tween_property(camera_inicio, "global_position", target_pos, 10.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	var move_duration = 8.0
+	var move_tween = create_tween().set_parallel(true)
+	move_tween.tween_property(camera_inicio, "global_position:x", target_pos.x, move_duration).set_trans(Tween.TRANS_LINEAR)
+	move_tween.tween_property(camera_inicio, "global_position:z", target_pos.z, move_duration).set_trans(Tween.TRANS_LINEAR)
 	
-	# Durante o trajeto, colocar o texto
-	await get_tree().create_timer(1.0).timeout
+	var bob_tween = create_tween().set_loops(int(move_duration / 1.0))
+	var base_y = camera_inicio.global_position.y
+	bob_tween.tween_property(camera_inicio, "global_position:y", base_y + 0.1, 0.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	bob_tween.tween_property(camera_inicio, "global_position:y", base_y, 0.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	
+	await move_tween.finished
+	bob_tween.kill() # Para o balanço
+	
+	# Ajusta Y para garantir que fica reto após caminhar
+	var adjust_tween = create_tween()
+	adjust_tween.tween_property(camera_inicio, "global_position:y", base_y, 0.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	await adjust_tween.finished
+	
+	# Parado de frente pra porta, mostra o texto
 	label.text = "There is something wrong with this place..." if is_en else "Tem algo errado nesse lugar..."
 	var t3 = create_tween()
 	t3.tween_property(label, "modulate:a", 1.0, 0.8)
 	await t3.finished
-	
 	await get_tree().create_timer(3.0).timeout
 	
 	var t4 = create_tween()
 	t4.tween_property(label, "modulate:a", 0.0, 0.8)
 	await t4.finished
 	
-	# Espere mais alguns segundos
-	await get_tree().create_timer(1.5).timeout
+	await get_tree().create_timer(1.0).timeout
 	
-	# Então mostre
 	label.text = "I need to find out what it is" if is_en else "Eu preciso descobrir o que é"
 	var t5 = create_tween()
 	t5.tween_property(label, "modulate:a", 1.0, 0.8)
 	await t5.finished
-	
 	await get_tree().create_timer(2.5).timeout
 	
 	var t6 = create_tween()
 	t6.tween_property(label, "modulate:a", 0.0, 0.8)
 	await t6.finished
 	
-	if move_tween.is_running():
-		await move_tween.finished
+	# Escurece a tela para o evento de arrastar estante
+	if fade:
+		fade.fade_out()
+	await get_tree().create_timer(2.0).timeout
+	
+	# Placeholder de Áudio de Móvel Arrastando
+	var temp_audio = AudioStreamPlayer.new()
+	temp_audio.stream = load("res://assets/sounds/player/dash_effect.mp3") 
+	temp_audio.volume_db = 5.0
+	add_child(temp_audio)
+	temp_audio.play()
+	
+	# Move a estante revelando o portal
+	var armario = get_node_or_null("portal/armario")
+	if armario:
+		# Arrastar pro lado (baseado na orientação local)
+		armario.global_position -= armario.global_transform.basis.x * 2.5
+	
+	await get_tree().create_timer(1.5).timeout
+	if is_instance_valid(temp_audio):
+		temp_audio.queue_free()
 		
-	# Restaura elementos
+	# Tela volta, mostrando portal revelado
+	if fade:
+		fade.fade_in()
+	await get_tree().create_timer(2.0).timeout
+	
+	# Anda em direção ao portal revelado
+	var t_final_move = create_tween()
+	var p_final = camera_inicio.global_position + dir_to_vortex * 3.0
+	t_final_move.tween_property(camera_inicio, "global_position", p_final, 3.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	await t_final_move.finished
+	
+	# Escurece novamente pra iniciar a cutscene antiga
+	if fade:
+		fade.fade_out()
+	await get_tree().create_timer(2.0).timeout
+		
+	# Restaura elementos ocultos
 	if is_instance_valid(enemy):
 		enemy.visible = true
 	if is_instance_valid(player):
@@ -369,7 +420,6 @@ func iniciar_cutscene() -> void:
 	if is_instance_valid(vortex):
 		vortex.visible = true
 	
-	# Inicia cutscene antiga
 	if is_instance_valid(text_layer):
 		text_layer.queue_free()
 		
@@ -379,6 +429,10 @@ func iniciar_cutscene() -> void:
 		
 	await get_tree().process_frame
 	
+	# Transição pra cutscene antiga abrindo do preto
+	if fade:
+		fade.fade_in()
+		
 	iniciar_cutscene_antiga()
 
 func iniciar_cutscene_antiga() -> void:
