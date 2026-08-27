@@ -412,7 +412,7 @@ func iniciar_cutscene() -> void:
 	var dist_to_vortex = camera_inicio.global_position.distance_to(vortex_pos)
 	var target_pos = camera_inicio.global_position + dir_to_vortex * (dist_to_vortex - 2.0)
 	
-	var move_duration = 12.0
+	var move_duration = 9.0
 	var move_tween = create_tween().set_parallel(true)
 	move_tween.tween_property(camera_inicio, "global_position:x", target_pos.x, move_duration).set_trans(Tween.TRANS_LINEAR)
 	move_tween.tween_property(camera_inicio, "global_position:z", target_pos.z, move_duration).set_trans(Tween.TRANS_LINEAR)
@@ -447,6 +447,16 @@ func iniciar_cutscene() -> void:
 	# Parado de frente pra porta, mostra o texto imediatamente após chegar
 	await get_tree().create_timer(0.1).timeout
 	if cutscene_skipped: return
+	
+	# Olha para cima e para baixo sutilmente
+	var look_up_down = create_tween()
+	var base_x_rot = camera_inicio.rotation_degrees.x
+	look_up_down.tween_property(camera_inicio, "rotation_degrees:x", base_x_rot + 12.0, 1.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	look_up_down.tween_property(camera_inicio, "rotation_degrees:x", base_x_rot - 12.0, 1.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	look_up_down.tween_property(camera_inicio, "rotation_degrees:x", base_x_rot, 1.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	await look_up_down.finished
+	if cutscene_skipped: return
+	
 	label.text = "There is something wrong with this place..." if is_en else "Tem algo errado nesse lugar..."
 	var t3 = create_tween()
 	t3.tween_property(label, "modulate:a", 1.0, 0.8)
@@ -509,7 +519,7 @@ func iniciar_cutscene() -> void:
 	
 	# Anda em direção ao portal revelado (zoom um pouco menor)
 	var t_final_move = create_tween()
-	var p_final = camera_inicio.global_position + dir_to_vortex * 1.5
+	var p_final = camera_inicio.global_position + dir_to_vortex * 0.7
 	t_final_move.tween_property(camera_inicio, "global_position", p_final, 3.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	await t_final_move.finished
 	if cutscene_skipped: return
