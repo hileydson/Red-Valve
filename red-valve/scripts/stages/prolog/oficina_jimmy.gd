@@ -34,7 +34,14 @@ func skip_cutscene() -> void:
 	add_child(skip_fade_canvas)
 	
 	var t = create_tween()
-	t.tween_property(skip_fade_rect, "color:a", 1.0, 3.0)
+	t.tween_property(skip_fade_rect, "color:a", 1.0, 2.0) # Mais rápido (2s)
+	
+	var text_layer_node = get_node_or_null("CutsceneTextLayer")
+	if is_instance_valid(text_layer_node):
+		for child in text_layer_node.get_children():
+			if child is Control:
+				t.parallel().tween_property(child, "modulate:a", 0.0, 2.0)
+				
 	await t.finished
 	
 	# Prepara o fade original para estar totalmente preto antes de remover a tela de skip
@@ -114,7 +121,8 @@ func _ready() -> void:
 	# Usamos process_mode = DISABLED em vez de set_physics_process para ter certeza absoluta 
 	# que o player não vai andar, mesmo que os scripts internos dele tentem ligar a física de novo
 	if player:
-		player.process_mode = Node.PROCESS_MODE_DISABLED
+		pass
+		#player.process_mode = Node.PROCESS_MODE_DISABLED
 	if enemy:
 		enemy.process_mode = Node.PROCESS_MODE_DISABLED
 		# Configura o inimigo para o modo de arremesso de peças
@@ -551,7 +559,7 @@ func iniciar_cutscene() -> void:
 	# Placeholder de Áudio de Móvel Arrastando
 	var temp_audio = AudioStreamPlayer.new()
 	temp_audio.stream = load("res://assets/sounds/player/dash_effect.mp3") 
-	temp_audio.volume_db = 5.0
+	temp_audio.volume_db = 15.0
 	temp_audio.pitch_scale = 0.3
 	add_child(temp_audio)
 	temp_audio.play()

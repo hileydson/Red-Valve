@@ -6,7 +6,7 @@ func _ready() -> void:
 	player = get_parent()
 
 func _process_amulet_magic(_delta: float) -> void:
-	if GlobalEvents.is_maycow_normal or not player.is_first_person or player.is_reloading or player.is_using_ultimate:
+	if (GlobalEvents.is_maycow_normal and not SaveManager.prolog_finished) or not player.is_first_person or player.is_reloading or player.is_using_ultimate:
 		_hide_amulet_magic()
 		return
 		

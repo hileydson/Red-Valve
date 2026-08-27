@@ -758,12 +758,14 @@ func cutscene_trailer_sequence() -> void:
 	player.cutscene_set_auto_walk(true)
 	
 	# --------------------------------------------------------------------------
-	# TAKE 1: CÂMERA DO PLAYER
+	# TAKE 1: CÂMERA TERCEIRA PESSOA INDEPENDENTE
 	# --------------------------------------------------------------------------
-	print("Take 1: Câmera terceira pessoa do player (8s)...")
+	print("Take 1: Câmera terceira pessoa independente (8s)...")
 	
 	if is_instance_valid(player):
-		player.cutscene_set_camera_current(true)
+		player.cutscene_set_camera_current(false)
+		
+	_switch_to_loose_camera(Vector3(0, 1.8, 2.5), Vector3(-10, 0, 0), 4.0, 3.0)
 	
 	await get_tree().create_timer(8.0).timeout
 	print("... Take 1 concluído!")

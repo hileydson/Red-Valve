@@ -25,7 +25,7 @@ signal cinematic_cutscene_finished
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	message_canvas_layer = CanvasLayer.new()
-	message_canvas_layer.layer = 128
+	message_canvas_layer.layer = 160
 	add_child(message_canvas_layer)
 	
 	message_vbox = VBoxContainer.new()
@@ -273,7 +273,7 @@ func _show_next_cinematic_text() -> void:
 			if full_text[i] != " " and is_instance_valid(_cutscene_audio) and _cutscene_audio.stream != null:
 				# Variação sutil no som para aumentar a imersão
 				_cutscene_audio.pitch_scale = randf_range(0.85, 1.15)
-				_cutscene_audio.volume_db = randf_range(-22.0, -12.0)
+				_cutscene_audio.volume_db = randf_range(-6.0, -2.0)
 				_cutscene_audio.play()
 				
 			await get_tree().create_timer(0.05).timeout
@@ -296,7 +296,8 @@ func _process(delta: float) -> void:
 			elif not _cutscene_text_transitioning:
 				_cutscene_text_transitioning = true
 				var t = create_tween()
-				t.tween_property(_cutscene_label, "modulate:a", 0.0, 0.3)
+				if _cutscene_label:
+					t.tween_property(_cutscene_label, "modulate:a", 0.0, 0.3)
 				await t.finished
 				_current_cutscene_idx += 1
 				_show_next_cinematic_text()
@@ -304,18 +305,32 @@ func _process(delta: float) -> void:
 func _end_cinematic_text() -> void:
 	_cutscene_text_transitioning = true
 	var t = create_tween()
-	if _cutscene_overlay: t.tween_property(_cutscene_overlay, "modulate:a", 0.0, 1.0)
-	if _cutscene_label: t.parallel().tween_property(_cutscene_label, "modulate:a", 0.0, 1.0)
+	if _cutscene_overlay is CanvasItem: t.tween_property(_cutscene_overlay, "modulate:a", 0.0, 1.0)
+	if _cutscene_label is CanvasItem: t.parallel().tween_property(_cutscene_label, "modulate:a", 0.0, 1.0)
 	
 	if _cutscene_skip_ui:
-		var skip_t = create_tween()
-		skip_t.tween_property(_cutscene_skip_ui, "modulate:a", 0.0, 0.5)
+		if _cutscene_skip_ui is CanvasItem:
+			var skip_t = create_tween()
+			skip_t.tween_property(_cutscene_skip_ui, "modulate:a", 0.0, 0.5)
+	
+	# Start song immediately if skipped and we need to play battle song? 
+	# Wait, user said: "quando acontece o skipe... o som que nao foi iniciado antes deve se iniciar já que nao houve a cutscene para iniciar ele... o nome é SongFirstBattle do som"
+	# That logic should probably be in the stage script, or we emit a signal and pass skipped state.
 	
 	await t.finished
 	
 	if _cutscene_skip_ui:
 		_cutscene_skip_ui.queue_free()
 		_cutscene_skip_ui = null
+		
+	if _cutscene_label:
+		_cutscene_label.queue_free()
+		_cutscene_label = null
+		
+	if _cutscene_overlay:
+		_cutscene_overlay.queue_free()
+		_cutscene_overlay = null
 	
 	in_cinematic_cutscene = false
+
 	cinematic_cutscene_finished.emit()

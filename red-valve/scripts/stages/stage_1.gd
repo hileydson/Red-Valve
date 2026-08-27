@@ -68,15 +68,23 @@ func setup_player_spawn() -> void:
 			enemies_node.queue_free()
 		
 	if not is_instance_valid(prompt_label):
+		var center_container = CenterContainer.new()
+		center_container.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		
 		prompt_label = Label.new()
 		prompt_label.text = tr("PROMPT_ENTER_WORKSHOP")
-		prompt_label.visible = false
-		prompt_label.set_anchors_preset(Control.PRESET_CENTER)
 		prompt_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		prompt_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		prompt_label.add_theme_font_size_override("font_size", 16)
+		prompt_label.add_theme_font_size_override("font_size", 24)
 		prompt_label.add_theme_constant_override("outline_size", 4)
-		ui_layer.add_child(prompt_label)
+		
+		center_container.add_child(prompt_label)
+		ui_layer.add_child(center_container)
+		center_container.visible = false
+		
+		# Guardamos a referência ao container para poder ligar/desligar a visibilidade
+		# Como o prompt_label é var, vamos sobrescrever o funcionamento usando a variável do prompt
+		prompt_label.set_meta("container", center_container)
 	
 	# Inicia a exibição do texto introdutório
 	_play_intro_text()
@@ -89,6 +97,8 @@ func _process(delta: float) -> void:
 	if player_na_oficina and Input.is_action_just_pressed("ui_accept"):
 		player_na_oficina = false
 		if is_instance_valid(prompt_label):
+			if prompt_label.has_meta("container"):
+				prompt_label.get_meta("container").visible = false
 			prompt_label.visible = false
 		
 		$fade.fade_out()
@@ -117,6 +127,8 @@ func _on_area_3d_jimmy_house_body_entered(body: Node3D) -> void:
 	if body.name.to_lower() == "player" or body.is_in_group("player"):
 		player_na_oficina = true
 		if is_instance_valid(prompt_label):
+			if prompt_label.has_meta("container"):
+				prompt_label.get_meta("container").visible = true
 			prompt_label.visible = true
 
 
@@ -126,6 +138,8 @@ func _on_area_3d_jimmy_house_body_exited(body: Node3D) -> void:
 	if body.name.to_lower() == "player" or body.is_in_group("player"):
 		player_na_oficina = false
 		if is_instance_valid(prompt_label):
+			if prompt_label.has_meta("container"):
+				prompt_label.get_meta("container").visible = false
 			prompt_label.visible = false
 
 func _play_intro_text() -> void:

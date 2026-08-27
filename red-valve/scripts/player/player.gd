@@ -350,14 +350,6 @@ func _physics_process(delta: float) -> void:
 		camera_third_person.h_offset = _cutscene_shake_h_base
 		camera_third_person.v_offset = _cutscene_shake_v_base
 		
-	if GlobalEvents.in_cutscene and not (_cutscene_auto_walk or _cutscene_auto_run):
-		velocity.x = move_toward(velocity.x, 0, SPEED)
-		velocity.z = move_toward(velocity.z, 0, SPEED)
-		if not is_on_floor():
-			velocity += get_gravity() * delta
-		move_and_slide()
-		return
-
 	if is_using_ultimate:
 		# Apenas processa a gravidade, caso ele estivesse caindo no momento, 
 		# mas normalmente a animação vai travar ele. Retorna para não mover.
@@ -430,7 +422,7 @@ func _physics_process(delta: float) -> void:
 	if global_position.y < -10.0 and current_health > 0 and not is_falling_dead:
 		_trigger_fall_death()
 		
-	#somente poder executar ações do jogo se nao for prologo
+	# PARASITE MAYCOW (1ª Pessoa)
 	if !GlobalEvents.is_maycow_normal:
 	
 		# 1. LÓGICA DE MIRA (AIM/ZOOM EM PRIMEIRA PESSOA)
@@ -651,22 +643,60 @@ func _physics_process(delta: float) -> void:
 				modelo.rotation.y = lerp_angle(modelo.rotation.y, alvo_y, delta * velocidade_giro * speed_y)
 				modelo.position.x = lerp(modelo.position.x, alvo_pos_x, speed_x * delta)
 		
-	# DAQUI PRA FRENTE É O MAYCOW SEM PODERES 	
+	# DAQUI PRA FRENTE É O MAYCOW SEM PODERES (E NORMAL APOS PROLOGO)
 	else:
-		is_aiming = false
 		is_first_person = false
 		if not GlobalEvents.in_cutscene and not _cutscene_camera_disabled and camera_third_person and not camera_third_person.current:
 			camera_third_person.make_current()
 			
-		# Desativa o Motion Blur
-		if is_instance_valid(hud_layer) and not is_playing_return_effect:
-			var motion_blur = hud_layer.get_node_or_null("MotionBlurOverlay")
-			if motion_blur:
-				motion_blur.material.set_shader_parameter("blur_strength", 0.0)
-				motion_blur.visible = false
+		if SaveManager.prolog_finished and not _cutscene_inputs_disabled:
+			if Input.is_action_just_released("ui_hold_first_person_view"):
+				if amulet_selected_enemies.size() == 0:
+					AudioServer.playback_speed_scale = 1.0
+				_on_amulet_magic_released()
+
+			is_aiming = Input.is_action_pressed("ui_hold_first_person_view")
+			
+			if is_aiming:
+				if Input.is_action_just_pressed("ui_hold_first_person_view"):
+					AudioServer.playback_speed_scale = 0.5
+					
+				if is_instance_valid(amulet_crosshair): amulet_crosshair.visible = true
+				if point: point.visible = false
 				
-		_hide_amulet_magic()
-		_clear_amulet_hover()
+				if is_instance_valid(hud_layer):
+					var motion_blur = hud_layer.get_node_or_null("MotionBlurOverlay")
+					if motion_blur:
+						motion_blur.visible = true
+						motion_blur.material.set_shader_parameter("blur_strength", 0.08)
+						
+				_process_amulet_magic(delta)
+				_process_amulet_targeting()
+			else:
+				if is_instance_valid(amulet_crosshair): amulet_crosshair.visible = false
+				if point: point.visible = not GlobalEvents.in_cutscene and not _cutscene_hud_hidden
+				
+				if is_instance_valid(hud_layer) and not is_playing_return_effect:
+					var motion_blur = hud_layer.get_node_or_null("MotionBlurOverlay")
+					if motion_blur:
+						motion_blur.material.set_shader_parameter("blur_strength", 0.0)
+						motion_blur.visible = false
+						
+				_hide_amulet_magic()
+				_clear_amulet_hover()
+				
+			if is_aiming and not is_magic_attacking and Input.is_action_just_pressed("ui_magic_attack") and SaveManager.current_mp >= 10.0:
+				magic_hand_attack()
+		else:
+			is_aiming = false
+			if is_instance_valid(amulet_crosshair): amulet_crosshair.visible = false
+			if is_instance_valid(hud_layer) and not is_playing_return_effect:
+				var motion_blur = hud_layer.get_node_or_null("MotionBlurOverlay")
+				if motion_blur:
+					motion_blur.material.set_shader_parameter("blur_strength", 0.0)
+					motion_blur.visible = false
+			_hide_amulet_magic()
+			_clear_amulet_hover()
 		
 		# 3. GRAVIDADE
 		if not is_on_floor():
@@ -693,6 +723,15 @@ func _physics_process(delta: float) -> void:
 		# 7. MOVIMENTAÇÃO (DASH VS CAMINHADA)
 		var input_dir := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 		
+		# --- CUTSCENE INPUT OVERRIDES ---
+		if GlobalEvents.in_cutscene or _cutscene_inputs_disabled:
+			input_dir = Vector2.ZERO
+		if _cutscene_auto_walk:
+			input_dir.y = -1.0
+			_run_toggle_active = false
+		if _cutscene_auto_run:
+			input_dir.y = -1.0
+			_run_toggle_active = true
 		# MOVIMENTO NORMAL (WALK/RUN)
 		var is_running = _run_toggle_active and current_stamina > 0 and can_run_normal and not is_exhausted and not is_aiming
 		var velocidade_atual = RUN_SPEED if is_running else WALK_SPEED_NORMAL
@@ -701,7 +740,7 @@ func _physics_process(delta: float) -> void:
 		var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 		var velocity_Y_zero: bool = velocity.y <= 0
 		var target_fov: float = 75.0
-		if is_aiming and not GlobalEvents.is_maycow_normal:
+		if is_aiming:
 			if is_first_person:
 				target_fov = 75.0 # Primeira pessoa fica com FOV normal
 			else:

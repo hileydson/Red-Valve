@@ -491,7 +491,7 @@ func finish_cutscene() -> void:
 	
 	# Aguarda um tempinho antes de carregar a próxima cena
 	await get_tree().create_timer(3.0).timeout
-	LoadingScreen.load_scene("res://scenes/stages/prolog/the_house.tscn")
+	get_tree().change_scene_to_file("res://scenes/stages/prolog/the_house.tscn")
 
 func _stop_all_audio(node: Node) -> void:
 	if node is AudioStreamPlayer or node is AudioStreamPlayer2D or node is AudioStreamPlayer3D:

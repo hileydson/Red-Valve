@@ -66,7 +66,6 @@ func _ready() -> void:
 	
 	if player:
 		# Trava a cena para modo cutscene
-		player.process_mode = Node.PROCESS_MODE_DISABLED
 		for enemy in enemies:
 			if is_instance_valid(enemy):
 				# Atualiza a referência do player para que os inimigos teleportados não persigam o player da cena pausada
@@ -174,7 +173,6 @@ func _ready() -> void:
 			
 		# Restaura os controles e física APÓS o fim de toda a cutscene/explosão
 		if is_instance_valid(player):
-			player.process_mode = Node.PROCESS_MODE_INHERIT
 			if "camera_third_person" in player and is_instance_valid(player.camera_third_person):
 				player.camera_third_person.make_current()
 				
@@ -264,13 +262,7 @@ func _process(delta: float) -> void:
 		# Gira o furacão constantemente em torno do eixo Y
 		hurricane_node.rotate_y(deg_to_rad(30.0) * delta)
 		
-	# Avança as animações manualmente
-	if player and player.process_mode == Node.PROCESS_MODE_DISABLED:
-		var pt1 = player.get_node_or_null("maycow_lopes_normal/AnimationTree")
-		var pt2 = player.get_node_or_null("maycow_lopes/AnimationTree")
-		if pt1 and pt1.active: pt1.advance(delta)
-		if pt2 and pt2.active: pt2.advance(delta)
-		
+
 	for enemy in enemies:
 		if is_instance_valid(enemy) and enemy.process_mode == Node.PROCESS_MODE_DISABLED:
 			if "animation_tree" in enemy and enemy.animation_tree and enemy.animation_tree.active:
@@ -292,7 +284,7 @@ func _start_final_sequence() -> void:
 	GlobalEvents.in_cutscene = true
 	
 	if is_instance_valid(player):
-		player.process_mode = Node.PROCESS_MODE_DISABLED
+		pass
 	
 	# 1. Ultra Câmera Lenta
 	Engine.time_scale = 0.15
@@ -370,7 +362,6 @@ func iniciar_cutscene() -> void:
 	
 	# Encerramento: Restaura física e controles
 	if is_instance_valid(player):
-		player.process_mode = Node.PROCESS_MODE_INHERIT
 		if "camera_third_person" in player and is_instance_valid(player.camera_third_person):
 			player.camera_third_person.make_current()
 			

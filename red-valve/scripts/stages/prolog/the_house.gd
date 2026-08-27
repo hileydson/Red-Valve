@@ -191,12 +191,6 @@ func _start_phone_cutscene() -> void:
 	# Mostrar bordas antes do fade_out para estarem prontas no fade_in
 	GlobalUtils.show_cutscene_bars()
 	
-	# Configurar o nó de fade para rodar mesmo pausado
-	$ambient/fade.process_mode = Node.PROCESS_MODE_ALWAYS
-	
-	# Pausa a árvore inteira para parar áudios e movimentação
-	get_tree().paused = true
-	
 	$ambient/fade.fade_out()
 	await get_tree().create_timer(2.0).timeout
 	
@@ -224,10 +218,6 @@ func _start_phone_cutscene() -> void:
 	GlobalUtils.hide_cutscene_bars()
 	
 	$ambient/fade.fade_in()
-	
-	# Volta ao normal
-	get_tree().paused = false
-	$ambient/fade.process_mode = Node.PROCESS_MODE_INHERIT
 	
 	GlobalEvents.in_cutscene = false
 
