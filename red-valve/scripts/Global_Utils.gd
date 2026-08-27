@@ -8,7 +8,22 @@ var message_canvas_layer: CanvasLayer
 var message_vbox: VBoxContainer
 var active_messages: Dictionary = {}
 
+# --- SISTEMA GLOBAL DE TEXTOS CINEMÁTICOS ---
+var in_cinematic_cutscene: bool = false
+var _cutscene_overlay: ColorRect
+var _cutscene_label: Label
+var _cutscene_audio: AudioStreamPlayer
+var _cutscene_texts: Array = []
+var _current_cutscene_idx: int = 0
+var _cutscene_text_transitioning: bool = false
+var _cutscene_text_gen: int = 0
+var _cutscene_bars_node: Node = null
+var _cutscene_skip_ui: Control = null
+
+signal cinematic_cutscene_finished
+
 func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	message_canvas_layer = CanvasLayer.new()
 	message_canvas_layer.layer = 128
 	add_child(message_canvas_layer)
@@ -151,3 +166,152 @@ func shake_camera(duracao: float, forca: float):
 	# Volta para a posição original no final
 	current_shake_tween.tween_property(camera, "h_offset", base_h_offset, 0.1)
 	current_shake_tween.tween_property(camera, "v_offset", base_v_offset, 0.1)
+
+
+# =========================================================================
+# SISTEMA GLOBAL DE TEXTOS CINEMÁTICOS
+# =========================================================================
+
+func show_cutscene_bars() -> void:
+	if get_tree().current_scene:
+		_cutscene_bars_node = get_tree().current_scene.find_child("cutscene", true, false)
+		if _cutscene_bars_node:
+			_cutscene_bars_node.visible = true
+			_cutscene_bars_node.modulate.a = 0.0
+			var t = create_tween()
+			t.tween_property(_cutscene_bars_node, "modulate:a", 1.0, 1.0)
+
+func hide_cutscene_bars() -> void:
+	if _cutscene_bars_node:
+		var t = create_tween()
+		t.tween_property(_cutscene_bars_node, "modulate:a", 0.0, 1.0)
+		t.finished.connect(func():
+			if is_instance_valid(_cutscene_bars_node):
+				_cutscene_bars_node.visible = false
+				_cutscene_bars_node = null
+		)
+
+func start_cinematic_text_cutscene(texts: Array) -> void:
+	in_cinematic_cutscene = true
+	_cutscene_texts = texts
+	_current_cutscene_idx = 0
+	_cutscene_text_transitioning = true
+	
+	if not message_canvas_layer:
+		_ready()
+		
+	if not _cutscene_skip_ui:
+		_cutscene_skip_ui = load("res://scripts/ui/skip_cutscene_ui.gd").new()
+		message_canvas_layer.add_child(_cutscene_skip_ui)
+		_cutscene_skip_ui.skipped.connect(_on_cinematic_skipped)
+			
+	if not _cutscene_audio:
+		_cutscene_audio = AudioStreamPlayer.new()
+		var typing_sound_path = "res://assets/sounds/episodios/prologo/typing.mp3"
+		if ResourceLoader.exists(typing_sound_path):
+			_cutscene_audio.stream = load(typing_sound_path)
+		add_child(_cutscene_audio)
+		
+	if not _cutscene_overlay:
+		_cutscene_overlay = ColorRect.new()
+		_cutscene_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+		_cutscene_overlay.color = Color(0.05, 0.05, 0.05, 0.85)
+		_cutscene_overlay.modulate.a = 0.0
+		message_canvas_layer.add_child(_cutscene_overlay)
+		
+		_cutscene_label = Label.new()
+		_cutscene_label.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+		_cutscene_label.grow_horizontal = Control.GROW_DIRECTION_BOTH
+		_cutscene_label.grow_vertical = Control.GROW_DIRECTION_BOTH
+		_cutscene_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_cutscene_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		_cutscene_label.add_theme_font_override("font", load("res://assets/fonts/Montserrat-ExtraBold.ttf"))
+		_cutscene_label.add_theme_font_size_override("font_size", 28)
+		
+		_cutscene_label.add_theme_color_override("font_color", Color.WHITE)
+		_cutscene_label.add_theme_color_override("font_shadow_color", Color.BLACK)
+		_cutscene_label.add_theme_constant_override("shadow_outline_size", 4)
+		_cutscene_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		_cutscene_label.custom_minimum_size = Vector2(800, 0)
+		_cutscene_label.modulate.a = 0.0
+		message_canvas_layer.add_child(_cutscene_label)
+		
+	# Adjust overlay to not cover the black cinematic bars if they are active
+	if _cutscene_bars_node and _cutscene_bars_node.visible:
+		_cutscene_overlay.offset_top = 157
+		_cutscene_overlay.offset_bottom = -142
+	else:
+		_cutscene_overlay.offset_top = 0
+		_cutscene_overlay.offset_bottom = 0
+		
+	var t = create_tween()
+	t.tween_property(_cutscene_overlay, "modulate:a", 1.0, 1.0)
+	await get_tree().create_timer(1.0).timeout
+	
+	_show_next_cinematic_text()
+
+func _show_next_cinematic_text() -> void:
+	if _current_cutscene_idx < _cutscene_texts.size():
+		var full_text = tr(_cutscene_texts[_current_cutscene_idx])
+		_cutscene_label.text = full_text
+		_cutscene_label.visible_characters = 0
+		_cutscene_label.modulate.a = 1.0
+		
+		_cutscene_text_transitioning = true
+		_cutscene_text_gen += 1
+		var my_gen = _cutscene_text_gen
+		
+		for i in range(full_text.length()):
+			if my_gen != _cutscene_text_gen: return
+			if _cutscene_label.visible_characters >= full_text.length(): break
+			
+			_cutscene_label.visible_characters += 1
+			if full_text[i] != " " and is_instance_valid(_cutscene_audio) and _cutscene_audio.stream != null:
+				# Variação sutil no som para aumentar a imersão
+				_cutscene_audio.pitch_scale = randf_range(0.85, 1.15)
+				_cutscene_audio.volume_db = randf_range(-22.0, -12.0)
+				_cutscene_audio.play()
+				
+			await get_tree().create_timer(0.05).timeout
+			
+		_cutscene_text_transitioning = false
+	else:
+		_end_cinematic_text()
+
+func _on_cinematic_skipped() -> void:
+	_current_cutscene_idx = _cutscene_texts.size()
+	_cutscene_text_gen += 1
+	_end_cinematic_text()
+
+func _process(delta: float) -> void:
+	if in_cinematic_cutscene:
+		if Input.is_action_just_pressed("ui_accept"):
+			if _cutscene_text_transitioning and _cutscene_label and _cutscene_label.visible_characters < _cutscene_label.text.length():
+				_cutscene_label.visible_characters = _cutscene_label.text.length()
+				_cutscene_text_transitioning = false
+			elif not _cutscene_text_transitioning:
+				_cutscene_text_transitioning = true
+				var t = create_tween()
+				t.tween_property(_cutscene_label, "modulate:a", 0.0, 0.3)
+				await t.finished
+				_current_cutscene_idx += 1
+				_show_next_cinematic_text()
+
+func _end_cinematic_text() -> void:
+	_cutscene_text_transitioning = true
+	var t = create_tween()
+	if _cutscene_overlay: t.tween_property(_cutscene_overlay, "modulate:a", 0.0, 1.0)
+	if _cutscene_label: t.parallel().tween_property(_cutscene_label, "modulate:a", 0.0, 1.0)
+	
+	if _cutscene_skip_ui:
+		var skip_t = create_tween()
+		skip_t.tween_property(_cutscene_skip_ui, "modulate:a", 0.0, 0.5)
+	
+	await t.finished
+	
+	if _cutscene_skip_ui:
+		_cutscene_skip_ui.queue_free()
+		_cutscene_skip_ui = null
+	
+	in_cinematic_cutscene = false
+	cinematic_cutscene_finished.emit()
