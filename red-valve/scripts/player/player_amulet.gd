@@ -42,15 +42,19 @@ func _process_amulet_magic(delta: float) -> void:
 
 func _ensure_amuleto_visual() -> void:
 	if is_instance_valid(player.amuleto_node): return
-	if not player.hand_with_magic: return
+	if not player.camera: return
 
 	var amuleto_scene = load("res://assets/3d_model/player/Maycow Lopes/amuleto_power.glb")
 	if not amuleto_scene: return
 
 	var amuleto = amuleto_scene.instantiate()
-	player.hand_with_magic.add_child(amuleto)
-	amuleto.position = Vector3(-0.06, 0.15, -0.15) # Em cima da mão esquerda
-	amuleto.scale = Vector3(0.3, 0.3, 0.3)
+	# Preso na câmera (não na mão) para garantir posição e escala previsíveis na tela
+	player.camera.add_child(amuleto)
+	amuleto.position = Vector3(-0.18, -0.22, -0.55) # Ao lado da mão esquerda, em frente à câmera
+	amuleto.scale = Vector3(0.35, 0.35, 0.35)
+	amuleto.visible = true
+	for mesh in amuleto.find_children("*", "VisualInstance3D", true, false):
+		mesh.visible = true
 
 	var particles = CPUParticles3D.new()
 	particles.amount = 120
@@ -148,19 +152,25 @@ func _process_amulet_targeting() -> void:
 				
 	if target != player.amulet_hovered_enemy:
 		_clear_amulet_hover()
-		if target and not player.amulet_selected_enemies.has(target):
+		if target:
 			player.amulet_hovered_enemy = target
-			_apply_silhouette(target, Color(1.0, 1.0, 1.0, 0.5)) # Branco fraco (Hover)
-	
+			if player.amulet_selected_enemies.has(target):
+				_apply_silhouette(target, Color(1.0, 0.0, 0.0, 0.8)) # Já selecionado (vermelho forte)
+			else:
+				_apply_silhouette(target, Color(1.0, 1.0, 1.0, 0.5)) # Branco fraco (Hover)
+
 	if Input.is_action_just_pressed("ui_shoot") and player.amulet_hovered_enemy:
-		if player.amulet_selected_enemies.size() < player.max_amulet_targets:
-			var enemy = player.amulet_hovered_enemy
+		var enemy = player.amulet_hovered_enemy
+		if player.amulet_selected_enemies.has(enemy):
+			# Já estava selecionado: remove a seleção
+			player.amulet_selected_enemies.erase(enemy)
+			_apply_silhouette(enemy, Color(1.0, 1.0, 1.0, 0.5)) # Volta para hover fraco
+		elif player.amulet_selected_enemies.size() < player.max_amulet_targets:
 			player.amulet_selected_enemies.append(enemy)
-			player.amulet_hovered_enemy = null
 			_apply_silhouette(enemy, Color(1.0, 0.0, 0.0, 0.8)) # Vermelho forte (Selecionado)
-			
-			if player.amulet_counter_label:
-				player.amulet_counter_label.text = str(player.amulet_selected_enemies.size()) + " / 3"
+
+		if player.amulet_counter_label:
+			player.amulet_counter_label.text = str(player.amulet_selected_enemies.size()) + " / 3"
 
 func _clear_amulet_hover() -> void:
 	if player.amulet_hovered_enemy and is_instance_valid(player.amulet_hovered_enemy):
@@ -310,13 +320,42 @@ func _on_amulet_magic_released() -> void:
 	tree.current_scene = battlefield_scene
 
 func play_return_from_arena_effect() -> void:
+	player.is_playing_return_effect = true
+	GlobalUtils.vibrate_controller(null, 0.8, 0.8, 1.0)
+	GlobalUtils.shake_camera(0.6, 1.0)
+
+	# Câmera lenta momentânea ao voltar da arena
+	Engine.time_scale = 0.3
+	var time_tween = create_tween().set_ignore_time_scale(true)
+	time_tween.tween_interval(0.5)
+	time_tween.tween_callback(func(): Engine.time_scale = 1.0)
+
+	# Flash branco de transição
 	var flash = ColorRect.new()
 	flash.color = Color(1.0, 1.0, 1.0, 1.0)
 	flash.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	if player.hud_layer: player.hud_layer.add_child(flash)
-	
+
 	var tw = create_tween()
 	tw.tween_property(flash, "color:a", 0.0, 1.5)
 	tw.tween_callback(flash.queue_free)
-	
-	GlobalUtils.vibrate_controller(null, 0.8, 0.8, 1.0)
+
+	# Motion blur momentâneo
+	if is_instance_valid(player.hud_layer):
+		player.hud_layer.visible = true
+		var motion_blur = player.hud_layer.get_node_or_null("MotionBlurOverlay")
+		if motion_blur:
+			motion_blur.visible = true
+			motion_blur.material.set_shader_parameter("blur_strength", 1.8)
+			var blur_tween = create_tween()
+			blur_tween.tween_property(motion_blur.material, "shader_parameter/blur_strength", 0.0, 2.5).set_trans(Tween.TRANS_SINE)
+			blur_tween.finished.connect(func():
+				motion_blur.visible = false
+				player.is_playing_return_effect = false
+			)
+		else:
+			player.is_playing_return_effect = false
+	else:
+		player.is_playing_return_effect = false
+
+	SaveManager.save_game()

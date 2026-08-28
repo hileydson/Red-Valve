@@ -5,6 +5,7 @@ var player: CharacterBody3D
 func _ready() -> void:
 	player = get_parent()
 	_setup_health_hud()
+	_setup_iron_rusks_hud()
 
 func _setup_health_hud() -> void:
 	player.current_health = player.max_health
@@ -277,9 +278,9 @@ void fragment() {
 	player.amulet_counter_label.anchor_left = 1.0
 	player.amulet_counter_label.anchor_right = 1.0
 	player.amulet_counter_label.offset_left = -250
-	player.amulet_counter_label.offset_top = 40
+	player.amulet_counter_label.offset_top = 130
 	player.amulet_counter_label.offset_right = -40
-	player.amulet_counter_label.offset_bottom = 150
+	player.amulet_counter_label.offset_bottom = 240
 	player.amulet_counter_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	player.amulet_counter_label.visible = false
 	player.hud_layer.add_child(player.amulet_counter_label)
@@ -290,6 +291,49 @@ void fragment() {
 	counter_tween.tween_property(player.amulet_counter_label, "theme_override_colors/font_color", Color(0.5, 0.0, 0.0, 1.0), 0.4)
 	
 	_start_heartbeat_pulse()
+
+func _setup_iron_rusks_hud() -> void:
+	var iron_rusks_layer = CanvasLayer.new()
+	iron_rusks_layer.layer = 200 # Sempre acima de qualquer menu (in_game_menu usa 129)
+	iron_rusks_layer.process_mode = Node.PROCESS_MODE_ALWAYS
+	player.add_child(iron_rusks_layer)
+
+	var value_label = Label.new()
+	value_label.name = "IronRusksValue"
+	value_label.add_theme_font_size_override("font_size", 32)
+	value_label.add_theme_color_override("font_color", Color(0.85, 0.75, 0.4, 1.0))
+	value_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
+	value_label.add_theme_constant_override("outline_size", 6)
+	value_label.anchor_left = 1.0
+	value_label.anchor_right = 1.0
+	value_label.offset_left = -220
+	value_label.offset_top = 15
+	value_label.offset_right = -20
+	value_label.offset_bottom = 55
+	value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	value_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	iron_rusks_layer.add_child(value_label)
+
+	var caption_label = Label.new()
+	caption_label.add_theme_font_size_override("font_size", 14)
+	caption_label.add_theme_color_override("font_color", Color(0.85, 0.75, 0.4, 0.85))
+	caption_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
+	caption_label.add_theme_constant_override("outline_size", 5)
+	caption_label.anchor_left = 1.0
+	caption_label.anchor_right = 1.0
+	caption_label.offset_left = -220
+	caption_label.offset_top = 55
+	caption_label.offset_right = -20
+	caption_label.offset_bottom = 75
+	caption_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	caption_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	caption_label.text = "Iron Rusks"
+	iron_rusks_layer.add_child(caption_label)
+
+	var sc = GDScript.new()
+	sc.source_code = "extends Label\nfunc _process(_delta):\n\ttext = str(SaveManager.iron_rusks)"
+	sc.reload()
+	value_label.set_script(sc)
 
 func update_ammo_ui() -> void:
 	if not is_instance_valid(player.ammo_label): return
