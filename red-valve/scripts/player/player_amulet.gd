@@ -169,6 +169,10 @@ func _hide_amulet_magic() -> void:
 	player.amulet_selected_enemies.clear()
 
 func _process_amulet_targeting() -> void:
+	if not GlobalEvents.is_maycow_normal:
+		_clear_amulet_hover()
+		return
+
 	var space_state = player.get_world_3d().direct_space_state
 	var center = player.get_viewport().size / 2
 	var from = player.camera.project_ray_origin(center)
