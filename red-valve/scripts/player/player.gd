@@ -62,7 +62,7 @@ var is_exhausted: bool = false
 # --- ULTIMATE CINEMÁTICA ---
 @export_group("Ultimate Cinemática")
 @export var ult_model_distance: float = 1.7
-@export var ult_cogblade_rot_x: float = -70.0
+@export var ult_cogblade_rot_x: float = 110.0
 @export var ult_cogblade_rot_y: float = -90.0
 @export var ult_cogblade_rot_z: float = 0.0
 var mp_bar: ProgressBar

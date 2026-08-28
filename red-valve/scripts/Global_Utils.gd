@@ -25,7 +25,7 @@ signal cinematic_cutscene_finished
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	message_canvas_layer = CanvasLayer.new()
-	message_canvas_layer.layer = 160
+	message_canvas_layer.layer = 120
 	add_child(message_canvas_layer)
 	
 	message_vbox = VBoxContainer.new()
@@ -59,6 +59,7 @@ func show_center_message(message_id: String, text: String, font_size: int = 18, 
 		
 		# Animação de entrada
 		var tween = create_tween()
+		tween.bind_node(label)
 		tween.tween_property(label, "modulate:a", 1.0, 0.5)
 
 	label.text = text
@@ -76,6 +77,7 @@ func hide_center_message(message_id: String) -> void:
 		
 		if is_instance_valid(label):
 			var tween = create_tween()
+			tween.bind_node(label)
 			tween.tween_property(label, "modulate:a", 0.0, 0.5)
 			await tween.finished
 			if is_instance_valid(label):

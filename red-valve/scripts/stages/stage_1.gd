@@ -146,7 +146,7 @@ func _play_intro_text() -> void:
 	if GlobalEvents.entering_chapter_1:
 		GlobalEvents.entering_chapter_1 = false
 		# Exibe o título "CAPÍTULO 1" em vermelho bem grande no centro da tela (tamanho 120 como no splash)
-		await get_tree().create_timer(1.0).timeout
+		await get_tree().create_timer(1.0, false).timeout
 		
 		var chapter_label = Label.new()
 		chapter_label.text = tr("TXT_CHAPTER_1").to_upper()
@@ -167,7 +167,7 @@ func _play_intro_text() -> void:
 		tween_in.tween_property(chapter_label, "modulate:a", 1.0, 1.0)
 		await tween_in.finished
 		
-		await get_tree().create_timer(3.5).timeout
+		await get_tree().create_timer(3.5, false).timeout
 		
 		if is_instance_valid(chapter_label):
 			var tween_out = create_tween()
@@ -181,7 +181,7 @@ func _play_intro_text() -> void:
 	GlobalEvents.set("has_seen_stage_1_intro", true)
 	
 	# Pequena pausa antes de começar para não ser tão brusco
-	await get_tree().create_timer(1.5).timeout
+	await get_tree().create_timer(1.5, false).timeout
 	
 	var intro_keys = [
 		"NO_POWER_1_WALK_1", "NO_POWER_1_WALK_2", "NO_POWER_1_WALK_3", 
@@ -190,6 +190,6 @@ func _play_intro_text() -> void:
 	
 	for key in intro_keys:
 		GlobalUtils.show_center_message("intro_stage_1", tr(key), 18)
-		await get_tree().create_timer(4.5).timeout
+		await get_tree().create_timer(4.5, false).timeout
 		GlobalUtils.hide_center_message("intro_stage_1")
-		await get_tree().create_timer(0.5).timeout
+		await get_tree().create_timer(0.5, false).timeout
