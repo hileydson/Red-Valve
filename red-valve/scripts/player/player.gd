@@ -354,8 +354,15 @@ func _physics_process(delta: float) -> void:
 		camera_third_person.v_offset = _cutscene_shake_v_base
 		
 	if is_using_ultimate:
-		# Apenas processa a gravidade, caso ele estivesse caindo no momento, 
-		# mas normalmente a animação vai travar ele. Retorna para não mover.
+		# Processa a gravidade caso ele estivesse caindo no momento, 
+		# e processa o combate para que a cogblade possa girar e voar.
+		if not is_on_floor():
+			velocity += get_gravity() * delta
+		move_and_slide()
+		
+		var combat_comp = get_node_or_null("PlayerCombat")
+		if combat_comp: combat_comp.process_combat(delta)
+		
 		return
 
 	var is_in_house = get_tree().current_scene.name == "the_house" if get_tree() and get_tree().current_scene else false
