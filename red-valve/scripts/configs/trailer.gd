@@ -886,7 +886,17 @@ func cutscene_trailer_sequence() -> void:
 	var sprint_target_pos = fim.global_position - (sprint_dir * 4.8) # Afasta mais um pouco da porta
 	
 	tween_corrida.tween_property(player, "global_position", sprint_target_pos, tempo_sprint).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
-	
+
+	# Toca o som de passos manualmente durante a arrancada: o _physics_process do player está
+	# desligado desde o fim do Take 1 (para não cair/morrer na cutscene), então o loop normal
+	# de footstep dele não roda mais aqui.
+	if is_instance_valid(player) and "passos" in player and is_instance_valid(player.passos):
+		player.passos.play()
+		tween_corrida.finished.connect(func():
+			if is_instance_valid(player) and "passos" in player and is_instance_valid(player.passos):
+				player.passos.stop()
+		)
+
 	var tween_fov = create_tween()
 	tween_fov.tween_property(cam_fps_walk, "fov", 92.0, tempo_sprint).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	

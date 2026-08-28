@@ -126,7 +126,16 @@ func _ready() -> void:
 	if not fade_node and has_node("fade"):
 		fade_node = get_node("fade")
 		
+	# 8. Fade in para a música da cutscene
+	var bg_music = find_child("FirstCutsceneSong", true, false)
+	if bg_music:
+		var target_vol = bg_music.volume_db
+		bg_music.volume_db = -40.0
+		var music_tween = create_tween()
+		music_tween.tween_property(bg_music, "volume_db", target_vol, 5.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		
 	Engine.time_scale = 1.0 # Velocidade normal
+
 	
 	await get_tree().create_timer(1.0).timeout
 	load_chunk()

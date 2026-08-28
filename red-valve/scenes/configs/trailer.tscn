@@ -84,8 +84,8 @@ shader_parameter/cirrus_absorption = 2.0
 shader_parameter/cirrus_sky_tint_fade = 0.5
 shader_parameter/cirrus_size = 1.0
 shader_parameter/cirrus_uv = Vector2(0.16, 0.11)
-shader_parameter/cirrus_position1 = Vector2(0.03966994, 0.03966994)
-shader_parameter/cirrus_position2 = Vector2(0.03966994, 0.03966994)
+shader_parameter/cirrus_position1 = Vector2(0.693779, 0.693779)
+shader_parameter/cirrus_position2 = Vector2(0.693779, 0.693779)
 shader_parameter/cirrus_texture = ExtResource("4_0otj5")
 shader_parameter/cumulus_visible = true
 shader_parameter/cumulus_intensity = 9.245
@@ -95,7 +95,7 @@ shader_parameter/cumulus_absorption = 2.0
 shader_parameter/cumulus_noise_freq = 2.7
 shader_parameter/cumulus_sky_tint_fade = 0.0
 shader_parameter/cumulus_size = 0.5
-shader_parameter/cumulus_position = Vector2(105.243004, 105.243004)
+shader_parameter/cumulus_position = Vector2(108.51507, 108.51507)
 shader_parameter/cumulus_texture = ExtResource("5_ahyst")
 shader_parameter/cumulus_partial_mie_phase = Vector3(0.957564, 1.042436, 0.412)
 shader_parameter/cumulus_mie_intensity = 1.0
@@ -751,7 +751,7 @@ material_override = SubResource("StandardMaterial3D_bqph1")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 121.468254)
 
 [node name="fim" type="Marker3D" parent="." unique_id=1878825551]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.42811, -0.58681047, -233.34915)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.42811, -0.47379255, -233.34915)
 
 [node name="final" type="Node3D" parent="." unique_id=2056723904]
 
