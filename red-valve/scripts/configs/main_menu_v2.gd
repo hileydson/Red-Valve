@@ -166,6 +166,8 @@ func _start_menu_loop() -> void:
 func _on_button_focus(btn: Button) -> void:
 	if input_locked: return
 	
+	GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/mudar_selecao.mp3")
+	
 	# Dá um impulso no giro do amuleto (agora menos rápido e mais curto)
 	amulet_spin_velocity = 2.0
 	
@@ -233,6 +235,13 @@ func _ready() -> void:
 				# Conectar sinais para efeito de foco
 				btn.focus_entered.connect(func(): _on_button_focus(btn))
 				btn.mouse_entered.connect(func(): btn.grab_focus())
+				
+				btn.gui_input.connect(func(event: InputEvent):
+					if input_locked: return
+					if (event.is_action_pressed("ui_accept") or (event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed)):
+						if btn.disabled:
+							GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/negacao.mp3")
+				)
 
 	_setup_old_film_filter()
 	_start_menu_loop()
@@ -243,6 +252,7 @@ func _ready() -> void:
 
 func _on_load_pressed() -> void:
 	if input_locked: return
+	GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/selecionar_item.mp3")
 	$UI/Control.visible = false
 	var audio_out_tween = create_tween()
 	audio_out_tween.tween_property(ashen, "volume_db", -80.0, 2.0)
@@ -252,6 +262,7 @@ func _on_load_pressed() -> void:
 
 func _on_start_pressed() -> void:
 	if input_locked: return
+	GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/entrar_super.mp3")
 	$UI/Control.visible = false
 	var audio_out_tween = create_tween()
 	audio_out_tween.tween_property(ashen, "volume_db", -80.0, 2.0)
@@ -261,6 +272,7 @@ func _on_start_pressed() -> void:
 
 func _on_config_pressed() -> void:
 	if input_locked: return
+	GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/selecionar_item.mp3")
 	var config_script = load("res://scripts/ui/config_menu.gd")
 	if config_script:
 		var config_menu = config_script.new()
@@ -268,6 +280,7 @@ func _on_config_pressed() -> void:
 		$UI/Control.visible = false
 		config_menu.back_btn.pressed.disconnect(config_menu._on_back_pressed)
 		config_menu.back_btn.pressed.connect(func():
+			GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/selecionar_item_voltar.mp3")
 			SaveManager.save_game()
 			$UI/Control.visible = true
 			$UI/Control/VBoxContainer/config.grab_focus()
@@ -276,4 +289,5 @@ func _on_config_pressed() -> void:
 
 func _on_exit_pressed() -> void:
 	if input_locked: return
+	GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/selecionar_item_voltar.mp3")
 	get_tree().quit()

@@ -10,7 +10,7 @@ func _process_amulet_magic(delta: float) -> void:
 		_hide_amulet_magic()
 		return
 
-	if SaveManager.is_equipped("amulet") and SaveManager.current_mp > 0:
+	if SaveManager.current_mp > 0:
 		if not player.amulet_magic_active:
 			player.amulet_magic_active = true
 			if player.amulet_crosshair:

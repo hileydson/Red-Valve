@@ -34,6 +34,14 @@ func _ready() -> void:
 	message_vbox.add_theme_constant_override("separation", 20)
 	message_canvas_layer.add_child(message_vbox)
 
+func play_ui_sound(sound_path: String) -> void:
+	if ResourceLoader.exists(sound_path):
+		var p = AudioStreamPlayer.new()
+		p.stream = load(sound_path)
+		add_child(p)
+		p.play()
+		p.finished.connect(p.queue_free)
+
 func show_center_message(message_id: String, text: String, font_size: int = 18, duration: float = 0.0) -> void:
 	var label: Label
 	if active_messages.has(message_id):

@@ -32,6 +32,8 @@ func _ready() -> void:
 	get_tree().paused = true
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	
+	GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/entrar_menu.mp3")
+	
 	# Fundo
 	bg = ColorRect.new()
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -65,6 +67,7 @@ func _ready() -> void:
 		lbl.gui_input.connect(func(event: InputEvent):
 			if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 				if current_tab != tab_idx:
+					GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/sair_menu.mp3")
 					current_tab = tab_idx
 					if action_menu_open:
 						close_action_menu()
@@ -169,6 +172,7 @@ func _ready() -> void:
 					elif action_menu_open:
 						close_action_menu()
 				else:
+					GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/mudar_selecao.mp3")
 					current_slot = slot_idx
 					if action_menu_open:
 						close_action_menu()
@@ -210,6 +214,8 @@ func _create_action_menu() -> void:
 		btn.set_custom_minimum_size(Vector2(160, 36))
 		
 		btn.mouse_entered.connect(func():
+			if action_menu_index != opt_idx:
+				GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/mudar_selecao.mp3")
 			action_menu_index = opt_idx
 			_render_action_menu()
 		)
@@ -370,11 +376,13 @@ func _input(event: InputEvent) -> void:
 		elif event.is_action_pressed("ui_down"):
 			get_viewport().set_input_as_handled()
 			action_menu_index = (action_menu_index + 1) % 3
+			GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/mudar_selecao.mp3")
 			update_ui()
 			return
 		elif event.is_action_pressed("ui_up"):
 			get_viewport().set_input_as_handled()
 			action_menu_index = (action_menu_index - 1 + 3) % 3
+			GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/mudar_selecao.mp3")
 			update_ui()
 			return
 		elif event.is_action_pressed("ui_accept"):
@@ -390,9 +398,11 @@ func _input(event: InputEvent) -> void:
 
 	if event.is_action_pressed("ui_r1"):
 		current_tab = (current_tab - 1 + tabs.size()) % tabs.size()
+		GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/sair_menu.mp3")
 		update_ui()
 	elif event.is_action_pressed("ui_l1"):
 		current_tab = (current_tab + 1) % tabs.size()
+		GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/sair_menu.mp3")
 		update_ui()
 		
 	elif current_tab == 0:
@@ -416,17 +426,22 @@ func _input(event: InputEvent) -> void:
 		elif event.is_action_pressed("ui_accept"):
 			if current_item_selected != null:
 				open_action_menu()
+			else:
+				GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/negacao.mp3")
 				
 		if moved:
+			GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/mudar_selecao.mp3")
 			update_ui()
 
 func open_action_menu() -> void:
+	GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/selecionar_item.mp3")
 	action_menu_open = true
 	action_menu_index = 0
 	action_menu_panel.move_to_front()
 	update_ui()
 
 func close_action_menu() -> void:
+	GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/selecionar_item_voltar.mp3")
 	action_menu_open = false
 	action_menu_panel.visible = false
 	update_ui()
@@ -437,6 +452,13 @@ func execute_action() -> void:
 	var item_id = current_item_selected["id"]
 	var db_info = SaveManager.item_db.get(item_id)
 	var type = db_info.get("type", "")
+	
+	var btn_is_disabled = action_options[action_menu_index].disabled
+	if btn_is_disabled:
+		GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/negacao.mp3")
+		return
+
+	GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/selecionar_item.mp3")
 	
 	# Usar [0]
 	if action_menu_index == 0 and type == "usable":
@@ -475,6 +497,7 @@ func execute_action() -> void:
 		close_action_menu()
 
 func close_menu() -> void:
+	GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/sair_menu.mp3")
 	await get_tree().process_frame
 	get_tree().paused = false
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
