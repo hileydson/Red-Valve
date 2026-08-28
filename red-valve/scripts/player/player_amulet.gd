@@ -60,10 +60,18 @@ func _ensure_amuleto_visual() -> void:
 	var amuleto = amuleto_scene.instantiate()
 	# Preso na câmera (não na mão) para garantir posição e escala previsíveis na tela
 	player.camera.add_child(amuleto)
-	amuleto.position = Vector3(0.05, -0.22, -0.55) # Mais para a direita, em frente à câmera
 	amuleto.scale = Vector3(0.24, 0.24, 0.24)
-	amuleto.rotation.z = deg_to_rad(90) # Modelo todo girado para a direita: o giro (rotate_y) passa a parecer de baixo pra cima
 	amuleto.visible = true
+
+	# Posição e giro vêm do Marker3D "amuleto_position" (filho da câmera),
+	# ajustável direto na cena sem precisar mexer no código.
+	var amuleto_marker = player.camera.get_node_or_null("amuleto_position")
+	if amuleto_marker:
+		amuleto.position = amuleto_marker.position
+		amuleto.rotation = amuleto_marker.rotation
+	else:
+		amuleto.position = Vector3(0.05, -0.22, -0.55)
+		amuleto.rotation.z = deg_to_rad(90)
 
 	# Sem material override: mantém a cor/textura originais do modelo.
 	for mesh in amuleto.find_children("*", "MeshInstance3D", true, false):
