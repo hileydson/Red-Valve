@@ -27,7 +27,7 @@ var action_menu_index = 0
 var current_item_selected = null
 
 func _ready() -> void:
-	self.layer = 129 # Acima das mensagens do jogo (128) e no mesmo nível do Pause
+	self.layer = 150 # Acima das mensagens do jogo e no mesmo nível do Pause
 	self.process_mode = Node.PROCESS_MODE_ALWAYS
 	get_tree().paused = true
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)

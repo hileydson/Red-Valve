@@ -95,6 +95,7 @@ const SENSITIVITY = 0.003 # Sensibilidade do mouse
 var current_weapon #: AnimatedSprite2D
 var can_shoot_again:bool = true
 var is_falling_dead: bool = false
+var invulnerable: bool = false
 var fall_cam: Camera3D = null
 
 var last_rotation_y: float = 0.0
@@ -462,7 +463,7 @@ func _physics_process(delta: float) -> void:
 		is_aiming = wants_to_aim and has_mp
 		
 		if is_aiming:
-			SaveManager.current_mp -= 3.5 * delta
+			SaveManager.current_mp -= 1.5 * delta
 			if SaveManager.current_mp < 0: SaveManager.current_mp = 0
 			
 			if Input.is_action_just_pressed("ui_hold_first_person_view"):
@@ -993,6 +994,8 @@ func spawn_blood_effect(body: Node3D):
 	if comp: comp.spawn_blood_effect(body)
 
 func take_damage(number:int):
+	if invulnerable:
+		return
 	if GlobalEvents.in_cutscene:
 		return
 	if is_using_ultimate:

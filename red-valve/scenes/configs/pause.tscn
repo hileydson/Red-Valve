@@ -5,7 +5,7 @@
 
 [node name="Pause" type="CanvasLayer" unique_id=1267958209]
 process_mode = 3
-layer = 129
+layer = 150
 script = ExtResource("1_acl5t")
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=209238046]

@@ -13,6 +13,8 @@ var rain_scene = preload("res://scenes/effects/rain_effect.tscn")
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	Engine.time_scale = 1.0
+	AudioServer.playback_speed_scale = 1.0
 	GlobalEvents.in_cutscene = false
 	if is_instance_valid(real_time_label):
 		real_time_label.queue_free()

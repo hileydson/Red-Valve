@@ -130,7 +130,7 @@ func _ready() -> void:
 	var bg_music = find_child("FirstCutsceneSong", true, false)
 	if bg_music:
 		var target_vol = bg_music.volume_db
-		bg_music.volume_db = -40.0
+		bg_music.volume_db = -80.0
 		var music_tween = create_tween()
 		music_tween.tween_property(bg_music, "volume_db", target_vol, 5.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 		

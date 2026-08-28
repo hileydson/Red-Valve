@@ -143,6 +143,8 @@ func _physics_process(delta: float) -> void:
 
 func _on_body_entered(body: Node3D) -> void:
 	if body == target_player:
+		if body.get("invulnerable") == true:
+			return
 		# Aplica o Dano
 		if body.has_method("take_damage"):
 			body.take_damage(damage)

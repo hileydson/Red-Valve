@@ -285,7 +285,7 @@ func _start_final_sequence() -> void:
 	GlobalEvents.in_cutscene = true
 	
 	if is_instance_valid(player):
-		pass
+		player.invulnerable = true
 	
 	# 1. Ultra Câmera Lenta
 	Engine.time_scale = 0.15

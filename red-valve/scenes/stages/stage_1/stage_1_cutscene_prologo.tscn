@@ -290,7 +290,7 @@ script = ExtResource("1_fakdg")
 [node name="FirstCutsceneSong" type="AudioStreamPlayer" parent="." unique_id=699373086]
 stream = ExtResource("2_2bpw5")
 pitch_scale = 0.72
-autoplay = true
+autoplay = false
 parameters/looping = true
 
 [node name="cutscene" parent="." unique_id=796399776 instance=ExtResource("2_73cdy")]

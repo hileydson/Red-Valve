@@ -32,6 +32,7 @@ func _ready() -> void:
 	message_vbox.set_anchors_preset(Control.PRESET_CENTER)
 	message_vbox.alignment = BoxContainer.ALIGNMENT_CENTER
 	message_vbox.add_theme_constant_override("separation", 20)
+	message_vbox.process_mode = Node.PROCESS_MODE_PAUSABLE
 	message_canvas_layer.add_child(message_vbox)
 
 func play_ui_sound(sound_path: String) -> void:
@@ -67,7 +68,7 @@ func show_center_message(message_id: String, text: String, font_size: int = 18, 
 	
 	if duration > 0.0:
 		# Verifica se a label ainda existe e se o ID não foi sobrescrito ou apagado nesse meio tempo
-		await get_tree().create_timer(duration).timeout
+		await get_tree().create_timer(duration, false).timeout
 		hide_center_message(message_id)
 
 func hide_center_message(message_id: String) -> void:
