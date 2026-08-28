@@ -11,6 +11,8 @@ var current_mp: float = 30.0
 var prolog_finished: bool = false
 var battlefield_1_intro_played: bool = false
 var iron_rusks: int = 0
+var iron_rusks_pending: int = 0 # Ganho na luta atual, ainda não somado visualmente no HUD
+var iron_rusks_display: int = 0 # Valor mostrado no canto da tela, só sobe com a animação de tally
 
 var brightness_rect: ColorRect
 
@@ -76,6 +78,7 @@ var item_db = {
 
 func _ready():
 	self.process_mode = Node.PROCESS_MODE_ALWAYS
+	iron_rusks_display = iron_rusks
 	
 	var canvas = CanvasLayer.new()
 	canvas.layer = 125
@@ -236,6 +239,7 @@ func load_game() -> bool:
 				max_mp = data.get("max_mp", 30.0)
 				current_mp = data.get("current_mp", 30.0)
 				iron_rusks = data.get("iron_rusks", 0)
+				iron_rusks_display = iron_rusks
 				
 				if data.has("config"):
 					for key in data["config"].keys():
@@ -250,6 +254,7 @@ func load_game() -> bool:
 
 func add_iron_rusks(amount: int) -> void:
 	iron_rusks += amount
+	iron_rusks_pending += amount
 
 func add_item(item_id: String, amount: int = 1):
 	if not item_db.has(item_id): return

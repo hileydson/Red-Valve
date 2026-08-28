@@ -4,8 +4,8 @@ var player: CharacterBody3D
 
 func _ready() -> void:
 	player = get_parent()
-	_setup_health_hud()
 	_setup_iron_rusks_hud()
+	_setup_health_hud()
 
 func _setup_health_hud() -> void:
 	player.current_health = player.max_health
@@ -312,6 +312,7 @@ func _setup_iron_rusks_hud() -> void:
 	value_label.offset_bottom = 55
 	value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	value_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	value_label.pivot_offset = Vector2(100, 20)
 	iron_rusks_layer.add_child(value_label)
 
 	var caption_label = Label.new()
@@ -331,9 +332,11 @@ func _setup_iron_rusks_hud() -> void:
 	iron_rusks_layer.add_child(caption_label)
 
 	var sc = GDScript.new()
-	sc.source_code = "extends Label\nfunc _process(_delta):\n\ttext = str(SaveManager.iron_rusks)"
+	sc.source_code = "extends Label\nfunc _process(_delta):\n\ttext = str(SaveManager.iron_rusks_display)"
 	sc.reload()
 	value_label.set_script(sc)
+
+	player.iron_rusks_value_label = value_label
 
 func update_ammo_ui() -> void:
 	if not is_instance_valid(player.ammo_label): return

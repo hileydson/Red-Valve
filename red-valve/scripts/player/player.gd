@@ -70,6 +70,7 @@ var mp_bar: ProgressBar
 var hud_layer: CanvasLayer
 var amulet_counter_label: Label
 var amulet_crosshair: Panel
+var iron_rusks_value_label: Label
 
 var is_teleporting_enemies: bool = false
 var is_playing_return_effect: bool = false
@@ -650,21 +651,12 @@ func _physics_process(delta: float) -> void:
 	else:
 		var normal_can_aim = SaveManager.prolog_finished and not _cutscene_inputs_disabled
 		is_aiming = normal_can_aim and Input.is_action_pressed("ui_hold_first_person_view")
-		is_first_person = is_aiming
 
-		if not GlobalEvents.in_cutscene and not _cutscene_camera_disabled:
-			if is_aiming:
-				if not camera.current:
-					camera.make_current()
-					if camera_third_person:
-						camera_third_person.current = false
-					if hand_with_magic: hand_with_magic.visible = true
-					control_magic.visible = true
-			else:
-				if camera_third_person and not camera_third_person.current:
-					camera_third_person.make_current()
-					if hand_with_magic: hand_with_magic.visible = false
-					control_magic.visible = false
+		# A troca de câmera para 1ª pessoa é controlada pelo poder do amuleto
+		# (player_amulet.gd), que faz o zoom gradual da 3ª pessoa antes de trocar.
+		if not GlobalEvents.in_cutscene and not _cutscene_camera_disabled and not is_first_person:
+			if camera_third_person and not camera_third_person.current:
+				camera_third_person.make_current()
 
 		if normal_can_aim:
 			if Input.is_action_just_released("ui_hold_first_person_view"):

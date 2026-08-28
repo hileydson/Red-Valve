@@ -19,15 +19,28 @@ func _process_amulet_magic(delta: float) -> void:
 				player.amulet_counter_label.visible = true
 				player.amulet_counter_label.text = "0 / 3"
 			player.hand_with_pistol.visible = false
-
-			_ensure_amuleto_visual()
-			if player.amuleto_node:
-				player.amuleto_node.visible = true
-				if player.amuleto_particles:
-					player.amuleto_particles.emitting = true
-
 			player.control_weapons.visible = false
 			player.control_magic.visible = false
+
+		# Transição de câmera do poder do amuleto: espera o zoom da 3ª pessoa
+		# (feito pelo lerp de FOV normal em player.gd) avançar o bastante antes
+		# de trocar para a câmera em 1ª pessoa - dá a sensação de "zoom pra dentro".
+		if not player.is_first_person:
+			if is_instance_valid(player.camera_third_person) and player.camera_third_person.fov <= 55.0:
+				player.is_first_person = true
+				if is_instance_valid(player.camera) and not player.camera.current:
+					player.camera.fov = 75.0
+					player.camera.make_current()
+					if player.camera_third_person:
+						player.camera_third_person.current = false
+
+				if player.hand_with_magic: player.hand_with_magic.visible = true
+
+				_ensure_amuleto_visual()
+				if player.amuleto_node:
+					player.amuleto_node.visible = true
+					if player.amuleto_particles:
+						player.amuleto_particles.emitting = true
 
 		if is_instance_valid(player.amuleto_node):
 			player.amuleto_node.rotate_y(delta * 8.0) # Amuleto girando rapidamente
@@ -53,8 +66,17 @@ func _ensure_amuleto_visual() -> void:
 	amuleto.position = Vector3(-0.18, -0.22, -0.55) # Ao lado da mão esquerda, em frente à câmera
 	amuleto.scale = Vector3(0.35, 0.35, 0.35)
 	amuleto.visible = true
-	for mesh in amuleto.find_children("*", "VisualInstance3D", true, false):
+
+	# Material com emissão própria: garante que o amuleto apareça mesmo em
+	# pontos escuros da cena, já que ele fica muito perto da câmera em 1ª pessoa.
+	var glow_mat = StandardMaterial3D.new()
+	glow_mat.albedo_color = Color(0.6, 0.2, 1.0, 1.0)
+	glow_mat.emission_enabled = true
+	glow_mat.emission = Color(0.6, 0.2, 1.0)
+	glow_mat.emission_energy_multiplier = 1.5
+	for mesh in amuleto.find_children("*", "MeshInstance3D", true, false):
 		mesh.visible = true
+		mesh.material_override = glow_mat
 
 	var particles = CPUParticles3D.new()
 	particles.amount = 120
@@ -114,14 +136,26 @@ func _hide_amulet_magic() -> void:
 	if player.amulet_counter_label:
 		player.amulet_counter_label.visible = false
 	
-	if player.is_first_person and not player.is_reloading:
+	if GlobalEvents.is_maycow_normal:
+		# Volta da 1ª pessoa (amuleto) pra 3ª pessoa com zoom-out gradual:
+		# começa o FOV da 3ª pessoa já "fechado" e deixa o lerp normal abrir até 75.
+		if player.is_first_person:
+			player.is_first_person = false
+			if is_instance_valid(player.camera_third_person):
+				player.camera_third_person.fov = 40.0
+				player.camera_third_person.make_current()
+			if player.hand_with_magic:
+				player.hand_with_magic.visible = false
+			player.control_weapons.visible = false
+			player.control_magic.visible = false
+	elif player.is_first_person and not player.is_reloading:
 		if SaveManager.is_equipped("pistol"):
 			player.hand_with_pistol.visible = true
 		if player.hand_with_magic:
 			player.hand_with_magic.visible = true
 		player.control_weapons.visible = true
 		player.control_magic.visible = true
-		
+
 	if player.amuleto_node:
 		player.amuleto_node.visible = false
 		if player.amuleto_particles:
@@ -358,4 +392,52 @@ func play_return_from_arena_effect() -> void:
 	else:
 		player.is_playing_return_effect = false
 
+	_play_iron_rusks_tally()
+
 	SaveManager.save_game()
+
+func _play_iron_rusks_tally() -> void:
+	var earned = SaveManager.iron_rusks_pending
+	if earned <= 0: return
+	if not is_instance_valid(player.iron_rusks_value_label): return
+
+	var target_layer = player.iron_rusks_value_label.get_parent()
+	if not target_layer: return
+
+	var tally_label = Label.new()
+	tally_label.add_theme_font_size_override("font_size", 80)
+	tally_label.add_theme_color_override("font_color", Color(1.0, 0.85, 0.3, 1.0))
+	tally_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
+	tally_label.add_theme_constant_override("outline_size", 10)
+	tally_label.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+	tally_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	tally_label.pivot_offset = Vector2(60, 40)
+	tally_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	tally_label.text = "+0"
+	target_layer.add_child(tally_label)
+
+	var count_tween = create_tween().set_ignore_time_scale(true)
+	count_tween.tween_method(func(v): tally_label.text = "+" + str(int(v)), 0.0, float(earned), 1.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+
+	await count_tween.finished
+
+	# Voa até o contador do canto e soma
+	var start_pos = tally_label.global_position
+	var end_pos = player.iron_rusks_value_label.global_position + Vector2(20, 15)
+
+	var fly_tween = create_tween().set_ignore_time_scale(true).set_parallel(true)
+	fly_tween.tween_property(tally_label, "global_position", end_pos, 0.5).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+	fly_tween.tween_property(tally_label, "scale", Vector2(0.3, 0.3), 0.5).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+	fly_tween.tween_property(tally_label, "modulate:a", 0.0, 0.5).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+
+	await fly_tween.finished
+
+	tally_label.queue_free()
+
+	SaveManager.iron_rusks_display += earned
+	SaveManager.iron_rusks_pending -= earned
+
+	# Efeito de "pop" no número do canto ao receber a soma
+	var pop_tween = create_tween().set_ignore_time_scale(true)
+	pop_tween.tween_property(player.iron_rusks_value_label, "scale", Vector2(1.4, 1.4), 0.15).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	pop_tween.tween_property(player.iron_rusks_value_label, "scale", Vector2(1.0, 1.0), 0.2).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)

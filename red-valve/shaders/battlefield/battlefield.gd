@@ -17,6 +17,7 @@ var hurricane_node: Node3D
 func _ready() -> void:
 	_spawn_arena_hurricane()
 	SaveManager.save_game()
+	SaveManager.iron_rusks_pending = 0
 	GlobalEvents.set_high_nevoa()
 	GlobalEvents.is_maycow_normal = false
 	
