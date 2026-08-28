@@ -993,6 +993,8 @@ func spawn_blood_effect(body: Node3D):
 	if comp: comp.spawn_blood_effect(body)
 
 func take_damage(number:int):
+	if GlobalEvents.in_cutscene:
+		return
 	if is_using_ultimate:
 		return
 	if current_health <= 0:

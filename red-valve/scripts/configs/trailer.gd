@@ -889,11 +889,27 @@ func cutscene_trailer_sequence() -> void:
 
 	# Toca o som de passos manualmente durante a arrancada: o _physics_process do player está
 	# desligado desde o fim do Take 1 (para não cair/morrer na cutscene), então o loop normal
-	# de footstep dele não roda mais aqui.
+	# de footstep dele (que re-dispara o play() a cada frame de física) não roda mais aqui.
+	# "passos.mp3" não é um loop (é um passo único), então precisamos retocá-lo manualmente
+	# toda vez que ele terminar, igual o player.gd faria via _physics_process.
 	if is_instance_valid(player) and "passos" in player and is_instance_valid(player.passos):
-		player.passos.play()
+		var footstep_active = true
+		# Mesmo pitch/volume que o player.gd usa quando "is_running" está true (corrida)
+		var _play_running_footstep: Callable = func():
+			player.passos.pitch_scale = randf_range(1.15, 1.3)
+			player.passos.volume_db = randf_range(-8.0, -5.0)
+			player.passos.play()
+		var _resume_footstep: Callable
+		_resume_footstep = func():
+			if footstep_active and is_instance_valid(player) and is_instance_valid(player.passos):
+				_play_running_footstep.call()
+		player.passos.finished.connect(_resume_footstep)
+		_play_running_footstep.call()
 		tween_corrida.finished.connect(func():
-			if is_instance_valid(player) and "passos" in player and is_instance_valid(player.passos):
+			footstep_active = false
+			if is_instance_valid(player) and is_instance_valid(player.passos):
+				if player.passos.finished.is_connected(_resume_footstep):
+					player.passos.finished.disconnect(_resume_footstep)
 				player.passos.stop()
 		)
 
