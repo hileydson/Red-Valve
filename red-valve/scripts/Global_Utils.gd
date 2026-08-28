@@ -19,6 +19,7 @@ var _cutscene_text_transitioning: bool = false
 var _cutscene_text_gen: int = 0
 var _cutscene_bars_node: Node = null
 var _cutscene_skip_ui: Control = null
+var _cutscene_skip_layer: CanvasLayer = null
 
 signal cinematic_cutscene_finished
 
@@ -237,8 +238,14 @@ func start_cinematic_text_cutscene(texts: Array) -> void:
 		_ready()
 		
 	if not _cutscene_skip_ui:
+		# Camada própria, acima da barra preta do "cutscene" (CanvasLayer, layer 150),
+		# pra garantir que o aparato de segurar-pra-skip fique sempre por CIMA das barras.
+		if not is_instance_valid(_cutscene_skip_layer):
+			_cutscene_skip_layer = CanvasLayer.new()
+			_cutscene_skip_layer.layer = 155
+			add_child(_cutscene_skip_layer)
 		_cutscene_skip_ui = load("res://scripts/ui/skip_cutscene_ui.gd").new()
-		message_canvas_layer.add_child(_cutscene_skip_ui)
+		_cutscene_skip_layer.add_child(_cutscene_skip_ui)
 		_cutscene_skip_ui.skipped.connect(_on_cinematic_skipped)
 			
 	if not _cutscene_audio:
@@ -305,7 +312,7 @@ func _show_next_cinematic_text() -> void:
 			if full_text[i] != " " and is_instance_valid(_cutscene_audio) and _cutscene_audio.stream != null:
 				# Variação sutil no som para aumentar a imersão
 				_cutscene_audio.pitch_scale = randf_range(0.85, 1.15)
-				_cutscene_audio.volume_db = randf_range(-6.0, -2.0)
+				_cutscene_audio.volume_db = randf_range(-22.0, -16.0)
 				_cutscene_audio.play()
 				
 			await get_tree().create_timer(0.05).timeout
