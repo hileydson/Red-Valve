@@ -8132,6 +8132,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1128244, 0)
 collision_mask = 2
 script = ExtResource("1_uniwh")
 left_hand_idle_offset = Vector3(0.7, -0.35, 0)
+cogblade_tilt_x = 90.0
+cogblade_tilt_z = 45.0
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1639070262]
 

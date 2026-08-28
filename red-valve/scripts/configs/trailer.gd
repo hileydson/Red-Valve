@@ -865,7 +865,14 @@ func cutscene_trailer_sequence() -> void:
 	
 	var tempo_sprint = 3.5
 	var tween_corrida = create_tween()
-	tween_corrida.tween_property(player, "global_position", fim.global_position, tempo_sprint).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+	
+	# Aproxima-se um pouco menos do portal (recua na direção do movimento)
+	var sprint_dir = player.global_position.direction_to(fim.global_position)
+	sprint_dir.y = 0
+	sprint_dir = sprint_dir.normalized()
+	var sprint_target_pos = fim.global_position - (sprint_dir * 2.5)
+	
+	tween_corrida.tween_property(player, "global_position", sprint_target_pos, tempo_sprint).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
 	
 	var tween_fov = create_tween()
 	tween_fov.tween_property(cam_fps_walk, "fov", 92.0, tempo_sprint).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
