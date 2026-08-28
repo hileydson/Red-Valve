@@ -178,10 +178,13 @@ func _process_amulet_targeting() -> void:
 		_clear_amulet_hover()
 		return
 
+	var cam = player.get_viewport().get_camera_3d()
+	if not cam: return
+
 	var space_state = player.get_world_3d().direct_space_state
 	var center = player.get_viewport().size / 2
-	var from = player.camera.project_ray_origin(center)
-	var to = from + player.camera.project_ray_normal(center) * 30.0 
+	var from = cam.project_ray_origin(center)
+	var to = from + cam.project_ray_normal(center) * 30.0
 	
 	var query = PhysicsRayQueryParameters3D.create(from, to)
 	var result = space_state.intersect_ray(query)

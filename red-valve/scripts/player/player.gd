@@ -694,7 +694,6 @@ func _physics_process(delta: float) -> void:
 						motion_blur.material.set_shader_parameter("blur_strength", 0.08)
 						
 				_process_amulet_magic(delta)
-				_process_amulet_targeting()
 			else:
 				if is_instance_valid(amulet_crosshair): amulet_crosshair.visible = false
 				if point: point.visible = not GlobalEvents.in_cutscene and not _cutscene_hud_hidden
