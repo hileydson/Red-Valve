@@ -38,6 +38,7 @@ func _on_resume_pressed() -> void:
 
 func _on_exit_pressed() -> void:
 	GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/selecionar_item_voltar.mp3")
+	GlobalUtils.force_clear_all_screen_messages()
 	get_tree().paused = false
 	self.visible = false
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)

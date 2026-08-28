@@ -91,6 +91,27 @@ func clear_all_messages() -> void:
 			label.queue_free()
 	active_messages.clear()
 
+# Limpa IMEDIATAMENTE (sem tween/await) qualquer mensagem central ou texto cinemático
+# que esteja na tela. Usado ao sair pro menu principal, já que essas mensagens vivem
+# neste autoload e não são destruídas junto com a cena do jogo.
+func force_clear_all_screen_messages() -> void:
+	clear_all_messages()
+
+	if is_instance_valid(_cutscene_skip_ui):
+		_cutscene_skip_ui.queue_free()
+	_cutscene_skip_ui = null
+
+	if is_instance_valid(_cutscene_label):
+		_cutscene_label.queue_free()
+	_cutscene_label = null
+
+	if is_instance_valid(_cutscene_overlay):
+		_cutscene_overlay.queue_free()
+	_cutscene_overlay = null
+
+	_cutscene_text_transitioning = false
+	in_cinematic_cutscene = false
+
 func ativar_camera_lenta(escala: float, duracao: float, sound:bool):
 	Engine.time_scale = escala
 	
