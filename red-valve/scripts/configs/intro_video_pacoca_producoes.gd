@@ -18,12 +18,12 @@ func _process(_delta: float) -> void:
 func _start_fade_out() -> void:
 	if is_fading: return
 	is_fading = true
-	
+	RenderingServer.set_default_clear_color(Color.BLACK)
+
 	# Fade Out
 	var tween = create_tween()
 	tween.tween_property(self, "modulate:a", 0.0, 1.5)
-	tween.tween_callback(func(): 
-		RenderingServer.set_default_clear_color(Color.BLACK)
+	tween.tween_callback(func():
 		get_tree().change_scene_to_file("res://scenes/configs/trailer.tscn")
 	)
 

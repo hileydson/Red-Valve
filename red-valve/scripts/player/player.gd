@@ -83,7 +83,7 @@ var heartbeat_tween: Tween
 const SPEED = 5.0
 const JUMP_VELOCITY = 4.5
 const SENSITIVITY = 0.003 # Sensibilidade do mouse
-@export var WALK_SPEED: float = 4.0
+@export var WALK_SPEED: float = 3.0
 @export var WALK_SPEED_NORMAL: float = 2.8
 @export var RUN_SPEED: float = 4.8 # Velocidade maior para a corrida
 
@@ -181,6 +181,7 @@ var amuleto_particles: CPUParticles3D
 var amulet_hovered_enemy: Node3D = null
 var amulet_selected_enemies: Array[Node3D] = []
 var amulet_magic_active: bool = false
+var max_amulet_targets: int = 3
 
 var playback 
 
@@ -279,6 +280,7 @@ func _ready():
 	var amulet_component = load("res://scripts/player/player_amulet.gd").new()
 	amulet_component.name = "PlayerAmulet"
 	add_child(amulet_component)
+
 func update_ammo_ui() -> void:
 	var hud = get_node_or_null("PlayerHUD")
 	if hud: hud.update_ammo_ui()
@@ -576,12 +578,13 @@ func _physics_process(delta: float) -> void:
 					if is_on_floor() and velocity_Y_zero: playback.travel("walk")
 				
 				if !passos.playing and is_on_floor():
+					var cutscene_boost = 8.0 if GlobalEvents.in_cutscene else 0.0
 					if is_actually_running:
 						passos.pitch_scale = randf_range(1.15, 1.3)
-						passos.volume_db = randf_range(-8.0, -5.0)
+						passos.volume_db = randf_range(-8.0, -5.0) + cutscene_boost
 					else:
 						passos.pitch_scale = randf_range(0.65, 0.75)
-						passos.volume_db = randf_range(-11.0, -8.0)
+						passos.volume_db = randf_range(-11.0, -8.0) + (cutscene_boost * 0.5)
 					passos.play()
 				
 				velocity.x = direction.x * velocidade_atual
@@ -645,18 +648,30 @@ func _physics_process(delta: float) -> void:
 		
 	# DAQUI PRA FRENTE É O MAYCOW SEM PODERES (E NORMAL APOS PROLOGO)
 	else:
-		is_first_person = false
-		if not GlobalEvents.in_cutscene and not _cutscene_camera_disabled and camera_third_person and not camera_third_person.current:
-			camera_third_person.make_current()
-			
-		if SaveManager.prolog_finished and not _cutscene_inputs_disabled:
+		var normal_can_aim = SaveManager.prolog_finished and not _cutscene_inputs_disabled
+		is_aiming = normal_can_aim and Input.is_action_pressed("ui_hold_first_person_view")
+		is_first_person = is_aiming
+
+		if not GlobalEvents.in_cutscene and not _cutscene_camera_disabled:
+			if is_aiming:
+				if not camera.current:
+					camera.make_current()
+					if camera_third_person:
+						camera_third_person.current = false
+					if hand_with_magic: hand_with_magic.visible = true
+					control_magic.visible = true
+			else:
+				if camera_third_person and not camera_third_person.current:
+					camera_third_person.make_current()
+					if hand_with_magic: hand_with_magic.visible = false
+					control_magic.visible = false
+
+		if normal_can_aim:
 			if Input.is_action_just_released("ui_hold_first_person_view"):
 				if amulet_selected_enemies.size() == 0:
 					AudioServer.playback_speed_scale = 1.0
 				_on_amulet_magic_released()
 
-			is_aiming = Input.is_action_pressed("ui_hold_first_person_view")
-			
 			if is_aiming:
 				if Input.is_action_just_pressed("ui_hold_first_person_view"):
 					AudioServer.playback_speed_scale = 0.5
@@ -688,7 +703,6 @@ func _physics_process(delta: float) -> void:
 			if is_aiming and not is_magic_attacking and Input.is_action_just_pressed("ui_magic_attack") and SaveManager.current_mp >= 10.0:
 				magic_hand_attack()
 		else:
-			is_aiming = false
 			if is_instance_valid(amulet_crosshair): amulet_crosshair.visible = false
 			if is_instance_valid(hud_layer) and not is_playing_return_effect:
 				var motion_blur = hud_layer.get_node_or_null("MotionBlurOverlay")

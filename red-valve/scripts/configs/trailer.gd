@@ -758,15 +758,13 @@ func cutscene_trailer_sequence() -> void:
 	player.cutscene_set_auto_walk(true)
 	
 	# --------------------------------------------------------------------------
-	# TAKE 1: CÂMERA TERCEIRA PESSOA INDEPENDENTE
+	# TAKE 1: CÂMERA DO PLAYER
 	# --------------------------------------------------------------------------
-	print("Take 1: Câmera terceira pessoa independente (8s)...")
-	
+	print("Take 1: Câmera terceira pessoa do player (8s)...")
+
 	if is_instance_valid(player):
-		player.cutscene_set_camera_current(false)
-		
-	_switch_to_loose_camera(Vector3(0, 1.8, 2.5), Vector3(-10, 0, 0), 4.0, 3.0)
-	
+		player.cutscene_set_camera_current(true)
+
 	await get_tree().create_timer(8.0).timeout
 	print("... Take 1 concluído!")
 	
@@ -891,7 +889,7 @@ func cutscene_trailer_sequence() -> void:
 	# 1. ZOOM MODERADO NA VÁLVULA E ESCURECIMENTO CONFORME SE APROXIMA DA PORTA NO ZOOM
 	var target_zoom_fov = 45.0
 	var zoom_duration = 3.5
-	var valve_cam_pos = fim.global_position + Vector3(0, 1.4, 2.0)
+	var valve_cam_pos = fim.global_position + Vector3(0, 1.4, 0.0)
 	
 	var tween_zoom_door = create_tween().set_parallel(true)
 	tween_zoom_door.tween_property(cam_fps_walk, "fov", target_zoom_fov, zoom_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
@@ -1120,9 +1118,9 @@ func cutscene_trailer_sequence() -> void:
 	
 	# Faz a tela escura sumir revelando a cena no take final
 	var tween_reveal = create_tween()
-	tween_reveal.tween_property(ui_fader, "modulate:a", 0.0, 1.0)
+	tween_reveal.tween_property(ui_fader, "modulate:a", 0.0, 6.0)
 	
-	await get_tree().create_timer(3.0).timeout
+	await get_tree().create_timer(6.0).timeout
 	
 	# 6. EFEITO PISCANTE NEON DO NOME DO JOGO "RED VALVE" (LETRAS MAIORES E SEM BORDA PRETA)
 	print("Exibindo logo 'Red Valve' em letras gigantes (200px) sem borda piscando no centro da tela...")

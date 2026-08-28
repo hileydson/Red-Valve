@@ -352,8 +352,8 @@ shader_parameter/cirrus_absorption = 2.0
 shader_parameter/cirrus_sky_tint_fade = 0.5
 shader_parameter/cirrus_size = 1.0
 shader_parameter/cirrus_uv = Vector2(0.16, 0.11)
-shader_parameter/cirrus_position1 = Vector2(0.4838627, 0.4838627)
-shader_parameter/cirrus_position2 = Vector2(0.4838627, 0.4838627)
+shader_parameter/cirrus_position1 = Vector2(0.13365276, 0.13365276)
+shader_parameter/cirrus_position2 = Vector2(0.13365276, 0.13365276)
 shader_parameter/cirrus_texture = ExtResource("11_biy32")
 shader_parameter/cumulus_visible = true
 shader_parameter/cumulus_intensity = 0.6
@@ -363,7 +363,7 @@ shader_parameter/cumulus_absorption = 2.0
 shader_parameter/cumulus_noise_freq = 2.7
 shader_parameter/cumulus_sky_tint_fade = 0.0
 shader_parameter/cumulus_size = 0.5
-shader_parameter/cumulus_position = Vector2(2.4190743, 2.4190743)
+shader_parameter/cumulus_position = Vector2(0.66817373, 0.66817373)
 shader_parameter/cumulus_texture = ExtResource("12_jf8my")
 shader_parameter/cumulus_partial_mie_phase = Vector3(0.957564, 1.042436, 0.412)
 shader_parameter/cumulus_mie_intensity = 1.0
@@ -508,6 +508,7 @@ month = 3
 [node name="Ambient" type="Node3D" parent="." unique_id=267490047]
 
 [node name="Grass" type="MultiMeshInstance3D" parent="Ambient" unique_id=1928822362]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.09394193, 0)
 material_override = ExtResource("2_h2yge")
 material_overlay = ExtResource("2_h2yge")
 cast_shadow = 0
@@ -560,19 +561,19 @@ directional_shadow_split_1 = 0.01
 [node name="enemies" type="Node3D" parent="." unique_id=763470506]
 
 [node name="enemy_1" type="Marker3D" parent="enemies" unique_id=1707560012]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5789981, 0.4617896, -3.7856398)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5789981, 0, -3.7856398)
 
 [node name="enemy_2" type="Marker3D" parent="enemies" unique_id=69414827]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.750217, 0.4617896, -5.8831797)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.750217, 0, -5.8831797)
 
 [node name="enemy_3" type="Marker3D" parent="enemies" unique_id=816505902]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.988404, 0.4617896, -6.0247564)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.988404, 0, -6.0247564)
 
 [node name="enemy_4" type="Marker3D" parent="enemies" unique_id=1292869725]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.991475, 0.4617896, -3.1183472)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.991475, 0, -3.1183472)
 
 [node name="enemy_5" type="Marker3D" parent="enemies" unique_id=2082633266]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.7227616, 0.46179056, -7.934511)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.7227616, 0, -7.934511)
 
 [node name="fade" parent="." unique_id=158118564 instance=ExtResource("1_biy32")]
 

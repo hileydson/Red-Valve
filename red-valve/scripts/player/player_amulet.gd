@@ -5,11 +5,11 @@ var player: CharacterBody3D
 func _ready() -> void:
 	player = get_parent()
 
-func _process_amulet_magic(_delta: float) -> void:
-	if (GlobalEvents.is_maycow_normal and not SaveManager.prolog_finished) or not player.is_first_person or player.is_reloading or player.is_using_ultimate:
+func _process_amulet_magic(delta: float) -> void:
+	if not GlobalEvents.is_maycow_normal or not SaveManager.prolog_finished or player.is_reloading or player.is_using_ultimate:
 		_hide_amulet_magic()
 		return
-		
+
 	if Input.is_action_pressed("ui_magic") and SaveManager.is_equipped("amulet") and SaveManager.current_mp > 0:
 		if not player.amulet_magic_active:
 			player.amulet_magic_active = true
@@ -19,19 +19,19 @@ func _process_amulet_magic(_delta: float) -> void:
 				player.amulet_counter_label.visible = true
 				player.amulet_counter_label.text = "0 / 3"
 			player.hand_with_pistol.visible = false
-			if player.hand_with_magic:
-				player.hand_with_magic.visible = false
-			
+
+			_ensure_amuleto_visual()
 			if player.amuleto_node:
 				player.amuleto_node.visible = true
-				if player.amuleto_anim:
-					player.amuleto_anim.play("idle")
 				if player.amuleto_particles:
 					player.amuleto_particles.emitting = true
-			
+
 			player.control_weapons.visible = false
 			player.control_magic.visible = false
-			
+
+		if is_instance_valid(player.amuleto_node):
+			player.amuleto_node.rotate_y(delta * 8.0) # Amuleto girando rapidamente
+
 		_process_amulet_targeting()
 	else:
 		if player.amulet_magic_active:
@@ -39,6 +39,69 @@ func _process_amulet_magic(_delta: float) -> void:
 				_on_amulet_magic_released()
 			else:
 				_hide_amulet_magic()
+
+func _ensure_amuleto_visual() -> void:
+	if is_instance_valid(player.amuleto_node): return
+	if not player.hand_with_magic: return
+
+	var amuleto_scene = load("res://assets/3d_model/player/Maycow Lopes/amuleto_power.glb")
+	if not amuleto_scene: return
+
+	var amuleto = amuleto_scene.instantiate()
+	player.hand_with_magic.add_child(amuleto)
+	amuleto.position = Vector3(-0.06, 0.15, -0.15) # Em cima da mão esquerda
+	amuleto.scale = Vector3(0.3, 0.3, 0.3)
+
+	var particles = CPUParticles3D.new()
+	particles.amount = 120
+	particles.lifetime = 1.0
+	particles.local_coords = false # Partículas se espalham no ar independente do giro do amuleto
+	particles.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
+	particles.emission_sphere_radius = 0.2
+	particles.direction = Vector3.UP
+	particles.spread = 180.0
+	particles.gravity = Vector3(0, 0.5, 0)
+	particles.initial_velocity_min = 0.5
+	particles.initial_velocity_max = 2.0
+
+	# Variação de tons: roxos, brancos e vermelhos
+	var initial_grad = Gradient.new()
+	initial_grad.offsets = [0.0, 0.25, 0.5, 0.75, 1.0]
+	initial_grad.colors = [
+		Color(0.5, 0.0, 1.0, 1.0), # Roxo puro brilhante
+		Color(1.0, 1.0, 1.0, 1.0), # Branco mágico
+		Color(0.8, 0.2, 1.0, 1.0), # Lilás/Rosa
+		Color(1.0, 0.0, 0.0, 1.0), # Vermelho sangue
+		Color(0.3, 0.0, 0.6, 1.0)  # Roxo escuro
+	]
+	particles.color_initial_ramp = initial_grad
+
+	# Fade in e fade out no ciclo de vida
+	var alpha_grad = Gradient.new()
+	alpha_grad.offsets = [0.0, 0.2, 0.8, 1.0]
+	alpha_grad.colors = [Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+	particles.color_ramp = alpha_grad
+
+	var scale_curve = Curve.new()
+	scale_curve.add_point(Vector2(0.0, 0.8))
+	scale_curve.add_point(Vector2(1.0, 0.0))
+	particles.scale_amount_curve = scale_curve
+
+	var pmat = StandardMaterial3D.new()
+	pmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	pmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	pmat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	pmat.vertex_color_use_as_albedo = true # OBRIGATÓRIO para a cor do Gradient funcionar!
+	var pmesh = SphereMesh.new()
+	pmesh.radius = 0.04
+	pmesh.height = 0.08
+	pmesh.material = pmat
+	particles.mesh = pmesh
+
+	amuleto.add_child(particles)
+
+	player.amuleto_node = amuleto
+	player.amuleto_particles = particles
 
 func _hide_amulet_magic() -> void:
 	player.amulet_magic_active = false
@@ -98,10 +161,6 @@ func _process_amulet_targeting() -> void:
 			
 			if player.amulet_counter_label:
 				player.amulet_counter_label.text = str(player.amulet_selected_enemies.size()) + " / 3"
-				
-			if player.amuleto_anim:
-				player.amuleto_anim.play("cast")
-				player.amuleto_anim.queue("idle")
 
 func _clear_amulet_hover() -> void:
 	if player.amulet_hovered_enemy and is_instance_valid(player.amulet_hovered_enemy):
@@ -145,43 +204,110 @@ func _get_all_meshes(node: Node) -> Array:
 	return result
 
 func _on_amulet_magic_released() -> void:
-	player.is_using_ultimate = true # Trava outras ações
-	_hide_amulet_magic()
-	
-	GlobalUtils.vibrate_controller(null, 1.0, 1.0, 2.0)
-	
-	# Efeito de Flash na tela inteiro Roxo/Branco
-	var flash = ColorRect.new()
-	flash.color = Color(0.8, 0.2, 1.0, 1.0)
-	flash.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	if player.hud_layer: player.hud_layer.add_child(flash)
-	
-	# Aguardar flash tapar a tela
-	var tw = create_tween()
-	tw.tween_property(flash, "color:a", 1.0, 0.1)
-	await get_tree().create_timer(0.2).timeout
-	
-	# Transportar Maycow e inimigos para a Arena
-	# O ArenaManager deve ouvir esse evento globalmente ou podemos chamar ele se existir
-	var arena = get_tree().get_first_node_in_group("magic_arena")
-	if arena and arena.has_method("start_arena_event"):
-		# Teleporta o player
-		player.global_transform.origin = arena.get_player_spawn_point()
-		
-		# Teleporta e prepara os inimigos
-		var valid_enemies = []
-		for e in player.amulet_selected_enemies:
-			if is_instance_valid(e): valid_enemies.append(e)
-		
-		arena.start_arena_event(player, valid_enemies)
-	
-	# Desvanecer o flash
-	var tw2 = create_tween()
-	tw2.tween_property(flash, "color:a", 0.0, 1.0)
-	tw2.tween_callback(flash.queue_free)
-	
+	if player.amulet_selected_enemies.size() == 0:
+		return
+
+	# Guardamos os inimigos para transferir
+	GlobalEvents.amulet_captured_enemies.clear()
+	for e in player.amulet_selected_enemies:
+		if is_instance_valid(e):
+			_remove_silhouette(e)
+			GlobalEvents.amulet_captured_enemies.append(e)
+
 	player.amulet_selected_enemies.clear()
-	player.is_using_ultimate = false
+	_clear_amulet_hover()
+
+	# Limpa os estados do Player para quando voltar da Arena
+	player.is_aiming = false
+	player.is_first_person = false
+	if is_instance_valid(player.camera_third_person):
+		player.camera_third_person.make_current()
+		player.camera_third_person.fov = 75.0
+	if is_instance_valid(player.hand_with_magic):
+		player.hand_with_magic.visible = false
+	if is_instance_valid(player.amulet_crosshair): player.amulet_crosshair.visible = false
+	if player.point: player.point.visible = false
+	if is_instance_valid(player.amulet_counter_label): player.amulet_counter_label.visible = false
+
+	# Desativa o Motion Blur ao sair
+	if is_instance_valid(player.hud_layer):
+		var motion_blur = player.hud_layer.get_node_or_null("MotionBlurOverlay")
+		if motion_blur:
+			motion_blur.material.set_shader_parameter("blur_strength", 0.0)
+			motion_blur.visible = false
+
+	_hide_amulet_magic()
+
+	GlobalEvents.previous_is_maycow_normal = GlobalEvents.is_maycow_normal
+
+	player.is_teleporting_enemies = true
+
+	SaveManager.current_mp = SaveManager.max_mp
+
+	var tree = get_tree()
+	var root = tree.root
+	var current = tree.current_scene
+
+	# ---- TRANSIÇÃO CINEMÁTICA DIMENSIONAL ----
+	player.process_mode = Node.PROCESS_MODE_DISABLED
+	Engine.time_scale = 0.2 # Slow motion global
+
+	var cine_cam = Camera3D.new()
+	var cam_attr = CameraAttributesPractical.new()
+	cam_attr.dof_blur_far_enabled = true
+	cam_attr.dof_blur_far_distance = 1.0
+	cam_attr.dof_blur_far_transition = 10.0 # Motion blur pesado artificial
+	cine_cam.attributes = cam_attr
+	cine_cam.fov = 95.0
+
+	var center_pos = Vector3.ZERO
+	for e in GlobalEvents.amulet_captured_enemies:
+		center_pos += e.global_position
+	center_pos /= GlobalEvents.amulet_captured_enemies.size()
+
+	cine_cam.global_position = center_pos + Vector3(0, 1.5, 4.5)
+	current.add_child(cine_cam)
+	cine_cam.look_at(center_pos + Vector3(0, 1.0, 0), Vector3.UP)
+	cine_cam.make_current()
+
+	var tween = tree.create_tween().set_parallel(true).set_ignore_time_scale(true)
+	var anim_time = 1.2
+	for e in GlobalEvents.amulet_captured_enemies:
+		if is_instance_valid(e):
+			e.process_mode = Node.PROCESS_MODE_DISABLED
+			var target_y = e.global_position.y + 35.0
+			tween.tween_property(e, "global_position:y", target_y, anim_time).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+			tween.tween_property(e, "rotation:y", e.rotation.y + deg_to_rad(1080), anim_time).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+			tween.tween_property(e, "scale", Vector3(0.05, 5.0, 0.05), anim_time).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+
+	tween.tween_property(cine_cam, "global_position:y", cine_cam.global_position.y + 35.0, anim_time).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+	tween.tween_property(cine_cam, "fov", 130.0, anim_time).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+
+	await tween.finished
+
+	for e in GlobalEvents.amulet_captured_enemies:
+		if is_instance_valid(e):
+			e.scale = Vector3.ONE
+			e.rotation.x = 0
+			e.rotation.z = 0
+
+	if is_instance_valid(cine_cam):
+		cine_cam.queue_free()
+
+	player.process_mode = Node.PROCESS_MODE_INHERIT
+	Engine.time_scale = 1.0 # Retorna ao normal
+
+	player.is_teleporting_enemies = false
+
+	# Instancia o campo de batalha antes de removermos a nós mesmos da árvore
+	var battlefield_scene = load("res://scenes/stages/battlefield/battlefield_1.tscn").instantiate()
+
+	# Pausa a cena atual tirando ela da árvore
+	root.remove_child(current)
+	GlobalEvents.paused_scene_for_amulet = current
+
+	root.add_child(battlefield_scene)
+	tree.current_scene = battlefield_scene
 
 func play_return_from_arena_effect() -> void:
 	var flash = ColorRect.new()

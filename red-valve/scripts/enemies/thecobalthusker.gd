@@ -18,11 +18,13 @@ const SPEED = 2.0
 const ACCEL = 4.0
 
 @export var max_health = 150
+@export var iron_rusks_value: int = 4
 var current_health = max_health
 var update_timer = 0.0
 
 var playback 
 var dead:bool = false
+var cutscene_mode:bool = false
 
 func _ready() -> void:
 	playback = animation_tree["parameters/playback"]
@@ -43,6 +45,16 @@ func _physics_process(delta: float) -> void:
 		velocity += get_gravity() * delta
 	else:
 		velocity.y = 0
+
+	# Modo cutscene: só olha para o player, sem movimento/ataque
+	if cutscene_mode:
+		if player:
+			var look_pos = player.global_position
+			look_pos.y = global_position.y
+			if global_position.distance_to(look_pos) > 0.5:
+				look_at(look_pos, Vector3.UP)
+		move_and_slide()
+		return
 
 	if player and nav_agent:
 		# 2. Atualiza o destino apenas 5 vezes por segundo (Economiza CPU)
@@ -92,13 +104,14 @@ func take_damage(amount):
 	var tween = create_tween()
 	tween.tween_property(health_bar, "value", current_health, 0.2).set_trans(Tween.TRANS_SINE)
 	
-	if current_health <= 0:
+	if current_health <= 0 and not dead:
 		die()
 
 func die():
 	growl_2.play()
-	
+
 	dead = true
+	SaveManager.add_iron_rusks(iron_rusks_value)
 	health_bar_sprite.hide()
 	# Seu código de morte aqui
 	playback.travel("dead")

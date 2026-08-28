@@ -102,8 +102,8 @@ shader_parameter/cirrus_absorption = 2.0
 shader_parameter/cirrus_sky_tint_fade = 0.5
 shader_parameter/cirrus_size = 1.0
 shader_parameter/cirrus_uv = Vector2(0.16, 0.11)
-shader_parameter/cirrus_position1 = Vector2(0.5102522, 0.5102522)
-shader_parameter/cirrus_position2 = Vector2(0.5102522, 0.5102522)
+shader_parameter/cirrus_position1 = Vector2(0.040905006, 0.040905006)
+shader_parameter/cirrus_position2 = Vector2(0.040905006, 0.040905006)
 shader_parameter/cirrus_texture = ExtResource("3_01ffe")
 shader_parameter/cumulus_visible = true
 shader_parameter/cumulus_intensity = 0.6
@@ -113,7 +113,7 @@ shader_parameter/cumulus_absorption = 2.0
 shader_parameter/cumulus_noise_freq = 2.7
 shader_parameter/cumulus_sky_tint_fade = 0.0
 shader_parameter/cumulus_size = 0.5
-shader_parameter/cumulus_position = Vector2(2.5509865, 2.5509865)
+shader_parameter/cumulus_position = Vector2(5.205367, 5.205367)
 shader_parameter/cumulus_texture = ExtResource("4_qysyv")
 shader_parameter/cumulus_partial_mie_phase = Vector3(0.957564, 1.042436, 0.412)
 shader_parameter/cumulus_mie_intensity = 1.0
@@ -226,12 +226,12 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_mlxvh")
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_ov8eb"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_ljprc"]
 viewport_path = NodePath("SubViewport")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_x8mvr"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ov8eb"]
 resource_local_to_scene = true
-albedo_texture = SubResource("ViewportTexture_ov8eb")
+albedo_texture = SubResource("ViewportTexture_ljprc")
 emission = Color(0.7121294, 0.7121294, 0.71212935, 1)
 emission_energy_multiplier = 0.36
 uv1_scale = Vector3(-1, -1, -1)
@@ -887,19 +887,6 @@ visible = false
 
 [node name="Player" parent="." unique_id=448699446 instance=ExtResource("1_pbbbw")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8378088, 1.6337886, -12.337379)
-max_health = null
-damage_camera_shake_strength = null
-WALK_SPEED_NORMAL = null
-damage_crescent_cogblade = null
-damage_pistol = null
-damage_headshoot = null
-JOY_SENSITIVITY = null
-DEADZONE = null
-head_bob_ON = null
-DASH_SPEED = null
-DASH_DURATION = null
-DASH_COOLDOWN = null
-cogblade_tilt_y = null
 
 [node name="ambient" type="Node3D" parent="." unique_id=1364159059]
 
@@ -1177,7 +1164,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 499.48547, 0, 0)
 [node name="Cube_003_Screen_0" parent="ambient/casa/itens_da_casa/tv/Sketchfab_model/5836d5dd2aa14c29a482c9966515dc07_fbx/RootNode/Cube_003" parent_id_path=PackedInt32Array(204035221, 403962250) index="2" unique_id=544031]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 499.48547, 0, 0)
 mesh = SubResource("ArrayMesh_m2pnx")
-surface_material_override/0 = SubResource("StandardMaterial3D_x8mvr")
+surface_material_override/0 = SubResource("StandardMaterial3D_ov8eb")
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="ambient/casa/itens_da_casa/tv/Sketchfab_model/5836d5dd2aa14c29a482c9966515dc07_fbx/RootNode/Cube_003/Cube_003_Screen_0" index="0" unique_id=1615021297]
 transform = Transform3D(204.10088, 0, 0, 0, 264.26242, 4.534737e-06, 0, 0, 250.71162, 0, 0, 0)

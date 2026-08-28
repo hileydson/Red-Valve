@@ -68,10 +68,12 @@ func _ready() -> void:
 		# Trava a cena para modo cutscene
 		for enemy in enemies:
 			if is_instance_valid(enemy):
-				# Atualiza a referência do player para que os inimigos teleportados não persigam o player da cena pausada
-				if "player" in enemy:
-					enemy.player = player
-				enemy.process_mode = Node.PROCESS_MODE_DISABLED
+				var enemy_script = _get_enemy_script(enemy)
+				if enemy_script:
+					# Atualiza a referência do player para que os inimigos teleportados não persigam o player da cena pausada
+					if "player" in enemy_script:
+						enemy_script.player = player
+					enemy_script.cutscene_mode = true
 		GlobalEvents.in_cutscene = true
 		
 		var is_first_time = not SaveManager.prolog_finished
@@ -179,6 +181,9 @@ func _ready() -> void:
 		for enemy in enemies:
 			if is_instance_valid(enemy):
 				enemy.process_mode = Node.PROCESS_MODE_INHERIT
+				var enemy_script = _get_enemy_script(enemy)
+				if enemy_script:
+					enemy_script.cutscene_mode = false
 				
 		GlobalEvents.in_cutscene = false
 
@@ -262,11 +267,6 @@ func _process(delta: float) -> void:
 		# Gira o furacão constantemente em torno do eixo Y
 		hurricane_node.rotate_y(deg_to_rad(30.0) * delta)
 		
-
-	for enemy in enemies:
-		if is_instance_valid(enemy) and enemy.process_mode == Node.PROCESS_MODE_DISABLED:
-			if "animation_tree" in enemy and enemy.animation_tree and enemy.animation_tree.active:
-				enemy.animation_tree.advance(delta * 0.15)
 				
 	# --- VERIFICAÇÃO DO ÚLTIMO INIMIGO ---
 	if not final_sequence_started and not GlobalEvents.in_cutscene and enemies.size() > 0:
@@ -340,6 +340,14 @@ func _find_player_recursive(node: Node) -> Node:
 		if found: return found
 	return null
 
+func _get_enemy_script(enemy: Node) -> Node:
+	if "cutscene_mode" in enemy:
+		return enemy
+	for child in enemy.get_children():
+		if "cutscene_mode" in child:
+			return child
+	return null
+
 
 func iniciar_cutscene() -> void:
 	if not player or not camera_intro: return
@@ -368,6 +376,9 @@ func iniciar_cutscene() -> void:
 	for enemy in enemies:
 		if is_instance_valid(enemy):
 			enemy.process_mode = Node.PROCESS_MODE_INHERIT
+			var enemy_script = _get_enemy_script(enemy)
+			if enemy_script:
+				enemy_script.cutscene_mode = false
 			
 	GlobalEvents.in_cutscene = false
 	# Opcional: deletar a câmera de intro apenas se nós a criamos por código

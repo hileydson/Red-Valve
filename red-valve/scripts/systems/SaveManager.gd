@@ -10,6 +10,7 @@ var max_mp: float = 30.0
 var current_mp: float = 30.0
 var prolog_finished: bool = false
 var battlefield_1_intro_played: bool = false
+var iron_rusks: int = 0
 
 var brightness_rect: ColorRect
 
@@ -198,6 +199,7 @@ func save_game(scene_path: String = ""):
 		"equipped_items": equipped_items,
 		"max_mp": max_mp,
 		"current_mp": current_mp,
+		"iron_rusks": iron_rusks,
 		"config": config
 	}
 	
@@ -233,6 +235,7 @@ func load_game() -> bool:
 				equipped_items = data.get("equipped_items", ["cogblade"])
 				max_mp = data.get("max_mp", 30.0)
 				current_mp = data.get("current_mp", 30.0)
+				iron_rusks = data.get("iron_rusks", 0)
 				
 				if data.has("config"):
 					for key in data["config"].keys():
@@ -244,6 +247,9 @@ func load_game() -> bool:
 					LoadingScreen.load_scene(current_stage)
 					return true
 	return false
+
+func add_iron_rusks(amount: int) -> void:
+	iron_rusks += amount
 
 func add_item(item_id: String, amount: int = 1):
 	if not item_db.has(item_id): return
