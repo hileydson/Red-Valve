@@ -60,20 +60,20 @@ func _ensure_amuleto_visual() -> void:
 	var amuleto = amuleto_scene.instantiate()
 	# Preso na câmera (não na mão) para garantir posição e escala previsíveis na tela
 	player.camera.add_child(amuleto)
-	amuleto.position = Vector3(-0.18, -0.22, -0.55) # Ao lado da mão esquerda, em frente à câmera
-	amuleto.scale = Vector3(0.35, 0.35, 0.35)
+	amuleto.position = Vector3(0.05, -0.22, -0.55) # Mais para a direita, em frente à câmera
+	amuleto.scale = Vector3(0.24, 0.24, 0.24)
+	amuleto.rotation.z = deg_to_rad(90) # Modelo todo girado para a direita: o giro (rotate_y) passa a parecer de baixo pra cima
 	amuleto.visible = true
 
-	# Material com emissão própria: garante que o amuleto apareça mesmo em
-	# pontos escuros da cena, já que ele fica muito perto da câmera em 1ª pessoa.
-	var glow_mat = StandardMaterial3D.new()
-	glow_mat.albedo_color = Color(0.6, 0.2, 1.0, 1.0)
-	glow_mat.emission_enabled = true
-	glow_mat.emission = Color(0.6, 0.2, 1.0)
-	glow_mat.emission_energy_multiplier = 1.5
+	# Sem material override: mantém a cor/textura originais do modelo.
 	for mesh in amuleto.find_children("*", "MeshInstance3D", true, false):
 		mesh.visible = true
-		mesh.material_override = glow_mat
+
+	# Desliga colisão de qualquer corpo físico vindo do .glb: o amuleto fica
+	# bem na frente da câmera e não pode bloquear o raycast de mira/seleção de inimigos.
+	for col in amuleto.find_children("*", "CollisionObject3D", true, false):
+		col.collision_layer = 0
+		col.collision_mask = 0
 
 	var particles = CPUParticles3D.new()
 	particles.amount = 120
