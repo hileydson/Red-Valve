@@ -459,8 +459,8 @@ func _physics_process(delta: float) -> void:
 			if Input.is_action_just_pressed("ui_hold_first_person_view"):
 				AudioServer.playback_speed_scale = 0.5
 				
-			if is_instance_valid(amulet_crosshair): amulet_crosshair.visible = true
-			if point: point.visible = false # Esconde a mira normal
+			if is_instance_valid(amulet_crosshair): amulet_crosshair.visible = false
+			if point: point.visible = not GlobalEvents.in_cutscene and not _cutscene_hud_hidden
 			
 			# Ativa o Motion Blur forte
 			if is_instance_valid(hud_layer):

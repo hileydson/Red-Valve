@@ -10,14 +10,14 @@ func _process_amulet_magic(delta: float) -> void:
 		_hide_amulet_magic()
 		return
 
-	if Input.is_action_pressed("ui_magic") and SaveManager.is_equipped("amulet") and SaveManager.current_mp > 0:
+	if SaveManager.is_equipped("amulet") and SaveManager.current_mp > 0:
 		if not player.amulet_magic_active:
 			player.amulet_magic_active = true
 			if player.amulet_crosshair:
 				player.amulet_crosshair.visible = true
 			if player.amulet_counter_label:
 				player.amulet_counter_label.visible = true
-				player.amulet_counter_label.text = "0 / 3"
+				player.amulet_counter_label.text = "0"
 			player.hand_with_pistol.visible = false
 			player.control_weapons.visible = false
 			player.control_magic.visible = false
@@ -48,10 +48,7 @@ func _process_amulet_magic(delta: float) -> void:
 		_process_amulet_targeting()
 	else:
 		if player.amulet_magic_active:
-			if Input.is_action_just_released("ui_magic") and player.amulet_selected_enemies.size() > 0:
-				_on_amulet_magic_released()
-			else:
-				_hide_amulet_magic()
+			_hide_amulet_magic()
 
 func _ensure_amuleto_visual() -> void:
 	if is_instance_valid(player.amuleto_node): return
@@ -208,7 +205,7 @@ func _process_amulet_targeting() -> void:
 			_apply_silhouette(enemy, Color(1.0, 0.0, 0.0, 0.8)) # Vermelho forte (Selecionado)
 
 		if player.amulet_counter_label:
-			player.amulet_counter_label.text = str(player.amulet_selected_enemies.size()) + " / 3"
+			player.amulet_counter_label.text = str(player.amulet_selected_enemies.size())
 
 func _clear_amulet_hover() -> void:
 	if player.amulet_hovered_enemy and is_instance_valid(player.amulet_hovered_enemy):

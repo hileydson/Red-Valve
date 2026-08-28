@@ -277,11 +277,14 @@ void fragment() {
 	player.amulet_counter_label.add_theme_constant_override("outline_size", 10)
 	player.amulet_counter_label.anchor_left = 1.0
 	player.amulet_counter_label.anchor_right = 1.0
-	player.amulet_counter_label.offset_left = -250
-	player.amulet_counter_label.offset_top = 130
+	player.amulet_counter_label.anchor_top = 0.5
+	player.amulet_counter_label.anchor_bottom = 0.5
+	player.amulet_counter_label.offset_left = -150
+	player.amulet_counter_label.offset_top = -55
 	player.amulet_counter_label.offset_right = -40
-	player.amulet_counter_label.offset_bottom = 240
+	player.amulet_counter_label.offset_bottom = 55
 	player.amulet_counter_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	player.amulet_counter_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	player.amulet_counter_label.visible = false
 	player.hud_layer.add_child(player.amulet_counter_label)
 	
