@@ -866,11 +866,11 @@ func cutscene_trailer_sequence() -> void:
 	var tempo_sprint = 3.5
 	var tween_corrida = create_tween()
 	
-	# Aproxima-se um pouco menos do portal (recua na direção do movimento)
+	# Aproxima-se da porta (recua um pouco na direção do movimento para não colar nela)
 	var sprint_dir = player.global_position.direction_to(fim.global_position)
 	sprint_dir.y = 0
 	sprint_dir = sprint_dir.normalized()
-	var sprint_target_pos = fim.global_position - (sprint_dir * 2.5)
+	var sprint_target_pos = fim.global_position - (sprint_dir * 3.2)
 	
 	tween_corrida.tween_property(player, "global_position", sprint_target_pos, tempo_sprint).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
 	
@@ -895,12 +895,15 @@ func cutscene_trailer_sequence() -> void:
 	
 	# 1. ZOOM MODERADO NA VÁLVULA E ESCURECIMENTO CONFORME SE APROXIMA DA PORTA NO ZOOM
 	var target_zoom_fov = 45.0
-	var zoom_duration = 3.5
-	var valve_cam_pos = fim.global_position + Vector3(0, 1.4, 1.0)
+	var zoom_duration = 4.2 # Esticado para cobrir o fade to black e não parar de avançar
+	# A câmera avança um pouco em relação à posição que o player parou
+	var valve_cam_pos = fim.global_position - (sprint_dir * 1.8)
+	valve_cam_pos.y = cam_fps_walk.global_position.y # Mantém altura exata para não dar solavanco vertical
 	
 	var tween_zoom_door = create_tween().set_parallel(true)
-	tween_zoom_door.tween_property(cam_fps_walk, "fov", target_zoom_fov, zoom_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	tween_zoom_door.tween_property(cam_fps_walk, "global_position", valve_cam_pos, zoom_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tween_zoom_door.tween_property(cam_fps_walk, "fov", target_zoom_fov, zoom_duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	tween_zoom_door.tween_property(cam_fps_walk, "global_position", valve_cam_pos, zoom_duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tween_zoom_door.tween_property(cam_fps_walk, "rotation_degrees:z", 0.0, 1.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	
 	# Prepara o holofote da câmera que acenderá suavemente focando a porta no final do zoom
 	var door_spot = SpotLight3D.new()
@@ -959,9 +962,7 @@ func cutscene_trailer_sequence() -> void:
 					_set_visible_recursive(sub, false)
 	)
 		
-	# 1. ZOOM NA PORTA DA FRENTE (FOV 45) DURANTE 3 SEGUNDOS E A MÃO APARECE
-	var tween_cam = create_tween()
-	tween_cam.tween_property(cam_fps_walk, "fov", 45.0, 3.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	# A mão aparece enquanto a câmera ainda avança
 	
 	var player_hand = player_ref.find_child("hand_with_magic", true, false)
 	if player_hand:
