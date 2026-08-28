@@ -207,7 +207,7 @@ func _setup_audio_system() -> void:
 	if thunder_snd:
 		thunder_audio_player.stream = thunder_snd
 		thunder_audio_player.pitch_scale = 0.32
-		thunder_audio_player.volume_db = 1.0
+		thunder_audio_player.volume_db = -12.0
 	add_child(thunder_audio_player)
 
 func _setup_rain_particles() -> void:
@@ -767,7 +767,14 @@ func cutscene_trailer_sequence() -> void:
 
 	await get_tree().create_timer(8.0).timeout
 	print("... Take 1 concluído!")
-	
+
+	# Congela o player: a partir daqui ele não é mais controlado, só serve de modelo visual
+	# nos takes seguintes. Evita que a física dele (gravidade/queda) continue rodando durante
+	# a cutscene e dispare _trigger_fall_death() por sair da malha de colisão.
+	if is_instance_valid(player):
+		player.velocity = Vector3.ZERO
+		player.set_physics_process(false)
+
 	# --------------------------------------------------------------------------
 	# TAKE 2: PRIMEIRA PESSOA - OLHANDO PARA DIREITA E CIMA (CÉU) (6s)
 	# --------------------------------------------------------------------------
@@ -826,8 +833,13 @@ func cutscene_trailer_sequence() -> void:
 	is_loose_camera_active = false
 	if is_instance_valid(active_cam): active_cam.queue_free()
 	
-	var cam_fps_walk = Camera3D.new()
-	add_child(cam_fps_walk)
+	# Usa a câmera "camera_2" já existente na cena (em vez de criar uma via código) para
+	# permitir configurar a mão como filha dela diretamente no editor.
+	var cam_fps_walk = get_tree().current_scene.find_child("camera_2", true, false) as Camera3D
+	if not is_instance_valid(cam_fps_walk):
+		push_warning("camera_2 não encontrada na cena, criando câmera via código como fallback.")
+		cam_fps_walk = Camera3D.new()
+		add_child(cam_fps_walk)
 	cam_fps_walk.global_transform = player.global_transform * Transform3D(Basis(), Vector3(0, 1.6, 0))
 	cam_fps_walk.make_current()
 	active_cam = cam_fps_walk
@@ -870,7 +882,7 @@ func cutscene_trailer_sequence() -> void:
 	var sprint_dir = player.global_position.direction_to(fim.global_position)
 	sprint_dir.y = 0
 	sprint_dir = sprint_dir.normalized()
-	var sprint_target_pos = fim.global_position - (sprint_dir * 3.2)
+	var sprint_target_pos = fim.global_position - (sprint_dir * 4.8) # Afasta mais um pouco da porta
 	
 	tween_corrida.tween_property(player, "global_position", sprint_target_pos, tempo_sprint).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
 	
@@ -896,8 +908,8 @@ func cutscene_trailer_sequence() -> void:
 	# 1. ZOOM MODERADO NA VÁLVULA E ESCURECIMENTO CONFORME SE APROXIMA DA PORTA NO ZOOM
 	var target_zoom_fov = 45.0
 	var zoom_duration = 4.2 # Esticado para cobrir o fade to black e não parar de avançar
-	# A câmera avança um pouco em relação à posição que o player parou
-	var valve_cam_pos = fim.global_position - (sprint_dir * 1.8)
+	# A câmera avança até o marcador 'fim' (porta do portal)
+	var valve_cam_pos = fim.global_position
 	valve_cam_pos.y = cam_fps_walk.global_position.y # Mantém altura exata para não dar solavanco vertical
 	
 	var tween_zoom_door = create_tween().set_parallel(true)
@@ -1085,7 +1097,26 @@ func cutscene_trailer_sequence() -> void:
 	# Reforça make_current logo após disparar a animação
 	if is_instance_valid(cam_final):
 		cam_final.make_current()
-	
+
+	# Amuleto de poder surge piscando (cinza/transparente) na frente do Maycow durante o take final
+	if is_instance_valid(player_ref):
+		var amulet_scene = load("res://assets/3d_model/player/Maycow Lopes/amuleto_power.glb")
+		if amulet_scene:
+			var trailer_amulet = amulet_scene.instantiate()
+			player_ref.add_child(trailer_amulet)
+			trailer_amulet.scale = Vector3(0.6, 0.6, 0.6)
+			trailer_amulet.position = Vector3(0, 1.0, -0.7) # Frente do Maycow, um pouco mais para baixo
+
+			var amulet_mat = StandardMaterial3D.new()
+			amulet_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+			amulet_mat.albedo_color = Color(0.3, 0.3, 0.3, 0.0)
+			amulet_mat.emission_enabled = true
+			amulet_mat.emission = Color(0.15, 0.15, 0.15)
+			for mesh in trailer_amulet.find_children("*", "MeshInstance3D", true, false):
+				mesh.material_override = amulet_mat
+
+			_flicker_amulet_effect(amulet_mat, 11.0)
+
 	# Órbita da câmera em volta do modelo 3d do maycow parando de frente para ele
 	if is_instance_valid(player_ref) and is_instance_valid(cam_final):
 		if "playback" in player_ref:
@@ -1339,6 +1370,20 @@ func _flicker_title_effect(label: Label, duration: float) -> void:
 	if is_instance_valid(label):
 		label.modulate.a = 1.0
 		label.scale = Vector2.ONE
+
+func _flicker_amulet_effect(mat: StandardMaterial3D, duration: float) -> void:
+	if not is_instance_valid(mat): return
+	var max_alpha = 0.8
+	var elapsed: float = 0.0
+	while elapsed < duration:
+		if not is_instance_valid(mat): break
+		var flicker_factor = 0.0 if randf() < 0.35 else randf_range(0.5, 1.0)
+		mat.albedo_color.a = max_alpha * flicker_factor
+		var step = randf_range(0.06, 0.18)
+		elapsed += step
+		await get_tree().create_timer(step).timeout
+	if is_instance_valid(mat):
+		mat.albedo_color.a = 0.0
 
 func cutscene_force_maycow_lopes_only() -> void:
 	if not is_instance_valid(player_ref):
