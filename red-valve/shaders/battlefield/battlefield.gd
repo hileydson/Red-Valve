@@ -76,7 +76,15 @@ func _ready() -> void:
 						enemy_script.player = player
 					enemy_script.cutscene_mode = true
 		GlobalEvents.in_cutscene = true
-		
+
+		# Esconde a mão em primeira pessoa (hand_with_magic) durante a cutscene de intro:
+		# como ela é filha da Camera3D do player, continua visível no mundo mesmo com outra
+		# câmera (a de intro) ativa, flutuando em cena. Restaura o estado original no final.
+		var hand_magic_was_visible = false
+		if "hand_with_magic" in player and is_instance_valid(player.hand_with_magic):
+			hand_magic_was_visible = player.hand_with_magic.visible
+			player.hand_with_magic.visible = false
+
 		var is_first_time = not SaveManager.prolog_finished
 		
 		# Define qual animação tocar e impede que a câmera desligue no final
@@ -178,6 +186,8 @@ func _ready() -> void:
 		if is_instance_valid(player):
 			if "camera_third_person" in player and is_instance_valid(player.camera_third_person):
 				player.camera_third_person.make_current()
+			if "hand_with_magic" in player and is_instance_valid(player.hand_with_magic):
+				player.hand_with_magic.visible = hand_magic_was_visible
 				
 		for enemy in enemies:
 			if is_instance_valid(enemy):
@@ -258,6 +268,10 @@ func _spawn_red_explosion_vfx(pos: Vector3):
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	# HACK EXCLUSIVO: Mantém a mão mágica invisível durante as cutscenes da arena
+	if GlobalEvents.in_cutscene and is_instance_valid(player) and player.get("hand_with_magic") and is_instance_valid(player.hand_with_magic):
+		player.hand_with_magic.visible = false
+
 	if is_instance_valid(camera_intro):
 		camera_intro.make_current()
 		

@@ -410,7 +410,7 @@ func play_return_from_arena_effect() -> void:
 	else:
 		player.is_playing_return_effect = false
 
-	_play_iron_rusks_tally()
+	await _play_iron_rusks_tally()
 
 	SaveManager.save_game()
 

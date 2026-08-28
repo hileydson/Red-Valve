@@ -166,6 +166,10 @@ func finish_cutscene() -> void:
 	# Salva o progresso indicando o fim do prólogo e transiciona para o Capítulo 1 (stage_1)
 	SaveManager.prolog_finished = true
 	GlobalEvents.entering_chapter_1 = true
+	# Garante MP cheio ao entrar no Capítulo 1: o modo parasita da luta final do prólogo
+	# consome MP, e sem isso o poder do amuleto (que exige current_mp > 0) pode começar
+	# desativado se o MP tiver ficado baixo/zerado na luta.
+	SaveManager.current_mp = SaveManager.max_mp
 	SaveManager.save_game("res://scenes/stages/stage_1/stage_1.tscn")
 	LoadingScreen.load_scene("res://scenes/stages/stage_1/stage_1.tscn")
 

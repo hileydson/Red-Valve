@@ -69,6 +69,16 @@ func _finalizar_cutscene_tudo() -> void:
 		if player_cam:
 			player_cam.make_current()
 			
+		var hw_magic = player.get_node_or_null("Camera3D/hand_with_magic")
+		if hw_magic: hw_magic.visible = true
+		var hw_pistol = player.get_node_or_null("Camera3D/hand_with_pistol")
+		if hw_pistol: hw_pistol.visible = SaveManager.is_equipped("pistol")
+		
+		var ctrl_magic = player.get_node_or_null("Camera3D/CanvasLayer/control_magic")
+		if ctrl_magic: ctrl_magic.visible = true
+		var ctrl_weap = player.get_node_or_null("Camera3D/CanvasLayer/control_weapons")
+		if ctrl_weap: ctrl_weap.visible = true
+			
 	if pecas:
 		pecas.process_mode = Node.PROCESS_MODE_INHERIT
 		
@@ -344,6 +354,16 @@ func iniciar_cutscene() -> void:
 		
 	# Esconde o player, inimigo e vortex temporariamente
 	player.visible = false
+	if is_instance_valid(player):
+		var hw_magic = player.get_node_or_null("Camera3D/hand_with_magic")
+		if hw_magic: hw_magic.visible = false
+		var hw_pistol = player.get_node_or_null("Camera3D/hand_with_pistol")
+		if hw_pistol: hw_pistol.visible = false
+		
+		var ctrl_magic = player.get_node_or_null("Camera3D/CanvasLayer/control_magic")
+		if ctrl_magic: ctrl_magic.visible = false
+		var ctrl_weap = player.get_node_or_null("Camera3D/CanvasLayer/control_weapons")
+		if ctrl_weap: ctrl_weap.visible = false
 	enemy.visible = false
 	var vortex = get_node_or_null("auto_pecas_jimmy/VortexMagico")
 	if vortex:
@@ -640,6 +660,10 @@ func iniciar_cutscene() -> void:
 		enemy.visible = true
 	if is_instance_valid(player):
 		player.visible = true
+		var hw_magic = player.get_node_or_null("Camera3D/hand_with_magic")
+		if hw_magic: hw_magic.visible = false
+		var hw_pistol = player.get_node_or_null("Camera3D/hand_with_pistol")
+		if hw_pistol: hw_pistol.visible = false
 	if is_instance_valid(vortex):
 		vortex.visible = true
 	
@@ -869,6 +893,11 @@ func iniciar_cutscene_antiga() -> void:
 	# FASE 5: Câmera que roda o inimigo e se aproxima
 	# ---------------------------------------------------------
 	player.visible = true
+	if is_instance_valid(player):
+		var hw_magic = player.get_node_or_null("Camera3D/hand_with_magic")
+		if hw_magic: hw_magic.visible = false
+		var hw_pistol = player.get_node_or_null("Camera3D/hand_with_pistol")
+		if hw_pistol: hw_pistol.visible = false
 	
 	var start_orbit_radius = 4.0
 	var end_orbit_radius = 1.2

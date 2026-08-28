@@ -180,9 +180,10 @@ func _play_intro_text() -> void:
 			chapter_label.queue_free()
 		return
 
-	if GlobalEvents.get("has_seen_stage_1_intro") == true:
+	if SaveManager.stage_1_intro_played:
 		return
-	GlobalEvents.set("has_seen_stage_1_intro", true)
+	SaveManager.stage_1_intro_played = true
+	SaveManager.save_game()
 	
 	# Pequena pausa antes de começar para não ser tão brusco
 	await get_tree().create_timer(1.5, false).timeout

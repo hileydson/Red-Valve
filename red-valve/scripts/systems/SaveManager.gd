@@ -10,6 +10,7 @@ var max_mp: float = 30.0
 var current_mp: float = 30.0
 var prolog_finished: bool = false
 var battlefield_1_intro_played: bool = false
+var stage_1_intro_played: bool = false
 var iron_rusks: int = 0
 var iron_rusks_pending: int = 0 # Ganho na luta atual, ainda não somado visualmente no HUD
 var iron_rusks_display: int = 0 # Valor mostrado no canto da tela, só sobe com a animação de tally
@@ -109,6 +110,7 @@ func _ready():
 					current_stage = data.get("current_stage", "")
 					prolog_finished = data.get("prolog_finished", false)
 					battlefield_1_intro_played = data.get("battlefield_1_intro_played", false)
+					stage_1_intro_played = data.get("stage_1_intro_played", false)
 					if data.has("config"):
 						for key in data["config"].keys():
 							config[key] = data["config"][key]
@@ -197,6 +199,7 @@ func save_game(scene_path: String = ""):
 		"current_stage": current_stage,
 		"prolog_finished": prolog_finished,
 		"battlefield_1_intro_played": battlefield_1_intro_played,
+		"stage_1_intro_played": stage_1_intro_played,
 		"inventory_normal": inventory_normal,
 		"inventory_combat": inventory_combat,
 		"equipped_items": equipped_items,
@@ -229,6 +232,7 @@ func load_game() -> bool:
 				current_stage = data.get("current_stage", "")
 				prolog_finished = data.get("prolog_finished", false)
 				battlefield_1_intro_played = data.get("battlefield_1_intro_played", false)
+				stage_1_intro_played = data.get("stage_1_intro_played", false)
 				inventory_normal = data.get("inventory_normal", [{"id": "maycow_watch", "amount": 1}])
 				inventory_combat = data.get("inventory_combat", [
 					{"id": "pistol", "amount": 1},
@@ -328,6 +332,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			var menu_script = load("res://scripts/ui/in_game_menu.gd")
 			if menu_script:
 				menu_instance = menu_script.new()
+				menu_instance.name = "InGameMenu"
 				get_tree().root.add_child(menu_instance)
 		else:
 			# O próprio script do menu fechará e chamará queue_free()

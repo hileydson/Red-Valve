@@ -39,9 +39,14 @@ func _on_resume_pressed() -> void:
 func _on_exit_pressed() -> void:
 	GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/selecionar_item_voltar.mp3")
 	GlobalUtils.force_clear_all_screen_messages()
-	get_tree().paused = false
 	self.visible = false
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	# NÃO despausa antes de trocar de cena: enquanto a árvore está pausada, os inimigos
+	# (cujo _physics_process respeita a pausa) não processam física durante a troca de
+	# cena. Despausar antes fazia com que, no instante de destruir/trocar a cena, os
+	# inimigos perdessem o chão por um frame, caíssem abaixo de y=-10 e disparassem o
+	# "fall death" de todos de uma vez, somando Iron Rusks indevidamente. A cena do menu
+	# principal já garante despausar no seu _ready().
 	get_tree().change_scene_to_file("res://scenes/configs/main_menu_v2.tscn")
 
 func _on_config_pressed() -> void:
