@@ -637,6 +637,7 @@ navigation_layers = 4
 data_directory = "res://assets/terrain3d"
 material = SubResource("Terrain3DMaterial_wfumn")
 assets = SubResource("Terrain3DAssets_g33dr")
+collision_mode = 3
 collision_layer = 2
 collision_mask = 0
 top_level = true
