@@ -62,16 +62,22 @@ var cutscene_mode:bool = false
 # do chão e disparar o "fall death" indevidamente. Ignora o check de queda até passar isso.
 var _spawn_grace_time: float = 1.5
 
+# --- Congelamento por distância (economiza processamento e evita cair antes do chão
+# estar carregado/com colisão pronta perto de inimigos muito longe do player) ---
+@export var activation_distance: float = 120.0
+var _proximity_timer: Timer
+var _is_frozen: bool = false
+
 func _ready() -> void:
 	current_health = max_health
 	playback = animation_tree["parameters/playback"]
-	
+
 	# Limpa componentes da barra 3D antiga da cena herdada
 	var old_sprite = get_node_or_null("HealthBarSprite")
 	if old_sprite: old_sprite.queue_free()
 	var old_viewport = get_node_or_null("HealthBarViewport")
 	if old_viewport: old_viewport.queue_free()
-	
+
 	# Cria uma luz própria e forte exclusiva para o inimigo
 	var self_light = OmniLight3D.new()
 	self_light.light_color = Color(1.0, 0.9, 0.9) # Luz levemente quente
@@ -79,6 +85,36 @@ func _ready() -> void:
 	self_light.omni_range = 5.0
 	self_light.position = Vector3(0, 1.5, 0.8) # Ilumina bem a frente do corpo
 	add_child(self_light)
+
+	# Checa a distância do player ANTES de deixar rodar qualquer física: se já nasce
+	# longe, nunca chega a processar gravidade sobre um chão que pode nem estar
+	# carregado ainda. Um Timer independente reativa quando o player se aproximar.
+	_proximity_timer = Timer.new()
+	_proximity_timer.wait_time = 0.5
+	_proximity_timer.autostart = true
+	add_child(_proximity_timer)
+	_proximity_timer.timeout.connect(_check_proximity)
+	_check_proximity()
+
+func _check_proximity() -> void:
+	if dead:
+		if is_instance_valid(_proximity_timer): _proximity_timer.stop()
+		return
+	if not is_instance_valid(player):
+		return
+
+	var dist = global_position.distance_to(player.global_position)
+	# Margem de histerese: some (congela) só bem além do raio de ativação,
+	# pra não ficar ligando/desligando toda hora no limite.
+	if dist <= activation_distance and _is_frozen:
+		_is_frozen = false
+		velocity = Vector3.ZERO
+		_spawn_grace_time = 1.5 # Dá o mesmo respiro de novo ao "acordar"
+		set_physics_process(true)
+	elif dist > activation_distance * 1.3 and not _is_frozen:
+		_is_frozen = true
+		velocity = Vector3.ZERO
+		set_physics_process(false)
 
 func _physics_process(delta: float) -> void:
 	if _spawn_grace_time > 0.0:

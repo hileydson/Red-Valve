@@ -266,14 +266,16 @@ func bullet_time_back() -> void:
 	player.bullet_light.visible = false
 
 func spawn_blood_raycast(pos: Vector3, normal: Vector3) -> void:
+	if not is_inside_tree(): return
 	var blood = player.blood_effect.instantiate()
 	get_tree().root.add_child(blood)
 	blood.global_position = pos
-	
+
 	if normal != Vector3.ZERO:
 		blood.look_at(pos + normal, Vector3.UP)
-		
+
 func spawn_blood_effect(body: Node3D) -> void:
+	if not is_inside_tree(): return
 	var blood = player.blood_effect.instantiate()
 	get_tree().root.add_child(blood)
 	blood.global_position = body.global_position
