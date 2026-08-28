@@ -294,9 +294,8 @@ void fragment() {
 
 func _setup_iron_rusks_hud() -> void:
 	var iron_rusks_layer = CanvasLayer.new()
-	iron_rusks_layer.layer = 200 # Sempre acima de qualquer menu (in_game_menu usa 129)
+	iron_rusks_layer.layer = 120 # Acima do HUD normal (100), mas por baixo do overlay do menu (129)
 	iron_rusks_layer.process_mode = Node.PROCESS_MODE_ALWAYS
-	player.add_child(iron_rusks_layer)
 
 	var value_label = Label.new()
 	value_label.name = "IronRusksValue"
@@ -313,6 +312,7 @@ func _setup_iron_rusks_hud() -> void:
 	value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	value_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	value_label.pivot_offset = Vector2(100, 20)
+	value_label.text = str(SaveManager.iron_rusks_display)
 	iron_rusks_layer.add_child(value_label)
 
 	var caption_label = Label.new()
@@ -329,13 +329,19 @@ func _setup_iron_rusks_hud() -> void:
 	caption_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	caption_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	caption_label.text = "Iron Rusks"
+	caption_label.visible = false
 	iron_rusks_layer.add_child(caption_label)
 
 	var sc = GDScript.new()
-	sc.source_code = "extends Label\nfunc _process(_delta):\n\ttext = str(SaveManager.iron_rusks_display)"
+	sc.source_code = "extends CanvasLayer\nvar value_label: Label\nvar caption_label: Label\nfunc _process(_delta):\n\tvalue_label.text = str(SaveManager.iron_rusks_display)\n\tcaption_label.visible = get_tree().paused"
 	sc.reload()
-	value_label.set_script(sc)
+	# O script precisa ser anexado ANTES do nó entrar na árvore, senão o Godot
+	# não habilita o _process automaticamente (mesmo padrão usado no hud_layer acima).
+	iron_rusks_layer.set_script(sc)
+	iron_rusks_layer.value_label = value_label
+	iron_rusks_layer.caption_label = caption_label
 
+	player.add_child(iron_rusks_layer)
 	player.iron_rusks_value_label = value_label
 
 func update_ammo_ui() -> void:

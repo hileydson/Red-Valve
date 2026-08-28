@@ -17,8 +17,6 @@ func _activate_cogblade_ultimate() -> void:
 	player.magic_hand_attack()
 
 	# Parar jogador e deixar invulnerável durante a animação
-	var old_speed = player.SPEED
-	player.SPEED = 0.0
 	
 	var _old_pos = player.hand_magic_3d.position
 	var tween_prep = create_tween().set_parallel(true)
@@ -35,10 +33,14 @@ func _activate_cogblade_ultimate() -> void:
 	
 	# Pisca a cogblade de forma intensa
 	var flash_tween = create_tween().set_loops(5)
-	var mat = player.crescent_cogblade.get_node("Area3D/mesh").get_surface_override_material(0)
-	if mat and mat is StandardMaterial3D:
-		flash_tween.tween_property(mat, "emission_energy_multiplier", 10.0, 0.1)
-		flash_tween.tween_property(mat, "emission_energy_multiplier", 1.0, 0.1)
+	var mesh_node = player.crescent_cogblade.get_node_or_null("Area3D/mesh")
+	if not mesh_node:
+		mesh_node = player.crescent_cogblade.get_node_or_null("mesh") # Fallback
+	if mesh_node:
+		var mat = mesh_node.get_surface_override_material(0)
+		if mat and mat is StandardMaterial3D:
+			flash_tween.tween_property(mat, "emission_energy_multiplier", 10.0, 0.1)
+			flash_tween.tween_property(mat, "emission_energy_multiplier", 1.0, 0.1)
 	
 	await get_tree().create_timer(1.0).timeout
 	
@@ -126,7 +128,6 @@ func _activate_cogblade_ultimate() -> void:
 	
 	await get_tree().create_timer(1.0).timeout
 	
-	player.SPEED = old_speed
 	player.is_blade_returning = true
 	
 	if player.hud_layer: player.hud_layer.visible = true

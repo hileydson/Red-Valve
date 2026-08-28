@@ -889,7 +889,7 @@ func cutscene_trailer_sequence() -> void:
 	# 1. ZOOM MODERADO NA VÁLVULA E ESCURECIMENTO CONFORME SE APROXIMA DA PORTA NO ZOOM
 	var target_zoom_fov = 45.0
 	var zoom_duration = 3.5
-	var valve_cam_pos = fim.global_position + Vector3(0, 1.4, 0.0)
+	var valve_cam_pos = fim.global_position + Vector3(0, 1.4, 1.0)
 	
 	var tween_zoom_door = create_tween().set_parallel(true)
 	tween_zoom_door.tween_property(cam_fps_walk, "fov", target_zoom_fov, zoom_duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
