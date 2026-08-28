@@ -367,6 +367,11 @@ func _on_amulet_magic_released() -> void:
 	tree.current_scene = battlefield_scene
 
 func play_return_from_arena_effect() -> void:
+	# O combate na arena (Maycow não normal) consome o mesmo SaveManager.current_mp
+	# usado pelo poder do amuleto. Sem isso, o jogador podia voltar da arena sem mana
+	# e o amuleto (mão, giro, mira) simplesmente não aparecia mais no mundo normal.
+	SaveManager.current_mp = SaveManager.max_mp
+
 	player.is_playing_return_effect = true
 	GlobalUtils.vibrate_controller(null, 0.8, 0.8, 1.0)
 	GlobalUtils.shake_camera(0.6, 1.0)
