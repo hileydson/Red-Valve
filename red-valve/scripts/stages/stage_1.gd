@@ -48,7 +48,9 @@ func _ready() -> void:
 	setup_player_spawn()
 
 func setup_player_spawn() -> void:
-	if GlobalEvents.entering_chapter_1:
+	var is_chapter_1 = GlobalEvents.entering_chapter_1 or SaveManager.prolog_finished
+
+	if is_chapter_1:
 		var spawn_point = get_node_or_null("itens_caminho_jimmy/auto_pecas_jimmy/maykow_capitulo_1_inicio")
 		var player = get_node_or_null("Player")
 		if player and spawn_point:
@@ -62,7 +64,7 @@ func setup_player_spawn() -> void:
 		bloqueio.queue_free()
 		
 	# Remove os inimigos imediatamente se ainda estiver no prólogo
-	if not GlobalEvents.entering_chapter_1:
+	if not is_chapter_1:
 		var enemies_node = get_node_or_null("enemies")
 		if not enemies_node:
 			enemies_node = find_child("enemies", true, false)
