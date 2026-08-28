@@ -448,14 +448,23 @@ func _physics_process(delta: float) -> void:
 			if hand_with_magic: hand_with_magic.visible = true
 			control_magic.visible = true
 			
-		if Input.is_action_just_released("ui_hold_first_person_view"):
+		var wants_to_aim = Input.is_action_pressed("ui_hold_first_person_view")
+		var has_mp = SaveManager.current_mp > 0
+		
+		if Input.is_action_just_released("ui_hold_first_person_view") or (is_aiming and wants_to_aim and not has_mp):
 			if amulet_selected_enemies.size() == 0:
 				AudioServer.playback_speed_scale = 1.0
 			_on_amulet_magic_released()
 
-		is_aiming = Input.is_action_pressed("ui_hold_first_person_view")
+		if wants_to_aim and not has_mp and Input.is_action_just_pressed("ui_hold_first_person_view"):
+			if is_instance_valid(gun_load): gun_load.play()
+
+		is_aiming = wants_to_aim and has_mp
 		
 		if is_aiming:
+			SaveManager.current_mp -= 3.5 * delta
+			if SaveManager.current_mp < 0: SaveManager.current_mp = 0
+			
 			if Input.is_action_just_pressed("ui_hold_first_person_view"):
 				AudioServer.playback_speed_scale = 0.5
 				

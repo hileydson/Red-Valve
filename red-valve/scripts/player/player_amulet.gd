@@ -341,6 +341,7 @@ func _on_amulet_magic_released() -> void:
 
 	player.process_mode = Node.PROCESS_MODE_INHERIT
 	Engine.time_scale = 1.0 # Retorna ao normal
+	AudioServer.playback_speed_scale = 1.0 # Garante que o áudio não fique em câmera lenta
 
 	player.is_teleporting_enemies = false
 
