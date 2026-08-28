@@ -6,6 +6,7 @@ extends Node3D
 @export var hand_start_marker: Marker3D
 @export var hand_end_marker: Marker3D
 @export var hand_rotation_offset: Vector3 = Vector3.ZERO
+@export var hand_position_offset: Vector3 = Vector3.ZERO
 var ui_fader: ColorRect
 var lightning_flash_rect: ColorRect
 
@@ -989,22 +990,18 @@ func cutscene_trailer_sequence() -> void:
 			anim.active = false
 			
 		if hand_start_marker and hand_end_marker:
-			# Adiciona a mão na câmera (para não ser oculta pelo script que apaga o cenário),
-			# mas tweena o global_transform para ela seguir exatamente os markers!
+			# Adiciona a mão como filha da própria câmera (camera_2) e mantém a rotação/escala
+			# original do modelo (a mesma pose já usada normalmente na primeira pessoa) como base,
+			# somando "hand_rotation_offset" (giro extra) e "hand_position_offset" (deslocamento
+			# extra), ambos ajustáveis pelo Inspector sem precisar mexer nos markers.
+			# Tweena apenas a POSIÇÃO local do marker "inicio_mao" até o "inicio_fim" (indo pra frente).
 			cam_fps_walk.add_child(hand_3d)
-			
-			var rot_offset = Basis.from_euler(Vector3(deg_to_rad(hand_rotation_offset.x), deg_to_rad(hand_rotation_offset.y), deg_to_rad(hand_rotation_offset.z)))
-			
-			var start_trans = hand_start_marker.global_transform
-			start_trans.basis = start_trans.basis * rot_offset
-			
-			var end_trans = hand_end_marker.global_transform
-			end_trans.basis = end_trans.basis * rot_offset
-			
-			hand_3d.global_transform = start_trans
-			
+			hand_3d.position = hand_start_marker.position + hand_position_offset
+			hand_3d.rotation_degrees += hand_rotation_offset
+			hand_3d.visible = true
+
 			var tween_hand = create_tween()
-			tween_hand.tween_property(hand_3d, "global_transform", end_trans, 3.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+			tween_hand.tween_property(hand_3d, "position", hand_end_marker.position + hand_position_offset, 3.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 		else:
 			# Fallback caso os marcadores não tenham sido configurados no inspetor
 			cam_fps_walk.add_child(hand_3d)
