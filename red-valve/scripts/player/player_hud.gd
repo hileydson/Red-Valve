@@ -152,7 +152,7 @@ void fragment() {
 	var blood_mat = ShaderMaterial.new()
 	blood_mat.shader = blood_shader
 	player.blood_overlay.material = blood_mat
-	#player.hud_layer.add_child(player.blood_overlay) # Removido a marca de sangue conforme pedido
+	player.hud_layer.add_child(player.blood_overlay)
 
 	# Blur Setup
 	

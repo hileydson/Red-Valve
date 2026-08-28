@@ -878,6 +878,14 @@ func iniciar_cutscene_antiga() -> void:
 	
 	look_at_target = null
 	
+	_ativar_motion_blur(true)
+	if motion_blur_mat:
+		motion_blur_mat.set_shader_parameter("blur_strength", 0.0)
+		var blur_tween = create_tween()
+		blur_tween.tween_property(motion_blur_mat, "shader_parameter/blur_strength", 1.5, 1.6).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+		blur_tween.tween_property(motion_blur_mat, "shader_parameter/blur_strength", 0.0, 1.6).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		blur_tween.tween_callback(func(): _ativar_motion_blur(false))
+	
 	var orbit_tween = create_tween()
 	orbit_tween.tween_method(func(progress: float):
 		var angle = base_angle + (progress * TAU * 0.75)
