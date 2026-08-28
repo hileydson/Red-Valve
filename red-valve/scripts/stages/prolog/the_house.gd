@@ -35,17 +35,19 @@ func _ready() -> void:
 
 func _play_phone_ring_after_delay() -> void:
 	# Aguarda o tempo configurado no inspetor (padrão 120 segundos)
-	await get_tree().create_timer(tempo_para_telefone).timeout
+	await get_tree().create_timer(tempo_para_telefone, false).timeout
 	
 	telefone_tocando = true
 	
 	phone_audio = AudioStreamPlayer.new()
 	phone_audio.stream = load("res://assets/cutscenes/sound/telefone_ring.mp3")
+	phone_audio.process_mode = Node.PROCESS_MODE_PAUSABLE
 	add_child(phone_audio)
 	phone_audio.play()
 	
 	# Quando o áudio terminar, remove o node da memória para otimização
 	phone_audio.finished.connect(phone_audio.queue_free)
+
 
 func _show_intro_text() -> void:
 	await get_tree().create_timer(1.0).timeout

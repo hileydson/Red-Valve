@@ -54,9 +54,13 @@ var ranged_attack_timer: float = 5.0 # O primeiro ataque é mais rápido
 var current_health = max_health
 var update_timer = 0.0
 
-var playback 
+var playback
 var dead:bool = false
 var cutscene_mode:bool = false
+# Período de carência logo após spawnar/carregar a cena: o terreno (Terrain3D) pode
+# ainda não ter a colisão pronta nos primeiros instantes, fazendo o inimigo cair através
+# do chão e disparar o "fall death" indevidamente. Ignora o check de queda até passar isso.
+var _spawn_grace_time: float = 1.5
 
 func _ready() -> void:
 	current_health = max_health
@@ -77,8 +81,10 @@ func _ready() -> void:
 	add_child(self_light)
 
 func _physics_process(delta: float) -> void:
-	
-	if global_position.y < -10.0 and not dead:
+	if _spawn_grace_time > 0.0:
+		_spawn_grace_time -= delta
+
+	if _spawn_grace_time <= 0.0 and global_position.y < -10.0 and not dead:
 		take_damage(max_health)
 		return
 	if dead: 
