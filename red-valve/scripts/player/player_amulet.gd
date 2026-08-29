@@ -326,6 +326,14 @@ func _on_amulet_magic_released() -> void:
 	cine_cam.look_at(center_pos + Vector3(0, 1.0, 0), Vector3.UP)
 	cine_cam.make_current()
 
+	var travel_audio = AudioStreamPlayer.new()
+	travel_audio.stream = load("res://assets/sounds/player/espaco_travel.mp3")
+	travel_audio.pitch_scale = 0.8
+	travel_audio.process_mode = Node.PROCESS_MODE_ALWAYS
+	current.add_child(travel_audio)
+	travel_audio.play()
+	travel_audio.finished.connect(travel_audio.queue_free)
+
 	var tween = tree.create_tween().set_parallel(true).set_ignore_time_scale(true)
 	var anim_time = 1.2
 	for e in GlobalEvents.amulet_captured_enemies:
