@@ -64,11 +64,16 @@ func _ready() -> void:
 
 	player = get_tree().get_first_node_in_group("player")
 	enemies = get_tree().get_nodes_in_group("enemies")
-	
+
 	if player:
 		# Trava a cena para modo cutscene
 		for enemy in enemies:
 			if is_instance_valid(enemy):
+				# Reage no exato instante em que o inimigo morre (em vez de esperar o
+				# próximo frame do polling em _process), pra câmera lenta e afins já
+				# começarem ANTES da animação/som de morte do último inimigo tocar.
+				if enemy.has_signal("died") and not enemy.died.is_connected(_on_enemy_died):
+					enemy.died.connect(_on_enemy_died)
 				var enemy_script = _get_enemy_script(enemy)
 				if enemy_script:
 					# Atualiza a referência do player para que os inimigos teleportados não persigam o player da cena pausada
@@ -283,16 +288,19 @@ func _process(delta: float) -> void:
 		hurricane_node.rotate_y(deg_to_rad(30.0) * delta)
 		
 				
-	# --- VERIFICAÇÃO DO ÚLTIMO INIMIGO ---
-	if not final_sequence_started and not GlobalEvents.in_cutscene and enemies.size() > 0:
-		var all_dead = true
-		for enemy in enemies:
-			if is_instance_valid(enemy) and "dead" in enemy and not enemy.dead:
-				all_dead = false
-				break
-				
-		if all_dead:
-			_start_final_sequence()
+	# --- VERIFICAÇÃO DO ÚLTIMO INIMIGO (fallback; o caminho normal é o sinal "died") ---
+	_check_all_dead()
+
+func _on_enemy_died() -> void:
+	_check_all_dead()
+
+func _check_all_dead() -> void:
+	if final_sequence_started or GlobalEvents.in_cutscene or enemies.is_empty():
+		return
+	for enemy in enemies:
+		if is_instance_valid(enemy) and "dead" in enemy and not enemy.dead:
+			return
+	_start_final_sequence()
 
 func _start_final_sequence() -> void:
 	final_sequence_started = true

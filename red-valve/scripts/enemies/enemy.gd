@@ -54,6 +54,8 @@ var ranged_attack_timer: float = 5.0 # O primeiro ataque é mais rápido
 var current_health = max_health
 var update_timer = 0.0
 
+signal died
+
 var playback
 var dead:bool = false
 var cutscene_mode:bool = false
@@ -239,9 +241,9 @@ func take_damage(amount):
 		die()
 
 func die():
-	growl_death.play()
-
 	dead = true
+	died.emit()
+	growl_death.play()
 	SaveManager.add_iron_rusks(iron_rusks_value)
 	# Seu código de morte aqui
 	playback.travel("dead")

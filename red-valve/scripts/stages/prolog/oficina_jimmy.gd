@@ -69,8 +69,9 @@ func _finalizar_cutscene_tudo() -> void:
 		if player_cam:
 			player_cam.make_current()
 			
+		# Nesta luta o Maycow ainda não tem o poder do amuleto: a mão mágica não deve aparecer.
 		var hw_magic = player.get_node_or_null("Camera3D/hand_with_magic")
-		if hw_magic: hw_magic.visible = true
+		if hw_magic: hw_magic.visible = false
 		var hw_pistol = player.get_node_or_null("Camera3D/hand_with_pistol")
 		if hw_pistol: hw_pistol.visible = SaveManager.is_equipped("pistol")
 		
@@ -234,6 +235,15 @@ func _criar_faiscas_inimigo() -> void:
 	particles.position = Vector3(0, 0.05, 0)
 
 func _process(delta: float) -> void:
+	# Mantém a mão em primeira pessoa (hand_with_magic) sempre invisível durante toda a
+	# cutscene, mesmo que algum outro sistema (equipamento, combate) tente reexibi-la
+	# no meio do caminho — os `visible = false` pontuais espalhados pela cutscene não
+	# sobrevivem a isso sozinhos.
+	if GlobalEvents.in_cutscene and is_instance_valid(player):
+		var hw_magic = player.get_node_or_null("Camera3D/hand_with_magic")
+		if hw_magic and hw_magic.visible:
+			hw_magic.visible = false
+
 	time_passed += delta
 	var active_cam = get_viewport().get_camera_3d()
 	if active_cam:

@@ -26,7 +26,9 @@ const ACCEL = 4.0
 var current_health = max_health
 var update_timer = 0.0
 
-var playback 
+signal died
+
+var playback
 var dead:bool = false
 var cutscene_mode:bool = false
 
@@ -125,9 +127,9 @@ func take_damage(amount):
 		die()
 
 func die():
-	growl_2.play()
-
 	dead = true
+	died.emit()
+	growl_2.play()
 	SaveManager.add_iron_rusks(iron_rusks_value)
 	health_bar_sprite.hide()
 	# Seu código de morte aqui
