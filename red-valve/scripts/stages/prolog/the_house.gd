@@ -10,6 +10,7 @@ var telefone_atendido: bool = false
 var tv_ligada: bool = true
 var phone_audio: AudioStreamPlayer
 var ui_layer: CanvasLayer
+var phone_timer: Timer
 
 # --- Váriaveis da Cutscene do Telefone em Tempo Real ---
 var phone_texts = [
@@ -34,9 +35,19 @@ func _ready() -> void:
 	_play_phone_ring_after_delay()
 
 func _play_phone_ring_after_delay() -> void:
-	# Aguarda o tempo configurado no inspetor (padrão 120 segundos)
-	await get_tree().create_timer(tempo_para_telefone, false).timeout
-	
+	# Aguarda o tempo configurado no inspetor usando um Timer que respeita o pause
+	phone_timer = Timer.new()
+	phone_timer.wait_time = tempo_para_telefone
+	phone_timer.one_shot = true
+	phone_timer.process_mode = Node.PROCESS_MODE_PAUSABLE
+	add_child(phone_timer)
+	phone_timer.timeout.connect(_on_phone_timer_timeout)
+	phone_timer.start()
+
+func _on_phone_timer_timeout() -> void:
+	if is_instance_valid(phone_timer):
+		phone_timer.queue_free()
+		
 	telefone_tocando = true
 	
 	phone_audio = AudioStreamPlayer.new()
@@ -46,7 +57,7 @@ func _play_phone_ring_after_delay() -> void:
 	phone_audio.play()
 	
 	# Quando o áudio terminar, remove o node da memória para otimização
-	phone_audio.finished.connect(phone_audio.queue_free)
+	phone_audio.finished.connect(func(): if is_instance_valid(phone_audio): phone_audio.queue_free())
 
 
 func _show_intro_text() -> void:

@@ -273,9 +273,10 @@ func _spawn_red_explosion_vfx(pos: Vector3):
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	# HACK EXCLUSIVO: Mantém a mão mágica invisível durante as cutscenes da arena
-	if GlobalEvents.in_cutscene and is_instance_valid(player) and player.get("hand_with_magic") and is_instance_valid(player.hand_with_magic):
-		player.hand_with_magic.visible = false
+	# HACK EXCLUSIVO: Mantém a mão mágica invisível SOMENTE durante a cutscene do início (primeira vez no prólogo)
+	if animation_intro.is_playing() and animation_intro.current_animation == "intro_first_time":
+		if is_instance_valid(player) and player.get("hand_with_magic") and is_instance_valid(player.hand_with_magic):
+			player.hand_with_magic.visible = false
 
 	if is_instance_valid(camera_intro):
 		camera_intro.make_current()
