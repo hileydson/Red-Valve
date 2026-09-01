@@ -7,19 +7,60 @@
 
 ## 0. Sumário executivo
 
-A cidade **não será modelada à mão**. Ela será **gerada por scripts Python versionados**, alimentados por um
-arquivo `layout.json` que descreve eixos de rua, quadras, lotes e props. Isso é obrigatório por três motivos:
+### 0.1 Blender autora, Godot monta
 
-1. **Limite de payload do MCP.** Mandar milhares de linhas de `bpy` por chamada é frágil. Os scripts moram no
-   disco; o Blender só executa um *bootstrap* de 5 linhas.
-2. **Iterabilidade.** Você vai querer mudar largura de rua, densidade de postes, curvatura do eixo. Com dado
-   separado de código, é editar um número e re-rodar — não remodelar.
-3. **Reaproveitamento no Godot.** O mesmo `layout.json` pode depois posicionar colisões, waypoints de IA,
-   navmesh e os *spawns* de gameplay.
+A cidade é construída nos **dois** programas. A divisão não é preferência — é o que cada ferramenta
+consegue fazer:
 
-Regra de ouro do escopo que você definiu: **casas, igrejas e o cemitério são _proxies_ descartáveis**
-(volume + telhado + material certo, nada mais). **Ruas, meio-fio, calçada, postes, fiação, iluminação,
-praça, atmosfera, texturas e paleta são acabamento final.**
+| Trabalho | Onde | Por quê |
+|---|---|---|
+| Geometria, UV, vertex color | **Blender** | O Godot não desdobra UV nem tem operações de modelagem (bevel, boolean, solidify). CSG é protótipo e não gera UV; `ArrayMesh` por script gera malha, mas sem nenhuma dessas operações |
+| Textura: assar, atlas, *trim sheet*, ORM | **Blender** | O Godot não assa textura nenhuma |
+| Terreno, posicionamento, espalhamento | **Godot** | Terrain3D e Proton Scatter vivem lá; a colocação acontece contra o terreno real |
+| Iluminação, névoa, LUT, atmosfera | **Godot** | O render do Blender não é o seu renderer. Look calibrado fora do `mobile` @ 0.8 não bate |
+| Conferência visual | **Godot** | `editor_screenshot` pelo MCP fecha o loop na hora, dentro do jogo |
+
+**Consequência prática, e é a mais importante deste plano:** cada etapa termina com o resultado
+**dentro do jogo**, não com um render do Blender. O critério de aceite é sempre um screenshot no
+Godot, sob o Sky3D às 18:08. Nada é avaliado num ambiente que não é o de destino.
+
+A importação não é trabalho manual seu: eu exporto do Blender e monto no Godot no mesmo fluxo,
+pelos dois MCPs. O caminho já está provado no seu projeto — `auto_pecas_jimmy.glb` e
+`casa_inteira_por_fora.glb` entram exatamente assim.
+
+### 0.2 As ruas geram o terreno
+
+Inversão em relação à primeira versão deste plano. O terreno **não** vem primeiro com as ruas se
+adaptando a ele. Eu construo a malha viária no Blender e **derivo o heightmap dela**, que vai para o
+Terrain3D. Não existe "terreno do Blender" e "terreno do Godot" para manter em sincronia — existe um
+só, e as ruas assentam nele por construção. É assim que loteamento real funciona.
+
+### 0.3 A cidade mora em `city.tscn`, instanciada no `stage_1`
+
+Não construo dentro do `stage_1.tscn`. Construo em **`city.tscn`** e instancio como **um nó** dentro
+do `stage_1`. Você tem o que queria — está no `stage_1`, você move, esconde e liga com um clique —
+sem transformar um arquivo de 14 MB num de 100 MB, e sem eu precisar mexer na cena que já funciona
+enquanto itero. Se der errado, você deleta um nó.
+
+### 0.4 Tudo é gerado por script, não modelado à mão
+
+Os scripts Python moram no disco e leem um `layout.json`. Três motivos:
+
+1. **Limite de payload do MCP.** Mandar milhares de linhas de `bpy` por chamada é frágil. O Blender
+   executa só um *bootstrap* de 5 linhas.
+2. **Iterabilidade.** Você vai querer mudar largura de rua, densidade de postes, curvatura do eixo.
+   Com dado separado de código, é editar um número e re-rodar — não remodelar.
+3. **Reaproveitamento no Godot.** O mesmo `layout.json` posiciona colisões, âncoras de gameplay,
+   navmesh e *spawns*.
+
+**Idempotência**: toda função apaga a própria coleção antes de reconstruir. Rodar duas vezes nunca
+duplica geometria.
+
+### 0.5 Escopo
+
+Regra que você definiu: **casas, igrejas e cemitério são _proxies_ descartáveis** (volume, telhado e
+material certo, nada mais). **Ruas, meio-fio, calçada, postes, fiação, iluminação, praça, atmosfera,
+texturas e paleta são acabamento final.**
 
 ---
 
@@ -231,76 +272,96 @@ Coleções (o exportador varre por elas):
 ```
 CITY/
   00_REF/            blueprint, imagem de referência, REF_Human
-  01_TERRAIN/        malha do terreno (fonte do heightmap)
+  01_TERRAIN/        malha derivada das ruas → fonte do heightmap R16
   02_ROADS/          pista, meio-fio, calçada, sarjeta, remendos
   03_BLOCKS/         quadras, muros, cercas, portões, arrimos, degraus
   04_PROXY_BUILD/    ← DESCARTÁVEL: casas, sobrados
   05_LANDMARKS/      igreja, cemitério, obelisco, ETE  (proxy médio)
   06_STREET_FURN/    postes, luminárias, fios, placas, bueiros, lixo
   07_VEGETATION/     árvores urbanas, mata, arbustos
-  08_LIGHTING/       sol, céu, sondas (só look-dev, não exporta)
-  09_EXPORT/         cópias unidas por chunk + oclusores
+  08_LOOKDEV/        sol e céu só para conferir material — o look real é no Godot
+  09_EXPORT/         cópias unidas por chunk → .glb
 ```
 
-### 3.4 Estrutura de arquivos no repositório
+### 3.4 Estrutura de arquivos
+
+**Lado Blender** — a fábrica:
 
 ```
 tools/blender/citygen/
 ├── run.py                  bootstrap chamado pelo MCP
 ├── lib/
-│   ├── util.py             helpers de coleção, nome, limpeza idempotente
+│   ├── util.py             coleção, nome, limpeza idempotente
 │   ├── palette.py          paleta → cores lineares
-│   ├── materials.py        construção de todos os materiais
-│   ├── terrain.py          Etapa 1
-│   ├── roads.py            Etapa 2
-│   ├── blocks.py           Etapa 3
-│   ├── buildings.py        Etapa 4 (proxies)
-│   ├── landmarks.py        Etapa 5
-│   ├── props.py            Etapa 6 (postes/fios/placas)
-│   ├── vegetation.py       Etapa 7
-│   ├── lookdev.py          Etapa 8
-│   └── exporter.py         Etapa 9
+│   ├── materials.py        construção dos materiais
+│   ├── roads.py            Etapa 02 — malha viária (gera o terreno)
+│   ├── terrain.py          Etapa 01 — heightmap derivado das ruas
+│   ├── blocks.py           Etapa 03
+│   ├── buildings.py        Etapa 04 (proxies)
+│   ├── landmarks.py        Etapa 05
+│   ├── props.py            Etapa 06
+│   ├── vegetation.py       Etapa 07 — kit + pontos
+│   ├── bake.py             assar textura + empacotar ORM
+│   └── export.py           .glb por chunk, heightmap R16, splatmap
 ├── city_data/
-│   ├── layout.json         eixos de rua, quadras, lotes, praça
+│   ├── layout.json         eixos, quadras, lotes, praça
 │   ├── props.json          postes, placas, mobiliário, âncoras
 │   └── palette.json        a paleta da seção 2
-└── out/                    GLBs, heightmap, splatmap, renders
+└── out/                    .glb, heightmap, splatmap, texturas assadas
 ```
 
-**Bootstrap MCP** (a única coisa que trafega pelo MCP a cada chamada):
+**Lado Godot** — a obra:
+
+```
+red-valve/
+├── scenes/stages/city/
+│   ├── city.tscn                    ← instanciada dentro do stage_1
+│   ├── chunks/city_chunk_XX_YY.tscn  20 sub-cenas
+│   └── city_env.tres                 Environment calibrado
+├── assets/3d_model/city/
+│   ├── chunks/*.glb                  geometria unida por chunk
+│   ├── kit/*.glb                     postes, muros, árvores, props
+│   └── textures/*.png                albedo + ORM + normal (1024²)
+└── tools/godot/citybuild/
+    └── assemble.gd                   script de montagem chamado pelo MCP
+```
+
+**Bootstrap MCP no Blender** (a única coisa que trafega por chamada):
 
 ```python
 import sys, importlib
 P = r"/home/dev/Documents/Development/Game Development/Red Valve/Red-Valve/tools/blender/citygen"
 if P not in sys.path: sys.path.insert(0, P)
 import run; importlib.reload(run)
-run.phase(2)          # roda a Etapa 2 de forma idempotente
+run.phase(2)
 ```
-
-**Idempotência**: toda função apaga sua própria coleção antes de reconstruir. Rodar duas vezes nunca duplica
-geometria. Isso é o que torna a iteração viável.
 
 ---
 
 ## 4. Pipeline de textura e material
 
-### 4.1 Restrições reais do seu projeto (verificadas no `project.godot`)
+### 4.1 Restrições reais, verificadas no projeto
 
 | Achado | Consequência para o plano |
 |---|---|
-| `renderer/rendering_method="mobile"` | **Sem** VoxelGI, SDFGI, névoa volumétrica, SSAO/SSIL/SSR. GI tem que ser **assada** (LightmapGI) ou pintada no material |
-| `scaling_3d/scale=0.8` | Render a 80% e *upscale*. **Detalhe de média frequência ganha de micro-detalhe** — invista em manchas/desgaste de 10–50 cm, não em poro de 2 mm |
-| `occlusion_culling=true` | Preciso **gerar `OccluderInstance3D`** a partir do volume dos prédios, ou a cidade densa não vai render bem |
-| Addon `terrain_3d` (+ dados `.res` já existentes) | O chão **não sai como malha do Blender** — sai como **heightmap R16 + splatmap** para o Terrain3D |
-| Addon `proton_scatter` | Vegetação e entulho **são espalhados no Godot**, não assados no Blender. Blender entrega só o *kit* de árvores/arbustos |
-| Addons `sky_3d`, `SunshineClouds2` | Céu e nuvens são do Godot. A luz do Blender é **só para look-dev/conferência** |
-| Texturas do `RealisticTexturePack` são **1024²** | Mantenho 1024² como padrão para coerência com o `stage_1` |
-| `stage_1.tscn` = **14 MB monolítico** | A cidade **não pode** repetir isso. Vai em `.glb` externos + cenas por chunk |
+| `rendering_method="mobile"` | **Sem** VoxelGI, SDFGI, névoa volumétrica, SSAO/SSIL/SSR. GI tem que ser **assada** (LightmapGI) |
+| `scaling_3d/scale=0.8` | Render a 80% com *upscale*. **Detalhe de 10–50 cm ganha de micro-detalhe** — invista em manchas e desgaste, não em poro de 2 mm |
+| `occlusion_culling=true` | Preciso **gerar `OccluderInstance3D`** por chunk, ou a cidade densa não renderiza bem |
+| Addon `terrain_3d` (dados já existem) | O chão sai como **heightmap R16 + splatmap**, derivado das ruas (§0.2) |
+| Addon `proton_scatter` | Vegetação e entulho são espalhados **no Godot**. Blender entrega só o *kit* |
+| Addons `sky_3d`, `SunshineClouds2` | Céu e nuvens são do Godot |
+| `RealisticTexturePack` em 1024² | Mantenho 1024² como padrão — coerência visual com o `stage_1` |
+| `stage_1.tscn` = **14 MB** monolítico | A cidade vai em `city.tscn` instanciada, com `.glb` externos por chunk |
 
-> ⚠️ Observação: o `stage_1` tem `volumetric_fog_enabled` e `VoxelGI` configurados, mas **o renderer mobile
-> ignora os dois em runtime**. Se a névoa que você vê no jogo hoje não bate com a do editor, é essa a causa.
-> A atmosfera da cidade vai ser construída com **fog de profundidade + céu + partículas de poeira**, que
-> funcionam no mobile.
+**Achados específicos do `stage_1`** (medidos na cena):
+
+| Achado | Consequência |
+|---|---|
+| **Dois `WorldEnvironment` aninhados** — `Sky3D` é filho de `WorldEnvironment`, ambos com Environment atribuído | Só um vale, e é o do `Sky3D`. O `fog_enabled` e o `glow_enabled` do pai **não estão sendo aplicados** — hoje não há névoa de profundidade rodando. **Corrigir na Etapa 00** |
+| `TimeOfDay` congelado em **18:08**, `editor_time_enabled` e `game_time_enabled` ambos `false` | Notícia boa: já é golden hour, a hora da referência. A base atmosférica está certa — é a âncora do look-dev |
+| GLB de cenário com **20–34 MB cada** (um armário tem 29 MB) | Peso que não vira imagem no mobile @ 0.8. A cidade inteira, 20 chunks, deve ficar **menor que um** desses arquivos. É o principal motivo de ativos avulsos não assentarem juntos |
+| Conteúdo espalhado por **1450 × 1037 m**, player em `(486, 448)` | Cabe uma cidade de 600 × 420 m com folga, numa região livre do Terrain3D. Narrativamente a trilha da mata desemboca nela |
+| `volumetric_fog` e `VoxelGI` configurados | **Ignorados em runtime pelo renderer mobile.** Se a névoa do jogo não bate com a do editor, é essa a causa |
 
 ### 4.2 Estratégia de textura
 
@@ -387,126 +448,141 @@ Mais **~14 secundárias** e **~20 becos** sem placa, gerados proceduralmente a p
 
 ## 7. As Etapas
 
-Cada etapa é **um pedido fechado**. Ao fim de cada uma eu entrego: os scripts commitáveis, um **render de
-viewport de conferência**, e o critério de aceite verificado. Só avanço com seu OK.
+Cada etapa tem **metade Blender e metade Godot**, e termina com o resultado **dentro do jogo**.
+O critério de aceite é sempre um screenshot no Godot, sob o Sky3D às 18:08 — nunca um render do
+Blender. Ao fim de cada etapa entrego os scripts commitáveis dos dois lados. Só avanço com seu OK.
 
 ---
 
-### Etapa 0 — Fundação e look-dev (1 sessão)
+### Etapa 00 — Fundação e look base
 
-**Faço:** estrutura de pastas e coleções · `palette.json` com a seção 2 · `materials.py` com todos os
-materiais já nas cores certas · `REF_Human` · imagem de referência como *background* alinhada ·
-sol a 22° + céu de look-dev · uma **"placa de teste"** com todos os materiais lado a lado.
+**Blender:** estrutura de coleções · `palette.json` com a seção 2 · `materials.py` com todos os
+materiais nas cores certas · `REF_Human` · imagem de referência alinhada · **placa de teste** com
+todos os materiais lado a lado.
 
-**Aceite:** o render da placa de teste bate com a paleta da referência quando comparado lado a lado.
+**Godot:** cria `scenes/stages/city/city.tscn` e instancia no `stage_1` · **corrige o conflito dos
+dois `WorldEnvironment`** · cria `city_env.tres` com fog de profundidade de fato ativo · confirma o
+`TimeOfDay` travado em 18:08 · importa a placa de teste para dentro da cena.
 
-> Esta etapa vale ouro. Acertar a cor **antes** de modelar evita refazer tudo depois.
-
----
-
-### Etapa 1 — Terreno e `layout.json` (1 sessão)
-
-**Faço:** malha de terreno 600×420 m com a bacia rasa (queda de ~15 m para SE, patamar da igreja, cota baixa
-da ETE) · escrevo o **`layout.json` completo**: todos os eixos de rua como polilinhas com largura e classe,
-polígonos de quadra, subdivisão em lotes, footprints dos *landmarks*, limite da mata · marcações visuais
-das quadras sobre o terreno para você conferir a planta de cima.
-
-**Aceite:** vista de topo do *blockout* comparável à referência; você aprova a planta antes de eu gastar
-esforço em acabamento.
-
-**Este é o ponto de decisão mais importante do projeto.** Se a planta estiver certa, o resto flui.
+**Aceite:** screenshot da placa de teste **no Godot**, sob o Sky3D, comparada lado a lado com a
+referência. Acertar a cor no ambiente de destino antes de modelar evita refazer tudo depois.
 
 ---
 
-### Etapa 2 — Sistema viário completo ⭐ *(prioridade máxima sua)*
+### Etapa 01 — Traçado e terreno derivado ⭐ *decisão*
 
-**Faço:** geração da malha viária a partir das polilinhas — pista com **abaulamento de 2%** projetada no
-terreno · **meio-fio** com quebras e trechos faltando · **calçada** com placas trincadas e trechos ausentes ·
-**sarjeta** com vertex color de sujeira · **cruzamentos** resolvidos com sobras triangulares · **remendos de
-asfalto** como geometria decalcada · **trilhas de roda** pintadas em vertex color · bueiros e grelhas ·
-degraus e arrimos onde a rua vence desnível · transição paralelepípedo → terra batida nos becos.
+**Blender:** `layout.json` completo — eixos de rua como polilinhas com largura e classe, polígonos
+de quadra, subdivisão em lotes, *footprints* dos landmarks, limite da mata · malha viária esquemática
+· **deriva o heightmap R16 e o splatmap a partir das ruas** (§0.2).
 
-**Aceite:** perfil transversal correto em corte; a rua lê como rua a 1,70 m de altura (vista do jogador),
-não só de cima.
+**Godot:** escolhe a região livre do Terrain3D (longe da trilha e da oficina do Jimmy) · aplica
+heightmap e splatmap · screenshot de topo.
 
-*Provável 2 sessões — é a etapa mais pesada e a que você mais quer bem feita.*
+**Aceite:** vista de topo no Godot comparável à planta da seção 6. **Ponto de decisão mais importante
+do projeto** — aprovada a planta, o resto flui.
 
 ---
 
-### Etapa 3 — Quadras, muros e divisas (1 sessão)
+### Etapa 02 — Sistema viário ⭐ *prioridade máxima sua*
 
-**Faço:** muros de divisa modulares (1,8–2,2 m) com topo quebrado · cercas de madeira e arame · portões de
-chapa · arrimos e escadas entre lotes · calçamento de quintal · terrenos baldios com massa de mato ·
-tudo em **MultiMesh** a partir de ~10 módulos.
+**Blender:** pista com abaulamento de 2% · meio-fio com quebras e trechos faltando · calçada trincada
+e **ausente em trechos** · sarjeta em vertex color · cruzamentos com sobras triangulares · remendos
+de asfalto · trilhas de roda · bueiros e grelhas · degraus e arrimos vencendo desnível · transição
+paralelepípedo → terra batida nos becos · **UV ao longo do caminho** · texturas assadas (`T_cobble`,
+`T_cobble_worn`, `T_sidewalk`, `T_dirt`) com ORM empacotado.
+
+**Godot:** importa os `.glb` por chunk · aplica `StandardMaterial3D` com ORM · colisão · screenshots
+**a 1,70 m de altura** e do ângulo aéreo da referência.
+
+**Aceite:** a rua lê como rua na altura do jogador, dentro do jogo — não só de cima.
+*Provável 2 sessões: é a etapa mais pesada e a que você mais quer bem feita.*
+
+---
+
+### Etapa 03 — Quadras, muros e divisas
+
+**Blender:** kit de ~10 módulos — muro de 1,8–2,2 m com topo quebrado, cerca de madeira, cerca de
+arame, portão de chapa, arrimo, escada, mureta.
+
+**Godot:** MultiMesh ao longo das divisas do `layout.json` · terrenos baldios · screenshot em nível
+de rua.
 
 **Aceite:** a silhueta em nível de rua já parece uma cidade mesmo sem casas.
 
 ---
 
-### Etapa 4 — Casas proxy (1 sessão) — *descartável*
+### Etapa 04 — Casas proxy — *descartável*
 
-**Faço:** ~12 variantes paramétricas (térrea telha colonial, térrea metálica, sobrado, sobrado comercial com
-toldo e letreiro, ruína) · instanciadas nos lotes com rotação/escala/paleta variadas · caixa d'água, antena,
-varal como props opcionais por casa · **cada casa com um `EMP_` de âncora** para você trocar depois.
+**Blender:** ~12 variantes paramétricas (térrea colonial, térrea metálica, sobrado, sobrado comercial
+com toldo e letreiro, ruína), 250–500 tris cada.
+
+**Godot:** instanciadas nos lotes com rotação, escala e paleta variadas · caixa d'água, antena e varal
+como props opcionais · **um `EMP_` de âncora por casa** para você trocar depois.
 
 **Aceite:** massa e ritmo dos telhados batendo com a referência. **Sem investir em detalhe** — é proxy.
 
 ---
 
-### Etapa 5 — *Landmarks* (1 sessão) — *igreja/cemitério em proxy, ETE em acabamento*
+### Etapa 05 — Landmarks
 
-**Faço:** **Igreja Matriz** proxy (nave + torre + coruchéu + adro com degraus, telhado ardósia) ·
-**Complexo do Cemitério** proxy (capela, mausoléu, muro de pedra, caminhos de saibro, ciprestes) ·
-**Praça do Obelisco** em acabamento (rotatória, ilha ajardinada, obelisco com base escalonada, bancos,
-canteiro) · **ETE em acabamento** (tanques circulares, ponte de clarificador, bacias, deck, tubulação, cerca).
+**Blender:** igreja matriz e complexo do cemitério em **proxy** · praça do obelisco e ETE em
+**acabamento**.
 
-**Aceite:** silhuetas corretas na vista aérea; praça e ETE prontas para o jogo.
+**Godot:** posicionados · praça com pavimento radial e ilha ajardinada · ETE com tanques, ponte de
+clarificador, bacias, deck, tubulação e cerca.
 
----
-
-### Etapa 6 — Postes, fiação e mobiliário ⭐ *(prioridade máxima sua)*
-
-**Faço:** poste + braço + luminária no *trim sheet* · distribuição a cada ~32 m com inclinação aleatória ·
-**catenárias reais** (3 cabos por vão, flecha calculada, feixe de telecom bagunçado) · transformadores ·
-estais · **placas de nome de rua** com o atlas de texto · bueiros, lixeiras, tambores, pneus, caixotes,
-pilhas de entulho, veículos abandonados · tudo em MultiMesh.
-
-**Aceite:** a fiação cruzando o céu na vista aérea é a assinatura visual da referência — tem que estar lá.
+**Aceite:** silhuetas corretas na vista aérea; praça e ETE já prontas para o jogo.
 
 ---
 
-### Etapa 7 — Vegetação e anel de mata (1 sessão)
+### Etapa 06 — Postes, fiação e mobiliário ⭐ *prioridade máxima sua*
 
-**Faço:** kit de árvores (dossel de mata, copa urbana larga, cipreste, arbusto, moita de mato) reaproveitando
-`BIRCH`/`SPRUCE` que você já tem quando couber · **anel de mata** com silhueta irregular e emergentes ·
-árvores urbanas nas praças e quintais · mato em terreno baldio, junta de calçada e pé de muro ·
-**exporto os pontos de espalhamento para o Proton Scatter** em vez de assar tudo no Blender.
+**Blender:** poste, braço e luminária no *trim sheet* · **catenárias com flecha calculada** e feixe
+de telecom bagunçado · transformador · estais · placas de rua com atlas de texto assado · bueiros,
+lixeiras, tambores, pneus, caixotes, entulho, veículos abandonados.
 
-**Aceite:** a linha do horizonte de mata fecha a cidade por todos os lados, como na referência.
+**Godot:** MultiMesh a cada ~32 m com inclinação aleatória de ±3° · luminárias com material
+`emission` · **a luz dos postes vai assada no LightmapGI, não em 60 `OmniLight3D`** — só 2–4 luzes
+dinâmicas perto do jogador, ativadas por `VisibleOnScreenNotifier3D`.
 
----
-
-### Etapa 8 — Look-dev final e atmosfera (1 sessão)
-
-**Faço:** ajuste fino de toda a paleta em conjunto · máscaras de sujeira/desgaste por vertex color em tudo ·
-sol/céu/névoa calibrados · **3 renders de conferência** (o ângulo aéreo da referência, uma vista de rua a
-1,70 m, e um contra-luz) · **LUT sépia** exportada para o Godot · **preset de `Environment`** pronto para colar.
-
-**Aceite:** o render aéreo lado a lado com a referência — é aqui que a gente fecha a estética.
+**Aceite:** a fiação cruzando o céu na vista aérea. É a assinatura visual da referência.
 
 ---
 
-### Etapa 9 — Export e integração no Godot (1–2 sessões)
+### Etapa 07 — Vegetação e anel de mata
 
-**Faço:** bake de todos os materiais procedurais para textura (ORM empacotado) · **heightmap R16 + splatmap**
-para o Terrain3D · união estática por chunk → **20 `.glb`** em `assets/3d_model/city/` · **colisões
-simplificadas** (`COL_`) e trimesh só onde precisa · **`OccluderInstance3D`** por chunk · LOD0/LOD1 ·
-cena `city_root.tscn` com sub-cenas por chunk (**sem repetir o monolito de 14 MB do `stage_1`**) ·
-`Environment` + `LightmapGI` + `DirectionalLight3D` configurados · `props.json` com as âncoras de gameplay.
+**Blender:** kit de árvores — dossel de mata, copa urbana larga, cipreste, arbusto, moita —
+reaproveitando `BIRCH` e `SPRUCE` que você já tem onde couber.
 
-**Aceite:** roda no editor dentro do orçamento da seção 5, com o *profiler* aberto.
+**Godot:** **Proton Scatter** para o anel de mata com silhueta irregular, árvores urbanas em praças e
+quintais, mato em terreno baldio, junta de calçada e pé de muro.
+
+**Aceite:** a linha de horizonte de mata fecha a cidade por todos os lados, como na referência.
 
 ---
+
+### Etapa 08 — Atmosfera e look final
+
+**Blender:** ajuste fino da paleta em conjunto · máscaras de sujeira e desgaste em vertex color ·
+rebake do que precisar.
+
+**Godot — aqui é o grosso do trabalho:** calibra o fog de profundidade (`fog_light_color` = `#C8A870`,
+`fog_aerial_perspective` alto, densidade baixa) · tonemap Filmic ou AgX · **LUT sépia** em
+`adjustment_enabled` · partículas de poeira · **LightmapGI assado** · afinação do Sky3D às 18:08.
+
+**Aceite:** screenshot aéreo **no jogo** lado a lado com a referência. É aqui que a estética fecha.
+
+---
+
+### Etapa 09 — Otimização e fechamento
+
+A integração já aconteceu ao longo de todas as etapas anteriores — esta é só o fechamento técnico.
+
+**Godot:** `OccluderInstance3D` por chunk · LOD0/LOD1 · colisões simplificadas e trimesh só onde
+precisa · união estática por chunk · navmesh · `props.json` com as âncoras de gameplay · passagem com
+o *profiler*.
+
+**Aceite:** roda dentro do orçamento da seção 5, com o *profiler* aberto.
 
 ## 8. Âncoras de gameplay (opcional, mas barato agora)
 
@@ -525,26 +601,27 @@ agora e que custariam retrabalho depois. Se não quiser, é só dizer e eu remov
 
 ## 9. Como me pedir cada etapa
 
-Formato do pedido (curto é suficiente — o contexto está neste documento):
+Pedido curto basta — o contexto está neste documento.
 
 ```
-Executa a Etapa 2 do plano da cidade.
+Executa a Etapa 02 do plano da cidade.
 ```
 
-Se quiser ajustar algo antes:
+Com ajuste antes de executar:
 
 ```
-Executa a Etapa 2, mas com calçada de 1,8 m nas principais
+Executa a Etapa 02, mas com calçada de 1,8 m nas principais
 e sem remendo de asfalto na Margarida Maria Alves.
 ```
 
-Para revisar sem reconstruir:
+Para rever sem reconstruir (screenshot no Godot, não render do Blender):
 
 ```
-Me mostra um render da Etapa 2 do ângulo da referência.
+Me mostra a Etapa 02 do ângulo da referência e a 1,70 m.
 ```
 
-**Ordem recomendada:** `0 → 1 → 2 → 6 → 3 → 4 → 5 → 7 → 8 → 9`.
+**Ordem recomendada:** `00 → 01 → 02 → 06 → 03 → 04 → 05 → 07 → 08 → 09`.
 
-A troca (6 antes de 3/4) é proposital: **postes e fiação junto com a rua já entregam a estética da referência**
-em nível de rua. Você consegue avaliar se a direção está certa antes de gastar sessões em massa construída.
+A troca (06 antes de 03 e 04) é proposital: **rua e fiação juntas já entregam a estética da
+referência em nível de rua**. Você julga se a direção está certa dentro do jogo, antes de gastar
+sessões inteiras em massa construída.
