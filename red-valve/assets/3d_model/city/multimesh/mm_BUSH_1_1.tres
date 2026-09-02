@@ -1,0 +1,44 @@
+[gd_resource type="MultiMesh" format=4 uid="uid://biie2fd6kl27m"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wo2xi"]
+resource_name = "MI_canopy_urban"
+cull_mode = 2
+albedo_color = Color(0.33333334, 0.37647057, 0.227451, 1)
+roughness = 0.9
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_rr3xv"]
+_surfaces = [{
+"aabb": AABB(-0.85, 0, -0.7361216, 1.7, 1.25, 1.4722432),
+"format": 34896613377,
+"index_count": 30,
+"index_data": PackedByteArray("AAABAAIAAwAAAAIAAgABAAMABAABAAAAAAAFAAQABQABAAQABQAAAAMAAwABAAYABgABAAUABQADAAYA"),
+"name": "MI_canopy_urban",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 7,
+"vertex_data": PackedByteArray("//8AAP9/AAD/f////38AAP+/AAAAAAAA/z8AAAAAAAD/vwAA//8AAP8/AAD//wAAAAAAAP9/AAA=")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_uoajy"]
+resource_name = "city_vegkit_BUSH"
+_surfaces = [{
+"aabb": AABB(-0.85, 0, -0.7361216, 1.7, 1.25, 1.4722432),
+"format": 34896613383,
+"index_count": 30,
+"index_data": PackedByteArray("AAABAAIAAwAEAAUABgAHAAgACQAKAAsADAANAA4ADwAQABEAEgATABQAEwASABUAFQASABYAEwAVABcA"),
+"material": SubResource("StandardMaterial3D_wo2xi"),
+"name": "MI_canopy_urban",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("//8AAP9/9Pn/f////3/0+f+/AAAAAPT5/78AAAAAJPP/f////38k8/8/AAAAACTz/z8AAAAAIuP/f////38i4wAAAAD/fyLjAAAAAP9/Yr3/f////39ivf8/AAD//2K9/z8AAP//8c3/f////3/xzf+/AAD///HN/78AAP//If3/f////38h/f//AAD/fyH9//8AAP9/////PwAA//////+/AAD//////z8AAAAA////vwAAAAD//wAAAAD/f///d7rQnHe60Jx3utCcjMBCL4zAQi+MwEIvS2xbyEtsW8hLbFvIioRqxIqEasSKhGrEm5Gjl5uRo5ebkaOXuKTLlriky5a4pMuW/3//P/9//z//f/8//3//P/9//z//f/8/")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_rr3xv")
+
+[resource]
+transform_format = 1
+instance_count = 22
+mesh = SubResource("ArrayMesh_uoajy")
+buffer = PackedFloat32Array(-1.2654423, 0, 0.062808126, 342.25, 0, 1.267, 0, -1.97, -0.062808126, 0, -1.2654423, 261.94, -1.0066303, 0, 0.9930215, 384.83, 0, 1.414, 0, -2.26, -0.9930215, 0, -1.0066303, 260.46, 1.0371267, 0, -0.83900195, 400.32, 0, 1.334, 0, -2.23, 0.83900195, 0, 1.0371267, 257.78, -0.887152, 0, 0.13915908, 466.05, 0, 0.898, 0, -2.69, -0.13915908, 0, -0.887152, 260.35, 1.329157, 0, 0.17782764, 496.33, 0, 1.341, 0, -3.01, -0.17782764, 0, 1.329157, 256.83, -0.75969356, 0, -0.09808994, 358.03, 0, 0.766, 0, -2.1, 0.09808994, 0, -0.75969356, 265.69, -0.7266957, 0, 0.84169906, 359.21, 0, 1.112, 0, -2.14, -0.84169906, 0, -0.7266957, 267.41, 0.95261174, 0, 0.5775177, 379.23, 0, 1.114, 0, -2.3, -0.5775177, 0, 0.95261174, 265.43, 0.83805454, 0, 1.0825088, 384.06, 0, 1.369, 0, -2.31, -1.0825088, 0, 0.83805454, 263.15, -1.004417, 0, -0.2990827, 411.85, 0, 1.048, 0, -2.49, 0.2990827, 0, -1.004417, 266.45, -0.7532567, 0, -0.033472218, 419.56, 0, 0.754, 0, -2.43, 0.033472218, 0, -0.7532567, 265.75, -0.9867207, 0, -0.39000407, 443.15, 0, 1.061, 0, -2.4, 0.39000407, 0, -0.9867207, 259.82, 1.3463315, 0, -0.17763919, 458.67, 0, 1.358, 0, -2.64, 0.17763919, 0, 1.3463315, 264.86, -0.95097494, 0, -0.66948915, 490.51, 0, 1.163, 0, -2.95, 0.66948915, 0, -0.95097494, 261.34, -0.00028226333, 0, 1.386, 498.21, 0, 1.386, 0, -3.14, -1.386, 0, -0.00028226333, 262.78, 0.16128431, 0, -1.1477232, 362.29, 0, 1.159, 0, -2.29, 1.1477232, 0, 0.16128431, 274.01, 0.96319515, 0, 0.4796155, 399.78, 0, 1.076, 0, -2.72, -0.4796155, 0, 0.96319515, 271.39, -0.46626592, 0, 0.82540905, 400.91, 0, 0.948, 0, -2.64, -0.82540905, 0, -0.46626592, 269.56, -1.1487101, 0, 0.38653445, 436.14, 0, 1.212, 0, -2.77, -0.38653445, 0, -1.1487101, 272.86, -1.1869955, 0, 0.63250846, 452.42, 0, 1.345, 0, -2.8, -0.63250846, 0, -1.1869955, 271.99, -0.5944106, 0, -0.9064944, 488.85, 0, 1.084, 0, -3.15, 0.9064944, 0, -0.5944106, 276.62, -1.4072553, 0, 0.25403196, 496.11, 0, 1.43, 0, -3.16, -0.25403196, 0, -1.4072553, 268.89)

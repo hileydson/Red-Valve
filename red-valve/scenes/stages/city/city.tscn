@@ -1,0 +1,415 @@
+[gd_scene format=3 uid="uid://wwtg631i4nh0"]
+
+[ext_resource type="PackedScene" uid="uid://cotafpohvrged" path="res://assets/3d_model/city/city_testplate.glb" id="1_huve1"]
+[ext_resource type="PackedScene" uid="uid://df055xwttsvmu" path="res://assets/3d_model/city/city_roads.gltf" id="2_g3cjf"]
+[ext_resource type="PackedScene" uid="uid://cwqbh8nhatppg" path="res://assets/3d_model/city/city_walls.gltf" id="3_m0get"]
+[ext_resource type="PackedScene" uid="uid://he7gr4cvf0xj" path="res://assets/3d_model/city/city_houses.gltf" id="4_34eo7"]
+[ext_resource type="PackedScene" uid="uid://cluvp5bokyg80" path="res://assets/3d_model/city/city_props.gltf" id="5_qp32r"]
+[ext_resource type="PackedScene" uid="uid://dp886po4efq6s" path="res://assets/3d_model/city/city_landmarks.gltf" id="6_m0get"]
+[ext_resource type="Script" uid="uid://bmfibb2be6qi5" path="res://tools/godot/citybuild/city_vegetation.gd" id="7_njg1m"]
+[ext_resource type="MultiMesh" uid="uid://bvyyq0atnm51o" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_-3_-2.tres" id="8_bfptn"]
+[ext_resource type="MultiMesh" uid="uid://blfde5y7ipt5t" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_-2_-2.tres" id="9_j4oxn"]
+[ext_resource type="MultiMesh" uid="uid://dyik50v2171js" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_-1_-2.tres" id="10_aueo2"]
+[ext_resource type="MultiMesh" uid="uid://cw37fltypnxkg" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_0_-2.tres" id="11_8fvkf"]
+[ext_resource type="MultiMesh" uid="uid://dop8hbmfrh5hy" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_1_-2.tres" id="12_vj6nr"]
+[ext_resource type="MultiMesh" uid="uid://bpfhwlmubm8r1" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_2_-2.tres" id="13_5tllo"]
+[ext_resource type="MultiMesh" uid="uid://b1g1c1ceolnrk" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_-3_-1.tres" id="14_kjf8u"]
+[ext_resource type="MultiMesh" uid="uid://m7f4ovce7u5x" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_-2_-1.tres" id="15_75wkh"]
+[ext_resource type="MultiMesh" uid="uid://cf8nqrk56gnff" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_-1_-1.tres" id="16_shr21"]
+[ext_resource type="MultiMesh" uid="uid://eqkc0n38rlr8" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_0_-1.tres" id="17_oft1q"]
+[ext_resource type="MultiMesh" uid="uid://dvni43vo51jqe" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_1_-1.tres" id="18_djoxf"]
+[ext_resource type="MultiMesh" uid="uid://bllot3c01oemq" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_2_-1.tres" id="19_5qmw6"]
+[ext_resource type="MultiMesh" uid="uid://dqgnyjgirtegj" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_-3_0.tres" id="20_y1c4q"]
+[ext_resource type="MultiMesh" uid="uid://uqcmxc6317nw" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_-2_0.tres" id="21_ur33l"]
+[ext_resource type="MultiMesh" uid="uid://cdq3b0pfj2xk8" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_1_0.tres" id="22_ks4jh"]
+[ext_resource type="MultiMesh" uid="uid://chqvu0yr275xh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_2_0.tres" id="23_xpxbx"]
+[ext_resource type="MultiMesh" uid="uid://djnar1ln8qyrj" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_-3_1.tres" id="24_2gj1f"]
+[ext_resource type="MultiMesh" uid="uid://cqgsh3j56qfen" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_-2_1.tres" id="25_c777i"]
+[ext_resource type="MultiMesh" uid="uid://1kfcjt6b70vn" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_1_1.tres" id="26_8a3ba"]
+[ext_resource type="MultiMesh" uid="uid://cel8tv4u6h7q5" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_2_1.tres" id="27_c3836"]
+[ext_resource type="MultiMesh" uid="uid://cwju1qw1w3iw4" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_-3_-2.tres" id="28_ogikw"]
+[ext_resource type="MultiMesh" uid="uid://i2u8ovr2vdj7" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_-2_-2.tres" id="29_47b4r"]
+[ext_resource type="MultiMesh" uid="uid://dvf0uug24mbyf" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_-1_-2.tres" id="30_n7tnc"]
+[ext_resource type="MultiMesh" uid="uid://ll34dw54s7e4" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_0_-2.tres" id="31_4r28a"]
+[ext_resource type="MultiMesh" uid="uid://b8xtr24i5ihfv" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_1_-2.tres" id="32_80rvp"]
+[ext_resource type="MultiMesh" uid="uid://eta8wp65jk38" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_2_-2.tres" id="33_tbja7"]
+[ext_resource type="MultiMesh" uid="uid://yq6v6j0edaeq" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_-3_-1.tres" id="34_lplek"]
+[ext_resource type="MultiMesh" uid="uid://dq6b67rytollr" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_-2_-1.tres" id="35_6qqgr"]
+[ext_resource type="MultiMesh" uid="uid://ddbdfy3uvbfbe" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_-1_-1.tres" id="36_okv5i"]
+[ext_resource type="MultiMesh" uid="uid://ds3neroyhc7ve" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_0_-1.tres" id="37_urm2q"]
+[ext_resource type="MultiMesh" uid="uid://cx8kqm22oq1p6" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_1_-1.tres" id="38_qpeeq"]
+[ext_resource type="MultiMesh" uid="uid://q0yrqya55n3t" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_2_-1.tres" id="39_b24jn"]
+[ext_resource type="MultiMesh" uid="uid://xvxoiuim5mw8" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_-3_0.tres" id="40_wwe11"]
+[ext_resource type="MultiMesh" uid="uid://i0fcnurvpf50" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_-2_0.tres" id="41_82kpb"]
+[ext_resource type="MultiMesh" uid="uid://dsp8tijlvfo4e" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_1_0.tres" id="42_7yblj"]
+[ext_resource type="MultiMesh" uid="uid://bswuj11eea7hp" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_2_0.tres" id="43_4fng1"]
+[ext_resource type="MultiMesh" uid="uid://dh50evek4my5p" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_-3_1.tres" id="44_5wwxu"]
+[ext_resource type="MultiMesh" uid="uid://c3hbawv3f522r" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_-2_1.tres" id="45_mtgvm"]
+[ext_resource type="MultiMesh" uid="uid://boh5wiy3s4h4c" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_1_1.tres" id="46_biofd"]
+[ext_resource type="MultiMesh" uid="uid://cduo38b6t0c5n" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_2_1.tres" id="47_adwbb"]
+[ext_resource type="MultiMesh" uid="uid://dr2ueli57c7av" path="res://assets/3d_model/city/multimesh/mm_TREE_urban_0_-1.tres" id="48_ypme0"]
+[ext_resource type="MultiMesh" uid="uid://bwow3s714kxrg" path="res://assets/3d_model/city/multimesh/mm_TREE_urban_-1_-1.tres" id="49_6j0lh"]
+[ext_resource type="MultiMesh" uid="uid://dc10dcdj5fbk4" path="res://assets/3d_model/city/multimesh/mm_TREE_urban_-1_0.tres" id="50_4fwh0"]
+[ext_resource type="MultiMesh" uid="uid://yg66ge6usg1" path="res://assets/3d_model/city/multimesh/mm_TREE_urban_0_0.tres" id="51_x65vv"]
+[ext_resource type="MultiMesh" uid="uid://diqf3bce7l133" path="res://assets/3d_model/city/multimesh/mm_TREE_cypress_-1_-1.tres" id="52_wbty5"]
+[ext_resource type="MultiMesh" uid="uid://cei8isykg6qm5" path="res://assets/3d_model/city/multimesh/mm_TREE_cypress_-1_0.tres" id="53_8ryt5"]
+[ext_resource type="MultiMesh" uid="uid://m5yd0tl1vobk" path="res://assets/3d_model/city/multimesh/mm_TREE_cypress_-2_-1.tres" id="54_gkcsq"]
+[ext_resource type="MultiMesh" uid="uid://vn7hmfyyvj1m" path="res://assets/3d_model/city/multimesh/mm_BUSH_-3_-2.tres" id="55_nemrd"]
+[ext_resource type="MultiMesh" uid="uid://ce8h7kax40fcj" path="res://assets/3d_model/city/multimesh/mm_BUSH_-2_-2.tres" id="56_ovsq7"]
+[ext_resource type="MultiMesh" uid="uid://dujkysyt6wp4h" path="res://assets/3d_model/city/multimesh/mm_BUSH_-1_-2.tres" id="57_1x2v7"]
+[ext_resource type="MultiMesh" uid="uid://bu0oqcfyq5oha" path="res://assets/3d_model/city/multimesh/mm_BUSH_0_-2.tres" id="58_pyoy1"]
+[ext_resource type="MultiMesh" uid="uid://13f8vv54f7a5" path="res://assets/3d_model/city/multimesh/mm_BUSH_1_-2.tres" id="59_o43it"]
+[ext_resource type="MultiMesh" uid="uid://oyfblwn1f526" path="res://assets/3d_model/city/multimesh/mm_BUSH_2_-2.tres" id="60_4jxxf"]
+[ext_resource type="MultiMesh" uid="uid://nsew6p3ujp1o" path="res://assets/3d_model/city/multimesh/mm_BUSH_-3_-1.tres" id="61_66vw3"]
+[ext_resource type="MultiMesh" uid="uid://xid5x75i6w4d" path="res://assets/3d_model/city/multimesh/mm_BUSH_-2_-1.tres" id="62_b4eut"]
+[ext_resource type="MultiMesh" uid="uid://bdjc8u1h7txyt" path="res://assets/3d_model/city/multimesh/mm_BUSH_-1_-1.tres" id="63_b58vb"]
+[ext_resource type="MultiMesh" uid="uid://b62w0pppv8tjp" path="res://assets/3d_model/city/multimesh/mm_BUSH_0_-1.tres" id="64_l0gyn"]
+[ext_resource type="MultiMesh" uid="uid://bdq0e0uywx4gf" path="res://assets/3d_model/city/multimesh/mm_BUSH_1_-1.tres" id="65_7f7ny"]
+[ext_resource type="MultiMesh" uid="uid://1g3bd4lpqvh7" path="res://assets/3d_model/city/multimesh/mm_BUSH_2_-1.tres" id="66_7voq0"]
+[ext_resource type="MultiMesh" uid="uid://8ky1qgmaacfy" path="res://assets/3d_model/city/multimesh/mm_BUSH_-3_0.tres" id="67_aq7ps"]
+[ext_resource type="MultiMesh" uid="uid://sphvcx00h7ec" path="res://assets/3d_model/city/multimesh/mm_BUSH_-2_0.tres" id="68_4ut2y"]
+[ext_resource type="MultiMesh" uid="uid://crq00hh0j3f5w" path="res://assets/3d_model/city/multimesh/mm_BUSH_1_0.tres" id="69_hpmhf"]
+[ext_resource type="MultiMesh" uid="uid://c40rkmt8p2afr" path="res://assets/3d_model/city/multimesh/mm_BUSH_2_0.tres" id="70_pax5t"]
+[ext_resource type="MultiMesh" uid="uid://nl6uylt167yi" path="res://assets/3d_model/city/multimesh/mm_BUSH_-3_1.tres" id="71_wu6eu"]
+[ext_resource type="MultiMesh" uid="uid://bimfo3axrur42" path="res://assets/3d_model/city/multimesh/mm_BUSH_-2_1.tres" id="72_ptwhq"]
+[ext_resource type="MultiMesh" uid="uid://biie2fd6kl27m" path="res://assets/3d_model/city/multimesh/mm_BUSH_1_1.tres" id="73_gckxi"]
+[ext_resource type="MultiMesh" uid="uid://bo6sc2cpey6qu" path="res://assets/3d_model/city/multimesh/mm_BUSH_2_1.tres" id="74_qruqg"]
+[ext_resource type="MultiMesh" uid="uid://byy2782idce4b" path="res://assets/3d_model/city/multimesh/mm_WEED_-1_-1.tres" id="75_7y134"]
+[ext_resource type="MultiMesh" uid="uid://cevbmaxc4p13c" path="res://assets/3d_model/city/multimesh/mm_WEED_0_-1.tres" id="76_fl1qm"]
+[ext_resource type="MultiMesh" uid="uid://dlff3imtguu8f" path="res://assets/3d_model/city/multimesh/mm_WEED_-1_0.tres" id="77_0do2u"]
+[ext_resource type="MultiMesh" uid="uid://dt3ql000mnjhr" path="res://assets/3d_model/city/multimesh/mm_WEED_0_0.tres" id="78_iq7je"]
+[ext_resource type="MultiMesh" uid="uid://c63noekipnnjq" path="res://assets/3d_model/city/multimesh/mm_WEED_-2_0.tres" id="79_icwpa"]
+[ext_resource type="MultiMesh" uid="uid://b8ecic17vxjpu" path="res://assets/3d_model/city/multimesh/mm_WEED_1_0.tres" id="80_60sqd"]
+[ext_resource type="MultiMesh" uid="uid://u7jkaaswbtsm" path="res://assets/3d_model/city/multimesh/mm_WEED_1_-1.tres" id="81_temhv"]
+[ext_resource type="MultiMesh" uid="uid://bsq6uteiudg38" path="res://assets/3d_model/city/multimesh/mm_WEED_-1_1.tres" id="82_oqcvq"]
+[ext_resource type="MultiMesh" uid="uid://drhklsyoowg1d" path="res://assets/3d_model/city/multimesh/mm_WEED_0_1.tres" id="83_ujhl8"]
+[ext_resource type="Script" uid="uid://b7hsrf5ig2xcx" path="res://tools/godot/citybuild/city_occluders.gd" id="84_aueo2"]
+[ext_resource type="ArrayOccluder3D" uid="uid://cdorvt0jghue1" path="res://assets/3d_model/city/occ_city.tres" id="85_8fvkf"]
+
+[node name="City" type="Node3D" unique_id=1511466569]
+
+[node name="TestPlate" parent="." unique_id=1974429640 instance=ExtResource("1_huve1")]
+visible = false
+
+[node name="Roads" parent="." unique_id=1465085617 instance=ExtResource("2_g3cjf")]
+
+[node name="Walls" parent="." unique_id=1903987895 instance=ExtResource("3_m0get")]
+
+[node name="Houses" parent="." unique_id=520580516 instance=ExtResource("4_34eo7")]
+
+[node name="Props" parent="." unique_id=253033792 instance=ExtResource("5_qp32r")]
+
+[node name="Landmarks" parent="." unique_id=1091506322 instance=ExtResource("6_m0get")]
+
+[node name="Vegetation" type="Node3D" parent="." unique_id=491867330]
+script = ExtResource("7_njg1m")
+last_result = "TREE_forest: 4961 instâncias em 20 blocos
+TREE_forest_broad: 5811 instâncias em 20 blocos
+TREE_urban: 70 instâncias em 4 blocos
+TREE_cypress: 16 instâncias em 3 blocos
+BUSH: 3217 instâncias em 20 blocos
+WEED: 438 instâncias em 9 blocos
+TOTAL: 14513 plantas em 76 MultiMesh"
+
+[node name="TREE_forest_-3_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1687841041]
+cast_shadow = 0
+multimesh = ExtResource("8_bfptn")
+
+[node name="TREE_forest_-2_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1892682035]
+cast_shadow = 0
+multimesh = ExtResource("9_j4oxn")
+
+[node name="TREE_forest_-1_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=631043059]
+cast_shadow = 0
+multimesh = ExtResource("10_aueo2")
+
+[node name="TREE_forest_0_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=954307894]
+cast_shadow = 0
+multimesh = ExtResource("11_8fvkf")
+
+[node name="TREE_forest_1_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1364984087]
+cast_shadow = 0
+multimesh = ExtResource("12_vj6nr")
+
+[node name="TREE_forest_2_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=963210343]
+cast_shadow = 0
+multimesh = ExtResource("13_5tllo")
+
+[node name="TREE_forest_-3_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=997192787]
+cast_shadow = 0
+multimesh = ExtResource("14_kjf8u")
+
+[node name="TREE_forest_-2_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1726422366]
+cast_shadow = 0
+multimesh = ExtResource("15_75wkh")
+
+[node name="TREE_forest_-1_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=261988413]
+cast_shadow = 0
+multimesh = ExtResource("16_shr21")
+
+[node name="TREE_forest_0_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=555298506]
+cast_shadow = 0
+multimesh = ExtResource("17_oft1q")
+
+[node name="TREE_forest_1_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1320868926]
+cast_shadow = 0
+multimesh = ExtResource("18_djoxf")
+
+[node name="TREE_forest_2_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1743582367]
+cast_shadow = 0
+multimesh = ExtResource("19_5qmw6")
+
+[node name="TREE_forest_-3_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2001100634]
+cast_shadow = 0
+multimesh = ExtResource("20_y1c4q")
+
+[node name="TREE_forest_-2_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1334331384]
+cast_shadow = 0
+multimesh = ExtResource("21_ur33l")
+
+[node name="TREE_forest_1_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=492643626]
+cast_shadow = 0
+multimesh = ExtResource("22_ks4jh")
+
+[node name="TREE_forest_2_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1445789330]
+cast_shadow = 0
+multimesh = ExtResource("23_xpxbx")
+
+[node name="TREE_forest_-3_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1669708280]
+cast_shadow = 0
+multimesh = ExtResource("24_2gj1f")
+
+[node name="TREE_forest_-2_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1405279429]
+cast_shadow = 0
+multimesh = ExtResource("25_c777i")
+
+[node name="TREE_forest_1_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=642462718]
+cast_shadow = 0
+multimesh = ExtResource("26_8a3ba")
+
+[node name="TREE_forest_2_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2117798592]
+cast_shadow = 0
+multimesh = ExtResource("27_c3836")
+
+[node name="TREE_forest_broad_-3_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1816703643]
+cast_shadow = 0
+multimesh = ExtResource("28_ogikw")
+
+[node name="TREE_forest_broad_-2_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=335167367]
+cast_shadow = 0
+multimesh = ExtResource("29_47b4r")
+
+[node name="TREE_forest_broad_-1_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1105181708]
+cast_shadow = 0
+multimesh = ExtResource("30_n7tnc")
+
+[node name="TREE_forest_broad_0_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1848642262]
+cast_shadow = 0
+multimesh = ExtResource("31_4r28a")
+
+[node name="TREE_forest_broad_1_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=50610476]
+cast_shadow = 0
+multimesh = ExtResource("32_80rvp")
+
+[node name="TREE_forest_broad_2_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=858228244]
+cast_shadow = 0
+multimesh = ExtResource("33_tbja7")
+
+[node name="TREE_forest_broad_-3_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=968876144]
+cast_shadow = 0
+multimesh = ExtResource("34_lplek")
+
+[node name="TREE_forest_broad_-2_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=918258410]
+cast_shadow = 0
+multimesh = ExtResource("35_6qqgr")
+
+[node name="TREE_forest_broad_-1_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=831783111]
+cast_shadow = 0
+multimesh = ExtResource("36_okv5i")
+
+[node name="TREE_forest_broad_0_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1999683022]
+cast_shadow = 0
+multimesh = ExtResource("37_urm2q")
+
+[node name="TREE_forest_broad_1_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=102416051]
+cast_shadow = 0
+multimesh = ExtResource("38_qpeeq")
+
+[node name="TREE_forest_broad_2_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=969632174]
+cast_shadow = 0
+multimesh = ExtResource("39_b24jn")
+
+[node name="TREE_forest_broad_-3_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=96109724]
+cast_shadow = 0
+multimesh = ExtResource("40_wwe11")
+
+[node name="TREE_forest_broad_-2_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1180993549]
+cast_shadow = 0
+multimesh = ExtResource("41_82kpb")
+
+[node name="TREE_forest_broad_1_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=794970273]
+cast_shadow = 0
+multimesh = ExtResource("42_7yblj")
+
+[node name="TREE_forest_broad_2_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1125367177]
+cast_shadow = 0
+multimesh = ExtResource("43_4fng1")
+
+[node name="TREE_forest_broad_-3_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=920604158]
+cast_shadow = 0
+multimesh = ExtResource("44_5wwxu")
+
+[node name="TREE_forest_broad_-2_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=954283546]
+cast_shadow = 0
+multimesh = ExtResource("45_mtgvm")
+
+[node name="TREE_forest_broad_1_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=579038188]
+cast_shadow = 0
+multimesh = ExtResource("46_biofd")
+
+[node name="TREE_forest_broad_2_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1710585829]
+cast_shadow = 0
+multimesh = ExtResource("47_adwbb")
+
+[node name="TREE_urban_0_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=75433922]
+multimesh = ExtResource("48_ypme0")
+
+[node name="TREE_urban_-1_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=93257287]
+multimesh = ExtResource("49_6j0lh")
+
+[node name="TREE_urban_-1_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1355148937]
+multimesh = ExtResource("50_4fwh0")
+
+[node name="TREE_urban_0_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=601430073]
+multimesh = ExtResource("51_x65vv")
+
+[node name="TREE_cypress_-1_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1107463357]
+cast_shadow = 0
+multimesh = ExtResource("52_wbty5")
+
+[node name="TREE_cypress_-1_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=959156420]
+cast_shadow = 0
+multimesh = ExtResource("53_8ryt5")
+
+[node name="TREE_cypress_-2_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=36226829]
+cast_shadow = 0
+multimesh = ExtResource("54_gkcsq")
+
+[node name="BUSH_-3_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2144023571]
+cast_shadow = 0
+multimesh = ExtResource("55_nemrd")
+
+[node name="BUSH_-2_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2130690620]
+cast_shadow = 0
+multimesh = ExtResource("56_ovsq7")
+
+[node name="BUSH_-1_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2040930213]
+cast_shadow = 0
+multimesh = ExtResource("57_1x2v7")
+
+[node name="BUSH_0_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=636866587]
+cast_shadow = 0
+multimesh = ExtResource("58_pyoy1")
+
+[node name="BUSH_1_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1510347092]
+cast_shadow = 0
+multimesh = ExtResource("59_o43it")
+
+[node name="BUSH_2_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1005179305]
+cast_shadow = 0
+multimesh = ExtResource("60_4jxxf")
+
+[node name="BUSH_-3_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=636960505]
+cast_shadow = 0
+multimesh = ExtResource("61_66vw3")
+
+[node name="BUSH_-2_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=541063336]
+cast_shadow = 0
+multimesh = ExtResource("62_b4eut")
+
+[node name="BUSH_-1_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=526022452]
+cast_shadow = 0
+multimesh = ExtResource("63_b58vb")
+
+[node name="BUSH_0_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=484757851]
+cast_shadow = 0
+multimesh = ExtResource("64_l0gyn")
+
+[node name="BUSH_1_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=758374398]
+cast_shadow = 0
+multimesh = ExtResource("65_7f7ny")
+
+[node name="BUSH_2_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1460062333]
+cast_shadow = 0
+multimesh = ExtResource("66_7voq0")
+
+[node name="BUSH_-3_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=640276332]
+cast_shadow = 0
+multimesh = ExtResource("67_aq7ps")
+
+[node name="BUSH_-2_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2067413943]
+cast_shadow = 0
+multimesh = ExtResource("68_4ut2y")
+
+[node name="BUSH_1_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2104782875]
+cast_shadow = 0
+multimesh = ExtResource("69_hpmhf")
+
+[node name="BUSH_2_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=254552512]
+cast_shadow = 0
+multimesh = ExtResource("70_pax5t")
+
+[node name="BUSH_-3_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=22356900]
+cast_shadow = 0
+multimesh = ExtResource("71_wu6eu")
+
+[node name="BUSH_-2_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=49748416]
+cast_shadow = 0
+multimesh = ExtResource("72_ptwhq")
+
+[node name="BUSH_1_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1197814245]
+cast_shadow = 0
+multimesh = ExtResource("73_gckxi")
+
+[node name="BUSH_2_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=57931069]
+cast_shadow = 0
+multimesh = ExtResource("74_qruqg")
+
+[node name="WEED_-1_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=667763777]
+multimesh = ExtResource("75_7y134")
+
+[node name="WEED_0_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=251945827]
+multimesh = ExtResource("76_fl1qm")
+
+[node name="WEED_-1_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2114745582]
+multimesh = ExtResource("77_0do2u")
+
+[node name="WEED_0_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=712966279]
+multimesh = ExtResource("78_iq7je")
+
+[node name="WEED_-2_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1130378470]
+cast_shadow = 0
+multimesh = ExtResource("79_icwpa")
+
+[node name="WEED_1_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=261674382]
+cast_shadow = 0
+multimesh = ExtResource("80_60sqd")
+
+[node name="WEED_1_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1665180038]
+cast_shadow = 0
+multimesh = ExtResource("81_temhv")
+
+[node name="WEED_-1_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=740664693]
+cast_shadow = 0
+multimesh = ExtResource("82_oqcvq")
+
+[node name="WEED_0_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1305401732]
+cast_shadow = 0
+multimesh = ExtResource("83_ujhl8")
+
+[node name="Occluders" type="Node3D" parent="." unique_id=439235573]
+script = ExtResource("84_aueo2")
+last_result = "oclusor: 663 casas, 5304 vértices, 7956 triângulos"
+
+[node name="CityOccluder" type="OccluderInstance3D" parent="Occluders" unique_id=457314410]
+occluder = ExtResource("85_8fvkf")

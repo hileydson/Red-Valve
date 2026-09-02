@@ -1,0 +1,107 @@
+{
+ "atlas": "T_signs",
+ "cols": 2,
+ "rows": 6,
+ "plates": {
+  "av_padre_gabriel": {
+   "cell": 0,
+   "uv": [
+    0.0,
+    0.0,
+    0.5,
+    0.16666666666666666
+   ],
+   "nome": "Av. Padre Gabriel de Melo"
+  },
+  "r_padre_gabriel": {
+   "cell": 1,
+   "uv": [
+    0.5,
+    0.0,
+    0.5,
+    0.16666666666666666
+   ],
+   "nome": "R. Padre Gabriel de Melo"
+  },
+  "r_margarida": {
+   "cell": 2,
+   "uv": [
+    0.0,
+    0.16666666666666666,
+    0.5,
+    0.16666666666666666
+   ],
+   "nome": "R. Margarida Maria Alves"
+  },
+  "r_eustaquia": {
+   "cell": 3,
+   "uv": [
+    0.5,
+    0.16666666666666666,
+    0.5,
+    0.16666666666666666
+   ],
+   "nome": "R. Eustáquia Portela"
+  },
+  "r_terra_velha": {
+   "cell": 4,
+   "uv": [
+    0.0,
+    0.3333333333333333,
+    0.5,
+    0.16666666666666666
+   ],
+   "nome": "R. Terra Velha"
+  },
+  "r_obelisco": {
+   "cell": 5,
+   "uv": [
+    0.5,
+    0.3333333333333333,
+    0.5,
+    0.16666666666666666
+   ],
+   "nome": "R. do Obelisco"
+  },
+  "r_pobre": {
+   "cell": 6,
+   "uv": [
+    0.0,
+    0.5,
+    0.5,
+    0.16666666666666666
+   ],
+   "nome": "R. do Pobre"
+  },
+  "tv_bica": {
+   "cell": 7,
+   "uv": [
+    0.5,
+    0.5,
+    0.5,
+    0.16666666666666666
+   ],
+   "nome": "Tv. da Bica"
+  },
+  "beco_esgoto": {
+   "cell": 8,
+   "uv": [
+    0.0,
+    0.6666666666666666,
+    0.5,
+    0.16666666666666666
+   ],
+   "nome": "Beco do Esgoto"
+  },
+  "eixo_comercial": {
+   "cell": 9,
+   "uv": [
+    0.5,
+    0.6666666666666666,
+    0.5,
+    0.16666666666666666
+   ],
+   "nome": "R. do Comércio"
+  }
+ }
+}

@@ -625,3 +625,103 @@ Me mostra a Etapa 02 do ângulo da referência e a 1,70 m.
 A troca (06 antes de 03 e 04) é proposital: **rua e fiação juntas já entregam a estética da
 referência em nível de rua**. Você julga se a direção está certa dentro do jogo, antes de gastar
 sessões inteiras em massa construída.
+
+---
+
+## 10. Estado da execução — 02/09/2026
+
+Etapas **00 a 08 concluídas**. A cidade roda dentro do `stage_1`, em
+`scenes/stages/city/city.tscn`. `run.phase(99)` reconstrói tudo do zero.
+
+| Número | | |
+|---|---|---|
+| Quadras | 38 | derivadas da malha viária, grade 8 × 8 |
+| Vias | 30 | 10 nomeadas com placa |
+| Casas proxy | 614 | 6 tipos, âncora `EMP_house_*` em cada |
+| Postes / cabos | 227 / 606 | flecha 0,80 / 1,30 / 1,70 m |
+| Plantas | 14.513 | 6 MultiMesh |
+| Texturas | 56 mapas | tileáveis, geradas em numpy |
+| Regiões de terreno | 19 | as 4 originais do `stage_1` intactas |
+| Triângulos da cidade | 251.736 | + ~600 k de vegetação |
+
+### 10.1 Onde a execução divergiu do plano
+
+**Etapa 07 usa `MultiMeshInstance3D`, não Proton Scatter.** O Blender já resolve
+*onde* plantar, contra o mesmo heightfield que gerou o terreno — não há nada a
+re-espalhar, só a instanciar. Mesmo resultado de draw call, controle total, e
+trocar a árvore é apontar `multimesh.mesh` para outra malha.
+
+**Export é `.gltf` separado com `export_keep_originals`, não `.glb`.** O `.glb`
+embutia uma cópia das texturas por arquivo e o Godot as extraía de volta ao
+disco: a pasta chegou a 157 MB com 124 duplicatas. Referenciando as PNGs
+existentes, os seis arquivos somam menos de 12 MB.
+
+**O terreno cobre 19 regiões, não 6.** O anel de mata precisava de chão. A
+importação fica restrita a `Z ≤ 0` para nunca tocar as 4 regiões originais.
+
+**A Etapa 08 não assou LightmapGI nem colocou partículas de poeira.** O lightmap
+exige UV2 em cada malha e um bake de horas, que teria de ser refeito a cada
+mudança de geometria — é trabalho da 09, com a geometria congelada. A poeira
+precisa seguir a câmera do jogador, que vive em `player.tscn`.
+
+### 10.2 Dívidas abertas
+
+| Dívida | Custo | Onde resolver |
+|---|---|---|
+| **Vegetação sem LOD** | 613 k triângulos sempre renderizados | Etapa 09 — `visible_instance_count` por distância |
+| **Splatmap do Terrain3D** | 19 regiões com textura única | Formato de bits do control map; não quis chutar |
+| **LightmapGI** | sem rebote de luz | Etapa 09, geometria congelada |
+| **`OccluderInstance3D`** | `occlusion_culling` ligado sem oclusores | Etapa 09 |
+| 22 ruínas sem `EMP_` | menor | por design: ruína não vira casa |
+
+### 10.5 Etapa 09 — o que foi feito em 02/09
+
+**Colisão, que não existia.** A cidade tinha zero `StaticBody3D`: o jogador
+atravessava cada casa, muro e a praça. Resolvido pelo sufixo `-col` nos
+objetos unidos, que faz o importador glTF criar `StaticBody3D` +
+`ConcavePolygonShape3D`. **37 corpos estáticos** agora.
+
+As **ruas ficaram de fora de propósito**: sobem no máximo 11 cm sobre o
+terreno, que já tem colisão pelo Terrain3D. Os patamares dos lotes, não —
+chegam a 1,5 m acima do terreno em declive, e por isso colidem.
+Postes colidem; **cabos e placas não** (ninguém deve esbarrar num fio).
+
+**Vegetação fatiada no espaço.** Um MultiMesh único cobrindo 1280 × 768 m
+nunca é descartado pelo frustum: a mata atrás do jogador renderizava junto.
+Fatiando em blocos de 256 m, as 14.513 plantas viraram **76 MultiMesh**, e o
+Godot descarta os blocos fora de vista. Sombra só nos blocos a menos de 180 m
+do centro — a mata distante projetava sombra que ninguém vê.
+
+**Oclusor gerado.** O projeto tem `occlusion_culling = true` e não tinha
+oclusor nenhum: custo puro sem benefício. Uma caixa por casa num único
+`ArrayOccluder3D` — **663 caixas, 7.956 triângulos**. As caixas são
+deliberadamente menores que a casa (0,42 da menor dimensão em planta): um
+oclusor maior que a geometria descarta coisa visível e abre buraco na imagem.
+
+### 10.6 O que continua em aberto
+
+| Dívida | Situação |
+|---|---|
+| **LightmapGI** | não assado — exige UV2 em cada malha e horas de bake |
+| **LOD de malha** | não há LOD0/LOD1; o fatiamento resolve o frustum, não a distância |
+| **Navmesh da cidade** | o `NavigationRegion3D` do `stage_1` não cobre a cidade |
+| **Splatmap do Terrain3D** | 19 regiões com textura única |
+
+Medir o ganho com precisão exige **rodar o jogo**: os monitores do editor
+(1.262 draw calls, 3,8 M primitivas) incluem a UI, os gizmos e o debug de
+navegação, então não isolam o custo da cidade.
+
+### 10.3 Achados no projeto que não são meus
+
+- `shaders/battlefield/battlefield.gd` — `_get_enemy_script()` não existe
+  (linhas 71 e 184); o script inteiro falha ao carregar
+- `scripts/player/player.gd:298` — `amuleto_anim` não declarado
+- Dezenas de UIDs duplicados entre `scenes/player/battle_field/src/` e
+  `demos/grass/assets/BinbunGrass/`
+
+### 10.4 Ferramentas deixadas na cena
+
+Em `stage_1`: `_CityTerrainImport` (importa heightmap, sonda cotas) e
+`_CityLookdev` (calibra névoa, tonemap e LUT no Environment vivo).
+Em `city.tscn`: `Vegetation` (constrói os MultiMesh a partir de `scatter.json`).
+Todos são `@tool` acionados por propriedade — custo zero em runtime.

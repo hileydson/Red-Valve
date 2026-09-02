@@ -1,0 +1,221 @@
+{
+  "_meta": {
+    "space": "sRGB hex",
+    "rule": "nada acima de ~45% de saturacao",
+    "fonte": "docs/plano-cidade-blender.md secao 2"
+  },
+  "surfaces": {
+    "roof_tile_warm": {
+      "hex": "#A8613F",
+      "rough": 0.82,
+      "metal": 0.0,
+      "uso": "Telha colonial com cor"
+    },
+    "roof_tile_faded": {
+      "hex": "#8C5138",
+      "rough": 0.85,
+      "metal": 0.0,
+      "uso": "Telha colonial media - dominante"
+    },
+    "roof_tile_bleached": {
+      "hex": "#9A7A66",
+      "rough": 0.88,
+      "metal": 0.0,
+      "uso": "Telha desbotada com limo"
+    },
+    "roof_metal_rust": {
+      "hex": "#7A5442",
+      "rough": 0.74,
+      "metal": 0.35,
+      "uso": "Telha metalica enferrujada"
+    },
+    "roof_metal_zinc": {
+      "hex": "#8A8378",
+      "rough": 0.62,
+      "metal": 0.55,
+      "uso": "Metalica cinza / fibrocimento"
+    },
+    "roof_slate_blue": {
+      "hex": "#5A6472",
+      "rough": 0.7,
+      "metal": 0.0,
+      "uso": "Ardosia da torre da igreja"
+    },
+    "wall_whitewash": {
+      "hex": "#C9BCA6",
+      "rough": 0.9,
+      "metal": 0.0,
+      "uso": "Caiacao suja"
+    },
+    "wall_whitewash_hi": {
+      "hex": "#D6CBB4",
+      "rough": 0.88,
+      "metal": 0.0,
+      "uso": "Caiacao lavada - raro"
+    },
+    "wall_render_raw": {
+      "hex": "#A89880",
+      "rough": 0.93,
+      "metal": 0.0,
+      "uso": "Reboco cru sem pintura"
+    },
+    "wall_brick": {
+      "hex": "#8A5B45",
+      "rough": 0.9,
+      "metal": 0.0,
+      "uso": "Tijolo aparente"
+    },
+    "wall_stone_church": {
+      "hex": "#C4B79C",
+      "rough": 0.85,
+      "metal": 0.0,
+      "uso": "Pedra creme da matriz"
+    },
+    "wall_stone_cemetery": {
+      "hex": "#9B978C",
+      "rough": 0.87,
+      "metal": 0.0,
+      "uso": "Pedra cinza do cemiterio"
+    },
+    "paint_shop_red": {
+      "hex": "#7E3A32",
+      "rough": 0.78,
+      "metal": 0.0,
+      "uso": "Fachada comercial vermelha"
+    },
+    "paint_shop_ochre": {
+      "hex": "#9C7A45",
+      "rough": 0.8,
+      "metal": 0.0,
+      "uso": "Fachada comercial ocre"
+    },
+    "wood_aged": {
+      "hex": "#6B5844",
+      "rough": 0.88,
+      "metal": 0.0,
+      "uso": "Madeira envelhecida"
+    },
+    "wood_dark": {
+      "hex": "#56463A",
+      "rough": 0.9,
+      "metal": 0.0,
+      "uso": "Madeira em sombra / caibro"
+    },
+    "metal_rust_dark": {
+      "hex": "#5C3E30",
+      "rough": 0.68,
+      "metal": 0.45,
+      "uso": "Ferro corroido, portoes"
+    },
+    "sign_plate": {
+      "hex": "#C9BCA6",
+      "rough": 0.58,
+      "metal": 0.15,
+      "uso": "Chapa esmaltada de nome de rua"
+    }
+  },
+  "ground": {
+    "cobble_base": {
+      "hex": "#948B7C",
+      "rough": 0.8,
+      "metal": 0.0,
+      "uso": "Paralelepipedo - pedra"
+    },
+    "cobble_joint": {
+      "hex": "#6C6458",
+      "rough": 0.92,
+      "metal": 0.0,
+      "uso": "Junta de terra"
+    },
+    "cobble_polish": {
+      "hex": "#A69C8B",
+      "rough": 0.62,
+      "metal": 0.0,
+      "uso": "Trilha de roda polida"
+    },
+    "asphalt_patch": {
+      "hex": "#5E564B",
+      "rough": 0.86,
+      "metal": 0.0,
+      "uso": "Remendo asfaltico"
+    },
+    "dirt_road": {
+      "hex": "#7A6A55",
+      "rough": 0.95,
+      "metal": 0.0,
+      "uso": "Terra batida"
+    },
+    "sidewalk_concrete": {
+      "hex": "#B2A894",
+      "rough": 0.88,
+      "metal": 0.0,
+      "uso": "Placa de calcada"
+    },
+    "curb_granite": {
+      "hex": "#8E877A",
+      "rough": 0.76,
+      "metal": 0.0,
+      "uso": "Meio-fio de granito"
+    },
+    "gutter_grime": {
+      "hex": "#4E463A",
+      "rough": 0.94,
+      "metal": 0.0,
+      "uso": "Sujeira da sarjeta"
+    }
+  },
+  "nature": {
+    "canopy_forest": {
+      "hex": "#3E4A2E",
+      "rough": 0.9,
+      "metal": 0.0,
+      "uso": "Dossel da mata"
+    },
+    "canopy_forest_dark": {
+      "hex": "#2A3322",
+      "rough": 0.92,
+      "metal": 0.0,
+      "uso": "Sombra do dossel"
+    },
+    "canopy_urban": {
+      "hex": "#55603A",
+      "rough": 0.9,
+      "metal": 0.0,
+      "uso": "Arvore urbana empoeirada"
+    },
+    "cypress_dark": {
+      "hex": "#2E3A2B",
+      "rough": 0.91,
+      "metal": 0.0,
+      "uso": "Cipreste do cemiterio"
+    },
+    "grass_dry": {
+      "hex": "#7E7A52",
+      "rough": 0.93,
+      "metal": 0.0,
+      "uso": "Grama seca - nunca verde vivo"
+    }
+  },
+  "atmosphere": {
+    "sun_light": {
+      "hex": "#FFD9A0",
+      "uso": "Cor da luz solar"
+    },
+    "shadow_ambient": {
+      "hex": "#4A4438",
+      "uso": "Preenchimento das sombras"
+    },
+    "haze_warm": {
+      "hex": "#C8A870",
+      "uso": "Nevoa / fog distante"
+    },
+    "sky_horizon": {
+      "hex": "#D8B98A",
+      "uso": "Horizonte"
+    },
+    "sky_zenith": {
+      "hex": "#7E90A0",
+      "uso": "Zenite"
+    }
+  }
+}
