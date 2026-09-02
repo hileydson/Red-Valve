@@ -22,7 +22,11 @@ extends Node
 
 @export_group("Tonemap e ajuste")
 ## 0 Linear · 1 Reinhard · 2 Filmic · 3 ACES · 4 AgX
-@export var tonemap_mode: int = 4
+## 2 = Filmic. Era 4 (AgX), cujo ombro forte fazia a grama estourar para
+## branco enquanto a pista, com ~40% daquela luminância, caía numa parte
+## muito baixa da curva e lia como preto. O Filmic tem ombro mais suave e
+## aproxima os dois.
+@export var tonemap_mode: int = 2
 @export var tonemap_white: float = 4.5
 @export var tonemap_exposure: float = 1.0
 @export var brilho: float = 1.0

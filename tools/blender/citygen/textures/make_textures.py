@@ -151,7 +151,9 @@ def make_cobble(name="T_cobble", cells=28, seed=7, base="#948B7C",
         alb = alb * (1.0 + polish * 0.10 * j[..., None])
 
     occ = np.clip(0.35 + 0.65 * j, 0, 1)
-    rough = np.clip(0.86 - 0.22 * j * (1 + polish) + 0.06 * grain, 0.25, 1.0)
+    # 0.86 era matte quase total: a pedra nao devolvia nada da luz do poste.
+    # Paralelepipedo de rua e polido pelo trafego e tem brilho especular.
+    rough = np.clip(0.56 - 0.20 * j * (1 + polish) + 0.05 * grain, 0.18, 1.0)
     return save(name, alb, normal_from_height(H, 2.6), occ, rough)
 
 

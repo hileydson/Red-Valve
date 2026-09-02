@@ -17,10 +17,15 @@ COL = "06_STREET_FURN"
 
 VAO = 32.0          # espaçamento entre postes
 H_POSTE = 8.5
-H_ARM = 8.25          # quase no topo do poste (8,50)
+H_ARM = 8.50          # no topo do poste: a luminaria coroa o poste
 ARM_LEN = 0.80          # 1,60 e 1,15 ainda deixavam vao visivel
 ARM_RISE = math.radians(15.0)
 FLECHA_MIN = 6.0    # ponto mais baixo do cabo
+# Poca de luz projetada no chao (opcao D): quad aceso, nao luz. Estes valores
+# tem que casar com o cone do SpotLight em city_lights.gd, senao a mancha
+# desenhada nao cai onde a luz cairia.
+POCA_INCLINACAO = 22.0   # graus, igual a `inclinacao_graus`
+POCA_ALTURA_Z = 0.13     # acima do terreno; a pista sobe ate 0,11 pelo abaulamento
 TILT = math.radians(3.0)
 
 CLASSES_COM_POSTE = ("avenida", "principal", "radial", "secundaria")
@@ -273,6 +278,7 @@ def build(parent, hs):
     rng = random.Random(20240601)
     # posicao da luminaria de cada poste, para o Godot criar as luzes
     luzes = []
+    pocas = []
 
     sp = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
                       "city_data", "signs.json")
@@ -297,6 +303,15 @@ def build(parent, hs):
             wx, wy, wz = _world(p, (tipx, tipy, lz))
             luzes.append({"x": round(wx, 2), "y": round(wz, 2), "z": round(-wy, 2),
                           "rot": round(-p["ang"], 4)})
+            # centro da poca: desloca na direcao do braco pela inclinacao do cone
+            alt = wz - p["z"]
+            d = alt * math.tan(math.radians(POCA_INCLINACAO))
+            fx = p["x"] + ca * (ARM_LEN + 0.08 + d)
+            fy = p["y"] + sa * (ARM_LEN + 0.08 + d)
+            pocas.append({"x": round(fx, 2),
+                          "y": round(hs.at(fx, fy) + POCA_ALTURA_Z, 2),
+                          "z": round(-fy, 2), "rot": round(-p["ang"], 4),
+                          "raio": round(alt * math.tan(math.radians(38.0)), 2)})
             if i % 6 == 0:
                 build_transformer(col, p, i)
             if k == 0 or k == len(plist) - 1:
@@ -312,8 +327,8 @@ def build(parent, hs):
                          "out", "poles.json")
     os.makedirs(os.path.dirname(saida), exist_ok=True)
     with open(saida, "w", encoding="utf-8") as fh:
-        json.dump({"nota": "luminarias em coordenadas LOCAIS do Godot; "
+        json.dump({"nota": "luminarias e pocas em coordenadas LOCAIS do Godot; "
                            "rot e o giro em Y do braco",
-                   "luzes": luzes}, fh)
+                   "luzes": luzes, "pocas": pocas}, fh)
     return {"postes": total_p, "cabos": total_c, "placas": n_sign,
             "detritos": n_deb, "objetos": len(col.objects), "luzes_json": saida}

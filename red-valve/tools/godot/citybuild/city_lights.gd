@@ -32,6 +32,22 @@ extends Node3D
 ## Inclinação a partir da vertical, na direção do braço.
 @export var inclinacao_graus: float = 12.0
 
+@export_group("Poça no chão")
+## Quad aceso desenhado no chão sob cada poste, em blend aditivo.
+##
+## Não é luz. O renderer Forward Mobile atribui no máximo ~8 fontes por
+## OBJETO, e a pista é um único mesh de 596 x 420 m — por isso só um punhado
+## de postes a iluminava. Geometria acesa não tem esse teto: as 296 poças
+## desenham sempre, em 1 draw call.
+##
+## O que se perde: a poça não reage a nada que passe por cima, e não gera
+## sombra. Para poste de rua, que não se move, isso quase não aparece.
+@export var poca: bool = true
+@export var poca_textura: String = "res://assets/3d_model/city/textures/T_lightpool.png"
+@export var poca_forca: float = 1.35
+## Multiplica o raio vindo de poles.json (calculado a partir do cone).
+@export var poca_escala: float = 1.0
+
 @export_group("Custo")
 @export var sombra: bool = false
 @export var fade_inicio: float = 55.0
@@ -107,11 +123,56 @@ func _construir() -> void:
 	var nl := 0
 	if lente:
 		nl = _lentes(dados["luzes"])
+	var np_ := 0
+	if poca and dados.has("pocas"):
+		np_ = _pocas(dados["pocas"])
 
-	last_result = ("%d luzes + %d lentes | cone %.0f° | alcance %.0f m | "
-		+ "sombra=%s | fade %.0f–%.0f m") % [
-		n, nl, angulo * 2.0, alcance, str(sombra),
+	last_result = ("%d luzes + %d lentes + %d poças | cone %.0f° | "
+		+ "alcance %.0f m | sombra=%s | fade %.0f–%.0f m") % [
+		n, nl, np_, angulo * 2.0, alcance, str(sombra),
 		fade_inicio, fade_inicio + fade_comprimento]
+
+
+## Poças acesas no chão, num único MultiMesh — 1 draw call para as 296.
+func _pocas(lista: Array) -> int:
+	var pm := PlaneMesh.new()
+	pm.size = Vector2(2.0, 2.0)              # unitário; o raio vem na escala
+	pm.orientation = PlaneMesh.FACE_Y        # deitado no chão
+
+	var mat := StandardMaterial3D.new()
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	mat.albedo_texture = load(poca_textura)
+	mat.albedo_color = Color(cor.r * poca_forca, cor.g * poca_forca,
+		cor.b * poca_forca, 1.0)
+	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	mat.disable_receive_shadows = true
+	mat.render_priority = 1
+
+	var mm := MultiMesh.new()
+	mm.transform_format = MultiMesh.TRANSFORM_3D
+	mm.mesh = pm
+	mm.instance_count = lista.size()
+	for i in lista.size():
+		var P: Dictionary = lista[i]
+		var raio: float = float(P.get("raio", 6.0)) * poca_escala
+		var b := Basis(Vector3.UP, float(P["rot"])).scaled(Vector3(raio, 1.0, raio))
+		mm.set_instance_transform(i, Transform3D(b, Vector3(
+			float(P["x"]), float(P["y"]), float(P["z"]))))
+
+	var mmi := MultiMeshInstance3D.new()
+	mmi.name = "Pocas"
+	mmi.multimesh = mm
+	mmi.material_override = mat
+	mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	mmi.gi_mode = GeometryInstance3D.GI_MODE_DISABLED
+	# AABB explícito: um MultiMesh de quads deitados tem extensão nula em Y,
+	# e sem isto o frustum pode descartar o conjunto inteiro.
+	mmi.custom_aabb = AABB(Vector3(-700, -40, -700), Vector3(1400, 120, 1400))
+	add_child(mmi)
+	mmi.owner = get_tree().edited_scene_root
+	return lista.size()
 
 
 ## Quadros emissivos na boca de cada luminária, num único MultiMesh.
