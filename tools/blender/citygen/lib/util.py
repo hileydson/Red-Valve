@@ -114,3 +114,25 @@ def setup_scene_units():
     sc.unit_settings.system = 'METRIC'
     sc.unit_settings.length_unit = 'METERS'
     sc.unit_settings.scale_length = 1.0
+
+
+def faces_up(ob, limiar=-0.05):
+    """Vira as faces cuja normal aponta para baixo.
+
+    Só para superfícies ABERTAS que representam chão (pista, calçada, lote,
+    terreno). Nunca usar em sólido fechado: a face de baixo de uma caixa
+    aponta para baixo por definição, e virá-la a joga para dentro.
+
+    A fita gerada por `_strip` sai com winding invertido — as faces ficam
+    visíveis (o glTF marca doubleSided) mas com N·L < 0, então nenhuma luz
+    as atinge. Este é o conserto.
+    """
+    me = ob.data
+    n = 0
+    for poly in me.polygons:
+        if poly.normal.z < limiar:
+            poly.flip()
+            n += 1
+    if n:
+        me.update()
+    return n

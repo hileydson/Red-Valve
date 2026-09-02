@@ -12,6 +12,16 @@ from . import util, layout, materials as M
 COL = "04_PROXY_BUILD"
 TILE = 2.5
 
+# Vagas reservadas para asset do usuario: a casa proxy nao e construida ali,
+# e a vaga (posicao, angulo, tamanho) volta no resultado para o Godot
+# encaixar o modelo exatamente onde a casa estaria.
+# Coordenadas em MUNDO LOCAL do Godot (x, z), raio em metros.
+RESERVADOS = [
+    ("oficina_jimmy", 48.0, 196.0, 13.0),
+    ("casa_nice",     59.5, 188.1,  2.5),
+    ("casa_maycow",    5.6,  76.5,  2.0),
+]
+
 PAREDES = ("wall_whitewash", "wall_render_raw", "wall_brick",
            "wall_whitewash_hi", "paint_shop_ochre")
 TELHAS = ("roof_tile_faded", "roof_tile_warm", "roof_tile_bleached")
@@ -112,6 +122,9 @@ def build_casa(col, name, x, y, ang, larg, prof, tipo, rng, z0):
     _tri(v, f, eave[0], ridge[0], eave[3])                  # oitao
     _tri(v, f, eave[1], eave[2], ridge[1])
     rob = util._mk(name + "_teto", v, f, col, mat_teto)
+    # as duas aguas saem com winding invertido; sem isto o telhado — a
+    # superficie mais vista da cidade — nao recebe luz nenhuma
+    util.faces_up(rob)
     uvl = rob.data.uv_layers.new(name="UVMap")
     for loop in rob.data.loops:
         p = rob.data.vertices[loop.vertex_index].co
@@ -171,6 +184,7 @@ def build(parent, hs):
     # caixas para o oclusor do Godot: occlusion_culling esta ligado no projeto
     # e nao existe oclusor nenhum, entao hoje e custo puro sem beneficio.
     volumes = []
+    vagas = {}
 
     for b in data["blocks"]:
         poly = [(float(x), float(y)) for x, y in b["poly"]]
@@ -202,6 +216,20 @@ def build(parent, hs):
                 rec = rng.uniform(0.4, 1.6)
                 hx = a[0] + dx * mid + nx * (prof / 2.0 + rec)
                 hy = a[1] + dy * mid + ny * (prof / 2.0 + rec)
+                # a casa cai numa vaga reservada? entao nao construir
+                gx, gz = hx, -hy
+                reservada = None
+                for tag, rx, rz, raio in RESERVADOS:
+                    if math.hypot(gx - rx, gz - rz) <= raio:
+                        reservada = tag
+                        break
+                if reservada:
+                    vagas.setdefault(reservada, []).append(
+                        {"x": round(gx, 2), "y": round(plat, 2), "z": round(gz, 2),
+                         "rot": round(-ang, 4), "w": round(larg, 2),
+                         "d": round(prof, 2)})
+                    s += larg + rng.uniform(0.3, 1.8)
+                    continue
                 nome = "SM_house_%s_%d_%02d" % (b["id"], e, casas)
                 k, alt = build_casa(col, nome, hx, hy, ang, larg, prof, tipo,
                                     rng, plat)
@@ -219,6 +247,6 @@ def build(parent, hs):
     with open(saida, "w", encoding="utf-8") as fh:
         json.dump({"nota": "caixas em coordenadas LOCAIS do Godot para gerar "
                            "ArrayOccluder3D (x, y do piso, z, rot em Y, w, d, h)",
-                   "casas": volumes}, fh)
+                   "casas": volumes, "vagas_reservadas": vagas}, fh)
     return {"casas": casas, "objetos": len(col.objects), "pecas": objs,
-            "volumes_json": saida}
+            "volumes_json": saida, "vagas": {k: len(v) for k, v in vagas.items()}}

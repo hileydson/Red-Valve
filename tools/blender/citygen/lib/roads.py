@@ -99,6 +99,7 @@ def _strip(name, rows, col, mat, uv, cols):
             a = i * n + j
             faces.append((a, a + 1, a + n + 1, a + n))
     ob = util._mk(name, verts, faces, col, mat)
+    util.faces_up(ob)
     me = ob.data
     uvl = me.uv_layers.new(name="UVMap")
     cl = me.color_attributes.new(name="Col", type="FLOAT_COLOR", domain="CORNER")

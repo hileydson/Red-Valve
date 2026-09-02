@@ -57,6 +57,7 @@ def build_terrain_mesh(col, h, world, step=4):
             a = r * nx + c
             faces.append((a, a + 1, a + nx + 1, a + nx))
     me = util._mk("SM_terrain_preview", verts, faces, col, M.get("grass_dry"))
+    util.faces_up(me)
     return me, len(verts), len(faces)
 
 

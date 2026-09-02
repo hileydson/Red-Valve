@@ -45,6 +45,9 @@ def build():
     with open(os.path.abspath(LAYOUT), "r", encoding="utf-8") as fh:
         data = json.load(fh)
     nomes = [(r["id"], r["name"]) for r in data["roads"] if r["named"] and r["name"]]
+    # as duas ultimas celulas do atlas viram placas de casa: o jogador precisa
+    # saber de quem e a casa sem abrir menu nenhum
+    nomes += [("casa_nice", "Sra Nice"), ("casa_maycow", "Sr Maycow")]
 
     atlas = Image.new("RGB", (CW * COLS, CH * ROWS), (24, 22, 20))
     d = ImageDraw.Draw(atlas)

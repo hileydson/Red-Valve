@@ -95,11 +95,19 @@ def voronoi(U, V, cells, seed, jitter=0.42):
     return d1, d2 - d1, cid
 
 
+# Relevo real que um tile representa, em metros. O gradiente do heightmap
+# (adimensional) vira inclinação de verdade multiplicando por RELEVO/TILE*RES.
+# Antes eu usava RES/16 = 64, o que dava fator ~166 no paralelepípedo: a
+# normal ficava quase horizontal em CADA pixel por causa do ruído fino, e a
+# superfície não recebia luz nenhuma (N·L ≈ 0).
+GANHO = RES / 256.0
+
+
 def normal_from_height(H, strength=1.0):
     """Normal map OpenGL (+Y para cima) a partir de um heightmap com wrap."""
     dx = (np.roll(H, -1, axis=1) - np.roll(H, 1, axis=1)) * 0.5
     dy = (np.roll(H, -1, axis=0) - np.roll(H, 1, axis=0)) * 0.5
-    nx, ny, nz = -dx * strength * RES / 16.0, -dy * strength * RES / 16.0, 1.0
+    nx, ny, nz = -dx * strength * GANHO, -dy * strength * GANHO, 1.0
     L = np.sqrt(nx * nx + ny * ny + nz * nz)
     return np.dstack([(nx / L) * 0.5 + 0.5, (ny / L) * 0.5 + 0.5, (nz / L) * 0.5 + 0.5])
 

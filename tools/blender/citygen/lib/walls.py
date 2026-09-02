@@ -116,6 +116,7 @@ def build_lote(col, name, poly, plat, mat, hs):
     """
     verts = [(x, y, plat) for x, y in poly]
     ob = util._mk(name, verts, [tuple(range(len(poly)))], col, M.get(mat))
+    util.faces_up(ob)
 
     rows = []
     n = len(poly)

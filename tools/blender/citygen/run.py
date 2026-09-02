@@ -96,7 +96,8 @@ def _build(fases=()):
     if "houses" in fases:
         out["casas"] = houses.build(root, hs)
     if "landmarks" in fases:
-        out["marcos"] = landmarks.build(root, hs)
+        # igreja e praca vem de asset do usuario (city_extra/)
+        out["marcos"] = landmarks.build(root, hs, pular=("igreja", "praca"))
     if "vegetation" in fases:
         out["vegetacao"] = vegetation.build(root, hs)
     if "props" in fases:

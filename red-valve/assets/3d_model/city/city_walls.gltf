@@ -225,7 +225,7 @@
 	],
 	"meshes":[
 		{
-			"name":"SM_lot_q00",
+			"name":"SM_lot_q00.001",
 			"primitives":[
 				{
 					"attributes":{
@@ -239,7 +239,7 @@
 			]
 		},
 		{
-			"name":"SM_lot_q07",
+			"name":"SM_lot_q07.001",
 			"primitives":[
 				{
 					"attributes":{
@@ -252,7 +252,7 @@
 			]
 		},
 		{
-			"name":"SM_div_q00_2_4",
+			"name":"SM_div_q00_2_4.001",
 			"primitives":[
 				{
 					"attributes":{
@@ -265,7 +265,7 @@
 			]
 		},
 		{
-			"name":"SM_div_q00_0_4",
+			"name":"SM_div_q00_0_4.001",
 			"primitives":[
 				{
 					"attributes":{
@@ -279,7 +279,7 @@
 			]
 		},
 		{
-			"name":"SM_div_q00_0_0",
+			"name":"SM_div_q00_0_0.001",
 			"primitives":[
 				{
 					"attributes":{
@@ -293,7 +293,7 @@
 			]
 		},
 		{
-			"name":"SM_div_q00_3_1",
+			"name":"SM_div_q00_3_1.001",
 			"primitives":[
 				{
 					"attributes":{
@@ -307,7 +307,7 @@
 			]
 		},
 		{
-			"name":"SM_div_q00_3_0_p00",
+			"name":"SM_div_q00_3_0_p00.001",
 			"primitives":[
 				{
 					"attributes":{

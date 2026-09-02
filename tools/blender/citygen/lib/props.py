@@ -17,8 +17,8 @@ COL = "06_STREET_FURN"
 
 VAO = 32.0          # espaçamento entre postes
 H_POSTE = 8.5
-H_ARM = 8.18
-ARM_LEN = 1.60
+H_ARM = 8.25          # quase no topo do poste (8,50)
+ARM_LEN = 0.80          # 1,60 e 1,15 ainda deixavam vao visivel
 ARM_RISE = math.radians(15.0)
 FLECHA_MIN = 6.0    # ponto mais baixo do cabo
 TILT = math.radians(3.0)
@@ -139,16 +139,18 @@ def build_pole(col, p, i):
     for t in (0.0, 0.35, 0.7, 1.0):
         L = ARM_LEN * t
         arm.append((ca * L, sa * L, H_ARM + math.sin(ARM_RISE) * L * (0.6 + 0.4 * t)))
-    ob = tube_path("SM_pole_arm_%03d" % i, arm, 0.045, col,
+    # braco mais grosso: a 4,5 cm ele sumia e a luminaria parecia solta
+    ob = tube_path("SM_pole_arm_%03d" % i, arm, 0.065, col,
                    M.get("metal_rust_dark"), n=6)
     ob.location = loc
     ob.rotation_euler = rot
 
     # luminaria tipo cobra na ponta
     tip = arm[-1]
+    # 0.08 em vez de 0.30: a luminaria encosta na ponta do braco
     lamp = util.box("SM_pole_lamp_%03d" % i, 0.70, 0.26, 0.17, col,
                     M.get("metal_rust_dark"),
-                    loc=(tip[0] + ca * 0.30, tip[1] + sa * 0.30, tip[2] - 0.10),
+                    loc=(tip[0] + ca * 0.08, tip[1] + sa * 0.08, tip[2] - 0.10),
                     rot=(0, 0, p["ang"]))
     lamp.parent = None
     # posiciona a luminaria no espaco do poste
@@ -269,6 +271,8 @@ def build(parent, hs):
     col = util.reset_collection(COL, parent)
     data = layout.load()
     rng = random.Random(20240601)
+    # posicao da luminaria de cada poste, para o Godot criar as luzes
+    luzes = []
 
     sp = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
                       "city_data", "signs.json")
@@ -285,6 +289,14 @@ def build(parent, hs):
         poles_by_road[road["id"]] = plist
         for k, p in enumerate(plist):
             build_pole(col, p, i)
+            # ponta do braco, em coordenadas LOCAIS do Godot (x, y, -y_blender)
+            ca, sa = math.cos(p["ang"]), math.sin(p["ang"])
+            tipx = ca * (ARM_LEN + 0.08)
+            tipy = sa * (ARM_LEN + 0.08)
+            lz = H_ARM + math.sin(ARM_RISE) * ARM_LEN - 0.18
+            wx, wy, wz = _world(p, (tipx, tipy, lz))
+            luzes.append({"x": round(wx, 2), "y": round(wz, 2), "z": round(-wy, 2),
+                          "rot": round(-p["ang"], 4)})
             if i % 6 == 0:
                 build_transformer(col, p, i)
             if k == 0 or k == len(plist) - 1:
@@ -296,5 +308,12 @@ def build(parent, hs):
 
     n_sign = build_signs(col, poles_by_road, signs, hs)
     n_deb = build_debris(col, hs, rng)
+    saida = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                         "out", "poles.json")
+    os.makedirs(os.path.dirname(saida), exist_ok=True)
+    with open(saida, "w", encoding="utf-8") as fh:
+        json.dump({"nota": "luminarias em coordenadas LOCAIS do Godot; "
+                           "rot e o giro em Y do braco",
+                   "luzes": luzes}, fh)
     return {"postes": total_p, "cabos": total_c, "placas": n_sign,
-            "detritos": n_deb, "objetos": len(col.objects)}
+            "detritos": n_deb, "objetos": len(col.objects), "luzes_json": saida}

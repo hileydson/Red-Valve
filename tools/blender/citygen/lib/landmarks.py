@@ -313,13 +313,17 @@ def build_ete(col, e, hs, rng):
     return n
 
 
-def build(parent, hs):
+def build(parent, hs, pular=()):
+    """`pular` lista marcos que serao substituidos por asset do usuario."""
     col = util.reset_collection(COL, parent)
     L = layout.load()["landmarks"]
     rng = random.Random(5150)
-    r = {"igreja": build_igreja(col, L["igreja_matriz"], hs),
-         "cemiterio": build_cemiterio(col, L["cemiterio"], hs, rng),
-         "praca": build_praca(col, L["praca_obelisco"], hs, rng),
-         "ete": build_ete(col, L["ete"], hs, rng)}
+    r = {}
+    if "igreja" not in pular:
+        r["igreja"] = build_igreja(col, L["igreja_matriz"], hs)
+    r["cemiterio"] = build_cemiterio(col, L["cemiterio"], hs, rng)
+    if "praca" not in pular:
+        r["praca"] = build_praca(col, L["praca_obelisco"], hs, rng)
+    r["ete"] = build_ete(col, L["ete"], hs, rng)
     r["objetos"] = len(col.objects)
     return r
