@@ -404,18 +404,18 @@ disable_receive_shadows = true
 
 [node name="City" type="Node3D" unique_id=1511466569]
 script = ExtResource("1_2x27r")
-last_result = "corpos ajustados: 37"
+last_result = "corpos ajustados: 0"
 
 [node name="TestPlate" parent="." unique_id=1974429640 instance=ExtResource("1_huve1")]
 visible = false
 
-[node name="Roads" parent="." unique_id=1909587576 instance=ExtResource("2_g3cjf")]
+[node name="Roads" parent="." unique_id=321705307 instance=ExtResource("2_g3cjf")]
 
 [node name="Walls" parent="." unique_id=2035760721 instance=ExtResource("3_m0get")]
 
-[node name="Houses" parent="." unique_id=505278993 instance=ExtResource("4_34eo7")]
+[node name="Houses" parent="." unique_id=413733466 instance=ExtResource("4_34eo7")]
 
-[node name="Props" parent="." unique_id=300231165 instance=ExtResource("5_qp32r")]
+[node name="Props" parent="." unique_id=720216281 instance=ExtResource("5_qp32r")]
 
 [node name="Landmarks" parent="." unique_id=1091506322 instance=ExtResource("6_m0get")]
 
@@ -3157,8 +3157,8 @@ inclinacao_graus = 22.0
 poca_forca = 0.95
 last_result = "296 luzes + 296 lentes + 296 poças | cone 76° | alcance 15 m | sombra=false | fade 55–80 m"
 
-[node name="PoleLight_000" type="SpotLight3D" parent="PoleLights" unique_id=378407989]
-transform = Transform3D(0.99586207, -0.084260724, 0.03404354, 0, 0.3746066, 0.92718387, -0.09087812, -0.92334723, 0.37305647, -259.63, 12.86, 249.51)
+[node name="PoleLight_000" type="SpotLight3D" parent="PoleLights" unique_id=1024245409]
+transform = Transform3D(-0.9958627, 0.084253944, -0.034040798, 0, 0.37460658, 0.92718387, 0.090870805, 0.92334783, -0.3730567, -260.51, 12.94, 239.81)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -3170,8 +3170,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_001" type="SpotLight3D" parent="PoleLights" unique_id=335060442]
-transform = Transform3D(0.9962523, -0.0801972, 0.032401767, 0, 0.3746066, 0.92718387, -0.08649547, -0.92370903, 0.37320265, -227.64, 12.5, 247.2)
+[node name="PoleLight_001" type="SpotLight3D" parent="PoleLights" unique_id=1482755253]
+transform = Transform3D(-0.99625283, 0.0801904, -0.032399025, 0, 0.37460658, 0.92718387, 0.08648813, 0.9237096, -0.3732029, -228.48, 12.45, 237.49)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -3183,8 +3183,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_002" type="SpotLight3D" parent="PoleLights" unique_id=488998598]
-transform = Transform3D(0.99795884, -0.059210133, 0.023922445, 0, 0.37460658, 0.92718387, -0.063860185, -0.92529136, 0.37384194, -196, 11.67, 244.64)
+[node name="PoleLight_002" type="SpotLight3D" parent="PoleLights" unique_id=1754246405]
+transform = Transform3D(-0.9979593, 0.059203338, -0.0239197, 0, 0.37460658, 0.92718387, 0.063852854, 0.9252918, -0.37384212, -196.62, 11.61, 234.92)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -3196,8 +3196,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_003" type="SpotLight3D" parent="PoleLights" unique_id=1588125977]
-transform = Transform3D(0.9999704, -0.0071426514, 0.0028858182, 0, 0.3746066, 0.92718387, -0.0077035977, -0.9271564, 0.37459546, -164.3, 10.66, 242.61)
+[node name="PoleLight_003" type="SpotLight3D" parent="PoleLights" unique_id=1886351244]
+transform = Transform3D(-0.9999696, 0.007228555, -0.0029205258, 0, 0.37460658, 0.92718387, 0.007796248, 0.9271557, -0.3745952, -164.38, 10.9, 232.87)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -3209,8 +3209,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_004" type="SpotLight3D" parent="PoleLights" unique_id=486634007]
-transform = Transform3D(0.9976482, 0.06355154, -0.025676487, 0, 0.37460658, 0.92718387, 0.06854254, -0.9250033, 0.37372556, -133.02, 10.55, 243.72)
+[node name="PoleLight_004" type="SpotLight3D" parent="PoleLights" unique_id=1718859261]
+transform = Transform3D(-0.99764764, -0.063558325, 0.025679233, 0, 0.37460655, 0.92718387, -0.068549864, 0.9250028, -0.37372538, -132.35, 10.63, 234)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -3222,8 +3222,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_005" type="SpotLight3D" parent="PoleLights" unique_id=348037377]
-transform = Transform3D(0.9931637, 0.1082298, -0.043727677, 0, 0.37460655, 0.92718387, 0.1167296, -0.9208454, 0.37204567, -100.71, 10.95, 247.65)
+[node name="PoleLight_005" type="SpotLight3D" parent="PoleLights" unique_id=271711483]
+transform = Transform3D(-0.9931628, -0.10823656, 0.043730408, -4.0178545e-09, 0.37460655, 0.92718387, -0.11673689, 0.92084455, -0.37204534, -99.58, 10.98, 237.98)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -3235,8 +3235,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_006" type="SpotLight3D" parent="PoleLights" unique_id=155740733]
-transform = Transform3D(0.99391246, 0.102149904, -0.04127124, 0, 0.37460655, 0.92718387, 0.11017222, -0.9215396, 0.37232617, -69.23, 11.62, 251.57)
+[node name="PoleLight_006" type="SpotLight3D" parent="PoleLights" unique_id=1231755333]
+transform = Transform3D(-0.9939117, -0.102156684, 0.041273978, 0, 0.37460658, 0.92718387, -0.11017953, 0.9215389, -0.37232587, -68.15, 11.64, 241.89)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -3248,8 +3248,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_007" type="SpotLight3D" parent="PoleLights" unique_id=165481832]
-transform = Transform3D(0.9986744, 0.04772546, -0.019282337, 0, 0.3746066, 0.92718387, 0.05147357, -0.92595476, 0.37410998, -37.48, 12.14, 254.16)
+[node name="PoleLight_007" type="SpotLight3D" parent="PoleLights" unique_id=2050804123]
+transform = Transform3D(-0.998674, -0.047732268, 0.019285087, 0, 0.37460655, 0.92718387, -0.051480908, 0.9259544, -0.37410983, -36.98, 12.18, 244.43)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -3261,8 +3261,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_008" type="SpotLight3D" parent="PoleLights" unique_id=391251742]
-transform = Transform3D(0.9996079, -0.02596116, 0.01048899, 0, 0.3746066, 0.92718387, -0.028000014, -0.92682034, 0.3744597, -4.69, 12.1, 254.94)
+[node name="PoleLight_008" type="SpotLight3D" parent="PoleLights" unique_id=292919990]
+transform = Transform3D(-0.9996081, 0.02595435, -0.010486239, 0, 0.37460655, 0.92718387, 0.02799267, 0.9268205, -0.37445977, -4.97, 12.03, 245.2)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -3274,8 +3274,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_009" type="SpotLight3D" parent="PoleLights" unique_id=27719347]
-transform = Transform3D(0.9959793, -0.0830603, 0.03355854, 0, 0.37460655, 0.92718387, -0.08958342, -0.92345595, 0.3731004, 27.85, 11.61, 252.17)
+[node name="PoleLight_009" type="SpotLight3D" parent="PoleLights" unique_id=2110967051]
+transform = Transform3D(-0.99598, 0.083053514, -0.0335558, 0, 0.37460658, 0.92718387, 0.0895761, 0.9234566, -0.37310064, 26.98, 11.69, 242.47)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -3287,8 +3287,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_010" type="SpotLight3D" parent="PoleLights" unique_id=1862995485]
-transform = Transform3D(0.99172914, -0.11900281, 0.048080247, 0, 0.3746066, 0.92718387, -0.12834866, -0.91951525, 0.37150824, 59.51, 11.16, 249.19)
+[node name="PoleLight_010" type="SpotLight3D" parent="PoleLights" unique_id=1569806718]
+transform = Transform3D(-0.9917301, 0.11899604, -0.04807752, 0, 0.37460658, 0.92718387, 0.12834136, 0.91951615, -0.3715086, 58.26, 11.1, 239.53)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -3300,8 +3300,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_011" type="SpotLight3D" parent="PoleLights" unique_id=1296603219]
-transform = Transform3D(0.98807263, -0.14277567, 0.05768511, -4.017855e-09, 0.37460658, 0.92718387, -0.15398853, -0.916125, 0.3701385, 91.57, 10.54, 244.3)
+[node name="PoleLight_011" type="SpotLight3D" parent="PoleLights" unique_id=424191611]
+transform = Transform3D(-0.98807377, 0.14276893, -0.05768239, 0, 0.3746066, 0.92718387, 0.15398125, 0.9161261, -0.37013894, 90.07, 10.61, 234.68)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -3313,8 +3313,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_012" type="SpotLight3D" parent="PoleLights" unique_id=1254906200]
-transform = Transform3D(0.983119, -0.16964415, 0.068540685, 0, 0.37460658, 0.92718387, -0.18296711, -0.9115321, 0.36828285, 122.81, 10.09, 239.07)
+[node name="PoleLight_012" type="SpotLight3D" parent="PoleLights" unique_id=436814726]
+transform = Transform3D(-0.9831204, 0.16963747, -0.06853798, 0, 0.37460658, 0.92718387, 0.1829599, 0.91153336, -0.36828336, 121.03, 10.14, 229.49)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -3326,8 +3326,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_013" type="SpotLight3D" parent="PoleLights" unique_id=1917208934]
-transform = Transform3D(0.9777793, -0.19437203, 0.07853139, -8.035711e-09, 0.37460658, 0.92718387, -0.20963699, -0.9065812, 0.36628255, 154.85, 9.78, 232.1)
+[node name="PoleLight_013" type="SpotLight3D" parent="PoleLights" unique_id=112265490]
+transform = Transform3D(-0.9777808, 0.19436535, -0.078528695, 0, 0.37460655, 0.92718387, 0.20962979, 0.9065826, -0.36628312, 152.81, 9.93, 222.57)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -3339,8 +3339,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_014" type="SpotLight3D" parent="PoleLights" unique_id=784410128]
-transform = Transform3D(0.97574365, -0.20297565, 0.08200748, 0, 0.37460658, 0.92718387, -0.21891628, -0.9046938, 0.36552, 185.42, 9.58, 225.54)
+[node name="PoleLight_014" type="SpotLight3D" parent="PoleLights" unique_id=1988655482]
+transform = Transform3D(-0.97574526, 0.202969, -0.08200479, 8.03571e-09, 0.3746066, 0.92718387, 0.21890911, 0.9046953, -0.3655206, 183.29, 9.74, 216.04)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -3352,8 +3352,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_015" type="SpotLight3D" parent="PoleLights" unique_id=533090203]
-transform = Transform3D(-0.94610834, 0.3002688, -0.12131646, 0, 0.37460658, 0.92718387, 0.32385033, 0.8772164, -0.3544184, 108.95, 10.28, 234.03)
+[node name="PoleLight_015" type="SpotLight3D" parent="PoleLights" unique_id=411008398]
+transform = Transform3D(0.94610596, -0.30027524, 0.12131907, -8.03571e-09, 0.37460658, 0.92718387, -0.32385728, -0.8772142, 0.3544175, 111.62, 10.2, 241.83)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -3365,8 +3365,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_016" type="SpotLight3D" parent="PoleLights" unique_id=1168896583]
-transform = Transform3D(-0.9388241, 0.31931928, -0.12901334, 8.03571e-09, 0.37460658, 0.92718387, 0.34439692, 0.8704626, -0.3516897, 138.57, 10.03, 224.07)
+[node name="PoleLight_016" type="SpotLight3D" parent="PoleLights" unique_id=2081321212]
+transform = Transform3D(0.93882155, -0.31932563, 0.12901594, -8.035709e-09, 0.37460655, 0.92718387, -0.34440377, -0.8704602, 0.35168874, 141.4, 9.98, 231.8)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -3378,8 +3378,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_017" type="SpotLight3D" parent="PoleLights" unique_id=858656361]
-transform = Transform3D(-0.90325695, 0.39785478, -0.16074374, 0, 0.3746066, 0.92718387, 0.4291002, 0.83748525, -0.33836597, 168.47, 9.93, 211.86)
+[node name="PoleLight_017" type="SpotLight3D" parent="PoleLights" unique_id=1256938501]
+transform = Transform3D(0.9032538, -0.39786094, 0.16074623, 0, 0.37460658, 0.92718387, -0.42910683, -0.83748233, 0.33836478, 172, 9.75, 219.31)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -3391,8 +3391,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_018" type="SpotLight3D" parent="PoleLights" unique_id=682527774]
-transform = Transform3D(-0.8461397, 0.49415296, -0.19965075, -1.607142e-08, 0.37460658, 0.92718387, 0.53296113, 0.7845271, -0.3169695, 196.01, 9.86, 197.16)
+[node name="PoleLight_018" type="SpotLight3D" parent="PoleLights" unique_id=1017216375]
+transform = Transform3D(0.8461358, -0.49415877, 0.19965309, -1.6071418e-08, 0.37460658, 0.92718387, -0.5329674, -0.7845235, 0.31696802, 200.41, 9.87, 204.14)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -3404,8 +3404,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_019" type="SpotLight3D" parent="PoleLights" unique_id=1524641636]
-transform = Transform3D(-0.7920745, 0.5659757, -0.22866902, 1.6071418e-08, 0.3746066, 0.92718387, 0.61042446, 0.7343987, -0.29671633, 222.01, 9.7, 178.58)
+[node name="PoleLight_019" type="SpotLight3D" parent="PoleLights" unique_id=1233445726]
+transform = Transform3D(0.79207003, -0.5659811, 0.22867118, 0, 0.37460658, 0.92718387, -0.61043024, -0.73439455, 0.29671463, 227.04, 9.74, 185.1)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -3417,8 +3417,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_020" type="SpotLight3D" parent="PoleLights" unique_id=1332540261]
-transform = Transform3D(-0.76316696, 0.59914744, -0.24207126, 1.607142e-08, 0.37460655, 0.92718387, 0.6462013, 0.7075961, -0.2858874, 245.62, 9.69, 157.96)
+[node name="PoleLight_020" type="SpotLight3D" parent="PoleLights" unique_id=123055465]
+transform = Transform3D(0.76316226, -0.5991526, 0.24207336, 1.607142e-08, 0.37460658, 0.92718387, -0.6462069, -0.7075917, 0.2858856, 250.94, 9.63, 164.25)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -3430,7 +3430,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_021" type="SpotLight3D" parent="PoleLights" unique_id=816787052]
+[node name="PoleLight_021" type="SpotLight3D" parent="PoleLights" unique_id=180283807]
 transform = Transform3D(-0.91320974, -0.37781802, 0.15264839, 0, 0.37460655, 0.92718387, -0.40748987, 0.8467133, -0.34209436, -318.11, 20.56, -28.8)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -3443,7 +3443,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_022" type="SpotLight3D" parent="PoleLights" unique_id=327681682]
+[node name="PoleLight_022" type="SpotLight3D" parent="PoleLights" unique_id=851447977]
 transform = Transform3D(-0.9141446, -0.3758696, 0.15186116, 0, 0.37460655, 0.92718387, -0.4053884, 0.8475801, -0.34244454, -289.26, 20.5, -15.7)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -3456,7 +3456,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_023" type="SpotLight3D" parent="PoleLights" unique_id=1219473026]
+[node name="PoleLight_023" type="SpotLight3D" parent="PoleLights" unique_id=1796995112]
 transform = Transform3D(-0.9182319, -0.36720487, 0.14836039, 0, 0.3746066, 0.92718387, -0.3960432, 0.8513698, -0.34397572, -260.31, 20.64, -2.64)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -3469,7 +3469,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_024" type="SpotLight3D" parent="PoleLights" unique_id=518106914]
+[node name="PoleLight_024" type="SpotLight3D" parent="PoleLights" unique_id=1747298175]
 transform = Transform3D(-0.9242982, -0.3538794, 0.14297654, -1.6071422e-08, 0.3746066, 0.92718387, -0.38167122, 0.8569944, -0.34624818, -230.32, 20.91, 10.09)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -3482,7 +3482,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_025" type="SpotLight3D" parent="PoleLights" unique_id=1597691346]
+[node name="PoleLight_025" type="SpotLight3D" parent="PoleLights" unique_id=1028594847]
 transform = Transform3D(-0.9290337, -0.34305343, 0.13860257, -1.6071418e-08, 0.37460658, 0.92718387, -0.36999503, 0.86138505, -0.34802216, -201.24, 20.98, 21.57)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -3495,7 +3495,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_026" type="SpotLight3D" parent="PoleLights" unique_id=207212992]
+[node name="PoleLight_026" type="SpotLight3D" parent="PoleLights" unique_id=895391394]
 transform = Transform3D(-0.9329754, -0.33373064, 0.13483593, 1.607142e-08, 0.37460655, 0.92718387, -0.35994008, 0.86503977, -0.34949872, -171.16, 20.91, 33.09)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -3508,7 +3508,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_027" type="SpotLight3D" parent="PoleLights" unique_id=2103157315]
+[node name="PoleLight_027" type="SpotLight3D" parent="PoleLights" unique_id=384727627]
 transform = Transform3D(-0.93701804, -0.3238477, 0.13084297, 8.03571e-09, 0.3746066, 0.92718387, -0.349281, 0.868788, -0.35101312, -141.23, 20.07, 44.74)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -3521,7 +3521,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_028" type="SpotLight3D" parent="PoleLights" unique_id=784398333]
+[node name="PoleLight_028" type="SpotLight3D" parent="PoleLights" unique_id=50089949]
 transform = Transform3D(-0.9360716, -0.32619226, 0.13179022, 8.03571e-09, 0.3746066, 0.92718387, -0.35180968, 0.86791044, -0.35065857, -111.48, 18.92, 56.22)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -3534,7 +3534,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_029" type="SpotLight3D" parent="PoleLights" unique_id=2021930410]
+[node name="PoleLight_029" type="SpotLight3D" parent="PoleLights" unique_id=442581882]
 transform = Transform3D(-0.9287004, -0.34382853, 0.13891573, 0, 0.37460658, 0.92718387, -0.370831, 0.861076, -0.34789726, -81.42, 17.71, 67.48)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -3547,7 +3547,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_030" type="SpotLight3D" parent="PoleLights" unique_id=1709939220]
+[node name="PoleLight_030" type="SpotLight3D" parent="PoleLights" unique_id=193510826]
 transform = Transform3D(-0.92245555, -0.35798886, 0.14463687, 0, 0.37460658, 0.92718387, -0.38610342, 0.8552859, -0.3455579, -51.8, 16.41, 79.6)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -3560,7 +3560,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_031" type="SpotLight3D" parent="PoleLights" unique_id=228199729]
+[node name="PoleLight_031" type="SpotLight3D" parent="PoleLights" unique_id=1144634810]
 transform = Transform3D(-0.92023975, -0.36285815, 0.1466042, -1.607142e-08, 0.37460658, 0.92718387, -0.39135513, 0.85323143, -0.34472787, -21.82, 15.45, 92.1)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -3573,7 +3573,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_032" type="SpotLight3D" parent="PoleLights" unique_id=1655154378]
+[node name="PoleLight_032" type="SpotLight3D" parent="PoleLights" unique_id=1165487741]
 transform = Transform3D(-0.9197302, -0.363967, 0.14705221, 0, 0.37460655, 0.92718387, -0.39255106, 0.852759, -0.344537, 7.67, 14.71, 104.76)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -3586,7 +3586,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_033" type="SpotLight3D" parent="PoleLights" unique_id=1425254270]
+[node name="PoleLight_033" type="SpotLight3D" parent="PoleLights" unique_id=1311623352]
 transform = Transform3D(0.27702832, 0.8908955, -0.35994512, 0, 0.37460658, 0.92718387, 0.96086174, -0.2568562, 0.103776634, 55.73, 17.31, -73.44)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -3599,7 +3599,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_034" type="SpotLight3D" parent="PoleLights" unique_id=929756826]
+[node name="PoleLight_034" type="SpotLight3D" parent="PoleLights" unique_id=1889176171]
 transform = Transform3D(0.30886552, 0.8818499, -0.35629046, 0, 0.37460658, 0.92718387, 0.9511057, -0.28637514, 0.115703054, 65.21, 16.35, -43.27)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -3612,7 +3612,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_035" type="SpotLight3D" parent="PoleLights" unique_id=2093921126]
+[node name="PoleLight_035" type="SpotLight3D" parent="PoleLights" unique_id=1171799360]
 transform = Transform3D(0.4146881, 0.8437036, -0.34087837, 0, 0.3746066, 0.92718387, 0.90996367, -0.38449213, 0.15534489, 76.17, 15.68, -12.84)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -3625,7 +3625,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_036" type="SpotLight3D" parent="PoleLights" unique_id=841838912]
+[node name="PoleLight_036" type="SpotLight3D" parent="PoleLights" unique_id=975465352]
 transform = Transform3D(0.49183846, 0.80728644, -0.32616487, 1.607142e-08, 0.37460658, 0.92718387, 0.8706865, -0.45602468, 0.18424591, 91.41, 14.85, 15.53)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -3638,7 +3638,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_037" type="SpotLight3D" parent="PoleLights" unique_id=101188228]
+[node name="PoleLight_037" type="SpotLight3D" parent="PoleLights" unique_id=460438148]
 transform = Transform3D(0.48747888, 0.8095565, -0.32708204, 0, 0.3746066, 0.92718387, 0.8731348, -0.45198256, 0.18261279, 107.33, 14.1, 43.68)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -3651,7 +3651,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_038" type="SpotLight3D" parent="PoleLights" unique_id=1607514401]
+[node name="PoleLight_038" type="SpotLight3D" parent="PoleLights" unique_id=1706541376]
 transform = Transform3D(0.47854775, 0.8141245, -0.32892764, 0, 0.3746066, 0.92718387, 0.8780616, -0.44370174, 0.17926712, 122.95, 13.38, 71.65)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -3664,7 +3664,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_039" type="SpotLight3D" parent="PoleLights" unique_id=2001795192]
+[node name="PoleLight_039" type="SpotLight3D" parent="PoleLights" unique_id=428585504]
 transform = Transform3D(0.48284444, 0.8119406, -0.32804528, 0, 0.37460658, 0.92718387, 0.87570614, -0.44768557, 0.1808767, 138.59, 12.74, 99.81)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -3677,7 +3677,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_040" type="SpotLight3D" parent="PoleLights" unique_id=1169421237]
+[node name="PoleLight_040" type="SpotLight3D" parent="PoleLights" unique_id=792616626]
 transform = Transform3D(0.4871296, 0.8097372, -0.32715505, -1.607142e-08, 0.3746066, 0.92718387, 0.8733297, -0.4516587, 0.18248196, 153.68, 12.1, 128.02)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -3690,7 +3690,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_041" type="SpotLight3D" parent="PoleLights" unique_id=1897407851]
+[node name="PoleLight_041" type="SpotLight3D" parent="PoleLights" unique_id=1665817734]
 transform = Transform3D(0.4882645, 0.8091494, -0.32691756, 1.6071418e-08, 0.37460658, 0.92718387, 0.8726957, -0.45271096, 0.1829071, 169.26, 11.43, 155.57)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -3703,7 +3703,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_042" type="SpotLight3D" parent="PoleLights" unique_id=2136754228]
+[node name="PoleLight_042" type="SpotLight3D" parent="PoleLights" unique_id=981880846]
 transform = Transform3D(-0.20160145, -0.9081466, 0.36691502, 0, 0.3746066, 0.92718387, -0.9794677, 0.18692161, -0.07552122, -327.03, 21.73, -90.75)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -3716,7 +3716,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_043" type="SpotLight3D" parent="PoleLights" unique_id=12540788]
+[node name="PoleLight_043" type="SpotLight3D" parent="PoleLights" unique_id=1678417065]
 transform = Transform3D(-0.15536077, -0.9159258, 0.37005803, 0, 0.37460658, 0.92718387, -0.98785776, 0.144048, -0.058199167, -320.76, 21.21, -59.36)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -3729,7 +3729,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_044" type="SpotLight3D" parent="PoleLights" unique_id=181115161]
+[node name="PoleLight_044" type="SpotLight3D" parent="PoleLights" unique_id=351345544]
 transform = Transform3D(0.047574688, -0.926134, 0.3741824, 0, 0.37460658, 0.92718387, -0.9988677, -0.044110484, 0.01782179, -317.25, 20.47, -26.97)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -3742,7 +3742,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_045" type="SpotLight3D" parent="PoleLights" unique_id=1646779816]
+[node name="PoleLight_045" type="SpotLight3D" parent="PoleLights" unique_id=1910411485]
 transform = Transform3D(0.16513279, -0.9144549, 0.3694637, 4.017855e-09, 0.37460655, 0.92718387, -0.9862713, -0.15310846, 0.06185983, -323.64, 19.9, 5.06)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -3755,7 +3755,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_046" type="SpotLight3D" parent="PoleLights" unique_id=393629081]
+[node name="PoleLight_046" type="SpotLight3D" parent="PoleLights" unique_id=521727965]
 transform = Transform3D(-0.062252376, -0.92538553, 0.37388003, 2.0089275e-09, 0.3746066, 0.92718387, -0.99806046, 0.0577194, -0.02332015, -327.62, 19.24, 36.04)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -3768,7 +3768,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_047" type="SpotLight3D" parent="PoleLights" unique_id=358981481]
+[node name="PoleLight_047" type="SpotLight3D" parent="PoleLights" unique_id=1031336190]
 transform = Transform3D(-0.28278142, -0.8893403, 0.35931677, 0, 0.37460658, 0.92718387, -0.9591844, 0.26219037, -0.10593178, -319.78, 18.63, 65.64)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -3781,7 +3781,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_048" type="SpotLight3D" parent="PoleLights" unique_id=1103005122]
+[node name="PoleLight_048" type="SpotLight3D" parent="PoleLights" unique_id=1659927128]
 transform = Transform3D(-0.29837787, -0.8849486, 0.35754243, 0, 0.37460655, 0.92718387, -0.9544478, 0.27665114, -0.11177431, -309.44, 17.96, 95.95)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -3794,7 +3794,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_049" type="SpotLight3D" parent="PoleLights" unique_id=2085272391]
+[node name="PoleLight_049" type="SpotLight3D" parent="PoleLights" unique_id=1777910033]
 transform = Transform3D(-0.2799986, -0.8900969, 0.35962248, 8.03571e-09, 0.3746066, 0.92718387, -0.9600004, 0.25961018, -0.10488932, -300.78, 17.34, 127.1)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -3807,8 +3807,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_050" type="SpotLight3D" parent="PoleLights" unique_id=372440012]
-transform = Transform3D(0.08847681, -0.9235477, 0.37313747, 0, 0.3746066, 0.92718387, -0.99607825, -0.08203427, 0.033143993, 3.52, 16.83, -18.31)
+[node name="PoleLight_050" type="SpotLight3D" parent="PoleLights" unique_id=1778894671]
+transform = Transform3D(-0.08848412, 0.923547, -0.37313724, 0, 0.37460658, 0.92718387, 0.99607754, 0.082041055, -0.03314674, -3.19, 16.98, -18.9)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -3820,8 +3820,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_051" type="SpotLight3D" parent="PoleLights" unique_id=625488856]
-transform = Transform3D(0.0022926517, -0.9271814, 0.3746056, 0, 0.37460658, 0.92718387, -0.9999974, -0.0021257096, 0.0008588424, 6.57, 17.44, -51.04)
+[node name="PoleLight_051" type="SpotLight3D" parent="PoleLights" unique_id=1677465238]
+transform = Transform3D(-0.002299998, 0.9271814, -0.3746056, 0, 0.37460658, 0.92718387, 0.9999974, 0.002132521, -0.0008615944, -0.17, 17.49, -51.05)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -3833,8 +3833,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_052" type="SpotLight3D" parent="PoleLights" unique_id=1830648357]
-transform = Transform3D(-0.0882776, -0.9235641, 0.3731441, 0, 0.3746066, 0.92718387, -0.99609596, 0.08184957, -0.03306937, 3.95, 18.18, -82.73)
+[node name="PoleLight_052" type="SpotLight3D" parent="PoleLights" unique_id=1911837718]
+transform = Transform3D(0.08828492, 0.9235635, -0.37314382, 0, 0.37460658, 0.92718387, 0.9960953, -0.08185635, 0.033072107, -2.77, 18.24, -82.14)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -3846,8 +3846,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_053" type="SpotLight3D" parent="PoleLights" unique_id=511357414]
-transform = Transform3D(-0.09255998, -0.9232036, 0.37299842, 0, 0.37460658, 0.92718387, -0.99570715, 0.085820116, -0.034673575, 0.93, 18.74, -115.08)
+[node name="PoleLight_053" type="SpotLight3D" parent="PoleLights" unique_id=581899948]
+transform = Transform3D(0.09246772, 0.9232115, -0.37300164, 0, 0.37460658, 0.92718387, 0.9957157, -0.085734576, 0.034639016, -5.78, 18.63, -114.45)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -3859,7 +3859,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_054" type="SpotLight3D" parent="PoleLights" unique_id=1208197774]
+[node name="PoleLight_054" type="SpotLight3D" parent="PoleLights" unique_id=1672451301]
 transform = Transform3D(-0.55069166, -0.77392846, 0.3126874, 1.607142e-08, 0.37460658, 0.92718387, -0.83470875, 0.5105924, -0.20629272, 21.61, 12.19, 189.07)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -3872,7 +3872,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_055" type="SpotLight3D" parent="PoleLights" unique_id=1133010556]
+[node name="PoleLight_055" type="SpotLight3D" parent="PoleLights" unique_id=148155945]
 transform = Transform3D(-0.508802, -0.7981973, 0.32249263, 0, 0.37460655, 0.92718387, -0.86088353, 0.471753, -0.19060057, 39.09, 11.61, 215.87)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -3885,7 +3885,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_056" type="SpotLight3D" parent="PoleLights" unique_id=628961257]
+[node name="PoleLight_056" type="SpotLight3D" parent="PoleLights" unique_id=1212869115]
 transform = Transform3D(-0.465671, -0.82051873, 0.33151105, 0, 0.37460658, 0.92718387, -0.88495797, 0.43176264, -0.17444341, 54.16, 11.19, 243.6)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -3898,8 +3898,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_057" type="SpotLight3D" parent="PoleLights" unique_id=1383402273]
-transform = Transform3D(-0.69267595, -0.6687304, 0.2701846, 1.607142e-08, 0.37460655, 0.92718387, -0.7212489, 0.64223796, -0.25948095, 32.59, 15.07, 37.16)
+[node name="PoleLight_057" type="SpotLight3D" parent="PoleLights" unique_id=665496772]
+transform = Transform3D(0.69268125, 0.66872567, -0.2701827, 1.607142e-08, 0.37460658, 0.92718387, 0.72124386, -0.6422429, 0.25948295, 27.37, 14.95, 42.18)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -3911,8 +3911,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_058" type="SpotLight3D" parent="PoleLights" unique_id=722414965]
-transform = Transform3D(-0.69007504, -0.6710381, 0.27111697, 0, 0.3746066, 0.92718387, -0.7237379, 0.6398264, -0.25850663, 54.88, 14.23, 60.78)
+[node name="PoleLight_058" type="SpotLight3D" parent="PoleLights" unique_id=706927928]
+transform = Transform3D(0.6900803, 0.6710334, -0.2711151, 1.607142e-08, 0.3746066, 0.92718387, 0.7237328, -0.6398313, 0.25850862, 49.64, 14.24, 65.78)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -3924,8 +3924,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_059" type="SpotLight3D" parent="PoleLights" unique_id=1460090733]
-transform = Transform3D(-0.68426305, -0.6761351, 0.2731763, 0, 0.37460655, 0.92718387, -0.72923523, 0.6344377, -0.25632945, 76.46, 13.63, 83.76)
+[node name="PoleLight_059" type="SpotLight3D" parent="PoleLights" unique_id=2051984127]
+transform = Transform3D(0.6842685, 0.6761305, -0.27317443, 0, 0.37460658, 0.92718387, 0.7292302, -0.6344427, 0.25633144, 71.18, 13.64, 88.71)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -3937,8 +3937,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_060" type="SpotLight3D" parent="PoleLights" unique_id=1494130520]
-transform = Transform3D(-0.6715455, -0.6870092, 0.2775697, 0, 0.37460655, 0.92718387, -0.7409633, 0.62264615, -0.25156537, 99.05, 13.12, 107.37)
+[node name="PoleLight_060" type="SpotLight3D" parent="PoleLights" unique_id=291627089]
+transform = Transform3D(0.6715509, 0.6870047, -0.2775679, 0, 0.3746066, 0.92718387, 0.7409584, -0.62265116, 0.25156742, 93.68, 13.06, 112.23)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -3950,8 +3950,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_061" type="SpotLight3D" parent="PoleLights" unique_id=1762893558]
-transform = Transform3D(-0.64467084, -0.70879525, 0.28637186, 1.607142e-08, 0.37460658, 0.92718387, -0.76446027, 0.59772843, -0.24149793, 119.9, 12.51, 131.48)
+[node name="PoleLight_061" type="SpotLight3D" parent="PoleLights" unique_id=1529982876]
+transform = Transform3D(0.6446765, 0.7087908, -0.28637007, 1.6071422e-08, 0.37460658, 0.92718387, 0.7644555, -0.5977337, 0.24150003, 114.36, 12.44, 136.14)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -3963,8 +3963,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_062" type="SpotLight3D" parent="PoleLights" unique_id=934656738]
-transform = Transform3D(-0.6269193, -0.72235423, 0.29185006, -1.6071418e-08, 0.37460658, 0.92718387, -0.77908415, 0.5812695, -0.23484811, 140.15, 11.98, 156.52)
+[node name="PoleLight_062" type="SpotLight3D" parent="PoleLights" unique_id=1648244130]
+transform = Transform3D(0.62692505, 0.72235, -0.29184833, 1.607142e-08, 0.37460655, 0.92718387, 0.77907956, -0.5812748, 0.23485024, 134.51, 11.97, 161.06)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -3976,8 +3976,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_063" type="SpotLight3D" parent="PoleLights" unique_id=63511517]
-transform = Transform3D(-0.976849, 0.19835243, -0.08013958, 0, 0.3746066, 0.92718387, 0.21392998, 0.9057186, -0.36593407, 18.49, 15.99, -4.21)
+[node name="PoleLight_063" type="SpotLight3D" parent="PoleLights" unique_id=1537643871]
+transform = Transform3D(0.97684747, -0.1983591, 0.08014227, 0, 0.3746066, 0.92718387, -0.21393718, -0.9057172, 0.36593348, 19.94, 15.89, 2.38)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -3989,8 +3989,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_064" type="SpotLight3D" parent="PoleLights" unique_id=1659735388]
-transform = Transform3D(-0.976849, 0.19835243, -0.08013958, 0, 0.3746066, 0.92718387, 0.21392998, 0.9057186, -0.36593407, 49.37, 15.85, -11.26)
+[node name="PoleLight_064" type="SpotLight3D" parent="PoleLights" unique_id=1713667359]
+transform = Transform3D(0.97684747, -0.1983591, 0.08014227, 0, 0.3746066, 0.92718387, -0.21393718, -0.9057172, 0.36593348, 50.81, 15.65, -4.68)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4002,7 +4002,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_065" type="SpotLight3D" parent="PoleLights" unique_id=1408586828]
+[node name="PoleLight_065" type="SpotLight3D" parent="PoleLights" unique_id=1291920471]
 transform = Transform3D(-0.96440727, -0.24516702, 0.09905391, 8.035709e-09, 0.37460655, 0.92718387, -0.26442114, 0.89418286, -0.36127332, -18.54, 16.93, -4.86)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -4015,7 +4015,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_066" type="SpotLight3D" parent="PoleLights" unique_id=2021051820]
+[node name="PoleLight_066" type="SpotLight3D" parent="PoleLights" unique_id=391277438]
 transform = Transform3D(-0.96440727, -0.24516702, 0.09905391, 8.035709e-09, 0.37460655, 0.92718387, -0.26442114, 0.89418286, -0.36127332, -48.76, 18.16, -13.41)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -4028,7 +4028,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_067" type="SpotLight3D" parent="PoleLights" unique_id=2146034676]
+[node name="PoleLight_067" type="SpotLight3D" parent="PoleLights" unique_id=905399209]
 transform = Transform3D(0.7477007, -0.6156834, 0.24875222, 0, 0.3746066, 0.92718387, -0.6640359, -0.693256, 0.2800936, -12.03, 16.5, 15.27)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -4041,7 +4041,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_068" type="SpotLight3D" parent="PoleLights" unique_id=882288294]
+[node name="PoleLight_068" type="SpotLight3D" parent="PoleLights" unique_id=1025215618]
 transform = Transform3D(0.73032165, -0.6333625, 0.25589505, -1.607142e-08, 0.3746066, 0.92718387, -0.68310344, -0.67714244, 0.2735833, -35.67, 16.87, 36.85)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -4054,7 +4054,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_069" type="SpotLight3D" parent="PoleLights" unique_id=891738789]
+[node name="PoleLight_069" type="SpotLight3D" parent="PoleLights" unique_id=1686887133]
 transform = Transform3D(0.71238625, -0.65068614, 0.26289424, 0, 0.37460655, 0.92718387, -0.7017876, -0.66051304, 0.26686457, -58.39, 17.3, 58.63)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -4067,8 +4067,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_070" type="SpotLight3D" parent="PoleLights" unique_id=170120007]
-transform = Transform3D(-0.5347338, -0.78348947, 0.31655028, 0, 0.3746066, 0.92718387, -0.8450206, 0.49579653, -0.20031479, 16.49, 15.81, 11.09)
+[node name="PoleLight_070" type="SpotLight3D" parent="PoleLights" unique_id=1718248841]
+transform = Transform3D(0.53465545, 0.78353536, -0.31656882, -1.6071422e-08, 0.37460655, 0.92718387, 0.8450701, -0.4957239, 0.20028545, 11.21, 15.8, 14.43)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4080,8 +4080,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_071" type="SpotLight3D" parent="PoleLights" unique_id=113951351]
-transform = Transform3D(-0.5347338, -0.78348947, 0.31655028, 0, 0.3746066, 0.92718387, -0.8450206, 0.49579653, -0.20031479, 34.08, 15.05, 38.02)
+[node name="PoleLight_071" type="SpotLight3D" parent="PoleLights" unique_id=652529495]
+transform = Transform3D(0.53465545, 0.78353536, -0.31656882, -1.6071422e-08, 0.37460655, 0.92718387, 0.8450701, -0.4957239, 0.20028545, 28.81, 14.94, 41.35)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4093,7 +4093,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_072" type="SpotLight3D" parent="PoleLights" unique_id=2098944708]
+[node name="PoleLight_072" type="SpotLight3D" parent="PoleLights" unique_id=1716915862]
 transform = Transform3D(0.99775654, 0.062071443, -0.025078492, 0, 0.37460658, 0.92718387, 0.06694621, -0.9251038, 0.37376618, -178.51, 22.64, -129.39)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -4106,7 +4106,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_073" type="SpotLight3D" parent="PoleLights" unique_id=1242954154]
+[node name="PoleLight_073" type="SpotLight3D" parent="PoleLights" unique_id=297134468]
 transform = Transform3D(0.9979208, 0.059758503, -0.024144001, 0, 0.37460658, 0.92718387, 0.06445162, -0.9252561, 0.3738277, -146.07, 22.55, -126.92)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -4119,7 +4119,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_074" type="SpotLight3D" parent="PoleLights" unique_id=847251815]
+[node name="PoleLight_074" type="SpotLight3D" parent="PoleLights" unique_id=1527130762]
 transform = Transform3D(0.9983071, 0.053928245, -0.021788424, 2.0089277e-09, 0.37460658, 0.92718387, 0.058163486, -0.92561424, 0.3739724, -113.9, 21.88, -124.98)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -4132,7 +4132,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_075" type="SpotLight3D" parent="PoleLights" unique_id=1395799347]
+[node name="PoleLight_075" type="SpotLight3D" parent="PoleLights" unique_id=1794232650]
 transform = Transform3D(0.9990235, 0.040964782, -0.016550845, -2.0089275e-09, 0.3746066, 0.92718387, 0.04418194, -0.9262785, 0.3742408, -81.89, 21.05, -123.22)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -4145,7 +4145,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_076" type="SpotLight3D" parent="PoleLights" unique_id=902173710]
+[node name="PoleLight_076" type="SpotLight3D" parent="PoleLights" unique_id=1699762632]
 transform = Transform3D(0.9997402, 0.021134555, -0.008538915, 1.0044637e-09, 0.37460658, 0.92718387, 0.022794351, -0.92694294, 0.37450925, -50.45, 20.07, -122.86)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -4158,7 +4158,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_077" type="SpotLight3D" parent="PoleLights" unique_id=1062401607]
+[node name="PoleLight_077" type="SpotLight3D" parent="PoleLights" unique_id=708882910]
 transform = Transform3D(0.9999985, -0.0015796174, 0.0006382069, 0, 0.37460655, 0.92718387, -0.0017036722, -0.9271825, 0.37460604, -18.09, 19.45, -122.31)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -4171,7 +4171,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_078" type="SpotLight3D" parent="PoleLights" unique_id=390962866]
+[node name="PoleLight_078" type="SpotLight3D" parent="PoleLights" unique_id=566013158]
 transform = Transform3D(0.9996593, -0.024200156, 0.009777497, 0, 0.37460655, 0.92718387, -0.026100708, -0.92686796, 0.37447894, 14.24, 18.93, -123.04)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -4184,7 +4184,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_079" type="SpotLight3D" parent="PoleLights" unique_id=2036644882]
+[node name="PoleLight_079" type="SpotLight3D" parent="PoleLights" unique_id=722621789]
 transform = Transform3D(0.99890494, -0.043379772, 0.017526563, 0, 0.3746066, 0.92718387, -0.04678659, -0.92616856, 0.37419635, 46.28, 19.08, -124.04)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -4197,7 +4197,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_080" type="SpotLight3D" parent="PoleLights" unique_id=2019408565]
+[node name="PoleLight_080" type="SpotLight3D" parent="PoleLights" unique_id=681049185]
 transform = Transform3D(0.9982063, -0.055508506, 0.02242689, 2.0089275e-09, 0.37460658, 0.92718387, -0.05986785, -0.9255208, 0.37393466, 78.13, 18.87, -125.88)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -4210,7 +4210,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_081" type="SpotLight3D" parent="PoleLights" unique_id=1648691909]
+[node name="PoleLight_081" type="SpotLight3D" parent="PoleLights" unique_id=429913617]
 transform = Transform3D(0.99789447, -0.06013539, 0.024296276, 2.0089272e-09, 0.37460658, 0.92718387, -0.06485811, -0.92523164, 0.37381786, 110.06, 18.88, -127.26)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -4223,7 +4223,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_082" type="SpotLight3D" parent="PoleLights" unique_id=1991803440]
+[node name="PoleLight_082" type="SpotLight3D" parent="PoleLights" unique_id=1979311379]
 transform = Transform3D(0.9982003, -0.05560106, 0.022464285, 0, 0.37460655, 0.92718387, -0.059967674, -0.92551523, 0.3739324, 142.04, 18.51, -130.06)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -4236,7 +4236,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_083" type="SpotLight3D" parent="PoleLights" unique_id=2103150165]
+[node name="PoleLight_083" type="SpotLight3D" parent="PoleLights" unique_id=1060788318]
 transform = Transform3D(0.9989557, -0.042360954, 0.017114937, 2.0089272e-09, 0.37460658, 0.92718387, -0.04568776, -0.92621565, 0.37421542, 173.46, 18.17, -131.6)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -4249,7 +4249,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_084" type="SpotLight3D" parent="PoleLights" unique_id=1193920211]
+[node name="PoleLight_084" type="SpotLight3D" parent="PoleLights" unique_id=320626747]
 transform = Transform3D(0.9997331, -0.021419449, 0.008654018, 1.0044636e-09, 0.37460658, 0.92718387, -0.023101619, -0.9269364, 0.37450662, 205.22, 17.75, -132.83)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -4262,7 +4262,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_085" type="SpotLight3D" parent="PoleLights" unique_id=1352535014]
+[node name="PoleLight_085" type="SpotLight3D" parent="PoleLights" unique_id=255211154]
 transform = Transform3D(0.99996465, -0.0077916575, 0.0031480342, -2.511159e-10, 0.37460658, 0.92718387, -0.008403573, -0.9271511, 0.37459335, 237.77, 17.16, -132.95)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -4275,8 +4275,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_086" type="SpotLight3D" parent="PoleLights" unique_id=1838084045]
-transform = Transform3D(-0.9983245, 0.053650554, -0.021676231, 0, 0.37460658, 0.92718387, 0.057863988, 0.9256304, -0.3739789, -178.34, 22.24, -80.63)
+[node name="PoleLight_086" type="SpotLight3D" parent="PoleLights" unique_id=209668039]
+transform = Transform3D(0.9983241, -0.05365736, 0.021678979, 0, 0.3746066, 0.92718387, -0.057871327, -0.92563, 0.37397876, -178.04, 22.31, -75.4)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4288,8 +4288,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_087" type="SpotLight3D" parent="PoleLights" unique_id=1053361553]
-transform = Transform3D(-0.9987704, 0.045966066, -0.018571494, 0, 0.3746066, 0.92718387, 0.049576, 0.9260438, -0.37414595, -146.54, 22.54, -83.22)
+[node name="PoleLight_087" type="SpotLight3D" parent="PoleLights" unique_id=1540842587]
+transform = Transform3D(0.99876994, -0.045972865, 0.018574243, 0, 0.37460658, 0.92718387, -0.04958333, -0.9260434, 0.3741458, -146.28, 22.46, -77.98)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4301,8 +4301,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_088" type="SpotLight3D" parent="PoleLights" unique_id=1501548663]
-transform = Transform3D(-0.99961096, 0.025861671, -0.010448792, 0, 0.37460658, 0.92718387, 0.02789271, 0.92682314, -0.37446082, -114.16, 21.73, -84.29)
+[node name="PoleLight_088" type="SpotLight3D" parent="PoleLights" unique_id=1522249601]
+transform = Transform3D(0.99961066, -0.025868477, 0.010451543, 1.0044636e-09, 0.37460655, 0.92718387, -0.027900051, -0.9268229, 0.37446076, -114.01, 21.69, -79.06)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4314,8 +4314,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_089" type="SpotLight3D" parent="PoleLights" unique_id=1482413422]
-transform = Transform3D(-0.9999999, 0.0004601862, -0.00018592727, 1.5694746e-11, 0.3746066, 0.92718387, 0.0004963268, 0.92718375, -0.37460655, -81.98, 20.89, -84.66)
+[node name="PoleLight_089" type="SpotLight3D" parent="PoleLights" unique_id=736688939]
+transform = Transform3D(0.9999999, -0.00046699762, 0.00018867927, 1.5694746e-11, 0.3746066, 0.92718387, -0.00050367316, -0.92718375, 0.37460655, -81.98, 20.88, -79.42)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4327,8 +4327,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_090" type="SpotLight3D" parent="PoleLights" unique_id=1739802815]
-transform = Transform3D(-0.99965143, -0.024478216, 0.00988984, 0, 0.37460658, 0.92718387, -0.026400605, 0.9268607, -0.37447602, -49.86, 19.84, -84.46)
+[node name="PoleLight_090" type="SpotLight3D" parent="PoleLights" unique_id=321757399]
+transform = Transform3D(0.999649, 0.024564093, -0.0099245375, 0, 0.37460658, 0.92718387, 0.026493227, -0.9268584, 0.3744751, -50, 19.78, -79.22)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4340,8 +4340,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_091" type="SpotLight3D" parent="PoleLights" unique_id=1757475517]
-transform = Transform3D(-0.99878967, -0.045602445, 0.018424584, 0, 0.37460655, 0.92718387, -0.04918382, 0.9260617, -0.3741532, -17.55, 18.84, -83.11)
+[node name="PoleLight_091" type="SpotLight3D" parent="PoleLights" unique_id=1999459972]
+transform = Transform3D(0.99879014, 0.045595646, -0.018421834, 0, 0.3746066, 0.92718387, 0.049176488, -0.9260621, 0.37415335, -17.81, 18.79, -77.88)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4353,8 +4353,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_092" type="SpotLight3D" parent="PoleLights" unique_id=1239370089]
-transform = Transform3D(-0.9979268, -0.059672773, 0.024109364, 0, 0.37460655, 0.92718387, -0.06435916, 0.9252616, -0.37382993, 14.04, 17.97, -80.79)
+[node name="PoleLight_092" type="SpotLight3D" parent="PoleLights" unique_id=2010386125]
+transform = Transform3D(0.9979273, 0.059665974, -0.024106618, 0, 0.37460658, 0.92718387, 0.06435183, -0.9252621, 0.3738301, 13.71, 17.94, -75.56)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4366,8 +4366,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_093" type="SpotLight3D" parent="PoleLights" unique_id=1257801749]
-transform = Transform3D(-0.99749446, -0.06559318, 0.026501367, 2.0089275e-09, 0.37460658, 0.92718387, -0.07074453, 0.9248608, -0.373668, 45.84, 17.59, -78.4)
+[node name="PoleLight_093" type="SpotLight3D" parent="PoleLights" unique_id=2004736173]
+transform = Transform3D(0.99749506, 0.065586396, -0.02649862, 0, 0.3746066, 0.92718387, 0.070737205, -0.9248613, 0.3736682, 45.47, 17.66, -73.17)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4379,8 +4379,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_094" type="SpotLight3D" parent="PoleLights" unique_id=1855436593]
-transform = Transform3D(-0.9978226, -0.061153114, 0.02470746, -2.0089277e-09, 0.37460658, 0.92718387, -0.06595576, 0.925165, -0.3737909, 77.84, 17.49, -76.57)
+[node name="PoleLight_094" type="SpotLight3D" parent="PoleLights" unique_id=621121471]
+transform = Transform3D(0.997823, 0.06114632, -0.024704715, 2.0089275e-09, 0.37460655, 0.92718387, 0.06594843, -0.9251654, 0.37379107, 77.5, 17.37, -71.34)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4392,8 +4392,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_095" type="SpotLight3D" parent="PoleLights" unique_id=2098580569]
-transform = Transform3D(-0.9986585, -0.04801005, 0.019397318, 2.0089275e-09, 0.37460655, 0.92718387, -0.051780507, 0.92594004, -0.37410402, 109.86, 17.18, -74.2)
+[node name="PoleLight_095" type="SpotLight3D" parent="PoleLights" unique_id=2000443843]
+transform = Transform3D(0.9986589, 0.048003245, -0.01939457, 0, 0.3746066, 0.92718387, 0.05177317, -0.9259404, 0.3741042, 109.59, 17.24, -68.97)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4405,8 +4405,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_096" type="SpotLight3D" parent="PoleLights" unique_id=263875041]
-transform = Transform3D(-0.9995529, -0.027722072, 0.011200444, 0, 0.37460658, 0.92718387, -0.029899217, 0.9267693, -0.3744391, 142.03, 16.96, -73.35)
+[node name="PoleLight_096" type="SpotLight3D" parent="PoleLights" unique_id=1200242000]
+transform = Transform3D(0.99955314, 0.027715262, -0.011197692, -1.0044637e-09, 0.37460658, 0.92718387, 0.029891873, -0.92676955, 0.37443918, 141.87, 16.92, -68.11)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4418,8 +4418,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_097" type="SpotLight3D" parent="PoleLights" unique_id=1541228538]
-transform = Transform3D(-0.9999955, -0.0027849532, 0.001125194, -1.2555797e-10, 0.37460658, 0.92718387, -0.0030036687, 0.9271797, -0.37460488, 173.38, 16.57, -72.56)
+[node name="PoleLight_097" type="SpotLight3D" parent="PoleLights" unique_id=1690303573]
+transform = Transform3D(0.9999956, 0.0027781415, -0.0011224421, 0, 0.37460664, 0.92718387, 0.0029963222, -0.92717975, 0.3746049, 173.37, 16.59, -67.32)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4431,8 +4431,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_098" type="SpotLight3D" parent="PoleLights" unique_id=253325937]
-transform = Transform3D(-0.99968505, 0.023266466, -0.0094002625, 0, 0.37460655, 0.92718387, 0.025093691, 0.92689186, -0.37448862, 205.63, 16.21, -73)
+[node name="PoleLight_098" type="SpotLight3D" parent="PoleLights" unique_id=1324354463]
+transform = Transform3D(0.99968493, -0.023273276, 0.009403014, 0, 0.3746066, 0.92718387, -0.025101036, -0.92689174, 0.37448856, 205.76, 16.2, -67.76)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4444,8 +4444,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_099" type="SpotLight3D" parent="PoleLights" unique_id=1157582296]
-transform = Transform3D(-0.9992043, 0.036981422, -0.014941462, 0, 0.37460658, 0.92718387, 0.03988575, 0.9264461, -0.37430847, 237.75, 15.98, -74.61)
+[node name="PoleLight_099" type="SpotLight3D" parent="PoleLights" unique_id=2049513927]
+transform = Transform3D(0.99920404, -0.036988225, 0.014944212, -1.0044638e-09, 0.3746066, 0.92718387, -0.039893087, -0.92644584, 0.37430838, 237.96, 15.82, -69.38)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4457,7 +4457,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_100" type="SpotLight3D" parent="PoleLights" unique_id=507684030]
+[node name="PoleLight_100" type="SpotLight3D" parent="PoleLights" unique_id=853468649]
 transform = Transform3D(0.99886745, 0.044113882, -0.017823165, 0, 0.37460655, 0.92718387, 0.047578353, -0.9261338, 0.37418234, -177.88, 22.76, -25.71)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -4470,7 +4470,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_101" type="SpotLight3D" parent="PoleLights" unique_id=1808154614]
+[node name="PoleLight_101" type="SpotLight3D" parent="PoleLights" unique_id=199594337]
 transform = Transform3D(0.9985372, 0.05013278, -0.020254958, 0, 0.37460658, 0.92718387, 0.054069947, -0.92582756, 0.37405857, -145.86, 22.53, -24.47)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -4483,7 +4483,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_102" type="SpotLight3D" parent="PoleLights" unique_id=2039000975]
+[node name="PoleLight_102" type="SpotLight3D" parent="PoleLights" unique_id=956763382]
 transform = Transform3D(0.9974452, 0.06623378, -0.026760181, 0, 0.37460655, 0.92718387, 0.07143543, -0.9248151, 0.37364954, -114.26, 21.64, -22.65)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -4496,7 +4496,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_103" type="SpotLight3D" parent="PoleLights" unique_id=1103596106]
+[node name="PoleLight_103" type="SpotLight3D" parent="PoleLights" unique_id=1753191654]
 transform = Transform3D(0.996632, 0.076032914, -0.03071929, 0, 0.37460658, 0.92718387, 0.08200414, -0.9240611, 0.3733449, -82.68, 20.29, -19.67)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -4509,7 +4509,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_104" type="SpotLight3D" parent="PoleLights" unique_id=498670482]
+[node name="PoleLight_104" type="SpotLight3D" parent="PoleLights" unique_id=1668088863]
 transform = Transform3D(0.99692863, 0.07261337, -0.029337706, -2.0089277e-09, 0.37460658, 0.92718387, 0.07831605, -0.92433614, 0.373456, -50.64, 18.41, -16.87)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -4522,7 +4522,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_105" type="SpotLight3D" parent="PoleLights" unique_id=1768050705]
+[node name="PoleLight_105" type="SpotLight3D" parent="PoleLights" unique_id=999621861]
 transform = Transform3D(0.99799114, 0.058740683, -0.023732776, 0, 0.37460658, 0.92718387, 0.06335387, -0.9253213, 0.37385404, -18.39, 17.34, -15.05)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -4535,7 +4535,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_106" type="SpotLight3D" parent="PoleLights" unique_id=1077097061]
+[node name="PoleLight_106" type="SpotLight3D" parent="PoleLights" unique_id=182099180]
 transform = Transform3D(0.9992591, 0.03568436, -0.0144174155, 0, 0.37460658, 0.92718387, 0.03848682, -0.9264969, 0.37432903, 13.74, 16.46, -13.31)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -4548,7 +4548,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_107" type="SpotLight3D" parent="PoleLights" unique_id=307045501]
+[node name="PoleLight_107" type="SpotLight3D" parent="PoleLights" unique_id=2109078896]
 transform = Transform3D(0.99996555, 0.007692131, -0.003107823, 0, 0.37460658, 0.92718387, 0.008296231, -0.9271519, 0.3745937, 45.18, 15.84, -12.55)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -4561,7 +4561,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_108" type="SpotLight3D" parent="PoleLights" unique_id=1899184303]
+[node name="PoleLight_108" type="SpotLight3D" parent="PoleLights" unique_id=674266223]
 transform = Transform3D(0.9997261, -0.021697525, 0.008766369, 0, 0.37460658, 0.92718387, -0.023401534, -0.92692995, 0.374504, 77.21, 15.68, -12.61)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -4574,7 +4574,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_109" type="SpotLight3D" parent="PoleLights" unique_id=1340808483]
+[node name="PoleLight_109" type="SpotLight3D" parent="PoleLights" unique_id=66206377]
 transform = Transform3D(0.9986585, -0.04801005, 0.019397318, -2.0089275e-09, 0.37460655, 0.92718387, -0.051780507, -0.92594004, 0.37410402, 109.69, 15.49, -14.3)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -4587,7 +4587,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_110" type="SpotLight3D" parent="PoleLights" unique_id=1572298218]
+[node name="PoleLight_110" type="SpotLight3D" parent="PoleLights" unique_id=874256772]
 transform = Transform3D(0.99740165, -0.06679545, 0.026987113, 0, 0.37460658, 0.92718387, -0.07204121, -0.9247747, 0.37363324, 141.51, 15.23, -16.4)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -4600,7 +4600,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_111" type="SpotLight3D" parent="PoleLights" unique_id=1050198815]
+[node name="PoleLight_111" type="SpotLight3D" parent="PoleLights" unique_id=1287960212]
 transform = Transform3D(0.99667233, -0.07557767, 0.030535357, -2.0089277e-09, 0.37460658, 0.92718387, -0.081513144, -0.9240985, 0.37335998, 173.76, 15.06, -18.2)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -4613,7 +4613,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_112" type="SpotLight3D" parent="PoleLights" unique_id=1364490458]
+[node name="PoleLight_112" type="SpotLight3D" parent="PoleLights" unique_id=1403023880]
 transform = Transform3D(0.99702126, -0.07151091, 0.028892282, 0, 0.37460658, 0.92718387, -0.077127, -0.924422, 0.37349072, 205.11, 14.77, -21.43)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -4626,7 +4626,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_113" type="SpotLight3D" parent="PoleLights" unique_id=807815312]
+[node name="PoleLight_113" type="SpotLight3D" parent="PoleLights" unique_id=197394389]
 transform = Transform3D(0.9975577, -0.06476079, 0.026165055, 0, 0.37460658, 0.92718387, -0.06984676, -0.9249194, 0.3736917, 237.67, 14.64, -23.53)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -4639,8 +4639,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_114" type="SpotLight3D" parent="PoleLights" unique_id=546115663]
-transform = Transform3D(-0.99782914, -0.061060604, 0.024670083, 0, 0.37460658, 0.92718387, -0.06585598, 0.9251711, -0.37379336, -178.25, 20.95, 28.84)
+[node name="PoleLight_114" type="SpotLight3D" parent="PoleLights" unique_id=1011745806]
+transform = Transform3D(0.9978297, 0.061053813, -0.024667338, 0, 0.3746066, 0.92718387, 0.065848656, -0.92517155, 0.37379354, -178.59, 20.82, 34.07)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4652,8 +4652,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_115" type="SpotLight3D" parent="PoleLights" unique_id=29279144]
-transform = Transform3D(-0.99815196, -0.056341447, 0.022763424, 2.0089272e-09, 0.37460655, 0.92718387, -0.06076621, 0.9254704, -0.3739143, -146.24, 20.77, 31.29)
+[node name="PoleLight_115" type="SpotLight3D" parent="PoleLights" unique_id=1661850428]
+transform = Transform3D(0.99815243, 0.056334652, -0.022760676, 0, 0.37460658, 0.92718387, 0.060758878, -0.9254708, 0.37391448, -146.56, 20.61, 36.52)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4665,8 +4665,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_116" type="SpotLight3D" parent="PoleLights" unique_id=216220000]
-transform = Transform3D(-0.99885285, -0.044398528, 0.017938169, -2.0089275e-09, 0.37460658, 0.92718387, -0.047885355, 0.9261202, -0.37417686, -114.42, 19.94, 32.88)
+[node name="PoleLight_116" type="SpotLight3D" parent="PoleLights" unique_id=735979411]
+transform = Transform3D(0.99885315, 0.044391725, -0.01793542, 0, 0.37460658, 0.92718387, 0.047878016, -0.9261205, 0.37417698, -114.67, 19.9, 38.11)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4678,8 +4678,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_117" type="SpotLight3D" parent="PoleLights" unique_id=1134834304]
-transform = Transform3D(-0.99960226, -0.026146522, 0.01056388, 0, 0.37460655, 0.92718387, -0.028199932, 0.9268151, -0.3744576, -82.25, 18.8, 34.23)
+[node name="PoleLight_117" type="SpotLight3D" parent="PoleLights" unique_id=1519457602]
+transform = Transform3D(0.99960244, 0.026139714, -0.01056113, 0, 0.37460655, 0.92718387, 0.028192589, -0.9268153, 0.37445766, -82.4, 18.78, 39.47)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4691,8 +4691,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_118" type="SpotLight3D" parent="PoleLights" unique_id=1723202169]
-transform = Transform3D(-0.99999243, -0.0036194138, 0.0014623379, 0, 0.3746066, 0.92718387, -0.0039036635, 0.92717683, -0.37460372, -49.76, 17.38, 34.87)
+[node name="PoleLight_118" type="SpotLight3D" parent="PoleLights" unique_id=289351647]
+transform = Transform3D(0.99999243, 0.0036126021, -0.001459586, 0, 0.3746066, 0.92718387, 0.0038963167, -0.92717683, 0.37460375, -49.78, 17.27, 40.11)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4704,8 +4704,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_119" type="SpotLight3D" parent="PoleLights" unique_id=597795628]
-transform = Transform3D(-0.99977964, 0.019466028, -0.007864784, -1.0044638e-09, 0.37460658, 0.92718387, 0.020994786, 0.92697954, -0.374524, -18.01, 16.39, 34.16)
+[node name="PoleLight_119" type="SpotLight3D" parent="PoleLights" unique_id=2138265998]
+transform = Transform3D(0.9997815, -0.019380135, 0.007830083, 0, 0.37460658, 0.92718387, -0.02090215, -0.9269813, 0.37452474, -17.9, 16.31, 39.4)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4717,8 +4717,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_120" type="SpotLight3D" parent="PoleLights" unique_id=413631446]
-transform = Transform3D(-0.9991056, 0.039204776, -0.01583976, 0, 0.37460655, 0.92718387, 0.042283714, 0.9263546, -0.37427154, 13.81, 15.51, 33.64)
+[node name="PoleLight_120" type="SpotLight3D" parent="PoleLights" unique_id=1091337170]
+transform = Transform3D(0.99910533, -0.039211586, 0.015842509, -2.0089275e-09, 0.37460655, 0.92718387, -0.042291056, -0.92635435, 0.37427142, 14.03, 15.47, 38.88)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4730,8 +4730,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_121" type="SpotLight3D" parent="PoleLights" unique_id=77323956]
-transform = Transform3D(-0.9983245, 0.053650554, -0.021676231, 0, 0.37460658, 0.92718387, 0.057863988, 0.9256304, -0.3739789, 45.5, 14.97, 32.05)
+[node name="PoleLight_121" type="SpotLight3D" parent="PoleLights" unique_id=1308760225]
+transform = Transform3D(0.9983241, -0.05365736, 0.021678979, 0, 0.3746066, 0.92718387, -0.057871327, -0.92563, 0.37397876, 45.81, 15, 37.28)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4743,8 +4743,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_122" type="SpotLight3D" parent="PoleLights" unique_id=1391055396]
-transform = Transform3D(-0.9979208, 0.059758503, -0.024144001, 0, 0.37460658, 0.92718387, 0.06445162, 0.9252561, -0.3738277, 77.74, 14.67, 29.41)
+[node name="PoleLight_122" type="SpotLight3D" parent="PoleLights" unique_id=155367516]
+transform = Transform3D(0.99792033, -0.059765298, 0.024146747, 0, 0.37460658, 0.92718387, -0.06445895, -0.92525566, 0.37382752, 78.08, 14.57, 34.65)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4756,8 +4756,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_123" type="SpotLight3D" parent="PoleLights" unique_id=642219537]
-transform = Transform3D(-0.99809116, 0.057260092, -0.02313458, 0, 0.37460655, 0.92718387, 0.061757, 0.925414, -0.37389153, 109.06, 14.35, 27.62)
+[node name="PoleLight_123" type="SpotLight3D" parent="PoleLights" unique_id=593624127]
+transform = Transform3D(0.9980908, -0.057266902, 0.023137327, -2.0089277e-09, 0.37460658, 0.92718387, -0.061764345, -0.92541367, 0.37389135, 109.39, 14.24, 32.85)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4769,8 +4769,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_124" type="SpotLight3D" parent="PoleLights" unique_id=1855149608]
-transform = Transform3D(-0.99875546, 0.046243872, -0.018683737, 0, 0.37460658, 0.92718387, 0.04987562, 0.9260299, -0.37414035, 141.7, 13.99, 25.8)
+[node name="PoleLight_124" type="SpotLight3D" parent="PoleLights" unique_id=1891176628]
+transform = Transform3D(0.99875504, -0.046250675, 0.018686486, 0, 0.37460658, 0.92718387, -0.04988296, -0.92602956, 0.37414023, 141.96, 13.98, 31.04)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4782,8 +4782,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_125" type="SpotLight3D" parent="PoleLights" unique_id=373515833]
-transform = Transform3D(-0.9995472, 0.027900618, -0.01127258, 0, 0.37460658, 0.92718387, 0.030091785, 0.926764, -0.37443691, 173.69, 13.75, 24.16)
+[node name="PoleLight_125" type="SpotLight3D" parent="PoleLights" unique_id=410624864]
+transform = Transform3D(0.9995469, -0.027907426, 0.0112753315, -1.0044637e-09, 0.37460658, 0.92718387, -0.030099127, -0.9267638, 0.37443686, 173.85, 13.67, 29.4)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4795,8 +4795,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_126" type="SpotLight3D" parent="PoleLights" unique_id=166369318]
-transform = Transform3D(-0.9999899, 0.0041689076, -0.001684348, 1.2555798e-10, 0.37460658, 0.92718387, 0.004496312, 0.9271745, -0.3746028, 205.9, 13.39, 24.32)
+[node name="PoleLight_126" type="SpotLight3D" parent="PoleLights" unique_id=1974894869]
+transform = Transform3D(0.99998987, -0.004175719, 0.0016870999, 1.2555797e-10, 0.3746066, 0.92718387, -0.004503658, -0.92717445, 0.3746028, 205.93, 13.47, 29.56)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4808,8 +4808,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_127" type="SpotLight3D" parent="PoleLights" unique_id=1882888658]
-transform = Transform3D(-0.99994373, -0.009831371, 0.0039721313, 5.022318e-10, 0.37460655, 0.92718387, -0.010603474, 0.9271317, -0.3745855, 237.93, 13.2, 24.47)
+[node name="PoleLight_127" type="SpotLight3D" parent="PoleLights" unique_id=1407856930]
+transform = Transform3D(0.99994385, 0.009824559, -0.0039693792, 0, 0.37460655, 0.92718387, 0.010596128, -0.92713183, 0.37458554, 237.87, 13.16, 29.71)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4821,8 +4821,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_128" type="SpotLight3D" parent="PoleLights" unique_id=729777840]
-transform = Transform3D(0.9994943, -0.02948288, 0.011911856, 1.0044637e-09, 0.3746066, 0.92718387, -0.03179831, -0.926715, 0.37441716, -177.79, 18.53, 83.51)
+[node name="PoleLight_128" type="SpotLight3D" parent="PoleLights" unique_id=458347877]
+transform = Transform3D(-0.9994945, 0.029476073, -0.011909106, 0, 0.37460658, 0.92718387, 0.031790968, 0.9267152, -0.37441725, -177.94, 18.48, 78.77)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4834,8 +4834,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_129" type="SpotLight3D" parent="PoleLights" unique_id=1343145601]
-transform = Transform3D(0.9997731, -0.019750927, 0.007979892, 0, 0.37460658, 0.92718387, -0.021302061, -0.92697346, 0.37452158, -145.79, 18.3, 81.89)
+[node name="PoleLight_129" type="SpotLight3D" parent="PoleLights" unique_id=28326993]
+transform = Transform3D(-0.99977326, 0.019744119, -0.007977141, 0, 0.3746066, 0.92718387, 0.021294719, 0.92697364, -0.37452164, -145.89, 18.38, 77.15)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4847,8 +4847,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_130" type="SpotLight3D" parent="PoleLights" unique_id=1728887019]
-transform = Transform3D(0.9999782, 0.0061159628, -0.0024710095, 0, 0.37460658, 0.92718387, 0.0065962784, -0.92716366, 0.37459844, -113.68, 17.96, 82.02)
+[node name="PoleLight_130" type="SpotLight3D" parent="PoleLights" unique_id=962119376]
+transform = Transform3D(-0.9999782, -0.006122775, 0.0024737613, -2.5111593e-10, 0.37460658, 0.92718387, -0.0066036256, 0.92716366, -0.3745984, -113.65, 17.94, 77.28)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4860,8 +4860,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_131" type="SpotLight3D" parent="PoleLights" unique_id=398877975]
-transform = Transform3D(0.9993413, 0.033645976, -0.013593858, 0, 0.37460655, 0.92718387, 0.036288355, -0.92657316, 0.37435985, -82.2, 17.2, 82.76)
+[node name="PoleLight_131" type="SpotLight3D" parent="PoleLights" unique_id=942640849]
+transform = Transform3D(-0.99934113, -0.03365279, 0.013596608, 0, 0.37460658, 0.92718387, -0.036295705, 0.926573, -0.37435973, -82.03, 17.4, 78.02)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4873,8 +4873,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_132" type="SpotLight3D" parent="PoleLights" unique_id=670522706]
-transform = Transform3D(0.99826026, 0.05466872, -0.022087594, 0, 0.37460658, 0.92718387, 0.058962114, -0.9255708, 0.37395483, -50.52, 16.3, 84.24)
+[node name="PoleLight_132" type="SpotLight3D" parent="PoleLights" unique_id=471500168]
+transform = Transform3D(-0.9982598, -0.054675516, 0.02209034, 0, 0.37460658, 0.92718387, -0.05896944, 0.92557037, -0.37395468, -50.24, 16.34, 79.51)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4886,8 +4886,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_133" type="SpotLight3D" parent="PoleLights" unique_id=372260459]
-transform = Transform3D(0.9973224, 0.067805864, -0.027395347, 2.0089277e-09, 0.37460658, 0.92718387, 0.07313098, -0.9247012, 0.3736035, -18.21, 15.36, 86.09)
+[node name="PoleLight_133" type="SpotLight3D" parent="PoleLights" unique_id=2020862847]
+transform = Transform3D(-0.9973218, -0.06781266, 0.027398093, -2.0089275e-09, 0.37460658, 0.92718387, -0.073138304, 0.9247007, -0.3736033, -17.86, 15.44, 81.36)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4899,8 +4899,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_134" type="SpotLight3D" parent="PoleLights" unique_id=752772663]
-transform = Transform3D(0.9971212, 0.070302315, -0.028403977, 2.0089272e-09, 0.37460658, 0.92718387, 0.075823486, -0.9245147, 0.37352818, 13.25, 14.52, 89.28)
+[node name="PoleLight_134" type="SpotLight3D" parent="PoleLights" unique_id=1097421024]
+transform = Transform3D(-0.99712074, -0.0703091, 0.02840672, 0, 0.3746066, 0.92718387, -0.07583081, 0.92451423, -0.37352797, 13.61, 14.5, 84.56)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4912,8 +4912,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_135" type="SpotLight3D" parent="PoleLights" unique_id=91892183]
-transform = Transform3D(0.9976824, 0.06308903, -0.02548962, 0, 0.3746066, 0.92718387, 0.06804371, -0.925035, 0.37373838, 45.51, 13.94, 91.38)
+[node name="PoleLight_135" type="SpotLight3D" parent="PoleLights" unique_id=446062017]
+transform = Transform3D(-0.99768186, -0.06309582, 0.025492368, 0, 0.3746066, 0.92718387, -0.06805103, 0.9250345, -0.3737382, 45.83, 13.93, 86.65)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4925,8 +4925,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_136" type="SpotLight3D" parent="PoleLights" unique_id=304047691]
-transform = Transform3D(0.99875546, 0.046243872, -0.018683737, 0, 0.37460658, 0.92718387, 0.04987562, -0.9260299, 0.37414035, 77.78, 13.51, 93.17)
+[node name="PoleLight_136" type="SpotLight3D" parent="PoleLights" unique_id=1901330379]
+transform = Transform3D(-0.99875504, -0.046250675, 0.018686486, 0, 0.37460658, 0.92718387, -0.04988296, 0.92602956, -0.37414023, 78.01, 13.58, 88.44)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4938,8 +4938,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_137" type="SpotLight3D" parent="PoleLights" unique_id=1849361351]
-transform = Transform3D(0.99970484, 0.022524945, -0.009100668, 0, 0.37460658, 0.92718387, 0.024293937, -0.9269102, 0.374496, 109.35, 13.12, 94.39)
+[node name="PoleLight_137" type="SpotLight3D" parent="PoleLights" unique_id=396272795]
+transform = Transform3D(-0.9997047, -0.022531755, 0.00910342, 0, 0.37460658, 0.92718387, -0.024301281, 0.9269101, -0.37449595, 109.47, 13.14, 89.66)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4951,8 +4951,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_138" type="SpotLight3D" parent="PoleLights" unique_id=635011475]
-transform = Transform3D(0.9999885, -0.0044538714, 0.0017994806, 1.2555798e-10, 0.37460658, 0.92718387, -0.004803655, -0.9271732, 0.37460226, 142.02, 12.76, 94.7)
+[node name="PoleLight_138" type="SpotLight3D" parent="PoleLights" unique_id=484398096]
+transform = Transform3D(-0.9999885, 0.0044470597, -0.0017967287, 0, 0.37460655, 0.92718387, 0.0047963085, 0.9271732, -0.37460226, 142, 12.85, 89.96)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4964,8 +4964,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_139" type="SpotLight3D" parent="PoleLights" unique_id=67989682]
-transform = Transform3D(0.99943876, -0.031058254, 0.012548348, 0, 0.37460655, 0.92718387, -0.033497404, -0.9266635, 0.37439635, 173.87, 12.32, 94.42)
+[node name="PoleLight_139" type="SpotLight3D" parent="PoleLights" unique_id=1510225507]
+transform = Transform3D(-0.9994357, 0.031144112, -0.012583038, 0, 0.37460658, 0.92718387, 0.033590008, 0.92666066, -0.3743952, 173.71, 12.3, 89.68)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4977,8 +4977,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_140" type="SpotLight3D" parent="PoleLights" unique_id=1309492985]
-transform = Transform3D(0.9983529, -0.053194534, 0.021491986, 0, 0.37460658, 0.92718387, -0.057372153, -0.9256567, 0.37398955, 205.94, 11.76, 92.82)
+[node name="PoleLight_140" type="SpotLight3D" parent="PoleLights" unique_id=1576776671]
+transform = Transform3D(-0.99835324, 0.053187728, -0.021489238, 0, 0.37460655, 0.92718387, 0.05736481, 0.92565703, -0.3739897, 205.67, 11.73, 88.09)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -4990,8 +4990,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_141" type="SpotLight3D" parent="PoleLights" unique_id=715161156]
-transform = Transform3D(0.99770224, -0.06281832, 0.025380246, 0, 0.3746066, 0.92718387, -0.067751735, -0.9250534, 0.37374583, 238.05, 11.21, 90.27)
+[node name="PoleLight_141" type="SpotLight3D" parent="PoleLights" unique_id=940140150]
+transform = Transform3D(-0.9977028, 0.062811516, -0.025377499, 0, 0.3746066, 0.92718387, 0.067744404, 0.9250539, -0.373746, 237.73, 11.32, 85.54)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5003,8 +5003,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_142" type="SpotLight3D" parent="PoleLights" unique_id=1448789183]
-transform = Transform3D(0.99852633, 0.050317947, -0.02032977, 2.0089275e-09, 0.37460658, 0.92718387, 0.054269653, -0.9258175, 0.37405452, -178.29, 16.02, 139.21)
+[node name="PoleLight_142" type="SpotLight3D" parent="PoleLights" unique_id=462058251]
+transform = Transform3D(-0.99852586, -0.05032475, 0.020332517, 0, 0.37460655, 0.92718387, -0.054276988, 0.9258171, -0.37405437, -178.04, 15.98, 134.48)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5016,8 +5016,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_143" type="SpotLight3D" parent="PoleLights" unique_id=1864958869]
-transform = Transform3D(0.9984771, 0.05115116, -0.02066641, -2.0089275e-09, 0.37460658, 0.92718387, 0.0551683, -0.92577183, 0.37403607, -146.15, 15.71, 140.32)
+[node name="PoleLight_143" type="SpotLight3D" parent="PoleLights" unique_id=1748860125]
+transform = Transform3D(-0.99848217, -0.051065385, 0.020631753, 0, 0.37460655, 0.92718387, -0.05507579, 0.92577654, -0.37403798, -145.89, 15.8, 135.59)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5029,8 +5029,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_144" type="SpotLight3D" parent="PoleLights" unique_id=2005136861]
-transform = Transform3D(0.9983245, 0.053650554, -0.021676231, 0, 0.37460658, 0.92718387, 0.057863988, -0.9256304, 0.3739789, -114.24, 15.39, 142.84)
+[node name="PoleLight_144" type="SpotLight3D" parent="PoleLights" unique_id=2108241326]
+transform = Transform3D(-0.9983241, -0.05365736, 0.021678979, 0, 0.3746066, 0.92718387, -0.057871327, 0.92563, -0.37397876, -113.96, 15.34, 138.1)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5042,8 +5042,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_145" type="SpotLight3D" parent="PoleLights" unique_id=1142179529]
-transform = Transform3D(0.9985534, 0.049855035, -0.02014274, 2.0089277e-09, 0.3746066, 0.92718387, 0.053770386, -0.9258426, 0.37406465, -82.6, 14.87, 144.57)
+[node name="PoleLight_145" type="SpotLight3D" parent="PoleLights" unique_id=1846964367]
+transform = Transform3D(-0.9985529, -0.049861833, 0.020145487, 0, 0.37460658, 0.92718387, -0.05377772, 0.92584217, -0.3740645, -82.34, 14.84, 139.84)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5055,8 +5055,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_146" type="SpotLight3D" parent="PoleLights" unique_id=1435909618]
-transform = Transform3D(0.99918413, 0.037444636, -0.015128613, -1.0044636e-09, 0.37460658, 0.92718387, 0.04038534, -0.9264274, 0.374301, -50.59, 14.34, 146.23)
+[node name="PoleLight_146" type="SpotLight3D" parent="PoleLights" unique_id=575243859]
+transform = Transform3D(-0.9991839, -0.037451442, 0.015131365, 0, 0.37460658, 0.92718387, -0.040392682, 0.9264272, -0.37430087, -50.4, 14.33, 141.49)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5068,8 +5068,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_147" type="SpotLight3D" parent="PoleLights" unique_id=1434086183]
-transform = Transform3D(0.999769, 0.019929513, -0.0080520455, 0, 0.37460658, 0.92718387, 0.021494672, -0.92696965, 0.37452003, -18.34, 13.85, 147.44)
+[node name="PoleLight_147" type="SpotLight3D" parent="PoleLights" unique_id=418977368]
+transform = Transform3D(-0.99976885, -0.019936325, 0.008054797, -1.0044638e-09, 0.37460658, 0.92718387, -0.021502018, 0.9269695, -0.37451997, -18.24, 13.77, 142.7)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5081,8 +5081,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_148" type="SpotLight3D" parent="PoleLights" unique_id=2133565459]
-transform = Transform3D(0.9999995, -0.00083787105, 0.00033852187, 0, 0.37460655, 0.92718387, -0.000903673, -0.92718345, 0.37460643, 13.9, 13.26, 147.27)
+[node name="PoleLight_148" type="SpotLight3D" parent="PoleLights" unique_id=1383268177]
+transform = Transform3D(-0.9999995, 0.0008310596, -0.00033576987, 0, 0.37460655, 0.92718387, 0.0008963266, 0.92718345, -0.37460643, 13.89, 13.32, 142.53)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5094,8 +5094,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_149" type="SpotLight3D" parent="PoleLights" unique_id=1377377971]
-transform = Transform3D(0.9997331, -0.021419449, 0.008654018, 1.0044636e-09, 0.37460658, 0.92718387, -0.023101619, -0.9269364, 0.37450662, 46.21, 12.94, 147.1)
+[node name="PoleLight_149" type="SpotLight3D" parent="PoleLights" unique_id=1827090750]
+transform = Transform3D(-0.99973094, 0.02150533, -0.008688717, 1.0044636e-09, 0.37460658, 0.92718387, 0.023194244, 0.9269344, -0.37450582, 46.09, 12.91, 142.36)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5107,8 +5107,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_150" type="SpotLight3D" parent="PoleLights" unique_id=2026950685]
-transform = Transform3D(0.9991305, -0.03865576, 0.015617942, -1.0044636e-09, 0.37460658, 0.92718387, -0.041691583, -0.92637765, 0.37428087, 77.57, 12.67, 146.15)
+[node name="PoleLight_150" type="SpotLight3D" parent="PoleLights" unique_id=896860358]
+transform = Transform3D(-0.9991308, 0.038648963, -0.015615193, 0, 0.37460658, 0.92718387, 0.041684248, 0.92637795, -0.374281, 77.37, 12.62, 141.42)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5120,8 +5120,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_151" type="SpotLight3D" parent="PoleLights" unique_id=516895583]
-transform = Transform3D(0.9985096, -0.05060249, 0.020444732, 0, 0.37460658, 0.92718387, -0.054576542, -0.925802, 0.37404826, 109.96, 12.39, 144.68)
+[node name="PoleLight_151" type="SpotLight3D" parent="PoleLights" unique_id=1466287755]
+transform = Transform3D(-0.99851006, 0.050595693, -0.020441985, -2.0089277e-09, 0.3746066, 0.92718387, 0.05456921, 0.9258024, -0.3740484, 109.7, 12.35, 139.95)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5133,8 +5133,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_152" type="SpotLight3D" parent="PoleLights" unique_id=502352000]
-transform = Transform3D(0.9982598, -0.054675516, 0.02209034, 0, 0.37460658, 0.92718387, -0.05896944, -0.92557037, 0.37395468, 142.08, 12.01, 142.26)
+[node name="PoleLight_152" type="SpotLight3D" parent="PoleLights" unique_id=1932068050]
+transform = Transform3D(-0.9982543, 0.054761272, -0.022124989, 0, 0.37460655, 0.92718387, 0.059061933, 0.9255653, -0.37395263, 141.8, 12.03, 137.53)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5146,8 +5146,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_153" type="SpotLight3D" parent="PoleLights" unique_id=2050882758]
-transform = Transform3D(0.99852055, -0.050417334, 0.020369923, 0, 0.3746066, 0.92718387, -0.054376844, -0.9258121, 0.37405235, 173.59, 11.52, 140.87)
+[node name="PoleLight_153" type="SpotLight3D" parent="PoleLights" unique_id=242781217]
+transform = Transform3D(-0.99852085, 0.050410524, -0.020367175, -2.0089272e-09, 0.37460658, 0.92718387, 0.0543695, 0.9258124, -0.3740525, 173.34, 11.48, 136.14)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5159,8 +5159,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_154" type="SpotLight3D" parent="PoleLights" unique_id=1926709109]
-transform = Transform3D(0.9991879, -0.037358794, 0.015093934, 0, 0.37460658, 0.92718387, -0.04029276, -0.9264309, 0.3743024, 205.91, 10.68, 138.5)
+[node name="PoleLight_154" type="SpotLight3D" parent="PoleLights" unique_id=2092088900]
+transform = Transform3D(-0.9991882, 0.037351996, -0.0150911845, 1.0044637e-09, 0.37460658, 0.92718387, 0.040285423, 0.9264312, -0.37430248, 205.72, 10.76, 133.76)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5172,8 +5172,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_155" type="SpotLight3D" parent="PoleLights" unique_id=1046390067]
-transform = Transform3D(0.9995619, -0.027444042, 0.011088111, 1.0044638e-09, 0.37460664, 0.92718387, -0.029599352, -0.92677766, 0.37444246, 237.43, 10.07, 137.83)
+[node name="PoleLight_155" type="SpotLight3D" parent="PoleLights" unique_id=1602269658]
+transform = Transform3D(-0.999562, 0.027437229, -0.01108536, 0, 0.37460658, 0.92718387, 0.029592004, 0.9267778, -0.37444255, 237.29, 10.13, 133.09)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5185,8 +5185,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_156" type="SpotLight3D" parent="PoleLights" unique_id=1920414070]
-transform = Transform3D(0.9999733, -0.006771787, 0.0027359796, 0, 0.37460658, 0.92718387, -0.0073036077, -0.92715913, 0.3745966, -177.71, 13.06, 190.94)
+[node name="PoleLight_156" type="SpotLight3D" parent="PoleLights" unique_id=813813499]
+transform = Transform3D(-0.99997336, 0.0067649763, -0.0027332278, 0, 0.37460655, 0.92718387, 0.007296262, 0.9271592, -0.3745966, -177.74, 13.14, 186.2)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5198,8 +5198,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_157" type="SpotLight3D" parent="PoleLights" unique_id=2102679305]
-transform = Transform3D(0.99999917, 0.0012019329, -0.0004856124, -3.138949e-11, 0.3746066, 0.92718387, 0.0012963264, -0.9271831, 0.37460628, -146.1, 12.95, 191.19)
+[node name="PoleLight_157" type="SpotLight3D" parent="PoleLights" unique_id=1202927693]
+transform = Transform3D(-0.9999991, -0.0012087442, 0.0004883644, 0, 0.37460658, 0.92718387, -0.0013036727, 0.92718303, -0.37460628, -146.1, 13.07, 186.45)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5211,8 +5211,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_158" type="SpotLight3D" parent="PoleLights" unique_id=1796129142]
-transform = Transform3D(0.99970967, 0.022339562, -0.009025769, 1.0044636e-09, 0.37460658, 0.92718387, 0.024093993, -0.9269147, 0.37449783, -114.37, 13, 191.2)
+[node name="PoleLight_158" type="SpotLight3D" parent="PoleLights" unique_id=2094013357]
+transform = Transform3D(-0.9997095, -0.022346374, 0.00902852, 0, 0.37460655, 0.92718387, -0.02410134, 0.9269145, -0.37449777, -114.26, 13.04, 186.46)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5224,8 +5224,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_159" type="SpotLight3D" parent="PoleLights" unique_id=889544983]
-transform = Transform3D(0.9989332, 0.04281726, -0.017299294, 2.0089277e-09, 0.3746066, 0.92718387, 0.0461799, -0.9261947, 0.37420693, -81.97, 12.96, 192.41)
+[node name="PoleLight_159" type="SpotLight3D" parent="PoleLights" unique_id=1191404071]
+transform = Transform3D(-0.9989328, -0.04282406, 0.017302044, 2.0089275e-09, 0.37460655, 0.92718387, -0.046187237, 0.92619437, -0.37420678, -81.75, 13, 187.67)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5237,8 +5237,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_160" type="SpotLight3D" parent="PoleLights" unique_id=1388592423]
-transform = Transform3D(0.99820673, 0.055501707, -0.022424145, 0, 0.37460658, 0.92718387, 0.05986052, -0.9255212, 0.3739348, -50.3, 12.91, 193.95)
+[node name="PoleLight_160" type="SpotLight3D" parent="PoleLights" unique_id=1516054465]
+transform = Transform3D(-0.9982063, -0.055508506, 0.02242689, -2.0089275e-09, 0.37460658, 0.92718387, -0.05986785, 0.9255208, -0.37393466, -50.01, 13.05, 189.22)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5250,8 +5250,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_161" type="SpotLight3D" parent="PoleLights" unique_id=427510275]
-transform = Transform3D(0.9979014, 0.060036067, -0.024256147, 0, 0.37460655, 0.92718387, 0.064750984, -0.9252381, 0.37382045, -18.44, 12.54, 196.48)
+[node name="PoleLight_161" type="SpotLight3D" parent="PoleLights" unique_id=130894049]
+transform = Transform3D(-0.997901, -0.06004288, 0.024258895, 0, 0.3746066, 0.92718387, -0.06475833, 0.9252377, -0.37382028, -18.14, 12.52, 191.75)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5263,8 +5263,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_162" type="SpotLight3D" parent="PoleLights" unique_id=1469735481]
-transform = Transform3D(0.9982187, 0.055316605, -0.022349358, 0, 0.3746066, 0.92718387, 0.059660878, -0.9255323, 0.3739393, 13.66, 12.18, 198.47)
+[node name="PoleLight_162" type="SpotLight3D" parent="PoleLights" unique_id=2055234595]
+transform = Transform3D(-0.99821824, -0.0553234, 0.022352103, 0, 0.37460658, 0.92718387, -0.05966821, 0.92553186, -0.37393913, 13.94, 12.16, 193.74)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5276,8 +5276,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_163" type="SpotLight3D" parent="PoleLights" unique_id=1115033477]
-transform = Transform3D(0.9989193, 0.043095116, -0.017411554, 0, 0.3746066, 0.92718387, 0.04647958, -0.92618185, 0.37420171, 45.21, 11.8, 200.63)
+[node name="PoleLight_163" type="SpotLight3D" parent="PoleLights" unique_id=273412506]
+transform = Transform3D(-0.9989189, -0.043101918, 0.017414303, -2.0089275e-09, 0.37460658, 0.92718387, -0.046486914, 0.9261815, -0.3742016, 45.43, 11.71, 195.89)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5289,8 +5289,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_164" type="SpotLight3D" parent="PoleLights" unique_id=1912937979]
-transform = Transform3D(0.99966735, 0.023915287, -0.009662403, 0, 0.3746066, 0.92718387, 0.025793469, -0.9268754, 0.37448195, 77.36, 11.46, 201.75)
+[node name="PoleLight_164" type="SpotLight3D" parent="PoleLights" unique_id=1492735266]
+transform = Transform3D(-0.99966705, -0.023922093, 0.009665153, 0, 0.37460655, 0.92718387, -0.025800807, 0.9268752, -0.3744819, 77.48, 11.43, 197.01)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5302,8 +5302,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_165" type="SpotLight3D" parent="PoleLights" unique_id=1242121844]
-transform = Transform3D(0.99999917, 0.0012019329, -0.0004856124, -3.138949e-11, 0.3746066, 0.92718387, 0.0012963264, -0.9271831, 0.37460628, 109.9, 11.15, 202.25)
+[node name="PoleLight_165" type="SpotLight3D" parent="PoleLights" unique_id=1757935817]
+transform = Transform3D(-0.9999991, -0.0012087442, 0.0004883644, 0, 0.37460658, 0.92718387, -0.0013036727, 0.92718303, -0.37460628, 109.91, 11.07, 197.51)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5315,8 +5315,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_166" type="SpotLight3D" parent="PoleLights" unique_id=1036531127]
-transform = Transform3D(0.99973077, -0.021512138, 0.008691468, 0, 0.37460658, 0.92718387, -0.023201589, -0.92693424, 0.37450576, 142.11, 10.72, 201.72)
+[node name="PoleLight_166" type="SpotLight3D" parent="PoleLights" unique_id=524371300]
+transform = Transform3D(-0.99973094, 0.02150533, -0.008688717, 1.0044636e-09, 0.37460658, 0.92718387, 0.023194244, 0.9269344, -0.37450582, 142, 10.67, 196.99)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5328,8 +5328,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_167" type="SpotLight3D" parent="PoleLights" unique_id=666096950]
-transform = Transform3D(0.9990143, -0.041156843, 0.016628442, 2.0089275e-09, 0.37460655, 0.92718387, -0.044389084, -0.92626995, 0.37423733, 173.9, 10.15, 200.03)
+[node name="PoleLight_167" type="SpotLight3D" parent="PoleLights" unique_id=1993113046]
+transform = Transform3D(-0.99901026, 0.041242667, -0.016663117, 2.0089277e-09, 0.37460664, 0.92718387, 0.04448165, 0.9262662, -0.3742358, 173.69, 10.28, 195.29)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5341,8 +5341,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_168" type="SpotLight3D" parent="PoleLights" unique_id=1568428161]
-transform = Transform3D(0.9982891, -0.05421272, 0.02190336, 0, 0.37460655, 0.92718387, -0.0584703, -0.92559755, 0.37396568, 205.9, 9.84, 198.48)
+[node name="PoleLight_168" type="SpotLight3D" parent="PoleLights" unique_id=1848076552]
+transform = Transform3D(-0.9982895, 0.05420592, -0.021900615, 2.0089272e-09, 0.37460658, 0.92718387, 0.058462966, 0.92559797, -0.37396586, 205.62, 9.86, 193.75)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5354,8 +5354,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_169" type="SpotLight3D" parent="PoleLights" unique_id=1400264307]
-transform = Transform3D(0.99800956, -0.058469888, 0.023623366, 0, 0.37460658, 0.92718387, -0.0630618, -0.9253384, 0.37386099, 237.85, 9.65, 196.29)
+[node name="PoleLight_169" type="SpotLight3D" parent="PoleLights" unique_id=1452302272]
+transform = Transform3D(-0.9980101, 0.05846309, -0.02362062, 0, 0.37460658, 0.92718387, 0.06305447, 0.92533886, -0.37386116, 237.55, 9.74, 191.56)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5367,7 +5367,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_170" type="SpotLight3D" parent="PoleLights" unique_id=807296912]
+[node name="PoleLight_170" type="SpotLight3D" parent="PoleLights" unique_id=2058004157]
 transform = Transform3D(-0.99913466, -0.038563125, 0.015580514, -1.0044636e-09, 0.37460658, 0.92718387, -0.04159167, 0.9263815, -0.37428245, -178.23, 10.89, 246.06)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -5380,7 +5380,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_171" type="SpotLight3D" parent="PoleLights" unique_id=1383566045]
+[node name="PoleLight_171" type="SpotLight3D" parent="PoleLights" unique_id=2085484366]
 transform = Transform3D(-0.99938744, -0.032448214, 0.013109928, 0, 0.37460658, 0.92718387, -0.034996524, 0.9266159, -0.3743771, -145.89, 10.53, 247.14)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -5393,7 +5393,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_172" type="SpotLight3D" parent="PoleLights" unique_id=413634237]
+[node name="PoleLight_172" type="SpotLight3D" parent="PoleLights" unique_id=960084608]
 transform = Transform3D(-0.999838, -0.016691815, 0.00674393, 0, 0.3746066, 0.92718387, -0.018002702, 0.92703366, -0.37454587, -114.34, 10.72, 248.02)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -5406,7 +5406,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_173" type="SpotLight3D" parent="PoleLights" unique_id=592597761]
+[node name="PoleLight_173" type="SpotLight3D" parent="PoleLights" unique_id=90697774]
 transform = Transform3D(-0.9999964, 0.0024999878, -0.0010100605, 0, 0.37460658, 0.92718387, 0.0026963237, 0.9271805, -0.3746052, -81.69, 11.36, 248.07)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -5419,7 +5419,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_174" type="SpotLight3D" parent="PoleLights" unique_id=623857233]
+[node name="PoleLight_174" type="SpotLight3D" parent="PoleLights" unique_id=899296652]
 transform = Transform3D(-0.99974245, 0.021041863, -0.008501464, 0, 0.37460658, 0.92718387, 0.02269438, 0.9269451, -0.3745101, -49.65, 12.04, 247.74)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -5432,7 +5432,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_175" type="SpotLight3D" parent="PoleLights" unique_id=232591986]
+[node name="PoleLight_175" type="SpotLight3D" parent="PoleLights" unique_id=1325122590]
 transform = Transform3D(-0.9992358, 0.03624025, -0.01464201, -1.0044637e-09, 0.37460655, 0.92718387, 0.039086368, 0.92647535, -0.3743203, -17.79, 12.14, 246.9)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -5445,7 +5445,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_176" type="SpotLight3D" parent="PoleLights" unique_id=1755571020]
+[node name="PoleLight_176" type="SpotLight3D" parent="PoleLights" unique_id=415855788]
 transform = Transform3D(-0.9987753, 0.04587346, -0.018534081, -2.0089275e-09, 0.37460658, 0.92718387, 0.04947612, 0.92604834, -0.3741478, 14.03, 11.84, 245.32)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -5458,7 +5458,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_177" type="SpotLight3D" parent="PoleLights" unique_id=1979097088]
+[node name="PoleLight_177" type="SpotLight3D" parent="PoleLights" unique_id=1091158850]
 transform = Transform3D(-0.9985907, 0.04920693, -0.019880889, 2.0089275e-09, 0.37460658, 0.92718387, 0.053071383, 0.9258772, -0.37407866, 45.36, 11.34, 243.57)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -5471,7 +5471,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_178" type="SpotLight3D" parent="PoleLights" unique_id=2116795640]
+[node name="PoleLight_178" type="SpotLight3D" parent="PoleLights" unique_id=740590250]
 transform = Transform3D(-0.9988339, 0.044762164, -0.018085089, 2.0089272e-09, 0.37460655, 0.92718387, 0.04827755, 0.9261027, -0.37416977, 77.34, 10.77, 241.98)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -5484,7 +5484,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_179" type="SpotLight3D" parent="PoleLights" unique_id=48093703]
+[node name="PoleLight_179" type="SpotLight3D" parent="PoleLights" unique_id=519381146]
 transform = Transform3D(-0.9993268, 0.034016613, -0.013743601, 1.0044638e-09, 0.3746066, 0.92718387, 0.036688097, 0.9265597, -0.3743544, 109.97, 10.26, 240.33)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -5497,7 +5497,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_180" type="SpotLight3D" parent="PoleLights" unique_id=538685641]
+[node name="PoleLight_180" type="SpotLight3D" parent="PoleLights" unique_id=832921302]
 transform = Transform3D(-0.9998099, 0.018075533, -0.0073029897, 5.022318e-10, 0.37460658, 0.92718387, 0.01949509, 0.9270076, -0.3745354, 141.96, 9.84, 239.39)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -5510,7 +5510,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_181" type="SpotLight3D" parent="PoleLights" unique_id=1383181571]
+[node name="PoleLight_181" type="SpotLight3D" parent="PoleLights" unique_id=781691712]
 transform = Transform3D(-0.99999946, -0.0009305894, 0.00037598255, 3.1389488e-11, 0.37460658, 0.92718387, -0.001003673, 0.9271834, -0.3746064, 174.15, 9.47, 239.17)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -5523,7 +5523,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_182" type="SpotLight3D" parent="PoleLights" unique_id=385850584]
+[node name="PoleLight_182" type="SpotLight3D" parent="PoleLights" unique_id=753230447]
 transform = Transform3D(-0.99976236, -0.020214412, 0.008167152, 0, 0.3746066, 0.92718387, -0.021801947, 0.9269635, -0.37451753, 205.38, 9.35, 239.34)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -5536,7 +5536,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_183" type="SpotLight3D" parent="PoleLights" unique_id=766631617]
+[node name="PoleLight_183" type="SpotLight3D" parent="PoleLights" unique_id=1172493598]
 transform = Transform3D(-0.99946856, -0.030224243, 0.012211386, 0, 0.3746066, 0.92718387, -0.032597896, 0.9266911, -0.3744075, 237.93, 9.25, 240.86)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -5549,8 +5549,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_184" type="SpotLight3D" parent="PoleLights" unique_id=1590935964]
-transform = Transform3D(0.018398961, 0.9270269, -0.37454316, 0, 0.37460658, 0.92718387, 0.9998307, -0.01705922, 0.006892372, -147.81, 22.5, -152.32)
+[node name="PoleLight_184" type="SpotLight3D" parent="PoleLights" unique_id=387263278]
+transform = Transform3D(-0.018391615, -0.927027, 0.37454322, 0, 0.37460655, 0.92718387, -0.9998308, 0.017052408, -0.006889621, -143.06, 22.57, -152.4)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5562,8 +5562,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_185" type="SpotLight3D" parent="PoleLights" unique_id=240182699]
-transform = Transform3D(0.0053999736, 0.92717034, -0.3746011, 0, 0.37460655, 0.92718387, 0.9999854, -0.0050067683, 0.0020228657, -147.67, 22.65, -119.83)
+[node name="PoleLight_185" type="SpotLight3D" parent="PoleLights" unique_id=1573342750]
+transform = Transform3D(-0.0053926273, -0.9271704, 0.37460113, 0, 0.37460658, 0.92718387, -0.99998546, 0.004999957, -0.0020201136, -142.93, 22.61, -119.86)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5575,8 +5575,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_186" type="SpotLight3D" parent="PoleLights" unique_id=1231458685]
-transform = Transform3D(-0.027196646, 0.92684096, -0.37446803, 0, 0.37460658, 0.9271839, 0.9996301, 0.025216293, -0.010188043, -147.5, 22.62, -87.64)
+[node name="PoleLight_186" type="SpotLight3D" parent="PoleLights" unique_id=1644031827]
+transform = Transform3D(0.027189301, -0.9268411, 0.3744681, 0, 0.37460655, 0.92718387, -0.9996303, -0.02520948, 0.010185292, -142.76, 22.64, -87.51)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5588,8 +5588,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_187" type="SpotLight3D" parent="PoleLights" unique_id=297581141]
-transform = Transform3D(-0.05886595, 0.92557603, -0.37395698, 2.0089275e-09, 0.3746066, 0.92718387, 0.9982659, 0.05457956, -0.022051573, -149.56, 22.86, -56.38)
+[node name="PoleLight_187" type="SpotLight3D" parent="PoleLights" unique_id=681709386]
+transform = Transform3D(0.05885861, -0.9255764, 0.37395713, 0, 0.37460655, 0.92718387, -0.9982663, -0.054572754, 0.022048824, -144.83, 22.8, -56.1)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5601,8 +5601,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_188" type="SpotLight3D" parent="PoleLights" unique_id=532407488]
-transform = Transform3D(-0.078319706, 0.9243358, -0.37345588, 0, 0.37460652, 0.92718387, 0.9969282, 0.07261677, -0.029339077, -151.65, 22.59, -24.18)
+[node name="PoleLight_188" type="SpotLight3D" parent="PoleLights" unique_id=1263294612]
+transform = Transform3D(0.07831238, -0.9243364, 0.37345612, -2.0089275e-09, 0.37460658, 0.92718387, -0.9969289, -0.072609976, 0.029336333, -146.92, 22.52, -23.81)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5614,8 +5614,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_189" type="SpotLight3D" parent="PoleLights" unique_id=1762905681]
-transform = Transform3D(-0.08619292, 0.9237333, -0.37321246, 0, 0.37460655, 0.92718387, 0.99627846, 0.079916686, -0.032288436, -154.15, 21.79, 7.52)
+[node name="PoleLight_189" type="SpotLight3D" parent="PoleLights" unique_id=740667169]
+transform = Transform3D(0.0861856, -0.9237339, 0.37321272, 0, 0.37460658, 0.92718387, -0.99627906, -0.0799099, 0.03228569, -149.43, 21.81, 7.93)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5627,8 +5627,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_190" type="SpotLight3D" parent="PoleLights" unique_id=1049470307]
-transform = Transform3D(-0.07901754, 0.9242848, -0.37343526, 0, 0.37460658, 0.92718387, 0.99687326, 0.07326379, -0.029600492, -157.39, 20.61, 39.14)
+[node name="PoleLight_190" type="SpotLight3D" parent="PoleLights" unique_id=78617423]
+transform = Transform3D(0.07910991, -0.92427796, 0.37343255, 0, 0.37460658, 0.92718387, -0.99686587, -0.07334943, 0.029635092, -152.66, 20.47, 39.51)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5640,8 +5640,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_191" type="SpotLight3D" parent="PoleLights" unique_id=991050082]
-transform = Transform3D(-0.059964005, 0.9255155, -0.3739325, 0, 0.3746066, 0.9271839, 0.99820054, 0.055597663, -0.022462912, -159.11, 19.02, 71.02)
+[node name="PoleLight_191" type="SpotLight3D" parent="PoleLights" unique_id=1738837875]
+transform = Transform3D(0.059956674, -0.9255159, 0.37393266, 2.0089272e-09, 0.37460658, 0.9271839, -0.99820095, -0.055590864, 0.022460166, -154.38, 19.02, 71.31)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5653,8 +5653,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_192" type="SpotLight3D" parent="PoleLights" unique_id=1173770922]
-transform = Transform3D(-0.030695178, 0.92674696, -0.37443006, -1.0044637e-09, 0.37460658, 0.92718387, 0.99952877, 0.028460074, -0.011498615, -160.78, 17.58, 103.57)
+[node name="PoleLight_192" type="SpotLight3D" parent="PoleLights" unique_id=406788448]
+transform = Transform3D(0.030687837, -0.9267472, 0.37443015, 0, 0.37460658, 0.92718387, -0.99952906, -0.028453268, 0.011495865, -156.04, 17.6, 103.72)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5666,8 +5666,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_193" type="SpotLight3D" parent="PoleLights" unique_id=145626750]
-transform = Transform3D(0.0036999919, 0.92717755, -0.37460402, 1.2555798e-10, 0.3746066, 0.92718387, 0.9999932, -0.0034305728, 0.0013860412, -161.22, 15.93, 135.11)
+[node name="PoleLight_193" type="SpotLight3D" parent="PoleLights" unique_id=371477203]
+transform = Transform3D(-0.003692645, -0.92717755, 0.37460405, 1.2555797e-10, 0.3746066, 0.92718387, -0.9999932, 0.0034237609, -0.0013832891, -156.48, 15.93, 135.1)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5679,8 +5679,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_194" type="SpotLight3D" parent="PoleLights" unique_id=1737330776]
-transform = Transform3D(0.03749121, 0.926532, -0.37434322, 0, 0.37460655, 0.92718387, 0.9992969, -0.034761246, 0.014044454, -160.9, 14.2, 167.61)
+[node name="PoleLight_194" type="SpotLight3D" parent="PoleLights" unique_id=255010199]
+transform = Transform3D(-0.0375838, -0.92652875, 0.37434193, 1.0044636e-09, 0.37460658, 0.92718387, -0.99929345, 0.034847092, -0.014079138, -156.16, 14.15, 167.43)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5692,8 +5692,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_195" type="SpotLight3D" parent="PoleLights" unique_id=2087307392]
-transform = Transform3D(0.06465487, 0.9252439, -0.37382278, -2.0089275e-09, 0.37460658, 0.92718387, 0.9979077, -0.059946954, 0.02422014, -159.24, 12.37, 199.23)
+[node name="PoleLight_195" type="SpotLight3D" parent="PoleLights" unique_id=1812071094]
+transform = Transform3D(-0.06464754, -0.92524433, 0.37382296, 0, 0.37460658, 0.92718387, -0.9979081, 0.059940156, -0.024217393, -154.51, 12.06, 198.92)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5705,8 +5705,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_196" type="SpotLight3D" parent="PoleLights" unique_id=1295607836]
-transform = Transform3D(0.08150946, 0.9240987, -0.3733601, 0, 0.37460658, 0.92718387, 0.9966725, -0.07557426, 0.030533984, -156.81, 10.91, 231.29)
+[node name="PoleLight_196" type="SpotLight3D" parent="PoleLights" unique_id=63677315]
+transform = Transform3D(-0.08150216, -0.9240993, 0.37336034, 2.0089277e-09, 0.37460664, 0.92718387, -0.9966732, 0.07556749, -0.030531242, -152.08, 10.64, 230.9)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5718,8 +5718,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_197" type="SpotLight3D" parent="PoleLights" unique_id=632140153]
-transform = Transform3D(0.08838452, 0.92355525, -0.3731405, -4.017855e-09, 0.37460655, 0.92718387, 0.9960864, -0.0819487, 0.033109423, -153.76, 10.38, 263.42)
+[node name="PoleLight_197" type="SpotLight3D" parent="PoleLights" unique_id=1457006074]
+transform = Transform3D(-0.08837721, -0.9235559, 0.37314078, 0, 0.3746066, 0.92718387, -0.99608713, 0.08194192, -0.03310668, -149.04, 10.36, 263)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -5731,7 +5731,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_198" type="SpotLight3D" parent="PoleLights" unique_id=647959281]
+[node name="PoleLight_198" type="SpotLight3D" parent="PoleLights" unique_id=286160665]
 transform = Transform3D(0.06933697, -0.9249524, 0.373705, 0, 0.37460655, 0.92718387, -0.9975933, -0.064288124, 0.025974086, -91.34, 21.6, -152.18)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -5744,7 +5744,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_199" type="SpotLight3D" parent="PoleLights" unique_id=746319650]
+[node name="PoleLight_199" type="SpotLight3D" parent="PoleLights" unique_id=2067958512]
 transform = Transform3D(0.067441426, -0.9250729, 0.3737537, 0, 0.37460658, 0.92718387, -0.9977233, -0.0625306, 0.025264002, -93.34, 21.51, -120.18)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -5757,7 +5757,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_200" type="SpotLight3D" parent="PoleLights" unique_id=807024311]
+[node name="PoleLight_200" type="SpotLight3D" parent="PoleLights" unique_id=28689731]
 transform = Transform3D(0.06235218, -0.92537975, 0.37387767, 0, 0.37460658, 0.92718387, -0.9980542, -0.057811935, 0.023357537, -95.81, 21.45, -88.44)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -5770,7 +5770,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_201" type="SpotLight3D" parent="PoleLights" unique_id=74446590]
+[node name="PoleLight_201" type="SpotLight3D" parent="PoleLights" unique_id=1610041089]
 transform = Transform3D(0.048373763, -0.9260984, 0.37416804, 0, 0.37460658, 0.92718387, -0.9988293, -0.044851374, 0.01812113, -97.45, 21.58, -56.09)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -5783,7 +5783,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_202" type="SpotLight3D" parent="PoleLights" unique_id=284698201]
+[node name="PoleLight_202" type="SpotLight3D" parent="PoleLights" unique_id=17345812]
 transform = Transform3D(0.025489891, -0.92688257, 0.37448487, 0, 0.37460658, 0.92718387, -0.99967504, -0.023633815, 0.009548682, -98.91, 21.12, -24.37)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -5796,7 +5796,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_203" type="SpotLight3D" parent="PoleLights" unique_id=742974149]
+[node name="PoleLight_203" type="SpotLight3D" parent="PoleLights" unique_id=384776303]
 transform = Transform3D(-0.0013926531, -0.927183, 0.37460622, 6.277898e-11, 0.37460658, 0.92718387, -0.99999905, 0.0012912455, -0.000521697, -99.54, 20.57, 8.1)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -5809,7 +5809,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_204" type="SpotLight3D" parent="PoleLights" unique_id=953811244]
+[node name="PoleLight_204" type="SpotLight3D" parent="PoleLights" unique_id=584385313]
 transform = Transform3D(-0.02788904, -0.92682326, 0.37446088, 0, 0.3746066, 0.92718387, -0.9996111, 0.025858268, -0.010447417, -98.43, 19.46, 39.65)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -5822,7 +5822,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_205" type="SpotLight3D" parent="PoleLights" unique_id=1629778438]
+[node name="PoleLight_205" type="SpotLight3D" parent="PoleLights" unique_id=2094821046]
 transform = Transform3D(-0.049971834, -0.92602545, 0.37413856, 0, 0.37460658, 0.92718387, -0.9987506, 0.04633308, -0.018719777, -97.38, 18.14, 71.21)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -5835,7 +5835,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_206" type="SpotLight3D" parent="PoleLights" unique_id=461764030]
+[node name="PoleLight_206" type="SpotLight3D" parent="PoleLights" unique_id=70290294]
 transform = Transform3D(-0.064148575, -0.9252742, 0.37383503, 0, 0.37460658, 0.92718387, -0.99794036, 0.059477523, -0.024030479, -96.04, 16.64, 103.44)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -5848,7 +5848,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_207" type="SpotLight3D" parent="PoleLights" unique_id=136744948]
+[node name="PoleLight_207" type="SpotLight3D" parent="PoleLights" unique_id=900948298]
 transform = Transform3D(-0.06704233, -0.9250978, 0.37376374, 0, 0.37460655, 0.92718387, -0.9977501, 0.062160566, -0.025114497, -93.41, 15.21, 135.11)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -5861,7 +5861,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_208" type="SpotLight3D" parent="PoleLights" unique_id=240888634]
+[node name="PoleLight_208" type="SpotLight3D" parent="PoleLights" unique_id=1552465093]
 transform = Transform3D(-0.060056493, -0.9255103, 0.37393042, 0, 0.3746066, 0.92718387, -0.998195, 0.05568341, -0.022497557, -91.25, 13.99, 167.78)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -5874,7 +5874,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_209" type="SpotLight3D" parent="PoleLights" unique_id=1557340773]
+[node name="PoleLight_209" type="SpotLight3D" parent="PoleLights" unique_id=50380459]
 transform = Transform3D(-0.04148075, -0.9263858, 0.37428415, -1.0044637e-09, 0.37460655, 0.92718387, -0.99913925, 0.03846028, -0.015538962, -89.98, 12.83, 199.84)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -5887,7 +5887,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_210" type="SpotLight3D" parent="PoleLights" unique_id=2124022206]
+[node name="PoleLight_210" type="SpotLight3D" parent="PoleLights" unique_id=1048031061]
 transform = Transform3D(-0.017691733, -0.9270388, 0.37454796, 5.022319e-10, 0.3746066, 0.92718387, -0.99984354, 0.016403489, -0.006627439, -88.36, 12, 231.37)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -5900,7 +5900,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_211" type="SpotLight3D" parent="PoleLights" unique_id=1185290422]
+[node name="PoleLight_211" type="SpotLight3D" parent="PoleLights" unique_id=1889870547]
 transform = Transform3D(-0.0064926073, -0.9271643, 0.37459868, 0, 0.37460658, 0.92718387, -0.9999789, 0.006019841, -0.0024321736, -88.07, 11.48, 263.61)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -5913,7 +5913,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_212" type="SpotLight3D" parent="PoleLights" unique_id=611090670]
+[node name="PoleLight_212" type="SpotLight3D" parent="PoleLights" unique_id=1748069335]
 transform = Transform3D(-0.054066278, -0.92582774, 0.37405866, 0, 0.37460658, 0.92718387, -0.99853736, 0.05012938, -0.020253584, -34.03, 19.99, -152.56)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -5926,7 +5926,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_213" type="SpotLight3D" parent="PoleLights" unique_id=473841606]
+[node name="PoleLight_213" type="SpotLight3D" parent="PoleLights" unique_id=528562826]
 transform = Transform3D(-0.042579778, -0.926343, 0.37426683, 0, 0.37460658, 0.92718387, -0.9990931, 0.03947928, -0.015950665, -32.09, 19.71, -120)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -5939,7 +5939,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_214" type="SpotLight3D" parent="PoleLights" unique_id=524460152]
+[node name="PoleLight_214" type="SpotLight3D" parent="PoleLights" unique_id=1901050782]
 transform = Transform3D(-0.013692225, -0.927097, 0.37457147, 0, 0.3746066, 0.9271839, -0.99990624, 0.012695211, -0.005129198, -31.04, 19.21, -87.69)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -5952,7 +5952,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_215" type="SpotLight3D" parent="PoleLights" unique_id=1876232128]
+[node name="PoleLight_215" type="SpotLight3D" parent="PoleLights" unique_id=771563613]
 transform = Transform3D(0.01989134, -0.9270004, 0.37453246, 0, 0.37460655, 0.92718387, -0.9998021, -0.01844293, 0.0074514276, -31.83, 18.51, -56.29)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -5965,7 +5965,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_216" type="SpotLight3D" parent="PoleLights" unique_id=471879588]
+[node name="PoleLight_216" type="SpotLight3D" parent="PoleLights" unique_id=690985034]
 transform = Transform3D(0.048573535, -0.92608947, 0.3741644, 0, 0.3746066, 0.92718387, -0.99881965, -0.0450366, 0.018195964, -32.79, 17.87, -24.19)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -5978,7 +5978,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_217" type="SpotLight3D" parent="PoleLights" unique_id=1978134384]
+[node name="PoleLight_217" type="SpotLight3D" parent="PoleLights" unique_id=585757779]
 transform = Transform3D(0.069935516, -0.9249137, 0.37368935, 2.0089277e-09, 0.37460658, 0.92718387, -0.99755156, -0.06484308, 0.026198305, -34.86, 17.19, 7.64)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -5991,7 +5991,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_218" type="SpotLight3D" parent="PoleLights" unique_id=151242285]
+[node name="PoleLight_218" type="SpotLight3D" parent="PoleLights" unique_id=495700950]
 transform = Transform3D(0.079209596, -0.9242707, 0.37342957, 0, 0.3746066, 0.92718387, -0.99685806, -0.07344186, 0.029672433, -37.56, 16.81, 40.22)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6004,7 +6004,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_219" type="SpotLight3D" parent="PoleLights" unique_id=21789293]
+[node name="PoleLight_219" type="SpotLight3D" parent="PoleLights" unique_id=84007427]
 transform = Transform3D(0.076318376, -0.9244797, 0.37351403, 0, 0.37460655, 0.92718387, -0.9970835, -0.07076117, 0.028589366, -39.53, 16.16, 71.53)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6017,7 +6017,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_220" type="SpotLight3D" parent="PoleLights" unique_id=1363104686]
+[node name="PoleLight_220" type="SpotLight3D" parent="PoleLights" unique_id=1537214703]
 transform = Transform3D(0.060855035, -0.92546546, 0.37391227, -2.0089277e-09, 0.37460658, 0.92718387, -0.99814665, -0.056423806, 0.022796694, -41.88, 15.45, 103.5)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6030,7 +6030,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_221" type="SpotLight3D" parent="PoleLights" unique_id=742039547]
+[node name="PoleLight_221" type="SpotLight3D" parent="PoleLights" unique_id=1570280450]
 transform = Transform3D(0.034985516, -0.9266163, 0.37437725, 0, 0.37460658, 0.92718387, -0.99938786, -0.032438006, 0.013105803, -43.27, 14.48, 135.65)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6043,7 +6043,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_222" type="SpotLight3D" parent="PoleLights" unique_id=25659162]
+[node name="PoleLight_222" type="SpotLight3D" parent="PoleLights" unique_id=1822710425]
 transform = Transform3D(0.0038926438, -0.92717683, 0.37460375, -1.2555797e-10, 0.37460658, 0.92718387, -0.99999243, -0.0036091965, 0.0014582099, -44.41, 13.67, 167.14)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6056,7 +6056,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_223" type="SpotLight3D" parent="PoleLights" unique_id=1121763150]
+[node name="PoleLight_223" type="SpotLight3D" parent="PoleLights" unique_id=1120423835]
 transform = Transform3D(-0.028388841, -0.9268102, 0.3744556, 0, 0.3746066, 0.92718387, -0.999597, 0.026321676, -0.010634646, -43.95, 12.94, 199.41)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6069,7 +6069,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_224" type="SpotLight3D" parent="PoleLights" unique_id=1510474515]
+[node name="PoleLight_224" type="SpotLight3D" parent="PoleLights" unique_id=2094547759]
 transform = Transform3D(-0.05546418, -0.92575663, 0.37402993, 0, 0.37460658, 0.92718387, -0.99846065, 0.05142549, -0.020777246, -42.1, 12.53, 231.35)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6082,7 +6082,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_225" type="SpotLight3D" parent="PoleLights" unique_id=200853722]
+[node name="PoleLight_225" type="SpotLight3D" parent="PoleLights" unique_id=1912673561]
 transform = Transform3D(-0.067441426, -0.9250729, 0.3737537, 0, 0.37460658, 0.92718387, -0.9977233, 0.0625306, -0.025264002, -40.42, 12.18, 263.68)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6095,7 +6095,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_226" type="SpotLight3D" parent="PoleLights" unique_id=1681048025]
+[node name="PoleLight_226" type="SpotLight3D" parent="PoleLights" unique_id=2123627359]
 transform = Transform3D(0.064248376, -0.9252683, 0.3738326, 2.0089277e-09, 0.37460658, 0.92718387, -0.997934, -0.059570055, 0.024067862, 17.35, 19.17, -151.93)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6108,7 +6108,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_227" type="SpotLight3D" parent="PoleLights" unique_id=1296085715]
+[node name="PoleLight_227" type="SpotLight3D" parent="PoleLights" unique_id=721297047]
 transform = Transform3D(0.0569618, -0.92567843, 0.37399834, 2.0089272e-09, 0.37460655, 0.92718387, -0.9983763, -0.052814063, 0.021338267, 15.11, 18.92, -120.3)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6121,7 +6121,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_228" type="SpotLight3D" parent="PoleLights" unique_id=1072327387]
+[node name="PoleLight_228" type="SpotLight3D" parent="PoleLights" unique_id=1354420288]
 transform = Transform3D(0.03848315, -0.92649704, 0.3743291, 0, 0.37460658, 0.92718387, -0.99925923, -0.035680957, 0.014416041, 13.41, 18.05, -88.04)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6134,7 +6134,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_229" type="SpotLight3D" parent="PoleLights" unique_id=805962052]
+[node name="PoleLight_229" type="SpotLight3D" parent="PoleLights" unique_id=1317789593]
 transform = Transform3D(0.012992289, -0.9271056, 0.37457496, 5.0223187e-10, 0.37460658, 0.92718387, -0.9999156, -0.01204624, 0.004866997, 12.29, 17.33, -56.36)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6147,7 +6147,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_230" type="SpotLight3D" parent="PoleLights" unique_id=615350015]
+[node name="PoleLight_230" type="SpotLight3D" parent="PoleLights" unique_id=2140766866]
 transform = Transform3D(-0.014292167, -0.92708915, 0.3745683, 0, 0.37460658, 0.92718387, -0.99989784, 0.013251467, -0.0053539397, 13.2, 16.68, -23.84)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6160,7 +6160,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_231" type="SpotLight3D" parent="PoleLights" unique_id=1577032970]
+[node name="PoleLight_231" type="SpotLight3D" parent="PoleLights" unique_id=1044046333]
 transform = Transform3D(-0.03948239, -0.9264609, 0.3743145, 0, 0.37460655, 0.92718387, -0.99922025, 0.036607433, -0.014790363, 13.47, 15.92, 7.42)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6173,7 +6173,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_232" type="SpotLight3D" parent="PoleLights" unique_id=836836116]
+[node name="PoleLight_232" type="SpotLight3D" parent="PoleLights" unique_id=1167802241]
 transform = Transform3D(-0.057760485, -0.9256359, 0.37398118, 2.0089272e-09, 0.37460658, 0.92718387, -0.9983304, 0.05355459, -0.021637458, 15.32, 15.43, 39.85)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6186,7 +6186,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_233" type="SpotLight3D" parent="PoleLights" unique_id=1667682404]
+[node name="PoleLight_233" type="SpotLight3D" parent="PoleLights" unique_id=1784566516]
 transform = Transform3D(-0.066942565, -0.9251041, 0.37376627, -2.0089277e-09, 0.3746066, 0.92718387, -0.9977569, 0.062068067, -0.025077123, 17.21, 14.73, 71.7)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6199,7 +6199,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_234" type="SpotLight3D" parent="PoleLights" unique_id=318787087]
+[node name="PoleLight_234" type="SpotLight3D" parent="PoleLights" unique_id=231339840]
 transform = Transform3D(-0.06534606, -0.9252022, 0.3738059, 0, 0.37460658, 0.92718387, -0.9978627, 0.060587816, -0.024479061, 19.88, 14.16, 103.4)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6212,7 +6212,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_235" type="SpotLight3D" parent="PoleLights" unique_id=680856433]
+[node name="PoleLight_235" type="SpotLight3D" parent="PoleLights" unique_id=1695711503]
 transform = Transform3D(-0.05256841, -0.92590183, 0.37408864, 2.0089272e-09, 0.3746066, 0.92718387, -0.9986173, 0.04874058, -0.019692473, 21.59, 13.38, 135.07)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6225,7 +6225,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_236" type="SpotLight3D" parent="PoleLights" unique_id=1167936454]
+[node name="PoleLight_236" type="SpotLight3D" parent="PoleLights" unique_id=795539245]
 transform = Transform3D(-0.031987198, -0.9267094, 0.3744149, 0, 0.37460658, 0.92718387, -0.9994883, 0.029658014, -0.011982615, 23.13, 12.77, 167.62)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6238,7 +6238,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_237" type="SpotLight3D" parent="PoleLights" unique_id=1700863522]
+[node name="PoleLight_237" type="SpotLight3D" parent="PoleLights" unique_id=1109798824]
 transform = Transform3D(-0.004792636, -0.92717326, 0.37460226, 0, 0.37460658, 0.92718387, -0.99998856, 0.004443655, -0.0017953527, 24, 12.07, 199.17)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6251,7 +6251,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_238" type="SpotLight3D" parent="PoleLights" unique_id=1205943700]
+[node name="PoleLight_238" type="SpotLight3D" parent="PoleLights" unique_id=322850526]
 transform = Transform3D(0.022090856, -0.9269576, 0.37451518, 0, 0.37460658, 0.92718387, -0.999756, -0.020482285, 0.00827538, 23.26, 11.81, 231.37)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6264,7 +6264,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_239" type="SpotLight3D" parent="PoleLights" unique_id=75646313]
+[node name="PoleLight_239" type="SpotLight3D" parent="PoleLights" unique_id=1358836696]
 transform = Transform3D(0.03408605, -0.9266451, 0.3743889, 0, 0.37460658, 0.92718387, -0.9994189, -0.031604033, 0.012768858, 22.01, 11.6, 263.8)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6277,8 +6277,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_240" type="SpotLight3D" parent="PoleLights" unique_id=255902113]
-transform = Transform3D(0.018691566, -0.9270219, 0.37454113, 0, 0.3746066, 0.92718387, -0.99982536, -0.017330518, 0.0070019835, 79.18, 19.21, -151.99)
+[node name="PoleLight_240" type="SpotLight3D" parent="PoleLights" unique_id=1755062196]
+transform = Transform3D(-0.018698908, 0.92702174, -0.3745411, -5.022318e-10, 0.37460658, 0.92718387, 0.9998251, 0.017337326, -0.0070047346, 74.94, 19.2, -152.07)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -6290,8 +6290,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_241" type="SpotLight3D" parent="PoleLights" unique_id=451803806]
-transform = Transform3D(0.026089692, -0.92686826, 0.37447906, 1.0044637e-09, 0.37460658, 0.92718387, -0.9996596, -0.024189942, 0.009773371, 78.56, 18.76, -119.67)
+[node name="PoleLight_241" type="SpotLight3D" parent="PoleLights" unique_id=1876498439]
+transform = Transform3D(-0.026097037, 0.9268681, -0.374479, 0, 0.37460658, 0.92718387, 0.9996594, 0.024196751, -0.009776122, 74.32, 18.77, -119.78)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -6303,8 +6303,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_242" type="SpotLight3D" parent="PoleLights" unique_id=837488328]
-transform = Transform3D(0.044477973, -0.92626625, 0.37423587, 0, 0.37460658, 0.92718387, -0.9990103, -0.041239258, 0.016661743, 77.33, 17.86, -87.71)
+[node name="PoleLight_242" type="SpotLight3D" parent="PoleLights" unique_id=488792376]
+transform = Transform3D(-0.04448532, 0.926266, -0.37423572, 0, 0.37460658, 0.92718387, 0.9990101, 0.04124607, -0.016664492, 73.1, 17.87, -87.9)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -6316,8 +6316,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_243" type="SpotLight3D" parent="PoleLights" unique_id=590553512]
-transform = Transform3D(0.058459308, -0.9255982, 0.37396592, 0, 0.37460658, 0.92718387, -0.9982898, -0.054202527, 0.02189924, 75.94, 16.89, -55.52)
+[node name="PoleLight_243" type="SpotLight3D" parent="PoleLights" unique_id=1839977904]
+transform = Transform3D(-0.058466643, 0.92559785, -0.37396577, -2.0089277e-09, 0.3746066, 0.92718387, 0.9982894, 0.05420933, -0.021901987, 71.71, 16.68, -55.77)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -6329,8 +6329,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_244" type="SpotLight3D" parent="PoleLights" unique_id=1757940702]
-transform = Transform3D(0.060954843, -0.9254598, 0.37391, 0, 0.37460658, 0.92718387, -0.9981405, -0.056516346, 0.022834085, 73.99, 15.99, -24.14)
+[node name="PoleLight_244" type="SpotLight3D" parent="PoleLights" unique_id=1552442630]
+transform = Transform3D(-0.060962178, 0.9254594, -0.37390986, -2.0089275e-09, 0.3746066, 0.92718387, 0.9981401, 0.056523148, -0.022836832, 69.76, 15.97, -24.39)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -6342,8 +6342,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_245" type="SpotLight3D" parent="PoleLights" unique_id=1768903951]
-transform = Transform3D(0.05446569, -0.9258076, 0.37405053, 0, 0.37460658, 0.92718387, -0.99851567, -0.050499707, 0.020403204, 72.19, 15.34, 7.85)
+[node name="PoleLight_245" type="SpotLight3D" parent="PoleLights" unique_id=1459374644]
+transform = Transform3D(-0.054473024, 0.92580724, -0.37405038, 0, 0.37460658, 0.92718387, 0.99851525, 0.05050651, -0.020405954, 67.96, 15.26, 7.62)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -6355,8 +6355,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_246" type="SpotLight3D" parent="PoleLights" unique_id=1481858720]
-transform = Transform3D(0.038383223, -0.9265006, 0.37433052, 1.0044637e-09, 0.37460658, 0.92718387, -0.9992631, -0.035588305, 0.014378608, 69.94, 14.63, 39.73)
+[node name="PoleLight_246" type="SpotLight3D" parent="PoleLights" unique_id=921189748]
+transform = Transform3D(-0.038290642, 0.92650396, -0.37433186, 0, 0.37460658, 0.92718387, 0.9992667, 0.035502467, -0.014343925, 65.71, 14.71, 39.57)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -6368,8 +6368,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_247" type="SpotLight3D" parent="PoleLights" unique_id=1630950860]
-transform = Transform3D(0.016191946, -0.92706233, 0.37455747, 5.0223187e-10, 0.3746066, 0.92718387, -0.9998689, -0.0150129115, 0.00606561, 69.53, 13.97, 71.59)
+[node name="PoleLight_247" type="SpotLight3D" parent="PoleLights" unique_id=213771501]
+transform = Transform3D(-0.01619929, 0.9270622, -0.37455744, 0, 0.3746066, 0.92718387, 0.9998688, 0.015019721, -0.006068361, 65.29, 13.96, 71.52)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -6381,8 +6381,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_248" type="SpotLight3D" parent="PoleLights" unique_id=2058413352]
-transform = Transform3D(-0.008592547, -0.9271496, 0.37459275, 0, 0.37460658, 0.92718387, -0.99996305, 0.00796687, -0.003218825, 69.51, 13.34, 103.31)
+[node name="PoleLight_248" type="SpotLight3D" parent="PoleLights" unique_id=1933871894]
+transform = Transform3D(0.008599893, 0.92714953, -0.37459272, -2.511159e-10, 0.37460658, 0.92718387, 0.999963, -0.007973682, 0.003221577, 65.27, 13.27, 103.35)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -6394,8 +6394,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_249" type="SpotLight3D" parent="PoleLights" unique_id=321756123]
-transform = Transform3D(-0.03188725, -0.9267124, 0.37441608, 0, 0.3746066, 0.92718387, -0.9994915, 0.029565342, -0.011945173, 70.06, 12.67, 136.04)
+[node name="PoleLight_249" type="SpotLight3D" parent="PoleLights" unique_id=1602557209]
+transform = Transform3D(0.03189459, 0.92671216, -0.374416, 0, 0.37460658, 0.92718387, 0.9994912, -0.02957215, 0.011947923, 65.82, 12.65, 136.18)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -6407,8 +6407,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_250" type="SpotLight3D" parent="PoleLights" unique_id=1284199244]
-transform = Transform3D(-0.05027145, -0.9260115, 0.37413293, -2.0089272e-09, 0.37460655, 0.92718387, -0.99873555, 0.046610877, -0.018832019, 71.41, 12.07, 167.58)
+[node name="PoleLight_250" type="SpotLight3D" parent="PoleLights" unique_id=1244344278]
+transform = Transform3D(0.05027879, 0.9260112, -0.37413278, -2.0089275e-09, 0.3746066, 0.92718387, 0.99873525, -0.046617683, 0.018834766, 67.18, 12.03, 167.79)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -6420,8 +6420,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_251" type="SpotLight3D" parent="PoleLights" unique_id=1514640474]
-transform = Transform3D(-0.059257917, -0.9255545, 0.37394828, 0, 0.37460658, 0.92718387, -0.9982427, 0.054942984, -0.022198405, 72.71, 11.43, 199.82)
+[node name="PoleLight_251" type="SpotLight3D" parent="PoleLights" unique_id=977101548]
+transform = Transform3D(0.059265256, 0.92555416, -0.37394813, 2.0089277e-09, 0.37460658, 0.92718387, 0.9982423, -0.05494979, 0.022201153, 68.48, 11.54, 200.07)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -6433,8 +6433,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_252" type="SpotLight3D" parent="PoleLights" unique_id=1730836141]
-transform = Transform3D(-0.05965721, -0.92553246, 0.37393937, 0, 0.37460655, 0.92718387, -0.9982189, 0.0553132, -0.022347983, 74.66, 10.83, 231.59)
+[node name="PoleLight_252" type="SpotLight3D" parent="PoleLights" unique_id=1121448183]
+transform = Transform3D(0.059664547, 0.9255321, -0.37393922, 0, 0.37460658, 0.92718387, 0.99821854, -0.055320006, 0.02235073, 70.43, 10.93, 231.84)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -6446,8 +6446,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_253" type="SpotLight3D" parent="PoleLights" unique_id=609455560]
-transform = Transform3D(-0.05905827, -0.92556554, 0.37395272, 0, 0.3746066, 0.92718387, -0.9982546, 0.05475788, -0.022123616, 76.77, 10.46, 263.53)
+[node name="PoleLight_253" type="SpotLight3D" parent="PoleLights" unique_id=2009091439]
+transform = Transform3D(0.0590656, 0.92556506, -0.37395257, 0, 0.37460658, 0.92718387, 0.99825406, -0.05476467, 0.022126364, 72.54, 10.49, 263.78)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -6459,7 +6459,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_254" type="SpotLight3D" parent="PoleLights" unique_id=356477972]
+[node name="PoleLight_254" type="SpotLight3D" parent="PoleLights" unique_id=125084886]
 transform = Transform3D(-0.059764367, 0.92552656, -0.37393698, 0, 0.37460658, 0.92718387, 0.9982125, 0.055412557, -0.022388125, 130.72, 18.6, -151.99)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6472,7 +6472,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_255" type="SpotLight3D" parent="PoleLights" unique_id=1266060871]
+[node name="PoleLight_255" type="SpotLight3D" parent="PoleLights" unique_id=198728364]
 transform = Transform3D(-0.06325774, 0.9253269, -0.37385634, -2.0089272e-09, 0.37460655, 0.92718387, 0.99799716, 0.058651555, -0.023696765, 129.2, 18.17, -119.83)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6485,7 +6485,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_256" type="SpotLight3D" parent="PoleLights" unique_id=70612514]
+[node name="PoleLight_256" type="SpotLight3D" parent="PoleLights" unique_id=189768772]
 transform = Transform3D(-0.07183807, 0.92478836, -0.37363872, 2.0089277e-09, 0.37460664, 0.92718387, 0.9974164, 0.0666071, -0.026911013, 126.64, 17.59, -88.27)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6498,7 +6498,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_257" type="SpotLight3D" parent="PoleLights" unique_id=1475617105]
+[node name="PoleLight_257" type="SpotLight3D" parent="PoleLights" unique_id=1926441282]
 transform = Transform3D(-0.071139865, 0.9248347, -0.37365744, 0, 0.37460658, 0.92718387, 0.9974664, 0.06595974, -0.026649458, 124.17, 16.71, -56.65)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6511,7 +6511,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_258" type="SpotLight3D" parent="PoleLights" unique_id=838755471]
+[node name="PoleLight_258" type="SpotLight3D" parent="PoleLights" unique_id=474909237]
 transform = Transform3D(-0.05696914, 0.9256781, -0.3739982, 2.0089275e-09, 0.37460658, 0.92718387, 0.99837595, 0.05282087, -0.021341015, 122.37, 15.64, -24.22)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6524,7 +6524,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_259" type="SpotLight3D" parent="PoleLights" unique_id=723050009]
+[node name="PoleLight_259" type="SpotLight3D" parent="PoleLights" unique_id=1320357330]
 transform = Transform3D(-0.034393217, 0.9266353, -0.37438494, 0, 0.37460658, 0.92718387, 0.99940836, 0.031888835, -0.012883926, 120.91, 14.74, 7.87)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6537,7 +6537,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_260" type="SpotLight3D" parent="PoleLights" unique_id=1950105907]
+[node name="PoleLight_260" type="SpotLight3D" parent="PoleLights" unique_id=1878345706]
 transform = Transform3D(-0.0053999736, 0.92717034, -0.3746011, 0, 0.37460655, 0.92718387, 0.9999854, 0.0050067683, -0.0020228657, 120.29, 13.94, 40.03)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6550,7 +6550,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_261" type="SpotLight3D" parent="PoleLights" unique_id=327486656]
+[node name="PoleLight_261" type="SpotLight3D" parent="PoleLights" unique_id=866367840]
 transform = Transform3D(0.024097668, 0.92691463, -0.3744978, 1.0044637e-09, 0.37460658, 0.92718387, 0.9997096, -0.022342969, 0.009027145, 119.95, 13.42, 72.11)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6563,7 +6563,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_262" type="SpotLight3D" parent="PoleLights" unique_id=1729588966]
+[node name="PoleLight_262" type="SpotLight3D" parent="PoleLights" unique_id=1773299287]
 transform = Transform3D(0.049779415, 0.92603433, -0.37414214, -2.0089272e-09, 0.37460655, 0.92718387, 0.99876016, -0.04615467, 0.018647699, 121.85, 12.85, 103.3)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6576,7 +6576,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_263" type="SpotLight3D" parent="PoleLights" unique_id=1137754783]
+[node name="PoleLight_263" type="SpotLight3D" parent="PoleLights" unique_id=2120071926]
 transform = Transform3D(0.066750325, 0.92511594, -0.3737711, 2.0089272e-09, 0.37460658, 0.92718387, 0.99776965, -0.061889824, 0.025005113, 123.21, 12.39, 135.28)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6589,7 +6589,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_264" type="SpotLight3D" parent="PoleLights" unique_id=1660633965]
+[node name="PoleLight_264" type="SpotLight3D" parent="PoleLights" unique_id=771876354]
 transform = Transform3D(0.073932484, 0.9246464, -0.37358138, 2.0089275e-09, 0.37460658, 0.92718387, 0.99726325, -0.06854901, 0.027695594, 126.01, 11.8, 167.6)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6602,7 +6602,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_265" type="SpotLight3D" parent="PoleLights" unique_id=1626351519]
+[node name="PoleLight_265" type="SpotLight3D" parent="PoleLights" unique_id=206050799]
 transform = Transform3D(0.06694988, 0.9251036, -0.3737661, 0, 0.37460658, 0.92718387, 0.99775636, -0.06207485, 0.025079867, 128.13, 10.92, 199.93)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6615,7 +6615,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_266" type="SpotLight3D" parent="PoleLights" unique_id=166644799]
+[node name="PoleLight_266" type="SpotLight3D" parent="PoleLights" unique_id=343460396]
 transform = Transform3D(0.050778154, 0.9259878, -0.37412333, 0, 0.3746066, 0.92718387, 0.99871, -0.047080684, 0.019021831, 130.05, 10.1, 231.44)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6628,7 +6628,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_267" type="SpotLight3D" parent="PoleLights" unique_id=302713516]
+[node name="PoleLight_267" type="SpotLight3D" parent="PoleLights" unique_id=1766164419]
 transform = Transform3D(0.042687025, 0.92633873, -0.3742651, 0, 0.37460655, 0.92718387, 0.99908847, -0.03957872, 0.01599084, 131.4, 9.47, 263.24)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6641,7 +6641,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_268" type="SpotLight3D" parent="PoleLights" unique_id=480278700]
+[node name="PoleLight_268" type="SpotLight3D" parent="PoleLights" unique_id=656105043]
 transform = Transform3D(0.027996339, 0.9268204, -0.37445974, 0, 0.37460655, 0.92718387, 0.999608, -0.025957754, 0.010487613, 185.04, 18.06, -152.2)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6654,7 +6654,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_269" type="SpotLight3D" parent="PoleLights" unique_id=332145876]
+[node name="PoleLight_269" type="SpotLight3D" parent="PoleLights" unique_id=1502330580]
 transform = Transform3D(0.019598743, 0.92700577, -0.37453464, 0, 0.37460658, 0.92718387, 0.9998079, -0.018171638, 0.007341819, 185.96, 17.6, -119.99)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6667,7 +6667,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_270" type="SpotLight3D" parent="PoleLights" unique_id=1961055763]
+[node name="PoleLight_270" type="SpotLight3D" parent="PoleLights" unique_id=1587852233]
 transform = Transform3D(-0.0014999995, 0.92718285, -0.37460616, -6.277899e-11, 0.3746066, 0.92718387, 0.9999989, 0.0013907754, -0.00056190963, 186.64, 16.82, -87.73)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6680,7 +6680,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_271" type="SpotLight3D" parent="PoleLights" unique_id=1321079887]
+[node name="PoleLight_271" type="SpotLight3D" parent="PoleLights" unique_id=1433532363]
 transform = Transform3D(-0.024097668, 0.92691463, -0.3744978, -1.0044637e-09, 0.37460658, 0.92718387, 0.9997096, 0.022342969, -0.009027145, 185.98, 15.91, -55.63)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6693,7 +6693,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_272" type="SpotLight3D" parent="PoleLights" unique_id=155420433]
+[node name="PoleLight_272" type="SpotLight3D" parent="PoleLights" unique_id=1659653167]
 transform = Transform3D(-0.041588, 0.9263817, -0.37428248, 1.0044637e-09, 0.37460658, 0.92718387, 0.99913484, 0.038559724, -0.015579139, 184.79, 15.01, -24.38)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6706,7 +6706,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_273" type="SpotLight3D" parent="PoleLights" unique_id=854530035]
+[node name="PoleLight_273" type="SpotLight3D" parent="PoleLights" unique_id=488512997]
 transform = Transform3D(-0.052975193, 0.925882, -0.37408057, 0, 0.3746066, 0.92718387, 0.9985959, 0.049117744, -0.019844854, 183.68, 14.15, 7.68)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6719,7 +6719,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_274" type="SpotLight3D" parent="PoleLights" unique_id=1347109485]
+[node name="PoleLight_274" type="SpotLight3D" parent="PoleLights" unique_id=330587583]
 transform = Transform3D(-0.054972276, 0.92578185, -0.37404013, 0, 0.37460658, 0.92718387, 0.9984879, 0.050969407, -0.020592976, 182.04, 13.39, 40.02)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6732,7 +6732,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_275" type="SpotLight3D" parent="PoleLights" unique_id=1710581175]
+[node name="PoleLight_275" type="SpotLight3D" parent="PoleLights" unique_id=1477494932]
 transform = Transform3D(-0.048480988, 0.9260936, -0.3741661, 0, 0.37460658, 0.92718387, 0.99882406, 0.04495079, -0.018161297, 179.69, 12.77, 71.59)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6745,7 +6745,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_276" type="SpotLight3D" parent="PoleLights" unique_id=1789787290]
+[node name="PoleLight_276" type="SpotLight3D" parent="PoleLights" unique_id=1812655823]
 transform = Transform3D(-0.03409339, 0.9266448, -0.3743888, -1.0044636e-09, 0.37460658, 0.92718387, 0.9994186, 0.031610843, -0.012771608, 178.8, 12.07, 103.76)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6758,7 +6758,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_277" type="SpotLight3D" parent="PoleLights" unique_id=630855739]
+[node name="PoleLight_277" type="SpotLight3D" parent="PoleLights" unique_id=1180291535]
 transform = Transform3D(-0.013699571, 0.92709684, -0.37457144, 0, 0.37460658, 0.92718387, 0.9999061, 0.012702021, -0.0051319497, 177.76, 11.42, 135.71)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6771,7 +6771,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_278" type="SpotLight3D" parent="PoleLights" unique_id=1396419650]
+[node name="PoleLight_278" type="SpotLight3D" parent="PoleLights" unique_id=502840194]
 transform = Transform3D(0.008599893, 0.92714953, -0.37459272, -2.511159e-10, 0.37460658, 0.92718387, 0.999963, -0.007973682, 0.003221577, 177.81, 10.94, 167.39)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6784,7 +6784,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_279" type="SpotLight3D" parent="PoleLights" unique_id=2039804988]
+[node name="PoleLight_279" type="SpotLight3D" parent="PoleLights" unique_id=1171821490]
 transform = Transform3D(0.029595679, 0.9267777, -0.3744425, 0, 0.37460658, 0.92718387, 0.99956197, -0.027440635, 0.011086736, 178.57, 10.11, 199.61)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6797,7 +6797,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_280" type="SpotLight3D" parent="PoleLights" unique_id=1266627917]
+[node name="PoleLight_280" type="SpotLight3D" parent="PoleLights" unique_id=2056714012]
 transform = Transform3D(0.045484304, 0.9262243, -0.37421888, 2.0089277e-09, 0.37460658, 0.92718387, 0.9989651, -0.042172313, 0.017038718, 179.35, 9.53, 232.12)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6810,7 +6810,7 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_281" type="SpotLight3D" parent="PoleLights" unique_id=42275901]
+[node name="PoleLight_281" type="SpotLight3D" parent="PoleLights" unique_id=35247671]
 transform = Transform3D(0.05227616, 0.9259161, -0.37409437, -2.0089275e-09, 0.37460658, 0.92718387, 0.99863267, -0.048469614, 0.019582994, 180.84, 9.08, 263.87)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
@@ -6823,8 +6823,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_282" type="SpotLight3D" parent="PoleLights" unique_id=74847996]
-transform = Transform3D(0.040981174, -0.92640495, 0.3742919, -1.0044637e-09, 0.37460658, 0.92718387, -0.99915993, -0.037997082, 0.015351817, 242.66, 17.15, -152.18)
+[node name="PoleLight_282" type="SpotLight3D" parent="PoleLights" unique_id=689047937]
+transform = Transform3D(-0.04098851, 0.92640465, -0.37429178, 0, 0.37460658, 0.92718387, 0.9991596, 0.038003884, -0.015354566, 238.92, 17.1, -152.33)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -6836,8 +6836,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_283" type="SpotLight3D" parent="PoleLights" unique_id=23314118]
-transform = Transform3D(0.04557686, -0.92622036, 0.3742173, 0, 0.37460655, 0.92718387, -0.9989608, -0.04225813, 0.017073391, 241.28, 16.85, -119.84)
+[node name="PoleLight_283" type="SpotLight3D" parent="PoleLights" unique_id=587391533]
+transform = Transform3D(-0.045584198, 0.92622006, -0.37421718, 0, 0.37460658, 0.92718387, 0.9989605, 0.042264935, -0.01707614, 237.54, 16.82, -120.01)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -6849,8 +6849,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_284" type="SpotLight3D" parent="PoleLights" unique_id=1300172499]
-transform = Transform3D(0.056861967, -0.92568374, 0.3740005, 0, 0.37460658, 0.92718387, -0.99838203, -0.052721497, 0.021300867, 239.94, 16.36, -87.88)
+[node name="PoleLight_284" type="SpotLight3D" parent="PoleLights" unique_id=1250453104]
+transform = Transform3D(-0.056869306, 0.9256834, -0.3740003, 0, 0.37460658, 0.92718387, 0.9983817, 0.052728303, -0.021303615, 236.2, 16.27, -88.1)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -6862,8 +6862,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_285" type="SpotLight3D" parent="PoleLights" unique_id=42441239]
-transform = Transform3D(0.061453905, -0.92543143, 0.37389854, 0, 0.37460658, 0.92718387, -0.99810994, -0.056979068, 0.023021037, 237.8, 15.61, -56.02)
+[node name="PoleLight_285" type="SpotLight3D" parent="PoleLights" unique_id=1635435387]
+transform = Transform3D(-0.06146124, 0.925431, -0.37389836, 0, 0.37460655, 0.92718387, 0.99810946, 0.05698587, -0.023023784, 234.06, 15.54, -56.25)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -6875,8 +6875,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_286" type="SpotLight3D" parent="PoleLights" unique_id=201553014]
-transform = Transform3D(0.05416613, -0.92582273, 0.37405664, 0, 0.3746066, 0.92718387, -0.998532, -0.05022196, 0.02029099, 235.43, 14.65, -24.22)
+[node name="PoleLight_286" type="SpotLight3D" parent="PoleLights" unique_id=560607403]
+transform = Transform3D(-0.054173466, 0.9258223, -0.3740565, 0, 0.37460658, 0.92718387, 0.9985315, 0.050228763, -0.020293737, 231.69, 14.69, -24.42)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -6888,8 +6888,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_287" type="SpotLight3D" parent="PoleLights" unique_id=1790956013]
-transform = Transform3D(0.038882844, -0.9264827, 0.3743233, -1.0044636e-09, 0.37460658, 0.92718387, -0.99924374, -0.036051545, 0.0145657705, 233.8, 13.8, 7.95)
+[node name="PoleLight_287" type="SpotLight3D" parent="PoleLights" unique_id=1800054533]
+transform = Transform3D(-0.03889019, 0.92648244, -0.3743232, 0, 0.37460658, 0.92718387, 0.9992435, 0.03605836, -0.014568522, 230.06, 13.85, 7.8)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -6901,8 +6901,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_288" type="SpotLight3D" parent="PoleLights" unique_id=2103315846]
-transform = Transform3D(0.016591892, -0.92705625, 0.37455502, 0, 0.37460658, 0.92718387, -0.9998624, -0.015383734, 0.0062154317, 233.28, 12.79, 39.6)
+[node name="PoleLight_288" type="SpotLight3D" parent="PoleLights" unique_id=124910651]
+transform = Transform3D(-0.016599238, 0.92705613, -0.37455496, 0, 0.37460658, 0.92718387, 0.99986225, 0.015390545, -0.006218184, 229.54, 12.75, 39.54)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -6914,8 +6914,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_289" type="SpotLight3D" parent="PoleLights" unique_id=879843215]
-transform = Transform3D(-0.008192562, -0.92715275, 0.374594, -2.5111593e-10, 0.37460658, 0.92718387, -0.99996644, 0.007596011, -0.0030689875, 233.06, 11.77, 71.44)
+[node name="PoleLight_289" type="SpotLight3D" parent="PoleLights" unique_id=1654004154]
+transform = Transform3D(0.008199908, 0.9271527, -0.37459397, 0, 0.37460655, 0.92718387, 0.9999664, -0.007602822, 0.0030717393, 229.32, 11.75, 71.47)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -6927,8 +6927,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_290" type="SpotLight3D" parent="PoleLights" unique_id=711564949]
-transform = Transform3D(-0.031687353, -0.9267183, 0.37441847, 0, 0.3746066, 0.92718387, -0.9994979, 0.029380003, -0.011870289, 233.62, 10.86, 103.31)
+[node name="PoleLight_290" type="SpotLight3D" parent="PoleLights" unique_id=1099915272]
+transform = Transform3D(0.03169469, 0.926718, -0.37441838, 0, 0.37460655, 0.92718387, 0.99949753, -0.029386807, 0.01187304, 229.88, 10.86, 103.43)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -6940,8 +6940,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_291" type="SpotLight3D" parent="PoleLights" unique_id=1206503633]
-transform = Transform3D(-0.049672205, -0.92603934, 0.37414417, 2.0089275e-09, 0.3746066, 0.92718387, -0.9987656, 0.04605527, -0.018607534, 235.1, 10.15, 135.59)
+[node name="PoleLight_291" type="SpotLight3D" parent="PoleLights" unique_id=1793389906]
+transform = Transform3D(0.049679544, 0.92603904, -0.37414402, 0, 0.3746066, 0.92718387, 0.9987653, -0.04606207, 0.018610282, 231.36, 10.18, 135.77)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -6953,8 +6953,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_292" type="SpotLight3D" parent="PoleLights" unique_id=575336767]
-transform = Transform3D(-0.060156316, -0.92550474, 0.37392816, 0, 0.3746066, 0.92718387, -0.99818903, 0.055775966, -0.02253495, 236.64, 9.73, 167.81)
+[node name="PoleLight_292" type="SpotLight3D" parent="PoleLights" unique_id=344135453]
+transform = Transform3D(0.060163643, 0.92550427, -0.373928, 2.0089272e-09, 0.37460658, 0.92718387, 0.9981885, -0.055782758, 0.022537697, 232.91, 9.78, 168.04)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -6966,8 +6966,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_293" type="SpotLight3D" parent="PoleLights" unique_id=1805025070]
-transform = Transform3D(-0.059257917, -0.9255545, 0.37394828, 0, 0.37460658, 0.92718387, -0.9982427, 0.054942984, -0.022198405, 238.73, 9.66, 199.1)
+[node name="PoleLight_293" type="SpotLight3D" parent="PoleLights" unique_id=868922984]
+transform = Transform3D(0.059265256, 0.92555416, -0.37394813, 2.0089277e-09, 0.37460658, 0.92718387, 0.9982423, -0.05494979, 0.022201153, 235, 9.68, 199.32)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -6979,8 +6979,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_294" type="SpotLight3D" parent="PoleLights" unique_id=2145439723]
-transform = Transform3D(-0.05007171, -0.92602086, 0.3741367, 0, 0.37460658, 0.92718387, -0.9987457, 0.04642568, -0.01875719, 240.85, 9.38, 231.15)
+[node name="PoleLight_294" type="SpotLight3D" parent="PoleLights" unique_id=2091333761]
+transform = Transform3D(0.050079044, 0.9260205, -0.37413654, -2.0089275e-09, 0.37460658, 0.92718387, 0.99874526, -0.04643248, 0.01875994, 237.11, 9.32, 231.34)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -6992,8 +6992,8 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="PoleLight_295" type="SpotLight3D" parent="PoleLights" unique_id=318760121]
-transform = Transform3D(-0.045277175, -0.92623305, 0.3742224, 2.0089277e-09, 0.37460658, 0.92718387, -0.9989745, 0.041980267, -0.016961126, 242.01, 9.12, 263.26)
+[node name="PoleLight_295" type="SpotLight3D" parent="PoleLights" unique_id=855863239]
+transform = Transform3D(0.04528451, 0.9262327, -0.37422228, 0, 0.3746066, 0.92718387, 0.99897414, -0.041987065, 0.016963875, 238.27, 9.13, 263.43)
 light_color = Color(1, 0.72, 0.42, 1)
 light_energy = 1.6
 distance_fade_enabled = true
@@ -7005,12 +7005,12 @@ spot_attenuation = 0.9
 spot_angle = 38.0
 spot_angle_attenuation = 1.1
 
-[node name="Lentes" type="MultiMeshInstance3D" parent="PoleLights" unique_id=351765697]
+[node name="Lentes" type="MultiMeshInstance3D" parent="PoleLights" unique_id=320534399]
 material_override = SubResource("StandardMaterial3D_spbn8")
 cast_shadow = 0
 multimesh = ExtResource("93_y1c4q")
 
-[node name="Pocas" type="MultiMeshInstance3D" parent="PoleLights" unique_id=495750312]
+[node name="Pocas" type="MultiMeshInstance3D" parent="PoleLights" unique_id=1771793052]
 material_override = SubResource("StandardMaterial3D_htm2q")
 cast_shadow = 0
 custom_aabb = AABB(-700, -40, -700, 1400, 120, 1400)

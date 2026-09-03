@@ -901,3 +901,25 @@ contra o do `.gltf` antes de acreditar que a cena está atualizada.
 **Névoa, terceira calibragem.** Densidade 0,048, energia 0,45, transição de
 50 m em vez de 90 — o começo da mata estava claro demais porque a rampa era
 longa, e o miolo escuro demais porque o alvo era preto.
+
+### 10.11 — A luminária acesa do lado errado da rua
+
+Sintoma: em parte dos postes a lâmpada acesa ficava certinha no topo; em outra
+parte ela flutuava a quase 10 m, atravessada na pista, sem poste por perto.
+
+Causa: `_poles_for_road` escolhia de que lado da rua vinha a fileira de postes
+com `hash(road["id"]) & 1`. **`hash()` de string em Python é aleatorizado a
+cada processo** (PYTHONHASHSEED). A geometria dos postes vai para o
+`city_props.gltf` e a posição das luzes vai para o `poles.json`; quando os dois
+saem de execuções diferentes do Blender, o sorteio muda e em boa parte das ruas
+o poste fica de um lado e a luz do outro — separados pela largura da pista mais
+os dois recuos, ~9,7 m. Medido: 185 dos 296 postes divergiam, no máximo 9,75 m,
+com `rot` diferindo exatamente de π (a assinatura da troca de lado).
+
+Correção: `zlib.crc32(road["id"].encode("utf-8")) & 1`, que é estável entre
+processos. Verificado rodando o gerador em duas execuções separadas: diferença
+máxima de 0,0000 m.
+
+Regra geral que fica: **nada que atravesse a fronteira Blender→Godot pode
+depender de `hash()` de string.** Se um dado é gravado em JSON para o Godot
+reconstruir, ele tem de ser reproduzível fora do processo que o gerou.

@@ -8,6 +8,7 @@ import json
 import math
 import os
 import random
+import zlib
 
 import mathutils
 
@@ -98,7 +99,12 @@ def _resample(points, step):
 
 def _poles_for_road(road, hs, rng):
     """Postes de um lado só, com inclinação aleatória de ±3°."""
-    lado = 1 if (hash(road["id"]) & 1) else -1
+    # crc32 e nao hash(): `hash()` de string em Python e aleatorizado a cada
+    # processo. Como a geometria dos postes e o poles.json das luzes sao
+    # gerados em execucoes diferentes, metade das ruas sorteava um lado na
+    # exportacao e o outro na escrita do JSON — a luminaria acesa aparecia
+    # do lado oposto da pista, a quase 10 m do poste que deveria segura-la.
+    lado = 1 if (zlib.crc32(road["id"].encode("utf-8")) & 1) else -1
     hw = road["width"] / 2.0
     off = hw + 0.75
     pts = _resample(road["points"], VAO)

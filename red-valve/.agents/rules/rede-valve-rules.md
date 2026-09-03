@@ -20,3 +20,6 @@ trigger: always_on
 
 
 -qualquer texto que for adicionado incluir nos arquivos de csv disponiveis e sempre traduzir para o ingles tambem.
+
+-sempre considere o mcp, pois configurei com o godot para ajudar no desenvolvimento
+

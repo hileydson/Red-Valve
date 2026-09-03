@@ -53,6 +53,9 @@ var heartbeat_hud: ColorRect
 var blood_overlay: ColorRect
 var blur_overlay: ColorRect
 # STAMINA & MP
+@export_group("Debug & Testing")
+@export var infinite_stamina_test: bool = false
+
 var max_stamina: float = 100.0
 var current_stamina: float = 100.0
 var stamina_bar: ProgressBar
@@ -392,9 +395,10 @@ func _physics_process(delta: float) -> void:
 		is_exhausted = false
 		
 	# --- STAMINA LOGIC ---
-	var is_running_stam = _run_toggle_active and velocity.length() > 0.1 and current_stamina > 0 and stamina_active and not is_exhausted and not is_aiming
+	var is_running_stam = _run_toggle_active and velocity.length() > 0.1 and (current_stamina > 0 or infinite_stamina_test) and stamina_active and not is_exhausted and not is_aiming
 	if is_running_stam:
-		current_stamina -= 20.0 * delta
+		if not infinite_stamina_test:
+			current_stamina -= 20.0 * delta
 		if current_stamina < 0: current_stamina = 0
 		stamina_fade_timer = 2.0
 		if is_instance_valid(stamina_bar): stamina_bar.modulate.a = 1.0
@@ -538,8 +542,9 @@ func _physics_process(delta: float) -> void:
 		if dash_cooldown_timer > 0:
 			dash_cooldown_timer -= delta
 
-		if not _cutscene_inputs_disabled and Input.is_action_just_pressed("ui_dash") and not is_dashing and dash_cooldown_timer <= 0 and current_stamina >= 30.0:
-			current_stamina -= 30.0
+		if not _cutscene_inputs_disabled and Input.is_action_just_pressed("ui_dash") and not is_dashing and dash_cooldown_timer <= 0 and (current_stamina >= 30.0 or infinite_stamina_test):
+			if not infinite_stamina_test:
+				current_stamina -= 30.0
 			stamina_fade_timer = 2.0
 			stamina_bar.modulate.a = 1.0
 			dash()
@@ -574,7 +579,7 @@ func _physics_process(delta: float) -> void:
 				velocidade_atual = WALK_SPEED * 0.45
 			elif is_aiming:
 				velocidade_atual = WALK_SPEED * 0.4
-			elif _run_toggle_active and current_stamina > 0 and not is_exhausted:
+			elif _run_toggle_active and (current_stamina > 0 or infinite_stamina_test) and not is_exhausted:
 				velocidade_atual = RUN_SPEED
 			
 			# Mais lento ao andar para trás
@@ -585,7 +590,7 @@ func _physics_process(delta: float) -> void:
 			var velocity_Y_zero: bool = velocity.y <= 0
 
 			if direction and !transition_camera:
-				var is_actually_running = _run_toggle_active and current_stamina > 0 and not is_exhausted and not is_aiming
+				var is_actually_running = _run_toggle_active and (current_stamina > 0 or infinite_stamina_test) and not is_exhausted and not is_aiming
 
 				# Animações e Sons
 				if is_actually_running:
@@ -617,7 +622,7 @@ func _physics_process(delta: float) -> void:
 		# FX DURANTE CORRIDA (FOV e Blur leve - Diferenciado para 1ª Pessoa e 3ª Pessoa)
 		var camera = get_viewport().get_camera_3d()
 		if camera and not is_dashing:
-			var is_running = _run_toggle_active and velocity.length() > 0.1 and current_stamina > 0 and not is_exhausted and not is_aiming
+			var is_running = _run_toggle_active and velocity.length() > 0.1 and (current_stamina > 0 or infinite_stamina_test) and not is_exhausted and not is_aiming
 			var direction_check := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 			var visao_frente = -global_transform.basis.z
 			var alinhamento = direction_check.dot(visao_frente) if direction_check else 0.0
@@ -655,7 +660,7 @@ func _physics_process(delta: float) -> void:
 				alvo_y = PI + (limite_rotacao_lateral * 1.8) 
 				speed_y = 0.6
 				speed_x = 1.5
-				var current_is_running = _run_toggle_active and velocity.length() > 0.1 and current_stamina > 0 and not is_exhausted and not is_aiming
+				var current_is_running = _run_toggle_active and velocity.length() > 0.1 and (current_stamina > 0 or infinite_stamina_test) and not is_exhausted and not is_aiming
 				if not current_is_running:
 					alvo_pos_x = -0.15
 
@@ -755,7 +760,7 @@ func _physics_process(delta: float) -> void:
 			input_dir.y = -1.0
 			_run_toggle_active = true
 		# MOVIMENTO NORMAL (WALK/RUN)
-		var is_running = _run_toggle_active and current_stamina > 0 and can_run_normal and not is_exhausted and not is_aiming
+		var is_running = _run_toggle_active and (current_stamina > 0 or infinite_stamina_test) and can_run_normal and not is_exhausted and not is_aiming
 		var velocidade_atual = RUN_SPEED if is_running else WALK_SPEED_NORMAL
 		if input_dir.y > 0.1:
 			velocidade_atual *= 0.65
