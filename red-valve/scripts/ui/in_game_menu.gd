@@ -39,6 +39,10 @@ func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	
 	GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/entrar_menu.mp3")
+
+	# reabre na aba em que o jogador estava. O menu é destruído ao fechar, por
+	# isso a lembrança mora em GlobalEvents e não aqui.
+	current_tab = clampi(GlobalEvents.menu_ultima_aba, 0, tabs.size() - 1)
 	
 	# Fundo
 	bg = ColorRect.new()
@@ -244,6 +248,7 @@ func _create_action_menu() -> void:
 		action_options.append(btn)
 
 func update_ui() -> void:
+	GlobalEvents.menu_ultima_aba = current_tab
 	# Animação do Carrossel
 	if carousel_tween: carousel_tween.kill()
 	carousel_tween = create_tween().set_parallel(true)

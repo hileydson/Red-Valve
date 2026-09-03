@@ -70,15 +70,12 @@ theme_override_font_sizes/font_size = 15
 
 [node name="AjudaMouse" type="Label" parent="."]
 layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
+anchors_preset = 2
 anchor_top = 1.0
-anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -700.0
 offset_top = -34.0
+offset_right = 900.0
 offset_bottom = -12.0
-horizontal_alignment = 2
 theme_override_font_sizes/font_size = 15
 
 [node name="Centralizar" type="Button" parent="."]

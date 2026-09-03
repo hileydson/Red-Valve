@@ -348,6 +348,31 @@ por evento: assim o movimento é proporcional à inclinação do manche. Esquerd
 usa `ui_left/right/up/down` (que no projeto é o stick esquerdo, e de brinde
 traz WASD e setas); direito usa `ui_look_*`.
 
+**Só uma legenda por vez.** A do controle (`MAP_HELP_PAD`) ou a do mouse
+(`MAP_HELP_MOUSE`), conforme o que o jogador está usando — as duas ocupam o
+mesmo canto. Quem sabe o dispositivo é `GlobalEvents.usando_controle`,
+atualizado no `_input` do autoload.
+
+Duas pegadinhas resolvidas ali:
+
+- O autoload precisou de **`PROCESS_MODE_ALWAYS`**. Com a árvore pausada — que
+  é justamente quando o menu está aberto — um autoload PAUSABLE não recebe
+  entrada nenhuma, e a detecção congelava no dispositivo usado antes de
+  pausar.
+- O limiar do analógico é **0,5**, não a zona morta. Manche solto fica
+  tremendo perto de zero e trocaria a legenda sozinho, sem ninguém encostar
+  nele.
+
+### A aba lembra onde você estava
+
+`GlobalEvents.menu_ultima_aba` guarda a última aba aberta. O menu é
+`queue_free()`d ao fechar e recriado ao abrir, então a lembrança tem de morar
+fora dele. Gravada em `update_ui()`, que é o funil por onde toda troca de aba
+passa, e lida no `_ready` do menu.
+
+Só em memória, de propósito: não entra no `save_array` e some ao fechar o
+jogo.
+
 ### Este NÃO gira
 
 O minimapa gira com o player; o mapa grande é norte-para-cima e quem gira é a

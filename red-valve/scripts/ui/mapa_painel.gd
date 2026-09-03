@@ -73,9 +73,8 @@ func ativar() -> void:
 	_ativo = _dados.ok and MapaDados.disponivel(get_tree())
 	_painel.visible = _ativo
 	_escala.visible = _ativo
-	_ajuda_pad.visible = _ativo
-	_ajuda_mouse.visible = _ativo
 	_btn_centralizar.visible = _ativo
+	_legendas()
 	_indisponivel.visible = not _ativo
 	set_process(_ativo)
 	if _ativo:
@@ -188,9 +187,19 @@ func _atualizar() -> void:
 		if no.visible and no.has_meta("rotulo"):
 			_lado_do_rotulo(no, q, tam)
 
+	_legendas()
 	_escala.text = tr("MAP_SCALE").format({
 		"h": int(round(_meia * 2.0 * _dados.tam)),
 		"z": "%.1f" % ((zoom_max_m * 0.5 / _dados.tam) / _meia)})
+
+
+## Uma legenda ou a outra, nunca as duas: mostra a do dispositivo que o
+## jogador está usando de fato. `GlobalEvents` sabe disso porque acompanha os
+## eventos de entrada — o painel só pergunta.
+func _legendas() -> void:
+	var pad: bool = GlobalEvents.usando_controle
+	_ajuda_pad.visible = _ativo and pad
+	_ajuda_mouse.visible = _ativo and not pad
 
 
 ## Rótulo à direita do losango; perto da borda direita, vira para a esquerda.
