@@ -29,17 +29,27 @@ extends Node3D
 
 @export_multiline var last_result: String = ""
 
+## `ResourceSaver.save()` gira o loop principal, e o plugin MCP aproveita
+## para processar a próxima mensagem da fila. Um segundo `construir`
+## entrava no meio do primeiro e derrubava o editor com SIGSEGV dentro
+## do MultiMesh. Uma trava simples resolve.
+var _ocupado: bool = false
+
 @export var construir: bool = false:
 	set(v):
 		construir = false
-		if v and Engine.is_editor_hint():
+		if v and Engine.is_editor_hint() and not _ocupado:
+			_ocupado = true
 			_construir()
+			_ocupado = false
 
 @export var limpar: bool = false:
 	set(v):
 		limpar = false
-		if v and Engine.is_editor_hint():
+		if v and Engine.is_editor_hint() and not _ocupado:
+			_ocupado = true
 			_limpar()
+			_ocupado = false
 
 
 func _limpar() -> void:

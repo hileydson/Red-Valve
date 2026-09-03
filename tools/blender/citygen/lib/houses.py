@@ -4,6 +4,7 @@ O que importa aqui e **massa e ritmo de telhado**, nao detalhe: cada casa e
 um volume mais um telhado com a inclinacao certa do seu tipo. Toda casa deixa
 um Empty `EMP_house_*` na origem da testada para voce trocar depois.
 """
+import json
 import math
 import random
 
@@ -37,6 +38,16 @@ TIPOS = (
     ("ruina",            1, 0.00, 0.00, "nenhum",  8),
 )
 PE_DIREITO = (2.80, 2.60)
+
+# Folga minima entre a testada da casa e a borda do asfalto. O degrau da
+# porta avanca 0,56 m alem da parede, e ainda tem meio-fio e calcada: com
+# menos que isto o degrau e o peitoril aparecem *em cima* da pista, que era
+# de onde vinham as lajes cinzas soltas no asfalto.
+MARGEM_VIA = 1.60
+
+# Se nenhuma casa cair no raio nominal de uma vaga reservada, ela fica com a
+# vizinha mais próxima até esta distância.
+RAIO_SOCORRO = 15.0
 
 
 def _pick(rng):
@@ -73,36 +84,50 @@ def _caixa_local(col, name, x, y, ang, cx, cy, cz, sx, sy, sz, mat):
     return util.box(name, sx, sy, sz, col, mat, loc=p, rot=(0, 0, ang), base=False)
 
 
-def _abertura(col, name, x, y, ang, lado, pos, z0, larg, alt, hw, hd, mats):
-    """Vao recuado na parede + peitoril. `lado`: 'frente', 'esq' ou 'dir'.
+def _face_abertura(lado, hw, hd, pos, larg, fora, esp):
+    """Caixa colada na face da parede.
 
-    Nao abre buraco de verdade na malha: uma caixa escura recuada 6 cm ja
-    le como vao, e custa 12 triangulos em vez de um boolean.
+    `fora` e o quanto ela avanca para FORA da face; `esp` a espessura. A
+    versao anterior centrava a caixa 6 cm para DENTRO do volume: como a casa
+    e um bloco solido, e nao uma casca, o vao ficava inteiramente engolido
+    pela parede e nao aparecia nada — nem porta, nem janela.
+    """
+    if lado == "frente":
+        return (-hd - fora + esp / 2.0, pos, esp, larg)
+    if lado == "esq":
+        return (pos, -hw - fora + esp / 2.0, larg, esp)
+    return (pos, hw + fora - esp / 2.0, larg, esp)
+
+
+def _abertura(col, name, x, y, ang, lado, pos, z0, larg, alt, hw, hd, mats):
+    """Vao escuro saliente, com verga em cima e peitoril embaixo.
+
+    `lado`: 'frente' | 'esq' | 'dir'. Nao abre buraco de verdade na malha —
+    o vao e um painel escuro 2 cm a frente da parede, e a verga e o peitoril,
+    que avancam mais que ele, dao a sombra que le como profundidade. Sao 36
+    triangulos por janela, contra centenas de um boolean.
+
+    Ja errei isto duas vezes: primeiro afundando o painel 6 cm DENTRO do
+    volume solido da casa, onde ele sumia por completo; depois envolvendo-o
+    num requadro solido, que o tapava pela frente. O painel tem de ser a
+    peca mais externa da abertura.
     """
     n = 0
-    rec = 0.06
-    if lado == "frente":
-        cx, cy = -hd + rec + 0.06, pos
-        sx, sy = 0.12, larg
-    elif lado == "esq":
-        cx, cy = pos, -hw + rec + 0.06
-        sx, sy = larg, 0.12
-    else:
-        cx, cy = pos, hw - rec - 0.06
-        sx, sy = larg, 0.12
+    cx, cy, sx, sy = _face_abertura(lado, hw, hd, pos, larg, 0.02, 0.10)
     _caixa_local(col, name + "_vao", x, y, ang, cx, cy, z0 + alt / 2.0,
                  sx, sy, alt, mats["vao"])
     n += 1
+    # verga
+    cx, cy, sx, sy = _face_abertura(lado, hw, hd, pos, larg + 0.24, 0.07, 0.17)
+    _caixa_local(col, name + "_verga", x, y, ang, cx, cy, z0 + alt + 0.06,
+                 sx, sy, 0.12, mats["peitoril"])
+    n += 1
     # peitoril: so em janela (porta comeca no chao)
     if z0 > 0.35:
-        if lado == "frente":
-            px, py, psx, psy = -hd - 0.04, pos, 0.16, larg + 0.22
-        elif lado == "esq":
-            px, py, psx, psy = pos, -hw - 0.04, larg + 0.22, 0.16
-        else:
-            px, py, psx, psy = pos, hw + 0.04, larg + 0.22, 0.16
-        _caixa_local(col, name + "_peit", x, y, ang, px, py, z0 - 0.05,
-                     psx, psy, 0.10, mats["peitoril"])
+        cx, cy, sx, sy = _face_abertura(lado, hw, hd, pos, larg + 0.24,
+                                        0.09, 0.20)
+        _caixa_local(col, name + "_peit", x, y, ang, cx, cy, z0 - 0.05,
+                     sx, sy, 0.10, mats["peitoril"])
         n += 1
     return n
 
@@ -285,15 +310,22 @@ def build_casa(col, name, x, y, ang, larg, prof, tipo, rng, z0):
 
 
 def build(parent, hs):
+    """Duas passadas: primeiro decide ONDE, depois constrói.
+
+    A separação existe por causa das vagas reservadas. Quando a reserva era
+    resolvida no meio da construção, ela dependia de um sorteio cair dentro
+    de um raio de 2,5 m — e bastou eu recuar as casas da pista para a vaga
+    da Sra Nice desaparecer. Com a passada de posicionamento isolada, a
+    reserva vira "a casa mais próxima deste ponto", que não depende de sorte.
+    """
     col = util.reset_collection(COL, parent)
     data = layout.load()
     rng = random.Random(31415)
-    casas = objs = 0
-    # caixas para o oclusor do Godot: occlusion_culling esta ligado no projeto
-    # e nao existe oclusor nenhum, entao hoje e custo puro sem beneficio.
-    volumes = []
-    vagas = {}
+    vias = layout.grade_vias(data)
+    recuadas = empurradas = 0
 
+    # ---------------------------------------------------- passada 1: onde
+    cand = []
     for b in data["blocks"]:
         poly = [(float(x), float(y)) for x, y in b["poly"]]
         plat = max(hs.at(x, y) for x, y in poly) + 0.12
@@ -324,31 +356,72 @@ def build(parent, hs):
                 rec = rng.uniform(0.4, 1.6)
                 hx = a[0] + dx * mid + nx * (prof / 2.0 + rec)
                 hy = a[1] + dy * mid + ny * (prof / 2.0 + rec)
-                # a casa cai numa vaga reservada? entao nao construir
-                gx, gz = hx, -hy
-                reservada = None
-                for tag, rx, rz, raio in RESERVADOS:
-                    if math.hypot(gx - rx, gz - rz) <= raio:
-                        reservada = tag
+                passo = s + larg + rng.uniform(0.3, 1.8)
+
+                # a quadra é desenhada sem consultar as vias, então a divisa
+                # às vezes cai dentro do asfalto. Recua a casa até a testada
+                # ficar livre; se não houver quadra suficiente, não constrói.
+                recuado = 0.0
+                while recuado <= 7.0:
+                    livre = True
+                    for lat in (-larg / 2.0 + 0.3, 0.0, larg / 2.0 - 0.3):
+                        fx = hx - nx * (prof / 2.0) + dx * lat
+                        fy = hy - ny * (prof / 2.0) + dy * lat
+                        if layout.folga_via(vias, fx, fy) < MARGEM_VIA:
+                            livre = False
+                            break
+                    if livre:
                         break
-                if reservada:
-                    vagas.setdefault(reservada, []).append(
-                        {"x": round(gx, 2), "y": round(plat, 2), "z": round(gz, 2),
-                         "rot": round(-ang, 4), "w": round(larg, 2),
-                         "d": round(prof, 2)})
-                    s += larg + rng.uniform(0.3, 1.8)
+                    hx += nx * 0.5
+                    hy += ny * 0.5
+                    recuado += 0.5
+                s = passo
+                if recuado > 7.0:
+                    empurradas += 1
                     continue
-                nome = "SM_house_%s_%d_%02d" % (b["id"], e, casas)
-                k, alt = build_casa(col, nome, hx, hy, ang, larg, prof, tipo,
-                                    rng, plat)
-                volumes.append({"x": round(hx, 2), "y": round(plat, 2),
-                                "z": round(-hy, 2), "rot": round(-ang, 4),
-                                "w": round(larg, 2), "d": round(prof, 2),
-                                "h": round(alt, 2)})
-                objs += k
-                casas += 1
-                s += larg + rng.uniform(0.3, 1.8)
-    import json, os
+                if recuado > 0.0:
+                    recuadas += 1
+                cand.append({"bid": b["id"], "e": e, "x": hx, "y": hy,
+                             "ang": ang, "larg": larg, "prof": prof,
+                             "tipo": tipo, "plat": plat})
+
+    # ------------------------------------------- reservas: a mais próxima
+    vagas = {}
+    tomados = set()
+    for tag, rx, rz, raio in RESERVADOS:
+        dists = sorted(
+            ((math.hypot(c["x"] - rx, -c["y"] - rz), i)
+             for i, c in enumerate(cand) if i not in tomados))
+        escolhidos = [i for d, i in dists if d <= raio]
+        if not escolhidos and dists and dists[0][0] <= RAIO_SOCORRO:
+            # nenhuma casa caiu no raio nominal: fica com a vizinha mais
+            # próxima, para a vaga nunca sumir por causa do sorteio.
+            escolhidos = [dists[0][1]]
+        for i in escolhidos:
+            tomados.add(i)
+            c = cand[i]
+            vagas.setdefault(tag, []).append(
+                {"x": round(c["x"], 2), "y": round(c["plat"], 2),
+                 "z": round(-c["y"], 2), "rot": round(-c["ang"], 4),
+                 "w": round(c["larg"], 2), "d": round(c["prof"], 2)})
+
+    # ------------------------------------------------- passada 2: construir
+    casas = objs = 0
+    volumes = []
+    for i, c in enumerate(cand):
+        if i in tomados:
+            continue
+        nome = "SM_house_%s_%d_%02d" % (c["bid"], c["e"], casas)
+        k, alt = build_casa(col, nome, c["x"], c["y"], c["ang"],
+                            c["larg"], c["prof"], c["tipo"], rng, c["plat"])
+        volumes.append({"x": round(c["x"], 2), "y": round(c["plat"], 2),
+                        "z": round(-c["y"], 2), "rot": round(-c["ang"], 4),
+                        "w": round(c["larg"], 2), "d": round(c["prof"], 2),
+                        "h": round(alt, 2)})
+        objs += k
+        casas += 1
+
+    import os
     saida = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
                          "out", "houses.json")
     os.makedirs(os.path.dirname(saida), exist_ok=True)
@@ -357,4 +430,6 @@ def build(parent, hs):
                            "ArrayOccluder3D (x, y do piso, z, rot em Y, w, d, h)",
                    "casas": volumes, "vagas_reservadas": vagas}, fh)
     return {"casas": casas, "objetos": len(col.objects), "pecas": objs,
-            "volumes_json": saida, "vagas": {k: len(v) for k, v in vagas.items()}}
+            "volumes_json": saida, "recuadas_da_via": recuadas,
+            "descartadas_na_via": empurradas,
+            "vagas": {k: len(v) for k, v in vagas.items()}}

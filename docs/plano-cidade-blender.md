@@ -779,3 +779,115 @@ cidade: pior caso **367.204** triângulos de vegetação em vez de 745.158, ou
 Da pracinha, onde o jogo acontece, fica bem menos. O número real desenhado é
 da ordem de um quarto disso: o fatiamento em 128 m descarta a mata que está
 atrás da câmera.
+
+### 10.8 Correções de campo — 03/09
+
+Cinco defeitos apontados jogando, e o que cada um era de fato.
+
+**1. Casa sem porta nem janela.** Eu tinha afirmado que o detalhe estava lá
+porque o material `vao_escuro` aparecia no glTF exportado. Aparecia mesmo —
+enterrado. `_abertura()` centrava o painel escuro 6 cm para **dentro** da
+parede, e a casa é um bloco sólido, não uma casca: o vão ficava inteiramente
+engolido pelo volume. Não havia porta nem janela em nenhuma das 659 casas.
+A segunda tentativa envolveu o painel num requadro sólido, que o tapava pela
+frente. A terceira funciona: o vão é a peça mais **externa** da abertura
+(2 cm à frente da parede), com verga acima e peitoril abaixo avançando mais
+que ele — a sombra própria dessas duas dá a leitura de profundidade.
+36 triângulos por janela; 271 por casa no total.
+
+**2. Lajes cinzas soltas no asfalto.** As quadras são desenhadas sem
+consultar as vias, então 30 casas tinham a parede da frente dentro da pista —
+e com elas o degrau da porta e os peitoris, que são justamente lajes cinzas
+baixas. Medido: **1.564 vértices** de concreto e 435 de granito (35 postes)
+dentro da faixa de rolamento. A casa agora recua até ter `MARGEM_VIA` = 1,60 m
+de folga, e é descartada se a quadra não der espaço; o poste faz o mesmo com
+45 cm. Depois: **zero**. Custo: 573 casas em vez de 659, 262 postes em vez
+de 296.
+
+**3. Triângulos verdes pela cidade.** Era o `WEED` — cone de cinco lados com
+60 cm, 438 deles espalhados. De perto lia como plástico espetado na grama.
+Removido do gerador. O `BUSH_LOD`, que eu tinha feito com três lados, tinha
+o mesmo defeito de frente: passou para cinco.
+
+**4. Jogador atravessava as casas.** O importador de glTF cria todo corpo
+`-col` na camada 1. Neste projeto o mundo sólido está na **camada 2** — os
+`stop_walls` do stage_1 estão em `layer=2` e o Player tem `mask=2`. A colisão
+da cidade existia desde o primeiro export; ninguém a consultava.
+`city_colisao.gd`, no nó `City`, varre e corrige no `_ready()`.
+
+**5. Névoa na mata.** O renderizador Mobile não tem névoa volumétrica nem
+`FogVolume`. `city_neblina.gd` mede a distância do jogador até a mancha
+urbana e engrossa a névoa **global** do Environment conforme ele sai dela:
+`fog_density` de 0,0012 a 0,045, cor quente para cinza dessaturada,
+`fog_sky_affect` a 1,0. Fecha em 90 m de caminhada.
+
+**Duas armadilhas do caminho, anotadas para não repetir:**
+
+- `ResourceSaver.save()` seguido de `load()` do mesmo caminho devolve o
+  recurso **em cache**, não o que acabou de ser gravado. Use
+  `take_over_path()`.
+- Propriedade `@export` acrescentada a um script cujo nó já existe na cena
+  nasce `0`/`null`, não com o default do script. Sempre atribuir explícito.
+
+**Vaga reservada agora é determinística.** Ela dependia de um sorteio cair
+dentro de um raio de 2,5 m, e bastou recuar as casas da pista para a vaga da
+Sra Nice sumir. `houses.build()` passou a ter duas passadas — decide *onde*,
+depois constrói — e a reserva vira "a casa mais próxima deste ponto", com
+`RAIO_SOCORRO` de 15 m se nenhuma cair no raio nominal.
+
+### 10.9 Três correções de campo — 03/09 (segunda rodada)
+
+**Névoa clareava em vez de esconder.** A névoa do Godot é **aditiva**: ela
+pinta a própria cor por cima do que está atrás. Com cinza médio
+(0,40 0,42 0,43) e energia 1, ela *acendia* a mata. Pior, eu tinha posto
+`fog_aerial_perspective` em 0,9 — essa opção puxa a cor do **céu** para
+dentro da névoa, e à noite o céu tem nuvem clara. O resultado foi uma mata
+mais fácil de ler, não mais difícil. Corrigido: cor quase preta
+(0,055 0,06 0,062), `fog_light_energy` 0,25, densidade 0,075 e perspectiva
+aérea em **zero**.
+
+**Postes deslocados — reversão.** Eu tinha empurrado o poste para fora
+quando a base caía na pista de outra via, em cruzamento. Não valia a pena: a
+base de granito tem 14 cm e mal aparece no asfalto, mas afastar o poste até
+4 m leva junto a luminária e a poça de luz, que saem da rua — e 34 postes
+foram descartados de vez, abrindo trechos escuros. Revertido: 296 postes,
+nas posições originais. O ganho medido daquela mudança eram 435 vértices de
+granito; o custo foi visível na tela. A regra que eu deveria ter aplicado:
+não mexer no que não foi pedido.
+
+**Calçada picotada.** `tem_curb` e `tem_walk` passavam por dois ruídos
+independentes, então o meio-fio abria buracos a esmo e a calçada — com um
+segundo ruído por cima — virava ilhas de concreto soltas na grama. O
+meio-fio agora é contínuo, cortado só no cruzamento, e a calçada acompanha
+o meio-fio sem ruído próprio. Além disso `radial` e `secundaria` perderam a
+calçada (`walk=0`): rua estreita de bairro tem meio-fio e capim, não passeio
+de concreto. Ruas: 711 objetos para 402.
+
+### 10.10 A lente solta ao lado do poste — 03/09
+
+Reproduzido com uma `Camera3D` temporária apontada para um poste, captura
+`cinematic` (sem gizmos do editor): a lente acesa aparecia **abaixo e ao
+lado** da luminária, boiando no céu. Duas causas somadas:
+
+1. **Altura.** A lente era posta 24 cm abaixo do ponto de luz. Mas o ponto de
+   luz já está 8 cm abaixo do centro da caixa da luminária, que tem 17 cm de
+   altura — ou seja, praticamente na face de baixo dela. Os 24 cm punham a
+   lente 23 cm ABAIXO da luminária, num vão vazio. Agora são 6 cm.
+2. **Giro espelhado.** `Basis(Vector3.UP, θ)` leva +X para
+   `(cos θ, 0, -sin θ)`, e o braço aponta para `(cos ang, 0, -sin ang)` com
+   `ang = -rot` — o mesmo vetor que o cone do spot usa, e que já tinha sido
+   verificado. Passando `+rot` em vez de `-rot`, a lente saía girada de
+   `2·ang`: nos postes a 45° ela atravessava a luminária de lado.
+
+**E um crash meu, de novo.** `ResourceSaver.save()` gira o loop principal, e
+o plugin MCP aproveita para processar a próxima mensagem da fila. Dois
+`construir` em sequência rápida se cruzaram: o segundo entrou no meio do
+primeiro, dentro de `_lentes()`, e o editor caiu com SIGSEGV. Os quatro
+scripts construtores ganharam uma trava `_ocupado`.
+
+**Calçada removida.** `walk=0` em todas as classes, a pedido. Fica só o
+meio-fio marcando a borda da pista. Ruas: 711 objetos → 370.
+
+**Névoa, terceira calibragem.** Densidade 0,048, energia 0,45, transição de
+50 m em vez de 90 — o começo da mata estava claro demais porque a rampa era
+longa, e o miolo escuro demais porque o alvo era preto.

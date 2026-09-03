@@ -113,6 +113,10 @@ def _poles_for_road(road, hs, rng):
         L = math.hypot(dx, dy) or 1.0
         nx, ny = -dy / L * lado, dx / L * lado
         px, py = x + nx * off, y + ny * off
+        # Já tentei afastar o poste da pista de OUTRA via aqui, em cruzamento.
+        # Não vale: a base de granito tem 14 cm e mal aparece no asfalto, mas
+        # empurrar o poste 4 m para fora leva junto a luminária e a poça de
+        # luz, que saem da rua. Melhor um canto de base sobre o meio-fio.
         rx = rng.uniform(-TILT, TILT)
         ry = rng.uniform(-TILT, TILT)
         # o braço aponta para a pista (sentido -normal)

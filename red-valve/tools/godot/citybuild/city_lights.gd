@@ -56,17 +56,27 @@ extends Node3D
 
 @export_multiline var last_result: String = ""
 
+## `ResourceSaver.save()` gira o loop principal, e o plugin MCP aproveita
+## para processar a próxima mensagem da fila. Um segundo `construir`
+## entrava no meio do primeiro e derrubava o editor com SIGSEGV dentro
+## do MultiMesh. Uma trava simples resolve.
+var _ocupado: bool = false
+
 @export var construir: bool = false:
 	set(v):
 		construir = false
-		if v and Engine.is_editor_hint():
+		if v and Engine.is_editor_hint() and not _ocupado:
+			_ocupado = true
 			_construir()
+			_ocupado = false
 
 @export var limpar: bool = false:
 	set(v):
 		limpar = false
-		if v and Engine.is_editor_hint():
+		if v and Engine.is_editor_hint() and not _ocupado:
+			_ocupado = true
 			_limpar()
+			_ocupado = false
 
 
 func _limpar() -> int:
@@ -158,7 +168,7 @@ func _pocas(lista: Array) -> int:
 	for i in lista.size():
 		var P: Dictionary = lista[i]
 		var raio: float = float(P.get("raio", 6.0)) * poca_escala
-		var b := Basis(Vector3.UP, float(P["rot"])).scaled(Vector3(raio, 1.0, raio))
+		var b := Basis(Vector3.UP, -float(P["rot"])).scaled(Vector3(raio, 1.0, raio))
 		mm.set_instance_transform(i, Transform3D(b, Vector3(
 			float(P["x"]), float(P["y"]), float(P["z"]))))
 
@@ -207,11 +217,18 @@ func _lentes(luzes: Array) -> int:
 	mm.instance_count = luzes.size()
 	for i in luzes.size():
 		var L: Dictionary = luzes[i]
-		var b := Basis(Vector3.UP, float(L["rot"]))
-		# -0.24: a caixa da luminária vai de tip-0.10 a tip+0.07. A lente
-		# precisa ficar ABAIXO dela, senão fica coplanar e some.
+		# -rot, e não +rot. `Basis(UP, θ)` leva +X para (cos θ, 0, -sin θ),
+		# enquanto o braço aponta para (cos ang, 0, -sin ang) com
+		# ang = -rot — o mesmo vetor que o cone do spot usa. Com o sinal
+		# trocado a lente saía atravessada em relação à luminária, e nos
+		# postes a 45° isso a jogava para fora dela.
+		var b := Basis(Vector3.UP, -float(L["rot"]))
+		# -0.06 e não -0.24: a caixa da luminária tem 0,17 de altura e o
+		# ponto de luz fica 0,08 abaixo do centro dela, ou seja praticamente
+		# na face de baixo. Com 0,24 a lente descia 23 cm ABAIXO da
+		# luminária e ficava boiando, solta, ao lado do poste.
 		mm.set_instance_transform(i, Transform3D(b, Vector3(
-			float(L["x"]), float(L["y"]) - 0.24, float(L["z"]))))
+			float(L["x"]), float(L["y"]) - 0.06, float(L["z"]))))
 
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(save_dir))
 	var cam := "%s/mm_lentes.tres" % save_dir

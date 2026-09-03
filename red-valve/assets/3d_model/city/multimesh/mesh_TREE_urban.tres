@@ -21,7 +21,7 @@ _surfaces = [{
 blend_shape_mode = 0
 
 [resource]
-resource_name = "city_vegkit_TREE_urban_001"
+resource_name = "city_vegkit_TREE_urban"
 _surfaces = [{
 "aabb": AABB(-3.6849875, 0, -3.8767686, 7.5591393, 7.2, 7.554038),
 "format": 34896613383,

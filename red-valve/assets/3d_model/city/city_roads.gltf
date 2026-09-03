@@ -13,8 +13,7 @@
 			"nodes":[
 				0,
 				1,
-				2,
-				3
+				2
 			]
 		}
 	],
@@ -30,10 +29,6 @@
 		{
 			"mesh":2,
 			"name":"SM_roads_dirt_road"
-		},
-		{
-			"mesh":3,
-			"name":"SM_roads_sidewalk_concrete"
 		}
 	],
 	"materials":[
@@ -96,31 +91,11 @@
 					"index":8
 				}
 			}
-		},
-		{
-			"doubleSided":true,
-			"extensions":{
-				"KHR_materials_specular":{
-					"specularFactor":0.699999988079071
-				}
-			},
-			"name":"MI_sidewalk_concrete",
-			"normalTexture":{
-				"index":9
-			},
-			"pbrMetallicRoughness":{
-				"baseColorTexture":{
-					"index":10
-				},
-				"metallicRoughnessTexture":{
-					"index":11
-				}
-			}
 		}
 	],
 	"meshes":[
 		{
-			"name":"SM_road_av_padre_gabriel_surface.001",
+			"name":"SM_road_av_padre_gabriel_surface",
 			"primitives":[
 				{
 					"attributes":{
@@ -135,7 +110,7 @@
 			]
 		},
 		{
-			"name":"SM_road_av_padre_gabriel_curbL_00.001",
+			"name":"SM_road_av_padre_gabriel_curbL_00",
 			"primitives":[
 				{
 					"attributes":{
@@ -150,7 +125,7 @@
 			]
 		},
 		{
-			"name":"SM_road_tv_bica_surface.001",
+			"name":"SM_road_tv_bica_surface",
 			"primitives":[
 				{
 					"attributes":{
@@ -161,21 +136,6 @@
 					},
 					"indices":14,
 					"material":2
-				}
-			]
-		},
-		{
-			"name":"SM_road_av_padre_gabriel_walkL_00.001",
-			"primitives":[
-				{
-					"attributes":{
-						"POSITION":15,
-						"NORMAL":16,
-						"TEXCOORD_0":17,
-						"COLOR_0":18
-					},
-					"indices":19,
-					"material":3
 				}
 			]
 		}
@@ -216,18 +176,6 @@
 		{
 			"sampler":0,
 			"source":8
-		},
-		{
-			"sampler":0,
-			"source":9
-		},
-		{
-			"sampler":0,
-			"source":10
-		},
-		{
-			"sampler":0,
-			"source":11
 		}
 	],
 	"images":[
@@ -275,21 +223,6 @@
 			"mimeType":"image/png",
 			"name":"T_dirt_orm.png",
 			"uri":"textures/T_dirt_orm.png"
-		},
-		{
-			"mimeType":"image/png",
-			"name":"T_sidewalk_nrm.png",
-			"uri":"textures/T_sidewalk_nrm.png"
-		},
-		{
-			"mimeType":"image/png",
-			"name":"T_sidewalk_alb.png",
-			"uri":"textures/T_sidewalk_alb.png"
-		},
-		{
-			"mimeType":"image/png",
-			"name":"T_sidewalk_orm.png",
-			"uri":"textures/T_sidewalk_orm.png"
 		}
 	],
 	"accessors":[
@@ -336,11 +269,11 @@
 		{
 			"bufferView":5,
 			"componentType":5126,
-			"count":15924,
+			"count":19098,
 			"max":[
 				262.2015686035156,
 				14.487792015075684,
-				268.0891418457031
+				268.2410583496094
 			],
 			"min":[
 				-334.1945495605469,
@@ -352,25 +285,25 @@
 		{
 			"bufferView":6,
 			"componentType":5126,
-			"count":15924,
+			"count":19098,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":7,
 			"componentType":5126,
-			"count":15924,
+			"count":19098,
 			"type":"VEC2"
 		},
 		{
 			"bufferView":8,
 			"componentType":5126,
-			"count":15924,
+			"count":19098,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":9,
 			"componentType":5123,
-			"count":24594,
+			"count":29484,
 			"type":"SCALAR"
 		},
 		{
@@ -412,46 +345,6 @@
 			"componentType":5123,
 			"count":2808,
 			"type":"SCALAR"
-		},
-		{
-			"bufferView":15,
-			"componentType":5126,
-			"count":13846,
-			"max":[
-				262.2762451171875,
-				14.49779224395752,
-				268.12554931640625
-			],
-			"min":[
-				-334.1249084472656,
-				0.6699516773223877,
-				-152.2410125732422
-			],
-			"type":"VEC3"
-		},
-		{
-			"bufferView":16,
-			"componentType":5126,
-			"count":13846,
-			"type":"VEC3"
-		},
-		{
-			"bufferView":17,
-			"componentType":5126,
-			"count":13846,
-			"type":"VEC2"
-		},
-		{
-			"bufferView":18,
-			"componentType":5126,
-			"count":13846,
-			"type":"VEC3"
-		},
-		{
-			"bufferView":19,
-			"componentType":5123,
-			"count":21432,
-			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
@@ -487,92 +380,62 @@
 		},
 		{
 			"buffer":0,
-			"byteLength":191088,
+			"byteLength":229176,
 			"byteOffset":5303552,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":191088,
-			"byteOffset":5494640,
+			"byteLength":229176,
+			"byteOffset":5532728,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":127392,
-			"byteOffset":5685728,
+			"byteLength":152784,
+			"byteOffset":5761904,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":191088,
-			"byteOffset":5813120,
+			"byteLength":229176,
+			"byteOffset":5914688,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":49188,
-			"byteOffset":6004208,
+			"byteLength":58968,
+			"byteOffset":6143864,
 			"target":34963
 		},
 		{
 			"buffer":0,
 			"byteLength":22464,
-			"byteOffset":6053396,
+			"byteOffset":6202832,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":22464,
-			"byteOffset":6075860,
+			"byteOffset":6225296,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":14976,
-			"byteOffset":6098324,
+			"byteOffset":6247760,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":22464,
-			"byteOffset":6113300,
+			"byteOffset":6262736,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":5616,
-			"byteOffset":6135764,
-			"target":34963
-		},
-		{
-			"buffer":0,
-			"byteLength":166152,
-			"byteOffset":6141380,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":166152,
-			"byteOffset":6307532,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":110768,
-			"byteOffset":6473684,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":166152,
-			"byteOffset":6584452,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":42864,
-			"byteOffset":6750604,
+			"byteOffset":6285200,
 			"target":34963
 		}
 	],
@@ -584,7 +447,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":6793468,
+			"byteLength":6290816,
 			"uri":"city_roads.bin"
 		}
 	]

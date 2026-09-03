@@ -20,10 +20,13 @@ TILE = 4.0
 
 # por classe: material, meio-fio, largura da calçada, deslocamento em Z
 CLASS = {
-    "avenida":    dict(mat="cobble_base", curb=True,  walk=1.8, z=0.030, worn=0.55),
-    "principal":  dict(mat="cobble_base", curb=True,  walk=1.4, z=0.024, worn=0.70),
-    "radial":     dict(mat="cobble_base", curb=True,  walk=1.2, z=0.018, worn=0.60),
-    "secundaria": dict(mat="cobble_base", curb=True,  walk=1.0, z=0.012, worn=0.85),
+    # walk=0 em todas: a faixa de calçada foi removida a pedido. O meio-fio
+    # continua marcando a borda da pista; o que havia atrás dela virava laje
+    # de concreto solta na grama e não ajudava a leitura da rua.
+    "avenida":    dict(mat="cobble_base", curb=True,  walk=0.0, z=0.030, worn=0.55),
+    "principal":  dict(mat="cobble_base", curb=True,  walk=0.0, z=0.024, worn=0.70),
+    "radial":     dict(mat="cobble_base", curb=True,  walk=0.0, z=0.018, worn=0.60),
+    "secundaria": dict(mat="cobble_base", curb=True,  walk=0.0, z=0.012, worn=0.85),
     "travessa":   dict(mat="dirt_road",   curb=False, walk=0.0, z=0.006, worn=1.0),
     "beco":       dict(mat="dirt_road",   curb=False, walk=0.0, z=0.000, worn=1.0),
 }
@@ -163,9 +166,13 @@ def build_road(col, road, hs, nb):
         seg_curb, seg_walk = [], []
         run_c, run_w = [], []
         for s in st:
-            t = s["s"] / 26.0
-            tem_curb = (not s["cross"]) and _n1(t, 91 if side < 0 else 137) > 0.24
-            tem_walk = tem_curb and _n1(s["s"] / 55.0, 17 if side < 0 else 53) > 0.30
+            # meio-fio contínuo, cortado só no cruzamento. O ruído que eu
+            # usava aqui abria buracos de 5 m a esmo: o meio-fio sumia e
+            # reaparecia, e a calçada — que tinha um segundo ruído por cima
+            # — virava ilhas de concreto soltas. Cidade pequena tem meio-fio
+            # gasto, não meio-fio picotado.
+            tem_curb = not s["cross"]
+            tem_walk = tem_curb and cfg["walk"] > 0.0
             o0 = side * hw
             if tem_curb:
                 a = (s["x"] + s["nx"] * o0, s["y"] + s["ny"] * o0, s["z"])

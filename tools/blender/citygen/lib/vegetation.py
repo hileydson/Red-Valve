@@ -88,9 +88,10 @@ def build_kit(col):
     v, f = [], []
     _cone(v, f, 0, 0, 0, 0.85, 1.25, n=6)
     feitos["BUSH"] = util._mk("BUSH", v, f, col, M.get("canopy_urban"))
-    v, f = [], []
-    _cone(v, f, 0, 0, 0, 0.45, 0.60, n=5)
-    feitos["WEED"] = util._mk("WEED", v, f, col, M.get("grass_dry"))
+    # O antigo `WEED` era um cone de 5 lados com 60 cm: de perto lia como um
+    # triangulo de plastico espetado na grama, e havia 438 deles espalhados
+    # por toda a cidade. A grama ja esta na textura do terreno; tufo de mato
+    # so vale a pena com cartao de folhagem, que e outra conversa.
     feitos.update(_kit_lod(col))
     return feitos
 
@@ -116,8 +117,10 @@ def _kit_lod(col):
     feitos["TREE_forest_broad_LOD"] = util._mk(
         "TREE_forest_broad_LOD", v, f, col, M.get("canopy_forest_dark"))
 
+    # n=5 e nao n=3: com tres lados o arbusto vira um triangulo chapado
+    # quando visto de frente, que e exatamente o defeito que eu queria evitar.
     v, f = [], []
-    _cone(v, f, 0, 0, 0, 0.85, 1.25, n=3)
+    _cone(v, f, 0, 0, 0, 0.85, 1.25, n=5)
     feitos["BUSH_LOD"] = util._mk("BUSH_LOD", v, f, col, M.get("canopy_urban"))
     return feitos
 
@@ -182,7 +185,7 @@ def scatter(hs, rng):
                             []).append((x, y))
 
     pts = {"TREE_forest": [], "TREE_forest_broad": [], "TREE_urban": [],
-           "TREE_cypress": [], "BUSH": [], "WEED": []}
+           "TREE_cypress": [], "BUSH": []}
 
     # ---- anel de mata: borda interna irregular, densidade crescente ----
     passo = 7.0
@@ -238,16 +241,6 @@ def scatter(hs, rng):
             pts["TREE_urban"].append((round(lx, 2), round(hs.at(lx, ly), 2),
                                       round(-ly, 2), round(rng.uniform(0, 6.283), 3),
                                       round(rng.uniform(0.7, 1.15), 3)))
-        for k in range(rng.randint(4, 10)):
-            i = rng.randrange(len(poly))
-            x0, y0 = poly[i]
-            x1, y1 = poly[(i + 1) % len(poly)]
-            t = rng.random()
-            lx = x0 + (x1 - x0) * t + rng.uniform(-1.0, 1.0)
-            ly = y0 + (y1 - y0) * t + rng.uniform(-1.0, 1.0)
-            pts["WEED"].append((round(lx, 2), round(hs.at(lx, ly), 2), round(-ly, 2),
-                                round(rng.uniform(0, 6.283), 3),
-                                round(rng.uniform(0.6, 1.4), 3)))
 
     # ---- ciprestes no cemiterio ----
     cem = L["cemiterio"]
@@ -259,23 +252,6 @@ def scatter(hs, rng):
                                     round(-ly, 2), round(rng.uniform(0, 6.283), 3),
                                     round(rng.uniform(0.8, 1.3), 3)))
 
-    # ---- mato ao longo das vias, fora da pista ----
-    for r in data["roads"]:
-        hw = r["width"] / 2.0
-        for k in range(0, len(r["points"]), 3):
-            lx, ly = r["points"][k]
-            for lado in (-1, 1):
-                if rng.random() > 0.35:
-                    continue
-                off = hw + rng.uniform(1.8, 4.5)
-                ang = rng.uniform(0, 6.283)
-                wx = lx + math.cos(ang) * off
-                wy = ly + math.sin(ang) * off
-                if _dist_estrada(wx, wy, grid, cell) < hw + 1.2:
-                    continue
-                pts["WEED"].append((round(wx, 2), round(hs.at(wx, wy), 2),
-                                    round(-wy, 2), round(rng.uniform(0, 6.283), 3),
-                                    round(rng.uniform(0.5, 1.2), 3)))
     return pts
 
 

@@ -11,6 +11,12 @@ extends Node3D
 ## para metros. `base_y` é o ponto mais baixo do modelo, usado para assentar
 ## no chão em vez de enterrar ou levitar.
 
+## `ResourceSaver.save()` gira o loop principal, e o plugin MCP aproveita
+## para processar a próxima mensagem da fila. Um segundo `construir`
+## entrava no meio do primeiro e derrubava o editor com SIGSEGV dentro
+## do MultiMesh. Uma trava simples resolve.
+var _ocupado: bool = false
+
 @export var houses_json: String = "res://assets/3d_model/city/houses.json"
 @export var atlas_placas: String = "res://assets/3d_model/city/textures/T_signs_alb.png"
 
@@ -44,8 +50,10 @@ extends Node3D
 @export var posicionar: bool = false:
 	set(v):
 		posicionar = false
-		if v and Engine.is_editor_hint():
+		if v and Engine.is_editor_hint() and not _ocupado:
+			_ocupado = true
 			_posicionar()
+			_ocupado = false
 
 
 func _vagas() -> Dictionary:
