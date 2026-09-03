@@ -30,6 +30,7 @@ func _process_amulet_magic(delta: float) -> void:
 				player.is_first_person = true
 				if is_instance_valid(player.camera) and not player.camera.current:
 					player.camera.fov = 75.0
+					player.camera.rotation.x = 0.0 # Centraliza a câmera ao entrar em 1ª pessoa com o poder do amuleto
 					player.camera.make_current()
 					if player.camera_third_person:
 						player.camera_third_person.current = false
