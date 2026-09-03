@@ -3,5 +3,49 @@
  "mundo_x0": 260.0,
  "mundo_z0": -550.0,
  "tamanho_m": 680.0,
- "resolucao": 2048
+ "resolucao": 2048,
+ "pontos": [
+  {
+   "id": "pracinha",
+   "nome": "Pracinha",
+   "tipo": "marco",
+   "x": 640.0,
+   "z": -280.0
+  },
+  {
+   "id": "igreja",
+   "nome": "Igreja Matriz",
+   "tipo": "marco",
+   "x": 568.0,
+   "z": -314.0
+  },
+  {
+   "id": "oficina_jimmy",
+   "nome": "Oficina do Jimmy",
+   "tipo": "local",
+   "x": 690.82,
+   "z": -86.19
+  },
+  {
+   "id": "casa_jimmy",
+   "nome": "Casa do Jimmy",
+   "tipo": "casa",
+   "x": 723.63,
+   "z": -63.13
+  },
+  {
+   "id": "casa_nice",
+   "nome": "Casa da Dona Nice",
+   "tipo": "casa",
+   "x": 702.33,
+   "z": -92.77
+  },
+  {
+   "id": "casa_maycow",
+   "nome": "Casa do Maycow",
+   "tipo": "casa",
+   "x": 646.51,
+   "z": -203.89
+  }
+ ]
 }

@@ -49,6 +49,16 @@ TERROSAS = ("travessa", "beco")
 # principal por cima, que é como um mapa de papel se lê
 ORDEM = ["beco", "travessa", "secundaria", "radial", "principal", "avenida"]
 
+# Pontos de interesse marcados no mapa. Posição em coordenadas LOCAIS do
+# Godot (x, z); o mundo sai somando a origem da cidade.
+#
+# `casa_jimmy` é uma âncora, não uma vaga reservada: entrar em RESERVADOS
+# faria a passada 2 PULAR aquele lote e deixar um buraco na cidade, porque
+# vaga reservada existe para receber asset feito à mão. Aqui o ponto apenas
+# se cola na casa procedural mais próxima — que já está construída e tem
+# 8,6 x 12,3 m, a um quarteirão da oficina.
+ANCORA_CASA_JIMMY = (83.63, 216.87)
+
 
 def _carrega():
     lay = json.load(open(os.path.join(_CITYGEN, "city_data", "layout.json"),
@@ -149,9 +159,58 @@ def build():
     meta = {"nota": "recorte do mundo coberto por T_citymap.png; "
                     "gerado por tools/blender/citygen/textures/make_minimap.py",
             "mundo_x0": round(X0, 2), "mundo_z0": round(Z0, 2),
-            "tamanho_m": round(TAM, 2), "resolucao": RES}
+            "tamanho_m": round(TAM, 2), "resolucao": RES,
+            "pontos": _pontos(lay, casas, ox, oz)}
     json.dump(meta, open(OUT_JSON, "w", encoding="utf-8"), indent=1)
     return meta
+
+
+def _pontos(lay, casas, ox, oz):
+    """Pontos de interesse, em coordenadas de MUNDO.
+
+    Tudo derivado dos mesmos dados que desenham o mapa — nada digitado à mão
+    duas vezes. Se a cidade for regerada e uma casa mudar de lugar, o ponto
+    acompanha.
+    """
+    vag = casas.get("vagas_reservadas", {})
+
+    def media(tag):
+        lote = vag.get(tag) or []
+        if not lote:
+            return None
+        return (ox + sum(c["x"] for c in lote) / len(lote),
+                oz + sum(c["z"] for c in lote) / len(lote))
+
+    def mais_perto(lx, lz):
+        melhor, dmin = None, 1e9
+        for c in casas["casas"]:
+            d = math.hypot(c["x"] - lx, c["z"] - lz)
+            if d < dmin:
+                melhor, dmin = c, d
+        return (ox + melhor["x"], oz + melhor["z"]) if melhor else None
+
+    pr = lay["landmarks"]["praca_obelisco"]["center"]
+    ig = lay["landmarks"]["igreja_matriz"]["center"]
+
+    bruto = [
+        ("pracinha", "Pracinha", "marco",
+         (ox + pr[0], oz - pr[1])),
+        ("igreja", "Igreja Matriz", "marco",
+         (ox + ig[0], oz - ig[1])),
+        ("oficina_jimmy", "Oficina do Jimmy", "local", media("oficina_jimmy")),
+        ("casa_jimmy", "Casa do Jimmy", "casa",
+         mais_perto(*ANCORA_CASA_JIMMY)),
+        ("casa_nice", "Casa da Dona Nice", "casa", media("casa_nice")),
+        ("casa_maycow", "Casa do Maycow", "casa", media("casa_maycow")),
+    ]
+    saida = []
+    for pid, nome, tipo, pos in bruto:
+        if pos is None:
+            print("  AVISO: sem posição para", pid)
+            continue
+        saida.append({"id": pid, "nome": nome, "tipo": tipo,
+                      "x": round(pos[0], 2), "z": round(pos[1], 2)})
+    return saida
 
 
 def _rect(L, cx, cy, w, h, graus):

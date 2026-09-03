@@ -312,6 +312,87 @@ está na 150, então fica por cima de qualquer jeito.
 
 ---
 
+## 6c. Mapa grande (aba do menu de pausa)
+
+O mesmo mapa em tela cheia, com zoom e arrasto, aberto pelo botão **Mapa** do
+menu de pausa. Vive na mesma cena do minimapa (`Grande`, um `CanvasLayer`
+aninhado na camada 160), então herda a mesma regra de visibilidade sem
+duplicar lógica: o botão só aparece onde existe mapa e com o Maycow normal.
+
+### Como o menu encontra o mapa
+
+O nó do mapa está no grupo **`mapa_cidade`**. O `pause.gd` pergunta pelo
+grupo, não pelo caminho da cena — se outra fase ganhar mapa um dia, a aba
+aparece sozinha:
+
+```gdscript
+var m := get_tree().get_first_node_in_group("mapa_cidade")
+if m != null and m.has_method("pode_abrir_mapa") and m.pode_abrir_mapa():
+```
+
+Texto do botão: chave `MENU_MAPA` em `assets/textos/red_valve_textos_gerais.csv`.
+
+### Controles
+
+| | |
+|---|---|
+| roda do mouse | zoom, mantendo parado o ponto sob o cursor |
+| arrastar | mover |
+| **R** | centralizar no player |
+| **ESC** | voltar ao menu |
+| botões | −, +, Centralizar, Voltar (focáveis, para controle) |
+
+ESC é consumido em `_input`, e não em `_unhandled_input`: senão o menu de
+pausa veria o mesmo evento e fecharia junto.
+
+### Este NÃO gira
+
+O minimapa gira com o player; o mapa grande é norte-para-cima e quem gira é
+a seta. Com rótulo escrito na tela, girar o mapa deixaria os nomes de cabeça
+para baixo. A dedução do ângulo da seta é a mesma do minimapa: `-rotation.y`.
+
+### Limites do zoom
+
+`zoom_max_m = 560`, não 680 (o lado da textura): o papel tem 680 m mas a
+cidade só ocupa 600 × 420 no meio dele — deixar afastar até ver o papel
+inteiro só rendia margem de mata vazia.
+
+O centro é preso de forma **sensível ao zoom** (`_limitar_centro`): enquanto
+a janela é menor que o mapa ela anda até encostar na borda; quando fica maior
+que o mapa, o mapa é centralizado. Sem isso, no zoom máximo a cidade ficava
+largada num canto do painel.
+
+---
+
+## 6d. Pontos de interesse
+
+Marcados nos dois mapas (com rótulo só no grande). Saem no `citymap.json`,
+calculados pelo `make_minimap.py` a partir dos mesmos dados que desenham o
+mapa — se a cidade for regerada e uma casa mudar de lugar, o ponto acompanha.
+
+| ponto | origem do dado | cor |
+|---|---|---|
+| Pracinha | `landmarks.praca_obelisco` | verde-água |
+| Igreja Matriz | `landmarks.igreja_matriz` | verde-água |
+| Oficina do Jimmy | `vagas_reservadas.oficina_jimmy` | laranja |
+| Casa da Dona Nice | `vagas_reservadas.casa_nice` | azul |
+| Casa do Maycow | `vagas_reservadas.casa_maycow` | azul |
+| Casa do Jimmy | âncora colada na casa mais próxima | azul |
+
+### Por que a casa do Jimmy não virou vaga reservada
+
+Entrar em `RESERVADOS` (em `houses.py`) faria a passada 2 **pular** aquele
+lote: vaga reservada existe para receber asset feito à mão, e o gerador
+deixa o terreno vazio de propósito. Sem um modelo para pôr ali, isso abriria
+um buraco na cidade.
+
+Em vez disso a `ANCORA_CASA_JIMMY` em `make_minimap.py` se cola na casa
+procedural **mais próxima** — que já está construída, tem 8,6 × 12,3 m e fica
+a um quarteirão da oficina. Se um dia houver um asset da casa do Jimmy, aí
+sim vale promover a ponto reservado.
+
+---
+
 ## 7. Dívidas em aberto
 
 - LightmapGI não assado

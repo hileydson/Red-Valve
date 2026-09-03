@@ -65,6 +65,7 @@ ITEM_COGBLADE_DESC,"A gear-powered blade.","Uma lâmina de engrenagem."
 ITEM_AMMO_NAME,"Pistol Ammo","Balas de Pistola"
 ITEM_AMMO_DESC,"Ammunition for your gun.","Munição para a sua arma."
 MENU_CONFIG,"Configuration","Configurações"
+MENU_MAPA,Map,Mapa
 CONFIG_AIM_MODE,"Aim Mode","Modo de Mira"
 CONFIG_AIM_HOLD,"Hold","Segurar"
 CONFIG_AIM_TOGGLE,"Toggle","Alternar"
