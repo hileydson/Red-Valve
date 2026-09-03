@@ -239,6 +239,79 @@ gizmos. Basta criar um `Camera3D` temporário, posicionar, capturar e apagar.
 
 ---
 
+## 6b. Minimapa (stage_1)
+
+Círculo giratório no canto superior esquerdo, só no `stage_1` e só no
+gameplay com o Maycow normal.
+
+**É 2D, não 3D.** Uma textura assada do mapa mais um shader que a amostra
+girada. Custa um `ColorRect`: nada de segunda câmera, segundo viewport ou
+re-render da cidade a cada quadro.
+
+### Arquivos
+
+| arquivo | papel |
+|---|---|
+| `tools/blender/citygen/textures/make_minimap.py` | gera a textura (PIL puro, não precisa de Blender) |
+| `assets/3d_model/city/textures/T_citymap.png` | 2048², 3,01 px/m |
+| `assets/3d_model/city/citymap.json` | recorte do mundo que a textura cobre |
+| `shaders/ui/minimapa.gdshader` | recorte circular + giro na amostragem |
+| `scripts/ui/minimap.gd` | posição, giro e regra de visibilidade |
+| `scenes/ui/minimap.tscn` | a cena, instanciada em `stage_1.tscn` |
+
+O mapa é desenhado a partir dos **dados** (`layout.json` + `houses.json`), não
+renderizado da cena: fica legível a 190 px, não depende da hora do dia nem da
+iluminação, e regerar custa dois segundos.
+
+```bash
+python3 tools/blender/citygen/textures/make_minimap.py
+```
+
+**Se a cidade mudar de forma, rode isso de novo** — o mapa não se atualiza
+sozinho. O `citymap.json` sai junto e carrega o recorte do mundo, então o
+script do Godot não repete nenhum número: se o mapa crescer, os dois andam
+juntos.
+
+### Ajustes
+
+Todos exportados no nó `Minimap` de `stage_1`:
+
+| | padrão | |
+|---|---:|---|
+| `alcance_m` | 130 | diâmetro do mundo que cabe no círculo |
+| `tamanho_px` | 190 | lado do widget |
+| `margem_px` | (26, 26) | distância até o canto |
+| `suavidade` | 12 | 0 = giro instantâneo |
+
+### Por que o giro é `-rotation.y`
+
+Um nó com `rotation.y = θ` olha para `(-sen θ, 0, -cos θ)`. O shader amostra
+`uv = centro + R(giro)·p·raio`, com `p` indo de −1 a 1 e `p.y` para baixo.
+Para o topo da tela (`p = (0,−1)`) cair à frente do player:
+
+```
+R(a)·(0,−1) = (sen a, −cos a)  ≡  (−sen θ, −cos θ)   ⇒   a = −θ
+```
+
+Verificado também na prática: com o player a (815,97, −70,94) e `yaw` 0,5487,
+o ponto 26 m à frente é exatamente o pixel 40% acima da seta.
+
+O mapa em si não é espelhado: em UV, `u` cresce com X e `v` cresce com Z, o
+que é a projeção de cima olhando para −Y com −Z para cima — base destra, sem
+reflexão. Conferido no jogo: casa à direita do player aparece à direita da
+seta.
+
+### Regra de visibilidade
+
+`GlobalEvents.is_maycow_normal` **e** não `in_cutscene` **e** não pausado.
+
+O nó é `PROCESS_MODE_ALWAYS` de propósito: sem isso o `_process` para junto
+com a árvore quando o jogo pausa, e o minimapa ficaria congelado por cima do
+menu em vez de sumir. O `CanvasLayer` está na camada 100; o menu de pausa
+está na 150, então fica por cima de qualquer jeito.
+
+---
+
 ## 7. Dívidas em aberto
 
 - LightmapGI não assado

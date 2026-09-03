@@ -1,0 +1,7 @@
+{
+ "nota": "recorte do mundo coberto por T_citymap.png; gerado por tools/blender/citygen/textures/make_minimap.py",
+ "mundo_x0": 260.0,
+ "mundo_z0": -550.0,
+ "tamanho_m": 680.0,
+ "resolucao": 2048
+}

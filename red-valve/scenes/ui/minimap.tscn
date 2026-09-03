@@ -1,0 +1,41 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/minimap.gd" id="1_mmap"]
+[ext_resource type="Shader" path="res://shaders/ui/minimapa.gdshader" id="2_mmsh"]
+[ext_resource type="Texture2D" path="res://assets/3d_model/city/textures/T_citymap.png" id="3_mmtx"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mmap"]
+shader = ExtResource("2_mmsh")
+shader_parameter/mapa = ExtResource("3_mmtx")
+shader_parameter/centro_uv = Vector2(0.5, 0.5)
+shader_parameter/giro = 0.0
+shader_parameter/raio_uv = 0.0956
+shader_parameter/cor_borda = Color(0.78, 0.7, 0.55, 1)
+shader_parameter/cor_fora = Color(0.06, 0.07, 0.06, 1)
+shader_parameter/espessura = 0.035
+shader_parameter/opacidade = 0.92
+
+[node name="Minimap" type="CanvasLayer"]
+layer = 100
+script = ExtResource("1_mmap")
+
+[node name="Raiz" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 26.0
+offset_top = 26.0
+offset_right = 216.0
+offset_bottom = 216.0
+mouse_filter = 2
+
+[node name="Mapa" type="ColorRect" parent="Raiz"]
+material = SubResource("ShaderMaterial_mmap")
+layout_mode = 0
+offset_right = 190.0
+offset_bottom = 190.0
+mouse_filter = 2
+
+[node name="Seta" type="Polygon2D" parent="Raiz"]
+position = Vector2(95, 95)
+color = Color(0.98, 0.85, 0.55, 1)
+polygon = PackedVector2Array(0, -11, 7.5, 8, 0, 4, -7.5, 8)
