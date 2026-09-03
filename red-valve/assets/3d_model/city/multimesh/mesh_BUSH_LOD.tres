@@ -1,0 +1,38 @@
+[gd_resource type="ArrayMesh" format=4 uid="uid://chhj1h2nvlfti"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wo2xi"]
+resource_name = "MI_canopy_urban"
+cull_mode = 2
+albedo_color = Color(0.33333334, 0.37647057, 0.227451, 1)
+roughness = 0.9
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_31il0"]
+_surfaces = [{
+"aabb": AABB(-0.425, 0, -0.7361216, 1.2750001, 1.25, 1.4722432),
+"format": 34896613377,
+"index_count": 12,
+"index_data": PackedByteArray("AAABAAIAAgABAAMAAwABAAAAAwAAAAIA"),
+"name": "MI_canopy_urban",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 4,
+"vertex_data": PackedByteArray("//8AAP9/AABUVf///38AAAAAAAAAAAAAAAAAAP//AAA=")
+}]
+blend_shape_mode = 0
+
+[resource]
+resource_name = "city_vegkit_BUSH_LOD"
+_surfaces = [{
+"aabb": AABB(-0.425, 0, -0.7361216, 1.2750001, 1.25, 1.4722432),
+"format": 34896613383,
+"index_count": 12,
+"index_data": PackedByteArray("AAABAAIAAwAEAAUABgAHAAgACQAKAAsA"),
+"material": SubResource("StandardMaterial3D_wo2xi"),
+"name": "MI_canopy_urban",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 12,
+"vertex_data": PackedByteArray("//8AAP9/d+lUVf///3936QAAAAAAAHfpAAAAAAAAcMRUVf///39wxAAAAAD//3DEAAAAAP//8OFUVf///3/w4f//AAD/f/DhAAAAAP///////wAA/3///wAAAAAAAP//vMjZU7zI2VO8yNlTL3+g3y9/oN8vf6DfUZ5yhlGecoZRnnKG/3//P/9//z//f/8/")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_31il0")

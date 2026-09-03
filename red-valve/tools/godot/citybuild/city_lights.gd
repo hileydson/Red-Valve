@@ -11,6 +11,7 @@ extends Node3D
 ## ligadas, o resto some antes de custar.
 
 @export var luzes_json: String = "res://assets/3d_model/city/poles.json"
+@export var save_dir: String = "res://assets/3d_model/city/multimesh"
 
 @export_group("Luz")
 ## Sódio: o laranja característico da iluminação pública brasileira.
@@ -161,6 +162,15 @@ func _pocas(lista: Array) -> int:
 		mm.set_instance_transform(i, Transform3D(b, Vector3(
 			float(P["x"]), float(P["y"]), float(P["z"]))))
 
+	# Salvar como .tres em vez de embutir na cena: MultiMesh embutido já
+	# derrubou o editor na releitura ("Instance count must be 0 to change the
+	# transform format" -> SIGSEGV). A vegetação usa .tres e nunca travou.
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(save_dir))
+	var caminho := "%s/mm_pocas.tres" % save_dir
+	ResourceSaver.save(mm, caminho)
+	# take_over_path: load() devolveria o .tres em cache da construcao anterior.
+	mm.take_over_path(caminho)
+
 	var mmi := MultiMeshInstance3D.new()
 	mmi.name = "Pocas"
 	mmi.multimesh = mm
@@ -202,6 +212,11 @@ func _lentes(luzes: Array) -> int:
 		# precisa ficar ABAIXO dela, senão fica coplanar e some.
 		mm.set_instance_transform(i, Transform3D(b, Vector3(
 			float(L["x"]), float(L["y"]) - 0.24, float(L["z"]))))
+
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(save_dir))
+	var cam := "%s/mm_lentes.tres" % save_dir
+	ResourceSaver.save(mm, cam)
+	mm.take_over_path(cam)
 
 	var mmi := MultiMeshInstance3D.new()
 	mmi.name = "Lentes"

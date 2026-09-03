@@ -1,46 +1,9 @@
-[gd_resource type="MultiMesh" format=4 uid="uid://cei8isykg6qm5"]
+[gd_resource type="MultiMesh" format=3 uid="uid://cei8isykg6qm5"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_31il0"]
-resource_name = "MI_cypress_dark"
-cull_mode = 2
-albedo_color = Color(0.18039218, 0.227451, 0.16862746, 1)
-roughness = 0.91
-
-[sub_resource type="ArrayMesh" id="ArrayMesh_c0b1d"]
-_surfaces = [{
-"aabb": AABB(-1.1427851, 0, -1.2429309, 2.2855701, 8.1, 2.4858618),
-"format": 34896613377,
-"index_count": 78,
-"index_data": PackedByteArray("BwAIAAkACQAIAAoABwALAAgACQAKAAwADQALAAcADgAHAAkABwAOAA0ADgAJAAwADQAPAAsADgAPAA0ADwAIAAsADAAQAA4ADgAQAA8ADAAKABAACAAPABAACAAQAAoAAAABAAIAAwAAAAIAAgABAAMABAABAAAAAAAFAAQABQABAAQABQAAAAMAAwABAAYABgABAAUABQADAAYA"),
-"lods": [0.63906205, PackedByteArray("AAABAAIAAwAAAAIAAgABAAMABAABAAAAAAAFAAQABQABAAQABQAAAAMAAwABAAYABgABAAUABQADAAYA")],
-"name": "MI_cypress_dark",
-"primitive": 3,
-"uv_scale": Vector4(0, 0, 0, 0),
-"vertex_count": 17,
-"vertex_data": PackedByteArray("IPFxHCg0AAD/f////38AACFxcRwAAAAAAABxHNZLAAD//3EcKLQAAN2OcRz//wAA3g5xHNbLAACjmAAA/38AAHuF7CV7cAAAnIcAAHNqAAClcewlaHYAAL2R7CX/fwAAEGwAAK5yAACchwAAi5UAABBsAABQjQAAe4XsJYOPAAClcewllokAAA==")
-}]
-blend_shape_mode = 0
-
-[sub_resource type="ArrayMesh" id="ArrayMesh_11y1h"]
-resource_name = "city_vegkit_TREE_cypress"
-_surfaces = [{
-"aabb": AABB(-1.1427851, 0, -1.2429309, 2.2855701, 8.1, 2.4858618),
-"format": 34896613383,
-"index_count": 78,
-"index_data": PackedByteArray("GAAZABoAGAAbABkAHAAdAB4AHAAfAB0AIAAhACIAIAAjACEAJAAlACYAJAAnACUAKAApACoAKAArACkALAAtAC4ALQAsAC8ALQAvADAAMQAyADMAMgAxADQAMgA0ADUAAAABAAIAAwAEAAUABgAHAAgACQAKAAsADAANAA4ADwAQABEAEgATABQAEwASABUAFQASABYAEwAVABcA"),
-"lods": [0.63906205, PackedByteArray("AAABAAIAAwAEAAUABgAHAAgACQAKAAsADAANAA4ADwAQABEAEgATABQAEwASABUAFQASABYAEwAVABcA")],
-"material": SubResource("StandardMaterial3D_31il0"),
-"name": "MI_cypress_dark",
-"primitive": 3,
-"uv_scale": Vector4(0, 0, 0, 0),
-"vertex_count": 54,
-"vertex_data": PackedByteArray("IPFxHCg0p/H/f////3+n8SFxcRwAAKfxIXFxHAAADez/f////38N7AAAcRzWSw3sAABxHNZLrrz/f////3+uvN4OcRzWy6683g5xHNbL17H/f////3/Xsd2OcRz//9ex3Y5xHP//LeP/f////38t4///cRwotC3j//9xHCi0Wf//f////39Z/yDxcRwoNFn/IPFxHCg0///djnEc////////cRwotP//AABxHNZL//8hcXEcAAD//94OcRzWy///o5gAAP9/kfd7hewle3CR95yHAABzapH3vZHsJf9/kfechwAAc2qk9qVx7CVodqT2EGwAAK5ypPZ7hewle3Ck9hBsAACuchHApXHsJZaJEcAQbAAAUI0RwKVx7CVodhHAEGwAAFCNBrR7hewlg48GtJyHAACLlQa0pXHsJZaJBrSchwAAi5Uv8r2R7CX/fy/yo5gAAP9/L/J7hewlg48v8qOYAAD/f///EGwAAFCN//+chwAAi5X//5yHAABzav//EGwAAK5y//97hewlg4///3uF7CV7cP//vZHsJf9///+lcewllon//6Vx7CVodv//AcdkUgHHZFIBx2RSDFxEygxcRMoMXETKU4DJ7VOAye1TgMntR3iGokd4hqJHeIaijqDxe46g8XuOoPF7gb6xiIG+sYiBvrGI/3//P/9//z//f/8//3//P/9//z//f/8//MtUcvzLVHL8y1Ry/MtUckVO7cRFTu3ERU7txEVO7cT+f+T6/n/k+v5/5Pr+f+T6/XOjlv1zo5b9c6OW/XOjln6pL3p+qS96fqkven6pL3r/f/8//3//P/9//z//f/8//3//P/9//7//f/+//3//v/9//7//f/+/")
-}]
-blend_shape_mode = 0
-shadow_mesh = SubResource("ArrayMesh_c0b1d")
+[ext_resource type="ArrayMesh" uid="uid://dpow3s3fquse4" path="res://assets/3d_model/city/multimesh/mesh_TREE_cypress.tres" id="1_resg6"]
 
 [resource]
 transform_format = 1
 instance_count = 8
-mesh = SubResource("ArrayMesh_11y1h")
-buffer = PackedFloat32Array(-0.8269403, 0, 0.5424858, -203.68, 0, 0.989, 0, 13.09, -0.5424858, 0, -0.8269403, 11.61, 1.1785365, 0, -0.19767849, -219.59, 0, 1.195, 0, 12.47, 0.19767849, 0, 1.1785365, 18.55, 0.79801494, 0, 0.17510295, -240.25, 0, 0.817, 0, 11.53, -0.17510295, 0, 0.79801494, 30.52, -0.6195197, 0, 0.59070414, -241.39, 0, 0.856, 0, 10.68, -0.59070414, 0, -0.6195197, 46.55, -0.7414121, 0, -0.9486433, -186.59, 0, 1.204, 0, 13.5, 0.9486433, 0, -0.7414121, 10.24, -1.2195553, 0, 0.38205865, -204.07, 0, 1.278, 0, 13.22, -0.38205865, 0, -1.2195553, 4.3, -0.44595835, 0, -1.1869899, -235.71, 0, 1.268, 0, 12.37, 1.1869899, 0, -0.44595835, 12.07, 0.573447, 0, 1.023273, -204.91, 0, 1.173, 0, 12.86, -1.023273, 0, 0.573447, 13.88)
+mesh = ExtResource("1_resg6")
+buffer = PackedFloat32Array(-0.8269403, 0, 0.5424858, 13.343765, 0, 0.989, 0, 0.625, -0.5424858, 0, -0.8269403, -6.8550005, 1.1785365, 0, -0.19767849, -2.5662384, 0, 1.195, 0, 0.0050001144, 0.19767849, 0, 1.1785365, 0.084999084, 0.79801494, 0, 0.17510295, -23.226242, 0, 0.817, 0, -0.9350004, -0.17510295, 0, 0.79801494, 12.055, -0.6195197, 0, 0.59070414, -24.366241, 0, 0.856, 0, -1.7849998, -0.59070414, 0, -0.6195197, 28.085, -0.7414121, 0, -0.9486433, 30.433762, 0, 1.204, 0, 1.0349998, 0.9486433, 0, -0.7414121, -8.225, -1.2195553, 0, 0.38205865, 12.953751, 0, 1.278, 0, 0.7550001, -0.38205865, 0, -1.2195553, -14.165, -0.44595835, 0, -1.1869899, -18.686249, 0, 1.268, 0, -0.09500027, 1.1869899, 0, -0.44595835, -6.3950005, 0.573447, 0, 1.023273, 12.113754, 0, 1.173, 0, 0.3949995, -1.023273, 0, 0.573447, -4.585)

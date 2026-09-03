@@ -703,7 +703,7 @@ oclusor maior que a geometria descarta coisa visível e abre buraco na imagem.
 | Dívida | Situação |
 |---|---|
 | **LightmapGI** | não assado — exige UV2 em cada malha e horas de bake |
-| **LOD de malha** | não há LOD0/LOD1; o fatiamento resolve o frustum, não a distância |
+| **LOD de malha** | ~~não há LOD0/LOD1~~ — feito na vegetação em 02/09 (§10.7); casas e mobiliário continuam sem |
 | **Navmesh da cidade** | o `NavigationRegion3D` do `stage_1` não cobre a cidade |
 | **Splatmap do Terrain3D** | 19 regiões com textura única |
 
@@ -725,3 +725,57 @@ Em `stage_1`: `_CityTerrainImport` (importa heightmap, sonda cotas) e
 `_CityLookdev` (calibra névoa, tonemap e LUT no Environment vivo).
 Em `city.tscn`: `Vegetation` (constrói os MultiMesh a partir de `scatter.json`).
 Todos são `@tool` acionados por propriedade — custo zero em runtime.
+
+
+### 10.7 LOD da vegetação — 02/09
+
+O orçamento tinha estourado: **373.844** triângulos de cidade mais
+**745.158** de vegetação, contra um teto de 900.000. A mata era 67% do
+total, e continuava desenhada com a árvore completa a 1,3 km de distância.
+
+O kit ganhou três silhuetas de longe (`lib/vegetation.py::_kit_lod`), com a
+mesma altura e o mesmo raio máximo das originais para que a troca não mude o
+contorno contra o céu:
+
+| Espécie | LOD0 | LOD1 | instâncias |
+|---|---:|---:|---:|
+| `TREE_forest` | 44 tris | **6** | 4.961 |
+| `TREE_forest_broad` | 84 tris | **20** | 5.811 |
+| `BUSH` | 10 tris | **4** | 3.217 |
+
+`city_vegetation.gd` passou a gerar **dois** `MultiMeshInstance3D` por bloco,
+com `visibility_range_end`/`begin` e `VISIBILITY_RANGE_FADE_SELF` para
+dissolver a troca.
+
+O primeiro ajuste — bloco de 256 m, troca em 140 m — trocava cedo demais na
+tela. A causa é o granulado: o Godot mede a distância até a **origem do nó**,
+que é o centro do bloco, então a árvore da borda de um bloco cujo centro está
+a 300 m é rebaixada mesmo estando a 170 m do jogador. Corrigido baixando o
+bloco para **128 m** e a troca para **340 m**, com 30 m de dissolvência.
+Bloco de 96 m foi medido também: 656 nós para economizar 4.000 triângulos,
+não compensa.
+
+São **362 nós** (76 no começo), 162 deles LOD.
+
+Duas correções vieram junto, e as duas eram bugs de verdade:
+
+1. **A origem do nó.** O alcance de visibilidade é medido a partir da origem
+   do nó. Com todos os blocos em (0,0,0) o LOD trocaria em todos ao mesmo
+   tempo. Agora cada bloco fica no seu centro e as instâncias são relativas
+   a ele.
+2. **`load()` devolvia o cache.** Depois de `ResourceSaver.save()`, o
+   `load()` do mesmo caminho devolvia o `.tres` da construção anterior — com
+   as transformações antigas em coordenadas absolutas, que somadas ao novo
+   `position` **dobravam o tamanho da mata** (AABB de 2.445 m onde cabiam
+   1.280). Corrigido com `take_over_path()`, aqui e em `city_lights.gd`.
+
+Também: cada malha do kit virou um `.tres` próprio, referenciado como
+recurso externo. Antes a folhosa era gravada por inteiro dentro de cada um
+dos 20 `.tres` de bloco.
+
+**Resultado**, antes do frustum, varrendo 144 posições de câmera dentro da
+cidade: pior caso **367.204** triângulos de vegetação em vez de 745.158, ou
+**741.048 no total** — acima da meta de 600.000, abaixo do teto de 900.000.
+Da pracinha, onde o jogo acontece, fica bem menos. O número real desenhado é
+da ordem de um quarto disso: o fatiamento em 128 m descarta a mata que está
+atrás da câmera.

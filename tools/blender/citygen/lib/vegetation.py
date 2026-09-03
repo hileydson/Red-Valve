@@ -91,6 +91,34 @@ def build_kit(col):
     v, f = [], []
     _cone(v, f, 0, 0, 0, 0.45, 0.60, n=5)
     feitos["WEED"] = util._mk("WEED", v, f, col, M.get("grass_dry"))
+    feitos.update(_kit_lod(col))
+    return feitos
+
+
+def _kit_lod(col):
+    """Silhuetas de longe. A mata do anel externo ocupa poucos pixels na tela:
+    o que sobrevive a essa distancia e o contorno, nao o tronco nem as camadas
+    de copa. Uma arvore de floresta cai de 44 para 6 triangulos, a folhosa de
+    84 para 12 — e as duas juntas sao 10.772 das 14.513 plantas do mapa."""
+    feitos = {}
+
+    # conica: um unico cone do chao ao topo, mesma altura e raio maximo da
+    # LOD0 para que a troca nao mude a silhueta contra o ceu.
+    v, f = [], []
+    _cone(v, f, 0, 0, 0.0, 3.4, 17.5, n=4)
+    feitos["TREE_forest_LOD"] = util._mk(
+        "TREE_forest_LOD", v, f, col, M.get("canopy_forest"))
+
+    # folhosa: tambor unico cobrindo as tres camadas, com um toco de tronco.
+    v, f = [], []
+    _drum(v, f, 0, 0, 0.0, 0.40, 0.34, 4.6, n=3)
+    _drum(v, f, 0, 0, 4.6, 3.6, 2.2, 8.2, n=4)
+    feitos["TREE_forest_broad_LOD"] = util._mk(
+        "TREE_forest_broad_LOD", v, f, col, M.get("canopy_forest_dark"))
+
+    v, f = [], []
+    _cone(v, f, 0, 0, 0, 0.85, 1.25, n=3)
+    feitos["BUSH_LOD"] = util._mk("BUSH_LOD", v, f, col, M.get("canopy_urban"))
     return feitos
 
 

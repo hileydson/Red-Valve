@@ -1,44 +1,9 @@
-[gd_resource type="MultiMesh" format=4 uid="uid://c63noekipnnjq"]
+[gd_resource type="MultiMesh" format=3 uid="uid://c63noekipnnjq"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2gu8u"]
-resource_name = "MI_grass_dry"
-cull_mode = 2
-albedo_color = Color(0.49411762, 0.47843137, 0.3215686, 1)
-roughness = 0.93
-
-[sub_resource type="ArrayMesh" id="ArrayMesh_ad2tm"]
-_surfaces = [{
-"aabb": AABB(-0.36405766, 0, -0.42797545, 0.81405765, 0.6, 0.8559509),
-"format": 34896613377,
-"index_count": 24,
-"index_data": PackedByteArray("AAABAAIAAgABAAMABAABAAAABQACAAMAAwABAAUABQABAAQABQAAAAIAAAAFAAQA"),
-"name": "MI_grass_dry",
-"primitive": 3,
-"uv_scale": Vector4(0, 0, 0, 0),
-"vertex_count": 6,
-"vertex_data": PackedByteArray("//8AAP9/AAB8cv///38AADaeAAAAAAAAAAAAAOQwAAA2ngAA//8AAAAAAAAazwAA")
-}]
-blend_shape_mode = 0
-
-[sub_resource type="ArrayMesh" id="ArrayMesh_f0sgh"]
-resource_name = "city_vegkit_WEED"
-_surfaces = [{
-"aabb": AABB(-0.36405766, 0, -0.42797545, 0.81405765, 0.6, 0.8559509),
-"format": 34896613383,
-"index_count": 24,
-"index_data": PackedByteArray("AAABAAIAAwAEAAUABgAHAAgACQAKAAsADAANAA4ADwAQABEAEAAPABIAEAASABMA"),
-"material": SubResource("StandardMaterial3D_2gu8u"),
-"name": "MI_grass_dry",
-"primitive": 3,
-"uv_scale": Vector4(0, 0, 0, 0),
-"vertex_count": 20,
-"vertex_data": PackedByteArray("//8AAP9/CPZ8cv///38I9jaeAAAAAAj2Np4AAAAAwf18cv///3/B/QAAAADkMMH9AAAAAOQwecx8cv///395zAAAAAAaz3nMAAAAABrPH8N8cv///38fwzaeAAD//x/DNp4AAP//i/p8cv///3+L+v//AAD/f4v6//8AAP9///8AAAAAGs///zaeAAD/////Np4AAAAA//8AAAAA5DD//0G/eZpBv3maQb95mjHAGSgxwBkoMcAZKBh9vNAYfbzQGH280M2LMaPNizGjzYsxo7KiDpayog6WsqIOlv9//z//f/8//3//P/9//z//f/8/")
-}]
-blend_shape_mode = 0
-shadow_mesh = SubResource("ArrayMesh_ad2tm")
+[ext_resource type="ArrayMesh" uid="uid://rbr5c2ovxy0u" path="res://assets/3d_model/city/multimesh/mesh_WEED.tres" id="1_1rluv"]
 
 [resource]
 transform_format = 1
-instance_count = 3
-mesh = SubResource("ArrayMesh_f0sgh")
-buffer = PackedFloat32Array(-0.7787221, 0, 0.07152539, -264.05, 0, 0.782, 0, 4.4, -0.07152539, 0, -0.7787221, 253.49, -0.8897193, 0, -0.14212883, -326.11, 0, 0.901, 0, 10.07, 0.14212883, 0, -0.8897193, 69.06, -0.5139164, 0, 0.38310692, -308.17, 0, 0.641, 0, 9.38, -0.38310692, 0, -0.5139164, 96.34)
+instance_count = 9
+mesh = ExtResource("1_1rluv")
+buffer = PackedFloat32Array(1.3937484, 0, 0.026484406, 21.536667, 0, 1.394, 0, -0.8622217, -0.026484406, 0, 1.3937484, 23.991112, -1.0262337, 0, -0.6004711, 18.33667, 0, 1.189, 0, -2.622222, 0.6004711, 0, -1.0262337, 62.901108, 0.6703936, 0, -0.19436178, 18.536667, 0, 0.698, 0, -1.5222225, 0.19436178, 0, 0.6703936, 38.791107, 0.3395774, 0, -0.8765199, -66.283325, 0, 0.94, 0, 1.627778, 0.8765199, 0, 0.3395774, -56.59889, 0.407446, 0, -0.45932972, -56.923325, 0, 0.614, 0, 1.6877775, 0.45932972, 0, 0.407446, -51.83889, -0.18634091, 0, 1.0170709, -6.9333344, 0, 1.034, 0, 1.3577776, -1.0170709, 0, -0.18634091, -17.90889, 0.6264987, 0, 0.5352339, 23.146667, 0, 0.824, 0, 1.1577778, -0.5352339, 0, 0.6264987, -20.17889, -0.21354933, 0, -0.6371661, 28.026672, 0, 0.672, 0, -0.9522219, 0.6371661, 0, -0.21354933, 16.871109, 0.7842697, 0, 0.56226856, 20.556671, 0, 0.965, 0, 0.12777805, -0.56226856, 0, 0.7842697, 3.9711075)

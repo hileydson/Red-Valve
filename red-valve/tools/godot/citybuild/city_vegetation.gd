@@ -19,6 +19,13 @@ extends Node3D
 @export var bloco: float = 256.0
 ## Sombra só perto: a mata distante projeta sombra que ninguém vê.
 @export var sombra_ate: float = 180.0
+## Distância da troca LOD0 -> LOD1, em metros. Além dela a árvore vira a
+## silhueta: mesma altura e mesmo raio máximo, sem as camadas de copa nem o
+## tronco. A floresta cai de 44 para 6 triângulos por árvore, a folhosa de
+## 84 para 20 — e as duas somam 10.772 das 14.513 plantas do mapa.
+@export var dist_lod: float = 140.0
+## Faixa de dissolvência em torno da troca, para não haver estalo na tela.
+@export var margem_lod: float = 18.0
 
 @export_multiline var last_result: String = ""
 
@@ -82,6 +89,7 @@ func _construir() -> void:
 
 	_limpar()
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(save_dir))
+	_persistir_malhas(malhas)
 
 	var linhas := PackedStringArray()
 	var total := 0
@@ -102,39 +110,99 @@ func _construir() -> void:
 				blocos[chave] = []
 			blocos[chave].append(p)
 
+		var malha_lod: Mesh = malhas.get(especie + "_LOD", null)
+
 		for chave in blocos.keys():
 			var lote: Array = blocos[chave]
-			var mm := MultiMesh.new()
-			mm.transform_format = MultiMesh.TRANSFORM_3D
-			mm.mesh = malhas[especie]
-			mm.instance_count = lote.size()
+
+			# centro do bloco vira a origem do nó, e as instâncias passam a ser
+			# relativas a ele. O alcance de visibilidade do Godot é medido a partir
+			# da origem do nó: com todos os blocos em (0,0,0) o LOD trocaria em
+			# todos ao mesmo tempo, ou em nenhum.
 			var centro := Vector3.ZERO
-			for i in lote.size():
-				var p: Array = lote[i]
-				var pos := Vector3(float(p[0]), float(p[1]), float(p[2]))
-				var b := Basis(Vector3.UP, float(p[3])).scaled(
-					Vector3.ONE * float(p[4]))
-				mm.set_instance_transform(i, Transform3D(b, pos))
-				centro += pos
+			for p in lote:
+				centro += Vector3(float(p[0]), float(p[1]), float(p[2]))
 			centro /= float(lote.size())
 
+			var mm := _fazer_mm(malhas[especie], lote, centro)
 			var nome := "%s_%d_%d" % [especie, chave.x, chave.y]
-			var caminho := "%s/mm_%s.tres" % [save_dir, nome]
-			ResourceSaver.save(mm, caminho)
-
-			var mmi := MultiMeshInstance3D.new()
-			mmi.name = nome
-			mmi.multimesh = load(caminho)
-			# distância do bloco ao centro da cidade decide a sombra
 			var perto: bool = centro.length() < sombra_ate
-			mmi.cast_shadow = (GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+			var sombra: int = (GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 				if (lancar_sombra and perto)
 				else GeometryInstance3D.SHADOW_CASTING_SETTING_OFF)
-			add_child(mmi)
-			mmi.owner = get_tree().edited_scene_root
+
+			var mmi := _instanciar(mm, nome, centro, sombra)
+			if malha_lod != null:
+				mmi.visibility_range_end = dist_lod
+				mmi.visibility_range_end_margin = margem_lod
+				mmi.visibility_range_fade_mode = \
+					GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
+
+				# mesmas transformações, outra malha. Construído do zero em vez
+				# de duplicado: mexer em transform_format/instance_count de um
+				# MultiMesh já pronto é exatamente o caminho do SIGSEGV.
+				var mml := _fazer_mm(malha_lod, lote, centro)
+				var mmil := _instanciar(mml, nome + "_LOD", centro,
+					GeometryInstance3D.SHADOW_CASTING_SETTING_OFF)
+				mmil.visibility_range_begin = dist_lod
+				mmil.visibility_range_begin_margin = margem_lod
+				mmil.visibility_range_fade_mode = \
+					GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
+
 			total += lote.size()
 		linhas.append("%s: %d instâncias em %d blocos" % [
 			especie, pts.size(), blocos.size()])
 
 	linhas.append("TOTAL: %d plantas em %d MultiMesh" % [total, get_child_count()])
 	last_result = "\n".join(linhas)
+
+
+func _persistir_malhas(malhas: Dictionary) -> void:
+	"""Cada malha do kit vira um .tres proprio, uma vez so.
+
+	Sem isto, a malha e o material da arvore sao gravados *dentro* de cada
+	.tres de bloco: 20 copias da mesma folhosa. Salvando a parte, os blocos
+	passam a referencia-la como recurso externo."""
+	for nome in malhas.keys():
+		var caminho := "%s/mesh_%s.tres" % [save_dir, nome]
+		var malha: Mesh = malhas[nome]
+		ResourceSaver.save(malha, caminho)
+		malha.take_over_path(caminho)
+
+
+func _fazer_mm(malha: Mesh, lote: Array, centro: Vector3) -> MultiMesh:
+	var mm := MultiMesh.new()
+	mm.transform_format = MultiMesh.TRANSFORM_3D
+	mm.mesh = malha
+	mm.instance_count = lote.size()
+	for i in lote.size():
+		var p: Array = lote[i]
+		var pos := Vector3(float(p[0]), float(p[1]), float(p[2])) - centro
+		var b := Basis(Vector3.UP, float(p[3])).scaled(Vector3.ONE * float(p[4]))
+		mm.set_instance_transform(i, Transform3D(b, pos))
+	return mm
+
+
+func _instanciar(mm: MultiMesh, nome: String, centro: Vector3,
+		sombra: int) -> MultiMeshInstance3D:
+	"""Salva o MultiMesh como .tres e pendura um nó nele.
+
+	Nunca embutir na cena: MultiMesh embutido já derrubou o editor na
+	releitura ("Instance count must be 0 to change the transform format"
+	-> SIGSEGV)."""
+	var caminho := "%s/mm_%s.tres" % [save_dir, nome]
+	ResourceSaver.save(mm, caminho)
+	# take_over_path em vez de load(caminho): o editor guarda em cache o .tres
+	# da construcao anterior, e load() devolveria as transformacoes velhas —
+	# em coordenadas absolutas, que somadas ao novo `position` do bloco
+	# dobravam o tamanho da mata. Assim o recurso novo assume o caminho e o
+	# cache passa a apontar para ele.
+	mm.take_over_path(caminho)
+	var mmi := MultiMeshInstance3D.new()
+	mmi.name = nome
+	mmi.multimesh = mm
+	mmi.position = centro
+	mmi.cast_shadow = sombra
+	add_child(mmi)
+	mmi.owner = get_tree().edited_scene_root
+	return mmi

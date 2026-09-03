@@ -112,6 +112,18 @@
       "rough": 0.58,
       "metal": 0.15,
       "uso": "Chapa esmaltada de nome de rua"
+    },
+    "vao_escuro": {
+      "hex": "#221F1C",
+      "rough": 0.55,
+      "metal": 0.0,
+      "uso": "Interior do vao de porta e janela"
+    },
+    "barra_pintada": {
+      "hex": "#6E7C74",
+      "rough": 0.82,
+      "metal": 0.0,
+      "uso": "Barra pintada na base da parede"
     }
   },
   "ground": {

@@ -1,0 +1,9 @@
+[gd_resource type="MultiMesh" format=3 uid="uid://bur7asg5mvhcv"]
+
+[ext_resource type="ArrayMesh" uid="uid://rbr5c2ovxy0u" path="res://assets/3d_model/city/multimesh/mesh_WEED.tres" id="1_t2wkt"]
+
+[resource]
+transform_format = 1
+instance_count = 2
+mesh = ExtResource("1_t2wkt")
+buffer = PackedFloat32Array(-0.8897193, 0, -0.14212883, -8.969971, 0, 0.901, 0, 0.3449993, 0.14212883, 0, -0.8897193, -13.639999, -0.5139164, 0, 0.38310692, 8.970001, 0, 0.641, 0, -0.34500027, -0.38310692, 0, -0.5139164, 13.639999)
