@@ -25,7 +25,11 @@ FLECHA_MIN = 6.0    # ponto mais baixo do cabo
 # Poca de luz projetada no chao (opcao D): quad aceso, nao luz. Estes valores
 # tem que casar com o cone do SpotLight em city_lights.gd, senao a mancha
 # desenhada nao cai onde a luz cairia.
-POCA_INCLINACAO = 22.0   # graus, igual a `inclinacao_graus`
+# 10 e nao 22: a 22 graus o centro da poca caia 4,33 m a frente do eixo do
+# poste (0,88 do braco + 3,45 da inclinacao), longe o bastante para a mancha
+# parecer solta no meio da rua, sem relacao com a luminaria. A 10 graus ela
+# fica a ~2,4 m: logo adiante da luminaria, que e onde a luz de fato cai.
+POCA_INCLINACAO = 10.0   # graus, igual a `inclinacao_graus`
 POCA_ALTURA_Z = 0.13     # acima do terreno; a pista sobe ate 0,11 pelo abaulamento
 TILT = math.radians(3.0)
 

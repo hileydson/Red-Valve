@@ -923,3 +923,35 @@ máxima de 0,0000 m.
 Regra geral que fica: **nada que atravesse a fronteira Blender→Godot pode
 depender de `hash()` de string.** Se um dado é gravado em JSON para o Godot
 reconstruir, ele tem de ser reproduzível fora do processo que o gerou.
+
+### 10.12 — A poça de luz perto do poste
+
+A mancha acesa no chão era centrada por `d = altura × tan(inclinação)`, com
+inclinação de 22°: com a lâmpada a 8,53 m isso dava 3,45 m, mais os 0,88 m do
+braço, ou seja **4,33 m à frente do eixo do poste**. Longe o bastante para a
+mancha parecer solta no meio da rua, sem relação com a luminária.
+
+`POCA_INCLINACAO` e `inclinacao_graus` (que têm de andar juntos, senão o cone
+do SpotLight e a mancha pintada discordam) foram de 22° para **10°**. A poça
+passou a ficar a ~2,4 m do eixo — logo adiante da luminária. Deslocamento
+médio medido: 1,94 m para dentro; as luminárias não se moveram (0,0 m).
+
+Como o `lado` das ruas virou determinístico (§10.11), foi possível regerar
+**só o `poles.json`** num processo à parte e copiá-lo por cima, sem reexportar
+a geometria — o que antes teria embaralhado os postes.
+
+### 10.13 — Suavizar a mancha
+
+A dureza vinha do joelho do núcleo em `make_lightpool.py`: com `r/0.42` e
+expoente 1,6 a mancha caía de 0,86 para 0,12 entre r=0,1 e r=0,4 — um degrau
+que o olho lê como borda. Joelho a 0,62, expoentes 1,3 (núcleo) e 2,0
+(franja), pesos 0,55/0,60: o **maior degrau cai de 0,184 para 0,123**, 33% mais
+gradual. O malhado do ruído também foi de ±0,28 para ±0,20, que lia como
+aspereza.
+
+O perfil novo é 24% mais "cheio" no total, então `poca_forca` foi de 0,95 para
+**0,75** — senão a mancha ficaria maior e mais forte em vez de mais suave.
+
+Reimportar textura tem a mesma armadilha do §10.10: `reimport` respondeu
+sucesso e o `.ctex` continuou com o carimbo do dia anterior. Apagar o `.md5`
+e rodar `scan()` resolveu.

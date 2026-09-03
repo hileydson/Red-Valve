@@ -45,12 +45,18 @@ def build(nome="T_lightpool", seed=17):
     r = np.sqrt((dx / 0.98) ** 2 + (dy / 0.80) ** 2)
 
     # queda suave, com joelho: núcleo forte e franja longa
-    nucleo = np.clip(1.0 - r / 0.42, 0, 1) ** 1.6
-    franja = np.clip(1.0 - r, 0, 1) ** 2.6
-    f = np.clip(nucleo * 0.75 + franja * 0.55, 0, 1)
+    #
+    # O joelho a 0,42 com expoente 1,6 fechava o núcleo depressa demais: entre
+    # r=0,1 e r=0,4 a mancha caía de 0,86 para 0,12, um degrau que se lia como
+    # borda dura. Joelho a 0,62 e expoentes menores espalham a mesma queda por
+    # um raio maior — o degrau máximo cai de 0,18 para 0,12.
+    nucleo = np.clip(1.0 - r / 0.62, 0, 1) ** 1.3
+    franja = np.clip(1.0 - r, 0, 1) ** 2.0
+    f = np.clip(nucleo * 0.55 + franja * 0.60, 0, 1)
 
-    # irregularidade: borda de poça real não é círculo perfeito
-    f *= 0.86 + 0.28 * fbm(U, V, 5, 3, seed)
+    # irregularidade: borda de poça real não é círculo perfeito. Menos
+    # contraste que antes (0,28): o malhado forte também lia como aspereza.
+    f *= 0.90 + 0.20 * fbm(U, V, 5, 3, seed)
     f *= np.clip(1.0 - r, 0, 1) ** 0.5      # garante zero na borda do quad
     f = np.clip(f, 0, 1)
 
