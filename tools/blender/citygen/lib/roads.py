@@ -20,13 +20,13 @@ TILE = 4.0
 
 # por classe: material, meio-fio, largura da calçada, deslocamento em Z
 CLASS = {
-    # walk=0 em todas: a faixa de calçada foi removida a pedido. O meio-fio
-    # continua marcando a borda da pista; o que havia atrás dela virava laje
-    # de concreto solta na grama e não ajudava a leitura da rua.
-    "avenida":    dict(mat="cobble_base", curb=True,  walk=0.0, z=0.030, worn=0.55),
-    "principal":  dict(mat="cobble_base", curb=True,  walk=0.0, z=0.024, worn=0.70),
-    "radial":     dict(mat="cobble_base", curb=True,  walk=0.0, z=0.018, worn=0.60),
-    "secundaria": dict(mat="cobble_base", curb=True,  walk=0.0, z=0.012, worn=0.85),
+    # Calçada e meio-fio removidos a pedido, em todas as classes. A borda da
+    # pista fica marcada só pela sarjeta, que é vertex color na própria
+    # malha da via — não é geometria solta na grama.
+    "avenida":    dict(mat="cobble_base", curb=False, walk=0.0, z=0.030, worn=0.55),
+    "principal":  dict(mat="cobble_base", curb=False, walk=0.0, z=0.024, worn=0.70),
+    "radial":     dict(mat="cobble_base", curb=False, walk=0.0, z=0.018, worn=0.60),
+    "secundaria": dict(mat="cobble_base", curb=False, walk=0.0, z=0.012, worn=0.85),
     "travessa":   dict(mat="dirt_road",   curb=False, walk=0.0, z=0.006, worn=1.0),
     "beco":       dict(mat="dirt_road",   curb=False, walk=0.0, z=0.000, worn=1.0),
 }

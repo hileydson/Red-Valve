@@ -885,8 +885,18 @@ o plugin MCP aproveita para processar a próxima mensagem da fila. Dois
 primeiro, dentro de `_lentes()`, e o editor caiu com SIGSEGV. Os quatro
 scripts construtores ganharam uma trava `_ocupado`.
 
-**Calçada removida.** `walk=0` em todas as classes, a pedido. Fica só o
-meio-fio marcando a borda da pista. Ruas: 711 objetos → 370.
+**Calçada e meio-fio removidos.** Primeiro `walk=0`, depois `curb=False`,
+em todas as classes — a pedido, nas duas rodadas. A borda da pista fica
+marcada só pela **sarjeta**, que é vertex color na própria malha da via e
+não geometria solta na grama. Ruas: 711 objetos → **30**, um por via;
+`city_roads.gltf` caiu de 4 malhas para 2 e de 70.278 para 54.936
+triângulos.
+
+**Reimportação silenciosamente ignorada.** `filesystem_manage(op="reimport")`
+respondeu `reimported: [...]` mas o `.scn` em `.godot/imported/` continuou
+com o carimbo antigo — o editor não tinha percebido a mudança do arquivo.
+Só um `scan()` completo reimporta de fato. Conferir o mtime do `.scn`
+contra o do `.gltf` antes de acreditar que a cena está atualizada.
 
 **Névoa, terceira calibragem.** Densidade 0,048, energia 0,45, transição de
 50 m em vez de 90 — o começo da mata estava claro demais porque a rampa era

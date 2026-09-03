@@ -8,15 +8,15 @@ roughness = 0.9
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_31il0"]
 _surfaces = [{
-"aabb": AABB(-0.425, 0, -0.7361216, 1.2750001, 1.25, 1.4722432),
+"aabb": AABB(-0.68766445, 0, -0.80839807, 1.5376644, 1.25, 1.6167961),
 "format": 34896613377,
-"index_count": 12,
-"index_data": PackedByteArray("AAABAAIAAgABAAMAAwABAAAAAwAAAAIA"),
+"index_count": 24,
+"index_data": PackedByteArray("AAABAAIAAgABAAMABAABAAAABQACAAMAAwABAAUABQABAAQABQAAAAIAAAAFAAQA"),
 "name": "MI_canopy_urban",
 "primitive": 3,
 "uv_scale": Vector4(0, 0, 0, 0),
-"vertex_count": 4,
-"vertex_data": PackedByteArray("//8AAP9/AABUVf///38AAAAAAAAAAAAAAAAAAP//AAA=")
+"vertex_count": 6,
+"vertex_data": PackedByteArray("//8AAP9/AAB8cv///38AADaeAAAAAAAAAAAAAOQwAAA2ngAA//8AAAAAAAAazwAA")
 }]
 blend_shape_mode = 0
 

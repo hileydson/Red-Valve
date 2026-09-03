@@ -431,7 +431,7 @@ TREE_cypress: 16 instâncias em 4 blocos
 BUSH: 3217 instâncias em 55 blocos
 TOTAL: 14058 plantas em 339 MultiMesh"
 
-[node name="TREE_forest_-5_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=951130227]
+[node name="TREE_forest_-5_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1015993433]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -576.6692, 24.263433, -433.64664)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -439,7 +439,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("8_ykf5c")
 
-[node name="TREE_forest_-5_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=752891179]
+[node name="TREE_forest_-5_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1420740583]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -576.6692, 24.263433, -433.64664)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -447,7 +447,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("9_2x27r")
 
-[node name="TREE_forest_-4_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1473339322]
+[node name="TREE_forest_-4_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=686603873]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -447.40686, 23.455841, -435.89233)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -455,7 +455,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("10_i676f")
 
-[node name="TREE_forest_-4_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=204121194]
+[node name="TREE_forest_-4_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1708138967]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -447.40686, 23.455841, -435.89233)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -463,7 +463,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("11_njkkx")
 
-[node name="TREE_forest_-3_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1961220771]
+[node name="TREE_forest_-3_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=933566886]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -321.80325, 21.895605, -434.68695)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -471,7 +471,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("12_ys7a6")
 
-[node name="TREE_forest_-3_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=688324663]
+[node name="TREE_forest_-3_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1440567849]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -321.80325, 21.895605, -434.68695)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -479,7 +479,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("13_b8dyr")
 
-[node name="TREE_forest_-2_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=163011791]
+[node name="TREE_forest_-2_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2135331330]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -190.11008, 19.707718, -438.7392)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -487,7 +487,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("14_xf511")
 
-[node name="TREE_forest_-2_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2044417839]
+[node name="TREE_forest_-2_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=115267625]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -190.11008, 19.707718, -438.7392)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -495,7 +495,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("15_plh1o")
 
-[node name="TREE_forest_-1_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1895407595]
+[node name="TREE_forest_-1_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1680341213]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -65.89675, 18.0801, -433.04257)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -503,7 +503,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("16_q4i7t")
 
-[node name="TREE_forest_-1_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2028840754]
+[node name="TREE_forest_-1_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1836210339]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -65.89675, 18.0801, -433.04257)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -511,7 +511,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("17_dileq")
 
-[node name="TREE_forest_0_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1170931014]
+[node name="TREE_forest_0_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=706499780]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 67.462135, 16.642023, -437.11853)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -519,7 +519,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("18_ef4uk")
 
-[node name="TREE_forest_0_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=423104087]
+[node name="TREE_forest_0_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=859925007]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 67.462135, 16.642023, -437.11853)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -527,7 +527,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("19_8q5o7")
 
-[node name="TREE_forest_1_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=712749696]
+[node name="TREE_forest_1_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2112810470]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 189.21336, 15.192961, -435.88754)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -535,7 +535,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("20_61et8")
 
-[node name="TREE_forest_1_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1438819287]
+[node name="TREE_forest_1_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1749527166]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 189.21336, 15.192961, -435.88754)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -543,7 +543,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("21_s1h7b")
 
-[node name="TREE_forest_2_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=770994362]
+[node name="TREE_forest_2_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1793946391]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 317.1043, 14.166107, -437.45795)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -551,7 +551,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("22_6ptu4")
 
-[node name="TREE_forest_2_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=585680813]
+[node name="TREE_forest_2_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1446431524]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 317.1043, 14.166107, -437.45795)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -559,7 +559,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("23_88628")
 
-[node name="TREE_forest_3_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1503931967]
+[node name="TREE_forest_3_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=879938530]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 450.89194, 12.357142, -436.14713)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -567,7 +567,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("24_mcpcw")
 
-[node name="TREE_forest_3_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1583206819]
+[node name="TREE_forest_3_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=490371596]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 450.89194, 12.357142, -436.14713)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -575,7 +575,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("25_gs1cl")
 
-[node name="TREE_forest_4_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1743199797]
+[node name="TREE_forest_4_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=934924661]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 576.48816, 10.397618, -437.55157)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -583,7 +583,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("26_qx4yi")
 
-[node name="TREE_forest_4_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2084931383]
+[node name="TREE_forest_4_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=879546634]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 576.48816, 10.397618, -437.55157)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -591,7 +591,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("27_c6qe0")
 
-[node name="TREE_forest_-4_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=135379021]
+[node name="TREE_forest_-4_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=395947569]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -447.64108, 20.858948, -316.76752)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -599,7 +599,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("28_jsljk")
 
-[node name="TREE_forest_-4_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=570186379]
+[node name="TREE_forest_-4_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=113730809]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -447.64108, 20.858948, -316.76752)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -607,7 +607,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("29_romcx")
 
-[node name="TREE_forest_-3_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=96302517]
+[node name="TREE_forest_-3_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1179649662]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -319.36423, 18.728487, -317.26654)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -615,7 +615,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("30_6yifv")
 
-[node name="TREE_forest_-3_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1645499695]
+[node name="TREE_forest_-3_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1383444376]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -319.36423, 18.728487, -317.26654)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -623,7 +623,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("31_j4svl")
 
-[node name="TREE_forest_-2_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2054523200]
+[node name="TREE_forest_-2_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=486645018]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -195.14166, 16.992538, -321.18118)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -631,7 +631,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("32_ovivn")
 
-[node name="TREE_forest_-2_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1000690365]
+[node name="TREE_forest_-2_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=450711575]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -195.14166, 16.992538, -321.18118)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -639,7 +639,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("33_v3kgp")
 
-[node name="TREE_forest_-1_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=76102003]
+[node name="TREE_forest_-1_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=502811525]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -62.718784, 16.062775, -320.53342)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -647,7 +647,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("34_kedcb")
 
-[node name="TREE_forest_-1_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1570196151]
+[node name="TREE_forest_-1_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1178593238]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -62.718784, 16.062775, -320.53342)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -655,7 +655,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("35_jfxs1")
 
-[node name="TREE_forest_0_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=152426519]
+[node name="TREE_forest_0_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=736043284]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 61.36456, 14.568896, -319.96658)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -663,7 +663,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("36_6x6tg")
 
-[node name="TREE_forest_0_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=536829926]
+[node name="TREE_forest_0_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1555842630]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 61.36456, 14.568896, -319.96658)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -671,7 +671,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("37_eu2fp")
 
-[node name="TREE_forest_1_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=103303517]
+[node name="TREE_forest_1_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=455505903]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 191.6671, 12.709997, -319.6467)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -679,7 +679,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("38_o60oe")
 
-[node name="TREE_forest_1_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=864717414]
+[node name="TREE_forest_1_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1461400938]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 191.6671, 12.709997, -319.6467)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -687,7 +687,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("39_5fsqs")
 
-[node name="TREE_forest_2_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1782464474]
+[node name="TREE_forest_2_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=783358381]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 317.09064, 11.763602, -320.06918)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -695,7 +695,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("40_l2hps")
 
-[node name="TREE_forest_2_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=551048787]
+[node name="TREE_forest_2_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1910526158]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 317.09064, 11.763602, -320.06918)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -703,7 +703,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("41_rdfcc")
 
-[node name="TREE_forest_3_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=887900566]
+[node name="TREE_forest_3_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1734929396]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 446.70892, 10.159146, -322.02713)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -711,7 +711,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("42_qdbw7")
 
-[node name="TREE_forest_3_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=530178886]
+[node name="TREE_forest_3_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=325660671]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 446.70892, 10.159146, -322.02713)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -719,7 +719,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("43_rqugy")
 
-[node name="TREE_forest_4_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=510133849]
+[node name="TREE_forest_4_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2110755795]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 570.9379, 7.957438, -317.8372)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -727,7 +727,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("44_34iwg")
 
-[node name="TREE_forest_4_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1588696210]
+[node name="TREE_forest_4_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1449380845]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 570.9379, 7.957438, -317.8372)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -735,7 +735,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("45_o0fg7")
 
-[node name="TREE_forest_-5_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=533972156]
+[node name="TREE_forest_-5_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2081785841]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -573.2599, 22.507889, -322.75354)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -743,7 +743,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("46_hixfm")
 
-[node name="TREE_forest_-5_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=108092391]
+[node name="TREE_forest_-5_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1528050350]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -573.2599, 22.507889, -322.75354)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -751,7 +751,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("47_encaw")
 
-[node name="TREE_forest_-5_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1831629118]
+[node name="TREE_forest_-5_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1905413623]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -572.6187, 19.598907, -195.13136)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -759,7 +759,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("48_b0hpe")
 
-[node name="TREE_forest_-5_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1881731783]
+[node name="TREE_forest_-5_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=911250697]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -572.6187, 19.598907, -195.13136)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -767,7 +767,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("49_gn8yg")
 
-[node name="TREE_forest_-4_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1638125005]
+[node name="TREE_forest_-4_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=571090388]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -451.44806, 17.87231, -192.46533)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -775,7 +775,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("50_j6ich")
 
-[node name="TREE_forest_-4_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1555255722]
+[node name="TREE_forest_-4_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2108376329]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -451.44806, 17.87231, -192.46533)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -783,7 +783,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("51_h3jdf")
 
-[node name="TREE_forest_-3_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=908632087]
+[node name="TREE_forest_-3_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=613679335]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -315.80646, 15.941593, -219.20175)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -791,7 +791,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("8_bfptn")
 
-[node name="TREE_forest_-3_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1387017443]
+[node name="TREE_forest_-3_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1434767793]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -315.80646, 15.941593, -219.20175)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -799,7 +799,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("9_60sqd")
 
-[node name="TREE_forest_-2_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1443551981]
+[node name="TREE_forest_-2_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=821332028]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -200.31296, 14.976033, -221.1409)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -807,7 +807,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("9_j4oxn")
 
-[node name="TREE_forest_-2_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=87591986]
+[node name="TREE_forest_-2_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1683248754]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -200.31296, 14.976033, -221.1409)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -815,7 +815,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("11_temhv")
 
-[node name="TREE_forest_-1_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1369166797]
+[node name="TREE_forest_-1_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1891664557]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -57.82316, 14.191931, -225.82002)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -823,7 +823,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("10_aueo2")
 
-[node name="TREE_forest_-1_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1526541500]
+[node name="TREE_forest_-1_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1898403579]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -57.82316, 14.191931, -225.82002)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -831,7 +831,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("13_oqcvq")
 
-[node name="TREE_forest_0_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=875052690]
+[node name="TREE_forest_0_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=427293038]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58.561783, 12.789395, -225.10861)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -839,7 +839,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("11_8fvkf")
 
-[node name="TREE_forest_0_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1532800402]
+[node name="TREE_forest_0_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1490321904]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58.561783, 12.789395, -225.10861)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -847,7 +847,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("15_ujhl8")
 
-[node name="TREE_forest_1_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=805660514]
+[node name="TREE_forest_1_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=491708759]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 196.12257, 11.0774, -227.25217)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -855,7 +855,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("12_vj6nr")
 
-[node name="TREE_forest_1_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1860163244]
+[node name="TREE_forest_1_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=696867836]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 196.12257, 11.0774, -227.25217)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -863,7 +863,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("17_6lldq")
 
-[node name="TREE_forest_2_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1680280956]
+[node name="TREE_forest_2_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1374832720]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 328.48468, 8.7346735, -199.32841)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -871,7 +871,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("13_5tllo")
 
-[node name="TREE_forest_2_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2086731681]
+[node name="TREE_forest_2_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=937093670]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 328.48468, 8.7346735, -199.32841)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -879,7 +879,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("19_jujdn")
 
-[node name="TREE_forest_3_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1395596512]
+[node name="TREE_forest_3_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1534137175]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 448.3258, 6.5301394, -191.50694)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -887,7 +887,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("64_5k51k")
 
-[node name="TREE_forest_3_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1714793063]
+[node name="TREE_forest_3_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2073700827]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 448.3258, 6.5301394, -191.50694)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -895,7 +895,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("65_cnfg5")
 
-[node name="TREE_forest_4_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=824976258]
+[node name="TREE_forest_4_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=813365133]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 574.09454, 4.856135, -198.6232)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -903,7 +903,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("66_wsq52")
 
-[node name="TREE_forest_4_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=380545810]
+[node name="TREE_forest_4_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=384392145]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 574.09454, 4.856135, -198.6232)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -911,7 +911,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("67_vakum")
 
-[node name="TREE_forest_-5_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2049554680]
+[node name="TREE_forest_-5_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1454934187]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -576.2812, 16.005892, -64.85215)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -919,7 +919,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("68_172hd")
 
-[node name="TREE_forest_-5_-1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2074198350]
+[node name="TREE_forest_-5_-1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1687711421]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -576.2812, 16.005892, -64.85215)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -927,7 +927,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("69_g66lm")
 
-[node name="TREE_forest_-4_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1840502514]
+[node name="TREE_forest_-4_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=727502208]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -449.54703, 14.739247, -63.00335)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -935,7 +935,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("70_bmm25")
 
-[node name="TREE_forest_-4_-1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1618145410]
+[node name="TREE_forest_-4_-1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1100015922]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -449.54703, 14.739247, -63.00335)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -943,7 +943,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("71_exnk0")
 
-[node name="TREE_forest_2_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1443565434]
+[node name="TREE_forest_2_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1772159022]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 353.213, 5.285869, -63.49283)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -951,7 +951,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("19_5qmw6")
 
-[node name="TREE_forest_2_-1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=914326024]
+[node name="TREE_forest_2_-1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1878157908]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 353.213, 5.285869, -63.49283)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -959,7 +959,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("31_e1b1t")
 
-[node name="TREE_forest_3_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=644228445]
+[node name="TREE_forest_3_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=841771277]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 450.6155, 3.9015157, -65.29402)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -967,7 +967,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("74_o7nk8")
 
-[node name="TREE_forest_3_-1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1667322914]
+[node name="TREE_forest_3_-1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1811398652]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 450.6155, 3.9015157, -65.29402)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -975,7 +975,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("75_gyeku")
 
-[node name="TREE_forest_4_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=282265643]
+[node name="TREE_forest_4_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2071703009]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 577.1973, 2.1893048, -67.98001)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -983,7 +983,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("76_kybdr")
 
-[node name="TREE_forest_4_-1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1212574860]
+[node name="TREE_forest_4_-1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=391865233]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 577.1973, 2.1893048, -67.98001)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -991,7 +991,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("77_wbbv7")
 
-[node name="TREE_forest_-3_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=895470032]
+[node name="TREE_forest_-3_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1245486984]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -371.91855, 14.088572, -73.531425)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -999,7 +999,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("14_kjf8u")
 
-[node name="TREE_forest_-3_-1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1034233503]
+[node name="TREE_forest_-3_-1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=432175908]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -371.91855, 14.088572, -73.531425)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1007,7 +1007,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("21_yowwn")
 
-[node name="TREE_forest_-5_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=828574317]
+[node name="TREE_forest_-5_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=155654459]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -576.6071, 12.9189205, 65.273026)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1015,7 +1015,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("80_5kcnw")
 
-[node name="TREE_forest_-5_0_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=388594914]
+[node name="TREE_forest_-5_0_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=976100169]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -576.6071, 12.9189205, 65.273026)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1023,7 +1023,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("81_wnxdo")
 
-[node name="TREE_forest_-3_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2001098479]
+[node name="TREE_forest_-3_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=971455292]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -375.04248, 11.185, 53.4875)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1031,7 +1031,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("20_y1c4q")
 
-[node name="TREE_forest_-3_0_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2146778643]
+[node name="TREE_forest_-3_0_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1110637200]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -375.04248, 11.185, 53.4875)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1039,7 +1039,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("33_pqojq")
 
-[node name="TREE_forest_3_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1548603896]
+[node name="TREE_forest_3_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=918949500]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 447.58868, 1.1428348, 63.174877)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1047,7 +1047,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("84_nlcr1")
 
-[node name="TREE_forest_3_0_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=10504733]
+[node name="TREE_forest_3_0_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=240250967]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 447.58868, 1.1428348, 63.174877)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1055,7 +1055,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("85_fvl37")
 
-[node name="TREE_forest_4_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=543676951]
+[node name="TREE_forest_4_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1529716021]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 573.375, -0.10807017, 60.42815)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1063,7 +1063,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("86_0llqk")
 
-[node name="TREE_forest_4_0_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1925568951]
+[node name="TREE_forest_4_0_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1508397855]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 573.375, -0.10807017, 60.42815)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1071,7 +1071,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("87_cqily")
 
-[node name="TREE_forest_-4_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1175794725]
+[node name="TREE_forest_-4_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=737578878]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -447.23676, 11.403987, 67.184875)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1079,7 +1079,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("88_ibxgd")
 
-[node name="TREE_forest_-4_0_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2132785558]
+[node name="TREE_forest_-4_0_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=911451418]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -447.23676, 11.403987, 67.184875)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1087,7 +1087,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("89_m31xl")
 
-[node name="TREE_forest_2_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1143566281]
+[node name="TREE_forest_2_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=906116300]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 346.33862, 1.8277268, 71.96938)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1095,7 +1095,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("23_xpxbx")
 
-[node name="TREE_forest_2_0_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1828603136]
+[node name="TREE_forest_2_0_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=205329314]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 346.33862, 1.8277268, 71.96938)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1103,7 +1103,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("39_8t4mb")
 
-[node name="TREE_forest_-5_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1218974985]
+[node name="TREE_forest_-5_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1432432395]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -575.70105, 10.192445, 193.90788)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1111,7 +1111,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("92_tjx2n")
 
-[node name="TREE_forest_-5_1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=61044617]
+[node name="TREE_forest_-5_1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=720671706]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -575.70105, 10.192445, 193.90788)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1119,7 +1119,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("93_05xcs")
 
-[node name="TREE_forest_-4_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=205648297]
+[node name="TREE_forest_-4_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=590583060]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -451.38254, 8.810472, 196.37965)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1127,7 +1127,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("94_irw6l")
 
-[node name="TREE_forest_-4_1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=309435416]
+[node name="TREE_forest_-4_1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1908992922]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -451.38254, 8.810472, 196.37965)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1135,7 +1135,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("95_ft73d")
 
-[node name="TREE_forest_2_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1918617207]
+[node name="TREE_forest_2_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=787622679]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 340.45944, -0.52589047, 189.43137)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1143,7 +1143,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("27_c3836")
 
-[node name="TREE_forest_2_1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=715228979]
+[node name="TREE_forest_2_1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1235023472]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 340.45944, -0.52589047, 189.43137)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1151,7 +1151,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("47_xpkhb")
 
-[node name="TREE_forest_3_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1287808723]
+[node name="TREE_forest_3_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1433642402]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 442.76428, -1.3781301, 191.62852)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1159,7 +1159,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("98_71v0n")
 
-[node name="TREE_forest_3_1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=455396256]
+[node name="TREE_forest_3_1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=744635222]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 442.76428, -1.3781301, 191.62852)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1167,7 +1167,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("99_vgxt3")
 
-[node name="TREE_forest_4_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=769967545]
+[node name="TREE_forest_4_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=760633924]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 569.32776, -3.0143087, 197.14044)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1175,7 +1175,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("100_q3a63")
 
-[node name="TREE_forest_4_1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1177013655]
+[node name="TREE_forest_4_1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1369989182]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 569.32776, -3.0143087, 197.14044)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1183,7 +1183,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("101_f6uq7")
 
-[node name="TREE_forest_-3_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1120027930]
+[node name="TREE_forest_-3_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=888447150]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -377.3611, 8.314445, 190.07666)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1191,7 +1191,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("24_2gj1f")
 
-[node name="TREE_forest_-3_1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1629423405]
+[node name="TREE_forest_-3_1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=325396633]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -377.3611, 8.314445, 190.07666)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1199,7 +1199,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("41_pk5gq")
 
-[node name="TREE_forest_-5_2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1664079277]
+[node name="TREE_forest_-5_2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1932975484]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -573.3255, 8.785833, 264.37833)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1207,7 +1207,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("104_nt65r")
 
-[node name="TREE_forest_-5_2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=577273315]
+[node name="TREE_forest_-5_2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=593280332]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -573.3255, 8.785833, 264.37833)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1215,7 +1215,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("105_gffeo")
 
-[node name="TREE_forest_-4_2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1891826843]
+[node name="TREE_forest_-4_2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=707943464]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -452.42368, 7.739474, 265.97473)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1223,7 +1223,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("106_1qea8")
 
-[node name="TREE_forest_-4_2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1669765305]
+[node name="TREE_forest_-4_2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1719076617]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -452.42368, 7.739474, 265.97473)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1231,7 +1231,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("107_rmyby")
 
-[node name="TREE_forest_-3_2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=199976768]
+[node name="TREE_forest_-3_2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=818779398]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -376.5, 7.54, 265.62)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1239,7 +1239,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("108_v3smi")
 
-[node name="TREE_forest_-3_2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1056456018]
+[node name="TREE_forest_-3_2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1663078191]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -376.5, 7.54, 265.62)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1247,7 +1247,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("109_ilxtm")
 
-[node name="TREE_forest_2_2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=976945203]
+[node name="TREE_forest_2_2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=270680579]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 347.45712, -1.9792856, 266.77286)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1255,7 +1255,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("110_mltvg")
 
-[node name="TREE_forest_2_2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1527088046]
+[node name="TREE_forest_2_2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1332399349]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 347.45712, -1.9792856, 266.77286)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1263,7 +1263,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("111_tedak")
 
-[node name="TREE_forest_3_2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=889937976]
+[node name="TREE_forest_3_2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=607432136]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 444.83664, -2.7116663, 265.08002)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1271,7 +1271,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("112_by5s5")
 
-[node name="TREE_forest_3_2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1350959309]
+[node name="TREE_forest_3_2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=940479268]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 444.83664, -2.7116663, 265.08002)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1279,7 +1279,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("113_323sq")
 
-[node name="TREE_forest_4_2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=921966305]
+[node name="TREE_forest_4_2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1702285766]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 582.33997, -4.803529, 265.14822)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1287,7 +1287,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("114_edi7o")
 
-[node name="TREE_forest_4_2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1222023740]
+[node name="TREE_forest_4_2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2008570401]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 582.33997, -4.803529, 265.14822)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1295,7 +1295,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("115_i6pyp")
 
-[node name="TREE_forest_broad_-5_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1814183872]
+[node name="TREE_forest_broad_-5_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=666315894]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -574.71454, 24.289764, -437.2846)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1303,7 +1303,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("116_w6xe1")
 
-[node name="TREE_forest_broad_-5_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=892130754]
+[node name="TREE_forest_broad_-5_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=271874824]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -574.71454, 24.289764, -437.2846)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1311,7 +1311,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("117_jn304")
 
-[node name="TREE_forest_broad_-4_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1009094105]
+[node name="TREE_forest_broad_-4_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1340732216]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -448.9583, 23.46555, -436.31543)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1319,7 +1319,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("118_cxc2f")
 
-[node name="TREE_forest_broad_-4_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1061469016]
+[node name="TREE_forest_broad_-4_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2073634862]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -448.9583, 23.46555, -436.31543)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1327,7 +1327,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("119_lw728")
 
-[node name="TREE_forest_broad_-3_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=825683163]
+[node name="TREE_forest_broad_-3_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=687710392]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -318.28024, 21.813213, -436.63156)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1335,7 +1335,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("120_5skea")
 
-[node name="TREE_forest_broad_-3_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1434404950]
+[node name="TREE_forest_broad_-3_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1371492225]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -318.28024, 21.813213, -436.63156)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1343,7 +1343,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("121_usf28")
 
-[node name="TREE_forest_broad_-2_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=122331097]
+[node name="TREE_forest_broad_-2_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2036622795]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -192.89983, 19.553524, -433.32492)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1351,7 +1351,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("122_2ys2e")
 
-[node name="TREE_forest_broad_-2_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1788311584]
+[node name="TREE_forest_broad_-2_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1305563069]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -192.89983, 19.553524, -433.32492)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1359,7 +1359,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("123_xhmp8")
 
-[node name="TREE_forest_broad_-1_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1122563917]
+[node name="TREE_forest_broad_-1_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=25415769]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -61.29163, 18.152418, -437.42163)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1367,7 +1367,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("124_ekhhr")
 
-[node name="TREE_forest_broad_-1_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1318093277]
+[node name="TREE_forest_broad_-1_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1509408077]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -61.29163, 18.152418, -437.42163)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1375,7 +1375,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("125_uxur1")
 
-[node name="TREE_forest_broad_0_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1819240665]
+[node name="TREE_forest_broad_0_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=225215255]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64.38788, 16.667496, -434.7952)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1383,7 +1383,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("126_kquv7")
 
-[node name="TREE_forest_broad_0_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1488496640]
+[node name="TREE_forest_broad_0_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=409945926]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64.38788, 16.667496, -434.7952)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1391,7 +1391,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("127_w6jpt")
 
-[node name="TREE_forest_broad_1_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1389521399]
+[node name="TREE_forest_broad_1_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1808372616]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 190.99548, 15.231465, -436.38416)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1399,7 +1399,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("128_qfrk1")
 
-[node name="TREE_forest_broad_1_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1430747442]
+[node name="TREE_forest_broad_1_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1246441916]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 190.99548, 15.231465, -436.38416)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1407,7 +1407,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("129_no16n")
 
-[node name="TREE_forest_broad_2_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1707966536]
+[node name="TREE_forest_broad_2_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2043607692]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 320.0426, 14.018304, -434.45963)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1415,7 +1415,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("130_k7iu1")
 
-[node name="TREE_forest_broad_2_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=342859559]
+[node name="TREE_forest_broad_2_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2038935469]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 320.0426, 14.018304, -434.45963)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1423,7 +1423,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("131_jk72j")
 
-[node name="TREE_forest_broad_3_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2126943111]
+[node name="TREE_forest_broad_3_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=356130351]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 446.0818, 12.324677, -436.24094)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1431,7 +1431,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("132_a3mxm")
 
-[node name="TREE_forest_broad_3_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=539055189]
+[node name="TREE_forest_broad_3_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=536922341]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 446.0818, 12.324677, -436.24094)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1439,7 +1439,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("133_epua0")
 
-[node name="TREE_forest_broad_4_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=830928233]
+[node name="TREE_forest_broad_4_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2100047087]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 569.7042, 10.518689, -437.3058)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1447,7 +1447,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("134_vqqe1")
 
-[node name="TREE_forest_broad_4_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2017820023]
+[node name="TREE_forest_broad_4_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=878095277]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 569.7042, 10.518689, -437.3058)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1455,7 +1455,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("135_5r812")
 
-[node name="TREE_forest_broad_-5_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1556779423]
+[node name="TREE_forest_broad_-5_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=430354306]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -576.2396, 22.432072, -317.34256)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1463,7 +1463,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("136_k6int")
 
-[node name="TREE_forest_broad_-5_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=771301247]
+[node name="TREE_forest_broad_-5_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=881230399]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -576.2396, 22.432072, -317.34256)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1471,7 +1471,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("137_duwej")
 
-[node name="TREE_forest_broad_-4_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1750232591]
+[node name="TREE_forest_broad_-4_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1603495613]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -447.3399, 20.948229, -322.394)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1479,7 +1479,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("138_k2xyc")
 
-[node name="TREE_forest_broad_-4_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=806322753]
+[node name="TREE_forest_broad_-4_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=243627935]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -447.3399, 20.948229, -322.394)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1487,7 +1487,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("139_eoyjq")
 
-[node name="TREE_forest_broad_-2_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=135228174]
+[node name="TREE_forest_broad_-2_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=708485314]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -191.64151, 17.125742, -324.83014)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1495,7 +1495,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("140_40xge")
 
-[node name="TREE_forest_broad_-2_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=697596919]
+[node name="TREE_forest_broad_-2_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=595883841]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -191.64151, 17.125742, -324.83014)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1503,7 +1503,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("141_cfkyj")
 
-[node name="TREE_forest_broad_-1_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1093298047]
+[node name="TREE_forest_broad_-1_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1339680221]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -64.08495, 16.027613, -322.15213)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1511,7 +1511,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("142_mvnru")
 
-[node name="TREE_forest_broad_-1_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1629093509]
+[node name="TREE_forest_broad_-1_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1600103335]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -64.08495, 16.027613, -322.15213)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1519,7 +1519,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("143_wurd0")
 
-[node name="TREE_forest_broad_0_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=74306670]
+[node name="TREE_forest_broad_0_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=74102699]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 61.887688, 14.55324, -319.29147)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1527,7 +1527,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("144_p7nqh")
 
-[node name="TREE_forest_broad_0_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=985436007]
+[node name="TREE_forest_broad_0_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=154521406]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 61.887688, 14.55324, -319.29147)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1535,7 +1535,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("145_cldm2")
 
-[node name="TREE_forest_broad_1_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1281505177]
+[node name="TREE_forest_broad_1_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=40806111]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 192.86562, 12.82592, -324.81903)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1543,7 +1543,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("146_e7hvl")
 
-[node name="TREE_forest_broad_1_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=693960850]
+[node name="TREE_forest_broad_1_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1608201131]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 192.86562, 12.82592, -324.81903)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1551,7 +1551,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("147_1scma")
 
-[node name="TREE_forest_broad_3_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=825327849]
+[node name="TREE_forest_broad_3_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1387980775]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 447.18997, 10.072874, -317.40775)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1559,7 +1559,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("148_8vnww")
 
-[node name="TREE_forest_broad_3_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1485415521]
+[node name="TREE_forest_broad_3_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=941419502]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 447.18997, 10.072874, -317.40775)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1567,7 +1567,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("149_xc4p6")
 
-[node name="TREE_forest_broad_4_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1127469623]
+[node name="TREE_forest_broad_4_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=255763765]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 573.43854, 8.088847, -323.62445)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1575,7 +1575,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("150_q3pwx")
 
-[node name="TREE_forest_broad_4_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2003652474]
+[node name="TREE_forest_broad_4_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1155577272]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 573.43854, 8.088847, -323.62445)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1583,7 +1583,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("151_4ya7o")
 
-[node name="TREE_forest_broad_-3_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1320676267]
+[node name="TREE_forest_broad_-3_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=37298891]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -322.89108, 18.900932, -319.88007)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1591,7 +1591,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("152_2m3rn")
 
-[node name="TREE_forest_broad_-3_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1999482024]
+[node name="TREE_forest_broad_-3_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1127717257]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -322.89108, 18.900932, -319.88007)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1599,7 +1599,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("153_jlv87")
 
-[node name="TREE_forest_broad_2_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=513278522]
+[node name="TREE_forest_broad_2_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=935180642]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 320.88028, 11.727412, -320.7647)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1607,7 +1607,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("154_vthjl")
 
-[node name="TREE_forest_broad_2_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2095385008]
+[node name="TREE_forest_broad_2_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=777173719]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 320.88028, 11.727412, -320.7647)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1615,7 +1615,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("155_75tfh")
 
-[node name="TREE_forest_broad_-5_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1260295149]
+[node name="TREE_forest_broad_-5_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1818404364]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -576.64374, 19.492498, -189.72429)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1623,7 +1623,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("156_susom")
 
-[node name="TREE_forest_broad_-5_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1608845500]
+[node name="TREE_forest_broad_-5_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1883951922]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -576.64374, 19.492498, -189.72429)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1631,7 +1631,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("157_xug3a")
 
-[node name="TREE_forest_broad_-4_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2031252422]
+[node name="TREE_forest_broad_-4_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=827168222]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -452.07413, 17.934277, -195.4954)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1639,7 +1639,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("158_2a8oh")
 
-[node name="TREE_forest_broad_-4_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1937133857]
+[node name="TREE_forest_broad_-4_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=226977507]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -452.07413, 17.934277, -195.4954)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1647,7 +1647,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("159_aac5l")
 
-[node name="TREE_forest_broad_-3_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=261737464]
+[node name="TREE_forest_broad_-3_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=32245303]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -319.40866, 16.035137, -223.04926)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1655,7 +1655,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("28_ogikw")
 
-[node name="TREE_forest_broad_-3_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1341076230]
+[node name="TREE_forest_broad_-3_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1960218494]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -319.40866, 16.035137, -223.04926)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1663,7 +1663,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("49_ipqir")
 
-[node name="TREE_forest_broad_-2_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1439199171]
+[node name="TREE_forest_broad_-2_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1565564842]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -199.88516, 15.070782, -225.64174)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1671,7 +1671,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("29_47b4r")
 
-[node name="TREE_forest_broad_-2_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=941940416]
+[node name="TREE_forest_broad_-2_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1542490572]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -199.88516, 15.070782, -225.64174)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1679,7 +1679,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("51_cb55b")
 
-[node name="TREE_forest_broad_-1_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=440055009]
+[node name="TREE_forest_broad_-1_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2134695832]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -54.56893, 14.040924, -221.11371)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1687,7 +1687,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("30_n7tnc")
 
-[node name="TREE_forest_broad_-1_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=490930497]
+[node name="TREE_forest_broad_-1_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=209671793]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -54.56893, 14.040924, -221.11371)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1695,7 +1695,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("53_c68qu")
 
-[node name="TREE_forest_broad_0_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=56808688]
+[node name="TREE_forest_broad_0_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=752394867]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 59.94479, 12.644506, -218.69308)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1703,7 +1703,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("31_4r28a")
 
-[node name="TREE_forest_broad_0_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=271431160]
+[node name="TREE_forest_broad_0_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=667430060]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 59.94479, 12.644506, -218.69308)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1711,7 +1711,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("55_vpxst")
 
-[node name="TREE_forest_broad_1_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=476901012]
+[node name="TREE_forest_broad_1_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=906900868]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 200.56093, 11.029219, -229.15984)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1719,7 +1719,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("32_80rvp")
 
-[node name="TREE_forest_broad_1_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1914657773]
+[node name="TREE_forest_broad_1_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=462171105]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 200.56093, 11.029219, -229.15984)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1727,7 +1727,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("57_bpp06")
 
-[node name="TREE_forest_broad_2_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=654619719]
+[node name="TREE_forest_broad_2_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1320634111]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 327.22952, 8.695411, -197.22072)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1735,7 +1735,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("33_tbja7")
 
-[node name="TREE_forest_broad_2_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1297241996]
+[node name="TREE_forest_broad_2_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2018237715]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 327.22952, 8.695411, -197.22072)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1743,7 +1743,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("59_gke72")
 
-[node name="TREE_forest_broad_3_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=913900571]
+[node name="TREE_forest_broad_3_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=393229812]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 448.68765, 6.53605, -192.85664)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1751,7 +1751,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("172_dm5sx")
 
-[node name="TREE_forest_broad_3_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1422162922]
+[node name="TREE_forest_broad_3_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1176574692]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 448.68765, 6.53605, -192.85664)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1759,7 +1759,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("173_qbflo")
 
-[node name="TREE_forest_broad_4_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=92967106]
+[node name="TREE_forest_broad_4_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=754851328]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 572.49646, 4.5947976, -184.70418)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1767,7 +1767,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("174_ecnhv")
 
-[node name="TREE_forest_broad_4_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=457542108]
+[node name="TREE_forest_broad_4_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=396118244]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 572.49646, 4.5947976, -184.70418)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1775,7 +1775,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("175_xe2mx")
 
-[node name="TREE_forest_broad_-5_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1352420357]
+[node name="TREE_forest_broad_-5_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2052452626]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -574.85406, 15.996132, -65.0105)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1783,7 +1783,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("176_wcvjx")
 
-[node name="TREE_forest_broad_-5_-1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2033204865]
+[node name="TREE_forest_broad_-5_-1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=412103786]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -574.85406, 15.996132, -65.0105)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1791,7 +1791,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("177_nm7y6")
 
-[node name="TREE_forest_broad_-4_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=281635191]
+[node name="TREE_forest_broad_-4_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=383126132]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -447.18848, 14.706954, -63.387768)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1799,7 +1799,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("178_784q2")
 
-[node name="TREE_forest_broad_-4_-1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=976344]
+[node name="TREE_forest_broad_-4_-1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2046828894]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -447.18848, 14.706954, -63.387768)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1807,7 +1807,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("179_p8lcd")
 
-[node name="TREE_forest_broad_2_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1583559089]
+[node name="TREE_forest_broad_2_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1231153068]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 353.24854, 5.534706, -73.3972)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1815,7 +1815,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("39_b24jn")
 
-[node name="TREE_forest_broad_2_-1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1099616413]
+[node name="TREE_forest_broad_2_-1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=146685714]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 353.24854, 5.534706, -73.3972)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1823,7 +1823,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("71_23kjc")
 
-[node name="TREE_forest_broad_3_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1903658227]
+[node name="TREE_forest_broad_3_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1156121463]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 445.80814, 3.9385529, -62.870354)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1831,7 +1831,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("182_cb2ng")
 
-[node name="TREE_forest_broad_3_-1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1271652692]
+[node name="TREE_forest_broad_3_-1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1883931940]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 445.80814, 3.9385529, -62.870354)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1839,7 +1839,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("183_xgy0n")
 
-[node name="TREE_forest_broad_4_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1816522741]
+[node name="TREE_forest_broad_4_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=386450686]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 569.59155, 2.242236, -62.61316)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1847,7 +1847,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("184_a5h4y")
 
-[node name="TREE_forest_broad_4_-1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=41653397]
+[node name="TREE_forest_broad_4_-1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1562498327]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 569.59155, 2.242236, -62.61316)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1855,7 +1855,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("185_taqln")
 
-[node name="TREE_forest_broad_-3_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1759478639]
+[node name="TREE_forest_broad_-3_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=768138403]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -375.61502, 14.193749, -69.425)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1863,7 +1863,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("34_lplek")
 
-[node name="TREE_forest_broad_-3_-1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1323745807]
+[node name="TREE_forest_broad_-3_-1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=960685432]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -375.61502, 14.193749, -69.425)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1871,7 +1871,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("61_c5irp")
 
-[node name="TREE_forest_broad_-5_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1800654061]
+[node name="TREE_forest_broad_-5_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=295354237]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -573.139, 12.918044, 62.597744)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1879,7 +1879,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("188_8tv41")
 
-[node name="TREE_forest_broad_-5_0_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1053888170]
+[node name="TREE_forest_broad_-5_0_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1467040961]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -573.139, 12.918044, 62.597744)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1887,7 +1887,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("189_8ueax")
 
-[node name="TREE_forest_broad_-4_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=183304987]
+[node name="TREE_forest_broad_-4_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1249030941]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -454.5906, 11.701957, 60.17547)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1895,7 +1895,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("190_lr4eq")
 
-[node name="TREE_forest_broad_-4_0_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1781619735]
+[node name="TREE_forest_broad_-4_0_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=418317488]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -454.5906, 11.701957, 60.17547)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1903,7 +1903,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("191_jeyck")
 
-[node name="TREE_forest_broad_3_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=541084544]
+[node name="TREE_forest_broad_3_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1493031643]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 444.5984, 1.1513069, 64.15744)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1911,7 +1911,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("192_qxppa")
 
-[node name="TREE_forest_broad_3_0_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1162670940]
+[node name="TREE_forest_broad_3_0_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=916045204]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 444.5984, 1.1513069, 64.15744)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1919,7 +1919,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("193_2h40a")
 
-[node name="TREE_forest_broad_4_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1529891120]
+[node name="TREE_forest_broad_4_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1913087996]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 574.9245, -0.26165524, 64.3369)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1927,7 +1927,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("194_uv60m")
 
-[node name="TREE_forest_broad_4_0_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1479201794]
+[node name="TREE_forest_broad_4_0_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=732346402]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 574.9245, -0.26165524, 64.3369)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1935,7 +1935,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("195_2ycrd")
 
-[node name="TREE_forest_broad_-3_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1659265498]
+[node name="TREE_forest_broad_-3_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1001902115]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -377.78857, 10.787142, 63.45)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1943,7 +1943,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("40_wwe11")
 
-[node name="TREE_forest_broad_-3_0_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2029419628]
+[node name="TREE_forest_broad_-3_0_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=53626399]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -377.78857, 10.787142, 63.45)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1951,7 +1951,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("73_khtdh")
 
-[node name="TREE_forest_broad_2_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1689428754]
+[node name="TREE_forest_broad_2_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=230110546]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 349.52194, 1.746875, 73.12202)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1959,7 +1959,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("43_4fng1")
 
-[node name="TREE_forest_broad_2_0_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=55499154]
+[node name="TREE_forest_broad_2_0_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1450140734]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 349.52194, 1.746875, 73.12202)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1967,7 +1967,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("79_qdfxb")
 
-[node name="TREE_forest_broad_-5_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1290614774]
+[node name="TREE_forest_broad_-5_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1741229210]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -575.97784, 10.23965, 192.05367)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1975,7 +1975,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("200_h2y8k")
 
-[node name="TREE_forest_broad_-5_1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1567429250]
+[node name="TREE_forest_broad_-5_1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=159013721]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -575.97784, 10.23965, 192.05367)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1983,7 +1983,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("201_6sxhq")
 
-[node name="TREE_forest_broad_-4_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1963907203]
+[node name="TREE_forest_broad_-4_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=234415918]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -455.0428, 8.928527, 192.2025)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -1991,7 +1991,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("202_0x2yw")
 
-[node name="TREE_forest_broad_-4_1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=489231330]
+[node name="TREE_forest_broad_-4_1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=389021688]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -455.0428, 8.928527, 192.2025)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -1999,7 +1999,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("203_uq0cu")
 
-[node name="TREE_forest_broad_2_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1067681880]
+[node name="TREE_forest_broad_2_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=958007540]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 347.39206, -0.7017857, 193.81047)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2007,7 +2007,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("47_adwbb")
 
-[node name="TREE_forest_broad_2_1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1933790633]
+[node name="TREE_forest_broad_2_1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1504157836]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 347.39206, -0.7017857, 193.81047)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2015,7 +2015,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("87_oe6wx")
 
-[node name="TREE_forest_broad_3_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=180935891]
+[node name="TREE_forest_broad_3_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1253814309]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 449.74927, -1.4246668, 191.21294)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2023,7 +2023,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("206_3sdmk")
 
-[node name="TREE_forest_broad_3_1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=267504450]
+[node name="TREE_forest_broad_3_1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=317287220]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 449.74927, -1.4246668, 191.21294)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2031,7 +2031,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("207_bj0fg")
 
-[node name="TREE_forest_broad_4_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1664016385]
+[node name="TREE_forest_broad_4_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=149794416]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 573.6468, -2.8702755, 186.19116)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2039,7 +2039,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("208_j8pd4")
 
-[node name="TREE_forest_broad_4_1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1107058413]
+[node name="TREE_forest_broad_4_1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=843534080]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 573.6468, -2.8702755, 186.19116)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2047,7 +2047,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("209_8vixj")
 
-[node name="TREE_forest_broad_-3_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=835229922]
+[node name="TREE_forest_broad_-3_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2003975225]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -379.72336, 8.416667, 206.39333)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2055,7 +2055,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("44_5wwxu")
 
-[node name="TREE_forest_broad_-3_1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=862128274]
+[node name="TREE_forest_broad_-3_1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1495207031]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -379.72336, 8.416667, 206.39333)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2063,7 +2063,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("81_7twnk")
 
-[node name="TREE_forest_broad_-5_2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1637603404]
+[node name="TREE_forest_broad_-5_2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1140010055]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -585.67755, 8.928125, 267.06)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2071,7 +2071,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("212_14slg")
 
-[node name="TREE_forest_broad_-5_2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=139191038]
+[node name="TREE_forest_broad_-5_2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1937819244]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -585.67755, 8.928125, 267.06)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2079,7 +2079,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("213_jnark")
 
-[node name="TREE_forest_broad_-4_2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1473296913]
+[node name="TREE_forest_broad_-4_2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1735077924]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -448.14395, 7.7335, 265.97253)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2087,7 +2087,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("214_rbh0j")
 
-[node name="TREE_forest_broad_-4_2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1661253029]
+[node name="TREE_forest_broad_-4_2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1675771320]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -448.14395, 7.7335, 265.97253)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2095,7 +2095,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("215_lcpbj")
 
-[node name="TREE_forest_broad_2_2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=766881555]
+[node name="TREE_forest_broad_2_2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=400709051]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 354.659, -2.006, 262.48798)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2103,7 +2103,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("216_a3ffb")
 
-[node name="TREE_forest_broad_2_2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1082201050]
+[node name="TREE_forest_broad_2_2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1331055114]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 354.659, -2.006, 262.48798)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2111,7 +2111,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("217_414y7")
 
-[node name="TREE_forest_broad_3_2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1877438309]
+[node name="TREE_forest_broad_3_2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=332304290]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 446.86584, -2.6941667, 264.72083)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2119,7 +2119,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("218_6yutu")
 
-[node name="TREE_forest_broad_3_2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1743554211]
+[node name="TREE_forest_broad_3_2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1790488723]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 446.86584, -2.6941667, 264.72083)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2127,7 +2127,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("219_kdv8s")
 
-[node name="TREE_forest_broad_4_2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2022499033]
+[node name="TREE_forest_broad_4_2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2132233783]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 556.2486, -4.202381, 264.59)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2135,7 +2135,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("220_obhwe")
 
-[node name="TREE_forest_broad_4_2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1144282387]
+[node name="TREE_forest_broad_4_2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=146472630]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 556.2486, -4.202381, 264.59)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2143,76 +2143,76 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("221_j620r")
 
-[node name="TREE_urban_0_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=656259897]
+[node name="TREE_urban_0_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=138042056]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.0375, 8.69125, -46.178745)
 multimesh = ExtResource("48_ypme0")
 
-[node name="TREE_urban_-1_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1547105448]
+[node name="TREE_urban_-1_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=362264843]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -62.325, 11.338333, -57.09834)
 multimesh = ExtResource("49_6j0lh")
 
-[node name="TREE_urban_-1_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=79353885]
+[node name="TREE_urban_-1_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1967382218]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -41.055, 8.565001, 43.11667)
 multimesh = ExtResource("50_4fwh0")
 
-[node name="TREE_urban_0_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1570475963]
+[node name="TREE_urban_0_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1432792071]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 54.334003, 5.7629995, 70.268)
 multimesh = ExtResource("51_x65vv")
 
-[node name="TREE_urban_-2_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1642696465]
+[node name="TREE_urban_-2_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=262102889]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -133.09, 14.175, -87.375)
 multimesh = ExtResource("226_0gfav")
 
-[node name="TREE_urban_1_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1539124477]
+[node name="TREE_urban_1_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1468072322]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 163.48001, 6.9, -28.74)
 multimesh = ExtResource("227_jgn5s")
 
-[node name="TREE_urban_1_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=159273211]
+[node name="TREE_urban_1_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2141155079]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 172.555, 4.566667, 52.61333)
 cast_shadow = 0
 multimesh = ExtResource("229_oufee")
 
-[node name="TREE_urban_-2_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1053931747]
+[node name="TREE_urban_-2_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=894729860]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -137.92, 7.96, 122.61)
 cast_shadow = 0
 multimesh = ExtResource("228_1rabf")
 
-[node name="TREE_urban_-1_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1810994703]
+[node name="TREE_urban_-1_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1055530826]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -45.494995, 4.835, 179.47168)
 cast_shadow = 0
 multimesh = ExtResource("230_dag6o")
 
-[node name="TREE_urban_1_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=642857788]
+[node name="TREE_urban_1_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=10726875]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 201.58499, 2.005, 170.8)
 cast_shadow = 0
 multimesh = ExtResource("232_anw80")
 
-[node name="TREE_urban_0_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1114007201]
+[node name="TREE_urban_0_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=503824355]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 87.4625, 2.49, 218.205)
 cast_shadow = 0
 multimesh = ExtResource("231_qa3j1")
 
-[node name="TREE_cypress_-3_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1640281659]
+[node name="TREE_cypress_-3_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=219437136]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -277.265, 12.205, -23.150002)
 cast_shadow = 0
 multimesh = ExtResource("235_q810e")
 
-[node name="TREE_cypress_-2_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2082967399]
+[node name="TREE_cypress_-2_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1353839353]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -215.04875, 13.3637495, -20.555)
 cast_shadow = 0
 multimesh = ExtResource("54_gkcsq")
 
-[node name="TREE_cypress_-2_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1863066844]
+[node name="TREE_cypress_-2_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1261039627]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -225.32199, 11.736, 30.058002)
 cast_shadow = 0
 multimesh = ExtResource("234_s7jmj")
 
-[node name="TREE_cypress_-3_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=88132160]
+[node name="TREE_cypress_-3_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1150246484]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -294.81, 10.97, 7.86)
 cast_shadow = 0
 multimesh = ExtResource("237_spbn8")
 
-[node name="BUSH_-5_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=995709285]
+[node name="BUSH_-5_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=778964265]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -586.2093, 24.410625, -435.2048)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2220,7 +2220,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("236_l1rqx")
 
-[node name="BUSH_-5_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1721106010]
+[node name="BUSH_-5_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=145474050]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -586.2093, 24.410625, -435.2048)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2228,7 +2228,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("237_8h1r5")
 
-[node name="BUSH_-4_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1505704925]
+[node name="BUSH_-4_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1018018314]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -445.56873, 23.41439, -433.41498)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2236,7 +2236,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("238_pyper")
 
-[node name="BUSH_-4_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=181639021]
+[node name="BUSH_-4_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=65809762]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -445.56873, 23.41439, -433.41498)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2244,7 +2244,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("239_5b3na")
 
-[node name="BUSH_-3_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1342405481]
+[node name="BUSH_-3_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1496047968]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -323.30627, 21.849695, -430.16574)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2252,7 +2252,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("240_rc173")
 
-[node name="BUSH_-3_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2024523102]
+[node name="BUSH_-3_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=785713819]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -323.30627, 21.849695, -430.16574)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2260,7 +2260,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("241_wg62j")
 
-[node name="BUSH_-2_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=488180313]
+[node name="BUSH_-2_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=846705051]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -197.8256, 19.81158, -437.71313)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2268,7 +2268,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("242_1pfi1")
 
-[node name="BUSH_-2_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1892618490]
+[node name="BUSH_-2_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=696995729]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -197.8256, 19.81158, -437.71313)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2276,7 +2276,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("243_nowwj")
 
-[node name="BUSH_-1_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1609876126]
+[node name="BUSH_-1_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=670986675]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -63.470158, 18.170635, -436.4591)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2284,7 +2284,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("244_5wskx")
 
-[node name="BUSH_-1_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1002109930]
+[node name="BUSH_-1_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1208999768]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -63.470158, 18.170635, -436.4591)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2292,7 +2292,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("245_fcnqk")
 
-[node name="BUSH_0_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1782475863]
+[node name="BUSH_0_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1235917204]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64.41118, 16.691696, -437.7571)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2300,7 +2300,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("246_pedc8")
 
-[node name="BUSH_0_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1413780168]
+[node name="BUSH_0_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1764734017]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64.41118, 16.691696, -437.7571)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2308,7 +2308,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("247_kg7c6")
 
-[node name="BUSH_1_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1588528808]
+[node name="BUSH_1_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1304571431]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 198.53055, 15.040147, -431.28717)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2316,7 +2316,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("248_0gaun")
 
-[node name="BUSH_1_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1591712174]
+[node name="BUSH_1_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1382052595]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 198.53055, 15.040147, -431.28717)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2324,7 +2324,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("249_fsibx")
 
-[node name="BUSH_2_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1550304390]
+[node name="BUSH_2_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1180512087]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 317.67233, 14.165784, -437.64407)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2332,7 +2332,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("250_pdgee")
 
-[node name="BUSH_2_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2036274945]
+[node name="BUSH_2_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=400143768]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 317.67233, 14.165784, -437.64407)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2340,7 +2340,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("251_d2yux")
 
-[node name="BUSH_3_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1029477443]
+[node name="BUSH_3_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1819180234]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 449.2589, 12.325644, -432.78726)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2348,7 +2348,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("252_6slfd")
 
-[node name="BUSH_3_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=964004101]
+[node name="BUSH_3_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=871742656]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 449.2589, 12.325644, -432.78726)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2356,7 +2356,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("253_hvdy6")
 
-[node name="BUSH_4_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=295005731]
+[node name="BUSH_4_-4" type="MultiMeshInstance3D" parent="Vegetation" unique_id=516346119]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 567.67, 10.610338, -438.5286)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2364,7 +2364,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("254_m336m")
 
-[node name="BUSH_4_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=453834874]
+[node name="BUSH_4_-4_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2129438074]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 567.67, 10.610338, -438.5286)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2372,7 +2372,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("255_frjon")
 
-[node name="BUSH_-5_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=606768745]
+[node name="BUSH_-5_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1026141962]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -574.8882, 22.490122, -322.10736)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2380,7 +2380,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("256_v7kff")
 
-[node name="BUSH_-5_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=664535343]
+[node name="BUSH_-5_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1416345472]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -574.8882, 22.490122, -322.10736)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2388,7 +2388,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("257_3mc1k")
 
-[node name="BUSH_-4_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=908279974]
+[node name="BUSH_-4_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2083939752]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -451.41904, 21.009657, -321.74225)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2396,7 +2396,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("258_kbqwc")
 
-[node name="BUSH_-4_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=258025469]
+[node name="BUSH_-4_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1886667063]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -451.41904, 21.009657, -321.74225)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2404,7 +2404,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("259_hb5cd")
 
-[node name="BUSH_-3_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=710538370]
+[node name="BUSH_-3_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1177513351]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -324.7219, 18.83551, -317.6793)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2412,7 +2412,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("260_nppv1")
 
-[node name="BUSH_-3_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=289956153]
+[node name="BUSH_-3_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=452177738]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -324.7219, 18.83551, -317.6793)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2420,7 +2420,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("261_jmye0")
 
-[node name="BUSH_-2_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=864136473]
+[node name="BUSH_-2_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=690818367]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -191.82565, 17.197441, -330.44894)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2428,7 +2428,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("262_p4s5u")
 
-[node name="BUSH_-2_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=146565207]
+[node name="BUSH_-2_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=330272682]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -191.82565, 17.197441, -330.44894)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2436,7 +2436,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("263_spcli")
 
-[node name="BUSH_-1_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=125918539]
+[node name="BUSH_-1_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=853128392]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -66.29923, 16.026236, -320.22122)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2444,7 +2444,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("264_17hps")
 
-[node name="BUSH_-1_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1520063368]
+[node name="BUSH_-1_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=692980646]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -66.29923, 16.026236, -320.22122)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2452,7 +2452,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("265_e7tgr")
 
-[node name="BUSH_0_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=954159966]
+[node name="BUSH_0_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=626596551]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64.76562, 14.533416, -321.10938)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2460,7 +2460,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("266_o7mh3")
 
-[node name="BUSH_0_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=432473019]
+[node name="BUSH_0_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1849771089]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64.76562, 14.533416, -321.10938)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2468,7 +2468,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("267_df7y4")
 
-[node name="BUSH_1_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=943208936]
+[node name="BUSH_1_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=600102912]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 190.48677, 12.750901, -321.90903)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2476,7 +2476,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("268_w7k1q")
 
-[node name="BUSH_1_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=432284054]
+[node name="BUSH_1_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=961741203]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 190.48677, 12.750901, -321.90903)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2484,7 +2484,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("269_u3l50")
 
-[node name="BUSH_2_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=82115064]
+[node name="BUSH_2_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=422785033]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 327.1334, 11.48643, -314.77435)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2492,7 +2492,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("270_4vvhv")
 
-[node name="BUSH_2_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1136058895]
+[node name="BUSH_2_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=277606382]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 327.1334, 11.48643, -314.77435)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2500,7 +2500,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("271_kgdq8")
 
-[node name="BUSH_4_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2051937633]
+[node name="BUSH_4_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1102323332]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 576.67737, 8.014763, -325.5511)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2508,7 +2508,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("272_72g3h")
 
-[node name="BUSH_4_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=605375855]
+[node name="BUSH_4_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1990892838]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 576.67737, 8.014763, -325.5511)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2516,7 +2516,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("273_7okht")
 
-[node name="BUSH_3_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=241179375]
+[node name="BUSH_3_-3" type="MultiMeshInstance3D" parent="Vegetation" unique_id=592633341]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 442.8742, 10.061286, -316.1704)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2524,7 +2524,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("274_tnitw")
 
-[node name="BUSH_3_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1873565968]
+[node name="BUSH_3_-3_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=591988849]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 442.8742, 10.061286, -316.1704)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2532,7 +2532,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("275_oyxxs")
 
-[node name="BUSH_-5_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1168454581]
+[node name="BUSH_-5_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1518936141]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -580.3738, 19.767529, -197.40576)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2540,7 +2540,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("276_r16qm")
 
-[node name="BUSH_-5_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1299249058]
+[node name="BUSH_-5_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1653270738]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -580.3738, 19.767529, -197.40576)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2548,7 +2548,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("277_7ywjo")
 
-[node name="BUSH_-4_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1370857407]
+[node name="BUSH_-4_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=142314058]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -453.99738, 17.874683, -191.61388)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2556,7 +2556,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("278_a4ufw")
 
-[node name="BUSH_-4_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1430604579]
+[node name="BUSH_-4_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1651978748]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -453.99738, 17.874683, -191.61388)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2564,7 +2564,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("279_v1n2u")
 
-[node name="BUSH_-3_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1501086053]
+[node name="BUSH_-3_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1775524298]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -309.44913, 15.804047, -217.56213)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2572,7 +2572,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("55_nemrd")
 
-[node name="BUSH_-3_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1769334713]
+[node name="BUSH_-3_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2118954793]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -309.44913, 15.804047, -217.56213)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2580,7 +2580,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("96_r36ar")
 
-[node name="BUSH_-2_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=120790166]
+[node name="BUSH_-2_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1790729467]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -193.42934, 15.070002, -223.68843)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2588,7 +2588,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("56_ovsq7")
 
-[node name="BUSH_-2_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1534360339]
+[node name="BUSH_-2_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=153385756]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -193.42934, 15.070002, -223.68843)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2596,7 +2596,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("98_qgtyc")
 
-[node name="BUSH_-1_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=655554608]
+[node name="BUSH_-1_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2090095133]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -58.59773, 14.028409, -218.18228)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2604,7 +2604,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("57_1x2v7")
 
-[node name="BUSH_-1_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1150723911]
+[node name="BUSH_-1_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1411402265]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -58.59773, 14.028409, -218.18228)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2612,7 +2612,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("100_b7d2f")
 
-[node name="BUSH_0_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=95216251]
+[node name="BUSH_0_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2005430407]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51.720284, 12.689427, -217.96541)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2620,7 +2620,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("58_pyoy1")
 
-[node name="BUSH_0_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1371823626]
+[node name="BUSH_0_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1114310977]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51.720284, 12.689427, -217.96541)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2628,7 +2628,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("102_ek67f")
 
-[node name="BUSH_1_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=232422103]
+[node name="BUSH_1_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=337455411]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 199.65172, 11.027804, -226.0417)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2636,7 +2636,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("59_o43it")
 
-[node name="BUSH_1_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1096155509]
+[node name="BUSH_1_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1610189370]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 199.65172, 11.027804, -226.0417)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2644,7 +2644,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("104_drajn")
 
-[node name="BUSH_2_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=904259704]
+[node name="BUSH_2_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1974660836]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 330.30127, 8.824769, -202.7937)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2652,7 +2652,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("60_4jxxf")
 
-[node name="BUSH_2_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=860803519]
+[node name="BUSH_2_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1755925293]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 330.30127, 8.824769, -202.7937)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2660,7 +2660,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("106_a5ehq")
 
-[node name="BUSH_3_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=464027318]
+[node name="BUSH_3_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2013478852]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 447.86832, 6.3962064, -185.80171)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2668,7 +2668,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("292_67v5b")
 
-[node name="BUSH_3_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1785150138]
+[node name="BUSH_3_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=375424572]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 447.86832, 6.3962064, -185.80171)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2676,7 +2676,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("293_n0pqw")
 
-[node name="BUSH_4_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=905615802]
+[node name="BUSH_4_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=22531147]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 572.505, 4.576302, -184.83728)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2684,7 +2684,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("294_2v43j")
 
-[node name="BUSH_4_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1754349474]
+[node name="BUSH_4_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=488043542]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 572.505, 4.576302, -184.83728)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2692,7 +2692,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("295_khjii")
 
-[node name="BUSH_-6_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1802620437]
+[node name="BUSH_-6_-2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=717120213]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -640.47, 19.92, -159.745)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2700,7 +2700,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("296_jabxl")
 
-[node name="BUSH_-6_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=353219761]
+[node name="BUSH_-6_-2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=151596518]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -640.47, 19.92, -159.745)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2708,7 +2708,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("297_4vn8t")
 
-[node name="BUSH_-5_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1730220776]
+[node name="BUSH_-5_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=517850616]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -578.2943, 16.014822, -64.94975)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2716,7 +2716,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("298_ppebx")
 
-[node name="BUSH_-5_-1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=815190702]
+[node name="BUSH_-5_-1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=877270951]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -578.2943, 16.014822, -64.94975)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2724,7 +2724,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("299_dlrwk")
 
-[node name="BUSH_-4_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1709738897]
+[node name="BUSH_-4_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1208663603]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -452.5049, 14.881526, -68.18764)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2732,7 +2732,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("300_3ir6d")
 
-[node name="BUSH_-4_-1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=171358871]
+[node name="BUSH_-4_-1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1871280808]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -452.5049, 14.881526, -68.18764)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2740,7 +2740,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("301_trlkk")
 
-[node name="BUSH_2_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1502887860]
+[node name="BUSH_2_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=24695607]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 356.46927, 5.3645, -68.90624)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2748,7 +2748,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("66_7voq0")
 
-[node name="BUSH_2_-1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1614377325]
+[node name="BUSH_2_-1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=591588110]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 356.46927, 5.3645, -68.90624)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2756,7 +2756,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("118_h8blx")
 
-[node name="BUSH_3_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2133368737]
+[node name="BUSH_3_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=528954118]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 445.98547, 3.9773977, -65.623276)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2764,7 +2764,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("304_cvrfv")
 
-[node name="BUSH_3_-1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1991103420]
+[node name="BUSH_3_-1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=600635617]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 445.98547, 3.9773977, -65.623276)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2772,7 +2772,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("305_3cmtw")
 
-[node name="BUSH_4_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=141786316]
+[node name="BUSH_4_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=688906493]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 575.0721, 2.1617723, -63.65227)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2780,7 +2780,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("306_hl5s4")
 
-[node name="BUSH_4_-1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1213456732]
+[node name="BUSH_4_-1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1632041457]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 575.0721, 2.1617723, -63.65227)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2788,7 +2788,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("307_hyt4v")
 
-[node name="BUSH_-3_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=286116536]
+[node name="BUSH_-3_-1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1981467919]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -374.76624, 13.914999, -60.195)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2796,7 +2796,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("61_66vw3")
 
-[node name="BUSH_-3_-1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=250250894]
+[node name="BUSH_-3_-1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1966195562]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -374.76624, 13.914999, -60.195)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2804,7 +2804,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("108_xfyou")
 
-[node name="BUSH_-5_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1213781547]
+[node name="BUSH_-5_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=347108910]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -572.002, 12.902389, 62.1438)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2812,7 +2812,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("310_5ma30")
 
-[node name="BUSH_-5_0_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1945431019]
+[node name="BUSH_-5_0_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=774956087]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -572.002, 12.902389, 62.1438)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2820,7 +2820,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("311_5a7y1")
 
-[node name="BUSH_-4_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1974429379]
+[node name="BUSH_-4_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1881450686]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -455.79135, 11.713332, 61.679474)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2828,7 +2828,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("312_6p3sp")
 
-[node name="BUSH_-4_0_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1655599480]
+[node name="BUSH_-4_0_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=25719197]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -455.79135, 11.713332, 61.679474)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2836,7 +2836,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("313_ui161")
 
-[node name="BUSH_2_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2144326354]
+[node name="BUSH_2_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1802022213]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 347.10257, 1.891915, 68.75958)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2844,7 +2844,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("70_pax5t")
 
-[node name="BUSH_2_0_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1049796828]
+[node name="BUSH_2_0_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=792623784]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 347.10257, 1.891915, 68.75958)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2852,7 +2852,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("126_p8hh0")
 
-[node name="BUSH_3_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=448003556]
+[node name="BUSH_3_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1274118198]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 449.49353, 1.1054665, 64.490944)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2860,7 +2860,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("316_uhbms")
 
-[node name="BUSH_3_0_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2127313295]
+[node name="BUSH_3_0_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=155059519]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 449.49353, 1.1054665, 64.490944)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2868,7 +2868,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("317_poibt")
 
-[node name="BUSH_4_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1794269522]
+[node name="BUSH_4_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1660510464]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 570.4354, -0.15177214, 64.671646)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2876,7 +2876,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("318_3bplc")
 
-[node name="BUSH_4_0_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2115219342]
+[node name="BUSH_4_0_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=52308231]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 570.4354, -0.15177214, 64.671646)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2884,7 +2884,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("319_mqf1b")
 
-[node name="BUSH_-3_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1588795052]
+[node name="BUSH_-3_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=412206860]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -376.63998, 11.526668, 41.96)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2892,7 +2892,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("67_aq7ps")
 
-[node name="BUSH_-3_0_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1286900010]
+[node name="BUSH_-3_0_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=84090316]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -376.63998, 11.526668, 41.96)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2900,7 +2900,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("120_lr5aa")
 
-[node name="BUSH_-6_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1205597689]
+[node name="BUSH_-6_0" type="MultiMeshInstance3D" parent="Vegetation" unique_id=580769195]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -640.94, 13.68, 66.64)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2908,7 +2908,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("322_k7yjc")
 
-[node name="BUSH_-6_0_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1234360814]
+[node name="BUSH_-6_0_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1327558561]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -640.94, 13.68, 66.64)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2916,7 +2916,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("323_sjax4")
 
-[node name="BUSH_-4_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=149027534]
+[node name="BUSH_-4_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2043125118]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -450.02237, 8.812623, 195.19339)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2924,7 +2924,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("324_450xo")
 
-[node name="BUSH_-4_1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1447538843]
+[node name="BUSH_-4_1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=2052312650]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -450.02237, 8.812623, 195.19339)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2932,7 +2932,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("325_csjg6")
 
-[node name="BUSH_3_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=297531161]
+[node name="BUSH_3_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=62430218]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 447.16766, -1.2905319, 185.31723)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2940,7 +2940,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("326_83nwn")
 
-[node name="BUSH_3_1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=479782142]
+[node name="BUSH_3_1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=89128582]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 447.16766, -1.2905319, 185.31723)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2948,7 +2948,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("327_hj1t1")
 
-[node name="BUSH_-5_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1319838701]
+[node name="BUSH_-5_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1865006523]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -581.61554, 10.274339, 195.8206)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2956,7 +2956,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("328_kjrqa")
 
-[node name="BUSH_-5_1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=5280030]
+[node name="BUSH_-5_1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1667693698]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -581.61554, 10.274339, 195.8206)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2964,7 +2964,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("329_waqu1")
 
-[node name="BUSH_2_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1560147515]
+[node name="BUSH_2_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=886865050]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 347.21274, -0.6741026, 189.6046)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2972,7 +2972,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("74_qruqg")
 
-[node name="BUSH_2_1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=577037610]
+[node name="BUSH_2_1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1410761579]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 347.21274, -0.6741026, 189.6046)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2980,7 +2980,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("134_76t3s")
 
-[node name="BUSH_4_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=938184088]
+[node name="BUSH_4_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1188373038]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 568.7483, -2.9244578, 193.66264)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -2988,7 +2988,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("332_btbox")
 
-[node name="BUSH_4_1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1130103513]
+[node name="BUSH_4_1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1577666407]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 568.7483, -2.9244578, 193.66264)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -2996,7 +2996,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("333_av3xf")
 
-[node name="BUSH_-3_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=986349520]
+[node name="BUSH_-3_1" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1293699457]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -378.94748, 8.412499, 189.09251)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -3004,7 +3004,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("71_wu6eu")
 
-[node name="BUSH_-3_1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1819072326]
+[node name="BUSH_-3_1_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1765028079]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -378.94748, 8.412499, 189.09251)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -3012,7 +3012,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("128_nt8qs")
 
-[node name="BUSH_-5_2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=575993571]
+[node name="BUSH_-5_2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=139780979]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -576.8293, 8.749332, 266.59332)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -3020,7 +3020,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("336_u3llo")
 
-[node name="BUSH_-5_2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1021698635]
+[node name="BUSH_-5_2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=326927001]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -576.8293, 8.749332, 266.59332)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -3028,7 +3028,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("337_33nyb")
 
-[node name="BUSH_-4_2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1120931055]
+[node name="BUSH_-4_2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=696026988]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -451.04, 7.7814283, 263.2543)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -3036,7 +3036,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("338_oa42m")
 
-[node name="BUSH_-4_2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1842158936]
+[node name="BUSH_-4_2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1528004319]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -451.04, 7.7814283, 263.2543)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -3044,7 +3044,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("339_6vxsp")
 
-[node name="BUSH_2_2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=313985950]
+[node name="BUSH_2_2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1336666632]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 360.202, -2.16, 266.896)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -3052,7 +3052,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("340_ujdm5")
 
-[node name="BUSH_2_2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=876560251]
+[node name="BUSH_2_2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=707881001]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 360.202, -2.16, 266.896)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -3060,7 +3060,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("341_5talu")
 
-[node name="BUSH_3_2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1702844966]
+[node name="BUSH_3_2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1428952585]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 442.80884, -2.6935294, 265.34592)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -3068,7 +3068,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("342_ixgow")
 
-[node name="BUSH_3_2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1162929459]
+[node name="BUSH_3_2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1212900605]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 442.80884, -2.6935294, 265.34592)
 cast_shadow = 0
 visibility_range_begin = 340.0
@@ -3076,7 +3076,7 @@ visibility_range_begin_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("343_3o1ho")
 
-[node name="BUSH_4_2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=1888850905]
+[node name="BUSH_4_2" type="MultiMeshInstance3D" parent="Vegetation" unique_id=440689205]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 558.41144, -4.247143, 264.10428)
 cast_shadow = 0
 visibility_range_end = 340.0
@@ -3084,7 +3084,7 @@ visibility_range_end_margin = 30.0
 visibility_range_fade_mode = 1
 multimesh = ExtResource("344_hxilk")
 
-[node name="BUSH_4_2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=442714772]
+[node name="BUSH_4_2_LOD" type="MultiMeshInstance3D" parent="Vegetation" unique_id=127047426]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 558.41144, -4.247143, 264.10428)
 cast_shadow = 0
 visibility_range_begin = 340.0

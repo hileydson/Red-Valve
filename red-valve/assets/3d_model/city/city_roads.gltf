@@ -12,8 +12,7 @@
 			"name":"Scene",
 			"nodes":[
 				0,
-				1,
-				2
+				1
 			]
 		}
 	],
@@ -24,10 +23,6 @@
 		},
 		{
 			"mesh":1,
-			"name":"SM_roads_curb_granite"
-		},
-		{
-			"mesh":2,
 			"name":"SM_roads_dirt_road"
 		}
 	],
@@ -59,7 +54,7 @@
 					"specularFactor":0.699999988079071
 				}
 			},
-			"name":"MI_curb_granite",
+			"name":"MI_dirt_road",
 			"normalTexture":{
 				"index":3
 			},
@@ -69,26 +64,6 @@
 				},
 				"metallicRoughnessTexture":{
 					"index":5
-				}
-			}
-		},
-		{
-			"doubleSided":true,
-			"extensions":{
-				"KHR_materials_specular":{
-					"specularFactor":0.699999988079071
-				}
-			},
-			"name":"MI_dirt_road",
-			"normalTexture":{
-				"index":6
-			},
-			"pbrMetallicRoughness":{
-				"baseColorTexture":{
-					"index":7
-				},
-				"metallicRoughnessTexture":{
-					"index":8
 				}
 			}
 		}
@@ -110,7 +85,7 @@
 			]
 		},
 		{
-			"name":"SM_road_av_padre_gabriel_curbL_00",
+			"name":"SM_road_tv_bica_surface",
 			"primitives":[
 				{
 					"attributes":{
@@ -121,21 +96,6 @@
 					},
 					"indices":9,
 					"material":1
-				}
-			]
-		},
-		{
-			"name":"SM_road_tv_bica_surface",
-			"primitives":[
-				{
-					"attributes":{
-						"POSITION":10,
-						"NORMAL":11,
-						"TEXCOORD_0":12,
-						"COLOR_0":13
-					},
-					"indices":14,
-					"material":2
 				}
 			]
 		}
@@ -164,18 +124,6 @@
 		{
 			"sampler":0,
 			"source":5
-		},
-		{
-			"sampler":0,
-			"source":6
-		},
-		{
-			"sampler":0,
-			"source":7
-		},
-		{
-			"sampler":0,
-			"source":8
 		}
 	],
 	"images":[
@@ -193,21 +141,6 @@
 			"mimeType":"image/png",
 			"name":"T_cobble_orm.png",
 			"uri":"textures/T_cobble_orm.png"
-		},
-		{
-			"mimeType":"image/png",
-			"name":"T_curb_nrm.png",
-			"uri":"textures/T_curb_nrm.png"
-		},
-		{
-			"mimeType":"image/png",
-			"name":"T_curb_alb.png",
-			"uri":"textures/T_curb_alb.png"
-		},
-		{
-			"mimeType":"image/png",
-			"name":"T_curb_orm.png",
-			"uri":"textures/T_curb_orm.png"
 		},
 		{
 			"mimeType":"image/png",
@@ -269,46 +202,6 @@
 		{
 			"bufferView":5,
 			"componentType":5126,
-			"count":19098,
-			"max":[
-				262.2015686035156,
-				14.487792015075684,
-				268.2410583496094
-			],
-			"min":[
-				-334.1945495605469,
-				0.5199516415596008,
-				-152.171142578125
-			],
-			"type":"VEC3"
-		},
-		{
-			"bufferView":6,
-			"componentType":5126,
-			"count":19098,
-			"type":"VEC3"
-		},
-		{
-			"bufferView":7,
-			"componentType":5126,
-			"count":19098,
-			"type":"VEC2"
-		},
-		{
-			"bufferView":8,
-			"componentType":5126,
-			"count":19098,
-			"type":"VEC3"
-		},
-		{
-			"bufferView":9,
-			"componentType":5123,
-			"count":29484,
-			"type":"SCALAR"
-		},
-		{
-			"bufferView":10,
-			"componentType":5126,
 			"count":1872,
 			"max":[
 				-50.33063888549805,
@@ -323,25 +216,25 @@
 			"type":"VEC3"
 		},
 		{
-			"bufferView":11,
+			"bufferView":6,
 			"componentType":5126,
 			"count":1872,
 			"type":"VEC3"
 		},
 		{
-			"bufferView":12,
+			"bufferView":7,
 			"componentType":5126,
 			"count":1872,
 			"type":"VEC2"
 		},
 		{
-			"bufferView":13,
+			"bufferView":8,
 			"componentType":5126,
 			"count":1872,
 			"type":"VEC3"
 		},
 		{
-			"bufferView":14,
+			"bufferView":9,
 			"componentType":5123,
 			"count":2808,
 			"type":"SCALAR"
@@ -380,62 +273,32 @@
 		},
 		{
 			"buffer":0,
-			"byteLength":229176,
+			"byteLength":22464,
 			"byteOffset":5303552,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":229176,
-			"byteOffset":5532728,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":152784,
-			"byteOffset":5761904,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":229176,
-			"byteOffset":5914688,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":58968,
-			"byteOffset":6143864,
-			"target":34963
-		},
-		{
-			"buffer":0,
 			"byteLength":22464,
-			"byteOffset":6202832,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":22464,
-			"byteOffset":6225296,
+			"byteOffset":5326016,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":14976,
-			"byteOffset":6247760,
+			"byteOffset":5348480,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":22464,
-			"byteOffset":6262736,
+			"byteOffset":5363456,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":5616,
-			"byteOffset":6285200,
+			"byteOffset":5385920,
 			"target":34963
 		}
 	],
@@ -447,7 +310,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":6290816,
+			"byteLength":5391536,
 			"uri":"city_roads.bin"
 		}
 	]
