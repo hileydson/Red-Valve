@@ -1,9 +1,8 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/minimap.gd" id="1_mmap"]
 [ext_resource type="Shader" path="res://shaders/ui/minimapa.gdshader" id="2_mmsh"]
 [ext_resource type="Texture2D" path="res://assets/3d_model/city/textures/T_citymap.png" id="3_mmtx"]
-[ext_resource type="Shader" path="res://shaders/ui/mapa_grande.gdshader" id="4_mgsh"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_mmap"]
 shader = ExtResource("2_mmsh")
@@ -15,17 +14,6 @@ shader_parameter/cor_borda = Color(0.78, 0.7, 0.55, 1)
 shader_parameter/cor_fora = Color(0.06, 0.07, 0.06, 1)
 shader_parameter/espessura = 0.035
 shader_parameter/opacidade = 0.92
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_mgrd"]
-shader = ExtResource("4_mgsh")
-shader_parameter/mapa = ExtResource("3_mmtx")
-shader_parameter/centro_uv = Vector2(0.5, 0.5)
-shader_parameter/meia_janela = 0.09
-shader_parameter/aspecto = 1.0
-shader_parameter/cor_fora = Color(0.055, 0.065, 0.058, 1)
-shader_parameter/cor_grade = Color(1, 1, 1, 0.045)
-shader_parameter/grade_uv = 0.147
-shader_parameter/grade_ligada = true
 
 [node name="Minimap" type="CanvasLayer" groups=["mapa_cidade"]]
 layer = 100
@@ -58,102 +46,3 @@ mouse_filter = 2
 position = Vector2(95, 95)
 color = Color(1, 0.93, 0.65, 1)
 polygon = PackedVector2Array(0, -11, 7.5, 8, 0, 4, -7.5, 8)
-
-[node name="Grande" type="CanvasLayer" parent="."]
-layer = 160
-visible = false
-
-[node name="Fundo" type="ColorRect" parent="Grande"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-color = Color(0.043, 0.047, 0.043, 0.94)
-
-[node name="Titulo" type="Label" parent="Grande/Fundo"]
-layout_mode = 1
-anchors_preset = 0
-offset_left = 64.0
-offset_top = 34.0
-offset_right = 500.0
-offset_bottom = 66.0
-text = "MAPA DA CIDADE"
-
-[node name="Painel" type="Control" parent="Grande/Fundo"]
-clip_contents = true
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 64.0
-offset_top = 78.0
-offset_right = -64.0
-offset_bottom = -108.0
-
-[node name="Mapa" type="ColorRect" parent="Grande/Fundo/Painel"]
-material = SubResource("ShaderMaterial_mgrd")
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-
-[node name="Marcadores" type="Control" parent="Grande/Fundo/Painel"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-mouse_filter = 2
-
-[node name="Seta" type="Polygon2D" parent="Grande/Fundo/Painel"]
-color = Color(1, 0.93, 0.65, 1)
-polygon = PackedVector2Array(0, -15, 10, 11, 0, 5, -10, 11)
-
-[node name="Escala" type="Label" parent="Grande/Fundo"]
-layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 64.0
-offset_top = -96.0
-offset_right = 400.0
-offset_bottom = -70.0
-text = "—"
-
-[node name="Ajuda" type="Label" parent="Grande/Fundo"]
-layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 64.0
-offset_top = -66.0
-offset_right = 900.0
-offset_bottom = -42.0
-text = "Roda do mouse: zoom  |  arrastar: mover  |  R: centralizar no player  |  ESC: voltar"
-
-[node name="Botoes" type="HBoxContainer" parent="Grande/Fundo"]
-layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -430.0
-offset_top = -92.0
-offset_right = -64.0
-offset_bottom = -52.0
-theme_override_constants/separation = 10
-
-[node name="menos" type="Button" parent="Grande/Fundo/Botoes"]
-layout_mode = 2
-text = "  −  "
-
-[node name="mais" type="Button" parent="Grande/Fundo/Botoes"]
-layout_mode = 2
-text = "  +  "
-
-[node name="centralizar" type="Button" parent="Grande/Fundo/Botoes"]
-layout_mode = 2
-text = "Centralizar"
-
-[node name="voltar" type="Button" parent="Grande/Fundo/Botoes"]
-layout_mode = 2
-text = "Voltar"

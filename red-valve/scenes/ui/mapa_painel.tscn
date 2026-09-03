@@ -1,0 +1,108 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/mapa_painel.gd" id="1_mpai"]
+[ext_resource type="Shader" path="res://shaders/ui/mapa_grande.gdshader" id="2_mgsh"]
+[ext_resource type="Texture2D" path="res://assets/3d_model/city/textures/T_citymap.png" id="3_mmtx"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mgrd"]
+shader = ExtResource("2_mgsh")
+shader_parameter/mapa = ExtResource("3_mmtx")
+shader_parameter/centro_uv = Vector2(0.5, 0.5)
+shader_parameter/meia_janela = 0.09
+shader_parameter/aspecto = 1.0
+shader_parameter/cor_fora = Color(0.055, 0.065, 0.058, 1)
+shader_parameter/cor_grade = Color(1, 1, 1, 0.045)
+shader_parameter/grade_uv = 0.147
+shader_parameter/grade_ligada = true
+
+[node name="MapaPainel" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 1
+script = ExtResource("1_mpai")
+
+[node name="Painel" type="Control" parent="."]
+clip_contents = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = -72.0
+
+[node name="Mapa" type="ColorRect" parent="Painel"]
+material = SubResource("ShaderMaterial_mgrd")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Marcadores" type="Control" parent="Painel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Seta" type="Polygon2D" parent="Painel"]
+color = Color(1, 0.93, 0.65, 1)
+polygon = PackedVector2Array(0, -15, 10, 11, 0, 5, -10, 11)
+
+[node name="Escala" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -62.0
+offset_right = 520.0
+offset_bottom = -38.0
+
+[node name="AjudaPad" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -34.0
+offset_right = 700.0
+offset_bottom = -12.0
+theme_override_font_sizes/font_size = 15
+
+[node name="AjudaMouse" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -700.0
+offset_top = -34.0
+offset_bottom = -12.0
+horizontal_alignment = 2
+theme_override_font_sizes/font_size = 15
+
+[node name="Centralizar" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -170.0
+offset_top = -66.0
+offset_right = -8.0
+offset_bottom = -36.0
+
+[node name="Indisponivel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -20.0
+offset_right = 300.0
+offset_bottom = 20.0
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 24

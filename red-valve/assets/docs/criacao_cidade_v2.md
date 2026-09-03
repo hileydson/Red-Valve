@@ -312,53 +312,57 @@ está na 150, então fica por cima de qualquer jeito.
 
 ---
 
-## 6c. Mapa grande (aba do menu de pausa)
+## 6c. Mapa grande (aba MAPA do menu do jogo)
 
-O mesmo mapa em tela cheia, com zoom e arrasto, aberto pelo botão **Mapa** do
-menu de pausa. Vive na mesma cena do minimapa (`Grande`, um `CanvasLayer`
-aninhado na camada 160), então herda a mesma regra de visibilidade sem
-duplicar lógica: o botão só aparece onde existe mapa e com o Maycow normal.
+O mesmo mapa em tamanho grande vive na **aba MAPA** do menu do jogo — aquele
+que abre com `ui_menu_game`, montado em código por `scripts/ui/in_game_menu.gd`
+(abas: INVENTORY, **MAP**, FILES). Não é o menu de pausa.
 
-### Como o menu encontra o mapa
+| arquivo | papel |
+|---|---|
+| `scenes/ui/mapa_painel.tscn` | a cena do painel |
+| `scripts/ui/mapa_painel.gd` | zoom, arrasto, marcadores, seta |
+| `scripts/ui/mapa_dados.gd` | `class_name MapaDados` — lê o `citymap.json` |
+| `shaders/ui/mapa_grande.gdshader` | recorte com zoom, sem girar |
 
-O nó do mapa está no grupo **`mapa_cidade`**. O `pause.gd` pergunta pelo
-grupo, não pelo caminho da cena — se outra fase ganhar mapa um dia, a aba
-aparece sozinha:
+O menu instancia o painel uma vez no `_ready` e o mostra quando
+`current_tab == TAB_MAPA` (1), chamando `ativar()` / `desativar()`. Se não
+houver mapa nesta fase, ou o Maycow não for o normal, a aba mostra
+`MAP_UNAVAILABLE` em vez do mapa.
 
-```gdscript
-var m := get_tree().get_first_node_in_group("mapa_cidade")
-if m != null and m.has_method("pode_abrir_mapa") and m.pode_abrir_mapa():
-```
-
-Texto do botão: chave `MENU_MAPA` em `assets/textos/red_valve_textos_gerais.csv`.
+`MapaDados.disponivel()` é a regra única, usada pelo minimapa e pela aba:
+Maycow normal **e** fora de cutscene **e** existe nó no grupo `mapa_cidade`.
 
 ### Controles
 
 | | |
 |---|---|
-| roda do mouse | zoom, mantendo parado o ponto sob o cursor |
+| analógico esquerdo (e WASD/setas) | mover |
+| analógico direito | zoom |
+| roda do mouse | zoom no ponto sob o cursor |
 | arrastar | mover |
 | **R** | centralizar no player |
-| **ESC** | voltar ao menu |
-| botões | −, +, Centralizar, Voltar (focáveis, para controle) |
 
-ESC é consumido em `_input`, e não em `_unhandled_input`: senão o menu de
-pausa veria o mesmo evento e fecharia junto.
+Os analógicos são lidos por *polling* em `_process` (`Input.get_vector`), não
+por evento: assim o movimento é proporcional à inclinação do manche. Esquerdo
+usa `ui_left/right/up/down` (que no projeto é o stick esquerdo, e de brinde
+traz WASD e setas); direito usa `ui_look_*`.
 
 ### Este NÃO gira
 
-O minimapa gira com o player; o mapa grande é norte-para-cima e quem gira é
-a seta. Com rótulo escrito na tela, girar o mapa deixaria os nomes de cabeça
+O minimapa gira com o player; o mapa grande é norte-para-cima e quem gira é a
+seta. Com rótulo escrito na tela, girar o mapa deixaria os nomes de cabeça
 para baixo. A dedução do ângulo da seta é a mesma do minimapa: `-rotation.y`.
 
 ### Limites do zoom
 
-`zoom_max_m = 560`, não 680 (o lado da textura): o papel tem 680 m mas a
-cidade só ocupa 600 × 420 no meio dele — deixar afastar até ver o papel
-inteiro só rendia margem de mata vazia.
+- `zoom_min_m = 80`, não 40: a textura tem 3,01 px/m e a 40 m de altura o
+  painel a amplia 4,5 vezes — vira borrão. A 80 m são 2,2x, que ainda lê bem.
+- `zoom_max_m = 560`, não 680 (o lado da textura): o papel tem 680 m mas a
+  cidade só ocupa 600 × 420 no meio dele.
 
-O centro é preso de forma **sensível ao zoom** (`_limitar_centro`): enquanto
-a janela é menor que o mapa ela anda até encostar na borda; quando fica maior
+O centro é preso de forma **sensível ao zoom** (`_limitar_centro`): enquanto a
+janela é menor que o mapa ela anda até encostar na borda; quando fica maior
 que o mapa, o mapa é centralizado. Sem isso, no zoom máximo a cidade ficava
 largada num canto do painel.
 
@@ -370,26 +374,47 @@ Marcados nos dois mapas (com rótulo só no grande). Saem no `citymap.json`,
 calculados pelo `make_minimap.py` a partir dos mesmos dados que desenham o
 mapa — se a cidade for regerada e uma casa mudar de lugar, o ponto acompanha.
 
-| ponto | origem do dado | cor |
-|---|---|---|
-| Pracinha | `landmarks.praca_obelisco` | verde-água |
-| Igreja Matriz | `landmarks.igreja_matriz` | verde-água |
-| Oficina do Jimmy | `vagas_reservadas.oficina_jimmy` | laranja |
-| Casa da Dona Nice | `vagas_reservadas.casa_nice` | azul |
-| Casa do Maycow | `vagas_reservadas.casa_maycow` | azul |
-| Casa do Jimmy | âncora colada na casa mais próxima | azul |
+| ponto | chave | origem do dado | cor |
+|---|---|---|---|
+| Pracinha | `MAP_POI_PRACINHA` | `landmarks.praca_obelisco` | verde-água |
+| Igreja Matriz | `MAP_POI_IGREJA` | `landmarks.igreja_matriz` | verde-água |
+| Oficina do Jimmy | `MAP_POI_OFICINA_JIMMY` | `vagas_reservadas.oficina_jimmy` | laranja |
+| Casa do Jimmy | `MAP_POI_CASA_JIMMY` | âncora → casa mais próxima | azul |
+| Casa da Dona Nice | `MAP_POI_CASA_NICE` | `vagas_reservadas.casa_nice` | azul |
+| Casa do Maycow | `MAP_POI_CASA_MAYCOW` | `vagas_reservadas.casa_maycow` | azul |
+
+O JSON guarda a **chave**, não o texto — quem escreve na tela é o Godot com
+`tr()`.
 
 ### Por que a casa do Jimmy não virou vaga reservada
 
 Entrar em `RESERVADOS` (em `houses.py`) faria a passada 2 **pular** aquele
-lote: vaga reservada existe para receber asset feito à mão, e o gerador
-deixa o terreno vazio de propósito. Sem um modelo para pôr ali, isso abriria
-um buraco na cidade.
+lote: vaga reservada existe para receber asset feito à mão, e o gerador deixa
+o terreno vazio de propósito. Sem um modelo para pôr ali, isso abriria um
+buraco na cidade.
 
 Em vez disso a `ANCORA_CASA_JIMMY` em `make_minimap.py` se cola na casa
 procedural **mais próxima** — que já está construída, tem 8,6 × 12,3 m e fica
-a um quarteirão da oficina. Se um dia houver um asset da casa do Jimmy, aí
-sim vale promover a ponto reservado.
+a um quarteirão da oficina. Se um dia houver um asset da casa do Jimmy, aí sim
+vale promover a ponto reservado.
+
+---
+
+## 6e. Regra: todo texto vai para o CSV
+
+Nada de string escrita no código. Os textos do jogo ficam em
+`assets/textos/red_valve_textos_gerais.csv` (colunas `keys,en,pt`) e o Godot
+usa `tr("CHAVE")`. Traduzir para inglês é obrigatório na mesma linha.
+
+**Nome de pessoa não se traduz.** Jimmy, Maycow e Nice ficam iguais nas duas
+colunas; só a parte comum muda — `"Jimmy's House"` / `"Casa do Jimmy"`.
+
+Chaves do mapa: `MAP_POI_*`, `MAP_RECENTER`, `MAP_SCALE`, `MAP_HELP_PAD`,
+`MAP_HELP_MOUSE`, `MAP_UNAVAILABLE`. `MAP_SCALE` usa `{h}` e `{z}` com
+`String.format`, para a ordem das palavras poder mudar por idioma.
+
+Ao editar o CSV, confira que os `.translation` foram regerados — é a mesma
+armadilha de reimportação do §5.
 
 ---
 

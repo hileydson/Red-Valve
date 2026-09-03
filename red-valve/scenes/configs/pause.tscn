@@ -55,10 +55,6 @@ grow_vertical = 2
 layout_mode = 2
 text = "BTN_RESUME"
 
-[node name="mapa" type="Button" parent="Control/VSplitContainer" unique_id=1953553519]
-layout_mode = 2
-text = "MENU_MAPA"
-
 [node name="config" type="Button" parent="Control/VSplitContainer" unique_id=1953553518]
 layout_mode = 2
 text = "MENU_CONFIG"
@@ -68,6 +64,5 @@ layout_mode = 2
 text = "BTN_EXIT"
 
 [connection signal="pressed" from="Control/VSplitContainer/resume" to="." method="_on_resume_pressed"]
-[connection signal="pressed" from="Control/VSplitContainer/mapa" to="." method="_on_mapa_pressed"]
 [connection signal="pressed" from="Control/VSplitContainer/config" to="." method="_on_config_pressed"]
 [connection signal="pressed" from="Control/VSplitContainer/exit" to="." method="_on_exit_pressed"]

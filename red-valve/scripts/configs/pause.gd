@@ -1,7 +1,6 @@
 extends CanvasLayer
 
 @onready var resume: Button = $Control/VSplitContainer/resume
-@onready var mapa_btn: Button = $Control/VSplitContainer/mapa
 
 func _ready() -> void:
 	self.visible = false
@@ -29,9 +28,6 @@ func toogle_pause():
 		get_tree().paused = true
 		self.visible = true
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-		# a aba do mapa só existe onde há mapa de cidade (hoje, o stage_1) e
-		# com o Maycow normal — a mesma condição do minimapa do HUD
-		mapa_btn.visible = _mapa_disponivel() != null
 		resume.grab_focus()
 
 func _on_resume_pressed() -> void:
@@ -64,32 +60,3 @@ func _on_config_pressed() -> void:
 		# Certificar de que toca som ao voltar das config no pause menu (se possível)
 		# Normalmente config_menu_voltar emitirá som por conta do script do config menu, 
 		# mas caso precise, aqui seria reconectado.
-
-
-## O nó do mapa se anuncia pelo grupo "mapa_cidade". Perguntar pelo grupo, e
-## não pelo caminho da cena, evita amarrar o menu de pausa ao stage_1: se
-## outra fase ganhar mapa, a aba aparece sozinha.
-func _mapa_disponivel() -> Node:
-	var m := get_tree().get_first_node_in_group("mapa_cidade")
-	if m != null and m.has_method("pode_abrir_mapa") and m.pode_abrir_mapa():
-		return m
-	return null
-
-
-func _on_mapa_pressed() -> void:
-	var m := _mapa_disponivel()
-	if m == null:
-		return
-	GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/selecionar_item.mp3")
-	if not m.mapa_fechado.is_connected(_ao_fechar_mapa):
-		m.mapa_fechado.connect(_ao_fechar_mapa)
-	self.visible = false
-	m.abrir_mapa()
-
-
-func _ao_fechar_mapa() -> void:
-	# volta para o menu, não para o jogo: quem fechou o mapa pediu o mapa,
-	# não pediu para despausar
-	if get_tree().paused:
-		self.visible = true
-		resume.grab_focus()

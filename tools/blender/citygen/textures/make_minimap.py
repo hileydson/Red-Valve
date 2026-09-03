@@ -192,23 +192,26 @@ def _pontos(lay, casas, ox, oz):
     pr = lay["landmarks"]["praca_obelisco"]["center"]
     ig = lay["landmarks"]["igreja_matriz"]["center"]
 
+    # `chave`, e não o texto: quem escreve na tela é o Godot, com tr(). Todo
+    # texto do jogo vive nos CSV de tradução — aqui só o identificador.
     bruto = [
-        ("pracinha", "Pracinha", "marco",
+        ("pracinha", "MAP_POI_PRACINHA", "marco",
          (ox + pr[0], oz - pr[1])),
-        ("igreja", "Igreja Matriz", "marco",
+        ("igreja", "MAP_POI_IGREJA", "marco",
          (ox + ig[0], oz - ig[1])),
-        ("oficina_jimmy", "Oficina do Jimmy", "local", media("oficina_jimmy")),
-        ("casa_jimmy", "Casa do Jimmy", "casa",
+        ("oficina_jimmy", "MAP_POI_OFICINA_JIMMY", "local",
+         media("oficina_jimmy")),
+        ("casa_jimmy", "MAP_POI_CASA_JIMMY", "casa",
          mais_perto(*ANCORA_CASA_JIMMY)),
-        ("casa_nice", "Casa da Dona Nice", "casa", media("casa_nice")),
-        ("casa_maycow", "Casa do Maycow", "casa", media("casa_maycow")),
+        ("casa_nice", "MAP_POI_CASA_NICE", "casa", media("casa_nice")),
+        ("casa_maycow", "MAP_POI_CASA_MAYCOW", "casa", media("casa_maycow")),
     ]
     saida = []
-    for pid, nome, tipo, pos in bruto:
+    for pid, chave, tipo, pos in bruto:
         if pos is None:
             print("  AVISO: sem posição para", pid)
             continue
-        saida.append({"id": pid, "nome": nome, "tipo": tipo,
+        saida.append({"id": pid, "chave": chave, "tipo": tipo,
                       "x": round(pos[0], 2), "z": round(pos[1], 2)})
     return saida
 

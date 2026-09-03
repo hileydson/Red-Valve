@@ -65,7 +65,6 @@ ITEM_COGBLADE_DESC,"A gear-powered blade.","Uma lâmina de engrenagem."
 ITEM_AMMO_NAME,"Pistol Ammo","Balas de Pistola"
 ITEM_AMMO_DESC,"Ammunition for your gun.","Munição para a sua arma."
 MENU_CONFIG,"Configuration","Configurações"
-MENU_MAPA,Map,Mapa
 CONFIG_AIM_MODE,"Aim Mode","Modo de Mira"
 CONFIG_AIM_HOLD,"Hold","Segurar"
 CONFIG_AIM_TOGGLE,"Toggle","Alternar"
@@ -99,3 +98,14 @@ ACTION_USE,Use,Usar
 ACTION_EQUIP,Equip,Equipar
 ACTION_UNEQUIP,Unequip,Remover
 ACTION_INSPECT,Inspect,Inspecionar
+MAP_POI_PRACINHA,"Town Square","Pracinha"
+MAP_POI_IGREJA,"Main Church","Igreja Matriz"
+MAP_POI_OFICINA_JIMMY,"Jimmy's Workshop","Oficina do Jimmy"
+MAP_POI_CASA_JIMMY,"Jimmy's House","Casa do Jimmy"
+MAP_POI_CASA_NICE,"Ms. Nice's House","Casa da Dona Nice"
+MAP_POI_CASA_MAYCOW,"Maycow's House","Casa do Maycow"
+MAP_RECENTER,"Recenter","Centralizar"
+MAP_SCALE,"{h} m across  ·  zoom {z}x","{h} m de altura  ·  zoom {z}x"
+MAP_HELP_PAD,"Left stick: move  |  Right stick: zoom","Analógico esquerdo: mover  |  Analógico direito: zoom"
+MAP_HELP_MOUSE,"Mouse wheel: zoom  |  drag: move  |  R: recenter on player","Roda do mouse: zoom  |  arrastar: mover  |  R: centralizar no player"
+MAP_UNAVAILABLE,"No map available here.","Nenhum mapa disponível aqui."

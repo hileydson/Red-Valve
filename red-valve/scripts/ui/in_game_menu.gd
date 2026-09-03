@@ -26,6 +26,12 @@ var action_menu_open = false
 var action_menu_index = 0
 var current_item_selected = null
 
+# Aba MAPA (índice 1 em `tabs`). O painel se vira sozinho: lê o citymap.json,
+# acha o player pelo grupo e decide se há mapa nesta fase.
+const TAB_MAPA := 1
+const MAPA_PAINEL := preload("res://scenes/ui/mapa_painel.tscn")
+var mapa_painel: Control
+
 func _ready() -> void:
 	self.layer = 150 # Acima das mensagens do jogo e no mesmo nível do Pause
 	self.process_mode = Node.PROCESS_MODE_ALWAYS
@@ -182,6 +188,16 @@ func _ready() -> void:
 		grid_container.add_child(slot)
 		slot_panels.append(slot)
 		
+	# Painel do mapa: ocupa a área central, abaixo do carrossel de abas
+	mapa_painel = MAPA_PAINEL.instantiate()
+	mapa_painel.set_anchors_preset(Control.PRESET_FULL_RECT)
+	mapa_painel.offset_left = 150
+	mapa_painel.offset_top = 200
+	mapa_painel.offset_right = -150
+	mapa_painel.offset_bottom = -70
+	mapa_painel.visible = false
+	add_child(mapa_painel)
+
 	_create_action_menu()
 	update_ui()
 
@@ -259,6 +275,14 @@ func update_ui() -> void:
 		item_name_label.text = ""
 		item_desc_label.text = ""
 		item_icon_preview.texture = null
+
+	if mapa_painel:
+		var no_mapa: bool = current_tab == TAB_MAPA
+		mapa_painel.visible = no_mapa
+		if no_mapa:
+			mapa_painel.ativar()
+		else:
+			mapa_painel.desativar()
 		
 	if action_menu_open:
 		_render_action_menu()
