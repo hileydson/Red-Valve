@@ -301,7 +301,7 @@ func _input(event):
 	if event.is_action_pressed("ui_cogblade_power") and !GlobalEvents.is_maycow_normal:
 		if GlobalEvents.in_cutscene or process_mode == Node.PROCESS_MODE_DISABLED:
 			return
-		if cogblade_power_value >= 100.0 and not is_using_ultimate and is_on_floor():
+		if cogblade_power_value >= 100.0 and not is_using_ultimate and not is_magic_attacking and is_on_floor():
 			cogblade_power_value = 0.0
 			cogblade_pulsing = false
 			if cogblade_pulse_tween: cogblade_pulse_tween.kill()

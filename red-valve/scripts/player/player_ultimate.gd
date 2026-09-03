@@ -6,6 +6,11 @@ func _ready() -> void:
 	player = get_parent()
 
 func _activate_cogblade_ultimate() -> void:
+	# Mata qualquer tween de câmera lenta pendente (ex: do impacto da cogblade)
+	# para que ele não force o time_scale de volta a 1.0 no meio da cinemática do ultimate
+	if GlobalUtils.current_time_tween and GlobalUtils.current_time_tween.is_valid():
+		GlobalUtils.current_time_tween.kill()
+
 	player.is_using_ultimate = true
 	player.cogblade_power_value = 0.0
 	player.cogblade_pulsing = false
