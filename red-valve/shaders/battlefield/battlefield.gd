@@ -340,14 +340,21 @@ func _start_final_sequence() -> void:
 			
 			root.remove_child(current)
 			current.queue_free()
-			
-			root.add_child(GlobalEvents.paused_scene_for_amulet)
+
+			# A cena pausada nunca saiu da árvore (ver player_amulet.gd), só
+			# ficou escondida/sem processar. Aqui só a reativamos, o que evita
+			# o bug do chão (Terrain3D) perdendo a textura ao ser readicionado.
+			GlobalEvents.paused_scene_for_amulet.visible = true
+			GlobalEvents.paused_scene_for_amulet.process_mode = Node.PROCESS_MODE_INHERIT
 			tree.current_scene = GlobalEvents.paused_scene_for_amulet
-			
+
 			# Toca o efeito de retorno na câmera da cena restaurada
 			var p = _find_player_recursive(GlobalEvents.paused_scene_for_amulet)
-			if p and p.has_method("play_return_from_arena_effect"):
-				p.play_return_from_arena_effect()
+			if p:
+				if not p.is_in_group("player"):
+					p.add_to_group("player")
+				if p.has_method("play_return_from_arena_effect"):
+					p.play_return_from_arena_effect()
 			
 			# Restaura o estado normal/combat do jogador
 			GlobalEvents.is_maycow_normal = GlobalEvents.previous_is_maycow_normal

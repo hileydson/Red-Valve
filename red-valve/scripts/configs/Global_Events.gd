@@ -28,7 +28,7 @@ var menu_ultima_aba: int = 0
 ## legenda de controle ou a de mouse, nunca as duas ao mesmo tempo.
 var usando_controle: bool = false
 
-var paused_scene_for_amulet: Node = null
+var paused_scene_for_amulet: Node3D = null
 var amulet_captured_enemies: Array[Node] = []
 var previous_is_maycow_normal: bool = false
 

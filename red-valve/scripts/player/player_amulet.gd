@@ -365,11 +365,16 @@ func _on_amulet_magic_released() -> void:
 
 	player.is_teleporting_enemies = false
 
-	# Instancia o campo de batalha antes de removermos a nós mesmos da árvore
+	# Instancia o campo de batalha antes de pausarmos a cena atual
 	var battlefield_scene = load("res://scenes/stages/battlefield/battlefield_1.tscn").instantiate()
 
-	# Pausa a cena atual tirando ela da árvore
-	root.remove_child(current)
+	# Pausa a cena atual escondendo e desligando o processamento, SEM tirá-la
+	# da árvore (root.remove_child). Removê-la fazia o chão (Terrain3D) perder
+	# a textura quando a cena era readicionada depois da batalha.
+	current.visible = false
+	current.process_mode = Node.PROCESS_MODE_DISABLED
+	if is_instance_valid(player):
+		player.remove_from_group("player")
 	GlobalEvents.paused_scene_for_amulet = current
 
 	root.add_child(battlefield_scene)
