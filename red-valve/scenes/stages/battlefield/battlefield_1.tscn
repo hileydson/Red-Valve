@@ -7,6 +7,7 @@
 [ext_resource type="AudioStream" uid="uid://fj4slbstwq3d" path="res://assets/cutscenes/sound/song_first_battle.mp3" id="2_7p3s1"]
 [ext_resource type="Material" uid="uid://c2to67v55oatp" path="res://scenes/player/battle_field/src/materials/grass_01/grass_01.tres" id="2_h2yge"]
 [ext_resource type="PackedScene" uid="uid://bhyhnppiawn07" path="res://scenes/configs/pause.tscn" id="2_jf8my"]
+[ext_resource type="PackedScene" uid="uid://dsdy2ythow1i5" path="res://assets/3d_model/arena/arena.glb" id="2_til2i"]
 [ext_resource type="PackedScene" uid="uid://cluvbknxfjx2k" path="res://scenes/player/player.tscn" id="3_665qe"]
 [ext_resource type="Shader" uid="uid://d0wugdugrlcm5" path="res://scenes/player/battle_field/sky_shader.gdshader" id="9_bb3vo"]
 [ext_resource type="Shader" uid="uid://cvd0x7lon1ur6" path="res://addons/sky_3d/shaders/SkyMaterial.gdshader" id="10_ag1sr"]
@@ -352,8 +353,8 @@ shader_parameter/cirrus_absorption = 2.0
 shader_parameter/cirrus_sky_tint_fade = 0.5
 shader_parameter/cirrus_size = 1.0
 shader_parameter/cirrus_uv = Vector2(0.16, 0.11)
-shader_parameter/cirrus_position1 = Vector2(0.13365276, 0.13365276)
-shader_parameter/cirrus_position2 = Vector2(0.13365276, 0.13365276)
+shader_parameter/cirrus_position1 = Vector2(0.10475149, 0.10475149)
+shader_parameter/cirrus_position2 = Vector2(0.10475149, 0.10475149)
 shader_parameter/cirrus_texture = ExtResource("11_biy32")
 shader_parameter/cumulus_visible = true
 shader_parameter/cumulus_intensity = 0.6
@@ -363,7 +364,7 @@ shader_parameter/cumulus_absorption = 2.0
 shader_parameter/cumulus_noise_freq = 2.7
 shader_parameter/cumulus_sky_tint_fade = 0.0
 shader_parameter/cumulus_size = 0.5
-shader_parameter/cumulus_position = Vector2(0.66817373, 0.66817373)
+shader_parameter/cumulus_position = Vector2(0.5237039, 0.5237039)
 shader_parameter/cumulus_texture = ExtResource("12_jf8my")
 shader_parameter/cumulus_partial_mie_phase = Vector3(0.957564, 1.042436, 0.412)
 shader_parameter/cumulus_mie_intensity = 1.0
@@ -432,6 +433,9 @@ propagation = 0.15
 [node name="battlefield" type="Node3D" unique_id=1589636946]
 script = ExtResource("1_bb3vo")
 hurricane_particle_size_multiplier = 0.2
+
+[node name="arena" parent="." unique_id=949200250 instance=ExtResource("2_til2i")]
+transform = Transform3D(33, 0, 0, 0, 33, 0, 0, 0, 33, -0.58647144, 2.4231336, -0.19875526)
 
 [node name="intro_camera" type="Node3D" parent="." unique_id=105180248]
 

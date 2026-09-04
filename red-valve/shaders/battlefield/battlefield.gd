@@ -100,109 +100,35 @@ func _ready() -> void:
 			player.hand_with_magic.visible = false
 
 		var is_first_time = not SaveManager.prolog_finished
-		
-		# Define qual animação tocar e impede que a câmera desligue no final
+
 		if is_first_time:
+			# Prólogo: mantém a cutscene original de câmera
 			var anim = animation_intro.get_animation("intro_first_time")
 			for i in range(anim.get_track_count()):
 				if str(anim.track_get_path(i)).ends_with(":current"):
 					var key_idx = anim.track_get_key_count(i) - 1
 					if key_idx >= 0 and anim.track_get_key_value(i, key_idx) == false:
 						anim.track_set_key_value(i, key_idx, true)
-						
+
 			camera_intro_2.make_current()
 			animation_intro.play("intro_first_time")
 			SaveManager.battlefield_1_intro_played = true
 			SaveManager.save_game()
-		else:
-			var anim = animation_intro.get_animation("intro_capitulo_1")
-			var last_cam_path = ""
-			for i in range(anim.get_track_count()):
-				if str(anim.track_get_path(i)).ends_with(":current"):
-					var key_idx = anim.track_get_key_count(i) - 1
-					if key_idx >= 0 and anim.track_get_key_value(i, key_idx) == false:
-						anim.track_set_key_value(i, key_idx, true)
-					last_cam_path = str(anim.track_get_path(i)).replace(":current", "")
-			
-			animation_intro.play("intro_capitulo_1")
-			
-			# Aplica Blur na câmera para simular Motion Blur (Aplica na última câmera usada na animação)
-			if last_cam_path != "":
-				var cam_final = get_node_or_null(last_cam_path)
-				if cam_final:
-					var blur_attr = CameraAttributesPractical.new()
-					blur_attr.dof_blur_far_enabled = true
-					blur_attr.dof_blur_far_distance = 2.0
-					blur_attr.dof_blur_far_transition = 5.0
-					cam_final.attributes = blur_attr
-			
-		if is_first_time:
 			await animation_intro.animation_finished
 		else:
-			var anim = animation_intro.get_animation("intro_capitulo_1")
-			# Dispara a explosão 0.4 segundos ANTES da animação terminar
-			var wait_time = max(0.01, anim.length - 0.4)
-			await get_tree().create_timer(wait_time).timeout
-		
-		if not is_first_time:
-			# Descobre qual foi a câmera final da animação
-			var anim = animation_intro.get_animation("intro_capitulo_1")
-			var last_cam_path = ""
-			for i in range(anim.get_track_count()):
-				if str(anim.track_get_path(i)).ends_with(":current"):
-					last_cam_path = str(anim.track_get_path(i)).replace(":current", "")
-					
-			var cam_final = get_node_or_null(last_cam_path)
-			if cam_final:
-				cam_final.attributes = null # Remove o blur
-			
-			# Som de explosão em slow motion
-			var exp_sound = AudioStreamPlayer.new()
-			exp_sound.stream = preload("res://assets/sounds/common/explosao.mp3")
-			exp_sound.pitch_scale = 0.4 # Som grave de câmera lenta
-			add_child(exp_sound)
-			exp_sound.play()
-			
-			# Efeito visual da explosão no meio da arena
-			var arena_center = Vector3(0, 1.0, 0)
-			_spawn_red_explosion_vfx(arena_center)
-			
-			# Slow motion brutal da explosão
-			Engine.time_scale = 0.05
-			
-			# Vibra o controle (Tremor de tela)
-			GlobalUtils.vibrate_controller(Input, 1.0, 1.0, 1.0)
-			
-			# Tremidinha bruta na câmera de intro final
-			if cam_final:
-				var tween_shake = create_tween().set_ignore_time_scale(true)
-				tween_shake.tween_property(cam_final, "v_offset", 0.8, 0.03)
-				tween_shake.tween_property(cam_final, "v_offset", -0.8, 0.03)
-				tween_shake.tween_property(cam_final, "v_offset", 0.5, 0.03)
-				tween_shake.tween_property(cam_final, "v_offset", -0.5, 0.03)
-				tween_shake.tween_property(cam_final, "v_offset", 0.0, 0.03)
-				
-			# Espera 1.5 segundo real (curtindo a explosão épica e lenta)
-			await get_tree().create_timer(1.5, true, false, true).timeout
-			
-			# Restaura o tempo gradualmente
-			var time_tween = create_tween().set_ignore_time_scale(true)
-			time_tween.tween_property(Engine, "time_scale", 1.0, 0.5)
-			await time_tween.finished
-			
-			# Se a animação ainda estiver rolando (por causa do slow mo), garante que termine
-			if animation_intro.is_playing():
-				await animation_intro.animation_finished
-			
-			exp_sound.queue_free()
-			
-		# Restaura os controles e física APÓS o fim de toda a cutscene/explosão
+			# Pós-prólogo: player e inimigos emergem do chão da arena
+			await _play_rise_from_ground_intro()
+
+		# Restaura os controles e física APÓS o fim de toda a cutscene de entrada
 		if is_instance_valid(player):
 			if "camera_third_person" in player and is_instance_valid(player.camera_third_person):
 				player.camera_third_person.make_current()
 			if "hand_with_magic" in player and is_instance_valid(player.hand_with_magic):
 				player.hand_with_magic.visible = hand_magic_was_visible
 				
+		if is_instance_valid(player):
+			player.process_mode = Node.PROCESS_MODE_INHERIT
+
 		for enemy in enemies:
 			if is_instance_valid(enemy):
 				enemy.process_mode = Node.PROCESS_MODE_INHERIT
@@ -211,73 +137,6 @@ func _ready() -> void:
 					enemy_script.cutscene_mode = false
 				
 		GlobalEvents.in_cutscene = false
-
-
-func _spawn_red_explosion_vfx(pos: Vector3):
-	var node = Node3D.new()
-	add_child(node)
-	node.global_position = pos
-	
-	# Flash de Luz Vermelha
-	var flash = OmniLight3D.new()
-	flash.light_color = Color(1.0, 0.1, 0.0)
-	flash.light_energy = 30.0
-	flash.omni_range = 50.0
-	flash.shadow_enabled = false
-	node.add_child(flash)
-	var tween_light = create_tween()
-	tween_light.tween_property(flash, "light_energy", 0.0, 1.2)
-	
-	# Sparks (Fagulhas volumosas) Vermelhas
-	var sparks = CPUParticles3D.new()
-	sparks.emitting = true
-	sparks.one_shot = true
-	sparks.amount = 150
-	sparks.lifetime = 1.6
-	sparks.explosiveness = 1.0
-	sparks.spread = 180.0
-	sparks.initial_velocity_min = 20.0
-	sparks.initial_velocity_max = 50.0
-	var spark_mat = StandardMaterial3D.new()
-	spark_mat.albedo_color = Color(1.0, 0.1, 0.0)
-	spark_mat.emission_enabled = true
-	spark_mat.emission = Color(1.0, 0.05, 0.0)
-	spark_mat.emission_energy_multiplier = 12.0
-	var spark_mesh = SphereMesh.new()
-	spark_mesh.radius = 0.05
-	spark_mesh.height = 0.1
-	spark_mesh.material = spark_mat
-	sparks.mesh = spark_mesh
-	node.add_child(sparks)
-	
-	# Fumaça expansiva
-	var smoke = CPUParticles3D.new()
-	smoke.emitting = true
-	smoke.one_shot = true
-	smoke.amount = 50
-	smoke.lifetime = 1.5
-	smoke.explosiveness = 0.95
-	smoke.spread = 180.0
-	smoke.initial_velocity_min = 8.0
-	smoke.initial_velocity_max = 18.0
-	smoke.gravity = Vector3(0, 3.0, 0)
-	var smoke_mat = StandardMaterial3D.new()
-	var tex = load("res://assets/images/vfx/smoke.png")
-	if tex:
-		smoke_mat.albedo_texture = tex
-		smoke_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-		smoke_mat.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
-		smoke_mat.albedo_color = Color(1.0, 0.6, 0.6, 1.0) # Tint avermelhado na fumaça
-	var smoke_mesh = QuadMesh.new()
-	smoke_mesh.size = Vector2(25, 25)
-	smoke_mesh.material = smoke_mat
-	smoke.mesh = smoke_mesh
-	node.add_child(smoke)
-	
-	get_tree().create_timer(6.0).timeout.connect(func(): 
-		if is_instance_valid(node): 
-			node.queue_free()
-	)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -429,7 +288,7 @@ func iniciar_cutscene() -> void:
 
 func _on_animation_intro_animation_finished(anim_name: StringName) -> void:
 	# O controle de câmera e física agora é feito no final da corrotina _ready()
-	# Isso garante que a explosão e o slow motion rodem por completo antes do Player assumir.
+	# Isso garante que a cutscene de entrada rode por completo antes do Player assumir.
 	pass
 
 func _spawn_arena_hurricane() -> void:
@@ -548,3 +407,191 @@ func _spawn_arena_hurricane() -> void:
 	smoke.mesh = smoke_mesh
 	
 	hurricane_node.add_child(smoke)
+
+
+# ============================================================
+#  INTRO PÓS-PRÓLOGO: todos emergem de baixo da arena
+# ============================================================
+const RISE_DEPTH: float = 12.0      # quanto abaixo da arena todos começam
+const RISE_TIME: float = 1.35       # duração da subida
+const RISE_SETTLE: float = 0.45     # respiro depois de chegar em cima
+const ROCK_COUNT: int = 30          # pedaços de pedra que sobem junto
+const ROCK_LIFETIME: float = 15.0   # tempo que as pedras ficam na arena
+
+func _play_rise_from_ground_intro() -> void:
+	# Guarda a posição final de todo mundo e joga todos pra debaixo da arena.
+	var risers: Array = []
+	if is_instance_valid(player):
+		risers.append({"node": player, "pos": player.global_position})
+	for e in enemies:
+		if is_instance_valid(e):
+			risers.append({"node": e, "pos": e.global_position})
+
+	for r in risers:
+		var n: Node3D = r["node"]
+		# Congela a física: sem isso o player/inimigo cairia ou atravessaria o chão
+		# enquanto o tween controla a posição na mão.
+		n.process_mode = Node.PROCESS_MODE_DISABLED
+		n.global_position = r["pos"] - Vector3(0, RISE_DEPTH, 0)
+
+	# Câmera dedicada, que sobe junto com todo mundo.
+	var player_final: Vector3 = risers[0]["pos"] if risers.size() > 0 else Vector3(0, 1.0, 0)
+	var cam_final: Vector3 = player_final + Vector3(0, 2.6, 5.5)
+	var cam := Camera3D.new()
+	add_child(cam)
+	cam.global_position = cam_final - Vector3(0, RISE_DEPTH, 0)
+	cam.fov = 82.0
+	# _process() cuida de manter esta câmera ativa e olhando pro player.
+	camera_intro = cam
+	look_at_target = risers[0]["node"] if risers.size() > 0 else null
+	look_at_offset = Vector3(0, 1.0, 0)
+
+	# Sobe todo mundo (leve overshoot pra dar o "estouro" ao furar o chão).
+	var tween := create_tween().set_parallel(true)
+	for r in risers:
+		var n: Node3D = r["node"]
+		tween.tween_property(n, "global_position", r["pos"], RISE_TIME) \
+			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween.tween_property(cam, "global_position", cam_final, RISE_TIME) \
+		.set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
+	tween.tween_property(cam, "fov", 70.0, RISE_TIME) \
+		.set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
+
+	# No instante em que atravessamos o chão: pedras, poeira e tremor.
+	var punch_delay: float = RISE_TIME * 0.55
+	get_tree().create_timer(punch_delay).timeout.connect(func():
+		for r in risers:
+			var n: Node3D = r["node"]
+			if is_instance_valid(n):
+				_spawn_ground_burst(Vector3(n.global_position.x, 0.0, n.global_position.z))
+		GlobalUtils.vibrate_controller(Input, 0.8, 0.8, 0.5)
+		if is_instance_valid(cam):
+			var shake := create_tween()
+			shake.tween_property(cam, "v_offset", 0.25, 0.05)
+			shake.tween_property(cam, "v_offset", -0.18, 0.05)
+			shake.tween_property(cam, "v_offset", 0.09, 0.05)
+			shake.tween_property(cam, "v_offset", 0.0, 0.05)
+	)
+
+	await tween.finished
+	await get_tree().create_timer(RISE_SETTLE).timeout
+
+	# Devolve a câmera pro player (o _process para de forçar a câmera de intro).
+	camera_intro = null
+	look_at_target = null
+	if is_instance_valid(cam):
+		cam.queue_free()
+
+
+func _spawn_ground_burst(pos: Vector3) -> void:
+	# Poeira/terra saindo do ponto onde alguém furou o chão
+	var dust := CPUParticles3D.new()
+	add_child(dust)
+	dust.global_position = pos
+	dust.emitting = true
+	dust.one_shot = true
+	dust.amount = 40
+	dust.lifetime = 1.4
+	dust.explosiveness = 0.9
+	dust.spread = 55.0
+	dust.direction = Vector3.UP
+	dust.initial_velocity_min = 3.0
+	dust.initial_velocity_max = 9.0
+	dust.gravity = Vector3(0, -3.0, 0)
+	dust.scale_amount_min = 1.5
+	dust.scale_amount_max = 3.5
+	var dust_mat := StandardMaterial3D.new()
+	var tex = load("res://assets/images/vfx/smoke.png")
+	if tex:
+		dust_mat.albedo_texture = tex
+	dust_mat.albedo_color = Color(0.42, 0.31, 0.26, 0.85)
+	dust_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	dust_mat.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+	dust_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	var dust_mesh := QuadMesh.new()
+	dust_mesh.size = Vector2(2.5, 2.5)
+	dust_mesh.material = dust_mat
+	dust.mesh = dust_mesh
+	get_tree().create_timer(3.0).timeout.connect(func():
+		if is_instance_valid(dust):
+			dust.queue_free()
+	)
+
+	# Pedaços de pedra subindo junto e quicando na arena
+	var n := int(round(float(ROCK_COUNT) / max(1.0, float(enemies.size() + 1))))
+	for i in range(max(4, n)):
+		_spawn_rock_chunk(pos)
+
+
+func _spawn_rock_chunk(origin: Vector3) -> void:
+	var rock := RigidBody3D.new()
+	# Só colide com o chão da arena (layer 2): não empurra player nem inimigos.
+	rock.collision_layer = 0
+	# Ligada só depois que a pedra sai de baixo da arena (ver timer no fim).
+	rock.collision_mask = 0
+	rock.gravity_scale = 2.4
+	rock.continuous_cd = true
+	var phys := PhysicsMaterial.new()
+	phys.bounce = 0.45
+	phys.friction = 0.85
+	rock.physics_material_override = phys
+	add_child(rock)
+
+	var size := randf_range(0.18, 0.55)
+
+	# Formato angular de pedra (esfera de baixíssima resolução, achatada aleatoriamente)
+	var mesh := SphereMesh.new()
+	mesh.radius = size * 0.5
+	mesh.height = size
+	mesh.radial_segments = 5
+	mesh.rings = 3
+	var mat := StandardMaterial3D.new()
+	var tone := randf_range(0.16, 0.32)
+	mat.albedo_color = Color(tone * 1.15, tone * 0.9, tone * 0.85)
+	mat.roughness = 1.0
+	mat.metallic = 0.0
+	mesh.material = mat
+
+	var mi := MeshInstance3D.new()
+	mi.mesh = mesh
+	mi.scale = Vector3(randf_range(0.7, 1.4), randf_range(0.6, 1.2), randf_range(0.7, 1.4))
+	rock.add_child(mi)
+
+	var shape := CollisionShape3D.new()
+	var sphere := SphereShape3D.new()
+	sphere.radius = size * 0.45
+	shape.shape = sphere
+	rock.add_child(shape)
+
+	# Nasce escondida embaixo da arena e sobe furando o chão junto com o pessoal.
+	var ang := randf() * TAU
+	var rad := randf_range(0.3, 2.2)
+	rock.global_position = origin + Vector3(cos(ang) * rad, -1.4, sin(ang) * rad)
+	rock.rotation = Vector3(randf() * TAU, randf() * TAU, randf() * TAU)
+	rock.linear_velocity = Vector3(
+		cos(ang) * randf_range(1.0, 5.0),
+		randf_range(9.0, 17.0),
+		sin(ang) * randf_range(1.0, 5.0)
+	)
+	rock.angular_velocity = Vector3(
+		randf_range(-9.0, 9.0), randf_range(-9.0, 9.0), randf_range(-9.0, 9.0)
+	)
+
+	# A colisão com o chão só liga depois que a pedra já saiu de baixo dele,
+	# senão ela bateria na face inferior da arena e nunca apareceria.
+	get_tree().create_timer(0.3).timeout.connect(func():
+		if is_instance_valid(rock):
+			rock.collision_mask = 2
+	)
+
+	# Some suavemente depois de ficar um tempão quicando/parada na arena.
+	get_tree().create_timer(ROCK_LIFETIME).timeout.connect(func():
+		if not is_instance_valid(rock):
+			return
+		var t := create_tween()
+		t.tween_property(mi, "scale", Vector3.ZERO, 1.0).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
+		t.tween_callback(func():
+			if is_instance_valid(rock):
+				rock.queue_free()
+		)
+	)
