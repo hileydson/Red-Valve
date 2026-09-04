@@ -27,6 +27,11 @@ func _ready() -> void:
 	
 	self.layer = 128
 	self.process_mode = Node.PROCESS_MODE_ALWAYS
+
+	# Se a morte pegou o jogo em câmera lenta (poder da cogblade, menu radial,
+	# impacto), a animação de game over rodaria em slow motion.
+	Engine.time_scale = 1.0
+	AudioServer.playback_speed_scale = 1.0
 	
 	noise.noise_type = FastNoiseLite.TYPE_PERLIN
 	noise.frequency = 0.1
@@ -134,5 +139,8 @@ void fragment() {
 	print("Fade out completo. Retornando ao menu...")
 	
 	get_tree().paused = false
+	# Morrer na arena do amuleto deixava a cena anterior (escondida, mas ainda
+	# na árvore) sobrevivendo à troca de cena, junto com a HUD e o sangue dela.
+	GlobalUtils.cleanup_gameplay_leftovers()
 	get_tree().change_scene_to_file("res://scenes/configs/main_menu_v2.tscn")
 	queue_free()

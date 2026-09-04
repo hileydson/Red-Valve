@@ -104,16 +104,28 @@ var is_exhausted: bool = false
 # --- GOLPE MELEE DA COGBLADE (toque rápido em C / L1) ---
 @export_group("Cogblade Melee")
 ## Dano do golpe corpo a corpo da cogblade.
-@export var melee_damage: int = 5
+@export var melee_damage: int = 3
 ## Alcance do golpe: o player precisa estar perto do inimigo.
 @export var melee_range: float = 3.0
 ## Duração da passada da lâmina de um lado para o outro.
 @export var melee_duration: float = 0.18
 ## Estamina gasta por golpe.
-@export var melee_stamina_cost: float = 8.0
-## Altura e distância da lâmina em relação ao player durante o golpe.
+@export var melee_stamina_cost: float = 12.0
+## Espera, em milissegundos, entre o fim de um golpe e o próximo poder sair.
+@export var melee_cooldown_ms: int = 120
+## Altura e distância do CENTRO do golpe em relação ao player.
 @export var melee_height: float = 0.95
 @export var melee_distance: float = 1.75
+## Amplitude vertical do golpe (fração do alcance). O corte vai do canto
+## superior de um lado até o canto inferior do outro lado.
+@export var melee_vertical_ratio: float = 0.3
+## O quanto a mão esquerda acompanha o deslocamento da lâmina (0 = parada,
+## 1 = acompanha o golpe inteiro, que sairia da tela).
+@export var melee_hand_follow: float = 0.18
+## Empurrão da mão para frente no meio do golpe.
+@export var melee_hand_push: float = 0.12
+## Tempo que a mão leva para voltar devagar ao lugar (igual ao fim do reload).
+@export var melee_hand_return_time: float = 0.6
 var mp_bar: ProgressBar
 
 var hud_layer: CanvasLayer

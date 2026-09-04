@@ -271,6 +271,8 @@ func _cancel_melee() -> void:
 		_melee_tween.kill()
 	_melee_tween = null
 	player.cogblade_melee_active = false
+	_melee_start_cooldown()
+	_melee_return_hand()
 	if is_instance_valid(player):
 		for child in player.get_children():
 			if child is CanvasLayer and child.name == "CogbladeMeleeFX":
@@ -628,10 +630,15 @@ func _cut_spawn_flash(fx_layer: CanvasLayer) -> void:
 
 var _melee_sign: float = 1.0 # +1 começa pela direita (corta direita -> esquerda)
 var _melee_tween: Tween = null
+var _melee_hand_tween: Tween = null
+var _melee_hand_active: bool = false
+# Momento (em ms de tempo real) a partir do qual um novo golpe pode sair
+var _melee_ready_ms: int = 0
 
 func cogblade_melee_slash() -> bool:
 	if not is_instance_valid(player.crescent_cogblade): return false
 	if player.cogblade_melee_active: return false # espera o golpe atual terminar
+	if Time.get_ticks_msec() < _melee_ready_ms: return false # cooldown entre golpes
 	if player.is_using_ultimate or player.cogblade_menu_open: return false
 	if player.is_magic_attacking or player.is_blade_returning or player.is_reloading: return false
 	if player.is_exhausted: return false
@@ -652,6 +659,17 @@ func cogblade_melee_slash() -> bool:
 	var faiscas = player.crescent_cogblade.get_node_or_null("Faiscas")
 	if faiscas: faiscas.emitting = true
 	
+	# A mão esquerda só entra na jogada quando ela está visível na tela
+	# (primeira pessoa); em terceira pessoa a lâmina passa sozinha.
+	_melee_hand_active = is_instance_valid(player.hand_magic_3d) \
+		and is_instance_valid(player.hand_with_magic) \
+		and player.hand_with_magic.visible
+	if _melee_hand_active:
+		if _melee_hand_tween and _melee_hand_tween.is_valid():
+			_melee_hand_tween.kill()
+		_melee_hand_tween = null
+		player.hand_magic_3d.visible = true
+	
 	_play_blade_sound("res://assets/sounds/player/blade_out.mp3", randf_range(1.3, 1.55), -3.0)
 	
 	var streak := _melee_spawn_streak()
@@ -668,9 +686,29 @@ func cogblade_melee_slash() -> bool:
 	t.tween_callback(func():
 		_reset_blade_to_hand()
 		player.cogblade_melee_active = false
+		_melee_start_cooldown()
 		_melee_fade_streak(streak)
+		_melee_return_hand()
 	)
 	return true
+
+# Usa tempo real (ticks) de propósito: o cooldown é do jogador, não da cena,
+# então não deve esticar se o jogo estiver em câmera lenta.
+func _melee_start_cooldown() -> void:
+	_melee_ready_ms = Time.get_ticks_msec() + maxi(0, player.melee_cooldown_ms)
+
+# A mão volta devagar para a posição de descanso, do mesmo jeito que acontece
+# no fim da animação de recarregar a arma.
+func _melee_return_hand() -> void:
+	if not _melee_hand_active: return
+	_melee_hand_active = false
+	if not is_instance_valid(player.hand_magic_3d): return
+	if _melee_hand_tween and _melee_hand_tween.is_valid():
+		_melee_hand_tween.kill()
+	_melee_hand_tween = create_tween()
+	_melee_hand_tween.tween_property(player.hand_magic_3d, "position",
+		player.hand_magic_3d_pos_hidden, maxf(player.melee_hand_return_time, 0.05))\
+		.set_trans(Tween.TRANS_SINE)
 
 func _melee_update(p: float, side: float, streak: Line2D) -> void:
 	var cam: Camera3D = get_viewport().get_camera_3d()
@@ -680,26 +718,46 @@ func _melee_update(p: float, side: float, streak: Line2D) -> void:
 	var b := cam.global_transform.basis
 	# Ponto na frente do player, na altura do peito
 	var center: Vector3 = player.global_position + Vector3(0.0, player.melee_height, 0.0) - b.z * player.melee_distance
-	var reach: float = player.melee_range * 0.75
-	var from_pos: Vector3 = center + b.x * reach * side
-	var to_pos: Vector3 = center - b.x * reach * side
+	# Diagonal: canto SUPERIOR de um lado até o canto INFERIOR do outro lado
+	var offset: Vector3 = b.x * (player.melee_range * 0.75) * side \
+		+ b.y * (player.melee_range * player.melee_vertical_ratio)
+	var from_pos: Vector3 = center + offset
+	var to_pos: Vector3 = center - offset
+	var blade_pos: Vector3 = from_pos.lerp(to_pos, p)
 	
 	# Pose de arremesso, mas acompanhando a inclinação da câmera
 	var local := Basis.from_euler(Vector3(
 		deg_to_rad(player.cut_cogblade_rot_x),
 		deg_to_rad(player.cut_cogblade_rot_y),
 		deg_to_rad(player.cut_cogblade_rot_z)))
-	_cut_set_blade(from_pos.lerp(to_pos, p), b * local, 1.0)
+	_cut_set_blade(blade_pos, b * local, 1.0)
+	
+	# A mão esquerda acompanha o golpe, como se fosse ela empunhando a lâmina
+	_melee_update_hand(blade_pos, center, b, p)
 	
 	# Rastro 2D acompanhando o golpe (uma faixa curta, não a tela inteira)
 	if is_instance_valid(streak):
 		var vp: Vector2 = get_viewport().get_visible_rect().size
 		var c: Vector2 = vp * 0.5
-		var half: float = vp.x * 0.55
-		var sa: Vector2 = c + Vector2(half, 0.0) * side
-		var sb: Vector2 = c - Vector2(half, 0.0) * side
+		# Y da tela cresce para baixo, por isso o canto de cima é -y
+		var s_off := Vector2(vp.x * 0.55 * side, -vp.y * 0.55)
+		var sa: Vector2 = c + s_off
+		var sb: Vector2 = c - s_off
 		var tail: float = maxf(0.0, p - 0.4)
 		streak.points = PackedVector2Array([sa.lerp(sb, tail), sa.lerp(sb, p)])
+
+# Move a mão esquerda seguindo uma versão reduzida do arco da lâmina, para dar
+# a sensação de que é a mão que está desferindo o golpe (e não a lâmina
+# voando sozinha). Tudo é recalculado por frame, então a mão continua colada
+# na câmera mesmo se o player girar durante o golpe.
+func _melee_update_hand(blade_pos: Vector3, center: Vector3, cam_basis: Basis, p: float) -> void:
+	if not _melee_hand_active: return
+	if not is_instance_valid(player.hand_magic_3d) or not is_instance_valid(player.hand_with_magic): return
+	
+	var rest_world: Vector3 = player.hand_with_magic.to_global(player.hand_magic_3d_pos_original)
+	var follow: Vector3 = (blade_pos - center) * player.melee_hand_follow
+	var push: Vector3 = -cam_basis.z * (sin(p * PI) * player.melee_hand_push)
+	player.hand_magic_3d.position = player.hand_with_magic.to_local(rest_world + follow + push)
 
 func _melee_apply_damage() -> void:
 	var cam: Camera3D = get_viewport().get_camera_3d()

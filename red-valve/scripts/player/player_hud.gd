@@ -14,7 +14,13 @@ func _setup_health_hud() -> void:
 	player.hud_layer.layer = 100
 	player.hud_layer.process_mode = Node.PROCESS_MODE_ALWAYS
 	var sc = GDScript.new()
-	sc.source_code = "extends CanvasLayer\nfunc _process(delta):\n\tif get_parent()._cutscene_hud_hidden:\n\t\tvisible = false\n\telse:\n\t\tvisible = not GlobalEvents.in_cutscene"
+	# O _process abaixo remarca a HUD como visível todo frame. Como este
+	# CanvasLayer é PROCESS_MODE_ALWAYS, ele continuava rodando mesmo com a
+	# cena inteira desligada por trás da arena do amuleto — e a HUD daquela
+	# cena reaparecia por cima da arena e, depois, do menu principal. Quem
+	# esconde a cena marca a meta "_was_visible_before_pause" (ver
+	# GlobalUtils.set_canvas_layers_hidden), então respeitamos ela aqui.
+	sc.source_code = "extends CanvasLayer\nfunc _process(delta):\n\tif has_meta('_was_visible_before_pause'):\n\t\tvisible = false\n\t\treturn\n\tif get_parent()._cutscene_hud_hidden:\n\t\tvisible = false\n\telse:\n\t\tvisible = not GlobalEvents.in_cutscene"
 	sc.reload()
 	player.hud_layer.set_script(sc)
 	player.add_child(player.hud_layer)

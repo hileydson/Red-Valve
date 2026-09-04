@@ -38,7 +38,8 @@ func _on_resume_pressed() -> void:
 
 func _on_exit_pressed() -> void:
 	GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/selecionar_item_voltar.mp3")
-	GlobalUtils.force_clear_all_screen_messages()
+	# Também limpa a cena que fica pausada por trás da arena do amuleto
+	GlobalUtils.cleanup_gameplay_leftovers()
 	self.visible = false
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	# NÃO despausa antes de trocar de cena: enquanto a árvore está pausada, os inimigos

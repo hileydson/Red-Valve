@@ -179,6 +179,9 @@ func _on_button_focus(btn: Button) -> void:
 
 func _ready() -> void:
 	get_tree().paused = false
+	# Rede de segurança: qualquer caminho que traga o jogador de volta ao menu
+	# não pode deixar cena/HUD/sangue do jogo pendurados na árvore.
+	GlobalUtils.cleanup_gameplay_leftovers()
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	start.grab_focus()
 	

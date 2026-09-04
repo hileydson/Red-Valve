@@ -166,6 +166,45 @@ func remover_camera_lenta():
 	#    tween_tempo.kill()
 	
 
+# --- LIMPEZA AO VOLTAR PARA O MENU PRINCIPAL ---
+# Ao entrar na arena do amuleto, a cena anterior NÃO sai da árvore: ela vira
+# irmã da current_scene, só escondida e sem processar (ver player_amulet.gd).
+# Como change_scene_to_file() só destrói a current_scene, sair do jogo dali
+# (morrendo na arena ou pelo menu de pausa) deixava aquela cena inteira viva
+# por trás do menu principal. Sintomas:
+#   - a HUD daquela cena continuava na tela (o CanvasLayer dela é
+#     PROCESS_MODE_ALWAYS e se remarca visível todo frame, mesmo com a cena
+#     desligada);
+#   - o sangue dos inimigos, que é adicionado direto na root, também ficava;
+#   - ao dar load, existiam dois Terrain3D na árvore ao mesmo tempo e o chão
+#     perdia a textura.
+# Esta função precisa ser chamada ANTES de trocar para o menu principal.
+func cleanup_gameplay_leftovers() -> void:
+	var tree := get_tree()
+	if tree == null: return
+
+	if is_instance_valid(GlobalEvents.paused_scene_for_amulet):
+		var cena: Node = GlobalEvents.paused_scene_for_amulet
+		# Tira da árvore na hora (não só queue_free) para o Terrain3D dela sair
+		# de cena antes de qualquer outra ser carregada.
+		if cena.get_parent():
+			cena.get_parent().remove_child(cena)
+		cena.queue_free()
+	GlobalEvents.paused_scene_for_amulet = null
+	GlobalEvents.amulet_captured_enemies.clear()
+
+	# Nós soltos pendurados direto na root sobrevivem à troca de cena
+	for child in tree.root.get_children():
+		if child == tree.current_scene: continue
+		if child.scene_file_path == "res://scenes/enemies/blood.tscn":
+			child.queue_free()
+
+	force_clear_all_screen_messages()
+
+	# Nenhum poder/cinemática pode deixar o tempo travado no menu
+	Engine.time_scale = 1.0
+	AudioServer.playback_speed_scale = 1.0
+
 # --- ESCONDER/RESTAURAR CANVASLAYERS DE UMA CENA PAUSADA ---
 # Node3D.visible = false NÃO esconde CanvasLayers (ex: HUD, textos de
 # capítulo), pois eles não fazem parte da árvore de visibilidade 3D. Isso é
