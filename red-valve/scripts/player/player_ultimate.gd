@@ -826,6 +826,650 @@ func _melee_fade_streak(streak: Line2D) -> void:
 		elif is_instance_valid(streak): streak.queue_free()
 	)
 
+# =========================================================================
+# COGBLADE FIRE
+# Segue o mesmo padrão do Slain: tudo em câmera lenta e a engine assume a
+# câmera. O player salta para trás e para cima, olhando para baixo — para o
+# lugar onde ele estava. De lá desfere dois cortes iguais aos do melee, um em
+# cada diagonal, formando um X de fogo na tela inteira. O X desce até a arena
+# e, no impacto, o fogo se espalha pelo chão e sobe nos inimigos. O player
+# assiste do alto e depois volta rapidamente para onde começou.
+# Gasta o medidor inteiro da cogblade.
+# =========================================================================
+
+var _fire_streaks: Array = []
+var _fire_emitters: Array = []
+
+func _activate_cogblade_fire() -> void:
+	if GlobalUtils.current_time_tween and GlobalUtils.current_time_tween.is_valid():
+		GlobalUtils.current_time_tween.kill()
+
+	player.is_using_ultimate = true
+	_reset_cogblade_gauge(0.0) # gasta o medidor inteiro
+
+	player.is_blade_returning = false
+	_cancel_melee()
+	_reset_blade_to_hand()
+
+	Engine.time_scale = 0.1
+	AudioServer.playback_speed_scale = 0.5
+
+	_hide_combat_hud()
+
+	player.playback.travel("idle")
+	player.velocity = Vector3.ZERO
+
+	var start_pos: Vector3 = player.global_position
+	var start_cam_xf: Transform3D = player.camera.global_transform
+
+	var cine_cam := Camera3D.new()
+	get_tree().current_scene.add_child(cine_cam)
+	cine_cam.global_transform = start_cam_xf
+	cine_cam.make_current()
+	player.camera.current = false
+
+	var fx_layer := CanvasLayer.new()
+	fx_layer.name = "CogbladeFireFX"
+	fx_layer.layer = 105
+	get_tree().current_scene.add_child(fx_layer)
+
+	_fire_streaks.clear()
+	_fire_emitters.clear()
+
+	# Ponto de onde ele assiste: atrás e acima de onde estava
+	var cam_yaw: float = player.camera.global_rotation.y
+	var yaw_basis := Basis.from_euler(Vector3(0.0, cam_yaw, 0.0))
+	var back_dir: Vector3 = yaw_basis.z # +Z é "para trás" da câmera
+	var air_pos: Vector3 = start_pos + back_dir * player.fire_jump_back \
+		+ Vector3(0.0, player.fire_jump_height, 0.0)
+
+	# Rotação que olha do alto para o ponto de partida
+	var look_basis := Basis.looking_at(start_pos - air_pos, Vector3.UP)
+	var look_rot: Vector3 = look_basis.get_euler()
+	# Evita a câmera dar a volta longa no yaw durante o tween
+	look_rot.y = cam_yaw + wrapf(look_rot.y - cam_yaw, -PI, PI)
+
+	var seq := create_tween()
+
+	# --- Passo 1: o salto para trás e para cima, já olhando para baixo ---
+	seq.tween_callback(func():
+		_play_blade_sound("res://assets/sounds/player/blade_out.mp3", 0.7, -2.0)
+		GlobalUtils.shake_camera(0.12, 0.35)
+		_fire_set_blur(1.4)
+		_fire_spawn_speed_lines(cine_cam)
+	)
+	seq.tween_property(cine_cam, "global_position", air_pos, player.fire_jump_time)\
+		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	seq.parallel().tween_property(cine_cam, "global_rotation", look_rot, player.fire_jump_time)\
+		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	seq.parallel().tween_property(cine_cam, "fov", 88.0, player.fire_jump_time)\
+		.set_trans(Tween.TRANS_SINE)
+
+	seq.tween_callback(func():
+		_fire_set_blur(0.25)
+		GlobalUtils.shake_camera(0.15, 0.12)
+	)
+
+	# --- Passo 2: a cogblade entra na frente da câmera ---
+	# A câmera fica parada daqui em diante, então dá para pré-calcular tudo.
+	var air_basis := Basis.from_euler(look_rot)
+	var blade_center: Vector3 = air_pos - air_basis.z * player.cut_blade_distance
+	var entry_basis := _cut_blade_basis(air_basis, look_rot.y, 0.0)
+	var entry_from: Vector3 = blade_center + air_basis.x * 1.6 + air_basis.y * 1.0
+
+	seq.tween_callback(func():
+		if not is_instance_valid(player.crescent_cogblade): return
+		player.crescent_cogblade.show()
+		player.crescent_cogblade.top_level = true
+		var faiscas = player.crescent_cogblade.get_node_or_null("Faiscas")
+		if faiscas: faiscas.emitting = true
+		_play_blade_sound("res://assets/sounds/player/blade_out.mp3", 0.95)
+	)
+	seq.tween_method(func(t: float):
+		_cut_set_blade(entry_from.lerp(blade_center, ease(t, 0.35)), entry_basis, lerpf(0.55, 1.0, t))
+	, 0.0, 1.0, 0.10)
+	seq.tween_interval(0.05)
+
+	# --- Passo 3: os dois cortes que desenham o X ---
+	var reach: float = player.cut_blade_distance * 3.0
+	# Diagonal 1: canto superior ESQUERDO -> canto inferior DIREITO
+	# Diagonal 2: canto superior DIREITO  -> canto inferior ESQUERDO
+	var diagonais := [
+		{"dir": (-air_basis.x + air_basis.y).normalized(), "screen": Vector2(-1.0, -1.0)},
+		{"dir": (air_basis.x + air_basis.y).normalized(), "screen": Vector2(1.0, -1.0)},
+	]
+	for i in range(diagonais.size()):
+		var d: Dictionary = diagonais[i]
+		var wdir: Vector3 = d["dir"]
+		var sdir: Vector2 = d["screen"]
+		var from_pos: Vector3 = blade_center + wdir * reach
+		var to_pos: Vector3 = blade_center - wdir * reach
+		# Ângulo do corte no plano da tela, para girar a lâmina junto
+		var theta: float = atan2(wdir.dot(air_basis.y), wdir.dot(air_basis.x))
+		var rot_basis := _cut_blade_basis(air_basis, look_rot.y, theta)
+		var idx := i
+
+		seq.tween_callback(func(): _fire_begin_streak(fx_layer, sdir, idx))
+		seq.tween_method(func(t: float):
+			_cut_set_blade(from_pos.lerp(to_pos, t), rot_basis, 1.0)
+			_fire_update_streak(t)
+		, 0.0, 1.0, player.fire_slash_duration)
+		if i == 0:
+			seq.tween_interval(0.03)
+
+	# --- Passo 4: o X de fogo se forma e desce para a arena ---
+	var impact_pos: Vector3 = start_pos + Vector3(0.0, 0.1, 0.0)
+	var x_node_ref := [null] # array só para o lambda conseguir guardar a referência
+
+	seq.tween_callback(func():
+		_reset_blade_to_hand()
+		x_node_ref[0] = _fire_spawn_x(air_basis, blade_center)
+		GlobalUtils.shake_camera(0.2, 0.5)
+		_play_blade_sound("res://assets/sounds/common/explosao.mp3", 1.6, -12.0)
+	)
+	seq.tween_interval(player.fire_x_hold_time)
+
+	# O X vira para o chão enquanto cai e cresce
+	var flat_basis := Basis(Vector3.UP, look_rot.y) * Basis(Vector3(1, 0, 0), Vector3(0, 0, -1), Vector3(0, 1, 0))
+	seq.tween_callback(func(): _fire_fade_streaks())
+	seq.tween_method(func(t: float):
+		var node = x_node_ref[0]
+		if not is_instance_valid(node): return
+		var e: float = ease(t, 2.4) # acelera na queda
+		node.global_position = blade_center.lerp(impact_pos, e)
+		var b: Basis = air_basis.slerp(flat_basis, e)
+		node.global_transform = Transform3D(b.scaled(Vector3.ONE * lerpf(1.0, 2.4, e)), node.global_position)
+	, 0.0, 1.0, player.fire_x_fall_time).set_trans(Tween.TRANS_LINEAR)
+
+	# --- Passo 5: impacto e o incêndio se espalhando pela arena ---
+	seq.tween_callback(func():
+		GlobalUtils.shake_camera(0.35, 1.4)
+		GlobalUtils.vibrate_controller(Input, 0.9, 0.9, 0.4)
+		_play_blade_sound("res://assets/sounds/common/explosao.mp3", 0.85, 0.0)
+		_play_blade_sound("res://assets/sounds/common/fire_cracling.mp3", 0.9, -2.0)
+		_fire_set_blur(1.0)
+		_cut_spawn_flash(fx_layer)
+
+		var node = x_node_ref[0]
+		if is_instance_valid(node):
+			# O X marcado no chão apaga junto com o fogo tomando conta
+			var ft := create_tween()
+			ft.tween_interval(0.25)
+			ft.tween_callback(func():
+				if is_instance_valid(node): node.queue_free()
+			)
+
+		_fire_ignite_arena(impact_pos)
+	)
+
+	# Fica assistindo o fogo lá do alto, com a câmera respirando de leve
+	seq.tween_property(cine_cam, "fov", 78.0, player.fire_watch_time)\
+		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+	# --- Passo 6: volta rápida para onde o poder começou ---
+	seq.tween_callback(func():
+		_fire_set_blur(1.6)
+		_play_blade_sound("res://assets/sounds/player/blade_out.mp3", 0.6, -4.0)
+	)
+	seq.tween_property(cine_cam, "global_position", start_cam_xf.origin, player.fire_return_time)\
+		.set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+	seq.parallel().tween_property(cine_cam, "global_rotation", start_cam_xf.basis.get_euler(), player.fire_return_time)\
+		.set_trans(Tween.TRANS_SINE)
+	seq.parallel().tween_property(cine_cam, "fov", 75.0, player.fire_return_time)
+
+	seq.tween_callback(func():
+		GlobalUtils.shake_camera(0.25, 0.7)
+
+		if is_instance_valid(cine_cam):
+			cine_cam.queue_free()
+		player.camera.make_current()
+
+		_show_combat_hud()
+
+		var end_tween := create_tween()
+		end_tween.tween_interval(0.15)
+		end_tween.tween_callback(func():
+			player.global_position = start_pos
+			player.velocity = Vector3.ZERO
+			Engine.time_scale = 1.0
+			AudioServer.playback_speed_scale = 1.0
+			player.is_using_ultimate = false
+			_fire_restore_emitters() # o fogo volta à velocidade normal
+			_fire_fade_streaks()
+			if is_instance_valid(fx_layer): fx_layer.queue_free()
+		)
+	)
+
+# Todo emissor do incêndio passa por aqui: durante a cinemática ele roda
+# acelerado para compensar o Engine.time_scale, e volta ao normal quando o
+# player recupera o controle.
+func _fire_register_emitter(p: CPUParticles3D) -> void:
+	p.speed_scale = maxf(player.fire_slowmo_speed_scale, 0.1)
+	_fire_emitters.append(p)
+
+func _fire_restore_emitters() -> void:
+	for e in _fire_emitters:
+		if is_instance_valid(e):
+			var em: CPUParticles3D = e
+			em.speed_scale = 1.0
+	_fire_emitters.clear()
+
+func _fire_set_blur(strength: float) -> void:
+	if not is_instance_valid(player.hud_layer): return
+	var blur = player.hud_layer.get_node_or_null("MotionBlurOverlay")
+	if not blur: return
+	blur.visible = true
+	blur.material.set_shader_parameter("blur_strength", strength)
+
+func _fire_spawn_speed_lines(cam: Camera3D) -> void:
+	if not is_instance_valid(cam): return
+	var lines := CPUParticles3D.new()
+	lines.amount = 260
+	lines.lifetime = 0.25
+	lines.emission_shape = CPUParticles3D.EMISSION_SHAPE_BOX
+	lines.emission_box_extents = Vector3(3, 3, 3)
+	lines.direction = Vector3(0, -1, 0)
+	lines.spread = 0.0
+	lines.gravity = Vector3(0, -55, 0)
+	lines.initial_velocity_min = 12.0
+	lines.initial_velocity_max = 22.0
+
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = Color(1.0, 0.75, 0.4, 0.35)
+	mat.emission_enabled = true
+	mat.emission = Color(1.0, 0.6, 0.2)
+	mat.emission_energy_multiplier = 2.5
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+
+	var mesh := QuadMesh.new()
+	mesh.size = Vector2(0.012, 0.45)
+	mesh.material = mat
+	lines.mesh = mesh
+
+	cam.add_child(lines)
+	_fire_register_emitter(lines)
+	lines.position = Vector3(0, 0, -3)
+
+	var t := create_tween()
+	t.tween_interval(0.4)
+	t.tween_callback(func():
+		if is_instance_valid(lines): lines.emitting = false
+	)
+
+# --- Rastros 2D que ficam na tela formando o X ---
+func _fire_begin_streak(fx_layer: CanvasLayer, sdir: Vector2, idx: int) -> void:
+	if not is_instance_valid(fx_layer): return
+	var vp: Vector2 = get_viewport().get_visible_rect().size
+	var c: Vector2 = vp * 0.5
+	var half := Vector2(vp.x * 0.62, vp.y * 0.62)
+	_cut_streak_a = c + Vector2(half.x * sdir.x, half.y * sdir.y)
+	_cut_streak_b = c - Vector2(half.x * sdir.x, half.y * sdir.y)
+
+	var line := Line2D.new()
+	line.width = 34.0
+	line.begin_cap_mode = Line2D.LINE_CAP_ROUND
+	line.end_cap_mode = Line2D.LINE_CAP_ROUND
+	line.joint_mode = Line2D.LINE_JOINT_ROUND
+
+	# Gradiente de fogo: núcleo claro nas pontas quentes
+	var grad := Gradient.new()
+	grad.set_color(0, Color(1.0, 0.35, 0.05, 0.15))
+	grad.set_color(1, Color(1.0, 0.95, 0.6, 1.0))
+	line.gradient = grad
+
+	var wcurve := Curve.new()
+	wcurve.add_point(Vector2(0.0, 0.15))
+	wcurve.add_point(Vector2(0.5, 1.0))
+	wcurve.add_point(Vector2(1.0, 0.35))
+	line.width_curve = wcurve
+
+	line.points = PackedVector2Array([_cut_streak_a, _cut_streak_a])
+	fx_layer.add_child(line)
+	_cut_streak = line
+	_fire_streaks.append(line)
+
+	_play_blade_sound("res://assets/sounds/player/blade_out.mp3", 1.35 + 0.2 * float(idx), -1.0)
+	GlobalUtils.shake_camera(0.12, 0.3)
+
+func _fire_update_streak(t: float) -> void:
+	_cut_update_streak(t)
+
+func _fire_fade_streaks() -> void:
+	for line in _fire_streaks:
+		if not is_instance_valid(line): continue
+		var l: Line2D = line
+		var t := create_tween()
+		t.tween_property(l, "modulate:a", 0.0, 0.12)
+		t.tween_callback(func():
+			if is_instance_valid(l): l.queue_free()
+		)
+	_fire_streaks.clear()
+	_cut_streak = null
+
+# --- O X de fogo em 3D ---
+# Duas barras cruzadas emissivas com brasas subindo, montadas no plano da
+# câmera. Ao cair, ele gira para deitar no chão da arena (ver o slerp lá em cima).
+func _fire_spawn_x(cam_basis: Basis, pos: Vector3) -> Node3D:
+	var node := Node3D.new()
+	node.name = "CogbladeFireX"
+	get_tree().current_scene.add_child(node)
+	node.global_transform = Transform3D(cam_basis, pos)
+
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = Color(1.0, 0.45, 0.08, 1.0)
+	mat.emission_enabled = true
+	mat.emission = Color(1.0, 0.55, 0.12)
+	mat.emission_energy_multiplier = 7.0
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+
+	var mesh := BoxMesh.new()
+	mesh.size = Vector3(9.0, 0.42, 0.42)
+	mesh.material = mat
+
+	# As duas barras do X, giradas ±45° no plano da lâmina
+	for ang in [45.0, -45.0]:
+		var bar := MeshInstance3D.new()
+		bar.mesh = mesh
+		bar.rotation = Vector3(0, 0, deg_to_rad(ang))
+		bar.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		node.add_child(bar)
+
+	# Brasas saindo do X enquanto ele cai
+	var embers := CPUParticles3D.new()
+	embers.amount = 160
+	embers.lifetime = 1.1
+	embers.emission_shape = CPUParticles3D.EMISSION_SHAPE_BOX
+	embers.emission_box_extents = Vector3(3.2, 3.2, 0.3)
+	embers.direction = Vector3(0, 1, 0)
+	embers.spread = 60.0
+	embers.gravity = Vector3(0, 1.5, 0)
+	embers.initial_velocity_min = 1.5
+	embers.initial_velocity_max = 5.0
+	embers.scale_amount_min = 0.5
+	embers.scale_amount_max = 1.6
+	embers.color_ramp = _fire_gradient()
+
+	var emesh := SphereMesh.new()
+	emesh.radius = 0.06
+	emesh.height = 0.12
+	emesh.material = _fire_particle_material(true)
+	embers.mesh = emesh
+	node.add_child(embers)
+	_fire_register_emitter(embers)
+
+	var luz := OmniLight3D.new()
+	luz.light_color = Color(1.0, 0.5, 0.15)
+	luz.light_energy = 12.0
+	luz.omni_range = 30.0
+	luz.shadow_enabled = false
+	node.add_child(luz)
+
+	return node
+
+# Gradiente comum do fogo: núcleo claro -> laranja -> vermelho -> apaga
+func _fire_gradient() -> Gradient:
+	var g := Gradient.new()
+	g.offsets = PackedFloat32Array([0.0, 0.25, 0.6, 1.0])
+	g.colors = PackedColorArray([
+		Color(1.0, 0.95, 0.65, 1.0),
+		Color(1.0, 0.55, 0.10, 0.95),
+		Color(0.75, 0.12, 0.02, 0.55),
+		Color(0.15, 0.03, 0.0, 0.0),
+	])
+	return g
+
+func _fire_particle_material(emissive: bool) -> StandardMaterial3D:
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = Color(1, 1, 1, 1)
+	mat.vertex_color_use_as_albedo = true # deixa o color_ramp valer
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	mat.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
+	if emissive:
+		mat.emission_enabled = true
+		mat.emission = Color(1.0, 0.5, 0.12)
+		mat.emission_energy_multiplier = 4.0
+	return mat
+
+# --- O incêndio na arena ---
+func _fire_ignite_arena(center: Vector3) -> void:
+	var raio: float = maxf(player.fire_radius, 1.0)
+	var dur: float = maxf(player.fire_duration, 0.5)
+
+	var campo := Node3D.new()
+	campo.name = "CogbladeFireField"
+	get_tree().current_scene.add_child(campo)
+	campo.global_position = center
+
+	# Onda de choque de fogo saindo do ponto de impacto
+	_fire_spawn_shockwave(campo, raio)
+
+	# As manchas de fogo acendem de dentro para fora, dando a sensação de
+	# que o incêndio se espalha a partir do X.
+	var total: int = maxi(4, player.fire_patches)
+	for i in range(total):
+		var ang: float = randf() * TAU
+		# sqrt para distribuir uniformemente no disco (sem amontoar no centro)
+		var dist: float = sqrt(randf()) * raio
+		var pos: Vector3 = center + Vector3(cos(ang), 0.0, sin(ang)) * dist
+		var atraso: float = (dist / raio) * maxf(player.fire_spread_time, 0.01)
+		_fire_spawn_patch(campo, pos, atraso, dur, i < 6)
+
+	# Os inimigos pegam fogo conforme a onda chega neles
+	for inimigo in get_tree().get_nodes_in_group("enemies"):
+		if not is_instance_valid(inimigo) or not (inimigo is Node3D): continue
+		var d: float = inimigo.global_position.distance_to(center)
+		if d > raio: continue
+		_fire_ignite_enemy(inimigo, (d / raio) * maxf(player.fire_spread_time, 0.01), dur)
+
+	# Limpa o incêndio inteiro quando ele acaba
+	var limpeza := create_tween()
+	limpeza.tween_interval(dur + 3.0)
+	limpeza.tween_callback(func():
+		if is_instance_valid(campo): campo.queue_free()
+	)
+
+func _fire_spawn_shockwave(parent: Node3D, raio: float) -> void:
+	var onda := CPUParticles3D.new()
+	onda.emitting = true
+	onda.one_shot = true
+	onda.amount = 220
+	onda.lifetime = 1.4
+	onda.explosiveness = 1.0
+	onda.spread = 12.0
+	onda.direction = Vector3(1, 0.12, 0)
+	onda.flatness = 0.85 # espalha rente ao chão
+	onda.initial_velocity_min = raio * 0.7
+	onda.initial_velocity_max = raio * 1.3
+	onda.gravity = Vector3(0, 1.0, 0)
+	onda.scale_amount_min = 2.0
+	onda.scale_amount_max = 5.0
+	onda.color_ramp = _fire_gradient()
+
+	var mesh := QuadMesh.new()
+	mesh.size = Vector2(1.2, 1.2)
+	var mat := _fire_particle_material(true)
+	var tex = load("res://assets/images/vfx/smoke.png") if ResourceLoader.exists("res://assets/images/vfx/smoke.png") else null
+	if tex: mat.albedo_texture = tex
+	mesh.material = mat
+	onda.mesh = mesh
+	parent.add_child(onda)
+	_fire_register_emitter(onda)
+
+	var flash := OmniLight3D.new()
+	flash.light_color = Color(1.0, 0.45, 0.1)
+	flash.light_energy = 22.0
+	flash.omni_range = raio * 2.2
+	flash.shadow_enabled = false
+	parent.add_child(flash)
+	var t := create_tween()
+	t.tween_property(flash, "light_energy", 3.5, 1.5).set_trans(Tween.TRANS_CUBIC)
+
+# Uma mancha de fogo no chão: chamas + fumaça, e luz só nas primeiras
+func _fire_spawn_patch(parent: Node3D, pos: Vector3, atraso: float, dur: float, com_luz: bool) -> void:
+	var chamas := CPUParticles3D.new()
+	chamas.emitting = false
+	chamas.amount = 26
+	chamas.lifetime = 1.2
+	chamas.randomness = 0.6
+	chamas.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
+	chamas.emission_sphere_radius = randf_range(0.8, 1.8)
+	chamas.direction = Vector3(0, 1, 0)
+	chamas.spread = 16.0
+	chamas.gravity = Vector3(randf_range(-0.4, 0.4), 1.8, randf_range(-0.4, 0.4))
+	chamas.initial_velocity_min = 1.3
+	chamas.initial_velocity_max = 3.4
+	chamas.scale_amount_min = 1.1
+	chamas.scale_amount_max = 2.6
+	chamas.color_ramp = _fire_gradient()
+
+	var curva := Curve.new()
+	curva.add_point(Vector2(0.0, 0.35))
+	curva.add_point(Vector2(0.35, 1.0))
+	curva.add_point(Vector2(1.0, 0.0))
+	chamas.scale_amount_curve = curva
+
+	var mesh := QuadMesh.new()
+	mesh.size = Vector2(0.9, 1.3)
+	var mat := _fire_particle_material(true)
+	if ResourceLoader.exists("res://assets/images/vfx/smoke.png"):
+		mat.albedo_texture = load("res://assets/images/vfx/smoke.png")
+	mesh.material = mat
+	chamas.mesh = mesh
+
+	parent.add_child(chamas)
+	_fire_register_emitter(chamas)
+	chamas.global_position = pos
+
+	# Fumaça escura por cima, sem additive, para o fogo não virar só brilho
+	var fumaca := CPUParticles3D.new()
+	fumaca.emitting = false
+	fumaca.amount = 10
+	fumaca.lifetime = 2.6
+	fumaca.direction = Vector3(0, 1, 0)
+	fumaca.spread = 22.0
+	fumaca.gravity = Vector3(0, 1.1, 0)
+	fumaca.initial_velocity_min = 0.8
+	fumaca.initial_velocity_max = 2.0
+	fumaca.scale_amount_min = 2.5
+	fumaca.scale_amount_max = 5.5
+
+	var smat := StandardMaterial3D.new()
+	smat.albedo_color = Color(0.09, 0.08, 0.08, 0.32)
+	smat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	smat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	smat.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
+	if ResourceLoader.exists("res://assets/images/vfx/smoke.png"):
+		smat.albedo_texture = load("res://assets/images/vfx/smoke.png")
+	var smesh := QuadMesh.new()
+	smesh.size = Vector2(1.6, 1.6)
+	smesh.material = smat
+	fumaca.mesh = smesh
+
+	parent.add_child(fumaca)
+	_fire_register_emitter(fumaca)
+	fumaca.global_position = pos + Vector3(0, 1.0, 0)
+
+	var luz: OmniLight3D = null
+	if com_luz:
+		luz = OmniLight3D.new()
+		luz.light_color = Color(1.0, 0.45, 0.12)
+		luz.light_energy = 0.0
+		luz.omni_range = 12.0
+		luz.shadow_enabled = false
+		parent.add_child(luz)
+		luz.global_position = pos + Vector3(0, 1.0, 0)
+
+	# Acende depois do atraso e apaga quando o incêndio acaba
+	var t := create_tween()
+	t.tween_interval(atraso)
+	t.tween_callback(func():
+		if is_instance_valid(chamas): chamas.emitting = true
+		if is_instance_valid(fumaca): fumaca.emitting = true
+	)
+	if luz:
+		t.tween_property(luz, "light_energy", randf_range(3.5, 6.5), 0.12)
+		t.tween_interval(maxf(dur - atraso - 1.4, 0.1))
+		t.tween_property(luz, "light_energy", 0.0, 1.2)
+	else:
+		t.tween_interval(maxf(dur - atraso, 0.1))
+	t.tween_callback(func():
+		if is_instance_valid(chamas): chamas.emitting = false
+		if is_instance_valid(fumaca): fumaca.emitting = false
+	)
+
+# O fogo sobe no inimigo: chamas grudadas nele + queimadura ao longo do tempo
+func _fire_ignite_enemy(inimigo: Node3D, atraso: float, dur: float) -> void:
+	if inimigo.has_meta("_cogblade_burning"): return
+	inimigo.set_meta("_cogblade_burning", true)
+
+	var t := create_tween()
+	t.tween_interval(atraso)
+	t.tween_callback(func():
+		if not is_instance_valid(inimigo):
+			return
+
+		var chamas := CPUParticles3D.new()
+		chamas.name = "CogbladeBurn"
+		chamas.amount = 30
+		chamas.lifetime = 0.85
+		chamas.randomness = 0.5
+		chamas.emission_shape = CPUParticles3D.EMISSION_SHAPE_BOX
+		chamas.emission_box_extents = Vector3(0.35, 0.9, 0.35)
+		chamas.direction = Vector3(0, 1, 0)
+		chamas.spread = 12.0
+		chamas.gravity = Vector3(0, 2.2, 0)
+		chamas.initial_velocity_min = 1.0
+		chamas.initial_velocity_max = 2.4
+		chamas.scale_amount_min = 0.7
+		chamas.scale_amount_max = 1.5
+		chamas.color_ramp = _fire_gradient()
+
+		var mesh := QuadMesh.new()
+		mesh.size = Vector2(0.55, 0.8)
+		var mat := _fire_particle_material(true)
+		if ResourceLoader.exists("res://assets/images/vfx/smoke.png"):
+			mat.albedo_texture = load("res://assets/images/vfx/smoke.png")
+		mesh.material = mat
+		chamas.mesh = mesh
+
+		inimigo.add_child(chamas)
+		_fire_register_emitter(chamas)
+		chamas.position = Vector3(0, 0.9, 0)
+
+		if inimigo.has_method("take_damage"):
+			inimigo.take_damage(player.fire_impact_damage)
+
+		# Queimadura: alguns tiques de dano espalhados pela duração do fogo
+		var tiques: int = maxi(0, player.fire_burn_ticks)
+		if tiques > 0:
+			var passo: float = dur / float(tiques + 1)
+			var bt := create_tween()
+			for i in range(tiques):
+				bt.tween_interval(passo)
+				bt.tween_callback(func():
+					if is_instance_valid(inimigo) and inimigo.has_method("take_damage"):
+						inimigo.take_damage(player.fire_burn_damage)
+				)
+
+		var limpar := create_tween()
+		limpar.tween_interval(dur)
+		limpar.tween_callback(func():
+			if is_instance_valid(chamas): chamas.emitting = false
+			if is_instance_valid(inimigo): inimigo.remove_meta("_cogblade_burning")
+		)
+		limpar.tween_interval(1.2)
+		limpar.tween_callback(func():
+			if is_instance_valid(chamas): chamas.queue_free()
+		)
+	)
+
 func _apply_aoe_damage_slowly(pos: Vector3, damage: int = 30, radius: float = 15.0):
 	var inimigos = get_tree().get_nodes_in_group("enemies")
 	var afetados = []

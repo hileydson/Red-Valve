@@ -101,6 +101,44 @@ var is_exhausted: bool = false
 ## jorro inteiro: 1.0 = tão lento quanto a cena, 3.5 = ~0.35x do normal.
 @export var cut_blood_speed_scale: float = 3.5
 
+# --- TERCEIRO PODER: COGBLADE FIRE ---
+@export_group("Cogblade Fire")
+## Salto para trás e para cima antes do golpe.
+@export var fire_jump_back: float = 7.0
+@export var fire_jump_height: float = 12.0
+@export var fire_jump_time: float = 0.22
+## Duração de cada um dos dois cortes que formam o X.
+@export var fire_slash_duration: float = 0.09
+## Quanto tempo o X de fogo fica parado na tela antes de descer.
+@export var fire_x_hold_time: float = 0.08
+## Tempo de queda do X até a arena.
+@export var fire_x_fall_time: float = 0.16
+## Tempo assistindo o fogo se espalhar lá de cima.
+@export var fire_watch_time: float = 0.28
+## Volta rápida para o lugar de onde o poder começou.
+@export var fire_return_time: float = 0.12
+## Distância do X de fogo até a câmera enquanto ele se forma.
+@export var fire_x_distance: float = 4.5
+## Raio do incêndio na arena.
+@export var fire_radius: float = 18.0
+## Quantas manchas de fogo formam o incêndio (menor = mais leve).
+@export var fire_patches: int = 24
+## Quanto tempo o fogo queima, em segundos de jogo.
+@export var fire_duration: float = 6.0
+## Tempo (em segundos de jogo) que o incêndio leva para ir do centro à borda.
+## Curto de propósito: com time_scale 0.1 durante a cinemática, isso vira ~2s
+## reais, que é justamente o tempo em que o player assiste lá do alto.
+@export var fire_spread_time: float = 0.22
+## As partículas de fogo rodam com este speed_scale enquanto a cinemática está
+## em câmera lenta, senão o fogo ficaria praticamente congelado na tela.
+## Volta para 1.0 assim que o player recupera o controle.
+@export var fire_slowmo_speed_scale: float = 4.0
+## Dano no instante em que o fogo pega no inimigo.
+@export var fire_impact_damage: int = 20
+## Dano por tique de queimadura, e quantos tiques cada inimigo leva.
+@export var fire_burn_damage: int = 5
+@export var fire_burn_ticks: int = 4
+
 # --- GOLPE MELEE DA COGBLADE (toque rápido em C / L1) ---
 @export_group("Cogblade Melee")
 ## Dano do golpe corpo a corpo da cogblade.
@@ -1175,6 +1213,10 @@ func _activate_cogblade_slain() -> void:
 func _activate_cogblade_cut() -> void:
 	var comp = get_node_or_null("PlayerUltimate")
 	if comp: comp._activate_cogblade_cut()
+
+func _activate_cogblade_fire() -> void:
+	var comp = get_node_or_null("PlayerUltimate")
+	if comp: comp._activate_cogblade_fire()
 
 func cogblade_melee_slash() -> bool:
 	var comp = get_node_or_null("PlayerUltimate")
