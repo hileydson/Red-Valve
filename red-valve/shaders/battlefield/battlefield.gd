@@ -459,12 +459,12 @@ func _play_rise_from_ground_intro() -> void:
 	cam.global_position = anchor.global_position - Vector3(0, 1.5, 0)
 	cam.fov = 82.0
 
-	# Motion blur bem leve durante a subida (DOF distante suave, some no final).
+	# Motion blur durante a subida (DOF distante, some no final).
 	var blur := CameraAttributesPractical.new()
 	blur.dof_blur_far_enabled = true
-	blur.dof_blur_far_distance = 6.0
-	blur.dof_blur_far_transition = 14.0
-	blur.dof_blur_amount = 0.035
+	blur.dof_blur_far_distance = 4.0
+	blur.dof_blur_far_transition = 8.0
+	blur.dof_blur_amount = 0.12
 	cam.attributes = blur
 
 	_rise_cam = cam
