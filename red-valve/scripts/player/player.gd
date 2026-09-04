@@ -101,8 +101,8 @@ var is_exhausted: bool = false
 ## jorro inteiro: 1.0 = tão lento quanto a cena, 3.5 = ~0.35x do normal.
 @export var cut_blood_speed_scale: float = 3.5
 
-# --- TERCEIRO PODER: COGBLADE FIRE ---
-@export_group("Cogblade Fire")
+# --- TERCEIRO PODER: COGBLADE FIRE CROSS ---
+@export_group("Cogblade Fire Cross")
 ## Salto para trás e para cima antes do golpe.
 @export var fire_jump_back: float = 7.0
 @export var fire_jump_height: float = 12.0
@@ -1214,9 +1214,9 @@ func _activate_cogblade_cut() -> void:
 	var comp = get_node_or_null("PlayerUltimate")
 	if comp: comp._activate_cogblade_cut()
 
-func _activate_cogblade_fire() -> void:
+func _activate_cogblade_fire_cross() -> void:
 	var comp = get_node_or_null("PlayerUltimate")
-	if comp: comp._activate_cogblade_fire()
+	if comp: comp._activate_cogblade_fire_cross()
 
 func cogblade_melee_slash() -> bool:
 	var comp = get_node_or_null("PlayerUltimate")

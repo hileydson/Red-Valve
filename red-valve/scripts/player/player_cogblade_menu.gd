@@ -43,8 +43,8 @@ const POWERS: Array = [
 		"cost": 100.0,
 	},
 	{
-		"id": "fire",
-		"name": "COGBLADE FIRE",
+		"id": "fire_cross",
+		"name": "COGBLADE FIRE CROSS",
 		"desc": "Marca um X de fogo e incendeia a arena",
 		"cost_type": "cogblade",
 		"cost": 100.0,
@@ -268,5 +268,5 @@ func _execute_power(id: String) -> void:
 			player._activate_cogblade_slain()
 		"cut":
 			player._activate_cogblade_cut()
-		"fire":
-			player._activate_cogblade_fire()
+		"fire_cross":
+			player._activate_cogblade_fire_cross()

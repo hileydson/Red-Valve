@@ -827,7 +827,7 @@ func _melee_fade_streak(streak: Line2D) -> void:
 	)
 
 # =========================================================================
-# COGBLADE FIRE
+# COGBLADE FIRE CROSS
 # Segue o mesmo padrão do Slain: tudo em câmera lenta e a engine assume a
 # câmera. O player salta para trás e para cima, olhando para baixo — para o
 # lugar onde ele estava. De lá desfere dois cortes iguais aos do melee, um em
@@ -840,7 +840,7 @@ func _melee_fade_streak(streak: Line2D) -> void:
 var _fire_streaks: Array = []
 var _fire_emitters: Array = []
 
-func _activate_cogblade_fire() -> void:
+func _activate_cogblade_fire_cross() -> void:
 	if GlobalUtils.current_time_tween and GlobalUtils.current_time_tween.is_valid():
 		GlobalUtils.current_time_tween.kill()
 
@@ -895,7 +895,7 @@ func _activate_cogblade_fire() -> void:
 	seq.tween_callback(func():
 		_play_blade_sound("res://assets/sounds/player/blade_out.mp3", 0.7, -2.0)
 		GlobalUtils.shake_camera(0.12, 0.35)
-		_fire_set_blur(1.4)
+		_fire_set_blur(0.7)
 		_fire_spawn_speed_lines(cine_cam)
 	)
 	seq.tween_property(cine_cam, "global_position", air_pos, player.fire_jump_time)\
@@ -906,7 +906,7 @@ func _activate_cogblade_fire() -> void:
 		.set_trans(Tween.TRANS_SINE)
 
 	seq.tween_callback(func():
-		_fire_set_blur(0.25)
+		_fire_set_blur(0.12)
 		GlobalUtils.shake_camera(0.15, 0.12)
 	)
 
@@ -986,8 +986,8 @@ func _activate_cogblade_fire() -> void:
 		GlobalUtils.shake_camera(0.35, 1.4)
 		GlobalUtils.vibrate_controller(Input, 0.9, 0.9, 0.4)
 		_play_blade_sound("res://assets/sounds/common/explosao.mp3", 0.85, 0.0)
-		_play_blade_sound("res://assets/sounds/common/fire_cracling.mp3", 0.9, -2.0)
-		_fire_set_blur(1.0)
+		_fire_play_ambient(maxf(player.fire_duration, 0.5))
+		_fire_set_blur(0.5)
 		_cut_spawn_flash(fx_layer)
 
 		var node = x_node_ref[0]
@@ -1008,7 +1008,7 @@ func _activate_cogblade_fire() -> void:
 
 	# --- Passo 6: volta rápida para onde o poder começou ---
 	seq.tween_callback(func():
-		_fire_set_blur(1.6)
+		_fire_set_blur(0.85)
 		_play_blade_sound("res://assets/sounds/player/blade_out.mp3", 0.6, -4.0)
 	)
 	seq.tween_property(cine_cam, "global_position", start_cam_xf.origin, player.fire_return_time)\
@@ -1179,6 +1179,31 @@ func _fire_spawn_x(cam_basis: Basis, pos: Vector3) -> Node3D:
 		bar.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		node.add_child(bar)
 
+	# Chamas lambendo o X inteiro
+	var chamas := CPUParticles3D.new()
+	chamas.amount = 130
+	chamas.lifetime = 0.7
+	chamas.randomness = 0.6
+	chamas.emission_shape = CPUParticles3D.EMISSION_SHAPE_BOX
+	chamas.emission_box_extents = Vector3(3.0, 3.0, 0.15)
+	chamas.direction = Vector3(0, 1, 0)
+	chamas.spread = 35.0
+	chamas.gravity = Vector3(0, 3.0, 0)
+	chamas.initial_velocity_min = 0.8
+	chamas.initial_velocity_max = 2.6
+	chamas.scale_amount_min = 1.0
+	chamas.scale_amount_max = 2.4
+	chamas.color_ramp = _fire_gradient()
+
+	var cmesh := QuadMesh.new()
+	cmesh.size = Vector2(0.8, 1.1)
+	var cmat := _fire_particle_material(true)
+	cmat.albedo_texture = _fire_soft_texture()
+	cmesh.material = cmat
+	chamas.mesh = cmesh
+	node.add_child(chamas)
+	_fire_register_emitter(chamas)
+
 	# Brasas saindo do X enquanto ele cai
 	var embers := CPUParticles3D.new()
 	embers.amount = 160
@@ -1210,6 +1235,32 @@ func _fire_spawn_x(cam_basis: Basis, pos: Vector3) -> Node3D:
 	node.add_child(luz)
 
 	return node
+
+# A smoke.png tem um desenho reconhecível demais e as chamas ficavam com cara
+# de "símbolo" repetido. Esta textura é um borrão radial gerado na hora: sem
+# forma nenhuma, só um degradê macio que some nas bordas — é o que faz a
+# partícula ler como fogo em vez de um adesivo.
+var _fire_tex: Texture2D = null
+
+func _fire_soft_texture() -> Texture2D:
+	if _fire_tex != null: return _fire_tex
+	var g := Gradient.new()
+	g.offsets = PackedFloat32Array([0.0, 0.30, 0.62, 1.0])
+	g.colors = PackedColorArray([
+		Color(1, 1, 1, 1.0),
+		Color(1, 1, 1, 0.62),
+		Color(1, 1, 1, 0.20),
+		Color(1, 1, 1, 0.0),
+	])
+	var tex := GradientTexture2D.new()
+	tex.gradient = g
+	tex.fill = GradientTexture2D.FILL_RADIAL
+	tex.fill_from = Vector2(0.5, 0.5)
+	tex.fill_to = Vector2(0.5, 0.0) # raio = meia textura
+	tex.width = 64
+	tex.height = 64
+	_fire_tex = tex
+	return tex
 
 # Gradiente comum do fogo: núcleo claro -> laranja -> vermelho -> apaga
 func _fire_gradient() -> Gradient:
@@ -1250,6 +1301,9 @@ func _fire_ignite_arena(center: Vector3) -> void:
 	# Onda de choque de fogo saindo do ponto de impacto
 	_fire_spawn_shockwave(campo, raio)
 
+	# Faíscas subindo espalhadas por toda a arena enquanto o fogo existe
+	_fire_spawn_sparks(campo, raio, dur)
+
 	# As manchas de fogo acendem de dentro para fora, dando a sensação de
 	# que o incêndio se espalha a partir do X.
 	var total: int = maxi(4, player.fire_patches)
@@ -1275,6 +1329,62 @@ func _fire_ignite_arena(center: Vector3) -> void:
 		if is_instance_valid(campo): campo.queue_free()
 	)
 
+# Faíscas soltas subindo em toda a área do incêndio. Ficam ligadas durante a
+# vida do fogo e param junto com ele.
+func _fire_spawn_sparks(parent: Node3D, raio: float, dur: float) -> void:
+	var faiscas := CPUParticles3D.new()
+	faiscas.amount = 150
+	faiscas.lifetime = 2.4
+	faiscas.randomness = 0.8
+	faiscas.emission_shape = CPUParticles3D.EMISSION_SHAPE_BOX
+	faiscas.emission_box_extents = Vector3(raio, 0.4, raio)
+	faiscas.direction = Vector3(0, 1, 0)
+	faiscas.spread = 25.0
+	faiscas.gravity = Vector3(randf_range(-0.5, 0.5), 2.6, randf_range(-0.5, 0.5))
+	faiscas.initial_velocity_min = 1.5
+	faiscas.initial_velocity_max = 4.5
+	faiscas.scale_amount_min = 0.4
+	faiscas.scale_amount_max = 1.2
+	faiscas.color_ramp = _fire_gradient()
+
+	var mesh := SphereMesh.new()
+	mesh.radius = 0.035
+	mesh.height = 0.07
+	mesh.material = _fire_particle_material(true)
+	faiscas.mesh = mesh
+
+	parent.add_child(faiscas)
+	_fire_register_emitter(faiscas)
+	faiscas.position = Vector3(0, 0.3, 0)
+
+	var t := create_tween()
+	t.tween_interval(dur)
+	t.tween_callback(func():
+		if is_instance_valid(faiscas): faiscas.emitting = false
+	)
+
+# Crepitar do fogo enquanto ele existe, com fade out quando ele some da arena.
+func _fire_play_ambient(dur: float) -> void:
+	var path := "res://assets/sounds/common/fire_cracling.mp3"
+	if not ResourceLoader.exists(path): return
+	var som := AudioStreamPlayer.new()
+	var st = load(path)
+	if st is AudioStreamMP3:
+		# duplica para não ligar o loop no recurso compartilhado
+		st = st.duplicate()
+		st.loop = true
+	som.stream = st
+	som.volume_db = -3.0
+	add_child(som)
+	som.play()
+
+	var t := create_tween()
+	t.tween_interval(maxf(dur - 1.5, 0.1))
+	t.tween_property(som, "volume_db", -60.0, 1.5)
+	t.tween_callback(func():
+		if is_instance_valid(som): som.queue_free()
+	)
+
 func _fire_spawn_shockwave(parent: Node3D, raio: float) -> void:
 	var onda := CPUParticles3D.new()
 	onda.emitting = true
@@ -1295,8 +1405,7 @@ func _fire_spawn_shockwave(parent: Node3D, raio: float) -> void:
 	var mesh := QuadMesh.new()
 	mesh.size = Vector2(1.2, 1.2)
 	var mat := _fire_particle_material(true)
-	var tex = load("res://assets/images/vfx/smoke.png") if ResourceLoader.exists("res://assets/images/vfx/smoke.png") else null
-	if tex: mat.albedo_texture = tex
+	mat.albedo_texture = _fire_soft_texture()
 	mesh.material = mat
 	onda.mesh = mesh
 	parent.add_child(onda)
@@ -1338,8 +1447,7 @@ func _fire_spawn_patch(parent: Node3D, pos: Vector3, atraso: float, dur: float, 
 	var mesh := QuadMesh.new()
 	mesh.size = Vector2(0.9, 1.3)
 	var mat := _fire_particle_material(true)
-	if ResourceLoader.exists("res://assets/images/vfx/smoke.png"):
-		mat.albedo_texture = load("res://assets/images/vfx/smoke.png")
+	mat.albedo_texture = _fire_soft_texture()
 	mesh.material = mat
 	chamas.mesh = mesh
 
@@ -1365,8 +1473,7 @@ func _fire_spawn_patch(parent: Node3D, pos: Vector3, atraso: float, dur: float, 
 	smat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	smat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	smat.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
-	if ResourceLoader.exists("res://assets/images/vfx/smoke.png"):
-		smat.albedo_texture = load("res://assets/images/vfx/smoke.png")
+	smat.albedo_texture = _fire_soft_texture()
 	var smesh := QuadMesh.new()
 	smesh.size = Vector2(1.6, 1.6)
 	smesh.material = smat
@@ -1434,8 +1541,7 @@ func _fire_ignite_enemy(inimigo: Node3D, atraso: float, dur: float) -> void:
 		var mesh := QuadMesh.new()
 		mesh.size = Vector2(0.55, 0.8)
 		var mat := _fire_particle_material(true)
-		if ResourceLoader.exists("res://assets/images/vfx/smoke.png"):
-			mat.albedo_texture = load("res://assets/images/vfx/smoke.png")
+		mat.albedo_texture = _fire_soft_texture()
 		mesh.material = mat
 		chamas.mesh = mesh
 
