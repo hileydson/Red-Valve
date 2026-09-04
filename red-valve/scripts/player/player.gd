@@ -95,6 +95,20 @@ var is_exhausted: bool = false
 @export var cut_damage_radius: float = 15.0
 ## Quanto do acúmulo da cogblade sobra depois de usar o Cut (não zera).
 @export var cut_leftover_power: float = 25.0
+
+# --- GOLPE MELEE DA COGBLADE (toque rápido em C / L1) ---
+@export_group("Cogblade Melee")
+## Dano do golpe corpo a corpo da cogblade.
+@export var melee_damage: int = 5
+## Alcance do golpe: o player precisa estar perto do inimigo.
+@export var melee_range: float = 3.0
+## Duração da passada da lâmina de um lado para o outro.
+@export var melee_duration: float = 0.18
+## Estamina gasta por golpe.
+@export var melee_stamina_cost: float = 8.0
+## Altura e distância da lâmina em relação ao player durante o golpe.
+@export var melee_height: float = 1.2
+@export var melee_distance: float = 1.2
 var mp_bar: ProgressBar
 
 var hud_layer: CanvasLayer
@@ -211,6 +225,8 @@ var is_using_ultimate: bool = false
 # True enquanto o menu radial de poderes da cogblade está aberto (o player
 # perde o controle da câmera/movimento e o tempo fica ultra lento)
 var cogblade_menu_open: bool = false
+# True enquanto o golpe melee da cogblade está passando pela tela
+var cogblade_melee_active: bool = false
 var amuleto_node: Node3D
 var amuleto_particles: CPUParticles3D
 var amulet_hovered_enemy: Node3D = null
@@ -540,7 +556,7 @@ func _physics_process(delta: float) -> void:
 			if Input.is_action_just_pressed("ui_shoot") and !transition_camera and !is_magic_attacking:
 				shoot(Input)
 			
-			if !is_magic_attacking and Input.is_action_just_pressed("ui_magic_attack") and !transition_camera and camera.current and SaveManager.current_mp >= 10.0:
+			if !is_magic_attacking and !cogblade_melee_active and Input.is_action_just_pressed("ui_magic_attack") and !transition_camera and camera.current and SaveManager.current_mp >= 10.0:
 				magic_hand_attack()
 			
 		if camera_bullet_time_ON:
@@ -1141,6 +1157,11 @@ func _activate_cogblade_slain() -> void:
 func _activate_cogblade_cut() -> void:
 	var comp = get_node_or_null("PlayerUltimate")
 	if comp: comp._activate_cogblade_cut()
+
+func cogblade_melee_slash() -> bool:
+	var comp = get_node_or_null("PlayerUltimate")
+	if comp: return comp.cogblade_melee_slash()
+	return false
 
 func _apply_aoe_damage_slowly(pos: Vector3, damage: int = 30, radius: float = 15.0):
 	var comp = get_node_or_null("PlayerUltimate")

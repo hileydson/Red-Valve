@@ -2,12 +2,13 @@ extends Node
 
 # Seleção dos poderes da Cogblade.
 #
-# A ação "ui_cogblade_power" (tecla C / L1) agora precisa ser SEGURADA: ao
-# segurar, o tempo fica ultra lento e aparece um menu radial (estilo plasmids
-# do BioShock) com os poderes disponíveis. O jogador aponta o analógico direito
-# (ou o mouse) para a opção desejada e, ao SOLTAR o botão, o poder apontado é
-# executado. Um toque rápido (sem segurar) não faz nada — fica reservado para
-# uma ação futura.
+# A ação "ui_cogblade_power" (tecla C / L1) tem dois usos:
+#   - SEGURAR: o tempo fica ultra lento e aparece um menu radial (estilo dos
+#     plasmids do BioShock) com os poderes disponíveis. O jogador aponta o
+#     analógico direito (ou o mouse) para a opção desejada e, ao SOLTAR, o
+#     poder apontado é executado.
+#   - TOQUE RÁPIDO: golpe melee — a cogblade passa uma vez de um lado para o
+#     outro, alternando o lado a cada golpe.
 
 var player: CharacterBody3D
 
@@ -63,14 +64,14 @@ func _input(event: InputEvent) -> void:
 func _process(_delta: float) -> void:
 	if not is_instance_valid(player): return
 	
-	if Input.is_action_just_pressed("ui_cogblade_power") and _can_open():
+	if Input.is_action_just_pressed("ui_cogblade_power") and _can_use_action():
 		_pressing = true
 		_press_ms = Time.get_ticks_msec()
 	
 	if _pressing and not player.cogblade_menu_open:
-		if not _can_open():
+		if not _can_use_action():
 			_pressing = false
-		elif Time.get_ticks_msec() - _press_ms >= HOLD_MS:
+		elif _can_open() and Time.get_ticks_msec() - _press_ms >= HOLD_MS:
 			_open_menu()
 	
 	if player.cogblade_menu_open:
@@ -83,19 +84,30 @@ func _process(_delta: float) -> void:
 		if player.cogblade_menu_open:
 			# Só executa se o analógico/mouse estiver apontando para uma opção
 			_close_menu(true)
-		# Toque rápido: sem ação por enquanto (reservado)
+		elif _pressing:
+			# Não abriu o menu: foi um toque, então sai o golpe melee.
+			# Apertar várias vezes executa vários golpes, mas cada um só começa
+			# depois que o anterior termina (checado dentro do próprio golpe).
+			player.cogblade_melee_slash()
 		_pressing = false
 
 # =========================================================================
 # CONDIÇÕES
 # =========================================================================
 
-func _can_open() -> bool:
+# Condições básicas do botão (valem tanto para o menu quanto para o melee)
+func _can_use_action() -> bool:
 	if GlobalEvents.is_maycow_normal: return false
 	if GlobalEvents.in_cutscene or player._cutscene_inputs_disabled: return false
 	if player.process_mode == Node.PROCESS_MODE_DISABLED: return false
 	if get_tree().paused: return false
 	if player.is_using_ultimate or player.is_magic_attacking or player.is_reloading: return false
+	return true
+
+# Condições extras para abrir o menu radial de poderes
+func _can_open() -> bool:
+	if not _can_use_action(): return false
+	if player.cogblade_melee_active: return false
 	if not player.is_on_floor(): return false
 	# Mesma regra de antes: só com o medidor cheio
 	return player.cogblade_power_value >= 100.0

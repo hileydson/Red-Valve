@@ -23,6 +23,7 @@ func _activate_cogblade_slain() -> void:
 	
 	# Cancela a lâmina se estiver no ar/retornando (evita glitch de velocidade)
 	player.is_blade_returning = false
+	_cancel_melee()
 	_reset_blade_to_hand()
 	
 	# 1. Preparação
@@ -264,6 +265,17 @@ func _reset_cogblade_gauge(value: float) -> void:
 		player.cogblade_hud.tint_progress = Color(1, 1, 1, 1.0)
 		player.cogblade_hud.modulate = Color(1, 1, 1, 1.0)
 
+# Interrompe um golpe melee em andamento (usado quando um poder maior começa).
+func _cancel_melee() -> void:
+	if _melee_tween and _melee_tween.is_valid():
+		_melee_tween.kill()
+	_melee_tween = null
+	player.cogblade_melee_active = false
+	if is_instance_valid(player):
+		for child in player.get_children():
+			if child is CanvasLayer and child.name == "CogbladeMeleeFX":
+				child.queue_free()
+
 # Devolve a lâmina para a mão (posição original, escondida e sem top_level).
 func _reset_blade_to_hand() -> void:
 	if not is_instance_valid(player.crescent_cogblade): return
@@ -339,6 +351,7 @@ func _activate_cogblade_cut() -> void:
 	
 	# Cancela a lâmina se estiver no ar/retornando (evita glitch de velocidade)
 	player.is_blade_returning = false
+	_cancel_melee()
 	_reset_blade_to_hand()
 	
 	# 1. Preparação (idêntica ao Slain)
@@ -551,6 +564,157 @@ func _cut_spawn_flash(fx_layer: CanvasLayer) -> void:
 	t.tween_property(flash, "color:a", 0.0, 0.12).set_trans(Tween.TRANS_CUBIC)
 	t.tween_callback(func():
 		if is_instance_valid(flash): flash.queue_free()
+	)
+
+# =========================================================================
+# COGBLADE MELEE (toque rápido em C / L1)
+# A lâmina passa UMA vez de um lado para o outro na frente do player,
+# alternando o lado a cada uso (esquerda->direita, depois direita->esquerda,
+# e assim por diante). É rápido, gasta estamina e só acerta inimigos perto,
+# como um golpe corpo a corpo. Só pode ser repetido depois que o golpe atual
+# termina, então apertar várias vezes executa vários golpes em sequência.
+# =========================================================================
+
+var _melee_sign: float = 1.0 # +1 começa pela direita (corta direita -> esquerda)
+var _melee_tween: Tween = null
+
+func cogblade_melee_slash() -> bool:
+	if not is_instance_valid(player.crescent_cogblade): return false
+	if player.cogblade_melee_active: return false # espera o golpe atual terminar
+	if player.is_using_ultimate or player.cogblade_menu_open: return false
+	if player.is_magic_attacking or player.is_blade_returning or player.is_reloading: return false
+	if player.is_exhausted: return false
+	if not (player.current_stamina >= player.melee_stamina_cost or player.infinite_stamina_test):
+		return false
+	
+	if not player.infinite_stamina_test:
+		player.current_stamina = maxf(0.0, player.current_stamina - player.melee_stamina_cost)
+	player.stamina_fade_timer = 2.0
+	
+	player.cogblade_melee_active = true
+	
+	var side: float = _melee_sign
+	_melee_sign = -_melee_sign # o próximo golpe vem do lado oposto
+	
+	player.crescent_cogblade.show()
+	player.crescent_cogblade.top_level = true
+	var faiscas = player.crescent_cogblade.get_node_or_null("Faiscas")
+	if faiscas: faiscas.emitting = true
+	
+	_play_blade_sound("res://assets/sounds/player/blade_out.mp3", randf_range(1.3, 1.55), -3.0)
+	
+	var streak := _melee_spawn_streak()
+	var dur: float = maxf(player.melee_duration, 0.05)
+	
+	var t := create_tween()
+	_melee_tween = t
+	t.tween_method(func(p: float): _melee_update(p, side, streak), 0.0, 0.5, dur * 0.5)\
+		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	# O dano sai no meio do golpe, quando a lâmina passa na frente do player
+	t.tween_callback(func(): _melee_apply_damage())
+	t.tween_method(func(p: float): _melee_update(p, side, streak), 0.5, 1.0, dur * 0.5)\
+		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	t.tween_callback(func():
+		_reset_blade_to_hand()
+		player.cogblade_melee_active = false
+		_melee_fade_streak(streak)
+	)
+	return true
+
+func _melee_update(p: float, side: float, streak: Line2D) -> void:
+	var cam: Camera3D = get_viewport().get_camera_3d()
+	if not is_instance_valid(cam): cam = player.camera
+	if not is_instance_valid(cam) or not is_instance_valid(player.crescent_cogblade): return
+	
+	var b := cam.global_transform.basis
+	# Ponto na frente do player, na altura do peito
+	var center: Vector3 = player.global_position + Vector3(0.0, player.melee_height, 0.0) - b.z * player.melee_distance
+	var reach: float = player.melee_range * 0.75
+	var from_pos: Vector3 = center + b.x * reach * side
+	var to_pos: Vector3 = center - b.x * reach * side
+	
+	# Pose de arremesso, mas acompanhando a inclinação da câmera
+	var local := Basis.from_euler(Vector3(
+		deg_to_rad(player.cut_cogblade_rot_x),
+		deg_to_rad(player.cut_cogblade_rot_y),
+		deg_to_rad(player.cut_cogblade_rot_z)))
+	_cut_set_blade(from_pos.lerp(to_pos, p), b * local, 1.0)
+	
+	# Rastro 2D acompanhando o golpe (uma faixa curta, não a tela inteira)
+	if is_instance_valid(streak):
+		var vp: Vector2 = get_viewport().get_visible_rect().size
+		var c: Vector2 = vp * 0.5
+		var half: float = vp.x * 0.55
+		var sa: Vector2 = c + Vector2(half, 0.0) * side
+		var sb: Vector2 = c - Vector2(half, 0.0) * side
+		var tail: float = maxf(0.0, p - 0.4)
+		streak.points = PackedVector2Array([sa.lerp(sb, tail), sa.lerp(sb, p)])
+
+func _melee_apply_damage() -> void:
+	var cam: Camera3D = get_viewport().get_camera_3d()
+	var forward: Vector3
+	if is_instance_valid(cam):
+		forward = -cam.global_transform.basis.z
+	else:
+		forward = -player.global_transform.basis.z
+	forward.y = 0.0
+	if forward.length() < 0.01: return
+	forward = forward.normalized()
+	
+	var origin: Vector3 = player.global_position
+	var acertou := false
+	for inimigo in get_tree().get_nodes_in_group("enemies"):
+		if not is_instance_valid(inimigo) or not inimigo.has_method("take_damage"): continue
+		var to: Vector3 = inimigo.global_position - origin
+		if to.length() > player.melee_range: continue
+		var flat := Vector3(to.x, 0.0, to.z)
+		# Só acerta quem está na frente do player
+		if flat.length() > 0.01 and flat.normalized().dot(forward) < 0.15: continue
+		inimigo.take_damage(player.melee_damage)
+		acertou = true
+		if player.has_method("spawn_blood_effect"):
+			player.spawn_blood_effect(inimigo)
+	
+	if acertou:
+		if is_instance_valid(player.blade_in): player.blade_in.play()
+		GlobalUtils.shake_camera(0.12, 0.12)
+		GlobalUtils.vibrate_controller(Input, 0.3, 0.3, 0.1)
+
+func _melee_spawn_streak() -> Line2D:
+	var layer := CanvasLayer.new()
+	layer.name = "CogbladeMeleeFX"
+	layer.layer = 104
+	player.add_child(layer)
+	
+	var line := Line2D.new()
+	line.width = 22.0
+	line.begin_cap_mode = Line2D.LINE_CAP_ROUND
+	line.end_cap_mode = Line2D.LINE_CAP_ROUND
+	line.joint_mode = Line2D.LINE_JOINT_ROUND
+	
+	var grad := Gradient.new()
+	grad.set_color(0, Color(0.3, 0.85, 1.0, 0.0))
+	grad.set_color(1, Color(1.0, 1.0, 1.0, 0.85))
+	line.gradient = grad
+	
+	var wcurve := Curve.new()
+	wcurve.add_point(Vector2(0.0, 0.05))
+	wcurve.add_point(Vector2(0.85, 1.0))
+	wcurve.add_point(Vector2(1.0, 0.25))
+	line.width_curve = wcurve
+	
+	layer.add_child(line)
+	line.set_meta("fx_layer", layer)
+	return line
+
+func _melee_fade_streak(streak: Line2D) -> void:
+	if not is_instance_valid(streak): return
+	var layer = streak.get_meta("fx_layer") if streak.has_meta("fx_layer") else null
+	var t := create_tween()
+	t.tween_property(streak, "modulate:a", 0.0, 0.12)
+	t.tween_callback(func():
+		if is_instance_valid(layer): layer.queue_free()
+		elif is_instance_valid(streak): streak.queue_free()
 	)
 
 func _apply_aoe_damage_slowly(pos: Vector3, damage: int = 30, radius: float = 15.0):

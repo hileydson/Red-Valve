@@ -7,7 +7,7 @@ func _ready() -> void:
 
 func process_combat(delta: float) -> void:
 	# GIRO DA COGBLADE (só durante o arremesso normal, não durante a cinemática do ultimate)
-	if is_instance_valid(player.crescent_cogblade) and player.crescent_cogblade.top_level and not player.is_using_ultimate:
+	if is_instance_valid(player.crescent_cogblade) and player.crescent_cogblade.top_level and not player.is_using_ultimate and not player.cogblade_melee_active:
 		player.crescent_cogblade.global_rotate(Vector3.UP, -15.0 * delta)
 
 	# LÓGICA DO BUMERANGUE (COGBLADE RETORNANDO)

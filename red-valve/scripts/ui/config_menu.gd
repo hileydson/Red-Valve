@@ -250,6 +250,7 @@ func _update_controls_text():
 		txt += "\n[b]Maycow Combate (Adicionais)[/b]\n"
 		txt += "- Mirar: L2 / Botão Direito Mouse\n"
 		txt += "- Atirar: R2 / Botão Esquerdo Mouse\n"
+		txt += "- Golpe da Cogblade: aperte L1 / C\n"
 		txt += "- Poderes da Cogblade: SEGURE L1 / C e escolha com o Analógico Direito / Mouse\n"
 		txt += "- Trocar Câmera: R3 / C\n"
 	else:
@@ -262,6 +263,7 @@ func _update_controls_text():
 		txt += "\n[b]Combat Maycow (Additional)[/b]\n"
 		txt += "- Aim: L2 / Right Mouse Button\n"
 		txt += "- Shoot: R2 / Left Mouse Button\n"
+		txt += "- Cogblade Slash: tap L1 / C\n"
 		txt += "- Cogblade Powers: HOLD L1 / C and pick with the Right Stick / Mouse\n"
 		txt += "- Switch Camera: R3 / C\n"
 	controls_text.text = txt

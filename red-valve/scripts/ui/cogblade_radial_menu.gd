@@ -12,8 +12,8 @@ var icon_texture: Texture2D = null
 # Direção apontada pelo jogador (coordenadas de tela, Y para baixo)
 var point_dir: Vector2 = Vector2.ZERO
 
-var radius: float = 190.0
-var option_radius: float = 54.0
+var radius: float = 265.0
+var option_radius: float = 78.0
 
 var _font: Font = null
 var _appear: float = 0.0
@@ -62,7 +62,7 @@ func _draw() -> void:
 	draw_rect(Rect2(Vector2.ZERO, vp), Color(0.0, 0.0, 0.0, 0.45 * appear))
 	# Disco central e anel guia
 	draw_circle(center, r + option_radius * 1.15, Color(0.02, 0.03, 0.05, 0.45 * appear))
-	draw_arc(center, r, 0.0, TAU, 96, Color(0.55, 0.85, 1.0, 0.22 * appear), 2.0, true)
+	draw_arc(center, r, 0.0, TAU, 128, Color(0.55, 0.85, 1.0, 0.22 * appear), 3.0, true)
 	
 	var count := options.size()
 	var sector := TAU / float(count)
@@ -70,8 +70,8 @@ func _draw() -> void:
 	# Agulha apontando para onde o jogador está mirando
 	if point_dir.length() > 0.05:
 		var nd := point_dir.normalized()
-		draw_line(center + nd * 26.0, center + nd * (r - option_radius * 0.6),
-			Color(1.0, 0.85, 0.4, 0.55 * appear), 3.0, true)
+		draw_line(center + nd * 36.0, center + nd * (r - option_radius * 0.6),
+			Color(1.0, 0.85, 0.4, 0.55 * appear), 4.0, true)
 	
 	for i in range(count):
 		var opt: Dictionary = options[i]
@@ -103,11 +103,11 @@ func _draw() -> void:
 		
 		# Base do ícone
 		draw_circle(pos, orad, Color(0.04, 0.05, 0.07, 0.85 * appear))
-		draw_arc(pos, orad, 0.0, TAU, 48, Color(base_col.r, base_col.g, base_col.b, (0.95 if is_sel else 0.5) * appear), (4.0 if is_sel else 2.0), true)
+		draw_arc(pos, orad, 0.0, TAU, 64, Color(base_col.r, base_col.g, base_col.b, (0.95 if is_sel else 0.5) * appear), (6.0 if is_sel else 3.0), true)
 		
 		# Ícone da cogblade
 		if icon_texture:
-			var isize: float = orad * 1.25
+			var isize: float = orad * 1.3
 			var rect := Rect2(pos - Vector2(isize, isize) * 0.5, Vector2(isize, isize))
 			var icol := Color(1, 1, 1, (1.0 if enabled else 0.35) * appear)
 			if is_sel and enabled: icol = Color(1.0, 0.8, 0.75, appear)
@@ -115,10 +115,10 @@ func _draw() -> void:
 		
 		# Nome do poder abaixo do ícone
 		var name_txt: String = str(opt.get("name", ""))
-		var fsize: int = 20 if is_sel else 17
+		var fsize: int = 28 if is_sel else 24
 		var tw: float = _font.get_string_size(name_txt, HORIZONTAL_ALIGNMENT_LEFT, -1, fsize).x
-		var tpos := pos + Vector2(-tw * 0.5, orad + 26.0)
-		draw_string_outline(_font, tpos, name_txt, HORIZONTAL_ALIGNMENT_LEFT, -1, fsize, 5, Color(0, 0, 0, 0.9 * appear))
+		var tpos := pos + Vector2(-tw * 0.5, orad + 36.0)
+		draw_string_outline(_font, tpos, name_txt, HORIZONTAL_ALIGNMENT_LEFT, -1, fsize, 7, Color(0, 0, 0, 0.9 * appear))
 		draw_string(_font, tpos, name_txt, HORIZONTAL_ALIGNMENT_LEFT, -1, fsize,
 			Color(base_col.r, base_col.g, base_col.b, (1.0 if enabled else 0.5) * appear))
 	
@@ -126,7 +126,7 @@ func _draw() -> void:
 	var center_txt := "ESCOLHA UM PODER"
 	if selected >= 0 and selected < count:
 		center_txt = str(options[selected].get("desc", ""))
-	var cw: float = _font.get_string_size(center_txt, HORIZONTAL_ALIGNMENT_LEFT, -1, 18).x
-	var cpos := center + Vector2(-cw * 0.5, 6.0)
-	draw_string_outline(_font, cpos, center_txt, HORIZONTAL_ALIGNMENT_LEFT, -1, 18, 5, Color(0, 0, 0, 0.9 * appear))
-	draw_string(_font, cpos, center_txt, HORIZONTAL_ALIGNMENT_LEFT, -1, 18, Color(1, 1, 1, 0.9 * appear))
+	var cw: float = _font.get_string_size(center_txt, HORIZONTAL_ALIGNMENT_LEFT, -1, 24).x
+	var cpos := center + Vector2(-cw * 0.5, 8.0)
+	draw_string_outline(_font, cpos, center_txt, HORIZONTAL_ALIGNMENT_LEFT, -1, 24, 7, Color(0, 0, 0, 0.9 * appear))
+	draw_string(_font, cpos, center_txt, HORIZONTAL_ALIGNMENT_LEFT, -1, 24, Color(1, 1, 1, 0.9 * appear))
