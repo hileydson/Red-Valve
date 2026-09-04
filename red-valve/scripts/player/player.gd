@@ -62,12 +62,39 @@ var stamina_bar: ProgressBar
 var stamina_fade_timer: float = 0.0
 var is_exhausted: bool = false
 
-# --- ULTIMATE CINEMÁTICA ---
+# --- ULTIMATE CINEMÁTICA (COGBLADE SLAIN) ---
 @export_group("Ultimate Cinemática")
 @export var ult_model_distance: float = 1.7
 @export var ult_cogblade_rot_x: float = 110.0
 @export var ult_cogblade_rot_y: float = -90.0
 @export var ult_cogblade_rot_z: float = 0.0
+
+# --- SEGUNDO PODER: COGBLADE CUT ---
+@export_group("Cogblade Cut")
+## Quanto tempo (em tempo de jogo, já em câmera lenta) a câmera leva para se
+## ajeitar olhando para frente antes dos cortes começarem.
+@export var cut_camera_settle_time: float = 0.22
+## Distância da lâmina até a câmera durante os cortes.
+@export var cut_blade_distance: float = 1.6
+## Pausa depois que a lâmina aparece e antes do primeiro corte.
+@export var cut_blade_hold_time: float = 0.12
+## Quantos cortes a animação executa.
+@export var cut_slash_count: int = 18
+## Duração do PRIMEIRO corte (lento).
+@export var cut_slash_first_duration: float = 0.05
+## Duração do ÚLTIMO corte (velocidade altíssima).
+@export var cut_slash_last_duration: float = 0.004
+## Intervalo entre cortes, como fração da duração do corte.
+@export var cut_slash_gap_ratio: float = 0.35
+## Orientação base da lâmina (mesma convenção do arremesso: X, Y somado ao yaw, Z).
+@export var cut_cogblade_rot_x: float = 90.0
+@export var cut_cogblade_rot_y: float = 0.0
+@export var cut_cogblade_rot_z: float = 45.0
+## Dano em área no final (um pouco menor que o do Slain, que causa 30).
+@export var cut_damage: int = 18
+@export var cut_damage_radius: float = 15.0
+## Quanto do acúmulo da cogblade sobra depois de usar o Cut (não zera).
+@export var cut_leftover_power: float = 25.0
 var mp_bar: ProgressBar
 
 var hud_layer: CanvasLayer
@@ -181,6 +208,9 @@ var cogblade_pulsing: bool = false
 var cogblade_pulse_tween: Tween
 var cogblade_particles: CPUParticles2D
 var is_using_ultimate: bool = false
+# True enquanto o menu radial de poderes da cogblade está aberto (o player
+# perde o controle da câmera/movimento e o tempo fica ultra lento)
+var cogblade_menu_open: bool = false
 var amuleto_node: Node3D
 var amuleto_particles: CPUParticles3D
 var amulet_hovered_enemy: Node3D = null
@@ -285,6 +315,11 @@ func _ready():
 	var amulet_component = load("res://scripts/player/player_amulet.gd").new()
 	amulet_component.name = "PlayerAmulet"
 	add_child(amulet_component)
+	
+	# Instancia Componente do Menu Radial da Cogblade (segurar C / L1)
+	var cogblade_menu_component = load("res://scripts/player/player_cogblade_menu.gd").new()
+	cogblade_menu_component.name = "PlayerCogbladeMenu"
+	add_child(cogblade_menu_component)
 
 func update_ammo_ui() -> void:
 	var hud = get_node_or_null("PlayerHUD")
@@ -298,21 +333,11 @@ func _input(event):
 	if GlobalEvents.in_cutscene or _cutscene_inputs_disabled:
 		return
 		
-	if event.is_action_pressed("ui_cogblade_power") and !GlobalEvents.is_maycow_normal:
-		if GlobalEvents.in_cutscene or process_mode == Node.PROCESS_MODE_DISABLED:
-			return
-		if cogblade_power_value >= 100.0 and not is_using_ultimate and not is_magic_attacking and is_on_floor():
-			cogblade_power_value = 0.0
-			cogblade_pulsing = false
-			if cogblade_pulse_tween: cogblade_pulse_tween.kill()
-			if cogblade_particles: cogblade_particles.emitting = false
-			if cogblade_hud: 
-				cogblade_hud.value = 0.0
-				cogblade_hud.tint_progress = Color(1, 1, 1, 1.0)
-				cogblade_hud.modulate = Color(1, 1, 1, 1.0)
-			_activate_cogblade_ultimate()
+	# A ação "ui_cogblade_power" (C / L1) agora é tratada pelo componente
+	# PlayerCogbladeMenu: precisa ser SEGURADA para abrir o menu radial de
+	# escolha entre Cogblade Slain e Cogblade Cut.
 
-	if is_using_ultimate:
+	if is_using_ultimate or cogblade_menu_open:
 		return
 	if camera_bullet_time_ON:
 		return
@@ -357,7 +382,7 @@ func _physics_process(delta: float) -> void:
 		camera_third_person.h_offset = _cutscene_shake_h_base
 		camera_third_person.v_offset = _cutscene_shake_v_base
 		
-	if is_using_ultimate:
+	if is_using_ultimate or cogblade_menu_open:
 		# Processa a gravidade caso ele estivesse caindo no momento, 
 		# e processa o combate para que a cogblade possa girar e voar.
 		if not is_on_floor():
@@ -1109,13 +1134,17 @@ func update_equipment_visuals() -> void:
 
 
 
-func _activate_cogblade_ultimate() -> void:
+func _activate_cogblade_slain() -> void:
 	var comp = get_node_or_null("PlayerUltimate")
-	if comp: comp._activate_cogblade_ultimate()
+	if comp: comp._activate_cogblade_slain()
 
-func _apply_aoe_damage_slowly(pos: Vector3):
+func _activate_cogblade_cut() -> void:
 	var comp = get_node_or_null("PlayerUltimate")
-	if comp: comp._apply_aoe_damage_slowly(pos)
+	if comp: comp._activate_cogblade_cut()
+
+func _apply_aoe_damage_slowly(pos: Vector3, damage: int = 30, radius: float = 15.0):
+	var comp = get_node_or_null("PlayerUltimate")
+	if comp: comp._apply_aoe_damage_slowly(pos, damage, radius)
 
 func _spawn_explosion_vfx(pos: Vector3):
 	var comp = get_node_or_null("PlayerUltimate")

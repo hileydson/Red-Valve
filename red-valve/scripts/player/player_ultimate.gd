@@ -1,50 +1,35 @@
 extends Node
 
+# Poderes da Cogblade:
+#   - Cogblade Slain: mergulho do céu com impacto em área (zera o acúmulo).
+#   - Cogblade Cut:   rasga o meio da tela em várias direções (deixa 25% do acúmulo).
+# Ambos compartilham o mesmo padrão de cinemática: câmera lenta, o player perde
+# o controle da câmera (assumida por uma Camera3D temporária da engine) e só
+# recupera no final, quando o time_scale volta ao normal.
+
 var player: CharacterBody3D
 
 func _ready() -> void:
 	player = get_parent()
 
-func _activate_cogblade_ultimate() -> void:
+func _activate_cogblade_slain() -> void:
 	# Mata qualquer tween de câmera lenta pendente (ex: do impacto da cogblade)
 	# para que ele não force o time_scale de volta a 1.0 no meio da cinemática do ultimate
 	if GlobalUtils.current_time_tween and GlobalUtils.current_time_tween.is_valid():
 		GlobalUtils.current_time_tween.kill()
 
 	player.is_using_ultimate = true
-	player.cogblade_power_value = 0.0
-	player.cogblade_pulsing = false
-	if player.cogblade_pulse_tween: player.cogblade_pulse_tween.kill()
-	if player.cogblade_particles: player.cogblade_particles.emitting = false
-	if player.cogblade_hud:
-		player.cogblade_hud.value = 0.0
-		player.cogblade_hud.tint_progress = Color(1, 1, 1, 1.0)
-		player.cogblade_hud.modulate = Color(1, 1, 1, 1.0)
+	_reset_cogblade_gauge(0.0) # O Slain zera o medidor
 	
 	# Cancela a lâmina se estiver no ar/retornando (evita glitch de velocidade)
 	player.is_blade_returning = false
-	player.crescent_cogblade.top_level = false
-	player.crescent_cogblade.position = player.magic_blade_pos_original
-	player.crescent_cogblade.rotation = Vector3.ZERO
-	player.crescent_cogblade.scale = Vector3.ONE
-	player.crescent_cogblade.hide()
+	_reset_blade_to_hand()
 	
 	# 1. Preparação
 	Engine.time_scale = 0.1
 	AudioServer.playback_speed_scale = 0.5 # Deixa os sons graves/lentos
 	
-	player.control_magic.visible = false
-	player.control_weapons.visible = false
-	player.hand_with_pistol.visible = false
-	if player.hand_with_magic: player.hand_with_magic.visible = false
-	if player.point: player.point.visible = false # Esconde o ponto no meio da tela
-	
-	if player.hud_layer:
-		player.hud_layer.visible = false
-		var blur = player.hud_layer.get_node_or_null("MotionBlurOverlay")
-		if blur:
-			blur.visible = true
-			blur.material.set_shader_parameter("blur_strength", 0.2) # Motion blur bem sutil
+	_hide_combat_hud()
 			
 	# Para animações e zera a velocidade para não deslizar
 	player.playback.travel("idle")
@@ -243,27 +228,14 @@ func _activate_cogblade_ultimate() -> void:
 		_apply_aoe_damage_slowly(impact_pos)
 		
 		# Esconde a cogblade
-		player.crescent_cogblade.hide()
-		player.crescent_cogblade.top_level = false
-		player.crescent_cogblade.position = player.magic_blade_pos_original
-		player.crescent_cogblade.rotation = Vector3.ZERO
-		player.crescent_cogblade.scale = Vector3.ONE
+		_reset_blade_to_hand()
 		
 		# Restaura câmera do player imediatamente após o impacto, mas MANTÉM a câmera lenta!
 		if is_instance_valid(cine_cam):
 			cine_cam.queue_free()
 		player.camera.make_current()
 		
-		player.control_magic.visible = true
-		player.control_weapons.visible = true
-		player.hand_with_pistol.visible = SaveManager.is_equipped("pistol")
-		if player.hand_with_magic: player.hand_with_magic.visible = true
-		if player.point: player.point.visible = true # Restaura o ponto no meio da tela
-		
-		if player.hud_layer:
-			player.hud_layer.visible = true
-			var blur = player.hud_layer.get_node_or_null("MotionBlurOverlay")
-			if blur: blur.visible = false
+		_show_combat_hud()
 			
 		# Aguarda 0.15 segundos em slow motion antes de devolver controle
 		var end_tween = create_tween()
@@ -277,12 +249,316 @@ func _activate_cogblade_ultimate() -> void:
 		)
 	)
 
-func _apply_aoe_damage_slowly(pos: Vector3):
+# =========================================================================
+# HELPERS COMPARTILHADOS PELOS PODERES DA COGBLADE
+# =========================================================================
+
+# Reposiciona o medidor da cogblade. O Slain zera (0.0); o Cut deixa 25%.
+func _reset_cogblade_gauge(value: float) -> void:
+	player.cogblade_power_value = value
+	player.cogblade_pulsing = false
+	if player.cogblade_pulse_tween: player.cogblade_pulse_tween.kill()
+	if player.cogblade_particles: player.cogblade_particles.emitting = false
+	if player.cogblade_hud:
+		player.cogblade_hud.value = value
+		player.cogblade_hud.tint_progress = Color(1, 1, 1, 1.0)
+		player.cogblade_hud.modulate = Color(1, 1, 1, 1.0)
+
+# Devolve a lâmina para a mão (posição original, escondida e sem top_level).
+func _reset_blade_to_hand() -> void:
+	if not is_instance_valid(player.crescent_cogblade): return
+	var faiscas = player.crescent_cogblade.get_node_or_null("Faiscas")
+	if faiscas: faiscas.emitting = false
+	player.crescent_cogblade.top_level = false
+	player.crescent_cogblade.position = player.magic_blade_pos_original
+	player.crescent_cogblade.rotation = Vector3.ZERO
+	player.crescent_cogblade.scale = Vector3.ONE
+	player.crescent_cogblade.hide()
+
+func _hide_combat_hud() -> void:
+	player.control_magic.visible = false
+	player.control_weapons.visible = false
+	player.hand_with_pistol.visible = false
+	if player.hand_with_magic: player.hand_with_magic.visible = false
+	if player.point: player.point.visible = false # Esconde o ponto no meio da tela
+	
+	if player.hud_layer:
+		player.hud_layer.visible = false
+		var blur = player.hud_layer.get_node_or_null("MotionBlurOverlay")
+		if blur:
+			blur.visible = true
+			blur.material.set_shader_parameter("blur_strength", 0.2) # Motion blur bem sutil
+
+func _show_combat_hud() -> void:
+	player.control_magic.visible = true
+	player.control_weapons.visible = true
+	player.hand_with_pistol.visible = SaveManager.is_equipped("pistol")
+	if player.hand_with_magic: player.hand_with_magic.visible = true
+	if player.point: player.point.visible = true # Restaura o ponto no meio da tela
+	
+	if player.hud_layer:
+		player.hud_layer.visible = true
+		var blur = player.hud_layer.get_node_or_null("MotionBlurOverlay")
+		if blur: blur.visible = false
+
+func _play_blade_sound(path: String, pitch: float = 1.0, volume_db: float = 0.0) -> void:
+	if not ResourceLoader.exists(path): return
+	var p := AudioStreamPlayer.new()
+	p.stream = load(path)
+	p.pitch_scale = clampf(pitch, 0.05, 4.0)
+	p.volume_db = volume_db
+	add_child(p)
+	p.play()
+	p.finished.connect(func():
+		if is_instance_valid(p): p.queue_free()
+	)
+
+
+# =========================================================================
+# COGBLADE CUT
+# Em câmera lenta, a lâmina rasga o meio da tela de um lado para o outro:
+# começa devagar (direita->esquerda, esquerda->direita) e depois sai para
+# direções aleatórias, acelerando rapidamente até uma velocidade altíssima.
+# No final aplica dano em área (menor que o do Slain) e devolve 25% do
+# acúmulo, ou seja, NÃO zera o medidor da cogblade.
+# =========================================================================
+
+var _cut_streak: Line2D = null
+var _cut_streak_a: Vector2 = Vector2.ZERO
+var _cut_streak_b: Vector2 = Vector2.ZERO
+
+func _activate_cogblade_cut() -> void:
+	# Mesma proteção do Slain: nenhum tween de câmera lenta pendente pode
+	# devolver o time_scale para 1.0 no meio da cinemática.
+	if GlobalUtils.current_time_tween and GlobalUtils.current_time_tween.is_valid():
+		GlobalUtils.current_time_tween.kill()
+
+	player.is_using_ultimate = true
+	# Diferente do Slain, o Cut deixa parte do acúmulo (25% por padrão)
+	_reset_cogblade_gauge(clampf(player.cut_leftover_power, 0.0, 100.0))
+	
+	# Cancela a lâmina se estiver no ar/retornando (evita glitch de velocidade)
+	player.is_blade_returning = false
+	_reset_blade_to_hand()
+	
+	# 1. Preparação (idêntica ao Slain)
+	Engine.time_scale = 0.1
+	AudioServer.playback_speed_scale = 0.5
+	
+	_hide_combat_hud()
+	
+	player.playback.travel("idle")
+	player.velocity = Vector3.ZERO
+	
+	var start_pos: Vector3 = player.global_position
+	
+	# Câmera cinemática temporária: a engine assume o controle
+	var cine_cam := Camera3D.new()
+	get_tree().current_scene.add_child(cine_cam)
+	cine_cam.global_transform = player.camera.global_transform
+	cine_cam.make_current()
+	player.camera.current = false
+	
+	# Camada 2D onde os rasgos da tela são desenhados
+	var fx_layer := CanvasLayer.new()
+	fx_layer.name = "CogbladeCutFX"
+	fx_layer.layer = 105
+	get_tree().current_scene.add_child(fx_layer)
+	
+	# A câmera não sai do lugar: só o yaw importa daqui pra frente
+	var cam_yaw: float = player.camera.global_rotation.y
+	var cam_basis := Basis.from_euler(Vector3(0.0, cam_yaw, 0.0))
+	var screen_center: Vector3 = player.camera.global_position - cam_basis.z * player.cut_blade_distance
+	
+	var seq := create_tween()
+	
+	# Passo 1: a câmera se ajeita LENTAMENTE olhando para frente (nivelada)
+	seq.tween_property(cine_cam, "global_rotation:x", 0.0, player.cut_camera_settle_time)\
+		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	seq.parallel().tween_property(cine_cam, "global_rotation:z", 0.0, player.cut_camera_settle_time)\
+		.set_trans(Tween.TRANS_SINE)
+	
+	# Passo 2: a cogblade surge na frente da câmera
+	var entry_basis := _cut_blade_basis(cam_basis, cam_yaw, 0.0)
+	var entry_from: Vector3 = screen_center + cam_basis.x * 1.6 + cam_basis.y * 1.0
+	seq.tween_callback(func():
+		if not is_instance_valid(player.crescent_cogblade): return
+		player.crescent_cogblade.show()
+		player.crescent_cogblade.top_level = true
+		var faiscas = player.crescent_cogblade.get_node_or_null("Faiscas")
+		if faiscas: faiscas.emitting = true
+		_play_blade_sound("res://assets/sounds/player/blade_out.mp3", 0.9)
+	)
+	seq.tween_method(func(t: float):
+		_cut_set_blade(entry_from.lerp(screen_center, ease(t, 0.35)), entry_basis, lerpf(0.55, 1.0, t))
+	, 0.0, 1.0, 0.14)
+	
+	# Passo 3: aguarda um pequeno instante antes dos cortes
+	seq.tween_interval(player.cut_blade_hold_time)
+	
+	# Passo 4: os cortes, acelerando de forma geométrica até ficarem altíssimos
+	var count: int = maxi(3, player.cut_slash_count)
+	var d0: float = maxf(player.cut_slash_first_duration, 0.005)
+	var d1: float = clampf(player.cut_slash_last_duration, 0.001, d0)
+	var reach: float = player.cut_blade_distance * 3.0
+	
+	var travel_sign: float = 1.0 # +1 começa pela direita (corta direita -> esquerda)
+	var last_theta: float = 0.0
+	for i in range(count):
+		var f: float = float(i) / float(count - 1)
+		var dur: float = d0 * pow(d1 / d0, f) # decai rápido = acelera rápido
+		
+		var theta: float = 0.0
+		if i <= 1:
+			# Os dois primeiros são horizontais: direita->esquerda e esquerda->direita
+			theta = 0.0
+		else:
+			# Sai da direção anterior e parte para outra direção aleatória
+			theta = last_theta + randf_range(PI * 0.22, PI * 0.78)
+			theta = fmod(theta, PI)
+		last_theta = theta
+		
+		var dir: Vector3 = cam_basis.x * cos(theta) + cam_basis.y * sin(theta)
+		var from_pos: Vector3 = screen_center + dir * reach * travel_sign
+		var to_pos: Vector3 = screen_center - dir * reach * travel_sign
+		var rot_basis := _cut_blade_basis(cam_basis, cam_yaw, theta)
+		var kick: float = deg_to_rad(lerpf(1.0, 5.0, f)) * travel_sign
+		
+		var c_theta := theta
+		var c_sign := travel_sign
+		var c_dur := dur
+		var c_f := f
+		
+		seq.tween_callback(func(): _cut_begin_slash(fx_layer, c_theta, c_sign, c_f))
+		seq.tween_method(func(t: float):
+			_cut_set_blade(from_pos.lerp(to_pos, t), rot_basis, 1.0)
+			_cut_update_streak(t)
+			# Leve "chicote" da câmera acompanhando o corte (volta a zero no fim)
+			if is_instance_valid(cine_cam):
+				cine_cam.global_rotation.z = -sin(t * PI) * kick
+		, 0.0, 1.0, dur)
+		seq.tween_callback(func(): _cut_end_slash(c_dur))
+		
+		if i < count - 1:
+			seq.tween_interval(dur * player.cut_slash_gap_ratio)
+		
+		travel_sign = -travel_sign
+	
+	# Passo 5: golpe final, dano em área e devolução do controle
+	var impact_pos: Vector3 = start_pos + Vector3(0, 0.5, 0)
+	seq.tween_callback(func():
+		if is_instance_valid(cine_cam): cine_cam.global_rotation.z = 0.0
+		
+		GlobalUtils.shake_camera(0.3, 0.9)
+		GlobalUtils.vibrate_controller(Input, 0.7, 0.7, 0.3)
+		_play_blade_sound("res://assets/sounds/common/explosao.mp3", 1.2, -4.0)
+		_cut_spawn_flash(fx_layer)
+		
+		# Dano em área igual ao do Slain, porém um pouco menor
+		_apply_aoe_damage_slowly(impact_pos, player.cut_damage, player.cut_damage_radius)
+		
+		_reset_blade_to_hand()
+		
+		# Devolve a câmera ao player, mas MANTÉM a câmera lenta por um instante
+		if is_instance_valid(cine_cam):
+			cine_cam.queue_free()
+		player.camera.make_current()
+		
+		_show_combat_hud()
+		
+		var end_tween := create_tween()
+		end_tween.tween_interval(0.15)
+		end_tween.tween_callback(func():
+			player.global_position = start_pos # Garante que o player não é empurrado
+			player.velocity = Vector3.ZERO
+			Engine.time_scale = 1.0
+			AudioServer.playback_speed_scale = 1.0
+			player.is_using_ultimate = false
+			if is_instance_valid(fx_layer): fx_layer.queue_free()
+		)
+	)
+
+# Orientação da lâmina: parte da pose de arremesso (já calibrada no Inspector)
+# e gira no plano da tela para acompanhar a direção do corte.
+func _cut_blade_basis(cam_basis: Basis, cam_yaw: float, theta: float) -> Basis:
+	var base := Basis.from_euler(Vector3(
+		deg_to_rad(player.cut_cogblade_rot_x),
+		cam_yaw + deg_to_rad(player.cut_cogblade_rot_y),
+		deg_to_rad(player.cut_cogblade_rot_z)))
+	var spin := Basis(cam_basis.z.normalized(), theta)
+	return spin * base
+
+func _cut_set_blade(pos: Vector3, rot_basis: Basis, s: float) -> void:
+	if not is_instance_valid(player.crescent_cogblade): return
+	player.crescent_cogblade.global_transform = Transform3D(rot_basis.scaled(Vector3(s, s, s)), pos)
+
+func _cut_begin_slash(fx_layer: CanvasLayer, theta: float, travel_sign: float, f: float) -> void:
+	if not is_instance_valid(fx_layer): return
+	
+	var vp: Vector2 = get_viewport().get_visible_rect().size
+	var center: Vector2 = vp * 0.5
+	# Em coordenadas de tela o Y cresce para baixo, por isso o -sin
+	var d := Vector2(cos(theta), -sin(theta))
+	var half: float = vp.length() * 0.6
+	_cut_streak_a = center + d * half * travel_sign
+	_cut_streak_b = center - d * half * travel_sign
+	
+	var line := Line2D.new()
+	line.width = lerpf(14.0, 4.0, f)
+	line.begin_cap_mode = Line2D.LINE_CAP_ROUND
+	line.end_cap_mode = Line2D.LINE_CAP_ROUND
+	line.joint_mode = Line2D.LINE_JOINT_ROUND
+	
+	var grad := Gradient.new()
+	grad.set_color(0, Color(0.3, 0.85, 1.0, 0.0))
+	grad.set_color(1, Color(1.0, 1.0, 1.0, 1.0))
+	line.gradient = grad
+	
+	var wcurve := Curve.new()
+	wcurve.add_point(Vector2(0.0, 0.05))
+	wcurve.add_point(Vector2(0.8, 1.0))
+	wcurve.add_point(Vector2(1.0, 0.2))
+	line.width_curve = wcurve
+	
+	line.points = PackedVector2Array([_cut_streak_a, _cut_streak_a])
+	fx_layer.add_child(line)
+	_cut_streak = line
+	
+	_play_blade_sound("res://assets/sounds/player/blade_out.mp3", lerpf(0.85, 1.9, f), lerpf(-8.0, -1.0, f))
+
+func _cut_update_streak(t: float) -> void:
+	if not is_instance_valid(_cut_streak): return
+	_cut_streak.points = PackedVector2Array([_cut_streak_a, _cut_streak_a.lerp(_cut_streak_b, t)])
+
+func _cut_end_slash(dur: float) -> void:
+	var line := _cut_streak
+	_cut_streak = null
+	if not is_instance_valid(line): return
+	var t := create_tween()
+	t.tween_property(line, "modulate:a", 0.0, maxf(dur * 5.0, 0.04))
+	t.tween_callback(func():
+		if is_instance_valid(line): line.queue_free()
+	)
+
+func _cut_spawn_flash(fx_layer: CanvasLayer) -> void:
+	if not is_instance_valid(fx_layer): return
+	var flash := ColorRect.new()
+	flash.set_anchors_preset(Control.PRESET_FULL_RECT)
+	flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	flash.color = Color(1.0, 1.0, 1.0, 0.75)
+	fx_layer.add_child(flash)
+	var t := create_tween()
+	t.tween_property(flash, "color:a", 0.0, 0.12).set_trans(Tween.TRANS_CUBIC)
+	t.tween_callback(func():
+		if is_instance_valid(flash): flash.queue_free()
+	)
+
+func _apply_aoe_damage_slowly(pos: Vector3, damage: int = 30, radius: float = 15.0):
 	var inimigos = get_tree().get_nodes_in_group("enemies")
 	var afetados = []
 	for inimigo in inimigos:
 		if is_instance_valid(inimigo) and inimigo.has_method("take_damage"):
-			if inimigo.global_position.distance_to(pos) <= 15.0:
+			if inimigo.global_position.distance_to(pos) <= radius:
 				afetados.append(inimigo)
 				
 	# Aplica o dano em sequência para dar peso
@@ -292,7 +568,7 @@ func _apply_aoe_damage_slowly(pos: Vector3):
 		t.tween_interval(0.02 * i) # Intervalo minúsculo, mas perceptível no slow-mo
 		t.tween_callback(func():
 			if is_instance_valid(inimigo):
-				inimigo.take_damage(30)
+				inimigo.take_damage(damage)
 				
 				# Efeito de Knockback
 				var dir_away = (inimigo.global_position - pos).normalized()
