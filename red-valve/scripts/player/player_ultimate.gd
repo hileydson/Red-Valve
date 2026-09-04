@@ -538,6 +538,57 @@ func _cut_begin_slash(fx_layer: CanvasLayer, theta: float, travel_sign: float, f
 	_cut_streak = line
 	
 	_play_blade_sound("res://assets/sounds/player/blade_out.mp3", lerpf(0.85, 1.9, f), lerpf(-8.0, -1.0, f))
+	
+	# A lâmina passou: os inimigos por perto sangram como se estivessem
+	# sendo retalhados junto com a tela.
+	_cut_spawn_blood_wave(theta)
+
+# Sangue de UMA passada da lâmina: escolhe alguns inimigos no raio do golpe e
+# faz o sangue jorrar na direção do corte. O sangue roda com speed_scale maior
+# que 1 para compensar o Engine.time_scale da cinemática — assim ele continua
+# em câmera lenta, mas rápido o bastante para dar pra ver o jorro inteiro.
+func _cut_spawn_blood_wave(theta: float) -> void:
+	if player.blood_effect == null: return
+	var cam: Camera3D = get_viewport().get_camera_3d()
+	if not is_instance_valid(cam): return
+	
+	var b := cam.global_transform.basis
+	var dir: Vector3 = (b.x * cos(theta) + b.y * sin(theta)).normalized()
+	var origin: Vector3 = player.global_position
+	
+	var alvos: Array = []
+	for inimigo in get_tree().get_nodes_in_group("enemies"):
+		if not is_instance_valid(inimigo) or not (inimigo is Node3D): continue
+		if inimigo.global_position.distance_to(origin) <= player.cut_damage_radius:
+			alvos.append(inimigo)
+	if alvos.is_empty(): return
+	
+	alvos.shuffle()
+	var limite: int = mini(alvos.size(), maxi(1, player.cut_blood_targets_per_slash))
+	for i in range(limite):
+		_cut_spawn_blood_on(alvos[i], dir)
+	
+	_play_blade_sound("res://assets/sounds/player/blood_out.mp3", randf_range(0.85, 1.15), -7.0)
+
+func _cut_spawn_blood_on(alvo: Node3D, dir: Vector3) -> void:
+	if not is_instance_valid(alvo) or player.blood_effect == null: return
+	var blood = player.blood_effect.instantiate()
+	get_tree().root.add_child(blood)
+	
+	# Varia o ponto do corte pelo corpo do inimigo
+	blood.global_position = alvo.global_position + Vector3(
+		randf_range(-0.35, 0.35),
+		randf_range(1.0, 2.0),
+		randf_range(-0.35, 0.35))
+	
+	# O jorro sai acompanhando a direção em que a lâmina passou
+	var lado: float = 1.0 if randf() < 0.5 else -1.0
+	var spray: Vector3 = dir * lado + Vector3(0.0, 0.3, 0.0)
+	if spray.length() > 0.01 and absf(spray.normalized().dot(Vector3.UP)) < 0.95:
+		blood.look_at(blood.global_position + spray, Vector3.UP)
+	
+	# Compensa a câmera lenta da cinemática
+	blood.speed_scale = maxf(0.1, player.cut_blood_speed_scale)
 
 func _cut_update_streak(t: float) -> void:
 	if not is_instance_valid(_cut_streak): return

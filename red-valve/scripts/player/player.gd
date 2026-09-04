@@ -95,6 +95,11 @@ var is_exhausted: bool = false
 @export var cut_damage_radius: float = 15.0
 ## Quanto do acúmulo da cogblade sobra depois de usar o Cut (não zera).
 @export var cut_leftover_power: float = 25.0
+## Quantos inimigos sangram a cada passada da lâmina (menor = mais leve).
+@export var cut_blood_targets_per_slash: int = 2
+## O sangue do Cut roda mais rápido que o resto da cena para dar pra ver o
+## jorro inteiro: 1.0 = tão lento quanto a cena, 3.5 = ~0.35x do normal.
+@export var cut_blood_speed_scale: float = 3.5
 
 # --- GOLPE MELEE DA COGBLADE (toque rápido em C / L1) ---
 @export_group("Cogblade Melee")
@@ -107,8 +112,8 @@ var is_exhausted: bool = false
 ## Estamina gasta por golpe.
 @export var melee_stamina_cost: float = 8.0
 ## Altura e distância da lâmina em relação ao player durante o golpe.
-@export var melee_height: float = 1.2
-@export var melee_distance: float = 1.2
+@export var melee_height: float = 0.95
+@export var melee_distance: float = 1.75
 var mp_bar: ProgressBar
 
 var hud_layer: CanvasLayer
