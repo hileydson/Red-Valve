@@ -166,6 +166,27 @@ func remover_camera_lenta():
 	#    tween_tempo.kill()
 	
 
+# --- ESCONDER/RESTAURAR CANVASLAYERS DE UMA CENA PAUSADA ---
+# Node3D.visible = false NÃO esconde CanvasLayers (ex: HUD, textos de
+# capítulo), pois eles não fazem parte da árvore de visibilidade 3D. Isso é
+# usado ao pausar uma cena (ex: entrando na arena de batalha via amuleto) para
+# que textos/UI daquela cena não fiquem "grudados" na tela por cima da nova
+# cena. Guarda o estado de visibilidade original em cada CanvasLayer via meta,
+# para restaurar exatamente como estava (em vez de forçar tudo para visível).
+func set_canvas_layers_hidden(node: Node, hide: bool) -> void:
+	for child in node.get_children():
+		if child is CanvasLayer:
+			if hide:
+				child.set_meta("_was_visible_before_pause", child.visible)
+				child.visible = false
+			else:
+				if child.has_meta("_was_visible_before_pause"):
+					child.visible = child.get_meta("_was_visible_before_pause")
+					child.remove_meta("_was_visible_before_pause")
+				else:
+					child.visible = true
+		set_canvas_layers_hidden(child, hide)
+
 func vibrate_controller(_input_obj:Variant, low_strengh:float, high_strengh:float, time:float):
 	if Input:
 		Input.start_joy_vibration(0,low_strengh, high_strengh, time)

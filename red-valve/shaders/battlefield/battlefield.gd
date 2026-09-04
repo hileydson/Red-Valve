@@ -63,7 +63,16 @@ func _ready() -> void:
 			GlobalEvents.amulet_captured_enemies.clear()
 
 	player = get_tree().get_first_node_in_group("player")
-	enemies = get_tree().get_nodes_in_group("enemies")
+
+	# Escopado aos filhos de "enemies" (em vez de get_tree().get_nodes_in_group,
+	# que busca na árvore INTEIRA): a cena de origem (ex: stage_1) fica pausada
+	# mas ainda dentro da árvore enquanto a batalha rola, e seus inimigos
+	# continuam no grupo "enemies" mesmo parados — o que fazia a checagem de
+	# "todos mortos" nunca bater, já que eles nunca morrem.
+	enemies = []
+	for c in enemies_node.get_children():
+		if is_instance_valid(c) and c.is_in_group("enemies"):
+			enemies.append(c)
 
 	if player:
 		# Trava a cena para modo cutscene
@@ -346,6 +355,7 @@ func _start_final_sequence() -> void:
 			# o bug do chão (Terrain3D) perdendo a textura ao ser readicionado.
 			GlobalEvents.paused_scene_for_amulet.visible = true
 			GlobalEvents.paused_scene_for_amulet.process_mode = Node.PROCESS_MODE_INHERIT
+			GlobalUtils.set_canvas_layers_hidden(GlobalEvents.paused_scene_for_amulet, false)
 			tree.current_scene = GlobalEvents.paused_scene_for_amulet
 
 			# Toca o efeito de retorno na câmera da cena restaurada
@@ -364,7 +374,7 @@ func _start_final_sequence() -> void:
 			get_tree().change_scene_to_file("res://scenes/stages/stage_1.tscn")
 
 func _find_player_recursive(node: Node) -> Node:
-	if node.is_in_group("player") or node.name == "player":
+	if node.is_in_group("player") or node.name.to_lower() == "player":
 		return node
 	for child in node.get_children():
 		var found = _find_player_recursive(child)

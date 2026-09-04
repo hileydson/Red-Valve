@@ -373,6 +373,7 @@ func _on_amulet_magic_released() -> void:
 	# a textura quando a cena era readicionada depois da batalha.
 	current.visible = false
 	current.process_mode = Node.PROCESS_MODE_DISABLED
+	GlobalUtils.set_canvas_layers_hidden(current, true)
 	if is_instance_valid(player):
 		player.remove_from_group("player")
 	GlobalEvents.paused_scene_for_amulet = current
