@@ -5,7 +5,7 @@ extends Node
 # A ação "ui_cogblade_power" (tecla C / L1) tem dois usos:
 #   - SEGURAR: o tempo fica ultra lento e aparece um menu radial (estilo dos
 #     plasmids do BioShock) com os poderes disponíveis. O jogador aponta o
-#     analógico direito (ou o mouse) para a opção desejada e, ao SOLTAR, o
+#     analógico ESQUERDO (ou o mouse) para a opção desejada e, ao SOLTAR, o
 #     poder apontado é executado.
 #   - TOQUE RÁPIDO: golpe melee — a cogblade passa uma vez de um lado para o
 #     outro, alternando o lado a cada golpe.
@@ -18,17 +18,28 @@ const MENU_AUDIO_SCALE: float = 0.5
 const SELECT_DEADZONE: float = 0.35
 
 # Poderes disponíveis, na ordem em que aparecem no círculo (começa no topo).
+# "cost_type" diz de onde sai o custo: "mp" gasta mana (o arremesso, que antes
+# ficava no botão Y) e "cogblade" exige o medidor da cogblade cheio.
 const POWERS: Array = [
+	{
+		"id": "thrown",
+		"name": "COGBLADE THROWN",
+		"desc": "Arremessa a lâmina como um bumerangue",
+		"cost_type": "mp",
+		"cost": 10.0,
+	},
 	{
 		"id": "slain",
 		"name": "COGBLADE SLAIN",
 		"desc": "Mergulha do céu e explode a área",
+		"cost_type": "cogblade",
 		"cost": 100.0,
 	},
 	{
 		"id": "cut",
 		"name": "COGBLADE CUT",
 		"desc": "Retalha a tela em alta velocidade (deixa 25%)",
+		"cost_type": "cogblade",
 		"cost": 100.0,
 	},
 ]
@@ -109,8 +120,21 @@ func _can_open() -> bool:
 	if not _can_use_action(): return false
 	if player.cogblade_melee_active: return false
 	if not player.is_on_floor(): return false
-	# Mesma regra de antes: só com o medidor cheio
-	return player.cogblade_power_value >= 100.0
+	# Abre se pelo menos um dos poderes estiver disponível
+	for p in POWERS:
+		if _is_power_available(p): return true
+	return false
+
+# Cada poder tem o seu próprio custo: o arremesso gasta mana, os dois ultimates
+# exigem o medidor da cogblade cheio.
+func _is_power_available(p: Dictionary) -> bool:
+	var custo: float = float(p.get("cost", 0.0))
+	if str(p.get("cost_type", "cogblade")) == "mp":
+		# Mesmas condições que o arremesso tinha quando era no botão Y
+		if player.transition_camera: return false
+		if is_instance_valid(player.camera) and not player.camera.current: return false
+		return SaveManager.current_mp >= custo
+	return player.cogblade_power_value >= custo
 
 func _can_stay_open() -> bool:
 	if GlobalEvents.in_cutscene or player._cutscene_inputs_disabled: return false
@@ -141,7 +165,7 @@ func _open_menu() -> void:
 			"id": p["id"],
 			"name": p["name"],
 			"desc": p["desc"],
-			"enabled": player.cogblade_power_value >= float(p["cost"]),
+			"enabled": _is_power_available(p),
 		})
 	
 	_menu_layer = CanvasLayer.new()
@@ -162,8 +186,10 @@ func _open_menu() -> void:
 func _update_selection() -> void:
 	if not is_instance_valid(_menu): return
 	
-	# Analógico direito tem prioridade; o mouse serve para teclado
-	var stick := Input.get_vector("ui_look_left", "ui_look_right", "ui_look_up", "ui_look_down")
+	# Analógico esquerdo tem prioridade; o mouse serve para teclado.
+	# Enquanto o menu está aberto o player não anda (_physics_process do
+	# player.gd retorna cedo), então o analógico fica livre para escolher.
+	var stick := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 	if stick.length() > SELECT_DEADZONE:
 		_point_vec = stick
 		_mouse_vec = Vector2.ZERO
@@ -228,6 +254,9 @@ func _close_menu(execute: bool) -> void:
 func _execute_power(id: String) -> void:
 	if player.is_using_ultimate: return
 	match id:
+		"thrown":
+			if not player.is_magic_attacking and not player.cogblade_melee_active:
+				player.magic_hand_attack()
 		"slain":
 			player._activate_cogblade_slain()
 		"cut":

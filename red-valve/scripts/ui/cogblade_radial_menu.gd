@@ -1,8 +1,8 @@
 extends Control
 
 # Menu radial de escolha dos poderes da Cogblade (estilo dos plasmids do BioShock).
-# Os poderes aparecem em círculo e a seleção é feita apontando o analógico direito
-# (ou movendo o mouse) na direção da opção desejada. Quem instancia é o
+# Os poderes aparecem em círculo e a seleção é feita apontando o analógico
+# esquerdo (ou movendo o mouse) na direção da opção desejada. Quem instancia é o
 # PlayerCogbladeMenu, que também executa o poder ao soltar o botão.
 
 # Cada opção: { "id": String, "name": String, "desc": String, "enabled": bool }

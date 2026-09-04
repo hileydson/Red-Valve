@@ -573,8 +573,9 @@ func _physics_process(delta: float) -> void:
 			if Input.is_action_just_pressed("ui_shoot") and !transition_camera and !is_magic_attacking:
 				shoot(Input)
 			
-			if !is_magic_attacking and !cogblade_melee_active and Input.is_action_just_pressed("ui_magic_attack") and !transition_camera and camera.current and SaveManager.current_mp >= 10.0:
-				magic_hand_attack()
+			# O Cogblade Thrown saiu do botão Y: agora ele é uma das opções da
+			# roda de poderes da cogblade (segurar L1 / C, ver
+			# player_cogblade_menu.gd). O botão Y fica livre para outra ação.
 			
 		if camera_bullet_time_ON:
 			return
