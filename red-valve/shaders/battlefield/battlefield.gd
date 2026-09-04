@@ -13,6 +13,12 @@ var look_at_offset: Vector3 = Vector3.ZERO
 var final_sequence_started: bool = false
 var hurricane_node: Node3D
 
+# Estado da câmera da intro pós-prólogo (segue o alvo com atraso, ver _process)
+var _rise_cam: Camera3D
+var _rise_cam_anchor: Node3D
+var _rise_look_at: Vector3 = Vector3.ZERO
+var _rise_cam_time: float = 0.0
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	_spawn_arena_hurricane()
@@ -151,6 +157,8 @@ func _process(delta: float) -> void:
 		
 	if look_at_target and is_instance_valid(camera_intro) and camera_intro.current:
 		camera_intro.look_at(look_at_target.global_position + look_at_offset, Vector3.UP)
+
+	_update_rise_camera(delta)
 		
 	if is_instance_valid(hurricane_node):
 		# Gira o furacão constantemente em torno do eixo Y
@@ -412,11 +420,13 @@ func _spawn_arena_hurricane() -> void:
 # ============================================================
 #  INTRO PÓS-PRÓLOGO: todos emergem de baixo da arena
 # ============================================================
-const RISE_DEPTH: float = 12.0      # quanto abaixo da arena todos começam
-const RISE_TIME: float = 1.35       # duração da subida
-const RISE_SETTLE: float = 0.45     # respiro depois de chegar em cima
-const ROCK_COUNT: int = 30          # pedaços de pedra que sobem junto
-const ROCK_LIFETIME: float = 15.0   # tempo que as pedras ficam na arena
+const RISE_DEPTH: float = 12.0        # quanto abaixo da arena todos começam
+const RISE_TIME: float = 1.35         # duração da subida
+const RISE_SETTLE: float = 0.5        # respiro depois de chegar em cima
+const ROCK_COUNT: int = 80            # pedaços de pedra que sobem junto
+const ROCK_LIFETIME: float = 15.0     # tempo que as pedras ficam na arena
+const RISE_CAM_LAG: float = 4.2       # quanto MENOR, mais a câmera atrasa em relação ao alvo
+const RISE_CAM_AIM_LAG: float = 5.5   # atraso da mira (um pouco mais rápido que a posição)
 
 func _play_rise_from_ground_intro() -> void:
 	# Guarda a posição final de todo mundo e joga todos pra debaixo da arena.
@@ -434,17 +444,35 @@ func _play_rise_from_ground_intro() -> void:
 		n.process_mode = Node.PROCESS_MODE_DISABLED
 		n.global_position = r["pos"] - Vector3(0, RISE_DEPTH, 0)
 
-	# Câmera dedicada, que sobe junto com todo mundo.
 	var player_final: Vector3 = risers[0]["pos"] if risers.size() > 0 else Vector3(0, 1.0, 0)
 	var cam_final: Vector3 = player_final + Vector3(0, 2.6, 5.5)
+
+	# A subida da câmera é feita num "anchor" invisível; a câmera persegue esse
+	# anchor com amortecimento (ver _update_rise_camera), então ela chega atrasada,
+	# passa um pouco do ponto e se acomoda — em vez de andar colada no trilho.
+	var anchor := Node3D.new()
+	add_child(anchor)
+	anchor.global_position = cam_final - Vector3(0, RISE_DEPTH, 0)
+
 	var cam := Camera3D.new()
 	add_child(cam)
-	cam.global_position = cam_final - Vector3(0, RISE_DEPTH, 0)
+	cam.global_position = anchor.global_position - Vector3(0, 1.5, 0)
 	cam.fov = 82.0
-	# _process() cuida de manter esta câmera ativa e olhando pro player.
+
+	# Motion blur bem leve durante a subida (DOF distante suave, some no final).
+	var blur := CameraAttributesPractical.new()
+	blur.dof_blur_far_enabled = true
+	blur.dof_blur_far_distance = 6.0
+	blur.dof_blur_far_transition = 14.0
+	blur.dof_blur_amount = 0.035
+	cam.attributes = blur
+
+	_rise_cam = cam
+	_rise_cam_anchor = anchor
+	_rise_cam_time = 0.0
+	_rise_look_at = player_final + Vector3(0, 1.0, 0) - Vector3(0, RISE_DEPTH, 0)
+	# _process() mantém esta câmera ativa; a mira/posição são suavizadas à parte.
 	camera_intro = cam
-	look_at_target = risers[0]["node"] if risers.size() > 0 else null
-	look_at_offset = Vector3(0, 1.0, 0)
 
 	# Sobe todo mundo (leve overshoot pra dar o "estouro" ao furar o chão).
 	var tween := create_tween().set_parallel(true)
@@ -452,10 +480,10 @@ func _play_rise_from_ground_intro() -> void:
 		var n: Node3D = r["node"]
 		tween.tween_property(n, "global_position", r["pos"], RISE_TIME) \
 			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	tween.tween_property(cam, "global_position", cam_final, RISE_TIME) \
+	tween.tween_property(anchor, "global_position", cam_final, RISE_TIME) \
 		.set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
-	tween.tween_property(cam, "fov", 70.0, RISE_TIME) \
-		.set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
+	tween.tween_property(cam, "fov", 70.0, RISE_TIME + 0.3) \
+		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 
 	# No instante em que atravessamos o chão: pedras, poeira e tremor.
 	var punch_delay: float = RISE_TIME * 0.55
@@ -474,13 +502,51 @@ func _play_rise_from_ground_intro() -> void:
 	)
 
 	await tween.finished
+
+	# Tira o blur enquanto a câmera termina de se acomodar no alvo.
+	var blur_out := create_tween()
+	blur_out.tween_property(blur, "dof_blur_amount", 0.0, RISE_SETTLE)
+
 	await get_tree().create_timer(RISE_SETTLE).timeout
 
 	# Devolve a câmera pro player (o _process para de forçar a câmera de intro).
 	camera_intro = null
-	look_at_target = null
+	_rise_cam = null
+	if is_instance_valid(anchor):
+		anchor.queue_free()
 	if is_instance_valid(cam):
+		cam.attributes = null
 		cam.queue_free()
+	_rise_cam_anchor = null
+
+
+func _update_rise_camera(delta: float) -> void:
+	if not is_instance_valid(_rise_cam) or not is_instance_valid(_rise_cam_anchor):
+		return
+
+	_rise_cam_time += delta
+
+	# Balanço mínimo de câmera na mão, só pra tirar o aspecto de trilho.
+	var sway := Vector3(
+		sin(_rise_cam_time * 1.7) * 0.07 + sin(_rise_cam_time * 0.61) * 0.05,
+		sin(_rise_cam_time * 2.3 + 1.3) * 0.05,
+		sin(_rise_cam_time * 1.1 + 0.7) * 0.04
+	)
+
+	# Suavização exponencial: independe do framerate e nunca gruda no alvo.
+	var f: float = 1.0 - exp(-delta * RISE_CAM_LAG)
+	_rise_cam.global_position = _rise_cam.global_position.lerp(
+		_rise_cam_anchor.global_position + sway, f
+	)
+
+	var aim_goal: Vector3 = _rise_look_at
+	if is_instance_valid(player):
+		aim_goal = player.global_position + Vector3(0, 1.0, 0)
+	var af: float = 1.0 - exp(-delta * RISE_CAM_AIM_LAG)
+	_rise_look_at = _rise_look_at.lerp(aim_goal, af)
+
+	if _rise_cam.global_position.distance_to(_rise_look_at) > 0.1:
+		_rise_cam.look_at(_rise_look_at, Vector3.UP)
 
 
 func _spawn_ground_burst(pos: Vector3) -> void:
@@ -519,7 +585,7 @@ func _spawn_ground_burst(pos: Vector3) -> void:
 
 	# Pedaços de pedra subindo junto e quicando na arena
 	var n := int(round(float(ROCK_COUNT) / max(1.0, float(enemies.size() + 1))))
-	for i in range(max(4, n)):
+	for i in range(max(10, n)):
 		_spawn_rock_chunk(pos)
 
 
@@ -537,7 +603,7 @@ func _spawn_rock_chunk(origin: Vector3) -> void:
 	rock.physics_material_override = phys
 	add_child(rock)
 
-	var size := randf_range(0.18, 0.55)
+	var size := randf_range(0.14, 0.62)
 
 	# Formato angular de pedra (esfera de baixíssima resolução, achatada aleatoriamente)
 	var mesh := SphereMesh.new()
@@ -565,7 +631,7 @@ func _spawn_rock_chunk(origin: Vector3) -> void:
 
 	# Nasce escondida embaixo da arena e sobe furando o chão junto com o pessoal.
 	var ang := randf() * TAU
-	var rad := randf_range(0.3, 2.2)
+	var rad := randf_range(0.3, 3.0)
 	rock.global_position = origin + Vector3(cos(ang) * rad, -1.4, sin(ang) * rad)
 	rock.rotation = Vector3(randf() * TAU, randf() * TAU, randf() * TAU)
 	rock.linear_velocity = Vector3(
