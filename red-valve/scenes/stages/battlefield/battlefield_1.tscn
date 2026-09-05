@@ -298,8 +298,8 @@ sky = SubResource("Sky_bb3vo")
 tonemap_mode = 3
 ssr_enabled = true
 ssao_enabled = true
-ssil_enabled = true
-sdfgi_enabled = true
+ssil_enabled = false
+sdfgi_enabled = false
 glow_enabled = true
 volumetric_fog_enabled = true
 
@@ -393,8 +393,8 @@ tonemap_mode = 3
 tonemap_white = 6.0
 ssr_enabled = true
 ssao_enabled = true
-ssil_enabled = true
-sdfgi_enabled = true
+ssil_enabled = false
+sdfgi_enabled = false
 glow_enabled = true
 volumetric_fog_enabled = true
 
