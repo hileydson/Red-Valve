@@ -231,7 +231,7 @@ var dash_timer : float = 0.0
 var dash_cooldown_timer : float = 0.0
 var dash_direction : Vector3 = Vector3.ZERO
 @onready var trail_particles: GPUParticles3D = $trail_particles # Nó de fumaça
-@onready var modelo_visual = $maycow_lopes/Armature/Skeleton3D/char1
+var modelo_visual: MeshInstance3D # resolvido em _ready() conforme a variante ativa (normal/não-normal)
 
 
 # HAND ADJUSTMENTS
@@ -354,8 +354,10 @@ func _ready():
 	if GlobalEvents.is_maycow_normal:
 		playback = animation_tree_normal["parameters/playback"]
 		$maycow_lopes.queue_free()
+		modelo_visual = $maycow_lopes_normal/Armature/Skeleton3D/char1
 	else:
-		$maycow_lopes_normal.queue_free() 
+		$maycow_lopes_normal.queue_free()
+		modelo_visual = $maycow_lopes/Armature/Skeleton3D/char1
 		
 	# Instancia Componente HUD
 	var hud_component = load("res://scripts/player/player_hud.gd").new()
@@ -977,6 +979,12 @@ func _physics_process(delta: float) -> void:
 
 	var combat_comp = get_node_or_null("PlayerCombat")
 	if combat_comp: combat_comp.process_combat(delta)
+
+	# Esconde o corpo/braços do Maycow (normal ou não-normal) só quando a câmera
+	# de 1ª pessoa está realmente ativa — em qualquer outra câmera (3ª pessoa,
+	# cutscenes, bullet time) ele continua visível normalmente.
+	if is_instance_valid(modelo_visual):
+		modelo_visual.visible = not camera.current
 
 
 func dash():
