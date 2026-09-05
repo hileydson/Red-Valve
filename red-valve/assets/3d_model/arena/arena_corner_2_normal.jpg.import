@@ -2,20 +2,20 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bwairu587m8t2"
-path.s3tc="res://.godot/imported/arena_normal.jpg-3e0a9f3ad7c60f90d2e89314ac7012d6.s3tc.ctex"
+uid="uid://dlxbj0l5jbhp"
+path.s3tc="res://.godot/imported/arena_corner_2_normal.jpg-2eb082971dace3db066ca21ffa315cb0.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
 }
 generator_parameters={
-"md5": "07a600adeb862d0083c959af61d3af2a"
+"md5": "f80bed3110d95740d1cbeaa27717cc20"
 }
 
 [deps]
 
-source_file="res://assets/3d_model/arena/arena_normal.jpg"
-dest_files=["res://.godot/imported/arena_normal.jpg-3e0a9f3ad7c60f90d2e89314ac7012d6.s3tc.ctex"]
+source_file="res://assets/3d_model/arena/arena_corner_2_normal.jpg"
+dest_files=["res://.godot/imported/arena_corner_2_normal.jpg-2eb082971dace3db066ca21ffa315cb0.s3tc.ctex"]
 
 [params]
 
@@ -30,7 +30,7 @@ compress/channel_pack=0
 mipmaps/generate=true
 mipmaps/limit=-1
 roughness/mode=1
-roughness/src_normal="res://assets/3d_model/arena/arena_normal.jpg"
+roughness/src_normal="res://assets/3d_model/arena/arena_corner_2_normal.jpg"
 process/channel_remap/red=0
 process/channel_remap/green=1
 process/channel_remap/blue=2
