@@ -12,6 +12,13 @@ extends Node3D
 const GROUP := "fire_gargoyle"
 const FIRE_SHADER := preload("res://shaders/effects/fire_gargoyle.gdshader")
 
+## Altura (em unidades do modelo) do pivô em torno do qual o corpo deita no voo.
+const LEAN_PIVOT_Y := 0.8
+## Quanto o corpo deita voando: ~57°, deixando a coluna quase na horizontal.
+const FLIGHT_LEAN := -1.0
+## Empinada da frenagem no instante do pouso.
+const LANDING_FLARE := 0.4
+
 enum State { PERCHED, FLYING }
 
 ## Pontos de pouso. Aceita qualquer Node3D (Marker3D, o próprio canto, etc).
@@ -35,6 +42,8 @@ enum State { PERCHED, FLYING }
 ## Folga acima do ponto de pouso. A origem do modelo fica na sola do pé, então
 ## isto é só uma margem para o pé não atravessar a geometria.
 @export var hover_offset: float = 0.05
+## Velocidade com que a guinada acompanha a trajetória (menor = mais suave).
+@export var turn_rate: float = 2.2
 
 var _perches: Array[Node3D] = []
 var _state: int = State.PERCHED
@@ -56,6 +65,7 @@ var _roll: float = 0.0
 var _prev_yaw: float = 0.0
 
 var _model: Node3D
+var _lean_pivot: Node3D
 var _head_pivot: Node3D
 var _wing_pivots: Array[Node3D] = []
 var _wing_mats: Array[ShaderMaterial] = []
@@ -77,6 +87,8 @@ var _head_yaw: float = 0.0
 var _head_yaw_target: float = 0.0
 var _head_timer: float = 0.0
 var _seed: float = 0.0
+var _lean: float = 0.0
+var _lean_target: float = 0.0
 
 
 func _ready() -> void:
@@ -147,9 +159,17 @@ func _build_model() -> void:
 	_model.scale = Vector3.ONE * body_scale
 	add_child(_model)
 
+	# Pivô da inclinação de voo, na altura do peito: girando por aqui (e não
+	# pelos pés) o corpo deita sem que a silhueta saia de cima da trajetória.
+	_lean_pivot = Node3D.new()
+	_lean_pivot.name = "lean_pivot"
+	_lean_pivot.position = Vector3(0, LEAN_PIVOT_Y, 0)
+	_model.add_child(_lean_pivot)
+
 	var body := Node3D.new()
 	body.name = "body"
-	_model.add_child(body)
+	body.position = Vector3(0, -LEAN_PIVOT_Y, 0)
+	_lean_pivot.add_child(body)
 
 	# --- tronco / peito ---
 	var pelvis := CapsuleMesh.new()
@@ -612,8 +632,9 @@ func _enter_perched(duration: float) -> void:
 	_timer = duration
 	_current = _target
 	global_position = _perch_point(_current)
-	_pitch = 0.0
-	_roll = 0.0
+	# _pitch/_roll/_lean voltam a zero interpolados em _process_perched: zerar
+	# aqui de uma vez fazia o corpo estalar na vertical no instante do pouso.
+	_lean_target = 0.0
 	_wing_open_target = 0.0
 	_flap_rate = 0.0
 	_flap_amp = 0.05
@@ -623,6 +644,9 @@ func _enter_perched(duration: float) -> void:
 
 func _process_perched(delta: float) -> void:
 	_timer -= delta
+	var settle: float = clamp(delta * 2.0, 0.0, 1.0)
+	_pitch = lerp(_pitch, 0.0, settle)
+	_roll = lerp(_roll, 0.0, settle)
 	# Vira a cabeça de tempos em tempos, vigiando a arena.
 	_head_timer -= delta
 	if _head_timer <= 0.0:
@@ -686,19 +710,32 @@ func _process_flying(delta: float) -> void:
 		dir = _p3 - _bezier(0.96)
 	global_position = pos
 
+	_prev_yaw = _yaw
 	if dir.length_squared() > 0.0001:
 		var flat := Vector3(dir.x, 0.0, dir.z)
-		if flat.length_squared() > 0.0001:
-			_prev_yaw = _yaw
-			var want := atan2(-flat.x, -flat.z)
-			_yaw = lerp_angle(_yaw, want, clamp(delta * 5.0, 0.0, 1.0))
+		var want := _yaw
+		if _flight_t > 0.72:
+			# Na descida a tangente da curva fica quase vertical e o atan2
+			# enlouquece (era isso que fazia ele girar de repente ao pousar).
+			# A partir daqui a mira passa a ser o centro da arena.
+			var to_center := _arena_center - global_position
+			to_center.y = 0.0
+			if to_center.length_squared() > 0.01:
+				want = atan2(-to_center.x, -to_center.z)
+		elif flat.length() > dir.length() * 0.3:
+			want = atan2(-flat.x, -flat.z)
+		_yaw = lerp_angle(_yaw, want, clamp(delta * turn_rate, 0.0, 1.0))
+
 		var pitch_want: float = asin(clamp(dir.normalized().y, -1.0, 1.0))
-		_pitch = lerp(_pitch, clamp(pitch_want * 0.8, -0.6, 0.6), clamp(delta * 4.0, 0.0, 1.0))
+		_pitch = lerp(_pitch, clamp(pitch_want * 0.8, -0.6, 0.6), clamp(delta * 3.0, 0.0, 1.0))
+
+	# Corpo deitado como o de uma ave; empina para frear na chegada.
+	_lean_target = LANDING_FLARE if _flight_t >= 0.86 else FLIGHT_LEAN
 
 	# Inclina nas curvas, como um pássaro.
 	var turn := wrapf(_yaw - _prev_yaw, -PI, PI)
-	var roll_want: float = clamp(-turn / max(delta, 0.0001) * 0.22, -1.0, 1.0)
-	_roll = lerp(_roll, roll_want, clamp(delta * 3.0, 0.0, 1.0))
+	var roll_want: float = clamp(-turn / max(delta, 0.0001) * 0.18, -0.8, 0.8)
+	_roll = lerp(_roll, roll_want, clamp(delta * 2.0, 0.0, 1.0))
 
 	# Bate forte na subida e na chegada; plana no meio do trajeto.
 	# Nunca para de bater: no meio do trajeto bate mais devagar e mais curto,
@@ -794,13 +831,18 @@ func _animate(delta: float) -> void:
 			0.0)
 
 	# Respiração / pouso: sobe e desce de leve.
+	_lean = lerp(_lean, _lean_target, clamp(delta * 2.5, 0.0, 1.0))
+	_lean_pivot.rotation.x = _lean
+
 	var bob: float = sin(_time * 1.6) * 0.03 + sin(_flap_phase) * 0.05 * _wing_open
 	_model.position.y = bob
 	_model.scale = Vector3.ONE * body_scale * (1.0 + sin(_time * 1.9) * 0.015)
 
 	if _head_pivot:
 		_head_yaw = lerp(_head_yaw, _head_yaw_target * (1.0 - _wing_open), clamp(delta * 3.0, 0.0, 1.0))
-		_head_pivot.rotation = Vector3(sin(_time * 1.3) * 0.05, _head_yaw, 0.0)
+		# Com o corpo deitado a cabeça ficaria olhando para o chão: levanta o
+		# pescoço proporcionalmente à inclinação.
+		_head_pivot.rotation = Vector3(sin(_time * 1.3) * 0.05 - _lean * 0.75, _head_yaw, 0.0)
 
 	if _light:
 		var flicker: float = 0.82 + 0.18 * sin(_time * 11.0 + _seed) * cos(_time * 6.3)
