@@ -27,10 +27,22 @@ enum State { PERCHED, FLYING }
 @export var start_perch: int = -1
 
 @export_group("Corpo")
-@export var body_scale: float = 2.2
+@export var body_scale: float = 1.9
 @export var fire_energy: float = 2.0
 @export var light_energy: float = 6.0
 @export var light_range: float = 14.0
+
+@export_group("Vagar livre")
+## Ignora os poleiros e fica cruzando o céu sem parar (usado no trailer).
+@export var roam_enabled: bool = false
+@export var roam_center: Vector3 = Vector3.ZERO
+@export var roam_radius: float = 140.0
+@export var roam_height_min: float = 25.0
+@export var roam_height_max: float = 70.0
+## O centro do vagar acompanha a câmera ativa (à frente dela), de modo que o
+## bando esteja sempre no céu da tomada em curso. Sem isto, uma cena longa
+## como o trailer deixa quase todas fora de quadro.
+@export var roam_follow_camera: bool = true
 
 @export_group("Comportamento")
 @export var perch_time_min: float = 7.0
@@ -89,12 +101,17 @@ var _head_timer: float = 0.0
 var _seed: float = 0.0
 var _lean: float = 0.0
 var _lean_target: float = 0.0
+var _last_dir: Vector3 = Vector3.FORWARD
 
 
 func _ready() -> void:
 	add_to_group(GROUP)
 	_seed = randf() * 100.0
 	_build_model()
+
+	if roam_enabled:
+		_finish_roam_setup()
+		return
 
 	for p in perch_paths:
 		var n := get_node_or_null(p)
@@ -113,6 +130,84 @@ func setup(perch_nodes: Array, initial_perch: int = -1) -> void:
 	start_perch = initial_perch
 	if is_inside_tree() and _model != null:
 		_finish_setup()
+
+
+## Liga o modo "vagar livre": sem poleiro, só cruzando o céu de um ponto
+## aleatório a outro dentro do cilindro (centro / raio / faixa de altura).
+func setup_roam(center: Vector3, radius: float, height_min: float, height_max: float) -> void:
+	roam_enabled = true
+	roam_center = center
+	roam_radius = radius
+	roam_height_min = height_min
+	roam_height_max = height_max
+	if is_inside_tree() and _model != null:
+		_finish_roam_setup()
+
+
+func _finish_roam_setup() -> void:
+	_arena_center = roam_center
+	global_position = _random_sky_point()
+	var a := randf() * TAU
+	_last_dir = Vector3(cos(a), 0.0, sin(a))
+	_yaw = atan2(-_last_dir.x, -_last_dir.z)
+	_prev_yaw = _yaw
+	# Nasce já voando: asas abertas, corpo deitado.
+	_wing_open = 1.0
+	_wing_open_target = 1.0
+	_lean = FLIGHT_LEAN
+	_lean_target = FLIGHT_LEAN
+	_flap_phase = randf() * TAU
+	_flap_rate = 6.0
+	_flap_amp = 0.8
+	if _trail:
+		_trail.emitting = true
+	_start_roam_leg()
+	set_process(true)
+
+
+func _update_roam_center() -> void:
+	var cam := get_viewport().get_camera_3d()
+	if cam == null:
+		return
+	# Um pouco à frente da câmera, para o bando cruzar o campo de visão.
+	var fwd := -cam.global_transform.basis.z
+	var c := cam.global_position + Vector3(fwd.x, 0.0, fwd.z).normalized() * (roam_radius * 0.5)
+	roam_center = Vector3(c.x, 0.0, c.z)
+
+	# A câmera do trailer salta entre tomadas: quem ficar longe demais volta
+	# para o céu da tomada atual em vez de sumir para sempre.
+	var away := global_position - roam_center
+	away.y = 0.0
+	if away.length() > roam_radius * 2.2:
+		global_position = _random_sky_point()
+		_start_roam_leg()
+
+
+func _random_sky_point() -> Vector3:
+	var a := randf() * TAU
+	var r: float = roam_radius * sqrt(randf())
+	return Vector3(
+		roam_center.x + cos(a) * r,
+		randf_range(roam_height_min, roam_height_max),
+		roam_center.z + sin(a) * r)
+
+
+## Uma perna do vagar. O ponto de controle de saída segue a tangente da perna
+## anterior, então as pernas emendam numa curva contínua em vez de virarem
+## uma sequência de arcos com freada no meio.
+func _start_roam_leg() -> void:
+	_p0 = global_position
+	_p3 = _random_sky_point()
+	var d: float = max(_p0.distance_to(_p3), 8.0)
+	_p1 = _p0 + _last_dir * d * 0.42
+	var a := randf() * TAU
+	_p2 = _p3 + Vector3(cos(a), 0.0, sin(a)) * d * 0.42
+	_p1.y = clamp(_p1.y, roam_height_min, roam_height_max)
+	_p2.y = clamp(_p2.y, roam_height_min, roam_height_max)
+	_flight_t = 0.0
+	_flight_dur = max(d * 1.25 / max(flight_speed, 0.1), 2.0)
+	_state = State.FLYING
+	_last_beat = int(floor((_flap_phase - PI * 1.5) / TAU))
 
 
 func _finish_setup() -> void:
@@ -614,9 +709,12 @@ func _make_trail() -> CPUParticles3D:
 # =============================================================
 
 func _process(delta: float) -> void:
-	if _perches.is_empty():
+	if _perches.is_empty() and not roam_enabled:
 		return
 	_time += delta
+
+	if roam_enabled and roam_follow_camera:
+		_update_roam_center()
 
 	match _state:
 		State.PERCHED:
@@ -701,7 +799,8 @@ func _start_flight() -> void:
 
 func _process_flying(delta: float) -> void:
 	_flight_t = min(_flight_t + delta / _flight_dur, 1.0)
-	var t := smoothstep(0.0, 1.0, _flight_t)
+	# Vagando o ritmo é constante; entre poleiros ele acelera e desacelera.
+	var t: float = _flight_t if roam_enabled else smoothstep(0.0, 1.0, _flight_t)
 
 	var pos := _bezier(t)
 	var ahead := _bezier(min(t + 0.02, 1.0))
@@ -714,7 +813,7 @@ func _process_flying(delta: float) -> void:
 	if dir.length_squared() > 0.0001:
 		var flat := Vector3(dir.x, 0.0, dir.z)
 		var want := _yaw
-		if _flight_t > 0.72:
+		if _flight_t > 0.72 and not roam_enabled:
 			# Na descida a tangente da curva fica quase vertical e o atan2
 			# enlouquece (era isso que fazia ele girar de repente ao pousar).
 			# A partir daqui a mira passa a ser o centro da arena.
@@ -730,7 +829,9 @@ func _process_flying(delta: float) -> void:
 		_pitch = lerp(_pitch, clamp(pitch_want * 0.8, -0.6, 0.6), clamp(delta * 3.0, 0.0, 1.0))
 
 	# Corpo deitado como o de uma ave; empina para frear na chegada.
-	_lean_target = LANDING_FLARE if _flight_t >= 0.86 else FLIGHT_LEAN
+	_lean_target = FLIGHT_LEAN
+	if not roam_enabled and _flight_t >= 0.86:
+		_lean_target = LANDING_FLARE
 
 	# Inclina nas curvas, como um pássaro.
 	var turn := wrapf(_yaw - _prev_yaw, -PI, PI)
@@ -738,15 +839,28 @@ func _process_flying(delta: float) -> void:
 	_roll = lerp(_roll, roll_want, clamp(delta * 2.0, 0.0, 1.0))
 
 	# Bate forte na subida e na chegada; plana no meio do trajeto.
-	# Nunca para de bater: no meio do trajeto bate mais devagar e mais curto,
-	# na decolagem e na chegada bate forte.
-	var effort: float = max(1.0 - _flight_t / 0.3, (_flight_t - 0.68) / 0.32)
-	effort = clamp(effort, 0.0, 1.0)
-	_flap_rate = lerp(6.0, 9.5, effort)
-	_flap_amp = lerp(0.7, 1.05, effort)
+	if roam_enabled:
+		# Bate forte quando sobe, plana quando desce.
+		var climb: float = clamp(dir.normalized().y * 2.5 + 0.4, 0.0, 1.0)
+		_flap_rate = lerp(4.5, 8.5, climb)
+		_flap_amp = lerp(0.5, 1.0, climb)
+		_wing_open_target = 1.0
+	else:
+		# Nunca para de bater: no meio do trajeto bate mais devagar e mais
+		# curto, na decolagem e na chegada bate forte.
+		var effort: float = max(1.0 - _flight_t / 0.3, (_flight_t - 0.68) / 0.32)
+		effort = clamp(effort, 0.0, 1.0)
+		_flap_rate = lerp(6.0, 9.5, effort)
+		_flap_amp = lerp(0.7, 1.05, effort)
 
 	if _flight_t >= 1.0:
-		_enter_perched(randf_range(perch_time_min, perch_time_max))
+		if roam_enabled:
+			var exit_dir := _p3 - _p2
+			if exit_dir.length_squared() > 0.001:
+				_last_dir = exit_dir.normalized()
+			_start_roam_leg()
+		else:
+			_enter_perched(randf_range(perch_time_min, perch_time_max))
 
 
 func _bezier(t: float) -> Vector3:

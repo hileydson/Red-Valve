@@ -7,6 +7,15 @@ extends Node3D
 @export var hand_end_marker: Marker3D
 @export var hand_rotation_offset: Vector3 = Vector3.ZERO
 @export var hand_position_offset: Vector3 = Vector3.ZERO
+@export_group("Gárgulas de Fogo")
+## Quantas gárgulas ficam cruzando o céu do trailer (0 desliga).
+@export var sky_gargoyle_count: int = 8
+## Cilindro que elas vagam: o trailer corre no eixo Z, de ~+121 a ~-236.
+## O centro acompanha a câmera ativa; este valor é só o ponto de partida.
+@export var sky_gargoyle_center: Vector3 = Vector3(0, 0, 60)
+@export var sky_gargoyle_radius: float = 70.0
+@export var sky_gargoyle_height_min: float = 16.0
+@export var sky_gargoyle_height_max: float = 45.0
 var ui_fader: ColorRect
 var lightning_flash_rect: ColorRect
 
@@ -91,6 +100,7 @@ func _ready() -> void:
 	_setup_comet_particles()
 	_setup_lightning_light()
 	_setup_anti_lopes()
+	_spawn_sky_gargoyles()
 	
 	cutscene_trailer_sequence()
 
@@ -1445,3 +1455,33 @@ func _set_visible_recursive(node: Node, is_vis: bool) -> void:
 		if "visible" in child:
 			child.visible = is_vis
 		_set_visible_recursive(child, is_vis)
+
+
+# ============================================================
+# GÁRGULAS DE FOGO NO CÉU
+# ============================================================
+
+const FIRE_GARGOYLE_SCENE := preload("res://scenes/effects/fire_gargoyle.tscn")
+
+
+## No trailer elas não têm poleiro: ficam vagando pelo céu em direções
+## aleatórias, cada uma com tamanho e velocidade um pouco diferentes para o
+## bando não parecer clonado.
+func _spawn_sky_gargoyles() -> void:
+	if sky_gargoyle_count <= 0:
+		return
+
+	var flock := Node3D.new()
+	flock.name = "SkyGargoyles"
+	add_child(flock)
+
+	for _i in range(sky_gargoyle_count):
+		var g = FIRE_GARGOYLE_SCENE.instantiate()
+		g.body_scale = randf_range(1.5, 2.2)
+		g.flight_speed = randf_range(9.0, 16.0)
+		flock.add_child(g)
+		g.setup_roam(
+			sky_gargoyle_center,
+			sky_gargoyle_radius,
+			sky_gargoyle_height_min,
+			sky_gargoyle_height_max)
