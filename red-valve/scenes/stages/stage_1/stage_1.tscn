@@ -35,6 +35,7 @@
 [ext_resource type="Script" uid="uid://uveurdts033i" path="res://tools/godot/citybuild/city_lookdev.gd" id="34_58jrl"]
 [ext_resource type="PackedScene" path="res://scenes/ui/minimap.tscn" id="35_58jrl"]
 [ext_resource type="Script" uid="uid://b6781x3j14vwg" path="res://scripts/stages/fix_materials.gd" id="99_fixmat"]
+[ext_resource type="PackedScene" path="res://scenes/stages/jimmy_house/casa_jimmy_exterior.tscn" id="40_casajimmy"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_5de2w"]
 shader = ExtResource("25_g6ibx")
@@ -796,6 +797,9 @@ omni_attenuation = 0.162
 transform = Transform3D(1, 0, 2.9802322e-07, 0, 0.99999976, 0, 1.0430813e-07, 0, 1, -0.19568634, 0, 0.20306015)
 shape = SubResource("BoxShape3D_wfumn")
 
+[node name="casa_jimmy" parent="itens_caminho_jimmy" instance=ExtResource("40_casajimmy")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 492, 0, 344)
+
 [node name="casa" type="Node3D" parent="." unique_id=393651894]
 
 [node name="SpotLight3D" type="SpotLight3D" parent="casa" unique_id=2005209012]
@@ -895,5 +899,7 @@ last_result = "aplicado | fog d=0.0012 aer=0.35 | tonemap=2 white=4.5 | contrast
 [connection signal="body_entered" from="cameras/camera2" to="." method="_on_camera_2_body_entered"]
 [connection signal="body_entered" from="itens_caminho_jimmy/auto_pecas_jimmy/Area3D_jimmy_house" to="." method="_on_area_3d_jimmy_house_body_entered"]
 [connection signal="body_exited" from="itens_caminho_jimmy/auto_pecas_jimmy/Area3D_jimmy_house" to="." method="_on_area_3d_jimmy_house_body_exited"]
+[connection signal="body_entered" from="itens_caminho_jimmy/casa_jimmy/area_entrada" to="." method="_ao_entrar_area_casa_jimmy"]
+[connection signal="body_exited" from="itens_caminho_jimmy/casa_jimmy/area_entrada" to="." method="_ao_sair_area_casa_jimmy"]
 
 [editable path="CanvasLayer/shader_fumaca"]

@@ -1,0 +1,470 @@
+{
+  "res://assets/3d_model/mobilia/tiny_living_botanical_bookends_5.tscn": {
+    "pos": [
+      -0.231,
+      0.0,
+      -0.089
+    ],
+    "tam": [
+      0.462,
+      0.312,
+      0.2
+    ]
+  },
+  "res://assets/3d_model/mobilia/tiny_living_compact_lavatory_45.tscn": {
+    "pos": [
+      -0.193,
+      0.0,
+      -0.492
+    ],
+    "tam": [
+      0.385,
+      0.892,
+      0.744
+    ]
+  },
+  "res://assets/3d_model/mobilia/tiny_living_contemporary_carpet_40.tscn": {
+    "pos": [
+      -1.425,
+      0.006,
+      -0.893
+    ],
+    "tam": [
+      2.85,
+      0.0,
+      1.786
+    ]
+  },
+  "res://assets/3d_model/mobilia/tiny_living_don_tripp_light_fixture_19.tscn": {
+    "pos": [
+      -0.231,
+      -0.791,
+      -0.363
+    ],
+    "tam": [
+      0.471,
+      0.791,
+      0.567
+    ]
+  },
+  "res://assets/3d_model/mobilia/tiny_living_just_a_little_peek_18.tscn": {
+    "pos": [
+      -0.425,
+      0.0,
+      -0.131
+    ],
+    "tam": [
+      0.85,
+      2.19,
+      0.263
+    ]
+  },
+  "res://assets/3d_model/mobilia/tiny_living_lamp_without_storage_20.tscn": {
+    "pos": [
+      -0.365,
+      0.0,
+      -0.366
+    ],
+    "tam": [
+      0.73,
+      1.853,
+      0.731
+    ]
+  },
+  "res://assets/3d_model/mobilia/tiny_living_lovely_armchair_33.tscn": {
+    "pos": [
+      -0.411,
+      0.0,
+      -0.407
+    ],
+    "tam": [
+      0.822,
+      1.028,
+      0.739
+    ]
+  },
+  "res://assets/3d_model/mobilia/tiny_living_lovely_dining_chair_42.tscn": {
+    "pos": [
+      -0.312,
+      0.0,
+      -0.341
+    ],
+    "tam": [
+      0.623,
+      0.989,
+      0.661
+    ]
+  },
+  "res://assets/3d_model/mobilia/tiny_living_lovely_loveseat_12.tscn": {
+    "pos": [
+      -0.914,
+      0.0,
+      -0.401
+    ],
+    "tam": [
+      1.828,
+      0.913,
+      0.748
+    ]
+  },
+  "res://assets/3d_model/mobilia/tiny_living_media_marathoner_8.tscn": {
+    "pos": [
+      -0.665,
+      0.0,
+      -0.425
+    ],
+    "tam": [
+      1.331,
+      2.088,
+      0.425
+    ]
+  },
+  "res://assets/3d_model/mobilia/tiny_living_media_marathoner_allonthe_wall_10.tscn": {
+    "pos": [
+      -0.421,
+      0.608,
+      0.0
+    ],
+    "tam": [
+      0.841,
+      1.2,
+      0.367
+    ]
+  },
+  "res://assets/3d_model/mobilia/tiny_living_modern_pouffe_36.tscn": {
+    "pos": [
+      -0.294,
+      0.0,
+      -0.308
+    ],
+    "tam": [
+      0.594,
+      0.529,
+      0.604
+    ]
+  },
+  "res://assets/3d_model/mobilia/tiny_living_murphy_bed_2.tscn": {
+    "pos": [
+      -0.881,
+      0.0,
+      -1.425
+    ],
+    "tam": [
+      1.762,
+      2.397,
+      2.566
+    ]
+  },
+  "res://assets/3d_model/mobilia/tiny_living_murphy_love_seat_4.tscn": {
+    "pos": [
+      -0.881,
+      0.0,
+      -1.425
+    ],
+    "tam": [
+      1.762,
+      2.397,
+      1.3
+    ]
+  },
+  "res://assets/3d_model/mobilia/tiny_living_my_kinda_zen_22.tscn": {
+    "pos": [
+      -0.189,
+      0.0,
+      -0.238
+    ],
+    "tam": [
+      0.378,
+      0.341,
+      0.472
+    ]
+  },
+  "res://assets/3d_model/mobilia/tiny_living_not_a_table_end_43.tscn": {
+    "pos": [
+      -0.32,
+      0.0,
+      -0.32
+    ],
+    "tam": [
+      0.639,
+      0.579,
+      0.639
+    ]
+  },
+  "res://assets/3d_model/mobilia/tiny_living_not_quite_orbital_sitting_41.tscn": {
+    "pos": [
+      -0.275,
+      0.0,
+      -0.306
+    ],
+    "tam": [
+      0.55,
+      1.033,
+      0.519
+    ]
+  },
+  "res://assets/3d_model/mobilia/tiny_living_open_shelf_31.tscn": {
+    "pos": [
+      -0.426,
+      -0.268,
+      0.0
+    ],
+    "tam": [
+      0.851,
+      0.995,
+      0.413
+    ]
+  },
+  "res://assets/3d_model/mobilia/tiny_living_orbital_high_dining_35.tscn": {
+    "pos": [
+      -0.425,
+      0.0,
+      -0.425
+    ],
+    "tam": [
+      0.85,
+      1.0,
+      0.85
+    ]
+  },
+  "res://assets/3d_model/mobilia/tiny_living_power_tower_bookcase_47.tscn": {
+    "pos": [
+      -0.425,
+      0.0,
+      -0.425
+    ],
+    "tam": [
+      0.85,
+      2.397,
+      0.592
+    ]
+  },
+  "res://assets/3d_model/mobilia/tiny_living_power_tower_dresser_24.tscn": {
+    "pos": [
+      -0.263,
+      0.0,
+      -0.425
+    ],
+    "tam": [
+      0.527,
+      1.512,
+      0.516
+    ]
+  },
+  "res://assets/3d_model/mobilia/tiny_living_simpleand_clean_art_39.tscn": {
+    "pos": [
+      -0.422,
+      0.003,
+      0.0
+    ],
+    "tam": [
+      0.844,
+      0.844,
+      0.066
+    ]
+  },
+  "res://assets/3d_model/mobilia/tiny_living_sir_cumference_coffee_table_11.tscn": {
+    "pos": [
+      -0.365,
+      0.0,
+      -0.365
+    ],
+    "tam": [
+      0.731,
+      0.497,
+      0.731
+    ]
+  },
+  "res://assets/3d_model/mobilia/tiny_living_space_saving_single_13.tscn": {
+    "pos": [
+      -0.425,
+      0.0,
+      -1.277
+    ],
+    "tam": [
+      0.85,
+      1.113,
+      2.425
+    ]
+  },
+  "res://assets/3d_model/mobilia/tiny_living_stubby_cubby_dresser_38.tscn": {
+    "pos": [
+      -0.425,
+      0.0,
+      -0.425
+    ],
+    "tam": [
+      0.85,
+      1.355,
+      0.675
+    ]
+  },
+  "res://assets/3d_model/mobilia/tiny_living_the_modern_desk_lamp_23.tscn": {
+    "pos": [
+      -0.121,
+      0.0,
+      -0.122
+    ],
+    "tam": [
+      0.243,
+      0.56,
+      0.245
+    ]
+  },
+  "res://assets/3d_model/mobilia/tiny_living_the_sinkz_bathroom_vanity_32.tscn": {
+    "pos": [
+      -0.325,
+      0.0,
+      -0.419
+    ],
+    "tam": [
+      0.65,
+      1.37,
+      0.679
+    ]
+  },
+  "res://assets/3d_model/mobilia/tiny_living_tiered_shelf_29.tscn": {
+    "pos": [
+      -0.391,
+      -0.856,
+      0.0
+    ],
+    "tam": [
+      0.783,
+      1.081,
+      0.368
+    ]
+  },
+  "res://assets/3d_model/mobilia/tiny_living_tiny_console_44.tscn": {
+    "pos": [
+      -0.392,
+      0.0,
+      -0.425
+    ],
+    "tam": [
+      0.784,
+      0.787,
+      0.48
+    ]
+  },
+  "res://assets/3d_model/mobilia/tiny_living_tiny_desk_for_tiny_living_37.tscn": {
+    "pos": [
+      -0.423,
+      0.0,
+      -0.387
+    ],
+    "tam": [
+      0.846,
+      1.0,
+      0.812
+    ]
+  },
+  "res://assets/3d_model/mobilia/tiny_living_vertical_mini_garden_27.tscn": {
+    "pos": [
+      -0.084,
+      -0.5,
+      0.0
+    ],
+    "tam": [
+      0.17,
+      0.842,
+      0.204
+    ]
+  },
+  "res://assets/3d_model/mobilia/tinyt_living_miracle_mirror_26.tscn": {
+    "pos": [
+      -0.259,
+      -0.376,
+      -0.035
+    ],
+    "tam": [
+      0.519,
+      0.752,
+      0.096
+    ]
+  },
+  "res://assets/3d_model/stages/prolog/armario.glb": {
+    "pos": [
+      -0.447,
+      -0.953,
+      -0.243
+    ],
+    "tam": [
+      0.891,
+      1.904,
+      0.486
+    ]
+  },
+  "res://assets/3d_model/stages/prolog/cozinha_armario.glb": {
+    "pos": [
+      -0.951,
+      -0.488,
+      -0.243
+    ],
+    "tam": [
+      1.9,
+      0.973,
+      0.482
+    ]
+  },
+  "res://assets/3d_model/stages/prolog/gray_l-shaped_couch.glb": {
+    "pos": [
+      -1.132,
+      0.0,
+      -0.734
+    ],
+    "tam": [
+      2.244,
+      0.842,
+      1.522
+    ]
+  },
+  "res://assets/3d_model/stages/prolog/mesa.glb": {
+    "pos": [
+      -0.949,
+      -0.64,
+      -0.489
+    ],
+    "tam": [
+      1.896,
+      1.279,
+      0.974
+    ]
+  },
+  "res://assets/3d_model/stages/prolog/mesa_telefone.glb": {
+    "pos": [
+      -0.951,
+      -0.762,
+      -0.603
+    ],
+    "tam": [
+      1.899,
+      1.522,
+      1.208
+    ]
+  },
+  "res://assets/3d_model/stages/prolog/modern_entertainment_center_free.glb": {
+    "pos": [
+      -112.448,
+      -100.0,
+      -367.256
+    ],
+    "tam": [
+      198.627,
+      497.853,
+      734.513
+    ]
+  },
+  "res://assets/3d_model/stages/prolog/quadro_3d.glb": {
+    "pos": [
+      -0.875,
+      -0.949,
+      -0.478
+    ],
+    "tam": [
+      1.747,
+      1.897,
+      0.958
+    ]
+  }
+}

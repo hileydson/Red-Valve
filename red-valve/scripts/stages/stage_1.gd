@@ -5,6 +5,7 @@ extends Node3D
 @onready var sky_3d: Sky3D = $WorldEnvironment/Sky3D
 
 var player_na_oficina: bool = false
+var player_na_casa_jimmy: bool = false
 var prompt_label: Label
 var intro_label: Label
 var ui_layer: CanvasLayer
@@ -50,7 +51,18 @@ func _ready() -> void:
 func setup_player_spawn() -> void:
 	var is_chapter_1 = GlobalEvents.entering_chapter_1 or SaveManager.prolog_finished
 
-	if is_chapter_1:
+	# Voltando do interior da casa do Jimmy: o jogador tem de reaparecer na
+	# soleira, e não no ponto de entrada normal do mapa.
+	if GlobalEvents.voltando_da_casa_jimmy:
+		GlobalEvents.voltando_da_casa_jimmy = false
+		var saida = get_node_or_null("itens_caminho_jimmy/casa_jimmy/ponto_de_saida")
+		if not saida:
+			saida = find_child("ponto_de_saida", true, false)
+		var jogador = get_node_or_null("Player")
+		if jogador and saida:
+			jogador.global_position = saida.global_position
+			jogador.global_rotation.y = saida.global_rotation.y
+	elif is_chapter_1:
 		var spawn_point = get_node_or_null("itens_caminho_jimmy/auto_pecas_jimmy/maykow_capitulo_1_inicio")
 		var player = get_node_or_null("Player")
 		if player and spawn_point:
@@ -76,7 +88,6 @@ func setup_player_spawn() -> void:
 		center_container.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 		
 		prompt_label = Label.new()
-		prompt_label.text = tr("PROMPT_ENTER_WORKSHOP")
 		prompt_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		prompt_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		prompt_label.add_theme_font_size_override("font_size", 24)
@@ -98,16 +109,58 @@ func setup_player_spawn() -> void:
 func _process(delta: float) -> void:
 	#real_time_label.text = "Time: "+str(sky_3d.game_time)
 	
-	if player_na_oficina and Input.is_action_just_pressed("ui_accept"):
+	if not Input.is_action_just_pressed("ui_accept"):
+		return
+
+	if player_na_oficina:
 		player_na_oficina = false
-		if is_instance_valid(prompt_label):
-			if prompt_label.has_meta("container"):
-				prompt_label.get_meta("container").visible = false
-			prompt_label.visible = false
-		
+		_esconder_prompt()
 		$fade.fade_out()
 		await get_tree().create_timer(2.0).timeout
 		get_tree().change_scene_to_file("res://scenes/stages/prolog/oficina_jimmy.tscn")
+	elif player_na_casa_jimmy:
+		player_na_casa_jimmy = false
+		_esconder_prompt()
+		$fade.fade_out()
+		await get_tree().create_timer(2.0).timeout
+		LoadingScreen.load_scene("res://scenes/stages/jimmy_house/casa_jimmy_interior.tscn")
+
+
+func _mostrar_prompt(texto: String) -> void:
+	if not is_instance_valid(prompt_label):
+		return
+	prompt_label.text = texto
+	if prompt_label.has_meta("container"):
+		prompt_label.get_meta("container").visible = true
+	prompt_label.visible = true
+
+
+func _esconder_prompt() -> void:
+	if not is_instance_valid(prompt_label):
+		return
+	if prompt_label.has_meta("container"):
+		prompt_label.get_meta("container").visible = false
+	prompt_label.visible = false
+
+
+func _eh_o_player(body: Node3D) -> bool:
+	return body.name.to_lower() == "player" or body.is_in_group("player")
+
+
+## Casa do Jimmy: mesma mecânica de prompt da oficina, mas sem a trava do
+## prólogo — a casa continua acessível depois que ele termina.
+func _ao_entrar_area_casa_jimmy(body: Node3D) -> void:
+	if not _eh_o_player(body):
+		return
+	player_na_casa_jimmy = true
+	_mostrar_prompt(tr("PROMPT_ENTER_JIMMY_HOUSE"))
+
+
+func _ao_sair_area_casa_jimmy(body: Node3D) -> void:
+	if not _eh_o_player(body):
+		return
+	player_na_casa_jimmy = false
+	_esconder_prompt()
 
 
 func _on_timer_timeout() -> void:
@@ -128,23 +181,17 @@ func _on_camera_2_body_entered(body: Node3D) -> void:
 func _on_area_3d_jimmy_house_body_entered(body: Node3D) -> void:
 	if SaveManager.prolog_finished:
 		return
-	if body.name.to_lower() == "player" or body.is_in_group("player"):
+	if _eh_o_player(body):
 		player_na_oficina = true
-		if is_instance_valid(prompt_label):
-			if prompt_label.has_meta("container"):
-				prompt_label.get_meta("container").visible = true
-			prompt_label.visible = true
+		_mostrar_prompt(tr("PROMPT_ENTER_WORKSHOP"))
 
 
 func _on_area_3d_jimmy_house_body_exited(body: Node3D) -> void:
 	if SaveManager.prolog_finished:
 		return
-	if body.name.to_lower() == "player" or body.is_in_group("player"):
+	if _eh_o_player(body):
 		player_na_oficina = false
-		if is_instance_valid(prompt_label):
-			if prompt_label.has_meta("container"):
-				prompt_label.get_meta("container").visible = false
-			prompt_label.visible = false
+		_esconder_prompt()
 
 func _play_intro_text() -> void:
 	if GlobalEvents.entering_chapter_1:

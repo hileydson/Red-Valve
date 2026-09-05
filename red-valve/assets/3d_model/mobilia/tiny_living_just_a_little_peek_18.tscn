@@ -1,0 +1,24 @@
+[gd_scene format=3]
+
+[ext_resource type="ArrayMesh" path="res://assets/3d_model/mobilia/malhas/tiny_living_just_a_little_peek_18_0.res" id="1_0efnp"]
+[ext_resource type="ArrayMesh" path="res://assets/3d_model/mobilia/malhas/tiny_living_just_a_little_peek_18_1.res" id="2_s6ccx"]
+[ext_resource type="ArrayMesh" path="res://assets/3d_model/mobilia/malhas/tiny_living_just_a_little_peek_18_2.res" id="3_8apsy"]
+[ext_resource type="ArrayMesh" path="res://assets/3d_model/mobilia/malhas/tiny_living_just_a_little_peek_18_3.res" id="4_0ddnh"]
+[ext_resource type="ArrayMesh" path="res://assets/3d_model/mobilia/malhas/tiny_living_just_a_little_peek_18_4.res" id="5_tdfgv"]
+
+[node name="tiny_living_just_a_little_peek_18" type="Node3D" unique_id=1879535092]
+
+[node name="tiny_living_just_a_little_peek_18_0" type="MeshInstance3D" parent="." unique_id=361779335]
+mesh = ExtResource("1_0efnp")
+
+[node name="tiny_living_just_a_little_peek_18_1" type="MeshInstance3D" parent="." unique_id=1242606880]
+mesh = ExtResource("2_s6ccx")
+
+[node name="tiny_living_just_a_little_peek_18_2" type="MeshInstance3D" parent="." unique_id=1887178577]
+mesh = ExtResource("3_8apsy")
+
+[node name="tiny_living_just_a_little_peek_18_3" type="MeshInstance3D" parent="." unique_id=1873535405]
+mesh = ExtResource("4_0ddnh")
+
+[node name="tiny_living_just_a_little_peek_18_4" type="MeshInstance3D" parent="." unique_id=1582088698]
+mesh = ExtResource("5_tdfgv")

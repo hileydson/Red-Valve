@@ -1,0 +1,8 @@
+[gd_scene format=3]
+
+[ext_resource type="ArrayMesh" path="res://assets/3d_model/mobilia/malhas/tiny_living_not_quite_orbital_sitting_41_0.res" id="1_rj3ff"]
+
+[node name="tiny_living_not_quite_orbital_sitting_41" type="Node3D" unique_id=1754938881]
+
+[node name="tiny_living_not_quite_orbital_sitting_41_0" type="MeshInstance3D" parent="." unique_id=344707242]
+mesh = ExtResource("1_rj3ff")

@@ -1,0 +1,8 @@
+[gd_scene format=3]
+
+[ext_resource type="ArrayMesh" path="res://assets/3d_model/mobilia/malhas/tiny_living_the_modern_desk_lamp_23_0.res" id="1_bs4iq"]
+
+[node name="tiny_living_the_modern_desk_lamp_23" type="Node3D" unique_id=1763192948]
+
+[node name="tiny_living_the_modern_desk_lamp_23_0" type="MeshInstance3D" parent="." unique_id=992494719]
+mesh = ExtResource("1_bs4iq")

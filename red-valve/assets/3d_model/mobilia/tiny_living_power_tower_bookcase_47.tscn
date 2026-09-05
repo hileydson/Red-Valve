@@ -1,0 +1,12 @@
+[gd_scene format=3]
+
+[ext_resource type="ArrayMesh" path="res://assets/3d_model/mobilia/malhas/tiny_living_power_tower_bookcase_47_0.res" id="1_m6pwh"]
+[ext_resource type="ArrayMesh" path="res://assets/3d_model/mobilia/malhas/tiny_living_power_tower_bookcase_47_1.res" id="2_nauma"]
+
+[node name="tiny_living_power_tower_bookcase_47" type="Node3D" unique_id=2009020846]
+
+[node name="tiny_living_power_tower_bookcase_47_0" type="MeshInstance3D" parent="." unique_id=1930557880]
+mesh = ExtResource("1_m6pwh")
+
+[node name="tiny_living_power_tower_bookcase_47_1" type="MeshInstance3D" parent="." unique_id=1280637130]
+mesh = ExtResource("2_nauma")

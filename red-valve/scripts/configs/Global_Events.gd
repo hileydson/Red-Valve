@@ -15,6 +15,11 @@ var default_language:String = language_pt_br
 
 var is_maycow_normal = false
 var entering_chapter_1: bool = false
+
+## Ligado pela cena do interior da casa do Jimmy no instante em que o jogador
+## sai pela porta. O stage_1 consome (e zera) isto no spawn para devolver o
+## jogador à soleira da casa em vez do ponto de entrada padrão do mapa.
+var voltando_da_casa_jimmy: bool = false
 var game_weapon_events = {taken_pistol=false, taken_smg=false, taken_cogblade=false, taken_magic_hand_1=false}
 
 # --- estado de UI, só em memória (de propósito fora do save) ---

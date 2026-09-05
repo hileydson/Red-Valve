@@ -1,0 +1,13 @@
+[gd_scene format=3]
+
+[ext_resource type="ArrayMesh" path="res://assets/3d_model/mobilia/malhas/tinyt_living_miracle_mirror_26_0.res" id="1_vth2j"]
+[ext_resource type="ArrayMesh" path="res://assets/3d_model/mobilia/malhas/tinyt_living_miracle_mirror_26_1.res" id="2_o34l3"]
+
+[node name="tinyt_living_miracle_mirror_26" type="Node3D" unique_id=456616030]
+
+[node name="tinyt_living_miracle_mirror_26_0" type="MeshInstance3D" parent="." unique_id=1486822596]
+mesh = ExtResource("1_vth2j")
+
+[node name="tinyt_living_miracle_mirror_26_1" type="MeshInstance3D" parent="." unique_id=872726199]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0006850362, -1.9347253, -0.037128925)
+mesh = ExtResource("2_o34l3")

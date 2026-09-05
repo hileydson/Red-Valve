@@ -1,0 +1,12 @@
+[gd_scene format=3]
+
+[ext_resource type="ArrayMesh" path="res://assets/3d_model/mobilia/malhas/tiny_living_murphy_love_seat_4_0.res" id="1_sxbex"]
+[ext_resource type="ArrayMesh" path="res://assets/3d_model/mobilia/malhas/tiny_living_murphy_love_seat_4_1.res" id="2_30dbm"]
+
+[node name="tiny_living_murphy_love_seat_4" type="Node3D" unique_id=886626603]
+
+[node name="tiny_living_murphy_love_seat_4_0" type="MeshInstance3D" parent="." unique_id=1887294627]
+mesh = ExtResource("1_sxbex")
+
+[node name="tiny_living_murphy_love_seat_4_1" type="MeshInstance3D" parent="." unique_id=1566086904]
+mesh = ExtResource("2_30dbm")

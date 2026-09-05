@@ -1,0 +1,8 @@
+[gd_scene format=3]
+
+[ext_resource type="ArrayMesh" path="res://assets/3d_model/mobilia/malhas/tiny_living_compact_lavatory_45_0.res" id="1_hn5hb"]
+
+[node name="tiny_living_compact_lavatory_45" type="Node3D" unique_id=801347444]
+
+[node name="tiny_living_compact_lavatory_45_0" type="MeshInstance3D" parent="." unique_id=849363621]
+mesh = ExtResource("1_hn5hb")
