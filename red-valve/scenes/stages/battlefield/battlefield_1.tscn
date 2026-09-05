@@ -356,8 +356,8 @@ shader_parameter/cirrus_absorption = 2.0
 shader_parameter/cirrus_sky_tint_fade = 0.5
 shader_parameter/cirrus_size = 1.0
 shader_parameter/cirrus_uv = Vector2(0.16, 0.11)
-shader_parameter/cirrus_position1 = Vector2(0.29779598, 0.29779598)
-shader_parameter/cirrus_position2 = Vector2(0.29779598, 0.29779598)
+shader_parameter/cirrus_position1 = Vector2(0.901174, 0.901174)
+shader_parameter/cirrus_position2 = Vector2(0.901174, 0.901174)
 shader_parameter/cirrus_texture = ExtResource("11_biy32")
 shader_parameter/cumulus_visible = true
 shader_parameter/cumulus_intensity = 0.6
@@ -367,7 +367,7 @@ shader_parameter/cumulus_absorption = 2.0
 shader_parameter/cumulus_noise_freq = 2.7
 shader_parameter/cumulus_sky_tint_fade = 0.0
 shader_parameter/cumulus_size = 0.5
-shader_parameter/cumulus_position = Vector2(1.4889296, 1.4889296)
+shader_parameter/cumulus_position = Vector2(4.5065856, 4.5065856)
 shader_parameter/cumulus_texture = ExtResource("12_jf8my")
 shader_parameter/cumulus_partial_mie_phase = Vector3(0.957564, 1.042436, 0.412)
 shader_parameter/cumulus_mie_intensity = 1.0
@@ -440,14 +440,54 @@ hurricane_particle_size_multiplier = 0.2
 [node name="arena_corner_4" parent="." unique_id=893510581 instance=ExtResource("2_r4a1m")]
 transform = Transform3D(-9, 0, -7.86805e-07, 0, 9, 0, 7.86805e-07, 0, -9, -17.981655, 2.2727652, 17.856874)
 
+[node name="mesh_node" parent="arena_corner_4" index="0" unique_id=1290566324]
+layers = 8
+
+[node name="OmniLight3D" type="OmniLight3D" parent="arena_corner_4" unique_id=436455321]
+transform = Transform3D(0.11111111, 0, 0, 0, 0.11111111, 0, 0, 0, 0.11111111, 0.07321572, 0.20523262, 0.16684234)
+light_color = Color(1, 0.49410498, 0.4283028, 1)
+light_energy = 7.766
+omni_range = 8.563
+omni_attenuation = 0.701
+
 [node name="arena_corner_3" parent="." unique_id=157028447 instance=ExtResource("3_0ii5w")]
 transform = Transform3D(-9, 0, -7.86805e-07, 0, 9, 0, 7.86805e-07, 0, -9, 18.673704, 2.2727652, 18.335579)
+
+[node name="mesh_node" parent="arena_corner_3" index="0" unique_id=1628831558]
+layers = 8
+
+[node name="OmniLight3D" type="OmniLight3D" parent="arena_corner_3" unique_id=1077235884]
+transform = Transform3D(0.11111111, 0, 0, 0, 0.11111111, 0, 0, 0, 0.11111111, 0.07321572, 0.20523262, 0.16684234)
+light_color = Color(1, 0.49410498, 0.4283028, 1)
+light_energy = 7.766
+omni_range = 8.563
+omni_attenuation = 0.701
 
 [node name="arena_corner_2" parent="." unique_id=733659992 instance=ExtResource("4_6imna")]
 transform = Transform3D(9, 0, 0, 0, 9, 0, 0, 0, 9, 18.92484, 2.2727652, -17.521671)
 
+[node name="mesh_node" parent="arena_corner_2" index="0" unique_id=1493389094]
+layers = 8
+
+[node name="OmniLight3D" type="OmniLight3D" parent="arena_corner_2" unique_id=514771935]
+transform = Transform3D(0.11111111, 0, 0, 0, 0.11111111, 0, 0, 0, 0.11111111, 0.07321572, 0.20523262, 0.16684234)
+light_color = Color(1, 0.49410498, 0.4283028, 1)
+light_energy = 7.766
+omni_range = 8.563
+omni_attenuation = 0.701
+
 [node name="arena_corner_1" parent="." unique_id=874557360 instance=ExtResource("2_til2i")]
 transform = Transform3D(9, 0, 0, 0, 9, 0, 0, 0, 9, -17.414131, 2.2727652, -18.477755)
+
+[node name="OmniLight3D" type="OmniLight3D" parent="arena_corner_1" unique_id=762131621]
+transform = Transform3D(0.11111111, 0, 0, 0, 0.11111111, 0, 0, 0, 0.11111111, 0.07321572, 0.20523262, 0.16684234)
+light_color = Color(1, 0.49410498, 0.4283028, 1)
+light_energy = 7.766
+omni_range = 8.563
+omni_attenuation = 0.701
+
+[node name="mesh_node" parent="arena_corner_1" index="1" unique_id=1004291088]
+layers = 8
 
 [node name="intro_camera" type="Node3D" parent="." unique_id=105180248]
 
@@ -531,6 +571,70 @@ cast_shadow = 0
 lod_bias = 0.001
 multimesh = SubResource("MultiMesh_h2yge")
 
+[node name="Grass5" type="MultiMeshInstance3D" parent="Ambient" unique_id=921437239]
+transform = Transform3D(0.4889258, 0, 0, 0, 1, 0, 0, 0, 0.48577815, 22.219385, 0.093943834, 15.430775)
+material_override = ExtResource("2_h2yge")
+material_overlay = ExtResource("2_h2yge")
+cast_shadow = 0
+lod_bias = 0.001
+multimesh = SubResource("MultiMesh_h2yge")
+
+[node name="Grass6" type="MultiMeshInstance3D" parent="Ambient" unique_id=1397604418]
+transform = Transform3D(0.4889258, 0, 0, 0, 1, 0, 0, 0, 0.48577815, 16.816496, 0.09394193, 20.377157)
+material_override = ExtResource("2_h2yge")
+material_overlay = ExtResource("2_h2yge")
+cast_shadow = 0
+lod_bias = 0.001
+multimesh = SubResource("MultiMesh_h2yge")
+
+[node name="Grass7" type="MultiMeshInstance3D" parent="Ambient" unique_id=1328444744]
+transform = Transform3D(0.4889258, 0, 0, 0, 1, 0, 0, 0, 0.48577815, -15.774835, 0.09394193, 20.386408)
+material_override = ExtResource("2_h2yge")
+material_overlay = ExtResource("2_h2yge")
+cast_shadow = 0
+lod_bias = 0.001
+multimesh = SubResource("MultiMesh_h2yge")
+
+[node name="Grass8" type="MultiMeshInstance3D" parent="Ambient" unique_id=564320547]
+transform = Transform3D(0.4889258, 0, 0, 0, 1, 0, 0, 0, 0.48577815, -19.726492, 0.09394193, 17.069374)
+material_override = ExtResource("2_h2yge")
+material_overlay = ExtResource("2_h2yge")
+cast_shadow = 0
+lod_bias = 0.001
+multimesh = SubResource("MultiMesh_h2yge")
+
+[node name="Grass9" type="MultiMeshInstance3D" parent="Ambient" unique_id=1500504915]
+transform = Transform3D(0.4889258, 0, 0, 0, 1, 0, 0, 0, 0.48577815, -19.563547, 0.09394193, -14.944519)
+material_override = ExtResource("2_h2yge")
+material_overlay = ExtResource("2_h2yge")
+cast_shadow = 0
+lod_bias = 0.001
+multimesh = SubResource("MultiMesh_h2yge")
+
+[node name="Grass10" type="MultiMeshInstance3D" parent="Ambient" unique_id=1947449916]
+transform = Transform3D(0.4889258, 0, 0, 0, 1, 0, 0, 0, 0.48577815, -15.46562, 0.09394193, -19.004423)
+material_override = ExtResource("2_h2yge")
+material_overlay = ExtResource("2_h2yge")
+cast_shadow = 0
+lod_bias = 0.001
+multimesh = SubResource("MultiMesh_h2yge")
+
+[node name="Grass11" type="MultiMeshInstance3D" parent="Ambient" unique_id=1888124314]
+transform = Transform3D(0.4889258, 0, 0, 0, 1, 0, 0, 0, 0.48577815, 16.833284, 0.09394574, -19.860533)
+material_override = ExtResource("2_h2yge")
+material_overlay = ExtResource("2_h2yge")
+cast_shadow = 0
+lod_bias = 0.001
+multimesh = SubResource("MultiMesh_h2yge")
+
+[node name="Grass12" type="MultiMeshInstance3D" parent="Ambient" unique_id=1995762353]
+transform = Transform3D(0.4889258, 0, 0, 0, 1, 0, 0, 0, 0.48577815, 23.861786, 0.093943834, -15.079189)
+material_override = ExtResource("2_h2yge")
+material_overlay = ExtResource("2_h2yge")
+cast_shadow = 0
+lod_bias = 0.001
+multimesh = SubResource("MultiMesh_h2yge")
+
 [node name="GrassBlade" type="MeshInstance3D" parent="Ambient" unique_id=1756002042]
 visible = false
 mesh = SubResource("QuadMesh_ig7tw")
@@ -554,8 +658,8 @@ navigation_mesh = SubResource("NavigationMesh_biy32")
 navigation_layers = 4
 
 [node name="VoxelGI" type="VoxelGI" parent="Ambient" unique_id=1700195965]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.4191895, 0)
-size = Vector3(20, 11.327637, 20)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.225006, 4.4191895, -3.8812866)
+size = Vector3(58.743225, 11.327637, 63.249146)
 data = SubResource("VoxelGIData_766kb")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="Ambient" unique_id=813538425]
@@ -570,6 +674,7 @@ light_indirect_energy = 13.4
 light_volumetric_fog_energy = 15.2
 light_angular_distance = 18.56
 light_specular = 5.8
+light_cull_mask = 4294967287
 shadow_enabled = true
 directional_shadow_mode = 1
 directional_shadow_split_1 = 0.01
@@ -599,3 +704,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.7227616, 0, -7.934511)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0610838, 7.056343)
 
 [connection signal="animation_finished" from="intro_camera/animation_intro" to="." method="_on_animation_intro_animation_finished"]
+
+[editable path="arena_corner_4"]
+[editable path="arena_corner_3"]
+[editable path="arena_corner_2"]
+[editable path="arena_corner_1"]
