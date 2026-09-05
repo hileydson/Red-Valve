@@ -1,4 +1,64 @@
 {
+  "res://assets/3d_model/mobilia/armario_leve.tscn": {
+    "pos": [
+      -0.447,
+      -0.953,
+      -0.243
+    ],
+    "tam": [
+      0.891,
+      1.904,
+      0.486
+    ]
+  },
+  "res://assets/3d_model/mobilia/cozinha_armario_leve.tscn": {
+    "pos": [
+      -0.951,
+      -0.488,
+      -0.243
+    ],
+    "tam": [
+      1.9,
+      0.973,
+      0.482
+    ]
+  },
+  "res://assets/3d_model/mobilia/mesa_leve.tscn": {
+    "pos": [
+      -0.949,
+      -0.64,
+      -0.489
+    ],
+    "tam": [
+      1.896,
+      1.279,
+      0.974
+    ]
+  },
+  "res://assets/3d_model/mobilia/mesa_telefone_leve.tscn": {
+    "pos": [
+      -0.951,
+      -0.762,
+      -0.603
+    ],
+    "tam": [
+      1.899,
+      1.522,
+      1.208
+    ]
+  },
+  "res://assets/3d_model/mobilia/quadro_3d_leve.tscn": {
+    "pos": [
+      -0.875,
+      -0.949,
+      -0.478
+    ],
+    "tam": [
+      1.747,
+      1.897,
+      0.958
+    ]
+  },
   "res://assets/3d_model/mobilia/tiny_living_botanical_bookends_5.tscn": {
     "pos": [
       -0.231,

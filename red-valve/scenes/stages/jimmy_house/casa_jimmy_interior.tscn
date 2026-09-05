@@ -23,14 +23,14 @@
 [ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/tiny_living_not_a_table_end_43.tscn" id="21_tiny_living_no"]
 [ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/tiny_living_the_modern_desk_lamp_23.tscn" id="22_tiny_living_th"]
 [ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/tiny_living_botanical_bookends_5.tscn" id="23_tiny_living_bo"]
-[ext_resource type="PackedScene" path="res://assets/3d_model/stages/prolog/mesa.glb" id="24_mesa"]
+[ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/mesa_leve.tscn" id="24_mesa_leve"]
 [ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/tiny_living_lovely_dining_chair_42.tscn" id="25_tiny_living_lo"]
-[ext_resource type="PackedScene" path="res://assets/3d_model/stages/prolog/mesa_telefone.glb" id="26_mesa_telefone"]
+[ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/mesa_telefone_leve.tscn" id="26_mesa_telefone_"]
 [ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/tiny_living_tiny_console_44.tscn" id="27_tiny_living_ti"]
-[ext_resource type="PackedScene" path="res://assets/3d_model/stages/prolog/quadro_3d.glb" id="28_quadro_3d"]
+[ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/quadro_3d_leve.tscn" id="28_quadro_3d_leve"]
 [ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/tiny_living_vertical_mini_garden_27.tscn" id="29_tiny_living_ve"]
-[ext_resource type="PackedScene" path="res://assets/3d_model/stages/prolog/cozinha_armario.glb" id="30_cozinha_armari"]
-[ext_resource type="PackedScene" path="res://assets/3d_model/stages/prolog/armario.glb" id="31_armario"]
+[ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/cozinha_armario_leve.tscn" id="30_cozinha_armari"]
+[ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/armario_leve.tscn" id="31_armario_leve"]
 [ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/tiny_living_the_sinkz_bathroom_vanity_32.tscn" id="32_tiny_living_th"]
 [ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/tiny_living_orbital_high_dining_35.tscn" id="33_tiny_living_or"]
 [ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/tiny_living_not_quite_orbital_sitting_41.tscn" id="34_tiny_living_no"]
@@ -765,8 +765,6 @@ light_specular = 0.35
 spot_range = 8
 spot_angle = 80
 spot_angle_attenuation = 0.8
-shadow_enabled = true
-shadow_bias = 0.03
 
 [node name="luz_corredor_2" type="SpotLight3D" parent="luzes"]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 8, 2.45, 7.1)
@@ -791,8 +789,6 @@ light_specular = 0.35
 spot_range = 8
 spot_angle = 80
 spot_angle_attenuation = 0.8
-shadow_enabled = true
-shadow_bias = 0.03
 metadata/piscar = "quebrada"
 
 [node name="luz_q1" type="OmniLight3D" parent="luzes"]
@@ -804,8 +800,6 @@ light_volumetric_fog_energy = 2.2
 light_specular = 0.35
 omni_range = 6.5
 omni_attenuation = 1.2
-shadow_enabled = true
-shadow_bias = 0.03
 
 [node name="luz_q2" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.9, 2.42, 10.2)
@@ -816,8 +810,6 @@ light_volumetric_fog_energy = 2.2
 light_specular = 0.35
 omni_range = 5.8
 omni_attenuation = 1.2
-shadow_enabled = true
-shadow_bias = 0.03
 
 [node name="luz_q4" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.6, 1.5, 11.3)
@@ -897,7 +889,6 @@ light_color = Color(0.47, 0.6, 0.82, 1)
 light_energy = 9.0
 light_volumetric_fog_energy = 5.0
 light_specular = 0.15
-shadow_enabled = true
 spot_range = 9.0
 spot_angle = 30.0
 spot_angle_attenuation = 1.4
@@ -999,7 +990,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0.58, 4.5)
 [node name="livros_estar" parent="mobilia" instance=ExtResource("23_tiny_living_bo")]
 transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, 3.35, 0.5, 3.25)
 
-[node name="mesa_jantar" parent="mobilia" instance=ExtResource("24_mesa")]
+[node name="mesa_jantar" parent="mobilia" instance=ExtResource("24_mesa_leve")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.4, 0.64, 3.8)
 
 [node name="col_mesa_jantar" type="StaticBody3D" parent="colisoes_mobilia"]
@@ -1023,7 +1014,7 @@ transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 7.6, 0, 4.75)
 [node name="cadeira_jantar_4" parent="mobilia" instance=ExtResource("25_tiny_living_lo")]
 transform = Transform3D(-0.970296, 0, -0.241922, 0, 1, 0, 0.241922, 0, -0.970296, 9.3, 0, 4.8)
 
-[node name="aparador_telefone" parent="mobilia" instance=ExtResource("26_mesa_telefone")]
+[node name="aparador_telefone" parent="mobilia" instance=ExtResource("26_mesa_telefone_")]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 6.6, 0.762, 1.3)
 
 [node name="col_aparador_telefone" type="StaticBody3D" parent="colisoes_mobilia"]
@@ -1047,7 +1038,7 @@ collision_mask = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3935, -0.185)
 shape = SubResource("col_console_sala")
 
-[node name="quadro_encostado" parent="mobilia" instance=ExtResource("28_quadro_3d")]
+[node name="quadro_encostado" parent="mobilia" instance=ExtResource("28_quadro_3d_leve")]
 transform = Transform3D(-0.173648, 0, 0.984808, 0, 1, 0, -0.984808, 0, -0.173648, 6.7, 0.949, 5.4)
 
 [node name="planta_parede_sala" parent="mobilia" instance=ExtResource("29_tiny_living_ve")]
@@ -1077,7 +1068,7 @@ collision_mask = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.001, -0.0015, -0.002)
 shape = SubResource("col_bancada_cozinha_2")
 
-[node name="armario_cozinha" parent="mobilia" instance=ExtResource("31_armario")]
+[node name="armario_cozinha" parent="mobilia" instance=ExtResource("31_armario_leve")]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 11.5, 0.953, 0.55)
 
 [node name="col_armario_cozinha" type="StaticBody3D" parent="colisoes_mobilia"]
@@ -1173,7 +1164,7 @@ collision_mask = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5565, -0.0645)
 shape = SubResource("col_cama_q1")
 
-[node name="guarda_roupa_q1" parent="mobilia" instance=ExtResource("31_armario")]
+[node name="guarda_roupa_q1" parent="mobilia" instance=ExtResource("31_armario_leve")]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 3.5, 0.953, 9.3)
 
 [node name="col_guarda_roupa_q1" type="StaticBody3D" parent="colisoes_mobilia"]
@@ -1299,7 +1290,7 @@ collision_mask = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5565, -0.0645)
 shape = SubResource("col_cama_q3")
 
-[node name="guarda_roupa_q3" parent="mobilia" instance=ExtResource("31_armario")]
+[node name="guarda_roupa_q3" parent="mobilia" instance=ExtResource("31_armario_leve")]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 10.8, 0.953, 9.4)
 
 [node name="col_guarda_roupa_q3" type="StaticBody3D" parent="colisoes_mobilia"]

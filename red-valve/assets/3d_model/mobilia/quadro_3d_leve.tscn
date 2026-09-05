@@ -1,0 +1,8 @@
+[gd_scene format=3]
+
+[ext_resource type="ArrayMesh" path="res://assets/3d_model/mobilia/malhas/quadro_3d_leve_0.res" id="1_0p6ow"]
+
+[node name="quadro_3d_leve" type="Node3D" unique_id=1307724272]
+
+[node name="quadro_3d_0" type="MeshInstance3D" parent="." unique_id=1953200548]
+mesh = ExtResource("1_0p6ow")
