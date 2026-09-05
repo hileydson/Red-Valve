@@ -7,6 +7,7 @@ var player: CharacterBody3D
 var enemies: Array = []
 var camera_intro: Camera3D
 @export var hurricane_particle_size_multiplier: float = 1.0
+@export var fire_gargoyle_count: int = 2
 
 var look_at_target: Node3D
 var look_at_offset: Vector3 = Vector3.ZERO
@@ -22,6 +23,7 @@ var _rise_cam_time: float = 0.0
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	_spawn_arena_hurricane()
+	_spawn_fire_gargoyles()
 	SaveManager.save_game()
 	SaveManager.iron_rusks_pending = 0
 	GlobalEvents.set_high_nevoa()
@@ -416,6 +418,92 @@ func _spawn_arena_hurricane() -> void:
 	
 	hurricane_node.add_child(smoke)
 
+
+
+# ============================================================
+# GÁRGULAS DE FOGO
+# ============================================================
+
+const FIRE_GARGOYLE_SCENE := preload("res://scenes/effects/fire_gargoyle.tscn")
+
+# Nomes dos cantos da arena, em ordem, para o sorteio de pouso.
+const ARENA_CORNER_NAMES := [
+	"arena_corner_1", "arena_corner_2", "arena_corner_3", "arena_corner_4",
+]
+
+# Ponto mais alto de cada rocha, em espaço LOCAL do canto (antes da escala 9x).
+# Valores tirados do centroide do 0,5% de vértices mais altos de cada .glb —
+# é onde a gárgula fica empoleirada. Como são locais, continuam válidos se o
+# canto for movido/girado na cena.
+const ARENA_CORNER_PEAKS := {
+	"arena_corner_1": Vector3(-0.202, 0.435, -0.374),
+	"arena_corner_2": Vector3(0.669, 0.45, 0.118),
+	"arena_corner_3": Vector3(-0.519, 0.387, -0.091),
+	"arena_corner_4": Vector3(0.179, 0.351, -0.425),
+}
+
+
+func _spawn_fire_gargoyles() -> void:
+	if fire_gargoyle_count <= 0:
+		return
+
+	var perches: Array[Node3D] = []
+	for corner_name in ARENA_CORNER_NAMES:
+		var corner := get_node_or_null(NodePath(corner_name))
+		if corner is Node3D:
+			perches.append(_ensure_perch_marker(corner as Node3D))
+	if perches.size() < 2:
+		return
+
+	var nest := Node3D.new()
+	nest.name = "FireGargoyles"
+	add_child(nest)
+
+	# Distribui as gárgulas em cantos bem separados (0 e 2 em quatro cantos).
+	var step: int = max(1, perches.size() / max(fire_gargoyle_count, 1))
+	for i in range(fire_gargoyle_count):
+		var g = FIRE_GARGOYLE_SCENE.instantiate()
+		nest.add_child(g)
+		g.setup(perches, (i * step) % perches.size())
+
+
+## Cria (uma única vez) o Marker3D do topo da rocha usado como poleiro.
+func _ensure_perch_marker(corner: Node3D) -> Node3D:
+	var existing := corner.get_node_or_null("gargoyle_perch")
+	if existing is Node3D:
+		return existing as Node3D
+
+	var marker := Marker3D.new()
+	marker.name = "gargoyle_perch"
+	corner.add_child(marker)
+	if ARENA_CORNER_PEAKS.has(corner.name):
+		marker.position = ARENA_CORNER_PEAKS[corner.name]
+	else:
+		# Sem valor tabelado: usa o topo do bounding box do próprio modelo.
+		var aabb := _visual_aabb(corner)
+		marker.position = Vector3(aabb.get_center().x, aabb.end.y, aabb.get_center().z)
+	return marker
+
+
+## AABB local do canto, unindo a de todos os MeshInstance3D descendentes.
+func _visual_aabb(root: Node3D) -> AABB:
+	var result := AABB()
+	var first := true
+	var stack: Array[Node] = [root]
+	while not stack.is_empty():
+		var node: Node = stack.pop_back()
+		for c in node.get_children():
+			stack.append(c)
+		var mi := node as MeshInstance3D
+		if mi != null and mi.mesh != null:
+			var box: AABB = mi.mesh.get_aabb()
+			box = root.global_transform.affine_inverse() * mi.global_transform * box
+			if first:
+				result = box
+				first = false
+			else:
+				result = result.merge(box)
+	return result
 
 # ============================================================
 #  INTRO PÓS-PRÓLOGO: todos emergem de baixo da arena
