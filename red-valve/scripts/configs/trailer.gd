@@ -7,6 +7,14 @@ extends Node3D
 @export var hand_end_marker: Marker3D
 @export var hand_rotation_offset: Vector3 = Vector3.ZERO
 @export var hand_position_offset: Vector3 = Vector3.ZERO
+@export_group("Take Final - Mao em Chamas")
+## Liga o fogo na mão que aparece no zoom do portal.
+@export var hand_on_fire: bool = true
+## Tempo até o fogo tomar a mão inteira.
+@export var hand_fire_ignite_time: float = 1.1
+## Tamanho das chamas em relação à mão.
+@export var hand_fire_scale: float = 1.0
+
 @export_group("Gárgulas de Fogo")
 ## Quantas gárgulas ficam cruzando o céu do trailer (0 desliga).
 @export var sky_gargoyle_count: int = 8
@@ -1038,6 +1046,7 @@ func cutscene_trailer_sequence() -> void:
 
 			var tween_hand = create_tween()
 			tween_hand.tween_property(hand_3d, "position", hand_end_marker.position + hand_position_offset, 3.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+			_set_hand_on_fire(hand_3d)
 		else:
 			# Fallback caso os marcadores não tenham sido configurados no inspetor
 			cam_fps_walk.add_child(hand_3d)
@@ -1047,6 +1056,7 @@ func cutscene_trailer_sequence() -> void:
 			
 			var tween_hand = create_tween()
 			tween_hand.tween_property(hand_3d, "transform", target_trans, 3.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+			_set_hand_on_fire(hand_3d)
 		
 	# Diminuir som de velocidade mas MANTER chuva e relâmpagos ativos!
 	if is_instance_valid(zoom_sound_player):
@@ -1485,3 +1495,18 @@ func _spawn_sky_gargoyles() -> void:
 			sky_gargoyle_radius,
 			sky_gargoyle_height_min,
 			sky_gargoyle_height_max)
+
+
+const HAND_FIRE_SCENE := preload("res://scenes/effects/hand_fire.tscn")
+
+
+## Põe a mão do take final em chamas. Precisa ser chamado DEPOIS de a mão
+## entrar na árvore: o efeito mede o volume dela pelas transformadas globais.
+func _set_hand_on_fire(hand_3d: Node3D) -> void:
+	if not hand_on_fire or not is_instance_valid(hand_3d):
+		return
+	var fire = HAND_FIRE_SCENE.instantiate()
+	fire.fade_in = hand_fire_ignite_time
+	fire.flame_scale = hand_fire_scale
+	hand_3d.add_child(fire)
+	fire.ignite(hand_3d)
