@@ -32,7 +32,9 @@ enum State { PERCHED, FLYING }
 @export var flight_arc_height: float = 10.0
 ## Quanto o trajeto curva na direção do centro da arena (0 = linha reta).
 @export var flight_bow: float = 0.28
-@export var hover_offset: float = 0.35
+## Folga acima do ponto de pouso. A origem do modelo fica na sola do pé, então
+## isto é só uma margem para o pé não atravessar a geometria.
+@export var hover_offset: float = 0.05
 
 var _perches: Array[Node3D] = []
 var _state: int = State.PERCHED
@@ -57,6 +59,9 @@ var _model: Node3D
 var _head_pivot: Node3D
 var _wing_pivots: Array[Node3D] = []
 var _wing_mats: Array[ShaderMaterial] = []
+var _beat_puffs: Array[CPUParticles3D] = []
+var _last_beat: int = 0
+var _beat_flash: float = 0.0
 var _tail_pivots: Array[Node3D] = []
 var _tail_base: Array[float] = []
 var _light: OmniLight3D
@@ -148,22 +153,22 @@ func _build_model() -> void:
 
 	# --- tronco / peito ---
 	var pelvis := CapsuleMesh.new()
-	pelvis.radius = 0.27
-	pelvis.height = 0.72
+	pelvis.radius = 0.155
+	pelvis.height = 0.8
 	pelvis.radial_segments = 12
 	pelvis.rings = 6
 	_add_part(body, "pelvis", pelvis, Vector3(0, 0.52, 0.02), Vector3(0.35, 0, 0), noise_tex, 0.52)
 
 	var chest := SphereMesh.new()
-	chest.radius = 0.34
-	chest.height = 0.62
+	chest.radius = 0.19
+	chest.height = 0.66
 	chest.radial_segments = 14
 	chest.rings = 8
 	_add_part(body, "chest", chest, Vector3(0, 0.86, -0.06), Vector3.ZERO, noise_tex, 0.86)
 
 	var neck := CapsuleMesh.new()
-	neck.radius = 0.13
-	neck.height = 0.32
+	neck.radius = 0.085
+	neck.height = 0.36
 	neck.radial_segments = 8
 	neck.rings = 4
 	_add_part(body, "neck", neck, Vector3(0, 1.06, -0.14), Vector3(0.55, 0, 0), noise_tex, 1.06)
@@ -175,18 +180,18 @@ func _build_model() -> void:
 	body.add_child(_head_pivot)
 
 	var skull := SphereMesh.new()
-	skull.radius = 0.26
-	skull.height = 0.44
+	skull.radius = 0.185
+	skull.height = 0.34
 	skull.radial_segments = 12
 	skull.rings = 7
 	_add_part(_head_pivot, "skull", skull, Vector3.ZERO, Vector3.ZERO, noise_tex, 1.18)
 
 	var muzzle := CylinderMesh.new()
-	muzzle.top_radius = 0.045
-	muzzle.bottom_radius = 0.18
-	muzzle.height = 0.34
+	muzzle.top_radius = 0.03
+	muzzle.bottom_radius = 0.135
+	muzzle.height = 0.36
 	muzzle.radial_segments = 8
-	_add_part(_head_pivot, "muzzle", muzzle, Vector3(0, -0.04, -0.21), Vector3(-PI * 0.5, 0, 0), noise_tex, 1.15)
+	_add_part(_head_pivot, "muzzle", muzzle, Vector3(0, -0.035, -0.2), Vector3(-PI * 0.5, 0, 0), noise_tex, 1.15)
 
 	for side in [-1.0, 1.0]:
 		var horn := CylinderMesh.new()
@@ -194,15 +199,15 @@ func _build_model() -> void:
 		horn.bottom_radius = 0.085
 		horn.height = 0.6
 		horn.radial_segments = 6
-		_add_part(_head_pivot, "horn", horn, Vector3(0.14 * side, 0.18, 0.04),
-			Vector3(0.95, 0, -0.32 * side), noise_tex, 1.33)
+		_add_part(_head_pivot, "horn", horn, Vector3(0.105 * side, 0.14, 0.04),
+			Vector3(0.95, 0, -0.3 * side), noise_tex, 1.33)
 
 		var ear := CylinderMesh.new()
 		ear.top_radius = 0.006
 		ear.bottom_radius = 0.06
 		ear.height = 0.28
 		ear.radial_segments = 6
-		_add_part(_head_pivot, "ear", ear, Vector3(0.19 * side, 0.06, 0.09),
+		_add_part(_head_pivot, "ear", ear, Vector3(0.145 * side, 0.05, 0.08),
 			Vector3(0.2, 0, -0.9 * side), noise_tex, 1.23)
 
 	_add_eyes(_head_pivot)
@@ -210,36 +215,36 @@ func _build_model() -> void:
 	# --- patas traseiras (agachadas, prontas para agarrar a pedra) ---
 	for side in [-1.0, 1.0]:
 		var thigh := CapsuleMesh.new()
-		thigh.radius = 0.11
+		thigh.radius = 0.095
 		thigh.height = 0.36
 		thigh.radial_segments = 8
 		thigh.rings = 4
-		_add_part(body, "thigh", thigh, Vector3(0.19 * side, 0.42, 0.1),
-			Vector3(-0.6, 0, 0), noise_tex, 0.42)
+		_add_part(body, "thigh", thigh, Vector3(0.14 * side, 0.44, 0.07),
+			Vector3(-0.32, 0, 0), noise_tex, 0.44)
 
 		var shin := CapsuleMesh.new()
-		shin.radius = 0.085
+		shin.radius = 0.075
 		shin.height = 0.34
 		shin.radial_segments = 8
 		shin.rings = 4
-		_add_part(body, "shin", shin, Vector3(0.21 * side, 0.2, -0.02),
-			Vector3(0.7, 0, 0), noise_tex, 0.2)
+		_add_part(body, "shin", shin, Vector3(0.155 * side, 0.19, -0.05),
+			Vector3(0.34, 0, 0), noise_tex, 0.19)
 
 		var foot := CylinderMesh.new()
 		foot.top_radius = 0.12
 		foot.bottom_radius = 0.05
 		foot.height = 0.14
 		foot.radial_segments = 6
-		_add_part(body, "foot", foot, Vector3(0.21 * side, 0.05, -0.16),
-			Vector3(0.25, 0, 0), noise_tex, 0.05)
+		_add_part(body, "foot", foot, Vector3(0.155 * side, 0.045, -0.12),
+			Vector3(0.2, 0, 0), noise_tex, 0.045)
 
 		# bracinhos dobrados junto ao peito
 		var arm := CapsuleMesh.new()
-		arm.radius = 0.07
+		arm.radius = 0.06
 		arm.height = 0.32
 		arm.radial_segments = 6
 		arm.rings = 3
-		_add_part(body, "arm", arm, Vector3(0.24 * side, 0.78, -0.18),
+		_add_part(body, "arm", arm, Vector3(0.2 * side, 0.78, -0.18),
 			Vector3(1.0, 0, -0.4 * side), noise_tex, 0.78)
 
 	# Crista de espinhos da nuca até a base da cauda.
@@ -314,15 +319,15 @@ func _add_eyes(parent: Node3D) -> void:
 
 	for side in [-1.0, 1.0]:
 		var eye := SphereMesh.new()
-		eye.radius = 0.05
-		eye.height = 0.1
+		eye.radius = 0.032
+		eye.height = 0.064
 		eye.radial_segments = 6
 		eye.rings = 4
 		eye.material = eye_mat
 		var mi := MeshInstance3D.new()
 		mi.name = "eye"
 		mi.mesh = eye
-		mi.position = Vector3(0.1 * side, 0.05, -0.21)
+		mi.position = Vector3(0.075 * side, 0.05, -0.17)
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		mi.gi_mode = GeometryInstance3D.GI_MODE_DISABLED
 		parent.add_child(mi)
@@ -333,7 +338,7 @@ func _add_eyes(parent: Node3D) -> void:
 ## apenas soma a ondulação por cima dela.
 func _build_tail(body: Node3D, noise_tex: Texture2D) -> void:
 	# Ângulo de repouso de cada junta: positivo = desce.
-	var droop: Array[float] = [0.55, 0.4, 0.28, 0.1, -0.12, -0.3, -0.42]
+	var droop: Array[float] = [0.15, 0.12, 0.08, 0.0, -0.1, -0.2, -0.28]
 	var parent: Node3D = body
 	var pos := Vector3(0, 0.5, 0.26)
 	for i in range(droop.size()):
@@ -346,7 +351,7 @@ func _build_tail(body: Node3D, noise_tex: Texture2D) -> void:
 		_tail_base.append(droop[i])
 
 		var seg := SphereMesh.new()
-		var r: float = 0.135 - 0.015 * float(i)
+		var r: float = 0.11 - 0.013 * float(i)
 		seg.radius = r
 		seg.height = r * 2.2
 		seg.radial_segments = 8
@@ -371,7 +376,7 @@ func _build_wings(body: Node3D, noise_tex: Texture2D) -> void:
 		var side := 1.0 if i == 0 else -1.0
 		var pivot := Node3D.new()
 		pivot.name = "wing_pivot_%d" % i
-		pivot.position = Vector3(0.25 * side, 0.98, 0.05)
+		pivot.position = Vector3(0.21 * side, 0.98, 0.05)
 		body.add_child(pivot)
 		_wing_pivots.append(pivot)
 
@@ -392,6 +397,12 @@ func _build_wings(body: Node3D, noise_tex: Texture2D) -> void:
 		mi.material_override = mat
 		_wing_mats.append(mat)
 		pivot.add_child(mi)
+
+		# Sopro de fogo na ponta da asa, disparado a cada batida.
+		var puff := _make_beat_puff()
+		puff.position = Vector3(1.15 * side, 0.35, 0.0)
+		pivot.add_child(puff)
+		_beat_puffs.append(puff)
 
 
 ## Membrana de morcego: borda de ataque em arco, membrana que incha no meio e
@@ -505,6 +516,42 @@ func _make_embers() -> CPUParticles3D:
 	p.color_initial_ramp = ramps[0]
 	p.color_ramp = ramps[1]
 	p.mesh = _fire_particle_mesh(0.06)
+	return p
+
+
+## Sopro disparado a cada remada da asa: uma lufada curta de brasas empurrada
+## para baixo/para trás, como se a asa jogasse o fogo contra o ar.
+func _make_beat_puff() -> CPUParticles3D:
+	var p := CPUParticles3D.new()
+	p.name = "beat_puff"
+	p.amount = 16
+	p.lifetime = 0.85
+	p.one_shot = true
+	p.emitting = false
+	p.explosiveness = 1.0
+	p.local_coords = false
+	p.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
+	p.emission_sphere_radius = 0.22
+	p.direction = Vector3.DOWN
+	p.spread = 40.0
+	p.gravity = Vector3(0, -1.0, 0)
+	p.initial_velocity_min = 1.2
+	p.initial_velocity_max = 3.2
+	p.damping_min = 2.0
+	p.damping_max = 4.0
+
+	var curve := Curve.new()
+	curve.add_point(Vector2(0.0, 0.4))
+	curve.add_point(Vector2(0.25, 1.0))
+	curve.add_point(Vector2(1.0, 0.0))
+	p.scale_amount_min = 1.0 * body_scale
+	p.scale_amount_max = 2.4 * body_scale
+	p.scale_amount_curve = curve
+
+	var ramps := _fire_ramps()
+	p.color_initial_ramp = ramps[0]
+	p.color_ramp = ramps[1]
+	p.mesh = _fire_particle_mesh(0.08)
 	return p
 
 
@@ -623,6 +670,7 @@ func _start_flight() -> void:
 	_flight_dur = max((dist * 1.35 + lift * 2.0) / max(flight_speed, 0.1), 1.5)
 	_state = State.FLYING
 	_wing_open_target = 1.0
+	_last_beat = int(floor((_flap_phase - PI * 1.5) / TAU))
 	if _trail:
 		_trail.emitting = true
 
@@ -653,10 +701,12 @@ func _process_flying(delta: float) -> void:
 	_roll = lerp(_roll, roll_want, clamp(delta * 3.0, 0.0, 1.0))
 
 	# Bate forte na subida e na chegada; plana no meio do trajeto.
+	# Nunca para de bater: no meio do trajeto bate mais devagar e mais curto,
+	# na decolagem e na chegada bate forte.
 	var effort: float = max(1.0 - _flight_t / 0.3, (_flight_t - 0.68) / 0.32)
 	effort = clamp(effort, 0.0, 1.0)
-	_flap_rate = lerp(2.6, 8.5, effort)
-	_flap_amp = lerp(0.32, 0.95, effort)
+	_flap_rate = lerp(6.0, 9.5, effort)
+	_flap_amp = lerp(0.7, 1.05, effort)
 
 	if _flight_t >= 1.0:
 		_enter_perched(randf_range(perch_time_min, perch_time_max))
@@ -679,9 +729,17 @@ func _pick_next_perch() -> int:
 			taken[other.call("reserved_perch")] = true
 
 	var options: Array[int] = []
+	var fallback: Array[int] = []
 	for i in range(_perches.size()):
-		if i != _current and not taken.has(i):
+		if i == _current:
+			continue
+		fallback.append(i)
+		if not taken.has(i):
 			options.append(i)
+	# Se houver tanta gárgula quanto poleiro, ninguém acharia destino livre e
+	# todas ficariam presas na decolagem: aí vale repetir um poleiro ocupado.
+	if options.is_empty():
+		options = fallback
 	if options.is_empty():
 		return -1
 	return options[randi() % options.size()]
@@ -702,18 +760,28 @@ func _animate(delta: float) -> void:
 	_flap_phase += delta * _flap_rate
 	_wing_open = lerp(_wing_open, _wing_open_target, clamp(delta * 4.0, 0.0, 1.0))
 
-	# Dobrada: erguida e recolhida sobre as costas. Aberta: quase na horizontal.
+	# Dobrada: caída ao longo do corpo, recolhida para trás — a asa "encolhe"
+	# (escala do pivô) para simular a dobra do cotovelo, senão a folha rígida
+	# ficaria enorme para trás. Aberta: quase na horizontal.
 	var fold := 1.0 - _wing_open
-	var rz: float = lerp(0.12, 0.9, fold) + sin(_flap_phase) * _flap_amp * _wing_open \
-		+ sin(_time * 1.1) * 0.05 * fold
-	var ry: float = lerp(-0.18, -1.4, fold)
+	var rz: float = lerp(0.12, -1.15, fold) + sin(_flap_phase) * _flap_amp * _wing_open \
+		+ sin(_time * 1.1) * 0.04 * fold
+	var ry: float = lerp(-0.18, -0.35, fold)
 	var rx: float = sin(_flap_phase + 0.6) * 0.18 * _wing_open
+	# A asa é uma folha rígida: para "fechar" de verdade, além de girar para
+	# baixo ela encolhe no eixo da membrana (Y local), como se os dedos
+	# dobrassem. Aberta, volta ao tamanho cheio.
+	var wing_len: float = lerp(0.85, 1.0, _wing_open)
+	var wing_chord: float = lerp(0.32, 1.0, _wing_open)
 
 	for i in range(_wing_pivots.size()):
 		var side := 1.0 if i == 0 else -1.0
 		_wing_pivots[i].rotation = Vector3(rx, ry * side, rz * side)
+		_wing_pivots[i].scale = Vector3(wing_len, wing_chord, 1.0)
 		_wing_mats[i].set_shader_parameter("flap_phase", _flap_phase)
 		_wing_mats[i].set_shader_parameter("flap_amount", 0.06 + 0.14 * _wing_open)
+
+	_update_wing_beat(delta)
 
 	# Cauda ondulando com atraso ao longo dos segmentos.
 	var tail_speed: float = 1.6 + _flap_rate * 0.3
@@ -736,4 +804,18 @@ func _animate(delta: float) -> void:
 
 	if _light:
 		var flicker: float = 0.82 + 0.18 * sin(_time * 11.0 + _seed) * cos(_time * 6.3)
-		_light.light_energy = light_energy * flicker * (1.0 + _wing_open * 0.35)
+		_light.light_energy = light_energy * flicker * (1.0 + _wing_open * 0.35 + _beat_flash)
+
+
+## Dispara o sopro no fundo de cada remada (quando sin(fase) atinge o mínimo).
+func _update_wing_beat(delta: float) -> void:
+	_beat_flash = max(_beat_flash - delta * 3.5, 0.0)
+	var beat := int(floor((_flap_phase - PI * 1.5) / TAU))
+	if beat == _last_beat:
+		return
+	_last_beat = beat
+	if _wing_open < 0.5:
+		return
+	_beat_flash = 0.9
+	for puff in _beat_puffs:
+		puff.restart()

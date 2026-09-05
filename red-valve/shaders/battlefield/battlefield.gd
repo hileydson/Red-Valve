@@ -431,15 +431,16 @@ const ARENA_CORNER_NAMES := [
 	"arena_corner_1", "arena_corner_2", "arena_corner_3", "arena_corner_4",
 ]
 
-# Ponto mais alto de cada rocha, em espaço LOCAL do canto (antes da escala 9x).
-# Valores tirados do centroide do 0,5% de vértices mais altos de cada .glb —
-# é onde a gárgula fica empoleirada. Como são locais, continuam válidos se o
-# canto for movido/girado na cena.
+# Ponto de pouso de cada canto, em espaço LOCAL do canto (antes da escala 9x).
+# Obtido varrendo o .glb num heightmap: a célula MAIS ALTA que ainda tem
+# superfície sólida na vizinhança 3x3 (o vértice mais alto puro caía no vão
+# entre duas torres em três dos quatro cantos, e a gárgula pousava no ar).
+# Como são coordenadas locais, seguem válidas se o canto for movido ou girado.
 const ARENA_CORNER_PEAKS := {
-	"arena_corner_1": Vector3(-0.202, 0.435, -0.374),
-	"arena_corner_2": Vector3(0.669, 0.45, 0.118),
-	"arena_corner_3": Vector3(-0.519, 0.387, -0.091),
-	"arena_corner_4": Vector3(0.179, 0.351, -0.425),
+	"arena_corner_1": Vector3(0.357, 0.408, -0.537),
+	"arena_corner_2": Vector3(0.645, 0.469, 0.049),
+	"arena_corner_3": Vector3(-0.892, 0.468, 0.390),
+	"arena_corner_4": Vector3(-0.358, 0.421, -0.903),
 }
 
 
