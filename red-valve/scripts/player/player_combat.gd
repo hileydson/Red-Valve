@@ -293,9 +293,13 @@ func spawn_blood_effect(body: Node3D) -> void:
 const SIPHON_TO_PLAYER_TIME: float = 0.30
 ## Tempo do centro da tela até o medidor no canto superior esquerdo.
 const SIPHON_TO_HUD_TIME: float = 0.26
+## Quantas gotas de sangue cada dano manda para o medidor.
+const SIPHON_DROPS_PER_HIT: int = 4
+## Atraso entre uma gota e a seguinte do mesmo golpe.
+const SIPHON_DROP_STAGGER: float = 0.07
 ## Máximo de gotas simultâneas: acima disso o poder entra direto (sem FX),
 ## pra não virar chuva de sangue em rajadas rápidas de dano.
-const SIPHON_MAX_ACTIVE: int = 8
+const SIPHON_MAX_ACTIVE: int = 24
 
 var _siphons: Array[Node2D] = []
 var _cogblade_fill_tween: Tween
@@ -339,24 +343,39 @@ func _spawn_blood_siphon(start: Vector2, amount: float) -> void:
 		_apply_cogblade_power(amount)
 		return
 
+	# O sangue sai do inimigo em várias gotas, não em uma só: elas partem de
+	# pontos ligeiramente diferentes e escalonadas no tempo, então chegam no
+	# medidor em sequência (várias respingadas em vez de uma).
+	var total := SIPHON_DROPS_PER_HIT
+	var share := amount / float(total)
+	for i in total:
+		var jitter := Vector2(randf_range(-26.0, 26.0), randf_range(-22.0, 22.0))
+		_spawn_blood_drop(start + jitter, share, float(i) * SIPHON_DROP_STAGGER)
+
+func _spawn_blood_drop(start: Vector2, amount: float, delay: float) -> void:
 	var vp_size: Vector2 = player.get_viewport().get_visible_rect().size
 	var center: Vector2 = vp_size * 0.5
 	var hud_target: Vector2 = _cogblade_hud_center()
 
+	# Cada gota tem tamanho e velocidade um pouco diferentes.
+	var raio := randf_range(4.5, 7.5)
+	var vel := randf_range(0.88, 1.15)
+
 	var container := Node2D.new()
 	container.name = "CogbladeBloodSiphon"
 	container.position = start
+	container.visible = delay <= 0.0
 	player.hud_layer.add_child(container)
 	_siphons.append(container)
 
 	# Halo suave por trás da gota (dá o "brilho" molhado)
 	var halo := Polygon2D.new()
-	halo.polygon = _circle_points(13.0)
+	halo.polygon = _circle_points(raio * 2.0)
 	halo.color = Color(0.55, 0.0, 0.0, 0.35)
 	container.add_child(halo)
 
 	var drop := Polygon2D.new()
-	drop.polygon = _circle_points(6.5)
+	drop.polygon = _circle_points(raio)
 	drop.color = Color(0.72, 0.02, 0.02, 1.0)
 	container.add_child(drop)
 
@@ -364,37 +383,47 @@ func _spawn_blood_siphon(start: Vector2, amount: float) -> void:
 	# então elas "sobram" no caminho enquanto a gota avança.
 	var trail := CPUParticles2D.new()
 	trail.local_coords = false
-	trail.amount = 26
-	trail.lifetime = 0.45
+	trail.amount = 40
+	trail.lifetime = 0.5
 	trail.speed_scale = 1.0
 	trail.emission_shape = CPUParticles2D.EMISSION_SHAPE_SPHERE
-	trail.emission_sphere_radius = 4.0
+	trail.emission_sphere_radius = 5.0
 	trail.direction = Vector2(0, 1)
 	trail.spread = 45.0
 	trail.gravity = Vector2(0, 160)
 	trail.initial_velocity_min = 10.0
-	trail.initial_velocity_max = 45.0
+	trail.initial_velocity_max = 55.0
 	trail.scale_amount_min = 1.5
-	trail.scale_amount_max = 4.0
-	trail.color = Color(0.65, 0.0, 0.0, 0.8)
+	trail.scale_amount_max = 4.5
+	trail.color = Color(0.65, 0.0, 0.0, 0.85)
 	var trail_ramp := Gradient.new()
 	trail_ramp.offsets = [0.0, 1.0]
 	trail_ramp.colors = [Color(1, 1, 1, 0.9), Color(1, 1, 1, 0.0)]
 	trail.color_ramp = trail_ramp
-	trail.emitting = true
+	trail.emitting = delay <= 0.0
 	container.add_child(trail)
 
-	# Curvas: a gota faz um arco em vez de linha reta.
-	var to_player_ctrl: Vector2 = start.lerp(center, 0.5) + (center - start).orthogonal().normalized() * 60.0
-	var to_hud_ctrl: Vector2 = Vector2(center.x * 0.45, center.y * 0.35)
+	# Curvas: a gota faz um arco em vez de linha reta. O lado e a altura do
+	# arco variam, então gotas do mesmo golpe não viajam empilhadas.
+	var arco := randf_range(35.0, 95.0) * (1.0 if randf() < 0.5 else -1.0)
+	var to_player_ctrl: Vector2 = start.lerp(center, 0.5) + (center - start).orthogonal().normalized() * arco
+	var to_hud_ctrl: Vector2 = Vector2(center.x * randf_range(0.35, 0.55), center.y * randf_range(0.25, 0.45))
 
 	# Tween do próprio container: se ele for liberado (poder consumiu o medidor),
 	# o trajeto morre junto e o preenchimento não acontece.
 	var tw := container.create_tween()
+	if delay > 0.0:
+		tw.tween_interval(delay)
+		tw.tween_callback(func() -> void:
+			if is_instance_valid(container):
+				container.visible = true
+				trail.emitting = true
+		)
+
 	tw.tween_method(func(t: float) -> void:
 		if is_instance_valid(container):
 			container.position = _bezier2(start, to_player_ctrl, center, t)
-	, 0.0, 1.0, SIPHON_TO_PLAYER_TIME).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	, 0.0, 1.0, SIPHON_TO_PLAYER_TIME * vel).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 
 	# Chegou no player: pequena "absorvida" (a gota infla e comprime)
 	tw.tween_property(container, "scale", Vector2(1.5, 1.5), 0.07).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
@@ -404,7 +433,7 @@ func _spawn_blood_siphon(start: Vector2, amount: float) -> void:
 	tw.tween_method(func(t: float) -> void:
 		if is_instance_valid(container):
 			container.position = _bezier2(center, to_hud_ctrl, hud_target, t)
-	, 0.0, 1.0, SIPHON_TO_HUD_TIME).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	, 0.0, 1.0, SIPHON_TO_HUD_TIME * vel).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 
 	tw.tween_callback(func() -> void:
 		_siphons.erase(container)
@@ -427,7 +456,7 @@ func _cogblade_blood_splash() -> void:
 	splash.position = _cogblade_hud_center()
 	splash.one_shot = true
 	splash.explosiveness = 1.0
-	splash.amount = 24
+	splash.amount = 34
 	splash.lifetime = 0.5
 	splash.emission_shape = CPUParticles2D.EMISSION_SHAPE_SPHERE
 	splash.emission_sphere_radius = 10.0
