@@ -227,6 +227,9 @@ func _play_intro_text() -> void:
 			chapter_label.queue_free()
 		return
 
+	if SaveManager.prolog_finished:
+		return
+
 	if SaveManager.stage_1_intro_played:
 		return
 	SaveManager.stage_1_intro_played = true
