@@ -93,6 +93,11 @@ func _activate_cogblade_slain() -> void:
 		model_tween.tween_interval(0.15)
 		model_tween.tween_callback(func():
 			player_model.visible = true
+			# O corpo em si fica escondido enquanto a câmera de 1ª pessoa está ativa
+			# (player.gd faz isso todo frame), e o _physics_process não roda durante o
+			# ultimate — então aqui a malha precisa ser reexibida na mão.
+			if is_instance_valid(player.modelo_visual):
+				player.modelo_visual.visible = true
 			player_model.top_level = true
 			player_model.global_rotation = player.global_rotation
 			player_model.rotate_y(deg_to_rad(180)) # Gira o modelo para ficar de costas para a câmera
@@ -165,6 +170,8 @@ func _activate_cogblade_slain() -> void:
 			var model_trail = player_model.get_node_or_null("model_trail")
 			if is_instance_valid(model_trail): model_trail.queue_free()
 			player_model.visible = false # Some pro mergulho em primeira pessoa
+			if is_instance_valid(player.modelo_visual):
+				player.modelo_visual.visible = false
 			player_model.top_level = false
 			player_model.position = Vector3.ZERO
 			player_model.scale = Vector3.ONE # Restaura para o normal
@@ -502,6 +509,18 @@ func _cut_blade_basis(cam_basis: Basis, cam_yaw: float, theta: float) -> Basis:
 		deg_to_rad(player.cut_cogblade_rot_z)))
 	var spin := Basis(cam_basis.z.normalized(), theta)
 	return spin * base
+
+# A pose calibrada da lâmina (cut_cogblade_rot_*) assume a câmera nivelada, e
+# no Fire Cross ela olha lá de cima para baixo. Aqui a pose é levada para o
+# espaço da câmera, então a lâmina fica virada para frente o tempo todo,
+# qualquer que seja a inclinação da câmera.
+func _fire_blade_basis(cam_basis: Basis, theta: float) -> Basis:
+	var local := Basis.from_euler(Vector3(
+		deg_to_rad(player.cut_cogblade_rot_x),
+		deg_to_rad(player.cut_cogblade_rot_y),
+		deg_to_rad(player.cut_cogblade_rot_z)))
+	var spin := Basis(cam_basis.z.normalized(), theta)
+	return spin * (cam_basis.orthonormalized() * local)
 
 func _cut_set_blade(pos: Vector3, rot_basis: Basis, s: float) -> void:
 	if not is_instance_valid(player.crescent_cogblade): return
@@ -914,7 +933,7 @@ func _activate_cogblade_fire_cross() -> void:
 	# A câmera fica parada daqui em diante, então dá para pré-calcular tudo.
 	var air_basis := Basis.from_euler(look_rot)
 	var blade_center: Vector3 = air_pos - air_basis.z * player.cut_blade_distance
-	var entry_basis := _cut_blade_basis(air_basis, look_rot.y, 0.0)
+	var entry_basis := _fire_blade_basis(air_basis, 0.0)
 	var entry_from: Vector3 = blade_center + air_basis.x * 1.6 + air_basis.y * 1.0
 
 	seq.tween_callback(func():
@@ -946,7 +965,7 @@ func _activate_cogblade_fire_cross() -> void:
 		var to_pos: Vector3 = blade_center - wdir * reach
 		# Ângulo do corte no plano da tela, para girar a lâmina junto
 		var theta: float = atan2(wdir.dot(air_basis.y), wdir.dot(air_basis.x))
-		var rot_basis := _cut_blade_basis(air_basis, look_rot.y, theta)
+		var rot_basis := _fire_blade_basis(air_basis, theta)
 		var idx := i
 
 		seq.tween_callback(func(): _fire_begin_streak(fx_layer, sdir, idx))
