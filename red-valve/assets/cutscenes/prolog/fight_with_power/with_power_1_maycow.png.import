@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ds2huj5ugd0fe"
-path="res://.godot/imported/with_power_2.png-26581a6985ae2d0458d8fe51a86e8656.ctex"
+uid="uid://6jd2levd812r"
+path="res://.godot/imported/with_power_1_maycow.png-f0fec6bd6445f53066cd775096ce05a3.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/cutscenes/prolog/fight_with_power/with_power_2.png"
-dest_files=["res://.godot/imported/with_power_2.png-26581a6985ae2d0458d8fe51a86e8656.ctex"]
+source_file="res://assets/cutscenes/prolog/fight_with_power/with_power_1_maycow.png"
+dest_files=["res://.godot/imported/with_power_1_maycow.png-f0fec6bd6445f53066cd775096ce05a3.ctex"]
 
 [params]
 

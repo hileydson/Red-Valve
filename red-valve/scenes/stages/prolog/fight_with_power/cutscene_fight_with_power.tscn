@@ -1,10 +1,35 @@
-[gd_scene format=3 uid="uid://csv84wovjbr5v"]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" uid="uid://dcddve3ck37yh" path="res://scripts/stages/prolog/fight_with_power/cutscene_fight_with_power.gd" id="1_cutsn"]
 [ext_resource type="AudioStream" uid="uid://lvxgd3tjitad" path="res://assets/cutscenes/sound/begin.mp3" id="2_em5kw"]
 [ext_resource type="PackedScene" uid="uid://dy356o67p6jyn" path="res://scenes/configs/fade.tscn" id="2_fade"]
+[ext_resource type="Shader" path="res://shaders/cutscenes/cutscene_post.gdshader" id="4_post"]
+[ext_resource type="Shader" path="res://shaders/cutscenes/caption_gradient.gdshader" id="5_capt"]
 
-[node name="CutsceneTelefone" type="Control" unique_id=336494292]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_post"]
+shader = ExtResource("4_post")
+shader_parameter/aberration = 1.0
+shader_parameter/radial_blur = 0.0
+shader_parameter/barrel = 0.022
+shader_parameter/vignette_strength = 0.34
+shader_parameter/vignette_softness = 0.55
+shader_parameter/grain = 0.042
+shader_parameter/grain_speed = 14.0
+shader_parameter/exposure = 1.10
+shader_parameter/saturation = 1.06
+shader_parameter/grade_shadows = Color(0.06, 0.025, 0.075, 1)
+shader_parameter/grade_highlights = Color(1, 0.92, 0.84, 1)
+shader_parameter/grade_amount = 0.16
+shader_parameter/flash_color = Color(1, 0.85, 0.7, 1)
+shader_parameter/flash = 0.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_capt"]
+shader = ExtResource("5_capt")
+shader_parameter/top_color = Color(0, 0, 0, 0)
+shader_parameter/bottom_color = Color(0, 0, 0, 0.9)
+shader_parameter/curve = 1.7
+
+[node name="CutsceneFightWithPower" type="Control"]
 process_mode = 3
 layout_mode = 3
 anchors_preset = 15
@@ -14,58 +39,130 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_cutsn")
 
-[node name="Begin" type="AudioStreamPlayer" parent="." unique_id=1404481754]
+[node name="Begin" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("2_em5kw")
 volume_db = -5.41
 pitch_scale = 0.45
 autoplay = true
 parameters/looping = true
 
-[node name="Background" type="ColorRect" parent="." unique_id=726694366]
+[node name="Background" type="ColorRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 color = Color(0, 0, 0, 1)
 
-[node name="ImageRect" type="TextureRect" parent="." unique_id=415696744]
+[node name="Stage" type="SubViewportContainer" parent="."]
+material = SubResource("ShaderMaterial_post")
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-expand_mode = 1
-stretch_mode = 6
+mouse_filter = 2
+stretch = true
 
-[node name="TextBackground" type="ColorRect" parent="." unique_id=1298322849]
+[node name="World" type="SubViewport" parent="Stage"]
+own_world_3d = true
+handle_input_locally = false
+gui_disable_input = true
+size = Vector2i(1920, 1080)
+render_target_update_mode = 4
+
+[node name="Letterbox" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Top" type="ColorRect" parent="Letterbox"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Bottom" type="ColorRect" parent="Letterbox"]
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -180.0
 grow_horizontal = 2
 grow_vertical = 0
-color = Color(0, 0, 0, 0.784314)
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
 
-[node name="Label" type="Label" parent="TextBackground" unique_id=1734938268]
+[node name="TextBackground" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_capt")
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -300.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+color = Color(1, 1, 1, 1)
+
+[node name="Label" type="Label" parent="TextBackground"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 60.0
-offset_top = 30.0
-offset_right = -60.0
-offset_bottom = -30.0
+offset_left = 150.0
+offset_top = 140.0
+offset_right = -150.0
+offset_bottom = -58.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/font_size = 32
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.96, 0.93, 0.9, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.75)
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/shadow_outline_size = 6
+theme_override_font_sizes/font_size = 34
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
 
-[node name="fade" parent="." unique_id=42655387 instance=ExtResource("2_fade")]
-layout_mode = 0
+[node name="Arrow" type="Label" parent="TextBackground"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -96.0
+offset_top = -54.0
+offset_right = -56.0
+offset_bottom = -18.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 0.72, 0.42, 1)
+theme_override_font_sizes/font_size = 24
+text = "▼"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="fade" parent="." instance=ExtResource("2_fade")]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+offset_right = 0.0
+offset_bottom = 0.0
