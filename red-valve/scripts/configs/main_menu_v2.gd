@@ -416,3 +416,17 @@ func _on_exit_pressed() -> void:
 	if input_locked: return
 	GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/selecionar_item_voltar.mp3")
 	get_tree().quit()
+
+func _input(event: InputEvent) -> void:
+	if input_locked: return
+	var is_back = event.is_action_pressed("ui_cancel") or (event is InputEventJoypadButton and event.button_index == JOY_BUTTON_B and event.pressed)
+	if is_back:
+		var slots_panel = $UI.get_node_or_null("SlotsPanel")
+		if slots_panel and slots_panel.visible:
+			var vbox = slots_panel.get_child(0)
+			if vbox:
+				for child in vbox.get_children():
+					if child is Button and child.text == "BTN_BACK":
+						child.pressed.emit()
+						get_viewport().set_input_as_handled()
+						return

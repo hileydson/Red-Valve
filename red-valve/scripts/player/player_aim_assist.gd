@@ -1,7 +1,10 @@
 extends Node
 
 # Assistente de mira (aim assist) por magnetismo suave: quando há um inimigo
-# perto do centro da tela, a câmera é puxada de leve na direção dele.
+# perto do centro da tela, a câmera TENDE ao centro do modelo dele (metade da
+# altura), sem nunca travar - é ajuda, não trava-mira. Três coisas garantem
+# isso: zona morta no miolo, passo limitado a uma fração do erro restante, e
+# enfraquecimento enquanto o jogador está girando a câmera.
 #
 # Quando fica ativo:
 #   - Maycow NÃO normal (parasita): sempre, já que o combate é mais frenético.
@@ -15,10 +18,15 @@ extends Node
 const MAX_DISTANCE := 45.0          # Alcance máximo pra considerar um alvo
 const BASE_ANGLE_DEG := 7.0         # Cone ao redor do centro da tela (x intensidade)
 const MAX_PULL_DEG_PER_SEC := 110.0 # Teto da correção (x intensidade)
-const TARGET_HEIGHT_OFFSET := 1.1   # Mira no tronco, não no chão do inimigo
+const FALLBACK_HEIGHT := 1.8        # Altura assumida quando não dá pra medir o modelo
+const STICKY_ZONE_DEG := 1.2        # Perto demais do centro: o assist para de puxar
+const BREAK_FREE_FACTOR := 0.65     # O quanto o assist enfraquece quando o jogador está girando a câmera
 
 var player: CharacterBody3D
 var _target: Node3D = null
+# Altura de cada inimigo, medida uma vez a partir das malhas (AABB) e guardada
+# pelo id da instância - medir todo frame sairia caro.
+var _height_cache: Dictionary = {}
 
 func _ready() -> void:
 	player = get_parent()
@@ -75,7 +83,7 @@ func _find_best_target(cam: Camera3D) -> Node3D:
 		# Inimigos usam a flag "dead" (ver zombie.gd); mortos não atraem a mira.
 		if "dead" in enemy and enemy.dead: continue
 
-		var aim_point: Vector3 = enemy.global_position + Vector3.UP * TARGET_HEIGHT_OFFSET
+		var aim_point: Vector3 = _aim_point(enemy)
 		var to_target := aim_point - origin
 		var dist := to_target.length()
 		if dist < 1.0 or dist > MAX_DISTANCE: continue
@@ -88,6 +96,26 @@ func _find_best_target(cam: Camera3D) -> Node3D:
 		best = enemy
 
 	return best
+
+func _aim_point(enemy: Node3D) -> Vector3:
+	# Centro do inimigo: metade da altura do modelo 3D, não a base nem a cabeça.
+	return enemy.global_position + Vector3.UP * (_enemy_height(enemy) * 0.5)
+
+func _enemy_height(enemy: Node3D) -> float:
+	var id := enemy.get_instance_id()
+	if _height_cache.has(id): return _height_cache[id]
+
+	var height := 0.0
+	for mesh in enemy.find_children("*", "MeshInstance3D", true, false):
+		if not (mesh is MeshInstance3D) or mesh.mesh == null: continue
+		var aabb: AABB = mesh.get_aabb()
+		# Altura da malha no espaço do inimigo (aguenta modelo escalado/rotacionado)
+		var local: Transform3D = enemy.global_transform.affine_inverse() * mesh.global_transform
+		height = maxf(height, (local * aabb).end.y)
+
+	if height <= 0.1: height = FALLBACK_HEIGHT
+	_height_cache[id] = height
+	return height
 
 func _has_line_of_sight(from: Vector3, to: Vector3, enemy: Node3D) -> bool:
 	var space := player.get_world_3d().direct_space_state
@@ -102,20 +130,31 @@ func _has_line_of_sight(from: Vector3, to: Vector3, enemy: Node3D) -> bool:
 
 func _pull_towards(cam: Camera3D, target: Node3D, delta: float) -> void:
 	var origin := cam.global_position
-	var aim_point: Vector3 = target.global_position + Vector3.UP * TARGET_HEIGHT_OFFSET
+	var aim_point: Vector3 = _aim_point(target)
 	var to_target := (aim_point - origin).normalized()
 	var forward := -cam.global_transform.basis.z
 
 	var angle := forward.angle_to(to_target)
-	if angle < deg_to_rad(0.15): return # Já está em cima do alvo
 
-	# Quanto mais perto do centro, mais forte o magnetismo - o efeito "gruda" a
-	# mira sem impedir o jogador de varrer a tela procurando outro inimigo.
-	var closeness: float = 1.0 - clampf(angle / deg_to_rad(_cone_deg()), 0.0, 1.0)
-	# Curva mais suave que a quadrática de antes: o puxão já é sentido mesmo
-	# com o alvo longe do centro do cone.
-	var falloff: float = closeness * (0.35 + 0.65 * closeness)
-	var max_step: float = deg_to_rad(MAX_PULL_DEG_PER_SEC) * _strength() * delta * falloff
+	# Zona morta no miolo: com a mira já praticamente no centro do inimigo o
+	# assist solta - é isso que evita a sensação de mira "presa" nele.
+	var sticky := deg_to_rad(STICKY_ZONE_DEG)
+	if angle < sticky: return
+
+	# Tendência, não trava: o passo é uma fração do erro que ainda falta, então
+	# a mira converge suave pro centro do inimigo e nunca é cravada nele.
+	var cone := deg_to_rad(_cone_deg())
+	var closeness: float = 1.0 - clampf(angle / cone, 0.0, 1.0)
+	# Perto do centro o puxão AFROUXA (em vez de apertar), o que deixa o
+	# ajuste fino sempre nas mãos do jogador.
+	var falloff: float = smoothstep(0.0, 1.0, closeness) * (1.0 - closeness * 0.55)
+
+	var pull := deg_to_rad(MAX_PULL_DEG_PER_SEC) * _strength() * falloff * delta
+	# Nunca mais que uma fração do erro restante por frame: sem "snap".
+	var max_step: float = minf(pull, (angle - sticky) * 0.5)
+	# O jogador girando a câmera sempre vence o assist.
+	max_step *= 1.0 - BREAK_FREE_FACTOR * _look_input_strength()
+	if max_step <= 0.0: return
 
 	# --- Horizontal: gira o corpo do player (mesma convenção do olhar manual) ---
 	var flat_forward := Vector2(forward.x, forward.z)
@@ -132,3 +171,11 @@ func _pull_towards(cam: Camera3D, target: Node3D, delta: float) -> void:
 	var v_down := -25.0 if is_third_person else -60.0
 	var v_up := 20.0 if is_third_person else 60.0
 	cam.rotation.x = clampf(cam.rotation.x + pitch_delta, deg_to_rad(v_down), deg_to_rad(v_up))
+
+func _look_input_strength() -> float:
+	# 0 = jogador parado (assist no máximo), 1 = girando a câmera com força
+	# (assist quase todo desligado, pra não brigar com quem está mirando).
+	var joy := Input.get_vector("ui_look_left", "ui_look_right", "ui_look_up", "ui_look_down")
+	var by_joy: float = clampf(joy.length(), 0.0, 1.0)
+	var by_mouse: float = clampf(Input.get_last_mouse_velocity().length() / 900.0, 0.0, 1.0)
+	return maxf(by_joy, by_mouse)

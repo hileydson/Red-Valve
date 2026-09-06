@@ -11,11 +11,15 @@ func _ready() -> void:
 			btn.focus_entered.connect(func(): GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/mudar_selecao.mp3"))
 			btn.mouse_entered.connect(func(): btn.grab_focus())
 
-func _unhandled_input(event: InputEvent) -> void:
+func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_pause"):
 		if not self.visible and (get_tree().paused or GlobalEvents.in_cutscene):
 			return # Não abre se já estiver pausado (ex: Inventário aberto) ou em cutscene
 		toogle_pause()
+		get_viewport().set_input_as_handled()
+	elif self.visible and (event.is_action_pressed("ui_cancel") or (event is InputEventJoypadButton and event.button_index == JOY_BUTTON_B and event.pressed)):
+		toogle_pause()
+		get_viewport().set_input_as_handled()
 
 func toogle_pause():
 	if get_tree().paused:

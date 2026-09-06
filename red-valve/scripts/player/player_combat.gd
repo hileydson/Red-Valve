@@ -285,14 +285,21 @@ func spawn_blood_effect(body: Node3D) -> void:
 # SIFÃO DE SANGUE -> MEDIDOR DA COGBLADE
 # =========================================================================
 # O medidor não enche mais no instante do dano. Uma pequena porção do sangue
-# do inimigo vira uma gota 2D que viaja até o player (centro da tela), sobe
-# para o canto superior esquerdo (onde fica a HUD do medidor), respinga no
-# medidor e só então o preenchimento acontece.
+# do inimigo vira uma gota 2D que viaja até o player (centro da tela), vagueia
+# um instante por pontos aleatórios ali por perto, sobe para o canto superior
+# esquerdo (onde fica a HUD do medidor), respinga no medidor e só então o
+# preenchimento acontece.
 
 ## Tempo da gota do inimigo até o centro da tela (o player).
 const SIPHON_TO_PLAYER_TIME: float = 0.30
 ## Tempo do centro da tela até o medidor no canto superior esquerdo.
 const SIPHON_TO_HUD_TIME: float = 0.26
+## Quantas voltas a gota dá vagando perto do centro antes de subir pro medidor.
+const SIPHON_WANDER_STEPS: int = 3
+## Tempo de cada trecho do vaguear.
+const SIPHON_WANDER_STEP_TIME: float = 0.22
+## Raio (em pixels) da área em volta do centro onde a gota fica vagando.
+const SIPHON_WANDER_RADIUS: Vector2 = Vector2(230.0, 150.0)
 ## Quantas gotas de sangue cada dano manda para o medidor.
 const SIPHON_DROPS_PER_HIT: int = 4
 ## Atraso entre uma gota e a seguinte do mesmo golpe.
@@ -319,7 +326,7 @@ func add_cogblade_power(amount: float, source_pos = null) -> void:
 		_apply_cogblade_power(amount)
 		return
 
-	_spawn_blood_siphon(start, amount)
+	_spawn_blood_siphon(start, amount, source_pos)
 
 # Converte a posição 3D do golpe em coordenadas de tela. Retorna null quando
 # não dá pra desenhar o trajeto (sem câmera, ou o alvo está atrás dela).
@@ -338,7 +345,7 @@ func _siphon_screen_start(source_pos):
 	screen.y = clamp(screen.y, 8.0, size.y - 8.0)
 	return screen
 
-func _spawn_blood_siphon(start: Vector2, amount: float) -> void:
+func _spawn_blood_siphon(start: Vector2, amount: float, source_pos = null) -> void:
 	if not is_instance_valid(player.hud_layer) or not is_instance_valid(player.cogblade_hud):
 		_apply_cogblade_power(amount)
 		return
@@ -350,78 +357,49 @@ func _spawn_blood_siphon(start: Vector2, amount: float) -> void:
 	var share := amount / float(total)
 	for i in total:
 		var jitter := Vector2(randf_range(-26.0, 26.0), randf_range(-22.0, 22.0))
-		_spawn_blood_drop(start + jitter, share, float(i) * SIPHON_DROP_STAGGER)
+		_spawn_blood_drop(start + jitter, share, float(i) * SIPHON_DROP_STAGGER, source_pos)
 
-# Posição na tela da arma (mão direita do Maycow). O sangue passa por aqui
-# antes de subir pro medidor - é a arma que "bebe" o sangue.
-func _weapon_screen_pos() -> Vector2:
-	var vp := player.get_viewport()
-	var vp_size: Vector2 = vp.get_visible_rect().size
-	# Sem referência utilizável, cai num ponto à direita e abaixo do centro,
-	# que é mais ou menos onde a arma aparece na tela.
-	var fallback: Vector2 = Vector2(vp_size.x * 0.62, vp_size.y * 0.68)
+# --- Ancoragem no mundo -----------------------------------------------------
+# As gotas são nós 2D (HUD), mas ficam presas a pontos do MUNDO: a cada frame a
+# posição na tela é recalculada projetando o ponto 3D pela câmera atual. Assim,
+# girar a câmera faz o sangue deslizar pela tela como qualquer coisa parada no
+# cenário, em vez de ficar colado no visor.
 
-	var cam := vp.get_camera_3d()
-	if not is_instance_valid(cam): return fallback
+## Profundidade (em metros) dos pontos onde a gota vagueia à frente do jogador.
+const SIPHON_WANDER_DEPTH: Vector2 = Vector2(3.0, 6.0)
 
-	var source := _weapon_node()
-	if not is_instance_valid(source): return fallback
-	if cam.is_position_behind(source.global_position): return fallback
+func _cam() -> Camera3D:
+	var vp := player.get_viewport() if is_instance_valid(player) else null
+	if not vp: return null
+	return vp.get_camera_3d()
 
-	var screen: Vector2 = cam.unproject_position(source.global_position)
-	screen.x = clamp(screen.x, 8.0, vp_size.x - 8.0)
-	screen.y = clamp(screen.y, 8.0, vp_size.y - 8.0)
-	return screen
+## Ponto do mundo que hoje aparece em `screen`, à distância `dist` da câmera.
+func _screen_to_world(screen: Vector2, dist: float) -> Vector3:
+	var cam := _cam()
+	if not is_instance_valid(cam): return Vector3.ZERO
+	return cam.project_position(screen, dist)
 
-func _weapon_node() -> Node3D:
-	# Em 1ª pessoa a arma está presa na câmera; em 3ª pessoa vale mais a mão
-	# direita do modelo, então tentamos os dois, na ordem do que está visível.
-	if is_instance_valid(player.crescent_cogblade) and player.crescent_cogblade.visible:
-		return player.crescent_cogblade
-	if is_instance_valid(player.hand_with_pistol) and player.hand_with_pistol.visible:
-		return player.hand_with_pistol
+## Onde um ponto do mundo cai na tela agora. Se ficou atrás da câmera, devolve
+## `fallback` (a última posição válida), pra gota não pular pro outro lado.
+func _world_to_screen(world: Vector3, fallback: Vector2) -> Vector2:
+	var cam := _cam()
+	if not is_instance_valid(cam) or cam.is_position_behind(world): return fallback
+	return cam.unproject_position(world)
 
-	var hand := _right_hand_attachment()
-	if is_instance_valid(hand): return hand
-
-	if is_instance_valid(player.crescent_cogblade): return player.crescent_cogblade
-	return null
-
-var _right_hand_cache: BoneAttachment3D = null
-
-func _right_hand_attachment() -> BoneAttachment3D:
-	if is_instance_valid(_right_hand_cache): return _right_hand_cache
-
-	# Modelo ativo: parasita (maycow_lopes) ou normal (maycow_lopes_normal).
-	var model_name := "maycow_lopes_normal" if GlobalEvents.is_maycow_normal else "maycow_lopes"
-	var model := player.get_node_or_null(model_name)
-	if not model: return null
-
-	var skeletons := model.find_children("*", "Skeleton3D", true, false)
-	if skeletons.is_empty(): return null
-	var skeleton: Skeleton3D = skeletons[0]
-
-	# Nome do osso varia por rig (mixamorig:RightHand, hand.R, Bip01 R Hand...),
-	# então procuramos por "hand" + marca de lado direito.
-	var bone_idx := -1
-	for i in skeleton.get_bone_count():
-		var bone_name: String = skeleton.get_bone_name(i).to_lower()
-		if not bone_name.contains("hand"): continue
-		if bone_name.contains("right") or bone_name.ends_with(".r") or bone_name.contains("_r") or bone_name.contains(" r "):
-			bone_idx = i
-			break
-	if bone_idx == -1: return null
-
-	var attachment := BoneAttachment3D.new()
-	attachment.name = "CogbladeSiphonHand"
-	skeleton.add_child(attachment)
-	attachment.bone_idx = bone_idx
-	_right_hand_cache = attachment
-	return attachment
-
-func _spawn_blood_drop(start: Vector2, amount: float, delay: float) -> void:
-	var weapon: Vector2 = _weapon_screen_pos()
+func _spawn_blood_drop(start: Vector2, amount: float, delay: float, source_pos = null) -> void:
+	var vp_size: Vector2 = player.get_viewport().get_visible_rect().size
+	var center: Vector2 = vp_size * 0.5
 	var hud_target: Vector2 = _cogblade_hud_center()
+
+	# Profundidade desta gota: quanto mais perto da câmera, mais ela desliza
+	# quando o jogador vira - é o mesmo paralaxe de qualquer objeto do cenário.
+	var depth := randf_range(SIPHON_WANDER_DEPTH.x, SIPHON_WANDER_DEPTH.y)
+	var cam := _cam()
+	# A origem fica presa ao ponto exato do golpe no inimigo (quando temos ele).
+	var start_depth: float = depth
+	if source_pos is Vector3 and is_instance_valid(cam):
+		start_depth = maxf(cam.global_position.distance_to(source_pos), 0.5)
+	var start_world: Vector3 = _screen_to_world(start, start_depth)
 
 	# Cada gota tem tamanho e velocidade um pouco diferentes.
 	var raio := randf_range(4.5, 7.5)
@@ -471,14 +449,28 @@ func _spawn_blood_drop(start: Vector2, amount: float, delay: float) -> void:
 
 	# Curvas: a gota faz um arco em vez de linha reta. O lado e a altura do
 	# arco variam, então gotas do mesmo golpe não viajam empilhadas.
-	# O trajeto agora é inimigo -> arma (mão direita) -> medidor.
 	var arco := randf_range(35.0, 95.0) * (1.0 if randf() < 0.5 else -1.0)
-	var to_weapon_ctrl: Vector2 = start.lerp(weapon, 0.5) + (weapon - start).orthogonal().normalized() * arco
-	# Saindo da arma, a gota sobe fazendo uma curva por dentro da tela.
-	var to_hud_ctrl: Vector2 = Vector2(
-		weapon.x * randf_range(0.35, 0.6),
-		weapon.y * randf_range(0.3, 0.55)
-	)
+
+	# Depois de chegar ao centro, a gota vagueia por pontos aleatórios ali por
+	# perto antes de decidir subir - cada gota faz um caminho diferente.
+	# Tanto o "centro" quanto os pontos do vaguear viram pontos do MUNDO à
+	# frente do jogador - eles não são posições fixas de tela.
+	var center_world: Vector3 = _screen_to_world(center, depth)
+	var wander_world: Array[Vector3] = []
+	for _i in SIPHON_WANDER_STEPS:
+		var ang := randf() * TAU
+		var raio_norm := sqrt(randf()) # Distribui sem amontoar no miolo
+		var ponto := center + Vector2(
+			cos(ang) * SIPHON_WANDER_RADIUS.x * raio_norm,
+			sin(ang) * SIPHON_WANDER_RADIUS.y * raio_norm
+		)
+		wander_world.append(_screen_to_world(ponto, depth))
+
+	# A subida pro medidor sai do último ponto do vaguear (também no mundo).
+	var last_world: Vector3 = wander_world[wander_world.size() - 1] if wander_world.size() > 0 else center_world
+	# Curvatura da subida, guardada como número: o traçado em si é recalculado
+	# a cada frame com a projeção atualizada dos pontos.
+	var hud_arco := randf_range(-70.0, 70.0)
 
 	# Tween do próprio container: se ele for liberado (poder consumiu o medidor),
 	# o trajeto morre junto e o preenchimento não acontece.
@@ -492,18 +484,50 @@ func _spawn_blood_drop(start: Vector2, amount: float, delay: float) -> void:
 		)
 
 	tw.tween_method(func(t: float) -> void:
-		if is_instance_valid(container):
-			container.position = _bezier2(start, to_weapon_ctrl, weapon, t)
+		if not is_instance_valid(container): return
+		# Reprojeta origem e destino todo frame: se o jogador girar a câmera no
+		# meio do trajeto, a gota acompanha o cenário em vez da tela.
+		var a := _world_to_screen(start_world, container.position)
+		var b := _world_to_screen(center_world, container.position)
+		var ctrl: Vector2 = a.lerp(b, 0.5) + (b - a).orthogonal().normalized() * arco
+		container.position = _bezier2(a, ctrl, b, t)
 	, 0.0, 1.0, SIPHON_TO_PLAYER_TIME * vel).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 
-	# Chegou na arma: pequena "absorvida" (a gota infla e comprime)
-	tw.tween_property(container, "scale", Vector2(1.5, 1.5), 0.07).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	tw.tween_property(container, "scale", Vector2(0.85, 0.85), 0.06).set_trans(Tween.TRANS_SINE)
-
-	# Da arma, sobe para o canto superior esquerdo, onde está o medidor.
+	# Chegou ao centro: pequena "absorvida" (a gota infla e comprime). A posição
+	# continua sendo reprojetada aqui também, senão a gota "congelaria" na tela
+	# por um instante justo enquanto o jogador gira a câmera.
 	tw.tween_method(func(t: float) -> void:
-		if is_instance_valid(container):
-			container.position = _bezier2(weapon, to_hud_ctrl, hud_target, t)
+		if not is_instance_valid(container): return
+		container.position = _world_to_screen(center_world, container.position)
+		container.scale = Vector2.ONE.lerp(Vector2(1.5, 1.5), t)
+	, 0.0, 1.0, 0.07).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw.tween_method(func(t: float) -> void:
+		if not is_instance_valid(container): return
+		container.position = _world_to_screen(center_world, container.position)
+		container.scale = Vector2(1.5, 1.5).lerp(Vector2(0.85, 0.85), t)
+	, 0.0, 1.0, 0.06).set_trans(Tween.TRANS_SINE)
+
+	# Vagueia sem pressa entre os pontos sorteados, com uma curva em cada trecho.
+	var anterior := center_world
+	for destino in wander_world:
+		var origem := anterior
+		var curva := randf_range(-60.0, 60.0)
+		tw.tween_method(func(t: float) -> void:
+			if not is_instance_valid(container): return
+			var a := _world_to_screen(origem, container.position)
+			var b := _world_to_screen(destino, container.position)
+			var ctrl: Vector2 = a.lerp(b, 0.5) + (b - a).orthogonal().normalized() * curva
+			container.position = _bezier2(a, ctrl, b, t)
+		, 0.0, 1.0, SIPHON_WANDER_STEP_TIME * randf_range(0.8, 1.3) * vel).set_trans(Tween.TRANS_SINE)
+		anterior = destino
+
+	# Só então sobe para o medidor. Aqui a gota "descola" do mundo e passa a
+	# ser HUD: a origem ainda acompanha a câmera, o destino é o canto da tela.
+	tw.tween_method(func(t: float) -> void:
+		if not is_instance_valid(container): return
+		var a := _world_to_screen(last_world, container.position)
+		var ctrl: Vector2 = a.lerp(hud_target, 0.5) + (hud_target - a).orthogonal().normalized() * hud_arco
+		container.position = _bezier2(a, ctrl, hud_target, t)
 	, 0.0, 1.0, SIPHON_TO_HUD_TIME * vel).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 
 	tw.tween_callback(func() -> void:

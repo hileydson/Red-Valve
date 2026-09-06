@@ -121,7 +121,16 @@ func _wire_option_popup(option: OptionButton) -> void:
 	)
 
 func _input(event: InputEvent) -> void:
-	if _popup_open: return
+	var is_back = event.is_action_pressed("ui_cancel") or (event is InputEventJoypadButton and event.button_index == JOY_BUTTON_B and event.pressed)
+	
+	if _popup_open:
+		if is_back:
+			for tab in tab_container.get_children():
+				for option in tab.find_children("*", "OptionButton", true, false):
+					if option.get_popup().visible:
+						option.get_popup().hide()
+			get_viewport().set_input_as_handled()
+		return
 
 	if event is InputEventJoypadButton and event.pressed:
 		if event.button_index == JOY_BUTTON_LEFT_SHOULDER:
@@ -131,7 +140,7 @@ func _input(event: InputEvent) -> void:
 			tab_container.current_tab = min(tab_container.get_tab_count() - 1, tab_container.current_tab + 1)
 			get_viewport().set_input_as_handled()
 			
-	if event.is_action_pressed("ui_cancel"):
+	if is_back:
 		back_btn.pressed.emit()
 		get_viewport().set_input_as_handled()
 
