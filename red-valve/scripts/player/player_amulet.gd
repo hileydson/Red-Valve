@@ -38,6 +38,7 @@ func _process_amulet_magic(delta: float) -> void:
 				if player.hand_with_magic: player.hand_with_magic.visible = true
 
 				_ensure_amuleto_visual()
+				_set_aim_beam_active(true)
 				if player.amuleto_node:
 					player.amuleto_node.visible = true
 					if player.amuleto_particles:
@@ -166,12 +167,15 @@ func _hide_amulet_magic() -> void:
 		player.amuleto_node.visible = false
 		if player.amuleto_particles:
 			player.amuleto_particles.emitting = false
-			
+
+	_set_aim_beam_active(false)
+
 	_clear_amulet_hover()
-	
+
 	for enemy in player.amulet_selected_enemies:
 		if is_instance_valid(enemy):
 			_remove_silhouette(enemy)
+			_remove_magic_aura(enemy)
 	player.amulet_selected_enemies.clear()
 
 func _process_amulet_targeting() -> void:
@@ -212,9 +216,12 @@ func _process_amulet_targeting() -> void:
 			# Já estava selecionado: remove a seleção
 			player.amulet_selected_enemies.erase(enemy)
 			_apply_silhouette(enemy, Color(1.0, 1.0, 1.0, 0.5)) # Volta para hover fraco
+			_remove_magic_aura(enemy)
 		elif player.amulet_selected_enemies.size() < player.max_amulet_targets:
 			player.amulet_selected_enemies.append(enemy)
 			_apply_silhouette(enemy, Color(1.0, 0.0, 0.0, 0.8)) # Vermelho forte (Selecionado)
+			_play_selection_burst(enemy)
+			_apply_magic_aura(enemy)
 
 		if player.amulet_counter_label:
 			player.amulet_counter_label.text = str(player.amulet_selected_enemies.size())
@@ -260,6 +267,253 @@ func _get_all_meshes(node: Node) -> Array:
 		result.append_array(_get_all_meshes(child))
 	return result
 
+# ---------------------------------------------------------------------------
+# Feixe de mira: luz reta saindo da câmera, iluminando o caminho até onde o
+# jogador está mirando. Só existe enquanto o poder do amuleto está ativo.
+# ---------------------------------------------------------------------------
+const AIM_BEAM_RANGE := 30.0
+
+func _set_aim_beam_active(active: bool) -> void:
+	if not active:
+		var existing = _get_aim_beam()
+		if existing: existing.visible = false
+		return
+
+	var beam = _get_aim_beam()
+	if not beam: beam = _create_aim_beam()
+	if beam: beam.visible = true
+
+func _get_aim_beam() -> Node3D:
+	if not is_instance_valid(player.camera): return null
+	return player.camera.get_node_or_null("AmuletAimBeam")
+
+func _create_aim_beam() -> Node3D:
+	if not is_instance_valid(player.camera): return null
+
+	var root := Node3D.new()
+	root.name = "AmuletAimBeam"
+	player.camera.add_child(root)
+
+	# Luz de verdade: ilumina o cenário e os inimigos ao longo da mira.
+	var light := SpotLight3D.new()
+	light.spot_range = AIM_BEAM_RANGE
+	light.spot_angle = 7.0
+	light.spot_angle_attenuation = 0.6
+	light.spot_attenuation = 0.8
+	light.light_energy = 4.0
+	light.light_color = Color(0.75, 0.55, 1.0)
+	light.shadow_enabled = false # Barato: o feixe é sempre reto e curto
+	light.position = Vector3(0, 0, -0.3)
+	root.add_child(light)
+
+	# Cone visível do feixe (aditivo, some conforme se afasta da câmera).
+	var cone := MeshInstance3D.new()
+	var mesh := CylinderMesh.new()
+	mesh.top_radius = 0.02
+	mesh.bottom_radius = 0.85
+	mesh.height = AIM_BEAM_RANGE
+	mesh.radial_segments = 16
+	mesh.rings = 1
+	cone.mesh = mesh
+	cone.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+
+	var mat := StandardMaterial3D.new()
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	mat.albedo_color = Color(0.6, 0.4, 1.0, 0.06)
+	mat.disable_receive_shadows = true
+	cone.material_override = mat
+
+	# Deitado no eixo -Z (frente da câmera), começando logo à frente dela.
+	cone.rotation.x = deg_to_rad(-90)
+	cone.position = Vector3(0, 0, -AIM_BEAM_RANGE * 0.5)
+	root.add_child(cone)
+
+	return root
+
+# ---------------------------------------------------------------------------
+# Seleção do inimigo: estouro mágico no momento do clique + aura permanente
+# girando em volta de quem está marcado.
+# ---------------------------------------------------------------------------
+const AURA_NAME := "AmuletMagicAura"
+
+func _play_selection_burst(enemy: Node3D) -> void:
+	if not is_instance_valid(enemy): return
+
+	var burst := Node3D.new()
+	burst.name = "AmuletSelectionBurst"
+	enemy.get_parent().add_child(burst)
+	burst.global_position = enemy.global_position + Vector3.UP * 1.0
+
+	# Anel de choque que abre e some
+	var ring := MeshInstance3D.new()
+	var torus := TorusMesh.new()
+	torus.inner_radius = 0.75
+	torus.outer_radius = 0.9
+	ring.mesh = torus
+	ring.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	var ring_mat := StandardMaterial3D.new()
+	ring_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	ring_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	ring_mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	ring_mat.albedo_color = Color(0.9, 0.3, 1.0, 1.0)
+	ring.material_override = ring_mat
+	ring.scale = Vector3(0.2, 0.2, 0.2)
+	burst.add_child(ring)
+
+	# Faíscas saindo pra fora
+	var sparks := CPUParticles3D.new()
+	sparks.emitting = true
+	sparks.one_shot = true
+	sparks.explosiveness = 1.0
+	sparks.amount = 60
+	sparks.lifetime = 0.7
+	sparks.local_coords = false
+	sparks.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
+	sparks.emission_sphere_radius = 0.5
+	sparks.direction = Vector3.UP
+	sparks.spread = 180.0
+	sparks.gravity = Vector3(0, -1.5, 0)
+	sparks.initial_velocity_min = 2.0
+	sparks.initial_velocity_max = 5.0
+	sparks.scale_amount_min = 0.5
+	sparks.scale_amount_max = 1.0
+	var grad := Gradient.new()
+	grad.offsets = [0.0, 0.5, 1.0]
+	grad.colors = [Color(1.0, 0.9, 1.0, 1.0), Color(0.8, 0.2, 1.0, 1.0), Color(1.0, 0.1, 0.2, 0.0)]
+	grad.interpolation_mode = Gradient.GRADIENT_INTERPOLATE_LINEAR
+	sparks.color_ramp = grad
+	sparks.mesh = _make_spark_mesh()
+	burst.add_child(sparks)
+
+	# Clarão curto pra "vender" o impacto da escolha
+	var flash := OmniLight3D.new()
+	flash.light_color = Color(0.85, 0.4, 1.0)
+	flash.light_energy = 8.0
+	flash.omni_range = 6.0
+	flash.shadow_enabled = false
+	burst.add_child(flash)
+
+	var sfx := AudioStreamPlayer3D.new()
+	sfx.stream = load("res://assets/sounds/player/blade_in.mp3")
+	sfx.pitch_scale = 1.6
+	sfx.unit_size = 8.0
+	sfx.volume_db = -4.0
+	burst.add_child(sfx)
+	sfx.play()
+
+	GlobalUtils.vibrate_controller(null, 0.25, 0.4, 0.15)
+
+	var tw := create_tween().set_parallel(true)
+	tw.tween_property(ring, "scale", Vector3(2.4, 2.4, 2.4), 0.45).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	tw.tween_property(ring_mat, "albedo_color:a", 0.0, 0.45).set_trans(Tween.TRANS_SINE)
+	tw.tween_property(flash, "light_energy", 0.0, 0.3).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tw.chain().tween_interval(0.8)
+	tw.chain().tween_callback(burst.queue_free)
+
+func _make_spark_mesh() -> Mesh:
+	var mat := StandardMaterial3D.new()
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	mat.vertex_color_use_as_albedo = true
+	var mesh := SphereMesh.new()
+	mesh.radius = 0.05
+	mesh.height = 0.1
+	mesh.material = mat
+	return mesh
+
+func _apply_magic_aura(enemy: Node3D) -> void:
+	if not is_instance_valid(enemy): return
+	if enemy.has_node(AURA_NAME): return
+
+	var aura := Node3D.new()
+	aura.name = AURA_NAME
+	enemy.add_child(aura)
+	aura.position = Vector3(0, 1.0, 0)
+
+	# Dois anéis rúnicos girando em sentidos opostos
+	for i in range(2):
+		var ring := MeshInstance3D.new()
+		var torus := TorusMesh.new()
+		torus.inner_radius = 0.85 if i == 0 else 0.6
+		torus.outer_radius = 0.92 if i == 0 else 0.66
+		torus.rings = 24
+		ring.mesh = torus
+		ring.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+
+		var mat := StandardMaterial3D.new()
+		mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+		mat.albedo_color = Color(1.0, 0.25, 0.35, 0.9) if i == 0 else Color(0.7, 0.35, 1.0, 0.9)
+		ring.material_override = mat
+
+		ring.rotation = Vector3(deg_to_rad(15.0 if i == 0 else -25.0), 0, deg_to_rad(10.0 * float(i)))
+		ring.position.y = -0.15 if i == 0 else 0.35
+		aura.add_child(ring)
+
+		# Giro infinito (sentidos opostos) e pulsar de escala
+		var spin := create_tween().set_loops()
+		var dir := 1.0 if i == 0 else -1.0
+		spin.tween_property(ring, "rotation:y", ring.rotation.y + dir * TAU, 2.4 + float(i)).from_current()
+
+		var pulse := create_tween().set_loops()
+		pulse.tween_property(ring, "scale", Vector3(1.08, 1.08, 1.08), 0.6).set_trans(Tween.TRANS_SINE)
+		pulse.tween_property(ring, "scale", Vector3(0.94, 0.94, 0.94), 0.6).set_trans(Tween.TRANS_SINE)
+
+	# Chamas mágicas subindo em volta do corpo
+	var flames := CPUParticles3D.new()
+	flames.amount = 90
+	flames.lifetime = 1.1
+	flames.local_coords = false
+	flames.emission_shape = CPUParticles3D.EMISSION_SHAPE_RING
+	flames.emission_ring_radius = 0.65
+	flames.emission_ring_inner_radius = 0.45
+	flames.emission_ring_height = 0.1
+	flames.emission_ring_axis = Vector3.UP
+	flames.direction = Vector3.UP
+	flames.spread = 12.0
+	flames.gravity = Vector3(0, 1.2, 0)
+	flames.initial_velocity_min = 0.6
+	flames.initial_velocity_max = 1.6
+	flames.position.y = -0.9
+	flames.scale_amount_min = 0.6
+	flames.scale_amount_max = 1.2
+
+	var fgrad := Gradient.new()
+	fgrad.offsets = [0.0, 0.35, 0.7, 1.0]
+	fgrad.colors = [
+		Color(1.0, 1.0, 1.0, 0.0),
+		Color(1.0, 0.2, 0.3, 0.9),
+		Color(0.7, 0.2, 1.0, 0.7),
+		Color(0.3, 0.0, 0.5, 0.0)
+	]
+	flames.color_ramp = fgrad
+	flames.mesh = _make_spark_mesh()
+	flames.emitting = true
+	aura.add_child(flames)
+
+	# Luz de apoio pra aura "vazar" no cenário
+	var glow := OmniLight3D.new()
+	glow.light_color = Color(0.9, 0.35, 0.9)
+	glow.light_energy = 1.6
+	glow.omni_range = 4.0
+	glow.shadow_enabled = false
+	aura.add_child(glow)
+
+	# Entrada: a aura nasce do chão e cresce
+	aura.scale = Vector3(0.1, 0.1, 0.1)
+	var grow := create_tween()
+	grow.tween_property(aura, "scale", Vector3.ONE, 0.35).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+func _remove_magic_aura(enemy: Node) -> void:
+	if not is_instance_valid(enemy): return
+	var aura = enemy.get_node_or_null(AURA_NAME)
+	if aura: aura.queue_free()
+
 func _on_amulet_magic_released() -> void:
 	if player.amulet_selected_enemies.size() == 0:
 		return
@@ -269,6 +523,7 @@ func _on_amulet_magic_released() -> void:
 	for e in player.amulet_selected_enemies:
 		if is_instance_valid(e):
 			_remove_silhouette(e)
+			_remove_magic_aura(e)
 			GlobalEvents.amulet_captured_enemies.append(e)
 
 	player.amulet_selected_enemies.clear()

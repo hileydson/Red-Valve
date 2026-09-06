@@ -5,12 +5,20 @@ var title_label: Label
 var tab_container: TabContainer
 var back_btn: Button
 
+# Fica true enquanto a lista suspensa de algum OptionButton está aberta. Sem
+# isso, o mesmo evento do controle (D-pad, LB/RB, cancelar) era processado ao
+# mesmo tempo pela lista e pelo menu por trás dela - trocava de aba ou movia o
+# foco enquanto o jogador só queria escolher uma opção.
+var _popup_open: bool = false
+
 # Gameplay Tab
 var tab_gameplay: MarginContainer
 var lang_label: Label
 var lang_option: OptionButton
 var run_label: Label
 var run_option: OptionButton
+var aim_assist_label: Label
+var aim_assist_check: CheckButton
 
 # Controls Tab
 var tab_controls: MarginContainer
@@ -97,7 +105,22 @@ func _focus_first_item() -> void:
 	elif tab_container.current_tab == 2 and is_instance_valid(display_option):
 		display_option.grab_focus()
 
+func _wire_option_popup(option: OptionButton) -> void:
+	# Enquanto a lista está aberta ela é a única a receber navegação: soltamos o
+	# foco do menu de trás e devolvemos pro próprio OptionButton ao fechar.
+	var popup := option.get_popup()
+	popup.about_to_popup.connect(func():
+		_popup_open = true
+		if get_viewport(): get_viewport().gui_release_focus()
+	)
+	popup.popup_hide.connect(func():
+		_popup_open = false
+		if is_instance_valid(option): option.grab_focus()
+	)
+
 func _input(event: InputEvent) -> void:
+	if _popup_open: return
+
 	if event is InputEventJoypadButton and event.pressed:
 		if event.button_index == JOY_BUTTON_LEFT_SHOULDER:
 			tab_container.current_tab = max(0, tab_container.current_tab - 1)
@@ -111,6 +134,7 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 func _process(delta: float) -> void:
+	if _popup_open: return
 	if tab_container.current_tab == 1 and is_instance_valid(controls_scroll):
 		var joy_y = Input.get_axis("ui_look_up", "ui_look_down")
 		if abs(joy_y) > 0.1:
@@ -145,6 +169,7 @@ func _build_gameplay_tab():
 	lang_option.add_item(tr("CONFIG_LANG_PT"), 1)
 	if SaveManager.config["language"] == "en": lang_option.select(0)
 	else: lang_option.select(1)
+	_wire_option_popup(lang_option)
 	lang_option.item_selected.connect(_on_lang_selected)
 	vbox.add_child(lang_option)
 	
@@ -160,9 +185,22 @@ func _build_gameplay_tab():
 	run_option.add_item(tr("CONFIG_RUN_TOGGLE"), 1)
 	if SaveManager.config["run_mode"] == "hold": run_option.select(0)
 	else: run_option.select(1)
+	_wire_option_popup(run_option)
 	run_option.item_selected.connect(_on_run_selected)
 	vbox.add_child(run_option)
-	
+
+	# Assistente de mira
+	aim_assist_label = Label.new()
+	aim_assist_label.text = tr("CONFIG_AIM_ASSIST")
+	aim_assist_label.add_theme_font_size_override("font_size", 20)
+	vbox.add_child(aim_assist_label)
+
+	aim_assist_check = CheckButton.new()
+	aim_assist_check.add_theme_font_size_override("font_size", 20)
+	aim_assist_check.button_pressed = SaveManager.config.get("aim_assist", true)
+	aim_assist_check.toggled.connect(func(pressed): SaveManager.config["aim_assist"] = pressed)
+	vbox.add_child(aim_assist_check)
+
 	tab_container.add_child(tab_gameplay)
 
 func _build_controls_tab():
@@ -301,6 +339,7 @@ func _build_video_tab():
 	else:
 		display_option.select(1)
 		
+	_wire_option_popup(display_option)
 	display_option.item_selected.connect(_on_display_mode_selected)
 	vbox.add_child(display_option)
 	
@@ -321,6 +360,7 @@ func _build_video_tab():
 	elif r_val == "1080p": resolution_option.select(1)
 	else: resolution_option.select(2)
 	
+	_wire_option_popup(resolution_option)
 	resolution_option.item_selected.connect(_on_resolution_selected)
 	vbox.add_child(resolution_option)
 	
@@ -418,6 +458,7 @@ func _on_lang_selected(index: int) -> void:
 	run_option.set_item_text(0, tr("CONFIG_RUN_HOLD"))
 	run_option.set_item_text(1, tr("CONFIG_RUN_TOGGLE"))
 	
+	if is_instance_valid(aim_assist_label): aim_assist_label.text = tr("CONFIG_AIM_ASSIST")
 	if is_instance_valid(deadzone_label): deadzone_label.text = tr("CONFIG_DEADZONE")
 	if is_instance_valid(sens_look_label): sens_look_label.text = tr("CONFIG_SENS_LOOK")
 	if is_instance_valid(sens_aim_label): sens_aim_label.text = tr("CONFIG_SENS_AIM")

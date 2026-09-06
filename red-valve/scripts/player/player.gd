@@ -405,6 +405,11 @@ func _ready():
 	amulet_component.name = "PlayerAmulet"
 	add_child(amulet_component)
 	
+	# Instancia Componente do Assistente de Mira (aim assist)
+	var aim_assist_component = load("res://scripts/player/player_aim_assist.gd").new()
+	aim_assist_component.name = "PlayerAimAssist"
+	add_child(aim_assist_component)
+
 	# Instancia Componente do Menu Radial da Cogblade (segurar C / L1)
 	var cogblade_menu_component = load("res://scripts/player/player_cogblade_menu.gd").new()
 	cogblade_menu_component.name = "PlayerCogbladeMenu"

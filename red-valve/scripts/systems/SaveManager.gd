@@ -33,6 +33,7 @@ var default_config = {
 	"resolution": "1080p",
 	"display_mode": "windowed",
 	"brightness": 1.0,
+	"aim_assist": true,
 	"cel_shading": false,
 	"cel_shading_intensity": 0.65 # Faixa útil: 0.55 a 0.85 (ver menu de vídeo)
 }

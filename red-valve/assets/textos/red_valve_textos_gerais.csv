@@ -95,6 +95,7 @@ CONFIG_DISPLAY_FULLSCREEN,"Fullscreen","Tela Cheia"
 CONFIG_DISPLAY_WINDOWED,"Windowed","Modo Janela"
 CONFIG_CEL_SHADING,"Cel Shading (Cartoon)","Cel Shading (Cartoon)"
 CONFIG_CEL_SHADING_INTENSITY,"Cel Shading Intensity","Intensidade do Cel Shading"
+CONFIG_AIM_ASSIST,"Aim Assist","Assistente de Mira"
 TXT_PROLOGUE,"PROLOGUE","PRÓLOGO"
 TXT_CHAPTER_1,"CHAPTER 1","CAPÍTULO 1"
 ACTION_USE,Use,Usar
