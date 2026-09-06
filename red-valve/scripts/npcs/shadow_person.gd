@@ -60,6 +60,19 @@ const BASE_HEIGHT := 1.75
 ## Distancia que a crianca tenta manter do adulto.
 @export var follow_distance: float = 1.8
 
+@export_group("Passos")
+## Volume dos passos do adulto, somado ao volume do proprio no de audio.
+@export var step_volume_db: float = 0.0
+## Crianca pisa mais leve: este valor e SOMADO ao de cima (negativo = mais baixo).
+@export var child_step_volume_db: float = -7.0
+@export var step_pitch: float = 1.0
+## Pitch dos passos da crianca andando...
+@export var child_step_pitch: float = 1.35
+## ...e correndo (interpolado conforme a velocidade).
+@export var child_run_step_pitch: float = 1.75
+## Variacao aleatoria de pitch, pra dois passos nunca soarem iguais.
+@export var step_pitch_jitter: float = 0.06
+
 var state: State = State.WANDER
 var partner: ShadowPerson = null
 ## Adultos so interagem com adultos, criancas so com criancas.
@@ -89,6 +102,11 @@ var _gesture_phase := 0.0
 var _gesture_seed := 0.0
 var _speaking := true
 var _speak_timer := 0.0
+
+# passos
+var _steps: Node = null
+var _steps_base_db := 0.0
+var _step_half := 0
 
 # rig
 var _rig: Node3D
@@ -128,13 +146,13 @@ const VARIANTS: Array[Dictionary] = [
 
 ## Criancas: baixas, cabeca grande, pernas curtas, ombros estreitos.
 const CHILD_VARIANTS: Array[Dictionary] = [
-	{"name": "crianca_pequena", "height": 0.58, "girth": 1.15, "limb": 1.20, "shoulders": 0.80, "belly": 0.20, "hair": "short", "head": 1.30},
-	{"name": "crianca_magra", "height": 0.68, "girth": 0.95, "limb": 1.05, "shoulders": 0.78, "belly": 0.05, "hair": "short", "head": 1.22},
-	{"name": "crianca_cabeluda", "height": 0.64, "girth": 1.00, "limb": 1.10, "shoulders": 0.76, "belly": 0.10, "hair": "long", "head": 1.26},
-	{"name": "crianca_rabo_de_cavalo", "height": 0.66, "girth": 0.98, "limb": 1.08, "shoulders": 0.76, "belly": 0.08, "hair": "bun", "head": 1.24},
-	{"name": "crianca_espetada", "height": 0.62, "girth": 1.05, "limb": 1.12, "shoulders": 0.80, "belly": 0.15, "hair": "tuft", "head": 1.28},
-	{"name": "crianca_careca", "height": 0.60, "girth": 1.10, "limb": 1.15, "shoulders": 0.78, "belly": 0.18, "hair": "bald", "head": 1.32},
-	{"name": "crianca_maior", "height": 0.75, "girth": 0.92, "limb": 1.00, "shoulders": 0.84, "belly": 0.0, "hair": "short", "head": 1.16},
+	{"name": "crianca_pequena", "height": 0.50, "girth": 1.15, "limb": 1.20, "shoulders": 0.80, "belly": 0.20, "hair": "short", "head": 1.30},
+	{"name": "crianca_magra", "height": 0.59, "girth": 0.95, "limb": 1.05, "shoulders": 0.78, "belly": 0.05, "hair": "short", "head": 1.22},
+	{"name": "crianca_cabeluda", "height": 0.56, "girth": 1.00, "limb": 1.10, "shoulders": 0.76, "belly": 0.10, "hair": "long", "head": 1.26},
+	{"name": "crianca_rabo_de_cavalo", "height": 0.58, "girth": 0.98, "limb": 1.08, "shoulders": 0.76, "belly": 0.08, "hair": "bun", "head": 1.24},
+	{"name": "crianca_espetada", "height": 0.54, "girth": 1.05, "limb": 1.12, "shoulders": 0.80, "belly": 0.15, "hair": "tuft", "head": 1.28},
+	{"name": "crianca_careca", "height": 0.52, "girth": 1.10, "limb": 1.15, "shoulders": 0.78, "belly": 0.18, "hair": "bald", "head": 1.32},
+	{"name": "crianca_maior", "height": 0.65, "girth": 0.92, "limb": 1.00, "shoulders": 0.84, "belly": 0.0, "hair": "short", "head": 1.16},
 ]
 
 
@@ -168,6 +186,7 @@ func _ready() -> void:
 	else:
 		add_to_group("shadow_adult")
 
+	_find_steps_player()
 	_build_body()
 	_setup_collision()
 	_setup_nav()
@@ -190,6 +209,40 @@ func _exit_tree() -> void:
 	_population = maxi(0, _population - 1)
 	if is_child:
 		_child_population = maxi(0, _child_population - 1)
+
+
+## Procura o no de audio de passos que voce tiver colocado na cena. Aceita
+## AudioStreamPlayer3D ou 2D, com qualquer nome parecido com "passos"/"steps";
+## se nao achar por nome, pega o primeiro player de audio filho.
+func _find_steps_player() -> void:
+	var fallback: Node = null
+	for c in get_children():
+		var is_player := c is AudioStreamPlayer3D or c is AudioStreamPlayer or c is AudioStreamPlayer2D
+		if not is_player:
+			continue
+		if fallback == null:
+			fallback = c
+		var n := String(c.name).to_lower()
+		if n.contains("step") or n.contains("passo") or n.contains("foot"):
+			_steps = c
+			break
+	if _steps == null:
+		_steps = fallback
+	if _steps != null:
+		_steps_base_db = _steps.volume_db
+		_steps.volume_db = _steps_base_db + step_volume_db + (child_step_volume_db if is_child else 0.0)
+
+
+## Toca um passo. Crianca correndo sobe o pitch junto com a velocidade.
+func _play_step(speed_ratio: float) -> void:
+	if _steps == null:
+		return
+	var pitch := step_pitch
+	if is_child:
+		pitch = lerpf(child_step_pitch, child_run_step_pitch, clampf(speed_ratio - 1.0, 0.0, 1.0))
+	pitch += _rng.randf_range(-step_pitch_jitter, step_pitch_jitter)
+	_steps.pitch_scale = maxf(pitch, 0.05)
+	_steps.play()
 
 
 # ---------------------------------------------------------------- construcao
@@ -735,7 +788,13 @@ func _animate(delta: float) -> void:
 	var talking := state == State.TALK
 
 	if moving:
+		var before := _walk_phase
 		_walk_phase += delta * (4.2 + planar * 1.6)
+		# cada meio ciclo do balanco das pernas e um pe batendo no chao
+		var half := int(floor(_walk_phase / PI))
+		if half != int(floor(before / PI)) and is_on_floor() and state != State.PICKUP:
+			_play_step(planar / maxf(walk_speed, 0.01))
+		_step_half = half
 	_gesture_phase += delta
 
 	if state == State.PICKUP:
