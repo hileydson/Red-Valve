@@ -47,6 +47,7 @@ func _process_amulet_magic(delta: float) -> void:
 		if is_instance_valid(player.amuleto_node):
 			player.amuleto_node.rotate_y(delta * 8.0) # Amuleto girando rapidamente
 
+		_update_enemy_highlights()
 		_process_amulet_targeting()
 	else:
 		if player.amulet_magic_active:
@@ -169,6 +170,7 @@ func _hide_amulet_magic() -> void:
 			player.amuleto_particles.emitting = false
 
 	_set_aim_beam_active(false)
+	_clear_enemy_highlights()
 
 	_clear_amulet_hover()
 
@@ -220,6 +222,7 @@ func _process_amulet_targeting() -> void:
 		elif player.amulet_selected_enemies.size() < player.max_amulet_targets:
 			player.amulet_selected_enemies.append(enemy)
 			_apply_silhouette(enemy, Color(1.0, 0.0, 0.0, 0.8)) # Vermelho forte (Selecionado)
+			_remove_enemy_highlight(enemy)
 			_play_selection_burst(enemy)
 			_apply_magic_aura(enemy)
 
@@ -266,6 +269,89 @@ func _get_all_meshes(node: Node) -> Array:
 	for child in node.get_children():
 		result.append_array(_get_all_meshes(child))
 	return result
+
+# ---------------------------------------------------------------------------
+# Realce dos inimigos ainda NÃO selecionados: enquanto a mira do amuleto está
+# ativa, todo inimigo dentro do alcance ganha um contorno brilhante por cima do
+# material original (material_overlay). Sem isso, em cenário escuro o jogador
+# só enxergava o inimigo quando a mira encostava nele.
+# ---------------------------------------------------------------------------
+const HIGHLIGHT_RANGE := 45.0
+const HIGHLIGHT_META := "amulet_highlight_meshes"
+
+var _highlighted: Array = []
+var _highlight_material: ShaderMaterial
+
+func _get_highlight_material() -> ShaderMaterial:
+	if is_instance_valid(_highlight_material): return _highlight_material
+
+	var shader = load("res://shaders/effects/enemy_highlight.gdshader")
+	if not shader: return null
+
+	# Um único material compartilhado por todos os inimigos realçados.
+	_highlight_material = ShaderMaterial.new()
+	_highlight_material.shader = shader
+	_highlight_material.set_shader_parameter("rim_color", Color(0.5, 0.8, 1.0))
+	_highlight_material.set_shader_parameter("rim_power", 2.2)
+	_highlight_material.set_shader_parameter("rim_intensity", 1.2)
+	_highlight_material.set_shader_parameter("fill_intensity", 0.14)
+	_highlight_material.set_shader_parameter("pulse_speed", 2.0)
+	_highlight_material.set_shader_parameter("pulse_amount", 0.25)
+	return _highlight_material
+
+func _update_enemy_highlights() -> void:
+	var origin: Vector3 = player.global_position
+	var ativos := {}
+
+	for enemy in get_tree().get_nodes_in_group("enemies"):
+		if not (enemy is Node3D) or not is_instance_valid(enemy): continue
+		# Inimigos da cena pausada atrás da arena continuam no grupo.
+		if not enemy.is_inside_tree() or not enemy.can_process(): continue
+		if not enemy.is_visible_in_tree(): continue
+		if "dead" in enemy and enemy.dead: continue
+		if origin.distance_to(enemy.global_position) > HIGHLIGHT_RANGE: continue
+		# Selecionado já tem silhueta vermelha + aura própria: não precisa do realce.
+		if player.amulet_selected_enemies.has(enemy): continue
+
+		ativos[enemy] = true
+		_apply_enemy_highlight(enemy)
+
+	# Tira o realce de quem saiu do alcance, morreu ou acabou de ser escolhido.
+	for enemy in _highlighted.duplicate():
+		if not ativos.has(enemy):
+			_remove_enemy_highlight(enemy)
+
+func _apply_enemy_highlight(enemy: Node) -> void:
+	if enemy.has_meta(HIGHLIGHT_META): return
+
+	var mat := _get_highlight_material()
+	if not mat: return
+
+	var alterados := []
+	for m in _get_all_meshes(enemy):
+		# Respeita quem já tinha overlay próprio (não sobrescreve nem perde).
+		if m.material_overlay != null: continue
+		m.material_overlay = mat
+		alterados.append(m)
+
+	enemy.set_meta(HIGHLIGHT_META, alterados)
+	if not _highlighted.has(enemy):
+		_highlighted.append(enemy)
+
+func _remove_enemy_highlight(enemy) -> void:
+	_highlighted.erase(enemy)
+	if not is_instance_valid(enemy): return
+	if not enemy.has_meta(HIGHLIGHT_META): return
+
+	for m in enemy.get_meta(HIGHLIGHT_META):
+		if is_instance_valid(m):
+			m.material_overlay = null
+	enemy.remove_meta(HIGHLIGHT_META)
+
+func _clear_enemy_highlights() -> void:
+	for enemy in _highlighted.duplicate():
+		_remove_enemy_highlight(enemy)
+	_highlighted.clear()
 
 # ---------------------------------------------------------------------------
 # Feixe de mira: luz reta saindo da câmera, iluminando o caminho até onde o
@@ -519,6 +605,8 @@ func _on_amulet_magic_released() -> void:
 		return
 
 	# Guardamos os inimigos para transferir
+	_clear_enemy_highlights()
+
 	GlobalEvents.amulet_captured_enemies.clear()
 	for e in player.amulet_selected_enemies:
 		if is_instance_valid(e):
