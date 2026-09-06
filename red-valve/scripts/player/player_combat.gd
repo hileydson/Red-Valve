@@ -285,21 +285,23 @@ func spawn_blood_effect(body: Node3D) -> void:
 # SIFÃO DE SANGUE -> MEDIDOR DA COGBLADE
 # =========================================================================
 # O medidor não enche mais no instante do dano. Uma pequena porção do sangue
-# do inimigo vira uma gota 2D que viaja até o player (centro da tela), vagueia
-# um instante por pontos aleatórios ali por perto, sobe para o canto superior
-# esquerdo (onde fica a HUD do medidor), respinga no medidor e só então o
-# preenchimento acontece.
+# do inimigo vira uma gota 2D que voa até a frente do player, espirra pra cima,
+# cai no chão por gravidade, descansa um instante ali e só então é sugada para
+# o canto superior esquerdo (onde fica a HUD do medidor), respinga no medidor e
+# o preenchimento acontece.
 
 ## Tempo da gota do inimigo até o centro da tela (o player).
 const SIPHON_TO_PLAYER_TIME: float = 0.30
 ## Tempo do centro da tela até o medidor no canto superior esquerdo.
 const SIPHON_TO_HUD_TIME: float = 0.26
-## Quantas voltas a gota dá vagando perto do centro antes de subir pro medidor.
-const SIPHON_WANDER_STEPS: int = 3
-## Tempo de cada trecho do vaguear.
-const SIPHON_WANDER_STEP_TIME: float = 0.22
-## Raio (em pixels) da área em volta do centro onde a gota fica vagando.
-const SIPHON_WANDER_RADIUS: Vector2 = Vector2(230.0, 150.0)
+## Velocidade vertical do espirro (m/s) ao chegar na frente do jogador.
+const SIPHON_SPLASH_UP: Vector2 = Vector2(3.4, 5.2)
+## Espalhamento horizontal do espirro (m/s).
+const SIPHON_SPLASH_SIDE: float = 1.8
+## Gravidade do voo da gota (m/s²) - mais forte que a real, fica mais "peso".
+const SIPHON_GRAVITY: float = 16.0
+## Tempo que a gota fica parada no chão antes de ser sugada pro medidor.
+const SIPHON_GROUND_REST: float = 0.18
 ## Quantas gotas de sangue cada dano manda para o medidor.
 const SIPHON_DROPS_PER_HIT: int = 4
 ## Atraso entre uma gota e a seguinte do mesmo golpe.
@@ -365,8 +367,8 @@ func _spawn_blood_siphon(start: Vector2, amount: float, source_pos = null) -> vo
 # girar a câmera faz o sangue deslizar pela tela como qualquer coisa parada no
 # cenário, em vez de ficar colado no visor.
 
-## Profundidade (em metros) dos pontos onde a gota vagueia à frente do jogador.
-const SIPHON_WANDER_DEPTH: Vector2 = Vector2(3.0, 6.0)
+## Profundidade (em metros) do ponto à frente do jogador onde a gota espirra.
+const SIPHON_SPLASH_DEPTH: Vector2 = Vector2(2.5, 4.5)
 
 func _cam() -> Camera3D:
 	var vp := player.get_viewport() if is_instance_valid(player) else null
@@ -386,6 +388,19 @@ func _world_to_screen(world: Vector3, fallback: Vector2) -> Vector2:
 	if not is_instance_valid(cam) or cam.is_position_behind(world): return fallback
 	return cam.unproject_position(world)
 
+## Altura do chão logo abaixo de `world`. Sem colisão embaixo (ou sem cena),
+## assume a altura dos pés do player.
+func _ground_height(world: Vector3) -> float:
+	var piso: float = player.global_position.y
+	if not player.is_inside_tree(): return piso
+
+	var space := player.get_world_3d().direct_space_state
+	var query := PhysicsRayQueryParameters3D.create(world + Vector3.UP * 0.2, world + Vector3.DOWN * 25.0)
+	query.exclude = [player.get_rid()]
+	var hit := space.intersect_ray(query)
+	if hit.has("position"): return hit["position"].y
+	return piso
+
 func _spawn_blood_drop(start: Vector2, amount: float, delay: float, source_pos = null) -> void:
 	var vp_size: Vector2 = player.get_viewport().get_visible_rect().size
 	var center: Vector2 = vp_size * 0.5
@@ -393,7 +408,7 @@ func _spawn_blood_drop(start: Vector2, amount: float, delay: float, source_pos =
 
 	# Profundidade desta gota: quanto mais perto da câmera, mais ela desliza
 	# quando o jogador vira - é o mesmo paralaxe de qualquer objeto do cenário.
-	var depth := randf_range(SIPHON_WANDER_DEPTH.x, SIPHON_WANDER_DEPTH.y)
+	var depth := randf_range(SIPHON_SPLASH_DEPTH.x, SIPHON_SPLASH_DEPTH.y)
 	var cam := _cam()
 	# A origem fica presa ao ponto exato do golpe no inimigo (quando temos ele).
 	var start_depth: float = depth
@@ -453,21 +468,31 @@ func _spawn_blood_drop(start: Vector2, amount: float, delay: float, source_pos =
 
 	# Depois de chegar ao centro, a gota vagueia por pontos aleatórios ali por
 	# perto antes de decidir subir - cada gota faz um caminho diferente.
-	# Tanto o "centro" quanto os pontos do vaguear viram pontos do MUNDO à
-	# frente do jogador - eles não são posições fixas de tela.
+	# O ponto de chegada à frente do jogador é do MUNDO, não da tela.
 	var center_world: Vector3 = _screen_to_world(center, depth)
-	var wander_world: Array[Vector3] = []
-	for _i in SIPHON_WANDER_STEPS:
-		var ang := randf() * TAU
-		var raio_norm := sqrt(randf()) # Distribui sem amontoar no miolo
-		var ponto := center + Vector2(
-			cos(ang) * SIPHON_WANDER_RADIUS.x * raio_norm,
-			sin(ang) * SIPHON_WANDER_RADIUS.y * raio_norm
-		)
-		wander_world.append(_screen_to_world(ponto, depth))
 
-	# A subida pro medidor sai do último ponto do vaguear (também no mundo).
-	var last_world: Vector3 = wander_world[wander_world.size() - 1] if wander_world.size() > 0 else center_world
+	# Espirro: velocidade inicial pra cima com uma abertura lateral aleatória.
+	var vel_inicial := Vector3(
+		randf_range(-SIPHON_SPLASH_SIDE, SIPHON_SPLASH_SIDE),
+		randf_range(SIPHON_SPLASH_UP.x, SIPHON_SPLASH_UP.y),
+		randf_range(-SIPHON_SPLASH_SIDE, SIPHON_SPLASH_SIDE)
+	)
+
+	# Onde é o chão embaixo desse ponto (raycast), e quanto tempo o voo dura.
+	var chao_y: float = _ground_height(center_world)
+	var queda: float = maxf(center_world.y - chao_y, 0.05)
+	var voo: float = (vel_inicial.y + sqrt(vel_inicial.y * vel_inicial.y + 2.0 * SIPHON_GRAVITY * queda)) / SIPHON_GRAVITY
+	voo = clampf(voo, 0.3, 1.6)
+
+	# Ponto exato onde a gota vai bater no chão - é de lá que ela sobe pro medidor.
+	# A altura sai da MESMA fórmula do voo (e não de chao_y direto), senão um
+	# tempo de voo no limite do clamp faria a gota "pular" no fim da queda.
+	var pouso_y: float = center_world.y + vel_inicial.y * voo - 0.5 * SIPHON_GRAVITY * voo * voo
+	var last_world: Vector3 = Vector3(
+		center_world.x + vel_inicial.x * voo,
+		maxf(pouso_y, chao_y + 0.03), # Um dedo acima do chão, pra não sumir dentro dele
+		center_world.z + vel_inicial.z * voo
+	)
 	# Curvatura da subida, guardada como número: o traçado em si é recalculado
 	# a cada frame com a projeção atualizada dos pontos.
 	var hud_arco := randf_range(-70.0, 70.0)
@@ -507,22 +532,30 @@ func _spawn_blood_drop(start: Vector2, amount: float, delay: float, source_pos =
 		container.scale = Vector2(1.5, 1.5).lerp(Vector2(0.85, 0.85), t)
 	, 0.0, 1.0, 0.06).set_trans(Tween.TRANS_SINE)
 
-	# Vagueia sem pressa entre os pontos sorteados, com uma curva em cada trecho.
-	var anterior := center_world
-	for destino in wander_world:
-		var origem := anterior
-		var curva := randf_range(-60.0, 60.0)
-		tw.tween_method(func(t: float) -> void:
-			if not is_instance_valid(container): return
-			var a := _world_to_screen(origem, container.position)
-			var b := _world_to_screen(destino, container.position)
-			var ctrl: Vector2 = a.lerp(b, 0.5) + (b - a).orthogonal().normalized() * curva
-			container.position = _bezier2(a, ctrl, b, t)
-		, 0.0, 1.0, SIPHON_WANDER_STEP_TIME * randf_range(0.8, 1.3) * vel).set_trans(Tween.TRANS_SINE)
-		anterior = destino
+	# Espirra pra cima e cai: posição por física de projétil, no espaço do mundo.
+	# Sem easing (TRANS_LINEAR) porque a curva já vem da própria gravidade.
+	tw.tween_method(func(t: float) -> void:
+		if not is_instance_valid(container): return
+		var tempo := t * voo
+		var mundo := center_world + vel_inicial * tempo + Vector3.DOWN * (0.5 * SIPHON_GRAVITY * tempo * tempo)
+		container.position = _world_to_screen(mundo, container.position)
+		# A gota estica no sentido do voo: alonga subindo/caindo rápido.
+		var vel_y: float = vel_inicial.y - SIPHON_GRAVITY * tempo
+		var estica: float = clampf(absf(vel_y) / 6.0, 0.0, 0.6)
+		container.scale = Vector2(1.0 - estica * 0.35, 1.0 + estica * 0.5)
+	, 0.0, 1.0, voo).set_trans(Tween.TRANS_LINEAR)
 
-	# Só então sobe para o medidor. Aqui a gota "descola" do mundo e passa a
-	# ser HUD: a origem ainda acompanha a câmera, o destino é o canto da tela.
+	# Bateu no chão: achata e descansa ali um instante, ainda preso ao mundo.
+	tw.tween_method(func(t: float) -> void:
+		if not is_instance_valid(container): return
+		container.position = _world_to_screen(last_world, container.position)
+		# Esparrama no impacto e volta - o "splat" da gota batendo.
+		var splat: float = sin(clampf(t, 0.0, 1.0) * PI)
+		container.scale = Vector2(1.0 + splat * 0.7, 1.0 - splat * 0.45)
+	, 0.0, 1.0, SIPHON_GROUND_REST).set_trans(Tween.TRANS_SINE)
+
+	# Do chão, sobe para o medidor. Aqui a gota "descola" do mundo e passa a ser
+	# HUD: a origem ainda acompanha a câmera, o destino é o canto da tela.
 	tw.tween_method(func(t: float) -> void:
 		if not is_instance_valid(container): return
 		var a := _world_to_screen(last_world, container.position)
