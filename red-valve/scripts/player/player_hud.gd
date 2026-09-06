@@ -6,6 +6,15 @@ func _ready() -> void:
 	player = get_parent()
 	_setup_iron_rusks_hud()
 	_setup_health_hud()
+	_setup_cel_shading()
+
+func _setup_cel_shading() -> void:
+	# Filtro de cel shading (estilo Borderlands) por cima do render 3D.
+	# F7 liga/desliga em tempo real pra comparar com o visual original.
+	if player.has_node("CelShadingOverlay"): return
+	var overlay = load("res://scripts/effects/cel_shading_overlay.gd").new()
+	overlay.name = "CelShadingOverlay"
+	player.add_child(overlay)
 
 func _setup_health_hud() -> void:
 	player.current_health = player.max_health

@@ -52,6 +52,20 @@ var current_health: int = 100
 var heartbeat_hud: ColorRect
 var blood_overlay: ColorRect
 var blur_overlay: ColorRect
+# Cel shading (filtro estilo Borderlands por cima do render 3D).
+# Mudar no inspector já reflete em tempo real durante o jogo.
+@export_group("Cel Shading")
+@export_range(0.0, 1.0, 0.01) var cel_shading_intensity: float = 0.65:
+	set(value):
+		cel_shading_intensity = value
+		var overlay = get_node_or_null("CelShadingOverlay")
+		if overlay: overlay.set_intensity(value)
+@export var cel_shading_enabled: bool = true:
+	set(value):
+		cel_shading_enabled = value
+		var overlay = get_node_or_null("CelShadingOverlay")
+		if overlay: overlay.enabled = value
+
 # STAMINA & MP
 @export_group("Debug & Testing")
 @export var infinite_stamina_test: bool = false
