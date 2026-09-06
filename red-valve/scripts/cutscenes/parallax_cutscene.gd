@@ -27,6 +27,10 @@ const IMAGE_EXTENSIONS := ["png", "jpeg", "jpg", "webp"]
 @export var letterbox_height: float = 0.0
 ## Velocidade da maquina de escrever, em segundos por caractere.
 @export var typewriter_speed: float = 0.032
+## Som de tecla a cada letra (mesmo da cutscene do telefone). Vazio desliga.
+@export var typing_sound_path: String = "res://assets/sounds/episodios/prologo/typing.mp3"
+## Intensidade do acento de camera a cada nova fala. 0 desliga.
+@export var punch_scale: float = 0.35
 
 # --- nos --------------------------------------------------------------------
 @onready var stage: SubViewportContainer = $Stage
@@ -72,6 +76,8 @@ var finished: bool = false
 var _preloading: Array = []
 var _using_fallback: bool = false
 var _label_home: Vector2 = Vector2.ZERO
+var _typing_audio: AudioStreamPlayer
+var _last_visible_chars: int = 0
 
 
 # =============================================================================
@@ -115,6 +121,7 @@ func _ready() -> void:
 	_setup_ui()
 	_setup_skip()
 	_setup_audio()
+	_setup_typing_audio()
 
 	caption.modulate.a = 0.0
 	set_process(true)
@@ -175,6 +182,14 @@ func _setup_ui() -> void:
 	arrow.modulate.a = 0.0
 	letterbox_top.offset_bottom = 0.0
 	letterbox_bottom.offset_top = 0.0
+
+
+func _setup_typing_audio() -> void:
+	if typing_sound_path.is_empty() or not ResourceLoader.exists(typing_sound_path):
+		return
+	_typing_audio = AudioStreamPlayer.new()
+	_typing_audio.stream = load(typing_sound_path)
+	add_child(_typing_audio)
 
 
 func _setup_skip() -> void:
@@ -638,6 +653,7 @@ func _process(delta: float) -> void:
 	_update_layers(delta)
 	_update_post(delta)
 	_update_arrow()
+	_update_typing_sound()
 
 
 func _update_camera(delta: float) -> void:
@@ -667,13 +683,13 @@ func _update_camera(delta: float) -> void:
 		var s := _shake_amount
 		pos += Vector3(randf_range(-s, s), randf_range(-s, s), 0.0)
 		rot += Vector3(0, 0, randf_range(-s, s) * 6.0)
-		_shake_amount = move_toward(_shake_amount, 0.0, delta * 0.9)
+		_shake_amount = move_toward(_shake_amount, 0.0, delta * 0.12)
 
 	pos.z += _exit_push
 	camera.position = pos
 	camera.rotation_degrees = rot
 	camera.fov = fov + _fov_punch
-	_fov_punch = move_toward(_fov_punch, 0.0, delta * 9.0)
+	_fov_punch = move_toward(_fov_punch, 0.0, delta * 2.5)
 
 
 func _update_layers(delta: float) -> void:
@@ -706,16 +722,17 @@ func _update_post(delta: float) -> void:
 		return
 	if _blur_punch > 0.0001:
 		post_material.set_shader_parameter("radial_blur", _blur_punch)
-		_blur_punch = move_toward(_blur_punch, 0.0, delta * 1.6)
+		_blur_punch = move_toward(_blur_punch, 0.0, delta * 0.5)
 		if _blur_punch <= 0.0001:
 			post_material.set_shader_parameter("radial_blur", 0.0)
 
 
 ## Acento curto de camera: usado a cada nova linha de texto e nos impactos.
 func punch(strength: float = 1.0) -> void:
-	_shake_amount = maxf(_shake_amount, 0.10 * strength)
-	_fov_punch = -1.8 * strength
-	_blur_punch = maxf(_blur_punch, 0.28 * strength)
+	var s := strength * punch_scale
+	_shake_amount = maxf(_shake_amount, 0.10 * s)
+	_fov_punch = -1.8 * s
+	_blur_punch = maxf(_blur_punch, 0.28 * s)
 
 
 # =============================================================================
@@ -731,6 +748,7 @@ func show_text() -> void:
 
 	label.text = tr(str(texts[current_text_index]))
 	label.visible_characters = 0
+	_last_visible_chars = 0
 
 	if _text_tween and _text_tween.is_valid():
 		_text_tween.kill()
@@ -786,6 +804,25 @@ func next_slide() -> void:
 	load_slide()
 
 
+func _update_typing_sound() -> void:
+	if _typing_audio == null or finished:
+		return
+	var shown := label.visible_characters
+	if shown < 0 or shown <= _last_visible_chars:
+		# -1 = texto completo de uma vez (pulou a digitacao): nao dispara nada.
+		_last_visible_chars = maxi(shown, _last_visible_chars)
+		return
+	# Um quadro pode revelar mais de uma letra; toca uma vez so, senao vira rajada.
+	var revealed := label.text.substr(_last_visible_chars, shown - _last_visible_chars)
+	_last_visible_chars = shown
+	if revealed.strip_edges().is_empty():
+		return
+	# Mesma variacao da cutscene do telefone (Global_Utils._show_next_cinematic_text).
+	_typing_audio.pitch_scale = randf_range(0.85, 1.15)
+	_typing_audio.volume_db = randf_range(-22.0, -16.0)
+	_typing_audio.play()
+
+
 func _update_arrow() -> void:
 	if finished or is_transitioning or not waiting_for_input:
 		return
@@ -811,6 +848,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		if _text_tween and _text_tween.is_valid():
 			_text_tween.kill()
 		label.visible_characters = -1
+		_last_visible_chars = label.text.length()
 	else:
 		current_text_index += 1
 		show_text()
