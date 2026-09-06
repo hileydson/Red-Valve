@@ -277,9 +277,10 @@ func _show_slots_menu(is_new_game: bool) -> void:
 	
 	var vbox = VBoxContainer.new()
 	vbox.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
-	vbox.offset_right = -150
-	vbox.offset_bottom = -150
+	vbox.grow_horizontal = Control.GROW_DIRECTION_BEGIN
 	vbox.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	vbox.offset_right = -150
+	vbox.offset_bottom = -50
 	vbox.add_theme_constant_override("separation", 20)
 	slots_panel.add_child(vbox)
 	

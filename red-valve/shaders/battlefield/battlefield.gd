@@ -772,7 +772,7 @@ func _play_entry_blur() -> void:
 	var mat := ShaderMaterial.new()
 	mat.shader = shader
 	mat.set_shader_parameter("streak", 0.9)
-	mat.set_shader_parameter("intensity", 0.55)
+	mat.set_shader_parameter("intensity", 1.0) # Streaks roxos em força máxima
 	mat.set_shader_parameter("warp", 0.7)
 	mat.set_shader_parameter("aberration", 0.014)
 	mat.set_shader_parameter("flash", 0.55) # Herda o estouro branco do fim da transição
@@ -781,10 +781,15 @@ func _play_entry_blur() -> void:
 	layer.add_child(rect)
 
 	# Ignora o time_scale porque a intro da arena pode rodar em câmera lenta.
+	# Tudo em paralelo com delay (nada de chain) pra cada parâmetro ter seu
+	# próprio ritmo: o borrão limpa rápido, as linhas roxas seguram mais.
 	var tw := create_tween().set_parallel(true).set_ignore_time_scale(true)
 	tw.tween_property(mat, "shader_parameter/flash", 0.0, 0.35).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	tw.tween_property(mat, "shader_parameter/streak", 0.0, 0.8).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
-	tw.tween_property(mat, "shader_parameter/intensity", 0.0, 0.7).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
 	tw.tween_property(mat, "shader_parameter/warp", 0.0, 0.8).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
 	tw.tween_property(mat, "shader_parameter/aberration", 0.0, 0.8).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
-	tw.chain().tween_callback(layer.queue_free)
+	# As linhas roxas continuam em cheio por um instante e só então somem - é o
+	# que dá a sensação de continuidade com a transição que acabou de rolar.
+	tw.tween_property(mat, "shader_parameter/intensity", 0.0, 1.2).set_delay(0.3).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	tw.set_parallel(false)
+	tw.tween_callback(layer.queue_free)
