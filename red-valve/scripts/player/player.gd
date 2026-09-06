@@ -358,6 +358,7 @@ func _ready():
 	else:
 		$maycow_lopes_normal.queue_free()
 		modelo_visual = $maycow_lopes/Armature/Skeleton3D/char1
+		_acender_fogo_parasita()
 		
 	# Instancia Componente HUD
 	var hud_component = load("res://scripts/player/player_hud.gd").new()
@@ -1317,3 +1318,58 @@ func cutscene_set_camera_current(is_current: bool) -> void:
 	_cutscene_camera_disabled = not is_current
 	var comp = get_node_or_null("PlayerCutscene")
 	if comp: comp.cutscene_set_camera_current(is_current)
+
+
+# ============================================================
+# FOGO DO MAYCOW PARASITA
+# ============================================================
+
+# Efeito PRÓPRIO da gameplay (crosta de lava + chama borrada que deixa rastro).
+# Não é o hand_fire.tscn do trailer, que tem outra pegada e fica como está.
+const PARASITE_FIRE_SCENE := preload("res://scenes/effects/parasite_fire.tscn")
+
+## Só o Maycow NÃO normal pega fogo. A checagem mora aqui na folha, e não só em
+## quem chama, para não voltar a acender por engano na variante normal.
+@export_group("Fogo do Parasita")
+@export var fogo_parasita_ativo: bool = true
+## Ossos que delimitam o membro em chamas no corpo de 3ª pessoa (lado ESQUERDO).
+@export var fogo_osso_inicio: String = "LeftArm"
+@export var fogo_osso_fim: String = "LeftHand"
+## Raio da cápsula de fogo em torno do braço (0 = calcula pelo comprimento).
+@export var fogo_raio_braco: float = 0.0
+## Também põe fogo na mão esquerda de 1ª pessoa (vale para todas as animações
+## dela, porque o efeito segue a malha, não a animação).
+@export var fogo_na_mao_primeira_pessoa: bool = true
+@export var fogo_tamanho_chama: float = 1.0
+@export_range(0.0, 1.0) var fogo_opacidade_chama: float = 0.3
+
+
+func _acender_fogo_parasita() -> void:
+	if not fogo_parasita_ativo or GlobalEvents.is_maycow_normal:
+		return
+
+	# 1) Braço ESQUERDO do corpo (3ª pessoa / sombra / cutscenes).
+	var skel := get_node_or_null("maycow_lopes/Armature/Skeleton3D") as Skeleton3D
+	if skel and is_instance_valid(modelo_visual):
+		var fogo_braco = PARASITE_FIRE_SCENE.instantiate()
+		fogo_braco.name = "fogo_braco_esquerdo"
+		fogo_braco.mask_skeleton = skel
+		fogo_braco.mask_bone_from = fogo_osso_inicio
+		fogo_braco.mask_bone_to = fogo_osso_fim
+		fogo_braco.mask_radius = fogo_raio_braco
+		fogo_braco.flame_scale = fogo_tamanho_chama
+		fogo_braco.flame_opacity = fogo_opacidade_chama
+		fogo_braco.fade_in = 1.6
+		modelo_visual.add_child(fogo_braco)
+		fogo_braco.ignite(modelo_visual)
+
+	# 2) Mão ESQUERDA de 1ª pessoa. "hand_with_magic" é a esquerda;
+	#    "hand_with_pistol" é a direita e fica de fora de propósito.
+	if fogo_na_mao_primeira_pessoa and is_instance_valid(hand_with_magic):
+		var fogo_mao = PARASITE_FIRE_SCENE.instantiate()
+		fogo_mao.name = "fogo_mao_esquerda"
+		fogo_mao.flame_scale = fogo_tamanho_chama
+		fogo_mao.flame_opacity = fogo_opacidade_chama
+		fogo_mao.fade_in = 1.2
+		hand_with_magic.add_child(fogo_mao)
+		fogo_mao.ignite(hand_with_magic)
