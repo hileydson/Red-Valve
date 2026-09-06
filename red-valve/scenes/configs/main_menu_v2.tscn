@@ -83,13 +83,13 @@ offset_top = 56.0
 offset_right = 144.0
 offset_bottom = 192.0
 
-[node name="start" type="Button" parent="UI/Control/VBoxContainer" unique_id=1722963886]
-layout_mode = 2
-text = "BTN_START"
-
 [node name="load" type="Button" parent="UI/Control/VBoxContainer" unique_id=1901162516]
 layout_mode = 2
 text = "BTN_LOAD_GAME"
+
+[node name="new_game" type="Button" parent="UI/Control/VBoxContainer" unique_id=1722963886]
+layout_mode = 2
+text = "BTN_NEW_GAME"
 
 [node name="config" type="Button" parent="UI/Control/VBoxContainer" unique_id=1367834087]
 layout_mode = 2
@@ -101,7 +101,7 @@ text = "BTN_EXIT"
 
 [node name="fade" parent="UI" unique_id=13596553 instance=ExtResource("4_fade")]
 
-[connection signal="pressed" from="UI/Control/VBoxContainer/start" to="." method="_on_start_pressed"]
 [connection signal="pressed" from="UI/Control/VBoxContainer/load" to="." method="_on_load_pressed"]
+[connection signal="pressed" from="UI/Control/VBoxContainer/new_game" to="." method="_on_start_pressed"]
 [connection signal="pressed" from="UI/Control/VBoxContainer/config" to="." method="_on_config_pressed"]
 [connection signal="pressed" from="UI/Control/VBoxContainer/exit" to="." method="_on_exit_pressed"]

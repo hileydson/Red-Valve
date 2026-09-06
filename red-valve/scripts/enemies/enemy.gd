@@ -225,7 +225,8 @@ func take_damage(amount):
 	current_health = clamp(current_health, 0, max_health)
 	
 	if is_instance_valid(player) and player.has_method("add_cogblade_power"):
-		player.add_cogblade_power(float(amount))
+		# Passa o ponto do corpo (altura do peito) pra gota de sangue sair de lá.
+		player.add_cogblade_power(float(amount), global_position + Vector3(0, 1.4, 0))
 	
 	# Aciona a UI Global de Chefe
 	var root = get_tree().root

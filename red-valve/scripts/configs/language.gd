@@ -6,7 +6,7 @@ extends Node2D
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	# Verifica se já existe um jogo salvo para pular a tela de idioma
-	if FileAccess.file_exists(SaveManager.SAVE_PATH):
+	if FileAccess.file_exists(SaveManager.CONFIG_PATH):
 		# Pula direto para a introdução (as configurações já foram lidas no SaveManager)
 		get_tree().change_scene_to_file("res://scenes/configs/intro_godot_video.tscn")
 		return

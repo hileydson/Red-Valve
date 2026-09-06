@@ -110,3 +110,7 @@ MAP_SCALE,"{h} m across  ·  zoom {z}x","{h} m de altura  ·  zoom {z}x"
 MAP_HELP_PAD,"Left stick: move  |  Right stick: zoom","Analógico esquerdo: mover  |  Analógico direito: zoom"
 MAP_HELP_MOUSE,"Mouse wheel: zoom  |  drag: move  |  R: recenter on player","Roda do mouse: zoom  |  arrastar: mover  |  R: centralizar no player"
 MAP_UNAVAILABLE,"No map available here.","Nenhum mapa disponível aqui."
+BTN_NEW_GAME,New Game,Novo Jogo
+UI_SELECT_SAVE_SLOT,Select Save Slot,Selecionar Slot de Jogo
+UI_SLOT,Slot,Slot
+UI_EMPTY,EMPTY,VAZIO

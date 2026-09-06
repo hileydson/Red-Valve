@@ -1,6 +1,12 @@
 extends Node
 
-const SAVE_PATH = "user://save_game.json"
+const CONFIG_PATH = "user://config.json"
+var current_slot: int = 1
+
+func get_save_path(slot_index: int = -1) -> String:
+	if slot_index == -1:
+		slot_index = current_slot
+	return "user://save_game_" + str(slot_index) + ".json"
 
 var current_stage: String = ""
 var inventory_normal: Array = []
@@ -97,9 +103,9 @@ func _ready():
 		inventory_combat.append({"id": "cogblade", "amount": 1})
 		inventory_combat.append({"id": "pistol_ammo", "amount": 25})
 		
-	# Lê silenciosamente o save no boot para não apagar dados ao salvar apenas configs depois
-	if FileAccess.file_exists(SAVE_PATH):
-		var file = FileAccess.open(SAVE_PATH, FileAccess.READ)
+	# Lê apenas as configurações globais
+	if FileAccess.file_exists(CONFIG_PATH):
+		var file = FileAccess.open(CONFIG_PATH, FileAccess.READ)
 		if file:
 			var content = file.get_as_text()
 			file.close()
@@ -107,15 +113,15 @@ func _ready():
 			if json.parse(content) == OK:
 				var data = json.get_data()
 				if typeof(data) == TYPE_DICTIONARY:
-					current_stage = data.get("current_stage", "")
-					prolog_finished = data.get("prolog_finished", false)
-					battlefield_1_intro_played = data.get("battlefield_1_intro_played", false)
-					stage_1_intro_played = data.get("stage_1_intro_played", false)
-					if data.has("config"):
-						for key in data["config"].keys():
-							config[key] = data["config"][key]
-						
+					for key in data.keys():
+						config[key] = data[key]
 	apply_configs()
+
+func save_config() -> void:
+	var file = FileAccess.open(CONFIG_PATH, FileAccess.WRITE)
+	if file:
+		file.store_string(JSON.stringify(config))
+		file.close()
 
 func is_window_embedded() -> bool:
 	if Engine.has_method("is_embedded_in_editor") and Engine.is_embedded_in_editor():
@@ -183,6 +189,27 @@ func apply_configs() -> void:
 		else:
 			brightness_rect.color = Color(1, 1, 1, (b - 1.0) * 0.5)
 
+func get_slots_info() -> Array:
+	var info = []
+	for i in range(1, 4):
+		var path = get_save_path(i)
+		if FileAccess.file_exists(path):
+			var file = FileAccess.open(path, FileAccess.READ)
+			if file:
+				var content = file.get_as_text()
+				file.close()
+				var json = JSON.new()
+				if json.parse(content) == OK:
+					var data = json.get_data()
+					if typeof(data) == TYPE_DICTIONARY:
+						var ch = "TXT_PROLOGUE"
+						if data.get("prolog_finished", false):
+							ch = "TXT_CHAPTER_1"
+						info.append({"empty": false, "slot": i, "chapter": ch})
+						continue
+		info.append({"empty": true, "slot": i, "chapter": ""})
+	return info
+
 func save_game(scene_path: String = ""):
 	var temp_stage = current_stage
 	
@@ -191,7 +218,6 @@ func save_game(scene_path: String = ""):
 	elif get_tree().current_scene and not get_tree().current_scene.scene_file_path.contains("main_menu"):
 		temp_stage = get_tree().current_scene.scene_file_path
 		
-	# Atualiza a variavel global se for valida
 	if temp_stage != "":
 		current_stage = temp_stage
 		
@@ -205,21 +231,26 @@ func save_game(scene_path: String = ""):
 		"equipped_items": equipped_items,
 		"max_mp": max_mp,
 		"current_mp": current_mp,
-		"iron_rusks": iron_rusks,
-		"config": config
+		"iron_rusks": iron_rusks
 	}
 	
-	var file = FileAccess.open(SAVE_PATH, FileAccess.WRITE)
+	save_config() # Sempre salvar config junto
+	var path = get_save_path()
+	var file = FileAccess.open(path, FileAccess.WRITE)
 	if file:
 		file.store_string(JSON.stringify(save_data))
 		file.close()
-		print("Game/Config Saved! Stage: ", current_stage)
+		print("Game Saved in slot ", current_slot, "! Stage: ", current_stage)
 
-func load_game() -> bool:
-	if not FileAccess.file_exists(SAVE_PATH):
+func load_game(slot_id: int = -1) -> bool:
+	if slot_id != -1:
+		current_slot = slot_id
+		
+	var path = get_save_path()
+	if not FileAccess.file_exists(path):
 		return false
 		
-	var file = FileAccess.open(SAVE_PATH, FileAccess.READ)
+	var file = FileAccess.open(path, FileAccess.READ)
 	if file:
 		var content = file.get_as_text()
 		file.close()
@@ -245,16 +276,24 @@ func load_game() -> bool:
 				iron_rusks = data.get("iron_rusks", 0)
 				iron_rusks_display = iron_rusks
 				
-				if data.has("config"):
-					for key in data["config"].keys():
-						config[key] = data["config"][key]
-				apply_configs()
-				
 				if current_stage != "" and ResourceLoader.exists(current_stage):
-					print("Game Loaded! ", current_stage)
+					print("Game Loaded from slot ", current_slot, "! ", current_stage)
 					LoadingScreen.load_scene(current_stage)
 					return true
 	return false
+
+func reset_progress() -> void:
+	current_stage = ""
+	prolog_finished = false
+	battlefield_1_intro_played = false
+	stage_1_intro_played = false
+	inventory_normal = [{"id": "maycow_watch", "amount": 1}]
+	inventory_combat = [{"id": "pistol", "amount": 1}, {"id": "cogblade", "amount": 1}, {"id": "pistol_ammo", "amount": 25}]
+	equipped_items = ["cogblade"]
+	max_mp = 30.0
+	current_mp = 30.0
+	iron_rusks = 0
+	iron_rusks_display = 0
 
 func add_iron_rusks(amount: int) -> void:
 	iron_rusks += amount
@@ -335,5 +374,4 @@ func _unhandled_input(event: InputEvent) -> void:
 				menu_instance.name = "InGameMenu"
 				get_tree().root.add_child(menu_instance)
 		else:
-			# O próprio script do menu fechará e chamará queue_free()
 			pass

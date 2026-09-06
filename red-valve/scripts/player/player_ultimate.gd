@@ -263,6 +263,11 @@ func _activate_cogblade_slain() -> void:
 
 # Reposiciona o medidor da cogblade. O Slain zera (0.0); o Cut deixa 25%.
 func _reset_cogblade_gauge(value: float) -> void:
+	# Gotas de sangue ainda a caminho da HUD não podem encher o medidor
+	# depois que um poder acabou de consumi-lo.
+	var combat = player.get_node_or_null("PlayerCombat")
+	if combat and combat.has_method("cancel_cogblade_siphons"):
+		combat.cancel_cogblade_siphons()
 	player.cogblade_power_value = value
 	player.cogblade_pulsing = false
 	if player.cogblade_pulse_tween: player.cogblade_pulse_tween.kill()

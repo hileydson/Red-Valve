@@ -1,6 +1,6 @@
 extends Node3D
 
-@onready var start: Button = $UI/Control/VBoxContainer/start
+@onready var new_game: Button = $UI/Control/VBoxContainer/new_game
 @onready var load_btn: Button = $UI/Control/VBoxContainer/load
 @onready var ashen: AudioStreamPlayer = $AshenSerenity
 
@@ -183,10 +183,23 @@ func _ready() -> void:
 	# não pode deixar cena/HUD/sangue do jogo pendurados na árvore.
 	GlobalUtils.cleanup_gameplay_leftovers()
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-	start.grab_focus()
+	load_btn.grab_focus()
 	
-	if not FileAccess.file_exists("user://save_game.json"):
+	# Verifica se há saves para o botão de load e configura
+	var slots = SaveManager.get_slots_info()
+	var has_any_save = false
+	var has_empty_slot = false
+	for slot in slots:
+		if not slot["empty"]:
+			has_any_save = true
+		else:
+			has_empty_slot = true
+			
+	if not has_any_save:
 		load_btn.disabled = true
+		new_game.grab_focus()
+	if not has_empty_slot:
+		new_game.disabled = true
 	
 	var ashen_target = ashen.volume_db
 	ashen.volume_db = -80.0
@@ -253,26 +266,134 @@ func _ready() -> void:
 	await get_tree().create_timer(2.0).timeout
 	input_locked = false
 
-
-func _on_load_pressed() -> void:
-	if input_locked: return
+func _show_slots_menu(is_new_game: bool) -> void:
 	GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/selecionar_item.mp3")
 	$UI/Control.visible = false
+	
+	var slots_panel = Control.new()
+	slots_panel.name = "SlotsPanel"
+	slots_panel.set_anchors_preset(Control.PRESET_FULL_RECT)
+	$UI.add_child(slots_panel)
+	
+	var title = Label.new()
+	title.text = tr("UI_SELECT_SAVE_SLOT") if is_new_game else tr("BTN_LOAD_GAME")
+	title.add_theme_font_size_override("font_size", 48)
+	title.add_theme_color_override("font_color", Color(1, 0, 0, 1))
+	title.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.position.y = 100
+	slots_panel.add_child(title)
+	
+	var vbox = VBoxContainer.new()
+	vbox.set_anchors_preset(Control.PRESET_CENTER)
+	vbox.position.y -= 100 # Adjust up slightly
+	vbox.add_theme_constant_override("separation", 20)
+	slots_panel.add_child(vbox)
+	
+	var slots_info = SaveManager.get_slots_info()
+	var first_focusable = null
+	
+	for slot_info in slots_info:
+		var btn = Button.new()
+		var slot_idx = slot_info["slot"]
+		var is_empty = slot_info["empty"]
+		
+		btn.custom_minimum_size = Vector2(400, 80)
+		
+		if is_empty:
+			btn.text = tr("UI_SLOT") + " " + str(slot_idx) + " - [ " + tr("UI_EMPTY") + " ]"
+		else:
+			btn.text = tr("UI_SLOT") + " " + str(slot_idx) + " - " + tr(slot_info["chapter"])
+			
+		var style_normal = StyleBoxEmpty.new()
+		var style_focus = StyleBoxFlat.new()
+		style_focus.bg_color = Color(0.6, 0.0, 0.0, 0.4)
+		style_focus.border_color = Color(1.0, 0.1, 0.1, 0.8)
+		style_focus.border_width_left = 6
+		var style_hover = style_focus.duplicate()
+		style_hover.bg_color = Color(0.8, 0.0, 0.0, 0.2)
+		var style_pressed = style_focus.duplicate()
+		style_pressed.bg_color = Color(1.0, 0.0, 0.0, 0.6)
+		var style_disabled = StyleBoxFlat.new()
+		style_disabled.bg_color = Color(0.2, 0.2, 0.2, 0.4)
+		
+		btn.add_theme_stylebox_override("normal", style_normal)
+		btn.add_theme_stylebox_override("focus", style_focus)
+		btn.add_theme_stylebox_override("hover", style_hover)
+		btn.add_theme_stylebox_override("pressed", style_pressed)
+		btn.add_theme_stylebox_override("disabled", style_disabled)
+		
+		btn.add_theme_font_size_override("font_size", 22)
+		
+		if is_new_game and not is_empty:
+			btn.disabled = true
+		elif not is_new_game and is_empty:
+			btn.disabled = true
+		else:
+			if not first_focusable:
+				first_focusable = btn
+				
+		btn.focus_entered.connect(func():
+			GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/mudar_selecao.mp3")
+			btn.pivot_offset = btn.size / 2.0
+			var tween = create_tween()
+			btn.scale = Vector2(1.15, 1.15)
+			tween.tween_property(btn, "scale", Vector2(1.0, 1.0), 0.4).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+		)
+		btn.mouse_entered.connect(func(): if not btn.disabled: btn.grab_focus())
+		
+		btn.pressed.connect(func():
+			_on_slot_selected(slot_idx, is_new_game)
+		)
+		
+		vbox.add_child(btn)
+		
+	var back_btn = Button.new()
+	back_btn.text = "BTN_BACK"
+	back_btn.custom_minimum_size = Vector2(400, 60)
+	var btn_style = StyleBoxFlat.new()
+	btn_style.bg_color = Color(0, 0, 0, 0.5)
+	back_btn.add_theme_stylebox_override("normal", btn_style)
+	back_btn.add_theme_font_size_override("font_size", 22)
+	back_btn.pressed.connect(func():
+		GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/selecionar_item_voltar.mp3")
+		slots_panel.queue_free()
+		$UI/Control.visible = true
+		if is_new_game:
+			new_game.grab_focus()
+		else:
+			load_btn.grab_focus()
+	)
+	vbox.add_child(back_btn)
+	
+	if first_focusable:
+		first_focusable.grab_focus()
+	else:
+		back_btn.grab_focus()
+
+func _on_slot_selected(slot_id: int, is_new_game: bool) -> void:
+	if input_locked: return
+	input_locked = true
+	GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/entrar_super.mp3")
+	
 	var audio_out_tween = create_tween()
 	audio_out_tween.tween_property(ashen, "volume_db", -80.0, 2.0)
 	$UI/fade.fade_out()
 	await get_tree().create_timer(2.0).timeout
-	SaveManager.load_game()
+	
+	if is_new_game:
+		SaveManager.reset_progress()
+		SaveManager.current_slot = slot_id
+		SaveManager.save_game()
+		get_tree().change_scene_to_file("res://scenes/stages/stage_1/stage_1_cutscene_prologo.tscn")
+	else:
+		SaveManager.load_game(slot_id)
+
+func _on_load_pressed() -> void:
+	_show_slots_menu(false)
 
 func _on_start_pressed() -> void:
-	if input_locked: return
-	GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/entrar_super.mp3")
-	$UI/Control.visible = false
-	var audio_out_tween = create_tween()
-	audio_out_tween.tween_property(ashen, "volume_db", -80.0, 2.0)
-	$UI/fade.fade_out()
-	await get_tree().create_timer(2.0).timeout
-	get_tree().change_scene_to_file("res://scenes/stages/stage_1/stage_1_cutscene_prologo.tscn")
+	_show_slots_menu(true)
 
 func _on_config_pressed() -> void:
 	if input_locked: return
@@ -285,7 +406,7 @@ func _on_config_pressed() -> void:
 		config_menu.back_btn.pressed.disconnect(config_menu._on_back_pressed)
 		config_menu.back_btn.pressed.connect(func():
 			GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/selecionar_item_voltar.mp3")
-			SaveManager.save_game()
+			SaveManager.save_config()
 			$UI/Control.visible = true
 			$UI/Control/VBoxContainer/config.grab_focus()
 			config_menu.queue_free()

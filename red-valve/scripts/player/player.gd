@@ -1201,9 +1201,9 @@ func _on_bullet_touch_body_entered(body: Node3D) -> void:
 	var comp = get_node_or_null("PlayerCombat")
 	if comp: comp._on_bullet_touch_body_entered(body)
 
-func add_cogblade_power(amount: float) -> void:
+func add_cogblade_power(amount: float, source_pos = null) -> void:
 	var comp = get_node_or_null("PlayerCombat")
-	if comp: comp.add_cogblade_power(amount)
+	if comp: comp.add_cogblade_power(amount, source_pos)
 
 func _start_cogblade_pulse() -> void:
 	var comp = get_node_or_null("PlayerCombat")

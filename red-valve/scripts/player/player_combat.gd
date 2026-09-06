@@ -200,7 +200,7 @@ func raycast_process_shoot() -> void:
 			
 			if target.is_in_group("enemies"):
 				spawn_blood_raycast(player.ray_cast_3d.get_collision_point(), player.ray_cast_3d.get_collision_normal())
-				add_cogblade_power(10.0)
+				add_cogblade_power(10.0, player.ray_cast_3d.get_collision_point())
 		
 			var ponto_colisao = player.ray_cast_3d.get_collision_point()
 			var distancia = player.ray_cast_3d.global_position.distance_to(ponto_colisao)
@@ -281,14 +281,225 @@ func spawn_blood_effect(body: Node3D) -> void:
 	blood.global_position = body.global_position
 	blood.global_position.y += 2
 		
-func add_cogblade_power(amount: float) -> void:
+# =========================================================================
+# SIFÃO DE SANGUE -> MEDIDOR DA COGBLADE
+# =========================================================================
+# O medidor não enche mais no instante do dano. Uma pequena porção do sangue
+# do inimigo vira uma gota 2D que viaja até o player (centro da tela), sobe
+# para o canto superior esquerdo (onde fica a HUD do medidor), respinga no
+# medidor e só então o preenchimento acontece.
+
+## Tempo da gota do inimigo até o centro da tela (o player).
+const SIPHON_TO_PLAYER_TIME: float = 0.30
+## Tempo do centro da tela até o medidor no canto superior esquerdo.
+const SIPHON_TO_HUD_TIME: float = 0.26
+## Máximo de gotas simultâneas: acima disso o poder entra direto (sem FX),
+## pra não virar chuva de sangue em rajadas rápidas de dano.
+const SIPHON_MAX_ACTIVE: int = 8
+
+var _siphons: Array[Node2D] = []
+var _cogblade_fill_tween: Tween
+
+func add_cogblade_power(amount: float, source_pos = null) -> void:
 	if GlobalEvents.is_maycow_normal or not player.cogblade_hud or player.is_using_ultimate: return
+	if amount <= 0.0: return
+
+	var vivos: Array[Node2D] = []
+	for s in _siphons:
+		if is_instance_valid(s): vivos.append(s)
+	_siphons = vivos
+
+	var start = _siphon_screen_start(source_pos)
+	if start == null or _siphons.size() >= SIPHON_MAX_ACTIVE:
+		# Sem posição de origem visível na tela (ou FX demais): aplica direto.
+		_apply_cogblade_power(amount)
+		return
+
+	_spawn_blood_siphon(start, amount)
+
+# Converte a posição 3D do golpe em coordenadas de tela. Retorna null quando
+# não dá pra desenhar o trajeto (sem câmera, ou o alvo está atrás dela).
+func _siphon_screen_start(source_pos):
+	if not (source_pos is Vector3): return null
+	if not is_inside_tree(): return null
+	var vp := player.get_viewport()
+	if not vp: return null
+	var cam := vp.get_camera_3d()
+	if not is_instance_valid(cam) or cam.is_position_behind(source_pos): return null
+
+	var screen: Vector2 = cam.unproject_position(source_pos)
+	var size: Vector2 = vp.get_visible_rect().size
+	# Inimigo fora do enquadramento: puxa a gota pra borda mais próxima.
+	screen.x = clamp(screen.x, 8.0, size.x - 8.0)
+	screen.y = clamp(screen.y, 8.0, size.y - 8.0)
+	return screen
+
+func _spawn_blood_siphon(start: Vector2, amount: float) -> void:
+	if not is_instance_valid(player.hud_layer) or not is_instance_valid(player.cogblade_hud):
+		_apply_cogblade_power(amount)
+		return
+
+	var vp_size: Vector2 = player.get_viewport().get_visible_rect().size
+	var center: Vector2 = vp_size * 0.5
+	var hud_target: Vector2 = _cogblade_hud_center()
+
+	var container := Node2D.new()
+	container.name = "CogbladeBloodSiphon"
+	container.position = start
+	player.hud_layer.add_child(container)
+	_siphons.append(container)
+
+	# Halo suave por trás da gota (dá o "brilho" molhado)
+	var halo := Polygon2D.new()
+	halo.polygon = _circle_points(13.0)
+	halo.color = Color(0.55, 0.0, 0.0, 0.35)
+	container.add_child(halo)
+
+	var drop := Polygon2D.new()
+	drop.polygon = _circle_points(6.5)
+	drop.color = Color(0.72, 0.02, 0.02, 1.0)
+	container.add_child(drop)
+
+	# Rastro: as partículas ficam no espaço da tela (local_coords = false),
+	# então elas "sobram" no caminho enquanto a gota avança.
+	var trail := CPUParticles2D.new()
+	trail.local_coords = false
+	trail.amount = 26
+	trail.lifetime = 0.45
+	trail.speed_scale = 1.0
+	trail.emission_shape = CPUParticles2D.EMISSION_SHAPE_SPHERE
+	trail.emission_sphere_radius = 4.0
+	trail.direction = Vector2(0, 1)
+	trail.spread = 45.0
+	trail.gravity = Vector2(0, 160)
+	trail.initial_velocity_min = 10.0
+	trail.initial_velocity_max = 45.0
+	trail.scale_amount_min = 1.5
+	trail.scale_amount_max = 4.0
+	trail.color = Color(0.65, 0.0, 0.0, 0.8)
+	var trail_ramp := Gradient.new()
+	trail_ramp.offsets = [0.0, 1.0]
+	trail_ramp.colors = [Color(1, 1, 1, 0.9), Color(1, 1, 1, 0.0)]
+	trail.color_ramp = trail_ramp
+	trail.emitting = true
+	container.add_child(trail)
+
+	# Curvas: a gota faz um arco em vez de linha reta.
+	var to_player_ctrl: Vector2 = start.lerp(center, 0.5) + (center - start).orthogonal().normalized() * 60.0
+	var to_hud_ctrl: Vector2 = Vector2(center.x * 0.45, center.y * 0.35)
+
+	# Tween do próprio container: se ele for liberado (poder consumiu o medidor),
+	# o trajeto morre junto e o preenchimento não acontece.
+	var tw := container.create_tween()
+	tw.tween_method(func(t: float) -> void:
+		if is_instance_valid(container):
+			container.position = _bezier2(start, to_player_ctrl, center, t)
+	, 0.0, 1.0, SIPHON_TO_PLAYER_TIME).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+
+	# Chegou no player: pequena "absorvida" (a gota infla e comprime)
+	tw.tween_property(container, "scale", Vector2(1.5, 1.5), 0.07).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw.tween_property(container, "scale", Vector2(0.85, 0.85), 0.06).set_trans(Tween.TRANS_SINE)
+
+	# Sobe para o canto superior esquerdo, onde está o medidor.
+	tw.tween_method(func(t: float) -> void:
+		if is_instance_valid(container):
+			container.position = _bezier2(center, to_hud_ctrl, hud_target, t)
+	, 0.0, 1.0, SIPHON_TO_HUD_TIME).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+
+	tw.tween_callback(func() -> void:
+		_siphons.erase(container)
+		if is_instance_valid(container):
+			trail.emitting = false
+			halo.visible = false
+			drop.visible = false
+			# Deixa o rastro terminar de cair antes de sumir com o nó.
+			container.create_tween().tween_callback(container.queue_free).set_delay(0.6)
+		_cogblade_blood_splash()
+		_apply_cogblade_power(amount)
+	)
+
+# Respingo rápido de sangue no medidor, no momento em que a gota chega.
+func _cogblade_blood_splash() -> void:
+	if not is_instance_valid(player) or not is_instance_valid(player.cogblade_hud): return
+	if not is_instance_valid(player.hud_layer): return
+
+	var splash := CPUParticles2D.new()
+	splash.position = _cogblade_hud_center()
+	splash.one_shot = true
+	splash.explosiveness = 1.0
+	splash.amount = 24
+	splash.lifetime = 0.5
+	splash.emission_shape = CPUParticles2D.EMISSION_SHAPE_SPHERE
+	splash.emission_sphere_radius = 10.0
+	splash.direction = Vector2(0, -1)
+	splash.spread = 180.0
+	splash.gravity = Vector2(0, 520)
+	splash.initial_velocity_min = 70.0
+	splash.initial_velocity_max = 230.0
+	splash.scale_amount_min = 2.0
+	splash.scale_amount_max = 5.5
+	splash.color = Color(0.8, 0.0, 0.0, 0.9)
+	var ramp := Gradient.new()
+	ramp.offsets = [0.0, 0.7, 1.0]
+	ramp.colors = [Color(1, 1, 1, 1.0), Color(1, 1, 1, 0.8), Color(1, 1, 1, 0.0)]
+	splash.color_ramp = ramp
+	splash.emitting = true
+	player.hud_layer.add_child(splash)
+	splash.create_tween().tween_callback(splash.queue_free).set_delay(1.2)
+
+	# Flash vermelho + "soco" de escala no próprio medidor. Usa modulate/scale
+	# porque o pulso de medidor cheio já ocupa o tint_progress.
+	var hud: TextureProgressBar = player.cogblade_hud
+	var base_scale := Vector2(0.4, 0.4)
+	var punch := create_tween()
+	punch.tween_property(hud, "modulate", Color(1.8, 0.35, 0.35, 1.0), 0.05)
+	punch.parallel().tween_property(hud, "scale", base_scale * 1.12, 0.05).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	punch.tween_property(hud, "modulate", Color(1, 1, 1, 1), 0.22)
+	punch.parallel().tween_property(hud, "scale", base_scale, 0.22).set_trans(Tween.TRANS_SINE)
+
+# Preenchimento propriamente dito (só depois do sangue chegar no medidor).
+func _apply_cogblade_power(amount: float) -> void:
+	if not is_instance_valid(player) or not player.cogblade_hud: return
+	if GlobalEvents.is_maycow_normal or player.is_using_ultimate: return
+
 	player.cogblade_power_value = clamp(player.cogblade_power_value + amount, 0.0, 100.0)
-	if player.cogblade_hud: player.cogblade_hud.value = player.cogblade_power_value
-	
+
+	if _cogblade_fill_tween and _cogblade_fill_tween.is_valid(): _cogblade_fill_tween.kill()
+	_cogblade_fill_tween = create_tween()
+	_cogblade_fill_tween.tween_property(player.cogblade_hud, "value", player.cogblade_power_value, 0.22)\
+		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+
 	if player.cogblade_power_value >= 100.0 and not player.cogblade_pulsing:
 		player.cogblade_pulsing = true
 		_start_cogblade_pulse()
+
+# Cancela gotas em trânsito e o tween de preenchimento (usado quando um poder
+# consome o medidor: o sangue que ainda estava vindo não pode encher de novo).
+func cancel_cogblade_siphons() -> void:
+	if _cogblade_fill_tween and _cogblade_fill_tween.is_valid(): _cogblade_fill_tween.kill()
+	_cogblade_fill_tween = null
+	for s in _siphons:
+		if is_instance_valid(s): s.queue_free()
+	_siphons.clear()
+
+# Centro do medidor da cogblade em coordenadas da HUD.
+func _cogblade_hud_center() -> Vector2:
+	var hud: TextureProgressBar = player.cogblade_hud
+	if not is_instance_valid(hud): return Vector2(60, 60)
+	var tam: Vector2 = hud.size
+	if tam == Vector2.ZERO and hud.texture_progress:
+		tam = hud.texture_progress.get_size()
+	return hud.position + (tam * hud.scale) * 0.5
+
+func _bezier2(a: Vector2, b: Vector2, c: Vector2, t: float) -> Vector2:
+	return a.lerp(b, t).lerp(b.lerp(c, t), t)
+
+func _circle_points(radius: float, segments: int = 14) -> PackedVector2Array:
+	var pts := PackedVector2Array()
+	for i in segments:
+		var ang := TAU * float(i) / float(segments)
+		pts.append(Vector2(cos(ang), sin(ang)) * radius)
+	return pts
 
 func _start_cogblade_pulse() -> void:
 	if not player.cogblade_hud: return
