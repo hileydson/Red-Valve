@@ -34,6 +34,7 @@ var default_config = {
 	"display_mode": "windowed",
 	"brightness": 1.0,
 	"aim_assist": true,
+	"aim_assist_strength": 1.0, # 0.5 = sutil, 2.0 = bem grudento (menu: 50-200%)
 	"cel_shading": false,
 	"cel_shading_intensity": 0.65 # Faixa útil: 0.55 a 0.85 (ver menu de vídeo)
 }

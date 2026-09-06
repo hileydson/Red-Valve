@@ -19,6 +19,8 @@ var run_label: Label
 var run_option: OptionButton
 var aim_assist_label: Label
 var aim_assist_check: CheckButton
+var aim_strength_label: Label
+var aim_strength_slider: HSlider
 
 # Controls Tab
 var tab_controls: MarginContainer
@@ -198,10 +200,44 @@ func _build_gameplay_tab():
 	aim_assist_check = CheckButton.new()
 	aim_assist_check.add_theme_font_size_override("font_size", 20)
 	aim_assist_check.button_pressed = SaveManager.config.get("aim_assist", true)
-	aim_assist_check.toggled.connect(func(pressed): SaveManager.config["aim_assist"] = pressed)
+	aim_assist_check.toggled.connect(_on_aim_assist_toggled)
 	vbox.add_child(aim_assist_check)
 
+	# Intensidade da assistência (só faz efeito com ela ligada)
+	aim_strength_label = Label.new()
+	aim_strength_label.add_theme_font_size_override("font_size", 20)
+	vbox.add_child(aim_strength_label)
+
+	aim_strength_slider = HSlider.new()
+	aim_strength_slider.min_value = 50
+	aim_strength_slider.max_value = 200
+	aim_strength_slider.step = 5
+	aim_strength_slider.value = round(SaveManager.config.get("aim_assist_strength", 1.0) * 100.0)
+	aim_strength_slider.value_changed.connect(_on_aim_strength_changed)
+	vbox.add_child(aim_strength_slider)
+
+	_update_aim_assist_ui()
+
 	tab_container.add_child(tab_gameplay)
+
+func _on_aim_assist_toggled(pressed: bool) -> void:
+	SaveManager.config["aim_assist"] = pressed
+	_update_aim_assist_ui()
+
+func _on_aim_strength_changed(value: float) -> void:
+	# O slider trabalha em 50-200% pra ficar legível; o componente usa 0.5-2.0.
+	SaveManager.config["aim_assist_strength"] = value / 100.0
+	_update_aim_assist_ui()
+
+func _update_aim_assist_ui() -> void:
+	if not is_instance_valid(aim_strength_slider): return
+	var on: bool = SaveManager.config.get("aim_assist", true)
+	aim_strength_slider.editable = on
+	aim_strength_slider.focus_mode = Control.FOCUS_ALL if on else Control.FOCUS_NONE
+	aim_strength_slider.modulate.a = 1.0 if on else 0.4
+	if is_instance_valid(aim_strength_label):
+		aim_strength_label.modulate.a = 1.0 if on else 0.4
+		aim_strength_label.text = "%s: %d%%" % [tr("CONFIG_AIM_ASSIST_STRENGTH"), int(aim_strength_slider.value)]
 
 func _build_controls_tab():
 	tab_controls = MarginContainer.new()
@@ -459,6 +495,7 @@ func _on_lang_selected(index: int) -> void:
 	run_option.set_item_text(1, tr("CONFIG_RUN_TOGGLE"))
 	
 	if is_instance_valid(aim_assist_label): aim_assist_label.text = tr("CONFIG_AIM_ASSIST")
+	_update_aim_assist_ui()
 	if is_instance_valid(deadzone_label): deadzone_label.text = tr("CONFIG_DEADZONE")
 	if is_instance_valid(sens_look_label): sens_look_label.text = tr("CONFIG_SENS_LOOK")
 	if is_instance_valid(sens_aim_label): sens_aim_label.text = tr("CONFIG_SENS_AIM")

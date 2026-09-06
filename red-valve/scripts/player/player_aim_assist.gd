@@ -7,11 +7,14 @@ extends Node
 #   - Maycow NÃO normal (parasita): sempre, já que o combate é mais frenético.
 #   - Maycow normal: só enquanto está mirando (is_aiming).
 #
-# Liga/desliga em Configurações > Gameplay (SaveManager.config["aim_assist"]).
+# Liga/desliga e intensidade em Configurações > Gameplay:
+# SaveManager.config["aim_assist"] e ["aim_assist_strength"] (0.5 a 2.0).
+# A intensidade escala as duas coisas ao mesmo tempo: o tamanho do cone que
+# procura alvos E a força do puxão - por isso a diferença é bem perceptível.
 
 const MAX_DISTANCE := 45.0          # Alcance máximo pra considerar um alvo
-const MAX_ANGLE_DEG := 7.0          # Cone ao redor do centro da tela
-const MAX_PULL_DEG_PER_SEC := 55.0  # Teto da correção (evita "travar" a mira do jogador)
+const BASE_ANGLE_DEG := 7.0         # Cone ao redor do centro da tela (x intensidade)
+const MAX_PULL_DEG_PER_SEC := 110.0 # Teto da correção (x intensidade)
 const TARGET_HEIGHT_OFFSET := 1.1   # Mira no tronco, não no chão do inimigo
 
 var player: CharacterBody3D
@@ -36,6 +39,12 @@ func _physics_process(delta: float) -> void:
 func get_current_target() -> Node3D:
 	return _target
 
+func _strength() -> float:
+	return clampf(float(SaveManager.config.get("aim_assist_strength", 1.0)), 0.5, 2.0)
+
+func _cone_deg() -> float:
+	return BASE_ANGLE_DEG * _strength()
+
 func _is_active() -> bool:
 	if not SaveManager.config.get("aim_assist", true): return false
 	if not is_instance_valid(player): return false
@@ -52,7 +61,7 @@ func _is_active() -> bool:
 func _find_best_target(cam: Camera3D) -> Node3D:
 	var origin := cam.global_position
 	var forward := -cam.global_transform.basis.z
-	var max_angle := deg_to_rad(MAX_ANGLE_DEG)
+	var max_angle := deg_to_rad(_cone_deg())
 
 	var best: Node3D = null
 	var best_angle := max_angle
@@ -102,9 +111,11 @@ func _pull_towards(cam: Camera3D, target: Node3D, delta: float) -> void:
 
 	# Quanto mais perto do centro, mais forte o magnetismo - o efeito "gruda" a
 	# mira sem impedir o jogador de varrer a tela procurando outro inimigo.
-	var closeness: float = 1.0 - clampf(angle / deg_to_rad(MAX_ANGLE_DEG), 0.0, 1.0)
-	var strength: float = closeness * closeness
-	var max_step: float = deg_to_rad(MAX_PULL_DEG_PER_SEC) * delta * strength
+	var closeness: float = 1.0 - clampf(angle / deg_to_rad(_cone_deg()), 0.0, 1.0)
+	# Curva mais suave que a quadrática de antes: o puxão já é sentido mesmo
+	# com o alvo longe do centro do cone.
+	var falloff: float = closeness * (0.35 + 0.65 * closeness)
+	var max_step: float = deg_to_rad(MAX_PULL_DEG_PER_SEC) * _strength() * delta * falloff
 
 	# --- Horizontal: gira o corpo do player (mesma convenção do olhar manual) ---
 	var flat_forward := Vector2(forward.x, forward.z)

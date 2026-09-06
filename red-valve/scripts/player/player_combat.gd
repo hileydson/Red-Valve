@@ -352,9 +352,75 @@ func _spawn_blood_siphon(start: Vector2, amount: float) -> void:
 		var jitter := Vector2(randf_range(-26.0, 26.0), randf_range(-22.0, 22.0))
 		_spawn_blood_drop(start + jitter, share, float(i) * SIPHON_DROP_STAGGER)
 
+# Posição na tela da arma (mão direita do Maycow). O sangue passa por aqui
+# antes de subir pro medidor - é a arma que "bebe" o sangue.
+func _weapon_screen_pos() -> Vector2:
+	var vp := player.get_viewport()
+	var vp_size: Vector2 = vp.get_visible_rect().size
+	# Sem referência utilizável, cai num ponto à direita e abaixo do centro,
+	# que é mais ou menos onde a arma aparece na tela.
+	var fallback: Vector2 = Vector2(vp_size.x * 0.62, vp_size.y * 0.68)
+
+	var cam := vp.get_camera_3d()
+	if not is_instance_valid(cam): return fallback
+
+	var source := _weapon_node()
+	if not is_instance_valid(source): return fallback
+	if cam.is_position_behind(source.global_position): return fallback
+
+	var screen: Vector2 = cam.unproject_position(source.global_position)
+	screen.x = clamp(screen.x, 8.0, vp_size.x - 8.0)
+	screen.y = clamp(screen.y, 8.0, vp_size.y - 8.0)
+	return screen
+
+func _weapon_node() -> Node3D:
+	# Em 1ª pessoa a arma está presa na câmera; em 3ª pessoa vale mais a mão
+	# direita do modelo, então tentamos os dois, na ordem do que está visível.
+	if is_instance_valid(player.crescent_cogblade) and player.crescent_cogblade.visible:
+		return player.crescent_cogblade
+	if is_instance_valid(player.hand_with_pistol) and player.hand_with_pistol.visible:
+		return player.hand_with_pistol
+
+	var hand := _right_hand_attachment()
+	if is_instance_valid(hand): return hand
+
+	if is_instance_valid(player.crescent_cogblade): return player.crescent_cogblade
+	return null
+
+var _right_hand_cache: BoneAttachment3D = null
+
+func _right_hand_attachment() -> BoneAttachment3D:
+	if is_instance_valid(_right_hand_cache): return _right_hand_cache
+
+	# Modelo ativo: parasita (maycow_lopes) ou normal (maycow_lopes_normal).
+	var model_name := "maycow_lopes_normal" if GlobalEvents.is_maycow_normal else "maycow_lopes"
+	var model := player.get_node_or_null(model_name)
+	if not model: return null
+
+	var skeletons := model.find_children("*", "Skeleton3D", true, false)
+	if skeletons.is_empty(): return null
+	var skeleton: Skeleton3D = skeletons[0]
+
+	# Nome do osso varia por rig (mixamorig:RightHand, hand.R, Bip01 R Hand...),
+	# então procuramos por "hand" + marca de lado direito.
+	var bone_idx := -1
+	for i in skeleton.get_bone_count():
+		var bone_name: String = skeleton.get_bone_name(i).to_lower()
+		if not bone_name.contains("hand"): continue
+		if bone_name.contains("right") or bone_name.ends_with(".r") or bone_name.contains("_r") or bone_name.contains(" r "):
+			bone_idx = i
+			break
+	if bone_idx == -1: return null
+
+	var attachment := BoneAttachment3D.new()
+	attachment.name = "CogbladeSiphonHand"
+	skeleton.add_child(attachment)
+	attachment.bone_idx = bone_idx
+	_right_hand_cache = attachment
+	return attachment
+
 func _spawn_blood_drop(start: Vector2, amount: float, delay: float) -> void:
-	var vp_size: Vector2 = player.get_viewport().get_visible_rect().size
-	var center: Vector2 = vp_size * 0.5
+	var weapon: Vector2 = _weapon_screen_pos()
 	var hud_target: Vector2 = _cogblade_hud_center()
 
 	# Cada gota tem tamanho e velocidade um pouco diferentes.
@@ -405,9 +471,14 @@ func _spawn_blood_drop(start: Vector2, amount: float, delay: float) -> void:
 
 	# Curvas: a gota faz um arco em vez de linha reta. O lado e a altura do
 	# arco variam, então gotas do mesmo golpe não viajam empilhadas.
+	# O trajeto agora é inimigo -> arma (mão direita) -> medidor.
 	var arco := randf_range(35.0, 95.0) * (1.0 if randf() < 0.5 else -1.0)
-	var to_player_ctrl: Vector2 = start.lerp(center, 0.5) + (center - start).orthogonal().normalized() * arco
-	var to_hud_ctrl: Vector2 = Vector2(center.x * randf_range(0.35, 0.55), center.y * randf_range(0.25, 0.45))
+	var to_weapon_ctrl: Vector2 = start.lerp(weapon, 0.5) + (weapon - start).orthogonal().normalized() * arco
+	# Saindo da arma, a gota sobe fazendo uma curva por dentro da tela.
+	var to_hud_ctrl: Vector2 = Vector2(
+		weapon.x * randf_range(0.35, 0.6),
+		weapon.y * randf_range(0.3, 0.55)
+	)
 
 	# Tween do próprio container: se ele for liberado (poder consumiu o medidor),
 	# o trajeto morre junto e o preenchimento não acontece.
@@ -422,17 +493,17 @@ func _spawn_blood_drop(start: Vector2, amount: float, delay: float) -> void:
 
 	tw.tween_method(func(t: float) -> void:
 		if is_instance_valid(container):
-			container.position = _bezier2(start, to_player_ctrl, center, t)
+			container.position = _bezier2(start, to_weapon_ctrl, weapon, t)
 	, 0.0, 1.0, SIPHON_TO_PLAYER_TIME * vel).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 
-	# Chegou no player: pequena "absorvida" (a gota infla e comprime)
+	# Chegou na arma: pequena "absorvida" (a gota infla e comprime)
 	tw.tween_property(container, "scale", Vector2(1.5, 1.5), 0.07).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	tw.tween_property(container, "scale", Vector2(0.85, 0.85), 0.06).set_trans(Tween.TRANS_SINE)
 
-	# Sobe para o canto superior esquerdo, onde está o medidor.
+	# Da arma, sobe para o canto superior esquerdo, onde está o medidor.
 	tw.tween_method(func(t: float) -> void:
 		if is_instance_valid(container):
-			container.position = _bezier2(center, to_hud_ctrl, hud_target, t)
+			container.position = _bezier2(weapon, to_hud_ctrl, hud_target, t)
 	, 0.0, 1.0, SIPHON_TO_HUD_TIME * vel).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 
 	tw.tween_callback(func() -> void:
