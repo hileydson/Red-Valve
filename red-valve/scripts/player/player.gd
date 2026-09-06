@@ -53,14 +53,15 @@ var heartbeat_hud: ColorRect
 var blood_overlay: ColorRect
 var blur_overlay: ColorRect
 # Cel shading (filtro estilo Borderlands por cima do render 3D).
-# Mudar no inspector já reflete em tempo real durante o jogo.
+# O estado "de verdade" vem do menu de configurações (aba Vídeo); estes exports
+# são override rápido pra testar no editor - mudar aqui reflete em tempo real.
 @export_group("Cel Shading")
-@export_range(0.0, 1.0, 0.01) var cel_shading_intensity: float = 0.65:
+@export_range(0.55, 0.85, 0.01) var cel_shading_intensity: float = 0.65:
 	set(value):
 		cel_shading_intensity = value
 		var overlay = get_node_or_null("CelShadingOverlay")
 		if overlay: overlay.set_intensity(value)
-@export var cel_shading_enabled: bool = true:
+@export var cel_shading_enabled: bool = false:
 	set(value):
 		cel_shading_enabled = value
 		var overlay = get_node_or_null("CelShadingOverlay")

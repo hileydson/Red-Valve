@@ -32,6 +32,10 @@ var res_label: Label
 var resolution_option: OptionButton
 var brightness_label: Label
 var brightness_slider: HSlider
+var cel_label: Label
+var cel_check: CheckButton
+var cel_intensity_label: Label
+var cel_intensity_slider: HSlider
 
 func _ready() -> void:
 	self.layer = 130 # Fica acima de tudo
@@ -333,8 +337,57 @@ func _build_video_tab():
 	brightness_slider.value = SaveManager.config["brightness"]
 	brightness_slider.value_changed.connect(func(v): SaveManager.config["brightness"] = v; SaveManager.apply_configs())
 	vbox.add_child(brightness_slider)
-	
+
+	# Cel Shading (filtro cartoon por cima do 3D)
+	cel_label = Label.new()
+	cel_label.text = tr("CONFIG_CEL_SHADING")
+	cel_label.add_theme_font_size_override("font_size", 20)
+	vbox.add_child(cel_label)
+
+	cel_check = CheckButton.new()
+	cel_check.add_theme_font_size_override("font_size", 20)
+	cel_check.button_pressed = SaveManager.config.get("cel_shading", false)
+	cel_check.toggled.connect(_on_cel_shading_toggled)
+	vbox.add_child(cel_check)
+
+	# Intensidade: só faz sentido dentro da faixa em que o efeito fica bom.
+	cel_intensity_label = Label.new()
+	cel_intensity_label.add_theme_font_size_override("font_size", 20)
+	vbox.add_child(cel_intensity_label)
+
+	cel_intensity_slider = HSlider.new()
+	cel_intensity_slider.min_value = 55
+	cel_intensity_slider.max_value = 85
+	cel_intensity_slider.step = 1
+	cel_intensity_slider.value = round(SaveManager.config.get("cel_shading_intensity", 0.65) * 100.0)
+	cel_intensity_slider.value_changed.connect(_on_cel_intensity_changed)
+	vbox.add_child(cel_intensity_slider)
+
+	_update_cel_shading_ui()
+
 	tab_container.add_child(tab_video)
+
+func _on_cel_shading_toggled(pressed: bool) -> void:
+	SaveManager.config["cel_shading"] = pressed
+	_update_cel_shading_ui()
+	SaveManager.apply_configs()
+
+func _on_cel_intensity_changed(value: float) -> void:
+	# O slider trabalha em 55-85 pra ficar legível; o shader usa 0.55-0.85.
+	SaveManager.config["cel_shading_intensity"] = value / 100.0
+	_update_cel_shading_ui()
+	SaveManager.apply_configs()
+
+func _update_cel_shading_ui() -> void:
+	if not is_instance_valid(cel_intensity_slider): return
+	var on: bool = SaveManager.config.get("cel_shading", false)
+	# Sem cel shading ligado, o controle de intensidade fica inerte e apagado
+	cel_intensity_slider.editable = on
+	cel_intensity_slider.focus_mode = Control.FOCUS_ALL if on else Control.FOCUS_NONE
+	cel_intensity_slider.modulate.a = 1.0 if on else 0.4
+	if is_instance_valid(cel_intensity_label):
+		cel_intensity_label.modulate.a = 1.0 if on else 0.4
+		cel_intensity_label.text = "%s: %d%%" % [tr("CONFIG_CEL_SHADING_INTENSITY"), int(cel_intensity_slider.value)]
 
 func _on_display_mode_selected(index: int):
 	if index == 0:
@@ -378,6 +431,8 @@ func _on_lang_selected(index: int) -> void:
 	
 	if is_instance_valid(res_label): res_label.text = tr("CONFIG_RESOLUTION")
 	if is_instance_valid(brightness_label): brightness_label.text = tr("CONFIG_BRIGHTNESS")
+	if is_instance_valid(cel_label): cel_label.text = tr("CONFIG_CEL_SHADING")
+	_update_cel_shading_ui()
 	
 	back_btn.text = tr("BTN_BACK")
 

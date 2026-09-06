@@ -4,22 +4,35 @@ extends CanvasLayer
 # Fica num CanvasLayer abaixo da HUD (layer 100) pra não desenhar contorno em
 # cima de textos e ícones da interface.
 #
-# Teste rápido: F7 liga/desliga em tempo real. Se não curtir o visual, basta
-# apagar este arquivo, o shader em shaders/post_process/cel_shading.gdshader e
-# a chamada em player_hud.gd.
+# Ligado/desligado e intensidade vêm do menu de configurações (aba Vídeo),
+# guardados em SaveManager.config["cel_shading"] e ["cel_shading_intensity"].
+# Os @export no player.gd servem só de override rápido no editor.
+#
+# Teste rápido em jogo: F7 liga/desliga, F8/F9 ajustam a intensidade.
 
 const SHADER_PATH := "res://shaders/post_process/cel_shading.gdshader"
 const TOGGLE_KEY := KEY_F7
 const WEAKER_KEY := KEY_F8
 const STRONGER_KEY := KEY_F9
 
+# Faixa útil da intensidade - fora disso o filtro ou some ou fica agressivo demais.
+const MIN_INTENSITY := 0.55
+const MAX_INTENSITY := 0.85
+
 var enabled: bool = true
 var rect: ColorRect
 
 func set_intensity(value: float) -> void:
-	# Chamado pelo setter de "cel_shading_intensity" no player.gd.
+	# Chamado pelo menu de vídeo e pelo setter de "cel_shading_intensity" no player.gd.
 	if not is_instance_valid(rect): return
-	(rect.material as ShaderMaterial).set_shader_parameter("amount", clampf(value, 0.0, 1.0))
+	var v := clampf(value, MIN_INTENSITY, MAX_INTENSITY)
+	(rect.material as ShaderMaterial).set_shader_parameter("amount", v)
+
+func apply_config() -> void:
+	# Lê o estado salvo nas configurações de vídeo. Chamado no _ready e sempre
+	# que SaveManager.apply_configs() roda (ou seja, ao mexer no menu).
+	enabled = bool(SaveManager.config.get("cel_shading", false))
+	set_intensity(float(SaveManager.config.get("cel_shading_intensity", 0.65)))
 
 func _ready() -> void:
 	layer = 5
@@ -37,8 +50,7 @@ func _ready() -> void:
 	var mat := ShaderMaterial.new()
 	mat.shader = load(SHADER_PATH)
 	# Valores de partida - mexa aqui pra calibrar o look
-	# A intensidade sai do @export "cel_shading_intensity" lá no player.gd
-	mat.set_shader_parameter("amount", 0.65)
+	mat.set_shader_parameter("amount", 0.65) # Sobrescrito por apply_config()
 	mat.set_shader_parameter("outline_thickness", 1.1)
 	mat.set_shader_parameter("outline_threshold", 0.28) # Bordas nítidas, sem pegar ruído de textura
 	mat.set_shader_parameter("outline_softness", 0.18)
@@ -52,13 +64,8 @@ func _ready() -> void:
 
 	add_child(rect)
 
-	# Aplica o que estiver configurado no inspector do player
-	var owner_player := get_parent()
-	if owner_player:
-		if "cel_shading_intensity" in owner_player:
-			set_intensity(owner_player.cel_shading_intensity)
-		if "cel_shading_enabled" in owner_player:
-			enabled = owner_player.cel_shading_enabled
+	add_to_group("cel_shading_overlay")
+	apply_config()
 
 func _process(_delta: float) -> void:
 	# Mesma regra da HUD: quando a cena é "pausada" atrás da arena do amuleto,
@@ -74,19 +81,21 @@ func _input(event: InputEvent) -> void:
 	match event.keycode:
 		TOGGLE_KEY:
 			enabled = not enabled
+			SaveManager.config["cel_shading"] = enabled
 			print("[CelShading] ", "ligado" if enabled else "desligado")
 		WEAKER_KEY:
-			_nudge_amount(-0.1)
+			_nudge_amount(-0.05)
 		STRONGER_KEY:
-			_nudge_amount(0.1)
+			_nudge_amount(0.05)
 
 func _nudge_amount(delta_amount: float) -> void:
-	# Calibragem em tempo real: F8 enfraquece, F9 fortalece. Quando achar o
-	# ponto certo, copie o valor impresso para o "amount" lá no _ready().
+	# Calibragem em tempo real: F8 enfraquece, F9 fortalece, dentro da mesma
+	# faixa do slider do menu. O valor escolhido vai direto pra config salva.
 	var mat := rect.material as ShaderMaterial
-	var value: float = clampf(mat.get_shader_parameter("amount") + delta_amount, 0.0, 1.0)
-	mat.set_shader_parameter("amount", value)
+	var value: float = clampf(mat.get_shader_parameter("amount") + delta_amount, MIN_INTENSITY, MAX_INTENSITY)
+	set_intensity(value)
+	SaveManager.config["cel_shading_intensity"] = value
 	var owner_player := get_parent()
 	if owner_player and "cel_shading_intensity" in owner_player:
 		owner_player.set("cel_shading_intensity", value)
-	print("[CelShading] amount = %.2f" % value)
+	print("[CelShading] intensidade = %.2f" % value)

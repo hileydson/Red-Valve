@@ -32,7 +32,9 @@ var default_config = {
 	"sensitivity_aim": 0.4,
 	"resolution": "1080p",
 	"display_mode": "windowed",
-	"brightness": 1.0
+	"brightness": 1.0,
+	"cel_shading": false,
+	"cel_shading_intensity": 0.65 # Faixa útil: 0.55 a 0.85 (ver menu de vídeo)
 }
 
 var config = default_config.duplicate()
@@ -182,12 +184,22 @@ func apply_configs() -> void:
 		if InputMap.has_action(action):
 			InputMap.action_set_deadzone(action, config["deadzone"])
 			
+	_apply_cel_shading_config()
+
 	if is_instance_valid(brightness_rect):
 		var b = clamp(config["brightness"], 0.1, 2.0)
 		if b <= 1.0:
 			brightness_rect.color = Color(0, 0, 0, 1.0 - b)
 		else:
 			brightness_rect.color = Color(1, 1, 1, (b - 1.0) * 0.5)
+
+func _apply_cel_shading_config() -> void:
+	# Repassa a config de vídeo para o overlay de cel shading que estiver ativo
+	# (ele se registra no grupo ao entrar na árvore).
+	if not get_tree(): return
+	for overlay in get_tree().get_nodes_in_group("cel_shading_overlay"):
+		if is_instance_valid(overlay):
+			overlay.apply_config()
 
 func get_slots_info() -> Array:
 	var info = []
