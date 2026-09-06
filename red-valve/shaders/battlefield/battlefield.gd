@@ -22,6 +22,7 @@ var _rise_cam_time: float = 0.0
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	_play_entry_blur()
 	_spawn_arena_hurricane()
 	_spawn_fire_gargoyles()
 	SaveManager.save_game()
@@ -750,3 +751,40 @@ func _spawn_rock_chunk(origin: Vector3) -> void:
 				rock.queue_free()
 		)
 	)
+
+
+func _play_entry_blur() -> void:
+	# Continuação visual da transição do amuleto: a arena abre já borrada, como
+	# se o player ainda estivesse chegando em alta velocidade, e limpa rápido.
+	var shader := load("res://shaders/effects/warp_speed.gdshader")
+	if not shader: return
+
+	var layer := CanvasLayer.new()
+	layer.layer = 127
+	layer.process_mode = Node.PROCESS_MODE_ALWAYS
+	add_child(layer)
+
+	var rect := ColorRect.new()
+	rect.name = "ArenaEntryBlur"
+	rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	var mat := ShaderMaterial.new()
+	mat.shader = shader
+	mat.set_shader_parameter("streak", 0.9)
+	mat.set_shader_parameter("intensity", 0.55)
+	mat.set_shader_parameter("warp", 0.7)
+	mat.set_shader_parameter("aberration", 0.014)
+	mat.set_shader_parameter("flash", 0.55) # Herda o estouro branco do fim da transição
+	mat.set_shader_parameter("time_offset", randf() * 10.0)
+	rect.material = mat
+	layer.add_child(rect)
+
+	# Ignora o time_scale porque a intro da arena pode rodar em câmera lenta.
+	var tw := create_tween().set_parallel(true).set_ignore_time_scale(true)
+	tw.tween_property(mat, "shader_parameter/flash", 0.0, 0.35).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tw.tween_property(mat, "shader_parameter/streak", 0.0, 0.8).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	tw.tween_property(mat, "shader_parameter/intensity", 0.0, 0.7).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	tw.tween_property(mat, "shader_parameter/warp", 0.0, 0.8).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	tw.tween_property(mat, "shader_parameter/aberration", 0.0, 0.8).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	tw.chain().tween_callback(layer.queue_free)

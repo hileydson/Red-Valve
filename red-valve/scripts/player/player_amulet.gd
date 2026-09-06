@@ -327,13 +327,20 @@ func _on_amulet_magic_released() -> void:
 	cine_cam.look_at(center_pos + Vector3(0, 1.0, 0), Vector3.UP)
 	cine_cam.make_current()
 
+	# Overlay de "velocidade absurda pra cima": motion blur direcional + streaks
+	var warp_rect := _create_warp_overlay()
+
 	var travel_audio = AudioStreamPlayer.new()
 	travel_audio.stream = load("res://assets/sounds/player/espaco_travel.mp3")
-	travel_audio.pitch_scale = 0.8
+	travel_audio.pitch_scale = 0.55 # Bem mais grave
+	travel_audio.volume_db = 8.0    # E mais alto
+	travel_audio.bus = _ensure_warp_audio_bus() # Bus com distorção + grave
 	travel_audio.process_mode = Node.PROCESS_MODE_ALWAYS
 	current.add_child(travel_audio)
 	travel_audio.play()
 	travel_audio.finished.connect(travel_audio.queue_free)
+
+	GlobalUtils.vibrate_controller(null, 0.9, 0.9, 0.6)
 
 	var tween = tree.create_tween().set_parallel(true).set_ignore_time_scale(true)
 	var anim_time = 1.2
@@ -348,7 +355,21 @@ func _on_amulet_magic_released() -> void:
 	tween.tween_property(cine_cam, "global_position:y", cine_cam.global_position.y + 35.0, anim_time).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
 	tween.tween_property(cine_cam, "fov", 130.0, anim_time).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
 
+	if is_instance_valid(warp_rect):
+		var mat := warp_rect.material as ShaderMaterial
+		# Sobe rápido: o borrão vertical e a curvatura de túnel abrem primeiro,
+		# os streaks de energia entram logo em seguida.
+		tween.tween_property(mat, "shader_parameter/streak", 1.0, anim_time * 0.8).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+		tween.tween_property(mat, "shader_parameter/intensity", 1.0, anim_time * 0.5).set_trans(Tween.TRANS_SINE)
+		tween.tween_property(mat, "shader_parameter/warp", 1.0, anim_time).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		tween.tween_property(mat, "shader_parameter/aberration", 0.018, anim_time).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		# Estouro branco só no finalzinho, escondendo a troca de cena
+		tween.tween_property(mat, "shader_parameter/flash", 1.0, anim_time * 0.22).set_delay(anim_time * 0.78).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+
 	await tween.finished
+
+	if is_instance_valid(warp_rect):
+		warp_rect.queue_free()
 
 	for e in GlobalEvents.amulet_captured_enemies:
 		if is_instance_valid(e):
@@ -474,3 +495,69 @@ func _play_iron_rusks_tally() -> void:
 	var pop_tween = create_tween().set_ignore_time_scale(true)
 	pop_tween.tween_property(player.iron_rusks_value_label, "scale", Vector2(1.4, 1.4), 0.15).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	pop_tween.tween_property(player.iron_rusks_value_label, "scale", Vector2(1.0, 1.0), 0.2).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
+
+
+func _create_warp_overlay() -> ColorRect:
+	# ColorRect em tela cheia que roda o shader de velocidade extrema. Fica num
+	# CanvasLayer próprio (bem acima do HUD) e roda mesmo com a cena pausada.
+	var layer := CanvasLayer.new()
+	layer.layer = 128
+	layer.process_mode = Node.PROCESS_MODE_ALWAYS
+
+	var rect := ColorRect.new()
+	rect.name = "AmuletWarpOverlay"
+	rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	var mat := ShaderMaterial.new()
+	mat.shader = load("res://shaders/effects/warp_speed.gdshader")
+	mat.set_shader_parameter("intensity", 0.0)
+	mat.set_shader_parameter("streak", 0.0)
+	mat.set_shader_parameter("aberration", 0.0)
+	mat.set_shader_parameter("warp", 0.0)
+	mat.set_shader_parameter("flash", 0.0)
+	# Cada transição começa os streaks numa fase diferente
+	mat.set_shader_parameter("time_offset", randf() * 10.0)
+	rect.material = mat
+
+	layer.add_child(rect)
+	get_tree().root.add_child(layer)
+
+	# Liberar o rect (fim do efeito) leva junto o CanvasLayer criado aqui.
+	rect.tree_exited.connect(func():
+		if is_instance_valid(layer):
+			layer.queue_free()
+	)
+	return rect
+
+
+func _ensure_warp_audio_bus() -> StringName:
+	# Bus dedicado com distorção pesada + corte de agudos, deixando o som da
+	# transição sujo e grave. Criado uma única vez por sessão.
+	var bus_name := "AmuletWarp"
+	var idx := AudioServer.get_bus_index(bus_name)
+	if idx != -1:
+		return bus_name
+
+	idx = AudioServer.bus_count
+	AudioServer.add_bus(idx)
+	AudioServer.set_bus_name(idx, bus_name)
+	AudioServer.set_bus_send(idx, "Master")
+
+	var dist := AudioEffectDistortion.new()
+	dist.mode = AudioEffectDistortion.MODE_OVERDRIVE
+	dist.drive = 0.85
+	dist.pre_gain = 6.0
+	dist.post_gain = -2.0
+	AudioServer.add_bus_effect(idx, dist)
+
+	var low := AudioEffectLowPassFilter.new()
+	low.cutoff_hz = 2200.0
+	low.resonance = 0.6
+	AudioServer.add_bus_effect(idx, low)
+
+	var amp := AudioEffectAmplify.new()
+	amp.volume_db = 4.0
+	AudioServer.add_bus_effect(idx, amp)
+
+	return bus_name

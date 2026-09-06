@@ -34,7 +34,6 @@
 [ext_resource type="Script" uid="uid://dw4o7kme6nyjm" path="res://tools/godot/citybuild/city_terrain_import.gd" id="32_o0tgs"]
 [ext_resource type="Script" uid="uid://uveurdts033i" path="res://tools/godot/citybuild/city_lookdev.gd" id="34_58jrl"]
 [ext_resource type="PackedScene" path="res://scenes/ui/minimap.tscn" id="35_58jrl"]
-[ext_resource type="PackedScene" uid="uid://0k62b21mg4vm" path="res://scenes/npcs/shadow_person.tscn" id="37_fh8uc"]
 [ext_resource type="PackedScene" path="res://scenes/stages/jimmy_house/casa_jimmy_exterior.tscn" id="40_casajimmy"]
 [ext_resource type="Script" uid="uid://b6781x3j14vwg" path="res://scripts/stages/fix_materials.gd" id="99_fixmat"]
 
@@ -116,8 +115,8 @@ shader_parameter/cirrus_absorption = 2.0
 shader_parameter/cirrus_sky_tint_fade = 0.5
 shader_parameter/cirrus_size = 1.0
 shader_parameter/cirrus_uv = Vector2(0.16, 0.11)
-shader_parameter/cirrus_position1 = Vector2(0.030529996, 0.030529996)
-shader_parameter/cirrus_position2 = Vector2(0.030529996, 0.030529996)
+shader_parameter/cirrus_position1 = Vector2(0.28202015, 0.28202015)
+shader_parameter/cirrus_position2 = Vector2(0.28202015, 0.28202015)
 shader_parameter/cirrus_texture = ExtResource("3_kvc23")
 shader_parameter/cumulus_visible = true
 shader_parameter/cumulus_intensity = 9.245
@@ -127,7 +126,7 @@ shader_parameter/cumulus_absorption = 2.0
 shader_parameter/cumulus_noise_freq = 2.7
 shader_parameter/cumulus_sky_tint_fade = 0.0
 shader_parameter/cumulus_size = 0.5
-shader_parameter/cumulus_position = Vector2(5.1523867, 5.1523867)
+shader_parameter/cumulus_position = Vector2(136.39807, 136.39807)
 shader_parameter/cumulus_texture = ExtResource("4_2wkc3")
 shader_parameter/cumulus_partial_mie_phase = Vector3(0.957564, 1.042436, 0.412)
 shader_parameter/cumulus_mie_intensity = 1.0
@@ -899,18 +898,6 @@ last_result = "aplicado | fog d=0.0012 aer=0.35 | tonemap=2 white=4.5 | contrast
 [node name="Minimap" parent="." unique_id=565288066 instance=ExtResource("35_58jrl")]
 
 [node name="shadow_npcs" type="Node3D" parent="." unique_id=784190822]
-
-[node name="ShadowPerson" parent="shadow_npcs" unique_id=1778950004 instance=ExtResource("37_fh8uc")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 811.8975, 4.434407, -81.96882)
-
-[node name="ShadowPerson2" parent="shadow_npcs" unique_id=1901545630 instance=ExtResource("37_fh8uc")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 814.4866, 4.434407, -82.60414)
-
-[node name="ShadowPerson3" parent="shadow_npcs" unique_id=1343995004 instance=ExtResource("37_fh8uc")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 812.6728, 4.434407, -81.573524)
-
-[node name="ShadowPerson4" parent="shadow_npcs" unique_id=723597938 instance=ExtResource("37_fh8uc")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 814.30524, 4.434407, -79.99707)
 
 [connection signal="area_shape_entered" from="cameras/camera1" to="." method="_on_camera_1_area_shape_entered"]
 [connection signal="body_entered" from="cameras/camera2" to="." method="_on_camera_2_body_entered"]

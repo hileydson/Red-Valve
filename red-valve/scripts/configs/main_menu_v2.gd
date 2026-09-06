@@ -275,20 +275,19 @@ func _show_slots_menu(is_new_game: bool) -> void:
 	slots_panel.set_anchors_preset(Control.PRESET_FULL_RECT)
 	$UI.add_child(slots_panel)
 	
+	var vbox = VBoxContainer.new()
+	vbox.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+	vbox.offset_right = -150
+	vbox.offset_bottom = -150
+	vbox.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	vbox.add_theme_constant_override("separation", 20)
+	slots_panel.add_child(vbox)
+	
 	var title = Label.new()
 	title.text = tr("UI_SELECT_SAVE_SLOT") if is_new_game else tr("BTN_LOAD_GAME")
 	title.add_theme_font_size_override("font_size", 48)
 	title.add_theme_color_override("font_color", Color(1, 0, 0, 1))
-	title.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.position.y = 100
-	slots_panel.add_child(title)
-	
-	var vbox = VBoxContainer.new()
-	vbox.set_anchors_preset(Control.PRESET_CENTER)
-	vbox.position.y -= 100 # Adjust up slightly
-	vbox.add_theme_constant_override("separation", 20)
-	slots_panel.add_child(vbox)
+	vbox.add_child(title)
 	
 	var slots_info = SaveManager.get_slots_info()
 	var first_focusable = null
