@@ -211,6 +211,39 @@ func _exit_tree() -> void:
 		_child_population = maxi(0, _child_population - 1)
 
 
+## Reaproveita esta sombra em outro ponto da cidade, como se ela tivesse
+## acabado de nascer ali. Quem usa e o ShadowCrowd, que mantem um pool fixo e
+## so acende e apaga em vez de instanciar e liberar.
+##
+## O ponto importante e o _home: sem redefini-lo a sombra continuaria presa ao
+## lugar onde nasceu da primeira vez e voltaria andando para la, atravessando
+## meia cidade.
+func relocate(pos: Vector3) -> void:
+	# desfaz qualquer conversa em andamento sem deixar o parceiro pendurado
+	var other := partner
+	partner = null
+	if is_instance_valid(other) and other.partner == self:
+		other.partner = null
+		other._cooldown = other.talk_cooldown
+		other.state = State.LEAVE
+		other._pick_wander_target()
+
+	global_position = pos
+	velocity = Vector3.ZERO
+	_home = pos
+	_target = pos
+	state = State.WANDER
+	_follow_target = null
+	_speed_mul = 1.0
+	_state_timer = 0.0
+	_cooldown = _rng.randf_range(0.0, talk_cooldown)
+	_action_timer = _rng.randf_range(pickup_interval_min * 0.3, pickup_interval_max)
+	_dart_timer = _rng.randf_range(1.0, 5.0)
+	_pick_wander_target()
+	if _nav != null and _nav_ready:
+		_nav.target_position = _target
+
+
 ## Procura o no de audio de passos que voce tiver colocado na cena. Aceita
 ## AudioStreamPlayer3D ou 2D, com qualquer nome parecido com "passos"/"steps";
 ## se nao achar por nome, pega o primeiro player de audio filho.

@@ -32,7 +32,9 @@
 [ext_resource type="PackedScene" uid="uid://bjlae2i2x8twg" path="res://assets/3d_model/stages/prolog/auto_pecas_jimmy.glb" id="29_wfumn"]
 [ext_resource type="PackedScene" uid="uid://wwtg631i4nh0" path="res://scenes/stages/city/city.tscn" id="31_wfumn"]
 [ext_resource type="Script" uid="uid://dw4o7kme6nyjm" path="res://tools/godot/citybuild/city_terrain_import.gd" id="32_o0tgs"]
+[ext_resource type="Script" uid="uid://xardikb025r2" path="res://scripts/npcs/shadow_crowd.gd" id="34_6qoxa"]
 [ext_resource type="Script" uid="uid://uveurdts033i" path="res://tools/godot/citybuild/city_lookdev.gd" id="34_58jrl"]
+[ext_resource type="PackedScene" uid="uid://0k62b21mg4vm" path="res://scenes/npcs/shadow_person.tscn" id="35_4e6sg"]
 [ext_resource type="PackedScene" path="res://scenes/ui/minimap.tscn" id="35_58jrl"]
 [ext_resource type="PackedScene" path="res://scenes/stages/jimmy_house/casa_jimmy_exterior.tscn" id="40_casajimmy"]
 [ext_resource type="Script" uid="uid://b6781x3j14vwg" path="res://scripts/stages/fix_materials.gd" id="99_fixmat"]
@@ -115,8 +117,8 @@ shader_parameter/cirrus_absorption = 2.0
 shader_parameter/cirrus_sky_tint_fade = 0.5
 shader_parameter/cirrus_size = 1.0
 shader_parameter/cirrus_uv = Vector2(0.16, 0.11)
-shader_parameter/cirrus_position1 = Vector2(0.6105351, 0.6105351)
-shader_parameter/cirrus_position2 = Vector2(0.6105351, 0.6105351)
+shader_parameter/cirrus_position1 = Vector2(0.008714055, 0.008714055)
+shader_parameter/cirrus_position2 = Vector2(0.008714055, 0.008714055)
 shader_parameter/cirrus_texture = ExtResource("3_kvc23")
 shader_parameter/cumulus_visible = true
 shader_parameter/cumulus_intensity = 9.245
@@ -126,7 +128,7 @@ shader_parameter/cumulus_absorption = 2.0
 shader_parameter/cumulus_noise_freq = 2.7
 shader_parameter/cumulus_sky_tint_fade = 0.0
 shader_parameter/cumulus_size = 0.5
-shader_parameter/cumulus_position = Vector2(93.0917, 93.0917)
+shader_parameter/cumulus_position = Vector2(115.09279, 115.09279)
 shader_parameter/cumulus_texture = ExtResource("4_2wkc3")
 shader_parameter/cumulus_partial_mie_phase = Vector3(0.957564, 1.042436, 0.412)
 shader_parameter/cumulus_mie_intensity = 1.0
@@ -803,6 +805,8 @@ omni_attenuation = -2.593
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 640, 0, -280)
 
 [node name="shadow_npcs" type="Node3D" parent="." unique_id=784190822]
+script = ExtResource("34_6qoxa")
+shadow_scene = ExtResource("35_4e6sg")
 
 [node name="_CityTerrainImport" type="Node" parent="." unique_id=1680125804]
 script = ExtResource("32_o0tgs")
