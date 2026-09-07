@@ -529,10 +529,13 @@ func _show_delete_prompt(slot_idx: int, is_new_game: bool, trigger_btn: Button) 
 	prompt.set_anchors_preset(Control.PRESET_FULL_RECT)
 	slots_panel.add_child(prompt)
 	
+	var center = CenterContainer.new()
+	center.set_anchors_preset(Control.PRESET_FULL_RECT)
+	prompt.add_child(center)
+	
 	var vbox = VBoxContainer.new()
-	vbox.set_anchors_preset(Control.PRESET_CENTER)
 	vbox.add_theme_constant_override("separation", 20)
-	prompt.add_child(vbox)
+	center.add_child(vbox)
 	
 	var label = Label.new()
 	label.text = tr("UI_CONFIRM_DELETE") + " " + tr("UI_SLOT") + " " + str(slot_idx) + "?"
