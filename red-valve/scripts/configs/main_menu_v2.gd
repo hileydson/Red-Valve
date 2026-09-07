@@ -463,12 +463,16 @@ func _show_slot_action_menu(slot_idx: int, trigger_btn: Button) -> void:
 	
 	var menu = ColorRect.new()
 	menu.name = "ActionMenu"
-	menu.color = Color(0, 0, 0, 0.85)
+	menu.color = Color(0, 0, 0, 0.2)
 	menu.set_anchors_preset(Control.PRESET_FULL_RECT)
 	slots_panel.add_child(menu)
 	
 	var vbox = VBoxContainer.new()
-	vbox.set_anchors_preset(Control.PRESET_CENTER)
+	vbox.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+	vbox.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	vbox.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	vbox.offset_right = -580
+	vbox.offset_bottom = -150
 	vbox.add_theme_constant_override("separation", 20)
 	menu.add_child(vbox)
 	
