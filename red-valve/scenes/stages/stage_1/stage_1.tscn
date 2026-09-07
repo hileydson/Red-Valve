@@ -115,8 +115,8 @@ shader_parameter/cirrus_absorption = 2.0
 shader_parameter/cirrus_sky_tint_fade = 0.5
 shader_parameter/cirrus_size = 1.0
 shader_parameter/cirrus_uv = Vector2(0.16, 0.11)
-shader_parameter/cirrus_position1 = Vector2(0.27620286, 0.27620286)
-shader_parameter/cirrus_position2 = Vector2(0.27620286, 0.27620286)
+shader_parameter/cirrus_position1 = Vector2(0.6105351, 0.6105351)
+shader_parameter/cirrus_position2 = Vector2(0.6105351, 0.6105351)
 shader_parameter/cirrus_texture = ExtResource("3_kvc23")
 shader_parameter/cumulus_visible = true
 shader_parameter/cumulus_intensity = 9.245
@@ -126,7 +126,7 @@ shader_parameter/cumulus_absorption = 2.0
 shader_parameter/cumulus_noise_freq = 2.7
 shader_parameter/cumulus_sky_tint_fade = 0.0
 shader_parameter/cumulus_size = 0.5
-shader_parameter/cumulus_position = Vector2(66.40767, 66.40767)
+shader_parameter/cumulus_position = Vector2(93.0917, 93.0917)
 shader_parameter/cumulus_texture = ExtResource("4_2wkc3")
 shader_parameter/cumulus_partial_mie_phase = Vector3(0.957564, 1.042436, 0.412)
 shader_parameter/cumulus_mie_intensity = 1.0
@@ -641,14 +641,14 @@ top_level = true
 metadata/_edit_lock_ = true
 
 [node name="Player" parent="." unique_id=663958156 instance=ExtResource("1_23usu")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 459.0605, 13.167203, -157.71622)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 459.0605, 9.5435095, -157.71622)
 infinite_stamina_test = true
 
 [node name="enemies" type="Node3D" parent="." unique_id=1935818346]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 714.9369, 2.015886, 441.17017)
 
 [node name="Zombie" parent="enemies" unique_id=636241804 instance=ExtResource("18_2ux1o")]
-transform = Transform3D(0.059585143, 0, -0.99822325, 0, 1, 0, 0.99822325, 0, 0.059585143, -278.78238, -37.94532, -676.08954)
+transform = Transform3D(0.059585143, 0, -0.99822325, 0, 1, 0, 0.99822325, 0, 0.059585143, -261.54178, 9.17046, -654.7603)
 
 [node name="TheCobaltHusker4" parent="enemies" unique_id=1100274870 instance=ExtResource("3_hdpfd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -247.14114, 9.043781, -653.2125)
