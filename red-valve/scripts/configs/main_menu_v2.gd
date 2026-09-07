@@ -298,6 +298,10 @@ func _show_slots_menu(is_new_game: bool) -> void:
 		var slot_idx = slot_info["slot"]
 		var is_empty = slot_info["empty"]
 		
+		btn.set_meta("slot_idx", slot_idx)
+		btn.set_meta("is_empty", is_empty)
+		btn.set_meta("is_new_game", is_new_game)
+		
 		btn.custom_minimum_size = Vector2(400, 80)
 		
 		if is_empty:
@@ -343,7 +347,10 @@ func _show_slots_menu(is_new_game: bool) -> void:
 		btn.mouse_entered.connect(func(): if not btn.disabled: btn.grab_focus())
 		
 		btn.pressed.connect(func():
-			_on_slot_selected(slot_idx, is_new_game)
+			if is_new_game:
+				_on_slot_selected(slot_idx, is_new_game)
+			else:
+				_show_slot_action_menu(slot_idx, btn)
 		)
 		
 		vbox.add_child(btn)
@@ -423,6 +430,24 @@ func _input(event: InputEvent) -> void:
 	if is_back:
 		var slots_panel = $UI.get_node_or_null("SlotsPanel")
 		if slots_panel and slots_panel.visible:
+			if slots_panel.has_node("DeletePrompt"):
+				slots_panel.get_node("DeletePrompt").queue_free()
+				if slots_panel.has_meta("last_focus"):
+					var last_focus = slots_panel.get_meta("last_focus")
+					if is_instance_valid(last_focus):
+						last_focus.grab_focus()
+				get_viewport().set_input_as_handled()
+				return
+				
+			if slots_panel.has_node("ActionMenu"):
+				slots_panel.get_node("ActionMenu").queue_free()
+				if slots_panel.has_meta("last_focus"):
+					var last_focus = slots_panel.get_meta("last_focus")
+					if is_instance_valid(last_focus):
+						last_focus.grab_focus()
+				get_viewport().set_input_as_handled()
+				return
+				
 			var vbox = slots_panel.get_child(0)
 			if vbox:
 				for child in vbox.get_children():
@@ -430,3 +455,131 @@ func _input(event: InputEvent) -> void:
 						child.pressed.emit()
 						get_viewport().set_input_as_handled()
 						return
+
+func _show_slot_action_menu(slot_idx: int, trigger_btn: Button) -> void:
+	GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/selecionar_item.mp3")
+	var slots_panel = $UI.get_node("SlotsPanel")
+	slots_panel.set_meta("last_focus", trigger_btn)
+	
+	var menu = ColorRect.new()
+	menu.name = "ActionMenu"
+	menu.color = Color(0, 0, 0, 0.85)
+	menu.set_anchors_preset(Control.PRESET_FULL_RECT)
+	slots_panel.add_child(menu)
+	
+	var vbox = VBoxContainer.new()
+	vbox.set_anchors_preset(Control.PRESET_CENTER)
+	vbox.add_theme_constant_override("separation", 20)
+	menu.add_child(vbox)
+	
+	var label = Label.new()
+	label.text = tr("UI_SLOT") + " " + str(slot_idx)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.add_theme_font_size_override("font_size", 32)
+	vbox.add_child(label)
+	
+	var btn_load = Button.new()
+	btn_load.text = tr("BTN_LOAD_GAME")
+	btn_load.custom_minimum_size = Vector2(250, 60)
+	
+	var btn_delete = Button.new()
+	btn_delete.text = tr("BTN_DELETE")
+	btn_delete.custom_minimum_size = Vector2(250, 60)
+	
+	for b in [btn_load, btn_delete]:
+		var style_normal = StyleBoxFlat.new()
+		style_normal.bg_color = Color(0.2, 0.2, 0.2, 0.8)
+		var style_focus = StyleBoxFlat.new()
+		style_focus.bg_color = Color(0.8, 0, 0, 0.8)
+		style_focus.border_color = Color(1.0, 0.5, 0.5, 1.0)
+		style_focus.border_width_left = 4
+		b.add_theme_stylebox_override("normal", style_normal)
+		b.add_theme_stylebox_override("focus", style_focus)
+		b.add_theme_stylebox_override("hover", style_focus)
+		b.add_theme_font_size_override("font_size", 24)
+		
+		b.focus_entered.connect(func(): GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/mudar_selecao.mp3"))
+		b.mouse_entered.connect(func(): b.grab_focus())
+		vbox.add_child(b)
+	
+	btn_load.pressed.connect(func():
+		menu.queue_free()
+		_on_slot_selected(slot_idx, false)
+	)
+	
+	btn_delete.pressed.connect(func():
+		menu.queue_free()
+		_show_delete_prompt(slot_idx, false, trigger_btn)
+	)
+	
+	btn_load.grab_focus()
+
+func _show_delete_prompt(slot_idx: int, is_new_game: bool, trigger_btn: Button) -> void:
+	GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/selecionar_item.mp3")
+	var slots_panel = $UI.get_node("SlotsPanel")
+	slots_panel.set_meta("last_focus", trigger_btn)
+	
+	var prompt = ColorRect.new()
+	prompt.name = "DeletePrompt"
+	prompt.color = Color(0, 0, 0, 0.85)
+	prompt.set_anchors_preset(Control.PRESET_FULL_RECT)
+	slots_panel.add_child(prompt)
+	
+	var vbox = VBoxContainer.new()
+	vbox.set_anchors_preset(Control.PRESET_CENTER)
+	vbox.add_theme_constant_override("separation", 20)
+	prompt.add_child(vbox)
+	
+	var label = Label.new()
+	label.text = tr("UI_CONFIRM_DELETE") + " " + tr("UI_SLOT") + " " + str(slot_idx) + "?"
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.add_theme_font_size_override("font_size", 32)
+	label.add_theme_color_override("font_color", Color(1, 0.2, 0.2, 1))
+	vbox.add_child(label)
+	
+	var hbox = HBoxContainer.new()
+	hbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	hbox.add_theme_constant_override("separation", 40)
+	vbox.add_child(hbox)
+	
+	var btn_yes = Button.new()
+	btn_yes.text = tr("BTN_YES")
+	btn_yes.custom_minimum_size = Vector2(150, 50)
+	
+	var btn_no = Button.new()
+	btn_no.text = tr("BTN_NO")
+	btn_no.custom_minimum_size = Vector2(150, 50)
+	
+	# Apply standard simple red focus style for prompt buttons
+	for b in [btn_yes, btn_no]:
+		var style_normal = StyleBoxFlat.new()
+		style_normal.bg_color = Color(0.2, 0.2, 0.2, 0.8)
+		var style_focus = StyleBoxFlat.new()
+		style_focus.bg_color = Color(0.8, 0, 0, 0.8)
+		style_focus.border_color = Color(1.0, 0.5, 0.5, 1.0)
+		style_focus.border_width_left = 4
+		b.add_theme_stylebox_override("normal", style_normal)
+		b.add_theme_stylebox_override("focus", style_focus)
+		b.add_theme_stylebox_override("hover", style_focus)
+		b.add_theme_font_size_override("font_size", 24)
+		
+		b.focus_entered.connect(func(): GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/mudar_selecao.mp3"))
+		b.mouse_entered.connect(func(): b.grab_focus())
+		hbox.add_child(b)
+	
+	btn_no.pressed.connect(func():
+		GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/selecionar_item_voltar.mp3")
+		prompt.queue_free()
+		if is_instance_valid(trigger_btn):
+			trigger_btn.grab_focus()
+	)
+	
+	btn_yes.pressed.connect(func():
+		GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/entrar_super.mp3")
+		SaveManager.delete_save(slot_idx)
+		prompt.queue_free()
+		slots_panel.queue_free()
+		_show_slots_menu(is_new_game)
+	)
+	
+	btn_no.grab_focus()

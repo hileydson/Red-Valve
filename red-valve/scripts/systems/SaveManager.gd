@@ -256,6 +256,14 @@ func save_game(scene_path: String = ""):
 		file.close()
 		print("Game Saved in slot ", current_slot, "! Stage: ", current_stage)
 
+func delete_save(slot_id: int) -> void:
+	var path = get_save_path(slot_id)
+	if FileAccess.file_exists(path):
+		var dir = DirAccess.open("user://")
+		if dir:
+			dir.remove(path.get_file())
+			print("Game save deleted from slot ", slot_id)
+
 func load_game(slot_id: int = -1) -> bool:
 	if slot_id != -1:
 		current_slot = slot_id

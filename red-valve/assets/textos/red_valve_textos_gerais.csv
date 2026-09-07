@@ -118,3 +118,7 @@ BTN_NEW_GAME,New Game,Novo Jogo
 UI_SELECT_SAVE_SLOT,Select Save Slot,Selecionar Slot de Jogo
 UI_SLOT,Slot,Slot
 UI_EMPTY,EMPTY,VAZIO
+UI_CONFIRM_DELETE,Delete,Deseja deletar o
+BTN_DELETE,Delete,Deletar
+BTN_YES,Yes,Sim
+BTN_NO,No,Não
