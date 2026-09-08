@@ -444,6 +444,8 @@ func _too_close_to_cars(pos: Vector3) -> bool:
 
 
 func _park_car(car: Node3D) -> void:
+	if car.has_method("stop_engine"):
+		car.stop_engine()
 	car.visible = false
 	car.process_mode = Node.PROCESS_MODE_DISABLED
 	car.global_position = GARAGE

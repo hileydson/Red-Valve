@@ -28,8 +28,31 @@ const GRAVITY := 18.0
 @export var speed_max: float = 7.0
 ## Quanto ele freia pra fazer curva.
 @export var turn_slowdown: float = 0.55
-@export var turn_speed: float = 1.8
 @export var accel: float = 3.0
+## Angulo maximo das rodas dianteiras. Carro nao gira em cima do proprio eixo:
+## a guinada sai da roda da frente esterçada, entao parado ele NAO vira.
+@export var max_steer_deg: float = 32.0
+## Velocidade minima que ele mantem no meio de uma curva (nao para pra girar).
+@export var min_turn_speed: float = 1.1
+## Velocidade de re na manobra de meia-volta.
+@export var reverse_speed: float = 1.6
+
+@export_group("Motor (som)")
+## Tempo do fade in do motor quando o carro comeca a andar.
+@export var engine_fade_in: float = 0.7
+## Tempo do fade out ate silenciar quando ele para.
+@export var engine_fade_out: float = 0.5
+@export var engine_pitch_idle: float = 0.75
+@export var engine_pitch_max: float = 1.25
+
+@export_group("Fumaca")
+## Os carros sao mais fumacados que as pessoas: superficie lisa e grande
+## denuncia a caixa muito mais facil que um corpo cheio de membros.
+@export var smoke_billow: float = 0.16
+@export var smoke_body_dissolve: float = 0.46
+@export var smoke_edge_dissolve: float = 1.75
+@export var smoke_scale: float = 4.5
+@export var smoke_wisp_scale: float = 16.0
 
 @export_group("Ruas")
 ## Nome do no que contem as ruas. Qualquer colisor abaixo dele conta como pista.
@@ -58,7 +81,14 @@ var _probe_timer := 0.0
 var _stuck_timer := 0.0
 var _blocked := false
 var _wheels: Array[Node3D] = []
+var _front_wheels: Array[Node3D] = []
 var _wheel_radius := 0.34
+var _wheelbase := 2.4
+var _steer := 0.0
+var _reverse := 0.0
+var _engine: Node = null
+var _engine_target_db := 0.0
+var _engine_db := -60.0
 var _body_root: Node3D
 var _player: Node3D
 var _visible_now := true
@@ -101,6 +131,7 @@ func _ready() -> void:
 	_heading = rotation.y
 	_build_car()
 	_setup_collision()
+	_find_engine()
 	_player = get_tree().get_first_node_in_group("player") as Node3D
 	call_deferred("_align_to_road")
 
@@ -112,6 +143,15 @@ func _get_material() -> ShaderMaterial:
 		_shared_material = ShaderMaterial.new()
 		# exatamente o mesmo shader das pessoas: o visual tem que bater
 		_shared_material.shader = load("res://shaders/npcs/shadow_being.gdshader")
+		# mesmo shader das pessoas, so que com a fumaca no talo: a lataria e
+		# lisa e grande, entao a forma aparece muito mais facil que num corpo
+		_shared_material.set_shader_parameter("billow", smoke_billow)
+		_shared_material.set_shader_parameter("body_dissolve", smoke_body_dissolve)
+		_shared_material.set_shader_parameter("edge_dissolve", smoke_edge_dissolve)
+		_shared_material.set_shader_parameter("smoke_scale", smoke_scale)
+		_shared_material.set_shader_parameter("wisp_scale", smoke_wisp_scale)
+		_shared_material.set_shader_parameter("bite_scale", 2.4)
+		_shared_material.set_shader_parameter("edge_power", 0.9)
 	return _shared_material
 
 
@@ -181,6 +221,7 @@ func _build_car() -> void:
 	# rodas: pivo gira em X (eixo lateral), o cilindro deitado fica dentro
 	var axle_z := ln * 0.34
 	var axle_x := wd * 0.5 - _wheel_radius * 0.35
+	_wheelbase = axle_z * 2.0
 	for sx in [-1.0, 1.0]:
 		for sz in [-1.0, 1.0]:
 			_add_wheel(Vector3(sx * axle_x, _wheel_radius, sz * axle_z))
@@ -207,6 +248,8 @@ func _add_wheel(at: Vector3) -> void:
 	var mi := _make_part(pivot, cyl, Vector3.ZERO)
 	mi.rotation.z = PI * 0.5  # deita o cilindro no eixo lateral
 	_wheels.append(pivot)
+	if at.z > 0.0:
+		_front_wheels.append(pivot)   # so estas esterçam
 
 
 func _setup_collision() -> void:
@@ -237,7 +280,7 @@ func _is_road_at(pos: Vector3) -> bool:
 
 ## Sonda o asfalto a frente e decide pra onde apontar. Sem rua na frente,
 ## procura uma saida pros lados; sem saida nenhuma, da meia volta.
-func _steer(delta: float) -> void:
+func _choose_heading(delta: float) -> void:
 	_probe_timer -= delta
 	if _probe_timer > 0.0:
 		return
@@ -327,41 +370,71 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity.y = 0.0
 
-	_steer(delta)
-	# a rotacao persegue o rumo escolhido, entao a curva sai suave
-	rotation.y = rotate_toward(rotation.y, _heading, turn_speed * delta)
+	_choose_heading(delta)
 
-	var turning := absf(angle_difference(rotation.y, _heading))
-	var target := _cruise * (1.0 - clampf(turning, 0.0, 1.2) * turn_slowdown)
-	if _car_ahead() or _pedestrian_ahead():
-		target = 0.0   # freia e espera o caminho limpar
-	_speed = move_toward(_speed, maxf(target, 0.0), accel * delta)
+	var err := angle_difference(rotation.y, _heading)
+	var max_steer := deg_to_rad(max_steer_deg)
+	var blocked := _car_ahead() or _pedestrian_ahead()
+
+	# manobra de meia-volta: quando o rumo pedido esta quase pra tras, um carro
+	# de verdade nao pivota — ele entra na curva, para e volta de re esterçado
+	# pro outro lado. Sem isto ele girava no lugar, que era o que estava feio.
+	if _reverse > 0.0:
+		_reverse -= delta
+	elif not blocked and absf(err) > 2.0 and _speed < 0.9:
+		_reverse = 1.3
+
+	var reversing := _reverse > 0.0
+	_steer = clampf(err, -max_steer, max_steer)
+	if reversing:
+		_steer = -_steer   # de re, o volante vai pro lado contrario
+
+	# alvo de velocidade: freia pra curva, mas nunca para pra girar
+	var target := 0.0
+	if blocked:
+		target = 0.0
+	elif reversing:
+		target = -reverse_speed
+	else:
+		var t := _cruise * (1.0 - clampf(absf(_steer) / max_steer, 0.0, 1.0) * turn_slowdown)
+		target = maxf(t, min_turn_speed)
+	_speed = move_toward(_speed, target, accel * delta)
+
+	# guinada do modelo de bicicleta: so gira o que anda. Parado, tan(volante)
+	# multiplica zero e o carro fica reto — igual carro de verdade.
+	var yaw_rate := (_speed / maxf(_wheelbase, 0.5)) * tan(_steer)
+	rotation.y += yaw_rate * delta
 
 	var dir := Vector3(sin(rotation.y), 0.0, cos(rotation.y))
 	velocity.x = dir.x * _speed
 	velocity.z = dir.z * _speed
 	move_and_slide()
 
-	# travou em algo (poste, muro): tenta outro rumo
-	if _speed > 0.5 and velocity.length() < 0.3:
+	# travou em algo (poste, muro): da re e tenta outro rumo
+	if absf(_speed) > 0.5 and velocity.length() < 0.3:
 		_stuck_timer += delta
-		if _stuck_timer > 1.2:
+		if _stuck_timer > 1.0:
+			_reverse = 1.2
 			_heading += PI * (0.5 if _rng.randf() < 0.5 else -0.5)
 			_stuck_timer = 0.0
 	else:
 		_stuck_timer = 0.0
 
 	_spin_wheels(delta)
+	_update_engine(delta)
 
 
 func _spin_wheels(delta: float) -> void:
 	var spin := _speed / maxf(_wheel_radius, 0.05) * delta
 	for w in _wheels:
 		w.rotation.x += spin
+	# so as rodas da frente viram; as de tras seguem fixas no eixo
+	for w in _front_wheels:
+		w.rotation.y = lerp(w.rotation.y, _steer, clampf(delta * 6.0, 0.0, 1.0))
 	# leve inclinacao do corpo na curva
 	if _body_root != null:
-		var lean := clampf(angle_difference(rotation.y, _heading), -0.6, 0.6)
-		_body_root.rotation.z = lerp(_body_root.rotation.z, -lean * 0.10, clampf(delta * 4.0, 0.0, 1.0))
+		_body_root.rotation.z = lerp(_body_root.rotation.z, -_steer * 0.12,
+			clampf(delta * 4.0, 0.0, 1.0))
 
 
 ## Longe do player o carro some por inteiro (nao processa, nao aparece).
@@ -418,3 +491,67 @@ func relocate(pos: Vector3, heading := NAN) -> void:
 	_stuck_timer = 0.0
 	_probe_timer = 0.0
 	_visible_now = true
+
+
+# ------------------------------------------------------------ som do motor
+
+## Acha o no de audio do motor colocado na cena (nome com "motor"/"engine"/
+## "som", ou o primeiro player de audio filho).
+func _find_engine() -> void:
+	var fallback: Node = null
+	for c in get_children():
+		if not (c is AudioStreamPlayer3D or c is AudioStreamPlayer or c is AudioStreamPlayer2D):
+			continue
+		if fallback == null:
+			fallback = c
+		var n := String(c.name).to_lower()
+		if n.contains("motor") or n.contains("engine") or n.contains("som"):
+			_engine = c
+			break
+	if _engine == null:
+		_engine = fallback
+	if _engine == null:
+		return
+	_engine_target_db = _engine.volume_db
+	_engine_db = -60.0
+	_engine.volume_db = _engine_db
+	# motor tem que ser continuo: sem loop o mp3 toca uma vez e cala
+	var st: Resource = _engine.stream
+	if st != null and "loop" in st:
+		st.loop = true
+
+
+## Sobe o motor num fade quando o carro anda e silencia quando ele para.
+func _update_engine(delta: float) -> void:
+	if _engine == null:
+		return
+	var moving := absf(_speed) > 0.3
+	if moving:
+		if not _engine.playing:
+			_engine.volume_db = _engine_db
+			_engine.play()
+		var step := (_engine_target_db + 60.0) / maxf(engine_fade_in, 0.01)
+		_engine_db = move_toward(_engine_db, _engine_target_db, step * delta)
+		var ratio := clampf(absf(_speed) / maxf(_cruise, 0.1), 0.0, 1.0)
+		_engine.pitch_scale = lerpf(engine_pitch_idle, engine_pitch_max, ratio)
+	else:
+		var step := (_engine_target_db + 60.0) / maxf(engine_fade_out, 0.01)
+		_engine_db = move_toward(_engine_db, -60.0, step * delta)
+		if _engine_db <= -59.0 and _engine.playing:
+			_engine.stop()
+	_engine.volume_db = _engine_db
+
+
+func _exit_tree() -> void:
+	if _engine != null and _engine.playing:
+		_engine.stop()
+
+
+## Silencia o motor na hora. Usado pelo ShadowCrowd quando o carro e recolhido
+## pra garagem: sem isto o som continuaria tocando com o carro invisivel.
+func stop_engine() -> void:
+	if _engine == null:
+		return
+	_engine.stop()
+	_engine_db = -60.0
+	_engine.volume_db = _engine_db

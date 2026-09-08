@@ -10,4 +10,3 @@ script = ExtResource("1_shadowcar")
 
 [node name="motor" type="AudioStreamPlayer3D" parent="." unique_id=1415595019]
 stream = ExtResource("2_kwxb7")
-volume_db = 38.0
