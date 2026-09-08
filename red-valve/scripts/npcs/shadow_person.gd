@@ -1,6 +1,8 @@
 extends CharacterBody3D
 class_name ShadowPerson
 
+const ShadowRoads := preload("res://scripts/npcs/shadow_roads.gd")
+
 ## NPC "sombra de gente": silhueta humana montada por codigo (cabeca, torax,
 ## bracos, maos, pernas, pes), feita de escuridao. Ao entrar na cena ele sorteia
 ## uma silhueta (gordo, magro, cabeludo, careca...), vaga pela cidade e, quando
@@ -60,6 +62,17 @@ const BASE_HEIGHT := 1.75
 ## Distancia que a crianca tenta manter do adulto.
 @export var follow_distance: float = 1.8
 
+@export_group("Ruas")
+## Se ligado, a sombra so anda onde existe rua embaixo dela: nunca sobe em
+## casa, muro ou telhado. Desligue se quiser que ela ande por qualquer lugar.
+@export var road_only: bool = true
+## Nome do no que contem as ruas da cidade.
+@export var road_node_name: String = "Roads"
+## Alternativa ao nome: nos de rua marcados neste grupo.
+@export var road_group: String = "shadow_road"
+## Camada fisica onde esta a colisao da cidade.
+@export_flags_3d_physics var road_mask: int = 2
+
 @export_group("Passos")
 ## Volume dos passos do adulto, somado ao volume do proprio no de audio.
 @export var step_volume_db: float = 0.0
@@ -107,6 +120,10 @@ var _speak_timer := 0.0
 var _steps: Node = null
 var _steps_base_db := 0.0
 var _step_half := 0
+
+# controle de "so anda na rua"
+var _road_timer := 0.0
+var _off_road := 0.0
 
 # rig
 var _rig: Node3D
@@ -186,10 +203,13 @@ func _ready() -> void:
 	else:
 		add_to_group("shadow_adult")
 
+	ShadowRoads.setup(get_tree(), road_node_name, road_group)
 	_find_steps_player()
 	_build_body()
 	_setup_collision()
 	_setup_nav()
+	if road_only:
+		call_deferred("_snap_to_road")
 	_pick_wander_target()
 
 
@@ -491,6 +511,8 @@ func _physics_process(delta: float) -> void:
 	_cooldown = maxf(0.0, _cooldown - delta)
 	_state_timer -= delta
 	_speed_mul = move_toward(_speed_mul, 1.0, delta * 1.2)
+	if road_only:
+		_keep_on_road(delta)
 
 	match state:
 		State.WANDER:
@@ -603,11 +625,20 @@ func _pick_wander_target() -> void:
 	if is_child and state == State.WANDER and partner == null \
 			and _rng.randf() < follow_chance and _try_follow_adult():
 		return
-	var ang := _rng.randf() * TAU
-	# crianca nao vai longe: fica indo e voltando em trechos curtos
-	var dist := _rng.randf_range(wander_radius * 0.10, wander_radius * 0.35) if is_child \
-		else _rng.randf_range(wander_radius * 0.25, wander_radius)
-	_target = _home + Vector3(cos(ang) * dist, 0.0, sin(ang) * dist)
+	# tenta varios pontos e fica com o primeiro que caia sobre asfalto
+	var found := false
+	for attempt in (10 if road_only else 1):
+		var ang := _rng.randf() * TAU
+		# crianca nao vai longe: fica indo e voltando em trechos curtos
+		var dist := _rng.randf_range(wander_radius * 0.10, wander_radius * 0.35) if is_child \
+			else _rng.randf_range(wander_radius * 0.25, wander_radius)
+		_target = _home + Vector3(cos(ang) * dist, 0.0, sin(ang) * dist)
+		if not road_only or _is_road_at(_target):
+			found = true
+			break
+	if road_only and not found:
+		# nenhuma direcao livre: anda pouco, na propria rua onde ja esta
+		_target = ShadowRoads.nearest(global_position, wander_radius * 0.5)
 	if _nav_ready:
 		_target = NavigationServer3D.map_get_closest_point(get_world_3d().navigation_map, _target)
 	_state_timer = _rng.randf_range(4.0, 9.0) if is_child else _rng.randf_range(8.0, 20.0)
@@ -718,6 +749,51 @@ func _end_interaction() -> void:
 		other._pick_wander_target()
 
 
+# ------------------------------------------------------- so anda pela rua
+
+func _is_road_at(pos: Vector3) -> bool:
+	return ShadowRoads.is_road(pos)
+
+
+## Quem foi posicionado em cima de uma casa (ou de qualquer coisa que nao seja
+## rua) e puxado pro asfalto mais proximo assim que a cena comeca.
+func _snap_to_road() -> void:
+	if not is_inside_tree() or _is_road_at(global_position):
+		return
+	var p := ShadowRoads.nearest(global_position, 40.0)
+	if p != global_position:
+		global_position = p + Vector3.UP * 0.3
+		_home = global_position
+		_target = _home
+
+
+## Se sair do asfalto no meio do caminho (empurrao, curva, esquina cortada),
+## volta pra rua mais proxima em vez de subir na calcada ou no telhado.
+func _keep_on_road(delta: float) -> void:
+	_road_timer -= delta
+	if _road_timer > 0.0:
+		return
+	_road_timer = 0.35
+	if _is_road_at(global_position):
+		_off_road = 0.0
+		return
+	_off_road += 0.35
+	if _off_road < 0.7:
+		return
+	var p := ShadowRoads.nearest(global_position, 20.0)
+	if p == global_position:
+		return
+	# larga o que estiver fazendo e volta pra rua
+	if partner != null:
+		_end_interaction()
+	_follow_target = null
+	state = State.WANDER
+	_target = p
+	_state_timer = 8.0
+	_repath = 0.0
+	_off_road = 0.0
+
+
 # --------------------------------------------------- catar do chao (adulto)
 
 func _update_pickup_urge(delta: float) -> void:
@@ -744,6 +820,12 @@ func _update_darting(delta: float) -> void:
 	var ang := rotation.y + side * _rng.randf_range(0.8, 2.4)
 	var dist := _rng.randf_range(2.5, 7.0)
 	_target = global_position + Vector3(sin(ang), 0.0, cos(ang)) * dist
+	if road_only and not _is_road_at(_target):
+		# do outro lado, entao: a corrida nunca sai do asfalto
+		ang = rotation.y - side * _rng.randf_range(0.8, 2.4)
+		_target = global_position + Vector3(sin(ang), 0.0, cos(ang)) * dist
+		if not _is_road_at(_target):
+			_target = global_position
 	if _nav_ready:
 		_target = NavigationServer3D.map_get_closest_point(get_world_3d().navigation_map, _target)
 	_state_timer = _rng.randf_range(3.0, 6.0)
@@ -767,7 +849,7 @@ func _update_play(delta: float) -> void:
 			away = Vector3(sin(rotation.y), 0.0, cos(rotation.y))
 		away = away.normalized().rotated(Vector3.UP, _play_dir * 0.5)
 		var dest := global_position + away * 3.0
-		if _play_center.distance_to(dest) > 6.0:
+		if _play_center.distance_to(dest) > 6.0 or (road_only and not _is_road_at(dest)):
 			dest = _play_center
 			_play_dir = -_play_dir
 		_move_towards(dest, delta, false)

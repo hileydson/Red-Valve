@@ -1,6 +1,8 @@
 extends Node3D
 class_name ShadowCrowd
 
+const ShadowRoads := preload("res://scripts/npcs/shadow_roads.gd")
+
 ## Povoa a cidade de ShadowPerson ao redor do jogador, dando a impressao de
 ## que ela esta cheia sem nunca pagar por uma cidade cheia de verdade.
 ##
@@ -20,6 +22,11 @@ class_name ShadowCrowd
 ## Os pontos de spawn saem sempre do navmesh, entao ninguem nasce dentro de um
 ## predio ou boiando. Se o navmesh nao estiver pronto, cai para um raycast
 ## vertical no chao.
+##
+## O mesmo esquema vale para os ShadowCar, num pool separado: pool proprio,
+## anel proprio (maior, porque carro anda mais rapido) e uma exigencia a mais —
+## o ponto tem que estar sobre o no das ruas e ter pista continuando a frente,
+## senao o carro nasceria entalado numa quina.
 
 @export_group("Populacao")
 ## Cena da sombra. Se ficar vazio, usa res://scenes/npcs/shadow_person.tscn.
@@ -31,6 +38,30 @@ class_name ShadowCrowd
 ## Raio em que cada sombra vaga a partir de onde nasceu. 0 = nao mexe no valor
 ## que vier da cena.
 @export var wander_radius: float = 16.0
+
+@export_group("Carros")
+## Cena do carro. Vazio = res://scenes/npcs/shadow_car.tscn. 0 carros = desliga.
+@export var car_scene: PackedScene
+## Carros na memoria. Poucos de proposito: a cidade nao e uma avenida.
+@export var car_pool_size: int = 8
+## Quantos rodam ao mesmo tempo.
+@export var max_active_cars: int = 5
+## Anel onde os carros nascem. Maior que o das pessoas: carro cobre distancia
+## rapido e nascer perto demais fica na cara.
+@export var car_spawn_ring_min: float = 30.0
+@export var car_spawn_ring_max: float = 80.0
+## Dentro disso nao se recolhe carro nenhum.
+@export var car_keep_distance: float = 60.0
+## Alem disso o carro some mesmo estando na tela.
+@export var car_despawn_distance: float = 110.0
+## Distancia minima entre dois carros recem nascidos.
+@export var car_min_spacing: float = 25.0
+## Nome do no das ruas da cidade.
+@export var road_node_name: String = "Roads"
+## Alternativa ao nome: nos de rua marcados neste grupo.
+@export var road_group: String = "shadow_road"
+## Camada fisica da colisao da cidade.
+@export_flags_3d_physics var road_mask: int = 2
 
 @export_group("Distancias")
 ## Anel (em metros) onde as sombras nascem, medido a partir do jogador.
@@ -89,6 +120,11 @@ var _player_retry := 0.0
 var _nav_layers := 0
 var _warned_no_nav := false
 
+var _car_pool: Array[Node3D] = []
+var _car_active: Array[Node3D] = []
+var _car_idle: Array[Node3D] = []
+var _last_car_heading := 0.0
+
 
 func _ready() -> void:
 	_rng.randomize()
@@ -98,14 +134,46 @@ func _ready() -> void:
 		push_error("ShadowCrowd: shadow_person.tscn nao encontrada; a cidade fica vazia.")
 		set_physics_process(false)
 		return
+	ShadowRoads.setup(get_tree(), road_node_name, road_group)
 	max_active = mini(max_active, pool_size)
 	_build_pool()
+	_build_car_pool()
 	# o NavigationAgent3D de cada sombra so existe alguns frames depois do
 	# _ready dela (o proprio script espera a nav map sincronizar)
 	await get_tree().physics_frame
 	await get_tree().physics_frame
 	await get_tree().physics_frame
 	_sync_nav_layers()
+
+
+## Mesmo esquema do pool de pessoas, so que para os carros. Cada carro nasce
+## com o proprio sumico-por-distancia DESLIGADO: quem manda em quem aparece e
+## quem some passa a ser este no, senao os dois sistemas brigariam.
+func _build_car_pool() -> void:
+	if car_pool_size <= 0 or max_active_cars <= 0:
+		return
+	if car_scene == null:
+		car_scene = load("res://scenes/npcs/shadow_car.tscn") as PackedScene
+	if car_scene == null:
+		push_warning("ShadowCrowd: shadow_car.tscn nao encontrada; a cidade fica sem carros.")
+		return
+	max_active_cars = mini(max_active_cars, car_pool_size)
+	for i in car_pool_size:
+		var car := car_scene.instantiate() as Node3D
+		if car == null:
+			continue
+		if "despawn_enabled" in car:
+			car.despawn_enabled = false
+		if "road_node_name" in car:
+			car.road_node_name = road_node_name
+			car.road_group = road_group
+			car.road_mask = road_mask
+		add_child(car)
+		car.global_position = GARAGE
+		_car_pool.append(car)
+		_park_car(car)
+	if debug_log:
+		print("ShadowCrowd: pool de ", _car_pool.size(), " carros pronto.")
 
 
 ## Cria todas as sombras de uma vez e as manda direto para a garagem. Elas
@@ -186,6 +254,8 @@ func _physics_process(delta: float) -> void:
 
 	_retire_far(ppos, cam)
 	_fill(ppos, cam)
+	_retire_far_cars(ppos, cam)
+	_fill_cars(ppos, cam)
 
 
 ## Recolhe quem ja nao faz falta. A ordem dos testes importa: a distancia curta
@@ -234,6 +304,10 @@ func _pick_spawn_point(ppos: Vector3, cam: Camera3D) -> Vector3:
 			continue
 		# telhado, laje ou fundo de buraco: longe demais do nivel do jogador
 		if absf(pos.y - ppos.y) > max_height_diff:
+			continue
+		# nasce na rua: senao a sombra apareceria na calcada e voltaria
+		# andando pro asfalto na frente do jogador
+		if ShadowRoads.has_map() and not ShadowRoads.is_road(pos):
 			continue
 
 		var real_d := ppos.distance_to(pos)
@@ -288,6 +362,110 @@ func _offscreen(cam: Camera3D, pos: Vector3) -> bool:
 	return not cam.is_position_in_frustum(pos + Vector3.UP * 1.0)
 
 
+# ---------------------------------------------------------------- carros
+
+func _retire_far_cars(ppos: Vector3, cam: Camera3D) -> void:
+	for i in range(_car_active.size() - 1, -1, -1):
+		var car: Node3D = _car_active[i]
+		if not is_instance_valid(car):
+			_car_active.remove_at(i)
+			continue
+		var d := ppos.distance_to(car.global_position)
+		if d <= car_keep_distance:
+			continue
+		if d > car_despawn_distance or _offscreen(cam, car.global_position):
+			_park_car(car)
+			_car_active.remove_at(i)
+
+
+func _fill_cars(ppos: Vector3, cam: Camera3D) -> void:
+	var budget := spawns_per_tick
+	while _car_active.size() < max_active_cars and budget > 0 and not _car_idle.is_empty():
+		var spot := _pick_car_spot(ppos, cam)
+		if spot == NO_SPOT:
+			break
+		_deploy_car(spot)
+		budget -= 1
+
+
+## Sorteia um ponto de rua no anel ao redor do jogador. Alem das regras das
+## pessoas (fora da tela, longe das outras), o ponto precisa ter asfalto embaixo
+## E pista continuando em alguma direcao. O rumo inicial dessa checagem fica em
+## _last_car_heading, ja que o retorno so cabe a posicao.
+func _pick_car_spot(ppos: Vector3, cam: Camera3D) -> Vector3:
+	var world := get_world_3d()
+	for _i in spawn_tries:
+		var ang := _rng.randf() * TAU
+		var dist := _rng.randf_range(car_spawn_ring_min, car_spawn_ring_max)
+		var cand := ppos + Vector3(cos(ang) * dist, 0.0, sin(ang) * dist)
+
+		if not ShadowRoads.is_road(cand):
+			continue
+		var y := ShadowRoads.road_y(cand)
+		if is_nan(y):
+			y = ShadowRoads.ground_y(world, cand, road_mask)
+		if is_nan(y):
+			continue
+		var pos := Vector3(cand.x, y + 0.15, cand.z)
+		if absf(pos.y - ppos.y) > max_height_diff:
+			continue
+		var real_d := ppos.distance_to(pos)
+		if real_d < car_spawn_ring_min or real_d > car_spawn_ring_max:
+			continue
+		if avoid_camera and real_d < onscreen_ok_beyond and not _offscreen(cam, pos):
+			continue
+		if _too_close_to_cars(pos):
+			continue
+		# precisa de rua continuando a frente, senao nasce sem saida
+		var heading := _road_heading(world, pos)
+		if is_nan(heading):
+			continue
+		_last_car_heading = heading
+		return pos
+	return NO_SPOT
+
+
+## Em qual direcao a rua continua a partir daqui? NAN se nenhuma.
+func _road_heading(world: World3D, pos: Vector3) -> float:
+	var off := _rng.randf() * TAU
+	for k in 8:
+		var a := off + TAU * float(k) / 8.0
+		var ahead := pos + Vector3(sin(a), 0.0, cos(a)) * 9.0
+		if ShadowRoads.is_road(ahead):
+			return a
+	return NAN
+
+
+func _too_close_to_cars(pos: Vector3) -> bool:
+	for car in _car_active:
+		if is_instance_valid(car) and car.global_position.distance_to(pos) < car_min_spacing:
+			return true
+	return false
+
+
+func _park_car(car: Node3D) -> void:
+	car.visible = false
+	car.process_mode = Node.PROCESS_MODE_DISABLED
+	car.global_position = GARAGE
+	if car is CharacterBody3D:
+		car.velocity = Vector3.ZERO
+	if not _car_idle.has(car):
+		_car_idle.append(car)
+
+
+func _deploy_car(pos: Vector3) -> void:
+	var car: Node3D = _car_idle.pop_back()
+	if car == null or not is_instance_valid(car):
+		return
+	car.global_position = pos
+	car.rotation.y = _last_car_heading
+	car.process_mode = Node.PROCESS_MODE_INHERIT
+	car.visible = true
+	if car.has_method("relocate"):
+		car.relocate(pos, _last_car_heading)
+	_car_active.append(car)
+
+
 # ------------------------------------------------------- ligar e desligar
 
 func _park(npc: Node3D) -> void:
@@ -333,6 +511,11 @@ func active_count() -> int:
 	return _active.size()
 
 
+## Quantos carros estao rodando agora.
+func active_car_count() -> int:
+	return _car_active.size()
+
+
 ## Recolhe todo mundo. Util antes de uma cutscene, para a cidade nao andar
 ## no fundo do plano.
 func clear_all() -> void:
@@ -341,3 +524,8 @@ func clear_all() -> void:
 		if is_instance_valid(npc):
 			_park(npc)
 	_active.clear()
+	for i in range(_car_active.size() - 1, -1, -1):
+		var car: Node3D = _car_active[i]
+		if is_instance_valid(car):
+			_park_car(car)
+	_car_active.clear()
