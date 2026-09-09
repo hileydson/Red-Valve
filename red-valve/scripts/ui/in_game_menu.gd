@@ -32,6 +32,11 @@ const TAB_MAPA := 1
 const MAPA_PAINEL := preload("res://scenes/ui/mapa_painel.tscn")
 var mapa_painel: Control
 
+# Aba ARQUIVOS (índice 2 em `tabs`). Mesmo acordo da aba do mapa: o painel se
+# monta sozinho e só recebe `ativar()`/`desativar()` quando entra e sai de foco.
+const TAB_ARQUIVOS := 2
+var arquivos_painel: ArquivosPainel
+
 func _ready() -> void:
 	self.layer = 150 # Acima das mensagens do jogo e no mesmo nível do Pause
 	self.process_mode = Node.PROCESS_MODE_ALWAYS
@@ -202,6 +207,16 @@ func _ready() -> void:
 	mapa_painel.visible = false
 	add_child(mapa_painel)
 
+	# Painel dos arquivos: mesma área central do mapa
+	arquivos_painel = ArquivosPainel.new()
+	arquivos_painel.set_anchors_preset(Control.PRESET_FULL_RECT)
+	arquivos_painel.offset_left = 150
+	arquivos_painel.offset_top = 200
+	arquivos_painel.offset_right = -150
+	arquivos_painel.offset_bottom = -70
+	arquivos_painel.visible = false
+	add_child(arquivos_painel)
+
 	_create_action_menu()
 	update_ui()
 
@@ -288,6 +303,14 @@ func update_ui() -> void:
 			mapa_painel.ativar()
 		else:
 			mapa_painel.desativar()
+
+	if arquivos_painel:
+		var nos_arquivos: bool = current_tab == TAB_ARQUIVOS
+		arquivos_painel.visible = nos_arquivos
+		if nos_arquivos:
+			arquivos_painel.ativar()
+		else:
+			arquivos_painel.desativar()
 		
 	if action_menu_open:
 		_render_action_menu()

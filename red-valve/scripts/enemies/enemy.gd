@@ -59,6 +59,7 @@ signal died
 var playback
 var dead:bool = false
 var cutscene_mode:bool = false
+var is_attacking:bool = false
 # Período de carência logo após spawnar/carregar a cena: o terreno (Terrain3D) pode
 # ainda não ter a colisão pronta nos primeiros instantes, fazendo o inimigo cair através
 # do chão e disparar o "fall death" indevidamente. Ignora o check de queda até passar isso.
@@ -145,7 +146,18 @@ func _physics_process(delta: float) -> void:
 		move_and_slide()
 		return
 
-	
+	if is_attacking:
+		steps.stop()
+		velocity.x = move_toward(velocity.x, 0, SPEED)
+		velocity.z = move_toward(velocity.z, 0, SPEED)
+		if is_instance_valid(player):
+			var look_pos = player.global_position
+			look_pos.y = global_position.y
+			if global_position.distance_to(look_pos) > 0.5:
+				look_at(look_pos, Vector3.UP)
+		move_and_slide()
+		return
+
 	if player and nav_agent:
 		var distancia_to_player = self.global_position.distance_to(player.global_position)
 		
@@ -178,15 +190,11 @@ func _physics_process(delta: float) -> void:
 				
 				if disparou_agora:
 					if shoots_fireball:
-						playback.travel("attack")
-						_throw_fireball()
+						_exec_fireball_attack()
 					elif is_ranged_attacker:
-						playback.travel("attack")
-						_throw_random_projectile()
+						_exec_ranged_attack()
 				else:
-					playback.travel("attack_2")
-					if shoots_fireball:
-						ranged_attack_timer = 10.0
+					_exec_melee_attack()
 			else:
 				var next_p = nav_agent.get_next_path_position()
 				var direction = (next_p - global_position)
@@ -243,6 +251,7 @@ func take_damage(amount):
 
 func die():
 	dead = true
+	is_attacking = false
 	died.emit()
 	growl_death.play()
 	SaveManager.add_iron_rusks(iron_rusks_value)
@@ -287,15 +296,41 @@ func _on_attack_body_entered(body: Node3D) -> void:
 		#lanca damage no player
 		body.take_damage(attack_damage)
 
+func _exec_fireball_attack() -> void:
+	is_attacking = true
+	playback.travel("attack_2")
+	_throw_fireball()
+
+func _exec_ranged_attack() -> void:
+	is_attacking = true
+	playback.travel("attack_2")
+	_throw_random_projectile()
+
+func _exec_melee_attack() -> void:
+	is_attacking = true
+	playback.travel("attack")
+	if shoots_fireball:
+		ranged_attack_timer = 10.0
+	_finish_melee_attack()
+
+func _finish_melee_attack() -> void:
+	if not is_inside_tree() or get_tree() == null: return
+	await get_tree().create_timer(1.2).timeout
+	is_attacking = false
+
 func _throw_random_projectile() -> void:
 	if not projectile_source or projectile_source.get_child_count() == 0:
+		is_attacking = false
 		return
 		
 	# Espera o inimigo bater os braços no chão (aproximadamente 2.2 segundos depois do início da animação)
-	if not is_inside_tree() or get_tree() == null: return
+	if not is_inside_tree() or get_tree() == null:
+		is_attacking = false
+		return
 	await get_tree().create_timer(2.2).timeout
 	
 	if dead or not player:
+		is_attacking = false
 		return
 		
 	var children = projectile_source.get_children()
@@ -349,11 +384,16 @@ func _throw_random_projectile() -> void:
 	)
 	
 	# Destrói automaticamente se não bater no player (depois de dar o tempo do tween + folga)
-	if not is_inside_tree() or get_tree() == null: return
+	if not is_inside_tree() or get_tree() == null:
+		is_attacking = false
+		return
 	get_tree().create_timer(1.0).timeout.connect(func():
 		if is_instance_valid(projectile):
 			_shatter_projectile(projectile)
 	)
+	
+	await get_tree().create_timer(0.8).timeout
+	is_attacking = false
 
 func _shatter_projectile(projectile: Node3D) -> void:
 	if not is_instance_valid(projectile) or not is_inside_tree() or get_tree() == null:
@@ -424,23 +464,26 @@ func _shatter_projectile(projectile: Node3D) -> void:
 			projectile.queue_free())
 
 func _throw_fireball() -> void:
-	# O inimigo costuma bater, então vamos esperar 2.4s para sincronizar com o soco/animação
-	if not is_inside_tree() or get_tree() == null: return
-	await get_tree().create_timer(2.4).timeout
+	# Sincroniza com o momento de arremesso da animação (2.2s)
+	if not is_inside_tree() or get_tree() == null:
+		is_attacking = false
+		return
+	await get_tree().create_timer(2.2).timeout
 	
 	if dead or not is_instance_valid(player):
+		is_attacking = false
 		return
 		
 	# Instancia o novo script cheio de efeitos avançados
 	var fireball_script = load("res://scripts/effects/fireball_projectile.gd")
-	if not fireball_script: return
-	
-	var projectile = fireball_script.new()
-	projectile.target_player = player
-	
-	if not is_inside_tree() or get_tree() == null or get_tree().current_scene == null: return
-	get_tree().current_scene.add_child(projectile)
-	
-	# Posição Inicial: Bem acima, para vir de cima para baixo
-	var forward_dir = global_transform.basis.z.normalized()
-	projectile.global_position = global_position + Vector3(0, 2.8, 0) + (forward_dir * 1.0)
+	if fireball_script:
+		var projectile = fireball_script.new()
+		projectile.target_player = player
+		if is_inside_tree() and get_tree() != null and get_tree().current_scene != null:
+			get_tree().current_scene.add_child(projectile)
+			# Posição Inicial: Bem acima, para vir de cima para baixo
+			var forward_dir = global_transform.basis.z.normalized()
+			projectile.global_position = global_position + Vector3(0, 2.8, 0) + (forward_dir * 1.0)
+
+	await get_tree().create_timer(0.8).timeout
+	is_attacking = false

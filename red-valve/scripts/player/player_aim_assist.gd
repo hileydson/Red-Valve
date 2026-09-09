@@ -175,7 +175,9 @@ func _pull_towards(cam: Camera3D, target: Node3D, delta: float) -> void:
 func _look_input_strength() -> float:
 	# 0 = jogador parado (assist no máximo), 1 = girando a câmera com força
 	# (assist quase todo desligado, pra não brigar com quem está mirando).
-	var joy := Input.get_vector("ui_look_left", "ui_look_right", "ui_look_up", "ui_look_down")
+	var joy := Vector2.ZERO
+	if not GlobalEvents.telefone_cutscene_active:
+		joy = Input.get_vector("ui_look_left", "ui_look_right", "ui_look_up", "ui_look_down")
 	var by_joy: float = clampf(joy.length(), 0.0, 1.0)
 	var by_mouse: float = clampf(Input.get_last_mouse_velocity().length() / 900.0, 0.0, 1.0)
 	return maxf(by_joy, by_mouse)

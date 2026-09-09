@@ -18,6 +18,9 @@ var prolog_finished: bool = false
 var battlefield_1_intro_played: bool = false
 var stage_1_intro_played: bool = false
 var iron_rusks: int = 0
+## Ids dos arquivos de texto (aba ARQUIVOS do menu) que o jogador ja encontrou.
+## O conteudo mora em ArquivosDados; aqui so fica o que ja foi liberado.
+var arquivos_desbloqueados: Array = []
 var iron_rusks_pending: int = 0 # Ganho na luta atual, ainda não somado visualmente no HUD
 var iron_rusks_display: int = 0 # Valor mostrado no canto da tela, só sobe com a animação de tally
 
@@ -245,7 +248,8 @@ func save_game(scene_path: String = ""):
 		"equipped_items": equipped_items,
 		"max_mp": max_mp,
 		"current_mp": current_mp,
-		"iron_rusks": iron_rusks
+		"iron_rusks": iron_rusks,
+		"arquivos_desbloqueados": arquivos_desbloqueados
 	}
 	
 	save_config() # Sempre salvar config junto
@@ -297,6 +301,7 @@ func load_game(slot_id: int = -1) -> bool:
 				current_mp = data.get("current_mp", 30.0)
 				iron_rusks = data.get("iron_rusks", 0)
 				iron_rusks_display = iron_rusks
+				arquivos_desbloqueados = data.get("arquivos_desbloqueados", [])
 				
 				if current_stage != "" and ResourceLoader.exists(current_stage):
 					print("Game Loaded from slot ", current_slot, "! ", current_stage)
@@ -316,6 +321,24 @@ func reset_progress() -> void:
 	current_mp = 30.0
 	iron_rusks = 0
 	iron_rusks_display = 0
+	arquivos_desbloqueados = []
+
+
+## O jogador ja tem este arquivo?
+func tem_arquivo(id: String) -> bool:
+	return arquivos_desbloqueados.has(id)
+
+
+## Libera um arquivo pra aba ARQUIVOS e grava na hora — encontrar um arquivo e
+## progresso, e o jogador nao deveria perde-lo se fechar o jogo em seguida.
+## Devolve true so na primeira vez, pra quem chamou poder avisar na tela sem
+## repetir o aviso quando a cena for revisitada.
+func desbloquear_arquivo(id: String) -> bool:
+	if arquivos_desbloqueados.has(id):
+		return false
+	arquivos_desbloqueados.append(id)
+	save_game()
+	return true
 
 func add_iron_rusks(amount: int) -> void:
 	iron_rusks += amount

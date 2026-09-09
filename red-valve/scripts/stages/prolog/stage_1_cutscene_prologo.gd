@@ -1,11 +1,10 @@
 extends Node3D
 
-var text_chunks = [
-	["PROLOG_BEGIN_1_1", "PROLOG_BEGIN_1_2", "PROLOG_BEGIN_1_3"],
-	["PROLOG_BEGIN_1_4", "PROLOG_BEGIN_1_5", "PROLOG_BEGIN_2_1"],
-	["PROLOG_BEGIN_3_1", "PROLOG_BEGIN_3_2", "PROLOG_BEGIN_4_1", "PROLOG_BEGIN_4_2"],
-	["PROLOG_BEGIN_4_3", "PROLOG_BEGIN_4_4"]
-]
+# As falas da introdução, uma leva por tomada de câmera. Elas moram no catálogo
+# dos arquivos porque o jogador reencontra este mesmo texto na aba ARQUIVOS do
+# menu, como o arquivo "Após um dia de trabalho" — e as duas versões têm que ser
+# a mesma coisa.
+var text_chunks: Array = ArquivosDados.paragrafos("apos_um_dia_de_trabalho")
 
 var current_chunk_index: int = 0
 var current_text_index: int = 0

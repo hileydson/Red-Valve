@@ -12,16 +12,21 @@ var phone_audio: AudioStreamPlayer
 var ui_layer: CanvasLayer
 var phone_timer: Timer
 
+# Ids dos arquivos que esta cena entrega pra aba ARQUIVOS do menu
+const ARQUIVO_INTRO := "apos_um_dia_de_trabalho"
+const ARQUIVO_TELEFONE := "telefonema_dona_nice"
+
 # --- Váriaveis da Cutscene do Telefone em Tempo Real ---
-var phone_texts = [
-	"PROLOG_PHONE_1_1", "PROLOG_PHONE_1_2", "PROLOG_PHONE_1_3", "PROLOG_PHONE_1_4", "PROLOG_PHONE_1_5", "PROLOG_PHONE_1_6", "PROLOG_PHONE_1_7",
-	"PROLOG_PHONE_2_1", "PROLOG_PHONE_2_2", "PROLOG_PHONE_2_3", "PROLOG_PHONE_2_4", "PROLOG_PHONE_2_5", "PROLOG_PHONE_2_6", "PROLOG_PHONE_2_7", "PROLOG_PHONE_2_8",
-	"PROLOG_PHONE_3_1", "PROLOG_PHONE_3_2", "PROLOG_PHONE_3_3", "PROLOG_PHONE_3_4"
-]
+# As falas saem do mesmo lugar que o arquivo "Telefonema da Dona Nice" do menu,
+# pra ligação e arquivo nunca contarem versões diferentes da mesma conversa.
+var phone_texts: Array = ArquivosDados.linhas(ARQUIVO_TELEFONE)
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	SaveManager.prolog_finished = false
+	# a introdução do jogo, que o jogador acabou de ver na cutscene do prólogo,
+	# fica guardada como arquivo pra ele poder reler no menu
+	SaveManager.arquivos_desbloqueados = _com_arquivo(ARQUIVO_INTRO)
 	SaveManager.save_game()
 	GlobalEvents.is_maycow_normal = true
 	GlobalEvents.set_minimum_nevoa()
@@ -233,4 +238,23 @@ func _start_phone_cutscene() -> void:
 	$ambient/fade.fade_in()
 	
 	GlobalEvents.in_cutscene = false
+	
+	_novo_arquivo(ARQUIVO_TELEFONE)
+
+
+## Marca o arquivo como encontrado sem gravar o jogo — quem chama aqui é o
+## _ready, que salva logo em seguida de qualquer jeito.
+func _com_arquivo(id: String) -> Array:
+	var lista: Array = SaveManager.arquivos_desbloqueados.duplicate()
+	if not lista.has(id):
+		lista.append(id)
+	return lista
+
+
+## Libera o arquivo, grava e avisa na tela. O aviso só sai na primeira vez.
+func _novo_arquivo(id: String) -> void:
+	if not SaveManager.desbloquear_arquivo(id):
+		return
+	GlobalUtils.show_center_message("novo_arquivo",
+		tr("FILES_NEW") % ArquivosDados.titulo(id), 18, 5.0)
 
