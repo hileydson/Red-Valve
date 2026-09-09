@@ -116,8 +116,8 @@ shader_parameter/cirrus_absorption = 2.0
 shader_parameter/cirrus_sky_tint_fade = 0.5
 shader_parameter/cirrus_size = 1.0
 shader_parameter/cirrus_uv = Vector2(0.16, 0.11)
-shader_parameter/cirrus_position1 = Vector2(0.9393596, 0.9393596)
-shader_parameter/cirrus_position2 = Vector2(0.9393596, 0.9393596)
+shader_parameter/cirrus_position1 = Vector2(0.70625573, 0.70625573)
+shader_parameter/cirrus_position2 = Vector2(0.70625573, 0.70625573)
 shader_parameter/cirrus_texture = ExtResource("3_kvc23")
 shader_parameter/cumulus_visible = true
 shader_parameter/cumulus_intensity = 9.245
@@ -127,7 +127,7 @@ shader_parameter/cumulus_absorption = 2.0
 shader_parameter/cumulus_noise_freq = 2.7
 shader_parameter/cumulus_sky_tint_fade = 0.0
 shader_parameter/cumulus_size = 0.5
-shader_parameter/cumulus_position = Vector2(134.69836, 134.69836)
+shader_parameter/cumulus_position = Vector2(148.42296, 148.42296)
 shader_parameter/cumulus_texture = ExtResource("4_2wkc3")
 shader_parameter/cumulus_partial_mie_phase = Vector3(0.957564, 1.042436, 0.412)
 shader_parameter/cumulus_mie_intensity = 1.0
@@ -476,6 +476,26 @@ tracks/12/keys = {
 "values": [{
 "args": [0.0],
 "method": &"play"
+}]
+}
+tracks/13/type = "method"
+tracks/13/imported = false
+tracks/13/enabled = true
+tracks/13/path = NodePath("../fade")
+tracks/13/interp = 1
+tracks/13/loop_wrap = true
+tracks/13/keys = {
+"times": PackedFloat32Array(0.03333333, 30.9, 33.433334),
+"transitions": PackedFloat32Array(1, 1, 1),
+"values": [{
+"args": [],
+"method": &"fade_in"
+}, {
+"args": [],
+"method": &"fade_out"
+}, {
+"args": [],
+"method": &"fade_in"
 }]
 }
 
@@ -1009,7 +1029,7 @@ pitch_scale = 1.01
 
 [node name="Relogio" type="AudioStreamPlayer" parent="cutscene_primeira_vez" unique_id=2122795053]
 stream = ExtResource("40_mchwq")
-pitch_scale = 0.67
+pitch_scale = 0.76
 
 [node name="SomTheme" type="AudioStreamPlayer" parent="cutscene_primeira_vez" unique_id=1579093167]
 stream = ExtResource("41_gwpga")
@@ -1019,15 +1039,14 @@ pitch_scale = 0.74
 stream = ExtResource("42_gwpga")
 
 [node name="camera" type="Camera3D" parent="cutscene_primeira_vez" unique_id=1522741353]
-transform = Transform3D(-0.452845, -0.39907146, 0.7972913, 0.11210044, 0.8616551, 0.49495852, -0.8845139, 0.3135162, -0.34546012, 0, 0, 0)
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
 
 [node name="executa_capitulo_1" type="AnimationPlayer" parent="cutscene_primeira_vez" unique_id=683572890]
 libraries/ = SubResource("AnimationLibrary_a5jai")
-autoplay = &"intro"
 script = ExtResource("42_mchwq")
 
 [node name="camera_2" type="Camera3D" parent="cutscene_primeira_vez" unique_id=342308569]
-transform = Transform3D(-0.15980473, 0.28629044, 0.94472224, 0.047749233, 0.9581429, -0.28228036, -0.9859931, 2.2351742e-08, -0.16678591, 687.11, 6.74955, -217.65205)
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 687.11, 6.74955, -217.65205)
 
 [connection signal="body_entered" from="itens_caminho_jimmy/auto_pecas_jimmy/Area3D_jimmy_house" to="." method="_on_area_3d_jimmy_house_body_entered"]
 [connection signal="body_exited" from="itens_caminho_jimmy/auto_pecas_jimmy/Area3D_jimmy_house" to="." method="_on_area_3d_jimmy_house_body_exited"]

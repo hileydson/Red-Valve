@@ -838,8 +838,8 @@ func _physics_process(delta: float) -> void:
 				_hide_amulet_magic()
 				_clear_amulet_hover()
 				
-			if is_aiming and not is_magic_attacking and Input.is_action_just_pressed("ui_magic_attack") and SaveManager.current_mp >= 10.0:
-				magic_hand_attack()
+			# "ui_magic_attack" (Q / Y) ainda não tem função no Maycow normal.
+			# O ataque da cogblade é exclusivo do Maycow parasita.
 		else:
 			if is_instance_valid(amulet_crosshair): amulet_crosshair.visible = false
 			if is_instance_valid(hud_layer) and not is_playing_return_effect:

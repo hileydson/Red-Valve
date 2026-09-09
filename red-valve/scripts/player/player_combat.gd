@@ -80,6 +80,8 @@ func reload() -> void:
 		player.is_reloading = false
 
 func magic_hand_attack() -> void:
+	# A cogblade pertence só ao Maycow parasita.
+	if GlobalEvents.is_maycow_normal: return
 	SaveManager.current_mp -= 10.0
 	if SaveManager.current_mp < 0: SaveManager.current_mp = 0
 	if player.is_reloading: return
