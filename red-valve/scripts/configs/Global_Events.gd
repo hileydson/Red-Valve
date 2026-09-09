@@ -8,6 +8,8 @@ var can_load:bool = false
 var in_cutscene:bool = false:
 	set(val):
 		in_cutscene = val
+
+var telefone_cutscene_active: bool = false
 		if val and GlobalUtils:
 			GlobalUtils.clear_all_messages()
 var save_array = {}

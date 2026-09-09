@@ -39,6 +39,7 @@ func _ready() -> void:
 	# ---------------------------
 
 	GlobalEvents.in_cutscene = true
+	GlobalEvents.telefone_cutscene_active = true
 	
 	# Instancia o UI de Skip
 	var skip_layer = CanvasLayer.new()
@@ -165,6 +166,7 @@ func finish_cutscene() -> void:
 	
 	# Despausa o jogo e encerra estado de cutscene
 	GlobalEvents.in_cutscene = false
+	GlobalEvents.telefone_cutscene_active = false
 	get_tree().paused = false
 	
 	# Remove o CanvasLayer que envolve a cutscene (o pai deste node)

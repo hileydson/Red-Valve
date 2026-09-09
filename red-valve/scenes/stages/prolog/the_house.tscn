@@ -102,8 +102,8 @@ shader_parameter/cirrus_absorption = 2.0
 shader_parameter/cirrus_sky_tint_fade = 0.5
 shader_parameter/cirrus_size = 1.0
 shader_parameter/cirrus_uv = Vector2(0.16, 0.11)
-shader_parameter/cirrus_position1 = Vector2(0.10350209, 0.10350209)
-shader_parameter/cirrus_position2 = Vector2(0.10350209, 0.10350209)
+shader_parameter/cirrus_position1 = Vector2(0.010842283, 0.010842283)
+shader_parameter/cirrus_position2 = Vector2(0.010842283, 0.010842283)
 shader_parameter/cirrus_texture = ExtResource("3_01ffe")
 shader_parameter/cumulus_visible = true
 shader_parameter/cumulus_intensity = 0.6
@@ -113,7 +113,7 @@ shader_parameter/cumulus_absorption = 2.0
 shader_parameter/cumulus_noise_freq = 2.7
 shader_parameter/cumulus_sky_tint_fade = 0.0
 shader_parameter/cumulus_size = 0.5
-shader_parameter/cumulus_position = Vector2(0.51745844, 0.51745844)
+shader_parameter/cumulus_position = Vector2(0.054211266, 0.054211266)
 shader_parameter/cumulus_texture = ExtResource("4_qysyv")
 shader_parameter/cumulus_partial_mie_phase = Vector3(0.957564, 1.042436, 0.412)
 shader_parameter/cumulus_mie_intensity = 1.0
@@ -878,7 +878,7 @@ size = Vector3(2.0829468, 1, 2.142456)
 
 [node name="the_house" type="Node3D" unique_id=463009553]
 script = ExtResource("1_01ffe")
-tempo_para_telefone = 6.0
+tempo_para_telefone = 20.0
 
 [node name="cutscene" parent="." unique_id=796399776 instance=ExtResource("2_ljprc")]
 visible = false
