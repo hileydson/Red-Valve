@@ -436,19 +436,19 @@ func _input(event: InputEvent) -> void:
 		
 	elif current_tab == 0:
 		var moved = false
-		if event.is_action_pressed("ui_right"):
+		if event.is_action_pressed("ui_right") and not event is InputEventJoypadMotion:
 			if current_slot % grid_cols < grid_cols - 1:
 				current_slot += 1
 				moved = true
-		elif event.is_action_pressed("ui_left"):
+		elif event.is_action_pressed("ui_left") and not event is InputEventJoypadMotion:
 			if current_slot % grid_cols > 0:
 				current_slot -= 1
 				moved = true
-		elif event.is_action_pressed("ui_down"):
+		elif event.is_action_pressed("ui_down") and not event is InputEventJoypadMotion:
 			if current_slot + grid_cols < grid_cols * grid_rows:
 				current_slot += grid_cols
 				moved = true
-		elif event.is_action_pressed("ui_up"):
+		elif event.is_action_pressed("ui_up") and not event is InputEventJoypadMotion:
 			if current_slot - grid_cols >= 0:
 				current_slot -= grid_cols
 				moved = true
