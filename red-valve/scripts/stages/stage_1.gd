@@ -1,5 +1,9 @@
 extends Node3D
 
+# O fim do prologo (cutscene_fight_with_power) vira arquivo de leitura assim que
+# o Capitulo 1 comeca.
+const ARQUIVO_CADERNO := "caderno_do_jimmy"
+
 @onready var navigation_region_3d: NavigationRegion3D = $NavigationRegion3D
 @onready var real_time_label: Label = $real_time_label
 @onready var sky_3d: Sky3D = $WorldEnvironment/Sky3D
@@ -225,6 +229,12 @@ func _play_intro_text() -> void:
 			tween_out.tween_property(chapter_label, "modulate:a", 0.0, 1.0)
 			await tween_out.finished
 			chapter_label.queue_free()
+
+		# So depois que o "CAPITULO 1" saiu da tela: dois avisos grandes ao mesmo
+		# tempo no centro se atropelariam, e o respiro deixa claro que sao coisas
+		# diferentes.
+		await get_tree().create_timer(2.0, false).timeout
+		_novo_arquivo(ARQUIVO_CADERNO)
 		return
 
 	if SaveManager.prolog_finished:
@@ -248,3 +258,11 @@ func _play_intro_text() -> void:
 		await get_tree().create_timer(4.5, false).timeout
 		GlobalUtils.hide_center_message("intro_stage_1")
 		await get_tree().create_timer(0.5, false).timeout
+
+
+## Libera o arquivo do menu, grava e avisa na tela. O aviso so sai na primeira vez.
+func _novo_arquivo(id: String) -> void:
+	if not SaveManager.desbloquear_arquivo(id):
+		return
+	GlobalUtils.show_center_message("novo_arquivo",
+		tr("FILES_NEW") % ArquivosDados.titulo(id), 18, 5.0)

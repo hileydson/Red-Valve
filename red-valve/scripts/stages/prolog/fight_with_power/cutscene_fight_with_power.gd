@@ -35,6 +35,11 @@ const NEAR := 9.5     # primeiro plano
 
 const DIR := "res://assets/cutscenes/prolog/fight_with_power/"
 
+# As falas dos slides saem do mesmo lugar que o arquivo "O Caderno de Jimmy" do
+# menu, pra cutscene e arquivo nunca contarem versoes diferentes do mesmo fim de
+# prologo. Cada paragrafo do catalogo e a leva de falas de um slide, na ordem.
+const ARQUIVO := "caderno_do_jimmy"
+
 const FIRE := Color(1.0, 0.52, 0.20)
 const PARASITE := Color(0.72, 0.32, 1.0)
 const EMBER := Color(1.35, 0.50, 0.16)
@@ -120,7 +125,7 @@ func _slide_arena() -> Dictionary:
 			"to":   {"pos": Vector3(-0.12, 0.06, -2.2), "rot": Vector3(-0.18, 0.28, 0.18), "fov": 43.5},
 			"dur": 30.0,
 		},
-		"texts": ["WITH_POWER_1_1", "WITH_POWER_1_2", "WITH_POWER_1_3", "WITH_POWER_1_4"],
+		"texts": ArquivosDados.paragrafos(ARQUIVO)[0],
 	}
 
 
@@ -189,7 +194,7 @@ func _slide_final_blow() -> Dictionary:
 			"to":   {"pos": Vector3(-0.07, -0.06, -2.4), "rot": Vector3(0.26, 0.15, -0.18), "fov": 43.0},
 			"dur": 24.0,
 		},
-		"texts": ["WITH_POWER_2_1", "WITH_POWER_2_2", "WITH_POWER_2_3"],
+		"texts": ArquivosDados.paragrafos(ARQUIVO)[1],
 	}
 
 
@@ -257,7 +262,7 @@ func _slide_workshop() -> Dictionary:
 			"to":   {"pos": Vector3(0.08, 0.11, -1.9), "rot": Vector3(-0.20, -0.14, 0.10), "fov": 43.0},
 			"dur": 30.0,
 		},
-		"texts": ["WITH_POWER_3_1", "WITH_POWER_3_2", "WITH_POWER_3_3"],
+		"texts": ArquivosDados.paragrafos(ARQUIVO)[2],
 	}
 
 
@@ -312,7 +317,7 @@ func _slide_notebook() -> Dictionary:
 			"to":   {"pos": Vector3(-0.05, -0.13, -2.2), "rot": Vector3(0.28, 0.11, -0.10), "fov": 43.0},
 			"dur": 34.0,
 		},
-		"texts": ["WITH_POWER_4_1", "WITH_POWER_4_2", "WITH_POWER_4_3", "WITH_POWER_4_4"],
+		"texts": ArquivosDados.paragrafos(ARQUIVO)[3],
 	}
 
 

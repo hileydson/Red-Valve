@@ -14,6 +14,7 @@ class_name ArquivosDados
 ## Quem desbloqueia:
 ##   apos_um_dia_de_trabalho  -> the_house.gd, ao entrar na casa
 ##   telefonema_dona_nice     -> the_house.gd, ao terminar a ligacao
+##   caderno_do_jimmy         -> stage_1.gd, quando o Capitulo 1 comeca
 ##
 ## O que o jogador ja abriu mora em SaveManager.arquivos_desbloqueados; aqui so
 ## existe o conteudo.
@@ -40,6 +41,18 @@ const CATALOGO := [
 			["PROLOG_PHONE_2_1", "PROLOG_PHONE_2_2", "PROLOG_PHONE_2_3", "PROLOG_PHONE_2_4",
 				"PROLOG_PHONE_2_5", "PROLOG_PHONE_2_6", "PROLOG_PHONE_2_7", "PROLOG_PHONE_2_8"],
 			["PROLOG_PHONE_3_1", "PROLOG_PHONE_3_2", "PROLOG_PHONE_3_3", "PROLOG_PHONE_3_4"],
+		],
+	},
+	{
+		"id": "caderno_do_jimmy",
+		"titulo": "FILE_CADERNO_JIMMY_TITLE",
+		# o fim do prologo narrado na cutscene_fight_with_power: a arena, o golpe
+		# final, o despertar na oficina e o que o caderno de Jimmy contava
+		"paragrafos": [
+			["WITH_POWER_1_1", "WITH_POWER_1_2", "WITH_POWER_1_3", "WITH_POWER_1_4"],
+			["WITH_POWER_2_1", "WITH_POWER_2_2", "WITH_POWER_2_3"],
+			["WITH_POWER_3_1", "WITH_POWER_3_2", "WITH_POWER_3_3"],
+			["WITH_POWER_4_1", "WITH_POWER_4_2", "WITH_POWER_4_3", "WITH_POWER_4_4"],
 		],
 	},
 ]
