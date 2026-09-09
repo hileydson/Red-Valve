@@ -90,6 +90,10 @@ func _finalizar_cutscene_tudo() -> void:
 	if enemy:
 		enemy.visible = true
 		enemy.process_mode = Node.PROCESS_MODE_INHERIT
+		# Ativa as faíscas e iluminação do inimigo
+		_criar_faiscas_inimigo()
+		if enemy.has_node("enemy/OmniLight3D"):
+			enemy.get_node("enemy/OmniLight3D").visible = true
 		
 	var sub = get_node_or_null("CutsceneSubSceneJimmy")
 	if is_instance_valid(sub):
