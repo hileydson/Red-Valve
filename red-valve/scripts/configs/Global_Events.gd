@@ -50,6 +50,11 @@ func _process(delta: float) -> void:
 	pass #print(back_caminho_das_pedras)
 
 
+func set_in_cutscene() ->void:
+	in_cutscene = true;
+func unset_in_cutscene() ->void:
+	in_cutscene = false;
+
 func _input(event: InputEvent) -> void:
 	if event is InputEventJoypadButton:
 		usando_controle = true

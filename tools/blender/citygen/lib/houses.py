@@ -166,14 +166,19 @@ def build_casa(col, name, x, y, ang, larg, prof, tipo, rng, z0):
     n = 1
 
     if nome == "ruina":
-        for k in range(4):
-            t = -hw + (k + 1) * (larg / 5.0)
-            a = _place(x, y, ang, -hd, t, z0 + h)
-            b = _place(x, y, ang, hd, t, z0 + h + rng.uniform(0.1, 0.5))
-            util.box("%s_caibro%d" % (name, k), 0.10, 0.10,
-                     math.hypot(b[0] - a[0], b[1] - a[1]), col, M.get("wood_dark"),
-                     loc=a, rot=(math.radians(88), 0, ang))
-            n += 1
+        # Os caibros da ruina sairam. Eles nasciam com a rotacao errada:
+        # `rot=(radians(88), 0, ang)` deita o +Z local sobre o -Y e SO DEPOIS
+        # gira por `ang`, entao a viga apontava perpendicular ao eixo que ela
+        # deveria seguir. Em vez de vencer a profundidade da casa, ela saia
+        # pela lateral, na altura do telhado, atravessando ate 12,8 m sobre o
+        # lote vizinho e sobre a rua — as tabuas soltas que apareciam ligando
+        # uma casa a outra.
+        #
+        # O sorteio continua sendo consumido de proposito: o `rng` e um so
+        # para as 573 casas, e engolir estes quatro numeros mudaria todas as
+        # casas construidas depois desta.
+        for _ in range(4):
+            rng.uniform(0.1, 0.5)
         return n, h
 
     # ---- embasamento e barra pintada ----

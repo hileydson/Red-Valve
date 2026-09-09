@@ -26,8 +26,7 @@
 				12,
 				13,
 				14,
-				15,
-				16
+				15
 			]
 		}
 	],
@@ -160,21 +159,6 @@
 				-135.9881134033203,
 				16.801589965820312,
 				-124.2650146484375
-			]
-		},
-		{
-			"mesh":16,
-			"name":"SM_proxy__wood_dark-col",
-			"rotation":[
-				0.02387833781540394,
-				0.7189146876335144,
-				-0.6942479014396667,
-				0.024726739153265953
-			],
-			"translation":[
-				-102.16496276855469,
-				15.540491104125977,
-				-108.2327651977539
 			]
 		}
 	],
@@ -503,25 +487,6 @@
 					"texCoord":-1
 				}
 			}
-		},
-		{
-			"doubleSided":true,
-			"extensions":{
-				"KHR_materials_specular":{
-					"specularFactor":0.699999988079071
-				}
-			},
-			"name":"MI_wood_dark",
-			"pbrMetallicRoughness":{
-				"baseColorFactor":[
-					0.09305896610021591,
-					0.061246052384376526,
-					0.0423114113509655,
-					1
-				],
-				"metallicFactor":0,
-				"roughnessFactor":0.8999999761581421
-			}
 		}
 	],
 	"meshes":[
@@ -741,19 +706,6 @@
 					},
 					"indices":58,
 					"material":15
-				}
-			]
-		},
-		{
-			"name":"SM_house_q00_1_05_caibro0",
-			"primitives":[
-				{
-					"attributes":{
-						"POSITION":59,
-						"NORMAL":60
-					},
-					"indices":61,
-					"material":16
 				}
 			]
 		}
@@ -1585,34 +1537,6 @@
 			"componentType":5123,
 			"count":40284,
 			"type":"SCALAR"
-		},
-		{
-			"bufferView":59,
-			"componentType":5126,
-			"count":4032,
-			"max":[
-				35.51597595214844,
-				17.240949630737305,
-				5.102931022644043
-			],
-			"min":[
-				-335.7477722167969,
-				-345.26416015625,
-				-5.187729835510254
-			],
-			"type":"VEC3"
-		},
-		{
-			"bufferView":60,
-			"componentType":5126,
-			"count":4032,
-			"type":"VEC3"
-		},
-		{
-			"bufferView":61,
-			"componentType":5123,
-			"count":6048,
-			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
@@ -1969,24 +1893,6 @@
 			"byteLength":80568,
 			"byteOffset":8946432,
 			"target":34963
-		},
-		{
-			"buffer":0,
-			"byteLength":48384,
-			"byteOffset":9027000,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":48384,
-			"byteOffset":9075384,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":12096,
-			"byteOffset":9123768,
-			"target":34963
 		}
 	],
 	"samplers":[
@@ -1997,7 +1903,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":9135864,
+			"byteLength":9027000,
 			"uri":"city_houses.bin"
 		}
 	]
