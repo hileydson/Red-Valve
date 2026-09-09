@@ -9,6 +9,7 @@ extends CharacterBody3D
 @onready var load_gun: AudioStreamPlayer = $sounds/LoadGun
 @onready var gun_shot: AudioStreamPlayer = $sounds/GunShot
 @onready var passos: AudioStreamPlayer3D = $sounds_3d/Passos
+var _passo_pe_alternado: bool = false # alterna a cada passo p/ dar sensação de pé esq/dir
 @onready var pistola: AnimatedSprite2D = $Camera3D/CanvasLayer/control_weapons/pistola
 @onready var faisca: GPUParticles3D = $Camera3D/hand_with_pistol/faisca
 @onready var fire: AnimatedSprite3D = $Camera3D/hand_with_pistol/fire
@@ -724,10 +725,14 @@ func _physics_process(delta: float) -> void:
 					var cutscene_boost = 8.0 if GlobalEvents.in_cutscene else 0.0
 					if is_actually_running:
 						passos.pitch_scale = randf_range(1.15, 1.3)
-						passos.volume_db = randf_range(-8.0, -5.0) + cutscene_boost
+						passos.volume_db = randf_range(-12.0, -9.0) + cutscene_boost
 					else:
 						passos.pitch_scale = randf_range(0.65, 0.75)
-						passos.volume_db = randf_range(-11.0, -8.0) + (cutscene_boost * 0.5)
+						passos.volume_db = randf_range(-15.0, -12.0) + (cutscene_boost * 0.5)
+					_passo_pe_alternado = !_passo_pe_alternado
+					if _passo_pe_alternado:
+						passos.volume_db -= 4.0
+						passos.pitch_scale -= 0.08
 					passos.play()
 				
 				velocity.x = direction.x * velocidade_atual
@@ -916,13 +921,17 @@ func _physics_process(delta: float) -> void:
 			if !passos.playing and is_on_floor(): 
 				if alinhamento < -0.2:
 					passos.pitch_scale = randf_range(0.95, 1.05)
-					passos.volume_db = randf_range(-11.0, -8.0)
+					passos.volume_db = randf_range(-15.0, -12.0)
 				elif is_running:
 					passos.pitch_scale = randf_range(1.15, 1.3)
-					passos.volume_db = randf_range(-8.0, -5.0)
+					passos.volume_db = randf_range(-12.0, -9.0)
 				else:
 					passos.pitch_scale = randf_range(0.85, 0.95)
-					passos.volume_db = randf_range(-11.0, -8.0)
+					passos.volume_db = randf_range(-15.0, -12.0)
+				_passo_pe_alternado = !_passo_pe_alternado
+				if _passo_pe_alternado:
+					passos.volume_db -= 4.0
+					passos.pitch_scale -= 0.08
 				passos.play()
 			
 			velocity.x = direction.x * velocidade_atual
