@@ -116,8 +116,8 @@ shader_parameter/cirrus_absorption = 2.0
 shader_parameter/cirrus_sky_tint_fade = 0.5
 shader_parameter/cirrus_size = 1.0
 shader_parameter/cirrus_uv = Vector2(0.16, 0.11)
-shader_parameter/cirrus_position1 = Vector2(0.70625573, 0.70625573)
-shader_parameter/cirrus_position2 = Vector2(0.70625573, 0.70625573)
+shader_parameter/cirrus_position1 = Vector2(0.14402027, 0.14402027)
+shader_parameter/cirrus_position2 = Vector2(0.14402027, 0.14402027)
 shader_parameter/cirrus_texture = ExtResource("3_kvc23")
 shader_parameter/cumulus_visible = true
 shader_parameter/cumulus_intensity = 9.245
@@ -127,7 +127,7 @@ shader_parameter/cumulus_absorption = 2.0
 shader_parameter/cumulus_noise_freq = 2.7
 shader_parameter/cumulus_sky_tint_fade = 0.0
 shader_parameter/cumulus_size = 0.5
-shader_parameter/cumulus_position = Vector2(148.42296, 148.42296)
+shader_parameter/cumulus_position = Vector2(150.5944, 150.5944)
 shader_parameter/cumulus_texture = ExtResource("4_2wkc3")
 shader_parameter/cumulus_partial_mie_phase = Vector3(0.957564, 1.042436, 0.412)
 shader_parameter/cumulus_mie_intensity = 1.0
@@ -897,7 +897,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 520.44415, 16.27707, 384.0040
 shape = SubResource("BoxShape3D_tayg2")
 
 [node name="auto_pecas_jimmy" parent="itens_caminho_jimmy" unique_id=10078496 instance=ExtResource("29_wfumn")]
-transform = Transform3D(0.47452286, 0, 8.315826, 0, 6.037, 0, -6.9838977, 0, 0.56502116, 459.44028, 11.606275, -142.5142)
+transform = Transform3D(0.47452286, 0, 8.315826, 0, 6.037, 0, -6.9838977, 0, 0.56502116, 460.03867, 11.606275, -142.5142)
 
 [node name="maykow_capitulo_1_inicio" type="Marker3D" parent="itens_caminho_jimmy/auto_pecas_jimmy" unique_id=1788133959]
 transform = Transform3D(1, 0, 2.9802322e-07, 0, 0.99999976, 0, 1.0430813e-07, 0, 1, 0.4499054, -0.33600417, 0.5074158)

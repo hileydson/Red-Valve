@@ -9,6 +9,26 @@ var input_locked: bool = true
 var old_film_layer: CanvasLayer = null
 var amulet_node: Node3D = null
 var amulet_spin_velocity: float = 0.3
+# Painel de slots criado em _show_slots_menu. Guardado aqui em vez de ser
+# procurado por nome: um painel recem-fechado ainda ocupa o nome "SlotsPanel"
+# ate o fim do quadro, entao get_node() podia devolver o painel ja liberado.
+var slots_panel: Control = null
+
+const PARASITE_FIRE_SCENE := preload("res://scenes/effects/parasite_fire.tscn")
+
+@export_group("Fogo do Parasita")
+@export var fogo_osso_inicio: String = "LeftArm"
+@export var fogo_osso_fim: String = "LeftHand"
+@export var fogo_raio_braco: float = 0.0
+@export var fogo_tamanho_chama: float = 1.0
+@export_range(0.0, 1.0) var fogo_opacidade_chama: float = 0.3
+## No menu o Maycow fica em plano fechado e parado, entao a crosta de lava da
+## gameplay (crust_opacity 0.7 / lava 1.5) grita demais: o braco vira um bloco
+## vermelho. Aqui ela e so uma insinuacao por cima da pele.
+@export_range(0.0, 1.0) var fogo_crosta_opacidade: float = 0.16
+@export var fogo_lava_intensidade: float = 0.65
+@export var fogo_luz_energia: float = 0.7
+
 
 func _process(delta: float) -> void:
 	if amulet_node:
@@ -81,6 +101,45 @@ func _setup_old_film_filter() -> void:
 	mat.shader = shader
 	film_rect.material = mat
 	old_film_layer.add_child(film_rect)
+
+# O Maycow do menu e o parasita, entao o braco esquerdo dele tem de queimar
+# igual acontece na gameplay. Aqui a cena do menu instancia o .glb direto (nao
+# passa por player.gd), por isso o fogo precisa ser aceso na mao.
+func _acender_fogo_parasita() -> void:
+	var maycow := get_node_or_null("maycow_lopes")
+	if not maycow:
+		return
+
+	var skel := maycow.get_node_or_null("Armature/Skeleton3D") as Skeleton3D
+	if not skel:
+		skel = maycow.find_child("Skeleton3D", true, false) as Skeleton3D
+	if not skel:
+		return
+
+	var malha := skel.get_node_or_null("char1") as MeshInstance3D
+	if not malha:
+		for filho in skel.get_children():
+			if filho is MeshInstance3D:
+				malha = filho
+				break
+	if not malha:
+		return
+
+	var fogo_braco = PARASITE_FIRE_SCENE.instantiate()
+	fogo_braco.name = "fogo_braco_esquerdo"
+	fogo_braco.mask_skeleton = skel
+	fogo_braco.mask_bone_from = fogo_osso_inicio
+	fogo_braco.mask_bone_to = fogo_osso_fim
+	fogo_braco.mask_radius = fogo_raio_braco
+	fogo_braco.flame_scale = fogo_tamanho_chama
+	fogo_braco.flame_opacity = fogo_opacidade_chama
+	fogo_braco.crust_opacity = fogo_crosta_opacidade
+	fogo_braco.lava_intensity = fogo_lava_intensidade
+	fogo_braco.light_energy = fogo_luz_energia
+	fogo_braco.fade_in = 1.6
+	malha.add_child(fogo_braco)
+	fogo_braco.ignite(malha)
+
 
 func _start_menu_loop() -> void:
 	var maycow = get_node_or_null("maycow_lopes")
@@ -189,9 +248,15 @@ func _ready() -> void:
 	var slots = SaveManager.get_slots_info()
 	var has_any_save = false
 	var has_empty_slot = false
+	# O braço em chamas é o Maycow parasita: só faz sentido no menu depois que o
+	# jogador viu isso acontecer. Enquanto todos os saves estiverem no prólogo
+	# (ou não houver save nenhum), a mão fica limpa.
+	var has_save_pos_prologo = false
 	for slot in slots:
 		if not slot["empty"]:
 			has_any_save = true
+			if slot["chapter"] == "TXT_CHAPTER_1":
+				has_save_pos_prologo = true
 		else:
 			has_empty_slot = true
 			
@@ -260,6 +325,8 @@ func _ready() -> void:
 							GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/negacao.mp3")
 				)
 
+	if has_save_pos_prologo:
+		_acender_fogo_parasita()
 	_setup_old_film_filter()
 	_start_menu_loop()
 	
@@ -270,10 +337,13 @@ func _show_slots_menu(is_new_game: bool) -> void:
 	GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/selecionar_item.mp3")
 	$UI/Control.visible = false
 	
-	var slots_panel = Control.new()
-	slots_panel.name = "SlotsPanel"
-	slots_panel.set_anchors_preset(Control.PRESET_FULL_RECT)
-	$UI.add_child(slots_panel)
+	if is_instance_valid(slots_panel):
+		slots_panel.queue_free()
+	var panel := Control.new()
+	panel.name = "SlotsPanel"
+	panel.set_anchors_preset(Control.PRESET_FULL_RECT)
+	$UI.add_child(panel)
+	slots_panel = panel
 	
 	var vbox = VBoxContainer.new()
 	vbox.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
@@ -282,7 +352,7 @@ func _show_slots_menu(is_new_game: bool) -> void:
 	vbox.offset_right = -150
 	vbox.offset_bottom = -50
 	vbox.add_theme_constant_override("separation", 20)
-	slots_panel.add_child(vbox)
+	panel.add_child(vbox)
 	
 	var title = Label.new()
 	title.text = tr("UI_SELECT_SAVE_SLOT") if is_new_game else tr("BTN_LOAD_GAME")
@@ -364,7 +434,9 @@ func _show_slots_menu(is_new_game: bool) -> void:
 	back_btn.add_theme_font_size_override("font_size", 22)
 	back_btn.pressed.connect(func():
 		GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/selecionar_item_voltar.mp3")
-		slots_panel.queue_free()
+		panel.queue_free()
+		if slots_panel == panel:
+			slots_panel = null
 		$UI/Control.visible = true
 		if is_new_game:
 			new_game.grab_focus()
@@ -428,8 +500,7 @@ func _input(event: InputEvent) -> void:
 	if input_locked: return
 	var is_back = event.is_action_pressed("ui_cancel") or (event is InputEventJoypadButton and event.button_index == JOY_BUTTON_B and event.pressed)
 	if is_back:
-		var slots_panel = $UI.get_node_or_null("SlotsPanel")
-		if slots_panel and slots_panel.visible:
+		if is_instance_valid(slots_panel) and slots_panel.visible:
 			if slots_panel.has_node("DeletePrompt"):
 				slots_panel.get_node("DeletePrompt").queue_free()
 				if slots_panel.has_meta("last_focus"):
@@ -458,7 +529,8 @@ func _input(event: InputEvent) -> void:
 
 func _show_slot_action_menu(slot_idx: int, trigger_btn: Button) -> void:
 	GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/selecionar_item.mp3")
-	var slots_panel = $UI.get_node("SlotsPanel")
+	if not is_instance_valid(slots_panel):
+		return
 	slots_panel.set_meta("last_focus", trigger_btn)
 	
 	var menu = ColorRect.new()
@@ -520,7 +592,8 @@ func _show_slot_action_menu(slot_idx: int, trigger_btn: Button) -> void:
 
 func _show_delete_prompt(slot_idx: int, is_new_game: bool, trigger_btn: Button) -> void:
 	GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/selecionar_item.mp3")
-	var slots_panel = $UI.get_node("SlotsPanel")
+	if not is_instance_valid(slots_panel):
+		return
 	slots_panel.set_meta("last_focus", trigger_btn)
 	
 	var prompt = ColorRect.new()
@@ -585,7 +658,8 @@ func _show_delete_prompt(slot_idx: int, is_new_game: bool, trigger_btn: Button) 
 		GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/entrar_super.mp3")
 		SaveManager.delete_save(slot_idx)
 		prompt.queue_free()
-		slots_panel.queue_free()
+		# _show_slots_menu() ja descarta o painel antigo e assume o novo; fechar
+		# aqui tambem deixava dois "SlotsPanel" vivos no mesmo quadro.
 		_show_slots_menu(is_new_game)
 	)
 	
