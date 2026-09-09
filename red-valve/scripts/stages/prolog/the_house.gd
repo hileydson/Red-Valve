@@ -126,6 +126,7 @@ func _process(delta: float) -> void:
 			telefone_tocando = false
 			telefone_atendido = true
 			GlobalEvents.in_cutscene = true
+			GlobalEvents.telefone_cutscene_active = true
 			GlobalUtils.hide_center_message("interacao_casa")
 			
 			if is_instance_valid(phone_audio):
@@ -205,6 +206,7 @@ func _on_area_3d_tv_body_exited(body: Node3D) -> void:
 
 func _start_phone_cutscene() -> void:
 	GlobalEvents.in_cutscene = true
+	GlobalEvents.telefone_cutscene_active = true
 	
 	# Mostrar bordas antes do fade_out para estarem prontas no fade_in
 	GlobalUtils.show_cutscene_bars()
@@ -237,6 +239,7 @@ func _start_phone_cutscene() -> void:
 	
 	$ambient/fade.fade_in()
 	
+	GlobalEvents.telefone_cutscene_active = false
 	GlobalEvents.in_cutscene = false
 	
 	_novo_arquivo(ARQUIVO_TELEFONE)

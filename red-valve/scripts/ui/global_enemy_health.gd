@@ -72,6 +72,18 @@ func _ready() -> void:
 	panel.add_child(vbox)
 	container.add_child(panel)
 
+## Apaga a barra na hora se ela estiver mostrando este inimigo. Chamado por
+## quem some do mapa em silêncio (inimigo liberado por distância, ou que caiu
+## fora do chão): o nome dele não pode continuar no topo da tela.
+func hide_if_showing(enemy: Node) -> void:
+	if current_enemy != enemy:
+		return
+	current_enemy = null
+	if hide_tween:
+		hide_tween.kill()
+	container.modulate.a = 0.0
+
+
 func show_health(enemy: Node3D, enemy_name: String, current_hp: int, max_hp: int) -> void:
 	# Se for um inimigo novo sendo atacado, atualiza nome e máximo de vida
 	if current_enemy != enemy:

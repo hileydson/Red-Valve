@@ -71,6 +71,17 @@ var _spawn_grace_time: float = 1.5
 var _proximity_timer: Timer
 var _is_frozen: bool = false
 
+# --- Navegação ---
+# O NavigationRegion3D da stage_1 não cobre a cidade onde se joga (a região fica
+# a ~200 m dali), então um inimigo solto na rua recebe caminho vazio e
+# `is_navigation_finished()` responde true já no primeiro frame: ele nasceria e
+# ficaria plantado olhando o jogador. Quando o navmesh não alcança este ponto o
+# inimigo persegue em linha reta; se um dia a cidade for rebakeada, o caminho do
+# navmesh volta a valer sozinho, sem mexer neste código.
+var _nav_disponivel: bool = false
+## Distância horizontal máxima até o navmesh para considerá-lo utilizável aqui.
+const NAV_TOLERANCIA := 3.0
+
 func _ready() -> void:
 	current_health = max_health
 	playback = animation_tree["parameters/playback"]
@@ -119,12 +130,39 @@ func _check_proximity() -> void:
 		velocity = Vector3.ZERO
 		set_physics_process(false)
 
+## Troca de estado da AnimationTree sem explodir quando o inimigo nao tem aquele
+## estado. O The Cobalt Husker, por exemplo, nao tem "idle" na maquina de
+## estados: sem esta guarda, cada frame parado dele despeja tres erros no
+## console (foram 6 mil em um teste de 3 minutos) e o log fica ilegivel.
+func _travel(estado: StringName) -> void:
+	if playback == null:
+		return
+	var maquina := animation_tree.tree_root as AnimationNodeStateMachine
+	if maquina != null and not maquina.has_node(estado):
+		return
+	playback.travel(estado)
+
+
+## O navmesh cobre o chão debaixo deste inimigo? Consultado 5 vezes por segundo,
+## junto com a atualização do destino.
+func _atualiza_navegacao_disponivel() -> void:
+	var map := get_world_3d().navigation_map
+	if NavigationServer3D.map_get_regions(map).is_empty():
+		_nav_disponivel = false
+		return
+	var perto := NavigationServer3D.map_get_closest_point(map, global_position)
+	_nav_disponivel = Vector2(perto.x - global_position.x, perto.z - global_position.z).length() <= NAV_TOLERANCIA
+
+
 func _physics_process(delta: float) -> void:
 	if _spawn_grace_time > 0.0:
 		_spawn_grace_time -= delta
 
 	if _spawn_grace_time <= 0.0 and global_position.y < -10.0 and not dead:
-		take_damage(max_health)
+		# Caiu para fora do mapa (chão sem colisão pronta, buraco na cidade).
+		# Isso não é uma morte do jogador: anunciar no HUD o fim de um inimigo
+		# que ele nunca viu — e ainda pagar iron rusks por isso — é ruído puro.
+		remover_em_silencio()
 		return
 	if dead: 
 		steps.stop()
@@ -166,9 +204,16 @@ func _physics_process(delta: float) -> void:
 		if update_timer >= 0.2:
 			nav_agent.target_position = player.global_position
 			update_timer = 0.0
-		
+			_atualiza_navegacao_disponivel()
+
 		# 3. Calcula o movimento se ainda não chegou no alvo
-		if not nav_agent.is_navigation_finished() and (distancia_to_player<distance_to_aproach):
+		# Sem navmesh cobrindo este pedaço do mapa (o caso da cidade da stage_1),
+		# "chegou no alvo" é sempre verdadeiro e o inimigo ficaria parado; ali o
+		# critério passa a ser a distância crua até o jogador.
+		var ainda_indo: bool = distancia_to_player > 1.0
+		if _nav_disponivel:
+			ainda_indo = not nav_agent.is_navigation_finished()
+		if ainda_indo and (distancia_to_player<distance_to_aproach):
 			
 			# Verifica se vai atacar corpo a corpo ou à distância
 			var vai_atacar = false
@@ -196,9 +241,10 @@ func _physics_process(delta: float) -> void:
 				else:
 					_exec_melee_attack()
 			else:
-				var next_p = nav_agent.get_next_path_position()
+				var next_p = nav_agent.get_next_path_position() if _nav_disponivel \
+					else player.global_position
 				var direction = (next_p - global_position)
-				
+
 				direction.y = 0 # FORÇA o inimigo a não subir
 				direction = direction.normalized()
 				
@@ -214,10 +260,10 @@ func _physics_process(delta: float) -> void:
 				
 				if steps.playing == false and !dead: 
 					steps.play()
-					playback.travel("walk")
+					_travel("walk")
 		else:
 			steps.stop()			
-			playback.travel("idle")
+			_travel("idle")
 			# Para gradualmente ao chegar
 			velocity.x = move_toward(velocity.x, 0, SPEED)
 			velocity.z = move_toward(velocity.z, 0, SPEED)
@@ -226,6 +272,32 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 	
 	
+## Tira o inimigo do jogo sem nada na tela: sem barra de chefe, sem iron rusks,
+## sem animação nem som de morte. É o caminho de quem some longe do jogador —
+## o spawner da cidade usa isto ao liberar quem ficou para trás, e o inimigo
+## que cai do mapa também. Morte de verdade (a que o jogador causou) continua
+## em `die()`, com HUD e recompensa.
+func remover_em_silencio() -> void:
+	dead = true
+	is_attacking = false
+	set_physics_process(false)
+	if is_instance_valid(steps):
+		steps.stop()
+	_esconde_hud_de_chefe()
+	queue_free()
+
+
+## A barra de chefe no topo da tela pode estar mostrando justamente este
+## inimigo (o jogador bateu nele e seguiu andando). Ela sumiria sozinha em 2 s,
+## mas com o nome de alguém que acabou de deixar de existir.
+func _esconde_hud_de_chefe() -> void:
+	if not is_inside_tree() or get_tree() == null:
+		return
+	var hud := get_tree().root.get_node_or_null("GlobalEnemyHealthUI")
+	if hud != null and hud.has_method("hide_if_showing"):
+		hud.hide_if_showing(self)
+
+
 func take_damage(amount):
 	if growl_damage_taken.playing == false: growl_damage_taken.play()
 	blood_out.play()
@@ -256,7 +328,7 @@ func die():
 	growl_death.play()
 	SaveManager.add_iron_rusks(iron_rusks_value)
 	# Seu código de morte aqui
-	playback.travel("dead")
+	_travel("dead")
 	
 	if not is_inside_tree() or get_tree() == null: return
 	await get_tree().create_timer(3.7).timeout
@@ -298,17 +370,17 @@ func _on_attack_body_entered(body: Node3D) -> void:
 
 func _exec_fireball_attack() -> void:
 	is_attacking = true
-	playback.travel("attack_2")
+	_travel("attack_2")
 	_throw_fireball()
 
 func _exec_ranged_attack() -> void:
 	is_attacking = true
-	playback.travel("attack_2")
+	_travel("attack_2")
 	_throw_random_projectile()
 
 func _exec_melee_attack() -> void:
 	is_attacking = true
-	playback.travel("attack")
+	_travel("attack")
 	if shoots_fireball:
 		ranged_attack_timer = 10.0
 	_finish_melee_attack()

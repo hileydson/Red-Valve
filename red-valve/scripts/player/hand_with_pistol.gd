@@ -27,7 +27,7 @@ func _input(event):
 func _process(delta):
 	# --- 1. CAPTURA DO ANALÓGICO (Look Actions) ---
 	var joy_input = Vector2.ZERO
-	if not GlobalEvents.telefone_cutscene_active:
+	if not GlobalEvents.in_cutscene and not GlobalEvents.telefone_cutscene_active:
 		joy_input = Input.get_vector("ui_look_left", "ui_look_right", "ui_look_up", "ui_look_down")
 	
 	# Se houver input do analógico, somamos ao mouse_input simulando um movimento relativo

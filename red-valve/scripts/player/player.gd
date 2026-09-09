@@ -425,7 +425,7 @@ func _start_heartbeat_pulse() -> void:
 	if hud: hud._start_heartbeat_pulse()
 
 func _input(event):
-	if GlobalEvents.in_cutscene or _cutscene_inputs_disabled:
+	if GlobalEvents.in_cutscene or _cutscene_inputs_disabled or GlobalEvents.telefone_cutscene_active:
 		return
 		
 	# A ação "ui_cogblade_power" (C / L1) agora é tratada pelo componente
@@ -643,7 +643,7 @@ func _physics_process(delta: float) -> void:
 			return
 			
 		# 5. ROTAÇÃO DA CÂMERA (ANALÓGICO DIREITO)
-		if !camera_bullet_time_ON and not GlobalEvents.telefone_cutscene_active:
+		if !camera_bullet_time_ON and not GlobalEvents.in_cutscene and not _cutscene_inputs_disabled and not GlobalEvents.telefone_cutscene_active:
 			var joy_dir = Input.get_vector("ui_look_left", "ui_look_right", "ui_look_up", "ui_look_down")
 			if joy_dir.length() > DEADZONE:
 				var camera_atual = get_viewport().get_camera_3d()
@@ -855,7 +855,7 @@ func _physics_process(delta: float) -> void:
 			velocity += get_gravity() * delta
 
 		# 5. ROTAÇÃO DA CÂMERA (ANALÓGICO DIREITO)
-		if !camera_bullet_time_ON and not GlobalEvents.telefone_cutscene_active:
+		if !camera_bullet_time_ON and not GlobalEvents.in_cutscene and not _cutscene_inputs_disabled and not GlobalEvents.telefone_cutscene_active:
 			var joy_dir = Input.get_vector("ui_look_left", "ui_look_right", "ui_look_up", "ui_look_down")
 			if joy_dir.length() > DEADZONE:
 				var camera_atual = get_viewport().get_camera_3d()

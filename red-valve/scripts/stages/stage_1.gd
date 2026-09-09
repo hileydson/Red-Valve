@@ -86,7 +86,9 @@ func setup_player_spawn() -> void:
 			enemies_node = find_child("enemies", true, false)
 		if enemies_node:
 			enemies_node.queue_free()
-		
+	else:
+		_ligar_spawner_de_inimigos()
+
 	if not is_instance_valid(prompt_label):
 		var center_container = CenterContainer.new()
 		center_container.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -258,6 +260,19 @@ func _play_intro_text() -> void:
 		await get_tree().create_timer(4.5, false).timeout
 		GlobalUtils.hide_center_message("intro_stage_1")
 		await get_tree().create_timer(0.5, false).timeout
+
+
+## A cidade do Capitulo 1 tem de ter inimigo aparecendo enquanto o Maycow anda.
+## O spawner nasce por codigo (e nao no .tscn) justamente porque ele NAO pode
+## existir no prologo: la a cidade e so travessia, e a stage_1 e a mesma cena.
+## Se a volta da casa do Jimmy ou da arena recarregar a cena, este _ready roda
+## de novo e o spawner e recriado — dai o cuidado de nao duplicar.
+func _ligar_spawner_de_inimigos() -> void:
+	if get_node_or_null("enemy_spawner") != null:
+		return
+	var spawner = load("res://scripts/enemies/enemy_spawner.gd").new()
+	spawner.name = "enemy_spawner"
+	add_child(spawner)
 
 
 ## Libera o arquivo do menu, grava e avisa na tela. O aviso so sai na primeira vez.
