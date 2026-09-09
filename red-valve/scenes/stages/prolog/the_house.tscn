@@ -102,8 +102,8 @@ shader_parameter/cirrus_absorption = 2.0
 shader_parameter/cirrus_sky_tint_fade = 0.5
 shader_parameter/cirrus_size = 1.0
 shader_parameter/cirrus_uv = Vector2(0.16, 0.11)
-shader_parameter/cirrus_position1 = Vector2(0.12581383, 0.12581383)
-shader_parameter/cirrus_position2 = Vector2(0.12581383, 0.12581383)
+shader_parameter/cirrus_position1 = Vector2(0.4046428, 0.4046428)
+shader_parameter/cirrus_position2 = Vector2(0.4046428, 0.4046428)
 shader_parameter/cirrus_texture = ExtResource("3_01ffe")
 shader_parameter/cumulus_visible = true
 shader_parameter/cumulus_intensity = 0.6
@@ -113,7 +113,7 @@ shader_parameter/cumulus_absorption = 2.0
 shader_parameter/cumulus_noise_freq = 2.7
 shader_parameter/cumulus_sky_tint_fade = 0.0
 shader_parameter/cumulus_size = 0.5
-shader_parameter/cumulus_position = Vector2(5.6296062, 5.6296062)
+shader_parameter/cumulus_position = Vector2(7.0226936, 7.0226936)
 shader_parameter/cumulus_texture = ExtResource("4_qysyv")
 shader_parameter/cumulus_partial_mie_phase = Vector3(0.957564, 1.042436, 0.412)
 shader_parameter/cumulus_mie_intensity = 1.0
@@ -877,9 +877,10 @@ shadow_mesh = SubResource("ArrayMesh_5llxv")
 size = Vector3(2.0829468, 1, 2.142456)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ljprc"]
+size = Vector3(2.4598389, 1, 5.3363647)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ov8eb"]
-size = Vector3(6.788574, 2.868164, 1)
+size = Vector3(10.098511, 2.868164, 1.3094482)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_x8mvr"]
 size = Vector3(1.0415039, 1, 4.0581055)
@@ -1370,7 +1371,7 @@ transform = Transform3D(0.9999999, 0, -1.8626451e-09, 0, 1, 0, 0, 0, 0.9999999, 
 collision_layer = 2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="ambient/casa/itens_da_casa/objetos_aleatorios/mesa_telefone/bloque_player" unique_id=1473952611]
-transform = Transform3D(1, 0, 1.3038516e-08, 0, 0.9999995, 0, 0, 0, 0.99999946, -0.582253, 1.4555413, 0.61994934)
+transform = Transform3D(1, 0, 5.8300793e-07, 0, 0.9999805, 0, 0, 0, 0.99998003, 3.0219393, 0.082948685, 2.379939)
 shape = SubResource("BoxShape3D_ljprc")
 
 [node name="bloque_player2" type="StaticBody3D" parent="ambient/casa/itens_da_casa/objetos_aleatorios/mesa_telefone" unique_id=357474165]
@@ -1378,7 +1379,7 @@ transform = Transform3D(0.9999997, 0, -5.5879354e-09, 0, 1, 0, -3.7252903e-09, 0
 collision_layer = 2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="ambient/casa/itens_da_casa/objetos_aleatorios/mesa_telefone/bloque_player2" unique_id=1089019538]
-transform = Transform3D(1, 0, 5.3830445e-07, 0, 0.9999826, 0, 5.5879354e-09, 0, 0.99998176, -3.4566956, 0.5214597, -0.050736427)
+transform = Transform3D(1, 0, 8.828938e-07, 0, 0.9999689, 0, 5.5879354e-09, 0, 0.9999701, -1.8017254, 0.5214597, 0.103982925)
 shape = SubResource("BoxShape3D_ov8eb")
 
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="ambient/casa/itens_da_casa/objetos_aleatorios/mesa_telefone/bloque_player2" unique_id=1508445954]
