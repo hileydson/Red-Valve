@@ -102,15 +102,6 @@ const ShadowRoads := preload("res://scripts/npcs/shadow_roads.gd")
 ## raycast acertar a laje de um predio ou o fundo de um buraco.
 @export var max_height_diff: float = 6.0
 
-@export_group("Carga")
-## Quantas sombras/carros sao instanciados por frame ao montar o pool. Montar
-## os 34 nos de uma vez (cada um monta o proprio corpo em codigo) era o segundo
-## maior engasgo da entrada na stage_1; espalhando, a cidade demora um segundo
-## a mais pra encher e ninguem ve a diferenca.
-@export var build_per_frame: int = 2
-## Orcamento por frame, em ms, da rasterizacao do mapa de ruas.
-@export var road_build_budget_ms: float = 2.0
-
 @export_group("Debug")
 @export var debug_log: bool = false
 
@@ -135,44 +126,30 @@ var _car_idle: Array[Node3D] = []
 var _last_car_heading := 0.0
 
 
-## Nada aqui e feito no frame em que a stage entra. O mapa de ruas e o pool
-## sao montados aos poucos, frame a frame, e o loop de spawn so liga quando
-## tudo esta pronto — ate la a cidade fica vazia por um segundo, o que e bem
-## menos perceptivel do que a tela congelar.
 func _ready() -> void:
 	_rng.randomize()
-	set_physics_process(false)
 	if shadow_scene == null:
 		shadow_scene = load("res://scenes/npcs/shadow_person.tscn") as PackedScene
 	if shadow_scene == null:
 		push_error("ShadowCrowd: shadow_person.tscn nao encontrada; a cidade fica vazia.")
+		set_physics_process(false)
 		return
+	ShadowRoads.setup(get_tree(), road_node_name, road_group)
 	max_active = mini(max_active, pool_size)
-	await ShadowRoads.setup_async(get_tree(), road_node_name, road_group, road_build_budget_ms)
-	if not is_inside_tree():
-		return
-	await _build_pool()
-	if not is_inside_tree():
-		return
-	await _build_car_pool()
-	if not is_inside_tree():
-		return
+	_build_pool()
+	_build_car_pool()
 	# o NavigationAgent3D de cada sombra so existe alguns frames depois do
 	# _ready dela (o proprio script espera a nav map sincronizar)
 	await get_tree().physics_frame
 	await get_tree().physics_frame
 	await get_tree().physics_frame
-	if not is_inside_tree():
-		return
 	_sync_nav_layers()
-	set_physics_process(true)
 
 
 ## Mesmo esquema do pool de pessoas, so que para os carros. Cada carro nasce
 ## com o proprio sumico-por-distancia DESLIGADO: quem manda em quem aparece e
 ## quem some passa a ser este no, senao os dois sistemas brigariam.
 func _build_car_pool() -> void:
-	await get_tree().process_frame  # esta funcao sempre suspende: veja _ready
 	if car_pool_size <= 0 or max_active_cars <= 0:
 		return
 	if car_scene == null:
@@ -195,21 +172,15 @@ func _build_car_pool() -> void:
 		car.global_position = GARAGE
 		_car_pool.append(car)
 		_park_car(car)
-		if build_per_frame > 0 and (i + 1) % build_per_frame == 0:
-			await get_tree().process_frame
-			if not is_inside_tree():
-				return
 	if debug_log:
 		print("ShadowCrowd: pool de ", _car_pool.size(), " carros pronto.")
 
 
-## Cria as sombras (em lotes de build_per_frame, para nao travar o frame de
-## entrada) e as manda direto para a garagem. Elas
+## Cria todas as sombras de uma vez e as manda direto para a garagem. Elas
 ## nunca mais sao instanciadas nem liberadas: o resto do sistema so acende e
 ## apaga. Manter todas na arvore tambem preserva os contadores internos de
 ## populacao do ShadowPerson, que sao decrementados no _exit_tree.
 func _build_pool() -> void:
-	await get_tree().process_frame  # esta funcao sempre suspende: veja _ready
 	for i in pool_size:
 		var npc := shadow_scene.instantiate() as Node3D
 		if npc == null:
@@ -220,10 +191,6 @@ func _build_pool() -> void:
 			npc.wander_radius = wander_radius
 		_pool.append(npc)
 		_park(npc)
-		if build_per_frame > 0 and (i + 1) % build_per_frame == 0:
-			await get_tree().process_frame
-			if not is_inside_tree():
-				return
 	if debug_log:
 		print("ShadowCrowd: pool de ", _pool.size(), " sombras pronto.")
 
