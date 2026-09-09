@@ -16,22 +16,22 @@
    "id": "igreja",
    "chave": "MAP_POI_IGREJA",
    "tipo": "marco",
-   "x": 568.0,
+   "x": 593.15,
    "z": -314.0
   },
   {
    "id": "oficina_jimmy",
    "chave": "MAP_POI_OFICINA_JIMMY",
    "tipo": "local",
-   "x": 690.82,
-   "z": -86.19
+   "x": 460.04,
+   "z": -142.51
   },
   {
    "id": "casa_jimmy",
    "chave": "MAP_POI_CASA_JIMMY",
    "tipo": "casa",
-   "x": 723.63,
-   "z": -63.13
+   "x": 552.14,
+   "z": -340.51
   },
   {
    "id": "casa_nice",
@@ -44,8 +44,8 @@
    "id": "casa_maycow",
    "chave": "MAP_POI_CASA_MAYCOW",
    "tipo": "casa",
-   "x": 646.51,
-   "z": -203.89
+   "x": 647.37,
+   "z": -150.45
   }
  ]
 }

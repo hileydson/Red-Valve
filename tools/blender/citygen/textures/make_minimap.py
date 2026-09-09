@@ -59,6 +59,25 @@ ORDEM = ["beco", "travessa", "secundaria", "radial", "principal", "avenida"]
 # 8,6 x 12,3 m, a um quarteirão da oficina.
 ANCORA_CASA_JIMMY = (83.63, 216.87)
 
+# Pontos posicionados A MAO na cena do Godot, em coordenadas de MUNDO (x, z).
+#
+# Estes predios sairam do lugar que o gerador tinha planejado: casa_jimmy,
+# casa_maycow e a oficina foram arrastados em stage_1.tscn (filhos de
+# itens_caminho_jimmy, que nao tem transform, entao a origem do no JA e mundo),
+# e a Igreja e um asset solto em city.tscn (mundo = local + origem da City, que
+# esta em (640, 0, -280)). O layout.json nao sabe disso, entao derivar dele
+# devolveria o predio para o lugar antigo - por isso a sobrescrita vem por
+# ultimo e ganha do valor calculado.
+#
+# Ao mover qualquer um deles de novo na cena, e so trazer o `origin` do no
+# para ca. casa_nice segue saindo do layout, porque ainda nao foi movida.
+POIS_MANUAIS = {
+    "oficina_jimmy": (460.04, -142.51),
+    "casa_jimmy":    (552.14, -340.51),
+    "casa_maycow":   (647.37, -150.45),
+    "igreja":        (593.15, -314.00),
+}
+
 
 def _carrega():
     lay = json.load(open(os.path.join(_CITYGEN, "city_data", "layout.json"),
@@ -208,6 +227,7 @@ def _pontos(lay, casas, ox, oz):
     ]
     saida = []
     for pid, chave, tipo, pos in bruto:
+        pos = POIS_MANUAIS.get(pid, pos)
         if pos is None:
             print("  AVISO: sem posição para", pid)
             continue

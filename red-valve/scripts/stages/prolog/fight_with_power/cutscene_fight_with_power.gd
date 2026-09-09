@@ -162,7 +162,7 @@ func _slide_final_blow() -> Dictionary:
 			{
 				# A cogblade caida no chao, em primeiro plano. Prop recortado.
 				"name": "cogblade", "depth": 8.0,
-				"frame_size": 0.38, "offset": Vector2(0.33, 0.30), "roll": -14.0,
+				"frame_size": 0.38, "offset": Vector2(0.46, -0.08), "roll": -14.0,
 				"blur": 0.15,
 				"brightness": 1.05, "contrast": 1.06, "saturation": 1.05,
 				"rim": 0.18, "rim_color": Color(1.0, 0.66, 0.26), "rim_width": 0.008,
