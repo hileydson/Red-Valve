@@ -46,13 +46,24 @@ const GRAVITY := 18.0
 @export var engine_pitch_max: float = 1.25
 
 @export_group("Fumaca")
-## Os carros sao mais fumacados que as pessoas: superficie lisa e grande
-## denuncia a caixa muito mais facil que um corpo cheio de membros.
-@export var smoke_billow: float = 0.16
-@export var smoke_body_dissolve: float = 0.46
-@export var smoke_edge_dissolve: float = 1.75
+## Ondulacao da lataria. NAO engorda o carro: o viés que fazia isso e zero aqui
+## (billow_bias), entao a superficie so ondula em torno do tamanho real.
+@export var smoke_billow: float = 0.055
+@export var smoke_body_dissolve: float = 0.40
+@export var smoke_edge_dissolve: float = 1.6
 @export var smoke_scale: float = 4.5
 @export var smoke_wisp_scale: float = 16.0
+
+@export_subgroup("Casca de fumaca")
+## Segunda passada por cima da lataria: trapos de fumaca soltos em volta, que
+## quebram o contorno reto das caixas SEM aumentar o veiculo.
+@export var shell_enabled: bool = true
+## Quao longe da lataria a fumaca flutua (metros).
+@export var shell_expand: float = 0.22
+## Quanto da casca sobrevive ao recorte. Alto demais vira uma capa solida.
+@export var shell_coverage: float = 0.40
+## Concentra a fumaca na silhueta, que e onde a caixa se entrega.
+@export var shell_edge_bias: float = 0.55
 
 @export_group("Ruas")
 ## Nome do no que contem as ruas. Qualquer colisor abaixo dele conta como pista.
@@ -86,6 +97,8 @@ var _wheel_radius := 0.34
 var _wheelbase := 2.4
 var _steer := 0.0
 var _reverse := 0.0
+var _maneuver := 0.0
+var _jam := 0.0
 var _engine: Node = null
 var _engine_target_db := 0.0
 var _engine_db := -60.0
@@ -152,7 +165,22 @@ func _get_material() -> ShaderMaterial:
 		_shared_material.set_shader_parameter("wisp_scale", smoke_wisp_scale)
 		_shared_material.set_shader_parameter("bite_scale", 2.4)
 		_shared_material.set_shader_parameter("edge_power", 0.9)
+		# viés zero: o corpo ondula, mas nao cresce. Era isto que estava
+		# deixando os carros visivelmente maiores do que deviam ser.
+		_shared_material.set_shader_parameter("billow_bias", 0.0)
+		if shell_enabled:
+			_shared_material.next_pass = _make_shell()
 	return _shared_material
+
+
+## Casca de fumaca desenhada por cima da lataria (next_pass).
+func _make_shell() -> ShaderMaterial:
+	var m := ShaderMaterial.new()
+	m.shader = load("res://shaders/npcs/shadow_smoke_shell.gdshader")
+	m.set_shader_parameter("expand", shell_expand)
+	m.set_shader_parameter("coverage", shell_coverage)
+	m.set_shader_parameter("edge_bias", shell_edge_bias)
+	return m
 
 
 func _make_part(parent: Node3D, mesh: Mesh, offset: Vector3) -> MeshInstance3D:
@@ -291,6 +319,17 @@ func _choose_heading(delta: float) -> void:
 	var right := Vector3(fwd.z, 0.0, -fwd.x)
 	var origin := global_position
 
+	# saiu do asfalto (manobra apertada, quina cortada): volta pra rua mais
+	# proxima em vez de ficar vagando pelo terreno tentando adivinhar o rumo
+	if not _is_road_at(origin):
+		var back := ShadowRoads.nearest(origin, 25.0)
+		if back != origin:
+			var to := back - origin
+			to.y = 0.0
+			if to.length_squared() > 0.01:
+				_heading = atan2(to.x, to.z)
+				return
+
 	if _is_road_at(origin + fwd * look):
 		_blocked = false
 		# centraliza na pista: se so tem asfalto de um lado, corrige pro outro
@@ -301,18 +340,62 @@ func _choose_heading(delta: float) -> void:
 			_heading += -0.22 if l else 0.22
 		return
 
-	# cruzamento ou fim de rua: escolhe uma curva valida
+	# Cruzamento ou fim de rua: escolhe uma curva que este veiculo REALMENTE
+	# consegue fazer. Nao basta ter asfalto do outro lado — o onibus tem raio
+	# de giro de quase 10 m e nao cabe numa transversal estreita. Por isso
+	# testa o arco inteiro, nao so o destino.
 	var options: Array[float] = []
 	for ang in [PI * 0.5, -PI * 0.5, PI * 0.25, -PI * 0.25]:
 		var dir := Vector3(sin(_heading + ang), 0.0, cos(_heading + ang))
-		if _is_road_at(origin + dir * look * 0.8):
+		if _is_road_at(origin + dir * look * 0.8) and _arc_is_clear(ang):
 			options.append(ang)
-	if options.is_empty():
-		_heading += PI  # beco sem saida: retorna
+	if not options.is_empty():
+		_heading += options[_rng.randi_range(0, options.size() - 1)]
 		_blocked = false
 		return
-	_heading += options[_rng.randi_range(0, options.size() - 1)]
+
+	# beco sem saida: meia-volta. Se o veiculo couber, faz num arco so;
+	# se nao couber (o caso do onibus), ja entra em manobra com re.
+	_heading += PI
+	if not _arc_is_clear(PI):
+		_begin_maneuver()
 	_blocked = false
+
+
+## Raio minimo de curva deste veiculo. Sai da geometria: entre-eixos dividido
+## pela tangente do angulo maximo das rodas. Um hatch faz ~4 m, o onibus ~9 m.
+func _turn_radius() -> float:
+	return _wheelbase / maxf(tan(deg_to_rad(max_steer_deg)), 0.05)
+
+
+## O carro cabe nesta curva? Percorre o arco que ele de fato descreveria e
+## exige asfalto ao longo dele todo, nao so no destino. E o que impede um
+## veiculo grande de se comprometer com uma curva que nao tem como completar
+## e acabar entalado atravessado na rua.
+func _arc_is_clear(turn: float) -> bool:
+	if is_zero_approx(turn):
+		return true
+	var r := _turn_radius()
+	var fwd := _forward()
+	var right := Vector3(fwd.z, 0.0, -fwd.x)
+	var center := global_position + right * r * signf(turn)
+	var offset := global_position - center
+	var steps := 5
+	for i in range(1, steps + 1):
+		var t := turn * float(i) / float(steps)
+		var p := center + offset.rotated(Vector3.UP, t)
+		if not _is_road_at(p):
+			return false
+	return true
+
+
+## Entra em manobra: re esterçada pro lado contrario, ignorando pedestres ate
+## terminar. E a baliza de tres tempos de quem nao tem espaco pra girar de uma
+## vez — e o unico jeito de o veiculo sair de um corredor estreito.
+func _begin_maneuver() -> void:
+	_reverse = 1.4
+	_maneuver = 3.5
+	_jam = 0.0
 
 
 ## Pedestre atravessando a pista: para e espera ele sair da frente.
@@ -374,15 +457,28 @@ func _physics_process(delta: float) -> void:
 
 	var err := angle_difference(rotation.y, _heading)
 	var max_steer := deg_to_rad(max_steer_deg)
-	var blocked := _car_ahead() or _pedestrian_ahead()
 
-	# manobra de meia-volta: quando o rumo pedido esta quase pra tras, um carro
-	# de verdade nao pivota — ele entra na curva, para e volta de re esterçado
-	# pro outro lado. Sem isto ele girava no lugar, que era o que estava feio.
+	if _maneuver > 0.0:
+		_maneuver -= delta
 	if _reverse > 0.0:
 		_reverse -= delta
-	elif not blocked and absf(err) > 2.0 and _speed < 0.9:
-		_reverse = 1.3
+	# manobra acabou assim que ele ficou alinhado com o rumo que queria
+	if _maneuver > 0.0 and _reverse <= 0.0 and absf(err) < 0.3:
+		_maneuver = 0.0
+
+	# DENTRO da manobra o carro ignora pedestre. Sem isto ele travava pra
+	# sempre: parado ele nao gira (a guinada vem da roda rolando), entao se
+	# alguem atravessasse no meio do giro ele parava, e parado nunca terminava
+	# o giro pra sair da frente. Onibus em rua curta caia nisso toda vez.
+	var maneuvering := _maneuver > 0.0
+	var blocked := false
+	if not maneuvering:
+		blocked = _car_ahead() or _pedestrian_ahead()
+
+	# rumo quase pra tras: comeca a meia-volta (arco largo ou re)
+	if _reverse <= 0.0 and not maneuvering and not blocked \
+			and absf(err) > 2.0 and _speed < 0.9:
+		_begin_maneuver()
 
 	var reversing := _reverse > 0.0
 	_steer = clampf(err, -max_steer, max_steer)
@@ -414,11 +510,21 @@ func _physics_process(delta: float) -> void:
 	if absf(_speed) > 0.5 and velocity.length() < 0.3:
 		_stuck_timer += delta
 		if _stuck_timer > 1.0:
-			_reverse = 1.2
 			_heading += PI * (0.5 if _rng.randf() < 0.5 else -0.5)
+			_begin_maneuver()
 			_stuck_timer = 0.0
 	else:
 		_stuck_timer = 0.0
+
+	# rede de seguranca: parado ha tempo demais querendo virar, seja por quem
+	# for, ele forca uma manobra em vez de ficar agarrado no corredor
+	if absf(_speed) < 0.25 and (blocked or absf(err) > 0.4):
+		_jam += delta
+		if _jam > 2.5:
+			_jam = 0.0
+			_begin_maneuver()
+	else:
+		_jam = 0.0
 
 	_spin_wheels(delta)
 	_update_engine(delta)

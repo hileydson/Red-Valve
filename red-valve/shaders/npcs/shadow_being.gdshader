@@ -35,6 +35,9 @@ uniform float warp_scale : hint_range(0.5, 10.0) = 2.2;
 
 // inflar a malha alem do raio real, pra borda geometrica nao ser a silhueta
 uniform float billow : hint_range(0.0, 0.3) = 0.09;
+// Quanto do billow e empurrao pra FORA (engorda o corpo) em vez de so ondular.
+// 0 = a superficie oscila em torno do tamanho original, sem crescer.
+uniform float billow_bias : hint_range(0.0, 1.0) = 0.35;
 uniform float billow_scale : hint_range(0.5, 20.0) = 4.0;
 uniform float billow_speed : hint_range(0.0, 3.0) = 0.8;
 
@@ -104,7 +107,7 @@ void vertex() {
 	v_billow = b + b2 * 0.5;
 	// infla bem mais pra fora do que pra dentro: a massa cresce e as partes
 	// vizinhas encostam, em vez de afundar e abrir buraco
-	VERTEX += NORMAL * (v_billow + 0.35) * billow * 2.0;
+	VERTEX += NORMAL * (v_billow + billow_bias) * billow * 2.0;
 
 	// glitch: fatias horizontais escorregam por um instante.
 	// Semente por NPC pra que duas sombras nunca falhem juntas.
