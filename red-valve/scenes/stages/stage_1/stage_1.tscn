@@ -117,8 +117,8 @@ shader_parameter/cirrus_absorption = 2.0
 shader_parameter/cirrus_sky_tint_fade = 0.5
 shader_parameter/cirrus_size = 1.0
 shader_parameter/cirrus_uv = Vector2(0.16, 0.11)
-shader_parameter/cirrus_position1 = Vector2(0.017423099, 0.017423099)
-shader_parameter/cirrus_position2 = Vector2(0.017423099, 0.017423099)
+shader_parameter/cirrus_position1 = Vector2(0.47121572, 0.47121572)
+shader_parameter/cirrus_position2 = Vector2(0.47121572, 0.47121572)
 shader_parameter/cirrus_texture = ExtResource("3_kvc23")
 shader_parameter/cumulus_visible = true
 shader_parameter/cumulus_intensity = 9.245
@@ -128,7 +128,7 @@ shader_parameter/cumulus_absorption = 2.0
 shader_parameter/cumulus_noise_freq = 2.7
 shader_parameter/cumulus_sky_tint_fade = 0.0
 shader_parameter/cumulus_size = 0.5
-shader_parameter/cumulus_position = Vector2(0.087115526, 0.087115526)
+shader_parameter/cumulus_position = Vector2(32.366947, 32.366947)
 shader_parameter/cumulus_texture = ExtResource("4_2wkc3")
 shader_parameter/cumulus_partial_mie_phase = Vector3(0.957564, 1.042436, 0.412)
 shader_parameter/cumulus_mie_intensity = 1.0
@@ -643,7 +643,7 @@ top_level = true
 metadata/_edit_lock_ = true
 
 [node name="Player" parent="." unique_id=663958156 instance=ExtResource("1_23usu")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 459.0605, 9.5435095, -157.71622)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 481.4905, 9.5435095, -143.61006)
 infinite_stamina_test = true
 
 [node name="enemies" type="Node3D" parent="." unique_id=1935818346]
@@ -653,7 +653,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 714.9369, 2.015886, 441.17017
 transform = Transform3D(0.059585143, 0, -0.99822325, 0, 1, 0, 0.99822325, 0, 0.059585143, -200.31555, 9.17046, -663.3693)
 
 [node name="TheCobaltHusker4" parent="enemies" unique_id=1100274870 instance=ExtResource("3_hdpfd")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -185.91492, 9.043781, -661.82153)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -185.91492, 8.356881, -661.82153)
 
 [node name="real_time_label" type="Label" parent="." unique_id=2123051016]
 offset_left = 1814.0
@@ -703,7 +703,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 520.44415, 16.27707, 384.0040
 shape = SubResource("BoxShape3D_tayg2")
 
 [node name="auto_pecas_jimmy" parent="itens_caminho_jimmy" unique_id=10078496 instance=ExtResource("29_wfumn")]
-transform = Transform3D(0.8546394, -0.04049246, 4.966386, 0.33538565, 3.6605484, -0.024911508, -4.1582694, 0.28691968, 1.0187205, 535.16034, 12.164401, -207.58888)
+transform = Transform3D(0.28867352, 0, 5.0581894, 0, 3.6719992, 0, -4.2486186, 0, 0.34368002, 459.44028, 9.972853, -142.5142)
 
 [node name="maykow_capitulo_1_inicio" type="Marker3D" parent="itens_caminho_jimmy/auto_pecas_jimmy" unique_id=1788133959]
 transform = Transform3D(1, 0, 2.9802322e-07, 0, 0.99999976, 0, 1.0430813e-07, 0, 1, 0.4499054, -0.33600417, 0.5074158)
@@ -725,10 +725,10 @@ transform = Transform3D(1, 0, 2.9802322e-07, 0, 0.99999976, 0, 1.0430813e-07, 0,
 shape = SubResource("BoxShape3D_wfumn")
 
 [node name="casa_jimmy" parent="itens_caminho_jimmy" unique_id=1589314243 instance=ExtResource("40_casajimmy")]
-transform = Transform3D(-0.00071288185, 0.03457818, -0.99940175, -0.020598546, 0.9991894, 0.034585528, 0.9997875, 0.020610876, -4.374709e-08, 590.5438, 10.725889, -341.1994)
+transform = Transform3D(-4.3711385e-08, 0.03489949, -0.99939084, 0, 0.9993908, 0.034899496, 0.99999994, 1.5255053e-09, -4.368476e-08, 552.1364, 12.560703, -340.50687)
 
-[node name="casa_inteira_por_fora" parent="itens_caminho_jimmy" unique_id=161605872 instance=ExtResource("27_3817s")]
-transform = Transform3D(10.965386, -0.16372815, 0.16516988, 0.21571542, 8.322734, 0.0032492876, 0.23663096, 1.2113294e-10, -7.6568513, 535.4407, 9.003831, -47.200333)
+[node name="casa_maycow" parent="itens_caminho_jimmy" unique_id=161605872 instance=ExtResource("27_3817s")]
+transform = Transform3D(-0.7512893, 0.014736648, -7.640639, 0.21571541, 8.322733, 0.0032492871, -10.942177, 0.16306359, 0.5246695, 647.3723, 10.230516, -150.44713)
 script = ExtResource("99_fixmat")
 
 [node name="casa" type="Node3D" parent="." unique_id=393651894]

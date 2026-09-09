@@ -138,10 +138,9 @@
 [ext_resource type="Script" uid="uid://0lrym3rrrqft" path="res://tools/godot/citybuild/city_place_assets.gd" id="86_shr21"]
 [ext_resource type="MultiMesh" uid="uid://c8qv7h7x6ryg4" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_4_0_LOD.tres" id="87_cqily"]
 [ext_resource type="MultiMesh" uid="uid://rp5wx1f4k1ec" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_2_1_LOD.tres" id="87_oe6wx"]
-[ext_resource type="PackedScene" uid="uid://dsn1saorv2en5" path="res://assets/3d_model/city_extra/igreja.glb" id="87_oft1q"]
-[ext_resource type="PackedScene" uid="uid://cbq36h7m5nvbb" path="res://assets/3d_model/city_extra/pracinha.glb" id="88_djoxf"]
+[ext_resource type="PackedScene" uid="uid://icrvtx25lifk" path="res://assets/3d_model/city_extra/igreja.glb" id="87_oft1q"]
+[ext_resource type="PackedScene" uid="uid://otmdxphck8ei" path="res://assets/3d_model/city_extra/pracinha.glb" id="88_djoxf"]
 [ext_resource type="MultiMesh" uid="uid://dg7senhjbn7x7" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_-4_0.tres" id="88_ibxgd"]
-[ext_resource type="PackedScene" uid="uid://bjlae2i2x8twg" path="res://assets/3d_model/stages/prolog/auto_pecas_jimmy.glb" id="89_5qmw6"]
 [ext_resource type="MultiMesh" uid="uid://dbq6f7ev3lpta" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_-4_0_LOD.tres" id="89_m31xl"]
 [ext_resource type="PackedScene" uid="uid://k5p8rjs1xqwm" path="res://assets/3d_model/stages/prolog/casa_inteira_por_fora.glb" id="90_y1c4q"]
 [ext_resource type="Texture2D" uid="uid://dlv21xf8xd4ge" path="res://assets/3d_model/city/textures/T_signs_alb.png" id="91_ur33l"]
@@ -3108,13 +3107,10 @@ CasaSraNice: vaga (62.3, 187.2), placa célula 10
 CasaSrMaycow: vaga (6.5, 76.1), placa célula 11"
 
 [node name="Igreja" parent="Marcos" unique_id=1898502413 instance=ExtResource("87_oft1q")]
-transform = Transform3D(12.380034, 0, -8.469637, 0, 15, 0, 8.469637, 0, 12.380034, -72, 25.67, -34)
+transform = Transform3D(-0.69913435, 0, -14.983699, 0, 14.999999, 0, 14.983699, 0, -0.69913435, -46.85293, 25.67, -33.995556)
 
 [node name="Pracinha" parent="Marcos" unique_id=1150023158 instance=ExtResource("88_djoxf")]
 transform = Transform3D(20, 0, 0, 0, 20, 0, 0, 0, 20, 0, 19.75, 0)
-
-[node name="OficinaJimmy" parent="Marcos" unique_id=75531772 instance=ExtResource("89_5qmw6")]
-transform = Transform3D(0.51074046, 0, -9.986949, 0, 10, 0, 9.986949, 0, 0.51074046, 50.816666, 11.17, 193.80666)
 
 [node name="CasaSraNice" parent="Marcos" unique_id=939067544 instance=ExtResource("90_y1c4q")]
 transform = Transform3D(0.25537023, 0, -4.9934745, 0, 5, 0, 4.9934745, 0, 0.25537023, 62.33, 8.7, 187.23)
