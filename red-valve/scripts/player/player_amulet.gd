@@ -211,21 +211,18 @@ func _process_amulet_targeting() -> void:
 	var cam = player.get_viewport().get_camera_3d()
 	if not cam: return
 
-	var space_state = player.get_world_3d().direct_space_state
-	var center = player.get_viewport().size / 2
-	var from = cam.project_ray_origin(center)
-	var to = from + cam.project_ray_normal(center) * 30.0
-	
-	var query = PhysicsRayQueryParameters3D.create(from, to)
-	var result = space_state.intersect_ray(query)
-	
-	var target = null
-	if result and result.collider:
-		if result.collider.is_in_group("enemies") or (result.collider.get_parent() and result.collider.get_parent().is_in_group("enemies")):
-			target = result.collider
-			if not target.is_in_group("enemies"):
-				target = target.get_parent()
-				
+	# O raio exato no centro do pixel é preciso mas exige acerto perfeito; em
+	# outros dispositivos/controles a curva de sensibilidade do analógico pode
+	# ser um pouco diferente da testada aqui (foi reportado no Steam Deck: some
+	# no Desktop Mode, falha no Game Mode — mesmo hardware, o que muda é o
+	# input passando pela camada de controle da Steam) e a mira nunca cai
+	# exatamente em cima do inimigo. Por isso, se o raio não acertar nada, cai
+	# num segundo passo tolerante: o inimigo mais próximo do centro da câmera
+	# dentro de um cone pequeno, igual ao aim assist já faz para o tiro.
+	var target: Node3D = _raio_no_centro(cam)
+	if not target:
+		target = _inimigo_mais_proximo_do_centro(cam)
+
 	if target != player.amulet_hovered_enemy:
 		_clear_amulet_hover()
 		if target:
@@ -235,14 +232,12 @@ func _process_amulet_targeting() -> void:
 			else:
 				_apply_silhouette(target, Color(1.0, 1.0, 1.0, 0.5)) # Branco fraco (Hover)
 
-	# `Input.is_action_just_pressed` direto, aqui, e' o que falhava so' no jogo
-	# exportado com o gatilho de fato: `ui_shoot` e' mapeado num eixo analogico
-	# (gatilho direito), e nesta funcao ele e' lido junto com `ui_hold_first_person_view`
-	# (gatilho esquerdo, tambem eixo) segurado ao mesmo tempo — dois eixos
-	# analogicos cruzando o deadzone no mesmo instante e' exatamente o caso em
-	# que o "just pressed" interno do Godot fica menos confiavel entre editor e
-	# build exportada. Detectar a borda na mao, comparando com o frame
-	# anterior, remove essa dependencia.
+	# Deteccao manual da borda do gatilho em vez de `is_action_just_pressed`:
+	# `ui_shoot` e' um eixo analogico lido aqui junto com `ui_hold_first_person_view`
+	# (tambem eixo) segurado ao mesmo tempo, e isso e' mais robusto do que
+	# depender do "just pressed" interno do Godot para dois eixos analogicos
+	# pressionados juntos. Nao era a causa do bug relatado no Steam Deck (esse
+	# era a deteccao do inimigo, corrigida acima) mas nao custa manter.
 	var gatilho_pressionado_agora := Input.get_action_strength("ui_shoot") > 0.5
 	var gatilho_acabou_de_apertar := gatilho_pressionado_agora and not _gatilho_selecionar_estava_pressionado
 	_gatilho_selecionar_estava_pressionado = gatilho_pressionado_agora
@@ -263,6 +258,82 @@ func _process_amulet_targeting() -> void:
 
 		if player.amulet_counter_label:
 			player.amulet_counter_label.text = str(player.amulet_selected_enemies.size())
+
+## Raio exato no centro da tela — o jeito preciso, quando acerta.
+func _raio_no_centro(cam: Camera3D) -> Node3D:
+	var space_state = player.get_world_3d().direct_space_state
+	var center = player.get_viewport().size / 2
+	var from = cam.project_ray_origin(center)
+	var to = from + cam.project_ray_normal(center) * 30.0
+
+	var query = PhysicsRayQueryParameters3D.create(from, to)
+	var result = space_state.intersect_ray(query)
+
+	if result and result.collider:
+		if result.collider.is_in_group("enemies"):
+			return result.collider
+		var pai = result.collider.get_parent()
+		if pai and pai.is_in_group("enemies"):
+			return pai
+	return null
+
+const MIRA_CONE_DEG := 3.5
+const MIRA_DIST_MAX := 35.0
+var _altura_cache: Dictionary = {}
+
+## Segundo passo, tolerante: o inimigo mais perto do centro da câmera dentro
+## de um cone pequeno — mesma ideia do aim assist (player_aim_assist.gd), só
+## que aqui decide quem fica em hover, não puxa a câmera.
+func _inimigo_mais_proximo_do_centro(cam: Camera3D) -> Node3D:
+	var origem := cam.global_position
+	var frente := -cam.global_transform.basis.z
+	var melhor_angulo := deg_to_rad(MIRA_CONE_DEG)
+	var melhor: Node3D = null
+
+	for enemy in player.get_tree().get_nodes_in_group("enemies"):
+		if not (enemy is Node3D) or not is_instance_valid(enemy): continue
+		if not enemy.is_inside_tree() or not enemy.can_process(): continue
+		if not enemy.is_visible_in_tree(): continue
+		if "dead" in enemy and enemy.dead: continue
+
+		var ponto: Vector3 = enemy.global_position + Vector3.UP * (_altura_inimigo(enemy) * 0.5)
+		var direcao := ponto - origem
+		var dist := direcao.length()
+		if dist < 1.0 or dist > MIRA_DIST_MAX: continue
+
+		var angulo := frente.angle_to(direcao / dist)
+		if angulo >= melhor_angulo: continue
+		if not _linha_de_visao_livre(origem, ponto, enemy): continue
+
+		melhor_angulo = angulo
+		melhor = enemy
+
+	return melhor
+
+func _altura_inimigo(enemy: Node3D) -> float:
+	var id := enemy.get_instance_id()
+	if _altura_cache.has(id): return _altura_cache[id]
+
+	var altura := 0.0
+	for mesh in enemy.find_children("*", "MeshInstance3D", true, false):
+		if not (mesh is MeshInstance3D) or mesh.mesh == null: continue
+		var aabb: AABB = mesh.get_aabb()
+		var local: Transform3D = enemy.global_transform.affine_inverse() * mesh.global_transform
+		altura = maxf(altura, (local * aabb).end.y)
+
+	if altura <= 0.1: altura = 1.8
+	_altura_cache[id] = altura
+	return altura
+
+func _linha_de_visao_livre(origem: Vector3, alvo: Vector3, enemy: Node3D) -> bool:
+	var espaco = player.get_world_3d().direct_space_state
+	var consulta := PhysicsRayQueryParameters3D.create(origem, alvo)
+	consulta.exclude = [player.get_rid()]
+	var acerto := espaco.intersect_ray(consulta)
+	if acerto.is_empty(): return true
+	var colisor = acerto.get("collider")
+	if colisor == null: return true
+	return colisor == enemy or (colisor is Node and enemy.is_ancestor_of(colisor))
 
 func _clear_amulet_hover() -> void:
 	if player.amulet_hovered_enemy and is_instance_valid(player.amulet_hovered_enemy):
