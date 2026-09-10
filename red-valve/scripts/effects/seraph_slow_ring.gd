@@ -21,8 +21,8 @@ var dono: Node3D = null
 var duracao: float = 12.0
 ## Multiplicador de velocidade aplicado no jogador (0.4 = 60% mais lento).
 var fator: float = 0.4
-var speed: float = 11.0
-var turn_rate: float = 4.5
+var speed: float = 8.5
+var turn_rate: float = 3.4
 var raio: float = 0.85
 
 const COR := Color(0.7, 0.35, 1.0)
@@ -57,7 +57,7 @@ func _ready() -> void:
 	# fecha do nada: acompanha a mao girando
 	scale = Vector3.ONE * 0.05
 	var t := create_tween()
-	t.tween_property(self, "scale", Vector3.ONE, 0.55).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	t.tween_property(self, "scale", Vector3.ONE, 1.05).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 
 func _monta_anel() -> void:

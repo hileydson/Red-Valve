@@ -17,11 +17,11 @@ const FX := preload("res://scripts/effects/seraph_fx.gd")
 var damage: int = 40
 ## Velocidade inicial e final: sai lento da bazuca e vai ganhando corpo.
 var speed: float = 9.0
-var max_speed: float = 24.0
-var aceleracao: float = 7.0
+var max_speed: float = 18.0
+var aceleracao: float = 5.0
 ## Quanto ele consegue virar por segundo (rad/s). O limite e o que torna o
 ## ataque esquivavel por um instante.
-var turn_rate: float = 2.2
+var turn_rate: float = 1.8
 var alvo: Node3D = null
 var dono: Node3D = null
 ## Rede de seguranca: se por algum motivo o alvo desaparecer, nao fica um

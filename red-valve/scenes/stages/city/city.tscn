@@ -412,7 +412,7 @@ visible = false
 
 [node name="Walls" parent="." unique_id=2035760721 instance=ExtResource("3_m0get")]
 
-[node name="Houses" parent="." unique_id=413733466 instance=ExtResource("4_34eo7")]
+[node name="Houses" parent="." unique_id=179763016 instance=ExtResource("4_34eo7")]
 
 [node name="Props" parent="." unique_id=720216281 instance=ExtResource("5_qp32r")]
 
@@ -3107,7 +3107,7 @@ CasaSraNice: vaga (62.3, 187.2), placa célula 10
 CasaSrMaycow: vaga (6.5, 76.1), placa célula 11"
 
 [node name="Igreja" parent="Marcos" unique_id=1898502413 instance=ExtResource("87_oft1q")]
-transform = Transform3D(-0.69913435, 0, -14.983699, 0, 14.999999, 0, 14.983699, 0, -0.69913435, -46.85293, 25.67, -33.995556)
+transform = Transform3D(-0.69913435, 0, -14.983699, 0, 14.999999, 0, 14.983699, 0, -0.69913435, -50.03893, 23.898256, -37.181614)
 
 [node name="Pracinha" parent="Marcos" unique_id=1150023158 instance=ExtResource("88_djoxf")]
 transform = Transform3D(20, 0, 0, 0, 20, 0, 0, 0, 20, -13.270223, 19.75, 10.444345)

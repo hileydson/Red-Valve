@@ -84,7 +84,7 @@ size = Vector3(0.18, 2.6, 0.18)
 size = Vector3(4.6, 0.18, 2.4)
 
 [sub_resource type="BoxShape3D" id="forma_entrada"]
-size = Vector3(4.6, 3.0, 4.0)
+size = Vector3(7.0, 4.0, 6.5)
 
 [node name="casa_jimmy_exterior" type="Node3D"]
 

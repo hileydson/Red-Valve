@@ -413,7 +413,7 @@ func _monta_corpo() -> void:
 	# torax comprido e afunilado pra baixo
 	_parte(_spine, _capsula(h * 0.066, torso), Vector3(0, torso * 0.45, 0))
 	_parte(_spine, _esfera_malha(h * 0.072, 0.8), Vector3(0, torso * 0.70, 0)).scale = Vector3(1.1, 1.0, 0.85)
-	_parte(_spine, _capsula(h * 0.040, ombro_w * 1.25), Vector3(0, torso * 0.93, 0)).rotation.z = PI * 0.5
+	_parte(_spine, _capsula(h * 0.040, ombro_w * 2.0), Vector3(0, torso * 0.93, 0)).rotation.z = PI * 0.5
 
 	# pescoco, cranio alongado e dois chifres pra tras
 	_neck = Node3D.new()
@@ -1339,14 +1339,21 @@ func _roteiro_espada() -> void:
 func _corte_da_espada() -> void:
 	if not is_inside_tree():
 		return
+	# Espera a lamina descer antes de qualquer coisa aparecer. Com o corte agora
+	# durando 0,8 s, soltar o arco no frame zero punha o efeito no ar enquanto a
+	# espada ainda estava erguida atras da cabeca.
+	await get_tree().create_timer(ESP_CORTA * 0.32, false).timeout
+	if dead or not is_inside_tree():
+		return
+
 	var frente := -global_transform.basis.z
 	var centro := global_position + frente * 1.6 + Vector3.UP * (altura * 0.45)
 	_arco_de_corte(centro, frente)
 	FX.som_no_mundo(self, centro, FX.SOM_EXPLOSAO, -9.0, 1.8)
 	GlobalUtils.shake_camera(0.25, 0.3)
 
-	# O dano sai no meio do golpe, nao no comeco: da tempo de ler o movimento.
-	await get_tree().create_timer(ESP_CORTA * 0.45).timeout
+	# O dano sai logo depois do arco, no ponto mais baixo da lamina.
+	await get_tree().create_timer(ESP_CORTA * 0.16, false).timeout
 	if dead or not is_inside_tree() or not is_instance_valid(player):
 		return
 	var para := player.global_position - global_position
@@ -1410,9 +1417,9 @@ func _arco_de_corte(centro: Vector3, frente: Vector3) -> void:
 	no.add_child(faiscas)
 
 	var t := no.create_tween().set_parallel(true)
-	t.tween_property(mi, "scale", Vector3(1.5, 1.25, 1.25), 0.22).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
-	t.tween_method(func(v: float): mat.albedo_color = Color(1.0, 0.5, 0.15, v), 1.0, 0.0, 0.34)
-	t.tween_property(luz, "light_energy", 0.0, 0.34)
+	t.tween_property(mi, "scale", Vector3(1.6, 1.3, 1.3), 0.34).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	t.tween_method(func(v: float): mat.albedo_color = Color(1.0, 0.5, 0.15, v), 1.0, 0.0, 0.52)
+	t.tween_property(luz, "light_energy", 0.0, 0.52)
 	t.chain().tween_interval(1.2)
 	t.chain().tween_callback(no.queue_free)
 
@@ -1449,7 +1456,10 @@ func _levanta_esfera() -> void:
 	var e = EsferaFogo.new()
 	e.duration = duracao_esfera
 	e.radius = altura * 0.70
-	add_child(e)
+	# Filha do RIG, nao do corpo: a esfera se fecha com ele suspenso no ar (o
+	# salto e um deslocamento do rig, a capsula de colisao fica no chao). Presa
+	# ao corpo, ela apareceria la embaixo, nos pes dele.
+	_rig.add_child(e)
 	e.position = Vector3(0, altura * 0.50, 0)
 	_esfera = e
 	escudo_ativo = true
@@ -1706,29 +1716,32 @@ func _pose_asas(delta: float, blend: float, morto: bool) -> void:
 	var freq := 1.1
 	var amplitude := 0.10
 
+	# Asa de 2,8 m bate devagar e com curso longo. As frequencias abaixo sao
+	# deliberadamente baixas (e as amplitudes altas pra compensar): asa rapida e
+	# de passarinho, nao de bicho desse tamanho.
 	if morto:
 		abertura = 0.25
 		amplitude = 0.0
 	elif _act == Act.ESFERA and _fase >= 1:
 		abertura = 1.0
-		freq = 3.2
-		amplitude = 0.16
+		freq = 1.9
+		amplitude = 0.22
 	elif _act == Act.RAIO and _fase >= 1 and _fase <= 3:
 		abertura = 0.95
-		freq = 4.0
-		amplitude = 0.30
+		freq = 2.4
+		amplitude = 0.38
 	elif _act == Act.ESPADA and _fase == 1:
 		abertura = 0.75
-		freq = 2.6
-		amplitude = 0.22
+		freq = 1.8
+		amplitude = 0.28
 	elif _act != Act.NENHUMA:
 		abertura = 0.55
-		freq = 1.6
-		amplitude = 0.12
+		freq = 1.0
+		amplitude = 0.16
 	else:
 		abertura = 0.20 + blend * 0.45
-		freq = 1.1 + blend * 1.1
-		amplitude = 0.08 + blend * 0.10
+		freq = 0.7 + blend * 0.7
+		amplitude = 0.11 + blend * 0.13
 
 	var bate := sin(_t * TAU * freq) * amplitude
 	for i in 2:
@@ -1759,7 +1772,7 @@ func _pose_acao(delta: float) -> void:
 		Act.RAIO: _pose_raio(w, delta)
 		Act.FOGUETE: _pose_foguete(w)
 		Act.ESPADA: _pose_espada(w)
-		Act.ESFERA: _pose_esfera(w)
+		Act.ESFERA: _pose_esfera(w, delta)
 		Act.ANEL: _pose_anel(w)
 		_: pass
 
@@ -1817,18 +1830,24 @@ func _pose_raio(w: float, delta: float) -> void:
 			_para(_spine, Vector3(-0.26 * e, 0.0, 0.0), w)
 			_para(_neck, Vector3(-0.40 * e, 0.0, 0.0), w)
 		1:
-			# salto: o corpo sobe e as pernas se recolhem
+			# Salto. A subida desacelera (`sin` de 0 a PI/2), como corpo que sai
+			# do chao e perde forca — uma subida linear e o que faz um pulo
+			# parecer elevador.
 			var f1: float = clampf(_fase_t / RAIO_SOBE, 0.0, 1.0)
-			_altura_rig(altura * 0.55 * sin(f1 * PI * 0.5), w * 1.15)
-			_para(_coxa_l, Vector3(0.75 * f1, 0.0, 0.18 * f1), w)
-			_para(_coxa_r, Vector3(0.75 * f1, 0.0, -0.18 * f1), w)
-			_para(_joelho_l, Vector3(-1.45 * f1, 0.0, 0.0), w)
-			_para(_joelho_r, Vector3(-1.45 * f1, 0.0, 0.0), w)
+			_altura_rig(altura * SALTO_RAIO * sin(f1 * PI * 0.5), clampf(delta * 11.0, 0.0, 1.0))
+			# os primeiros 18% da fase ainda sao o impulso: pernas esticando
+			var impulso: float = clampf(f1 / 0.18, 0.0, 1.0)
+			_para(_coxa_l, Vector3(0.80 * impulso, 0.0, 0.18 * impulso), w * 1.3)
+			_para(_coxa_r, Vector3(0.80 * impulso, 0.0, -0.18 * impulso), w * 1.3)
+			_para(_joelho_l, Vector3(-1.50 * impulso, 0.0, 0.0), w * 1.3)
+			_para(_joelho_r, Vector3(-1.50 * impulso, 0.0, 0.0), w * 1.3)
 			_para(_ombro_l, Vector3(-3.05, 0.0, -0.22), w)
 			_para(_ombro_r, Vector3(-3.05, 0.0, 0.22), w)
 		2:
-			# agarra o raio com as duas maos acima da cabeca
-			_altura_rig(altura * 0.55, w)
+			# Apice suspenso: agarra o raio com as duas maos acima da cabeca.
+			# Ele flutua de leve aqui — parar completamente no ar nao le como
+			# "segurando um raio", le como pausa de jogo.
+			_altura_rig(altura * SALTO_RAIO + sin(_fase_t * 2.2) * 0.10, w)
 			_para(_ombro_l, Vector3(-2.85, 0.0, -0.10), w)
 			_para(_ombro_r, Vector3(-2.85, 0.0, 0.10), w)
 			_para(_cotovelo_l, Vector3(-0.55, 0.0, 0.0), w)
@@ -1837,7 +1856,8 @@ func _pose_raio(w: float, delta: float) -> void:
 		3:
 			# arremesso: os bracos desabam pra frente e o tronco vem com eles
 			var f3: float = clampf(_fase_t / RAIO_JOGA, 0.0, 1.0)
-			_altura_rig(altura * 0.55 * (1.0 - f3 * 0.45), w)
+			# comeca a ceder no fim do arremesso, sem ainda cair de verdade
+			_altura_rig(altura * SALTO_RAIO * (1.0 - f3 * 0.20), w)
 			_para(_ombro_l, Vector3(lerpf(-2.85, -1.30, f3), 0.0, -0.18), w * 1.25)
 			_para(_ombro_r, Vector3(lerpf(-2.85, -1.30, f3), 0.0, 0.18), w * 1.25)
 			_para(_cotovelo_l, Vector3(lerpf(-0.55, -0.05, f3), 0.0, 0.0), w * 1.25)
@@ -1845,16 +1865,24 @@ func _pose_raio(w: float, delta: float) -> void:
 			_para(_spine, Vector3(lerpf(-0.18, 0.34, f3), 0.0, 0.0), w * 1.2)
 			_para(_neck, Vector3(0.22 * f3, 0.0, 0.0), w)
 		_:
-			# queda e amortecimento nos joelhos
+			# Queda ACELERADA (o quadrado faz o papel da gravidade) nos primeiros
+			# 55% da fase, e so depois o amortecimento nos joelhos. O lerp
+			# anterior descia rapido no comeco e lento no fim — exatamente o
+			# contrario de um corpo caindo, e era o que mais chamava atencao.
 			var f4: float = clampf(_fase_t / RAIO_CAI, 0.0, 1.0)
-			_altura_rig(0.0, clampf(delta * 14.0, 0.0, 1.0))
-			var amort := sin(f4 * PI) * 0.45
-			_pernas_firmes(w, 0.18 + amort)
-			_para(_ombro_l, Vector3(-0.30, 0.0, -0.26), w)
-			_para(_ombro_r, Vector3(-0.30, 0.0, 0.26), w)
+			var queda: float = clampf(f4 / 0.55, 0.0, 1.0)
+			var alto := altura * SALTO_RAIO * 0.80
+			_altura_rig(alto * (1.0 - queda * queda), clampf(delta * 20.0, 0.0, 1.0))
+			# o amortecimento so existe DEPOIS de encostar no chao
+			var aterrou: float = clampf((f4 - 0.5) / 0.5, 0.0, 1.0)
+			var amort := sin(aterrou * PI) * 0.60
+			_pernas_firmes(w * 1.4, 0.18 + amort)
+			# no ar os bracos ficam soltos atras; ao aterrar vem pra frente
+			_para(_ombro_l, Vector3(lerpf(-1.10, -0.30, aterrou), 0.0, -0.26), w)
+			_para(_ombro_r, Vector3(lerpf(-1.10, -0.30, aterrou), 0.0, 0.26), w)
 			_para(_cotovelo_l, Vector3(-0.50, 0.0, 0.0), w)
 			_para(_cotovelo_r, Vector3(-0.50, 0.0, 0.0), w)
-			_para(_spine, Vector3(0.12 * (1.0 - f4), 0.0, 0.0), w)
+			_para(_spine, Vector3(lerpf(0.34, 0.10, aterrou) * (1.0 - f4 * 0.5), 0.0, 0.0), w)
 			_para(_neck, Vector3.ZERO, w)
 
 
@@ -1956,7 +1984,7 @@ func _pose_espada(w: float) -> void:
 			_para(_spine, Vector3(0.06, -0.18 * f4, 0.0), w)
 
 
-func _pose_esfera(w: float) -> void:
+func _pose_esfera(w: float, delta: float) -> void:
 	match _fase:
 		0:
 			# agacha carregando o salto
@@ -1970,7 +1998,7 @@ func _pose_esfera(w: float) -> void:
 			# salta e se abre em cruz: bracos e pernas escancarados
 			var f1: float = clampf(_fase_t / ESF_SOBE, 0.0, 1.0)
 			var e := sin(f1 * PI * 0.5)
-			_altura_rig(altura * 0.42 * e, w * 1.2)
+			_altura_rig(altura * SALTO_ESFERA * e, clampf(delta * 10.0, 0.0, 1.0))
 			_para(_ombro_l, Vector3(-1.10 * e, 0.0, -1.35 * e), w * 1.25)
 			_para(_ombro_r, Vector3(-1.10 * e, 0.0, 1.35 * e), w * 1.25)
 			_para(_cotovelo_l, Vector3(-0.12, 0.0, 0.0), w)
@@ -1982,23 +2010,29 @@ func _pose_esfera(w: float) -> void:
 			_para(_spine, Vector3(-0.30 * e, 0.0, 0.0), w)
 			_para(_neck, Vector3(-0.35 * e, 0.0, 0.0), w)
 		2:
-			# segura a pose de cruz enquanto a casca se fecha
-			_altura_rig(altura * 0.42, w)
+			# Segura a pose de cruz, flutuando, enquanto a casca se fecha. E o
+			# momento da imagem: ele parado no ar com o fogo nascendo em volta.
+			_altura_rig(altura * SALTO_ESFERA + sin(_fase_t * 1.9) * 0.09, w)
 			_para(_ombro_l, Vector3(-1.15, 0.0, -1.45), w)
 			_para(_ombro_r, Vector3(-1.15, 0.0, 1.45), w)
 			_para(_coxa_l, Vector3(0.22, 0.0, 0.75), w)
 			_para(_coxa_r, Vector3(0.22, 0.0, -0.75), w)
 			_para(_spine, Vector3(-0.32, 0.0, 0.0), w)
 		_:
-			# desce e volta a guarda, agora dentro da esfera
+			# Desce (queda acelerada, como no raio) e volta a guarda, agora
+			# dentro da esfera.
 			var f3: float = clampf(_fase_t / ESF_CAI, 0.0, 1.0)
-			_altura_rig(0.0, w * 1.2)
-			_pernas_firmes(w, 0.20 + sin(f3 * PI) * 0.35)
-			_para(_ombro_l, Vector3(-0.40, 0.0, -0.42), w)
-			_para(_ombro_r, Vector3(-0.40, 0.0, 0.42), w)
-			_para(_cotovelo_l, Vector3(-0.70, 0.0, 0.0), w)
-			_para(_cotovelo_r, Vector3(-0.70, 0.0, 0.0), w)
-			_para(_spine, Vector3(0.08, 0.0, 0.0), w)
+			var queda: float = clampf(f3 / 0.55, 0.0, 1.0)
+			_altura_rig(altura * SALTO_ESFERA * (1.0 - queda * queda), clampf(delta * 18.0, 0.0, 1.0))
+			var aterrou: float = clampf((f3 - 0.5) / 0.5, 0.0, 1.0)
+			_pernas_firmes(w * 1.4, 0.20 + sin(aterrou * PI) * 0.45)
+			_para(_ombro_l, Vector3(lerpf(-1.15, -0.40, aterrou), 0.0, lerpf(-1.45, -0.42, aterrou)), w)
+			_para(_ombro_r, Vector3(lerpf(-1.15, -0.40, aterrou), 0.0, lerpf(1.45, 0.42, aterrou)), w)
+			_para(_cotovelo_l, Vector3(-0.70 * aterrou - 0.12, 0.0, 0.0), w)
+			_para(_cotovelo_r, Vector3(-0.70 * aterrou - 0.12, 0.0, 0.0), w)
+			_para(_coxa_l, Vector3(0.22 * (1.0 - aterrou), 0.0, 0.75 * (1.0 - aterrou)), w)
+			_para(_coxa_r, Vector3(0.22 * (1.0 - aterrou), 0.0, -0.75 * (1.0 - aterrou)), w)
+			_para(_spine, Vector3(lerpf(-0.32, 0.08, aterrou), 0.0, 0.0), w)
 			_para(_neck, Vector3.ZERO, w)
 
 

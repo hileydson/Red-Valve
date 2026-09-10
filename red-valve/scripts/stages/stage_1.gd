@@ -10,6 +10,7 @@ const ARQUIVO_CADERNO := "caderno_do_jimmy"
 
 var player_na_oficina: bool = false
 var player_na_casa_jimmy: bool = false
+var player_na_casa_maycow: bool = false
 var prompt_label: Label
 var intro_label: Label
 var ui_layer: CanvasLayer
@@ -50,6 +51,7 @@ func _ready() -> void:
 	ui_layer = CanvasLayer.new()
 	ui_layer.layer = 128
 	add_child(ui_layer)
+	_setup_areas_casas()
 	setup_player_spawn()
 
 func setup_player_spawn() -> void:
@@ -63,12 +65,30 @@ func setup_player_spawn() -> void:
 		if not saida:
 			saida = find_child("ponto_de_saida", true, false)
 		var jogador = get_node_or_null("Player")
+		if not jogador:
+			jogador = find_child("Player", true, false)
+		if not jogador:
+			jogador = find_child("player", true, false)
 		if jogador and saida:
 			jogador.global_position = saida.global_position
 			jogador.global_rotation.y = saida.global_rotation.y
+	elif GlobalEvents.voltando_da_casa_maycow:
+		GlobalEvents.voltando_da_casa_maycow = false
+		var jogador = get_node_or_null("Player")
+		if not jogador:
+			jogador = find_child("Player", true, false)
+		if not jogador:
+			jogador = find_child("player", true, false)
+		if jogador:
+			jogador.global_position = Vector3(638.568, 6.75, -148.692)
+			jogador.global_rotation.y = -PI * 0.5
 	elif is_chapter_1:
 		var spawn_point = get_node_or_null("itens_caminho_jimmy/auto_pecas_jimmy/maykow_capitulo_1_inicio")
 		var player = get_node_or_null("Player")
+		if not player:
+			player = find_child("Player", true, false)
+		if not player:
+			player = find_child("player", true, false)
 		if player and spawn_point:
 			player.global_position = spawn_point.global_position
 			player.global_rotation.y = spawn_point.global_rotation.y + PI
@@ -130,9 +150,17 @@ func _process(delta: float) -> void:
 		$fade.fade_out()
 		await get_tree().create_timer(2.0).timeout
 		LoadingScreen.load_scene("res://scenes/stages/jimmy_house/casa_jimmy_interior.tscn")
+	elif player_na_casa_maycow:
+		player_na_casa_maycow = false
+		GlobalEvents.entrando_na_casa_maycow = true
+		_esconder_prompt()
+		$fade.fade_out()
+		await get_tree().create_timer(2.0).timeout
+		LoadingScreen.load_scene("res://scenes/stages/prolog/the_house.tscn")
 
 
 func _mostrar_prompt(texto: String) -> void:
+	GlobalUtils.show_center_message("interacao_stage_1", texto, 18)
 	if not is_instance_valid(prompt_label):
 		return
 	prompt_label.text = texto
@@ -142,6 +170,7 @@ func _mostrar_prompt(texto: String) -> void:
 
 
 func _esconder_prompt() -> void:
+	GlobalUtils.hide_center_message("interacao_stage_1")
 	if not is_instance_valid(prompt_label):
 		return
 	if prompt_label.has_meta("container"):
@@ -166,6 +195,47 @@ func _ao_sair_area_casa_jimmy(body: Node3D) -> void:
 	if not _eh_o_player(body):
 		return
 	player_na_casa_jimmy = false
+	_esconder_prompt()
+
+
+func _setup_areas_casas() -> void:
+	var casa_jimmy_area = get_node_or_null("itens_caminho_jimmy/casa_jimmy/area_entrada")
+	if not casa_jimmy_area:
+		casa_jimmy_area = find_child("area_entrada", true, false)
+	if casa_jimmy_area:
+		if not casa_jimmy_area.body_entered.is_connected(_ao_entrar_area_casa_jimmy):
+			casa_jimmy_area.body_entered.connect(_ao_entrar_area_casa_jimmy)
+		if not casa_jimmy_area.body_exited.is_connected(_ao_sair_area_casa_jimmy):
+			casa_jimmy_area.body_exited.connect(_ao_sair_area_casa_jimmy)
+
+	if get_node_or_null("area_entrada_casa_maycow") == null:
+		var area_maycow = Area3D.new()
+		area_maycow.name = "area_entrada_casa_maycow"
+		area_maycow.collision_layer = 0
+		area_maycow.collision_mask = 1
+		area_maycow.monitorable = false
+		var col_shape = CollisionShape3D.new()
+		var box = BoxShape3D.new()
+		box.size = Vector3(7.0, 5.0, 7.0)
+		col_shape.shape = box
+		area_maycow.add_child(col_shape)
+		add_child(area_maycow)
+		area_maycow.global_position = Vector3(639.5, 7.5, -148.7)
+		area_maycow.body_entered.connect(_ao_entrar_area_casa_maycow)
+		area_maycow.body_exited.connect(_ao_sair_area_casa_maycow)
+
+
+func _ao_entrar_area_casa_maycow(body: Node3D) -> void:
+	if not _eh_o_player(body):
+		return
+	player_na_casa_maycow = true
+	_mostrar_prompt(tr("PROMPT_ENTER_MAYCOW_HOUSE"))
+
+
+func _ao_sair_area_casa_maycow(body: Node3D) -> void:
+	if not _eh_o_player(body):
+		return
+	player_na_casa_maycow = false
 	_esconder_prompt()
 
 

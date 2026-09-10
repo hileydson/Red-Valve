@@ -141,9 +141,11 @@ func arremessar(destino: Vector3) -> void:
 	_fase = Fase.QUEDA
 	_topo = _ponta_da_mao()
 	_base = destino
-	# o raio desaba: o topo corre atras da base em 0,12 s, nao ao contrario
+	# O raio desaba: o topo corre atras da base, nao ao contrario. 0,12 s era
+	# rapido demais pra dar tempo de VER a coluna descer — virava um corte seco
+	# pro estouro.
 	var t := create_tween()
-	t.tween_method(_desce_topo, 0.0, 1.0, 0.12).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+	t.tween_method(_desce_topo, 0.0, 1.0, 0.26).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
 	t.tween_callback(_impacto)
 
 
@@ -169,7 +171,7 @@ func _impacto() -> void:
 	if is_instance_valid(_faiscas):
 		_faiscas.emitting = false
 	var t := create_tween()
-	t.tween_method(func(v: float): _opacidade = v, 1.0, 0.0, 0.22)
+	t.tween_method(func(v: float): _opacidade = v, 1.0, 0.0, 0.40)
 	t.tween_callback(queue_free)
 
 

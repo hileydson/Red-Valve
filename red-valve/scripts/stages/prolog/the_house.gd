@@ -23,21 +23,34 @@ var phone_texts: Array = ArquivosDados.linhas(ARQUIVO_TELEFONE)
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	SaveManager.prolog_finished = false
-	# a introdução do jogo, que o jogador acabou de ver na cutscene do prólogo,
-	# fica guardada como arquivo pra ele poder reler no menu
-	SaveManager.arquivos_desbloqueados = _com_arquivo(ARQUIVO_INTRO)
-	SaveManager.save_game()
 	GlobalEvents.is_maycow_normal = true
 	GlobalEvents.set_minimum_nevoa()
+	GlobalEvents.in_cutscene = false
 	
 	# Cria uma camada UI por cima de todos os shaders
 	ui_layer = CanvasLayer.new()
 	ui_layer.layer = 128
 	add_child(ui_layer)
 	
-	_show_intro_text()
-	_play_phone_ring_after_delay()
+	if not GlobalEvents.entrando_na_casa_maycow and not SaveManager.prolog_finished:
+		SaveManager.prolog_finished = false
+		# a introdução do jogo, que o jogador acabou de ver na cutscene do prólogo,
+		# fica guardada como arquivo pra ele poder reler no menu
+		SaveManager.arquivos_desbloqueados = _com_arquivo(ARQUIVO_INTRO)
+		SaveManager.save_game()
+		_show_intro_text()
+		_play_phone_ring_after_delay()
+	else:
+		telefone_atendido = true
+		telefone_tocando = false
+		var player = get_node_or_null("Player")
+		if not player:
+			player = find_child("Player", true, false)
+		if not player:
+			player = find_child("player", true, false)
+		if player:
+			player.global_position = Vector3(1.24, 1.52, -9.5)
+			player.global_rotation.y = 0.0
 
 func _play_phone_ring_after_delay() -> void:
 	# Aguarda o tempo configurado no inspetor usando um Timer que respeita o pause
@@ -112,6 +125,8 @@ func _process(delta: float) -> void:
 			player_na_porta = false
 			GlobalEvents.in_cutscene = true
 			GlobalUtils.hide_center_message("interacao_casa")
+			GlobalEvents.voltando_da_casa_maycow = true
+			GlobalEvents.entrando_na_casa_maycow = false
 			
 			# Chama o efeito de fade out
 			$ambient/fade.fade_out()
@@ -170,13 +185,13 @@ func _update_prompt() -> void:
 
 func _on_area_3d_body_entered(body: Node3D) -> void:
 	# Verifica se quem entrou na área foi o player e se já atendeu o telefone
-	if (body.name == "player" or body.is_in_group("player")) and telefone_atendido:
+	if (body.name.to_lower() == "player" or body.is_in_group("player")) and telefone_atendido:
 		player_na_porta = true
 		_update_prompt()
 
 
 func _on_area_3d_body_exited(body: Node3D) -> void:
-	if body.name == "player" or body.is_in_group("player"):
+	if body.name.to_lower() == "player" or body.is_in_group("player"):
 		player_na_porta = false
 		_update_prompt()
 

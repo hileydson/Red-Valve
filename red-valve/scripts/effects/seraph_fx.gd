@@ -219,10 +219,10 @@ static func explosao(pai: Node, pos: Vector3, cor: Color, raio: float = 2.5,
 		som_no_mundo(pai, pos, SOM_EXPLOSAO, -2.0, randf_range(0.85, 1.15))
 
 	var t := raiz.create_tween().set_parallel(true)
-	t.tween_property(clarao, "scale", Vector3.ONE * 2.6, 0.35).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
-	t.tween_method(func(v: float): mat_clarao.albedo_color = Color(cor.r, cor.g, cor.b, v), 1.0, 0.0, 0.4)
-	t.tween_property(onda, "scale", Vector3(1.8, 0.3, 1.8), 0.5).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
-	t.tween_property(luz, "light_energy", 0.0, 0.5).set_trans(Tween.TRANS_EXPO)
+	t.tween_property(clarao, "scale", Vector3.ONE * 2.9, 0.50).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	t.tween_method(func(v: float): mat_clarao.albedo_color = Color(cor.r, cor.g, cor.b, v), 1.0, 0.0, 0.60)
+	t.tween_property(onda, "scale", Vector3(2.1, 0.3, 2.1), 0.75).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	t.tween_property(luz, "light_energy", 0.0, 0.70).set_trans(Tween.TRANS_EXPO)
 	# as particulas ainda estao no ar quando o clarao acaba: o no so sai depois
 	t.chain().tween_interval(2.2)
 	t.chain().tween_callback(raiz.queue_free)

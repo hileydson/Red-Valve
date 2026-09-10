@@ -23,6 +23,8 @@ func _ready() -> void:
 		return
 	if GlobalEvents.voltando_da_casa_jimmy:
 		return
+	if GlobalEvents.voltando_da_casa_maycow:
+		return
 	if not has_animation(ANIM_INTRO):
 		return
 

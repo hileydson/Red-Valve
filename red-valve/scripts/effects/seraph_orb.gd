@@ -15,8 +15,9 @@ const FX := preload("res://scripts/effects/seraph_fx.gd")
 
 ## Dano no jogador (direto ou dentro do raio do estouro).
 var damage: int = 15
-## Velocidade de voo, em m/s.
-var speed: float = 17.0
+## Velocidade de voo, em m/s. Lenta o bastante pra dar pra sair da frente:
+## o golpe e frequente, nao e pra ser inevitavel.
+var speed: float = 12.5
 ## Raio do nucleo visivel.
 var radius: float = 0.42
 ## Quem for pego dentro deste raio do estouro leva o dano.
@@ -54,8 +55,8 @@ func _ready() -> void:
 	# Nasce do nada: o crescimento acompanha os bracos se abrindo.
 	scale = Vector3.ONE * 0.05
 	var t := create_tween()
-	t.tween_property(self, "scale", Vector3.ONE * 1.08, 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	t.tween_property(self, "scale", Vector3.ONE, 0.12).set_trans(Tween.TRANS_SINE)
+	t.tween_property(self, "scale", Vector3.ONE * 1.10, 0.46).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	t.tween_property(self, "scale", Vector3.ONE, 0.20).set_trans(Tween.TRANS_SINE)
 
 
 func _monta_visual() -> void:

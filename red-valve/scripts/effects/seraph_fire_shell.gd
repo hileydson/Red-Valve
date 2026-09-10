@@ -102,8 +102,8 @@ func _ready() -> void:
 
 	scale = Vector3.ONE * 0.05
 	var t := create_tween()
-	t.tween_property(self, "scale", Vector3.ONE * 1.14, 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	t.tween_property(self, "scale", Vector3.ONE, 0.18).set_trans(Tween.TRANS_SINE)
+	t.tween_property(self, "scale", Vector3.ONE * 1.14, 0.55).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	t.tween_property(self, "scale", Vector3.ONE, 0.28).set_trans(Tween.TRANS_SINE)
 
 
 func _monta_casca() -> void:
