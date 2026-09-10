@@ -18,7 +18,14 @@ func _setup_cel_shading() -> void:
 
 func _setup_health_hud() -> void:
 	player.current_health = player.max_health
-	
+
+	# Batalha forçada pelo toque: o Maycow de combate da arena é um player.tscn
+	# recém instanciado, então nasceria com a vida cheia. Aqui ele recebe o
+	# sangue que sobrou do tranco levado na cidade — é com esse que vai lutar.
+	if GlobalEvents.forced_battle_health >= 0:
+		player.current_health = clampi(GlobalEvents.forced_battle_health, 1, player.max_health)
+		GlobalEvents.forced_battle_health = -1
+
 	player.hud_layer = CanvasLayer.new()
 	player.hud_layer.layer = 100
 	player.hud_layer.process_mode = Node.PROCESS_MODE_ALWAYS

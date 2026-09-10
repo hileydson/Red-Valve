@@ -116,7 +116,7 @@ func _process(_delta: float) -> void:
 # Condições básicas do botão (valem tanto para o menu quanto para o melee)
 func _can_use_action() -> bool:
 	if GlobalEvents.is_maycow_normal: return false
-	if GlobalEvents.in_cutscene or player._cutscene_inputs_disabled: return false
+	if (player and player.has_method("are_cutscene_inputs_blocked") and player.are_cutscene_inputs_blocked()) or GlobalEvents.in_cutscene or player._cutscene_inputs_disabled: return false
 	if player.process_mode == Node.PROCESS_MODE_DISABLED: return false
 	if get_tree().paused: return false
 	if player.is_using_ultimate or player.is_magic_attacking or player.is_reloading: return false

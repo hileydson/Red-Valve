@@ -39,6 +39,16 @@ var paused_scene_for_amulet: Node3D = null
 var amulet_captured_enemies: Array[Node] = []
 var previous_is_maycow_normal: bool = false
 
+## --- Batalha forçada pelo toque (inimigo encosta no Maycow normal na cidade) ---
+## Ligado enquanto a sequência (dano em câmera lenta + viagem) está rodando.
+## Segura um segundo inimigo de disparar a mesma coisa por cima e faz os toques
+## que chegarem no meio da cinemática não tirarem vida nenhuma.
+var forced_battle_running: bool = false
+## Sangue com que o Maycow de combate deve nascer na arena. A arena instancia um
+## player.tscn novo, que nasceria com a vida cheia e apagaria o tranco levado na
+## rua; quem consome (e zera) isto é o player_hud.gd. -1 = nasce cheio.
+var forced_battle_health: int = -1
+
 func _ready() -> void:
 	# PROCESS_MODE_ALWAYS por causa do `_input` abaixo: com a árvore pausada
 	# (menu aberto) um autoload PAUSABLE não recebe entrada nenhuma, e a

@@ -440,8 +440,43 @@ func _acertar_player(body: Node3D) -> void:
 	# 4. Chama o tremor de tela
 	GlobalUtils.shake_camera(0.2, 0.2)
 	
+	# 5. Na cidade o toque não é uma pancada comum: leva metade do sangue e
+	# arrasta o jogador para a arena (ver _tenta_batalha_forcada).
+	if _tenta_batalha_forcada(body):
+		return
+	
 	# Lança dano no player
 	body.take_damage(attack_damage)
+
+
+## Toque no Maycow normal enquanto ele anda pela cidade: em vez do dano de
+## sempre, ele perde metade do sangue que ainda tem e a batalha na arena começa
+## à força, sem passar pela mira do amuleto. Quem cuida da sequência (dano em
+## câmera lenta e depois a viagem) é o player_amulet.gd.
+##
+## Vale SÓ na stage_1 e depois do prólogo: no prólogo e nos interiores o
+## encontro tem de continuar sendo um encostão comum, e o Maycow de combate
+## (dentro da própria arena) nunca entra aqui.
+##
+## true = o toque foi consumido; quem chamou não aplica mais dano nenhum.
+func _tenta_batalha_forcada(body: Node3D) -> bool:
+	if not GlobalEvents.is_maycow_normal:
+		return false
+	if not SaveManager.prolog_finished:
+		return false
+	if not body.has_method("force_battle_from_touch"):
+		return false
+	var cena := get_tree().current_scene
+	if cena == null or not cena.scene_file_path.contains("stage_1"):
+		return false
+
+	# Sequência já em andamento (outro inimigo encostou primeiro, ou este mesmo
+	# no frame anterior): o toque não faz nada. Deixar cair no dano normal seria
+	# tirar vida por cima da cinemática — e poderia matar o jogador no meio dela.
+	if GlobalEvents.forced_battle_running:
+		return true
+
+	return body.force_battle_from_touch(self)
 
 func _exec_fireball_attack() -> void:
 	is_attacking = true

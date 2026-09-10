@@ -425,8 +425,11 @@ func _start_heartbeat_pulse() -> void:
 	var hud = get_node_or_null("PlayerHUD")
 	if hud: hud._start_heartbeat_pulse()
 
+func are_cutscene_inputs_blocked() -> bool:
+	return GlobalEvents.in_cutscene or _cutscene_inputs_disabled or GlobalEvents.telefone_cutscene_active or GlobalUtils.in_cinematic_cutscene
+
 func _input(event):
-	if GlobalEvents.in_cutscene or _cutscene_inputs_disabled or GlobalEvents.telefone_cutscene_active:
+	if are_cutscene_inputs_blocked():
 		return
 		
 	# A ação "ui_cogblade_power" (C / L1) agora é tratada pelo componente
@@ -506,13 +509,17 @@ func _physics_process(delta: float) -> void:
 	last_rotation_y = rotation.y
 	last_camera_rot_x = current_camera_rot_x
 	
-	if SaveManager.config.get("run_mode", "hold") == "toggle":
-		if Input.is_action_just_pressed("ui_run"):
-			_run_toggle_active = not _run_toggle_active
-		if velocity.length() < 0.1 or is_aiming or is_exhausted or current_stamina <= 0:
-			_run_toggle_active = false
+	if not are_cutscene_inputs_blocked():
+		if SaveManager.config.get("run_mode", "hold") == "toggle":
+			if Input.is_action_just_pressed("ui_run"):
+				_run_toggle_active = not _run_toggle_active
+			if velocity.length() < 0.1 or is_aiming or is_exhausted or current_stamina <= 0:
+				_run_toggle_active = false
+		else:
+			_run_toggle_active = Input.is_action_pressed("ui_run")
 	else:
-		_run_toggle_active = Input.is_action_pressed("ui_run")
+		if not _cutscene_auto_run:
+			_run_toggle_active = false
 
 	
 	# --- STAMINA EXHAUSTION LOGIC ---
@@ -571,7 +578,7 @@ func _physics_process(delta: float) -> void:
 		is_first_person = true # Sempre em primeira pessoa
 		
 		# Força a câmera de 1ª pessoa a ser a atual se não for (ex: ao entrar na cena)
-		if not GlobalEvents.in_cutscene and not _cutscene_camera_disabled and not camera.current and not transition_camera and not camera_bullet_time_ON:
+		if not are_cutscene_inputs_blocked() and not _cutscene_camera_disabled and not camera.current and not transition_camera and not camera_bullet_time_ON:
 			camera.make_current()
 			if camera_third_person:
 				camera_third_person.current = false
@@ -580,16 +587,26 @@ func _physics_process(delta: float) -> void:
 			if hand_with_magic: hand_with_magic.visible = true
 			control_magic.visible = true
 			
-		var wants_to_aim = Input.is_action_pressed("ui_hold_first_person_view")
+		var cutscene_blocked = are_cutscene_inputs_blocked()
+		var wants_to_aim = not cutscene_blocked and Input.is_action_pressed("ui_hold_first_person_view")
 		var has_mp = SaveManager.current_mp > 0
 		
-		if Input.is_action_just_released("ui_hold_first_person_view") or (is_aiming and wants_to_aim and not has_mp):
+		if not cutscene_blocked and (Input.is_action_just_released("ui_hold_first_person_view") or (is_aiming and wants_to_aim and not has_mp)):
 			if amulet_selected_enemies.size() == 0:
 				AudioServer.playback_speed_scale = 1.0
 			_on_amulet_magic_released()
 
-		if wants_to_aim and not has_mp and Input.is_action_just_pressed("ui_hold_first_person_view"):
+		if not cutscene_blocked and wants_to_aim and not has_mp and Input.is_action_just_pressed("ui_hold_first_person_view"):
 			if is_instance_valid(gun_load): gun_load.play()
+
+		if cutscene_blocked:
+			if is_aiming:
+				is_aiming = false
+				if amulet_selected_enemies.size() == 0:
+					AudioServer.playback_speed_scale = 1.0
+				_on_amulet_magic_released()
+			elif AudioServer.playback_speed_scale != 1.0 and amulet_selected_enemies.size() == 0:
+				AudioServer.playback_speed_scale = 1.0
 
 		is_aiming = wants_to_aim and has_mp
 		
@@ -631,7 +648,7 @@ func _physics_process(delta: float) -> void:
 			velocity += get_gravity() * delta
 
 		# 4. PULO E RECARGA
-		if not _cutscene_inputs_disabled:
+		if not are_cutscene_inputs_blocked():
 			if Input.is_action_just_pressed("ui_accept") and is_on_floor():
 				velocity.y = JUMP_VELOCITY
 				playback.travel("jump")
@@ -650,7 +667,7 @@ func _physics_process(delta: float) -> void:
 			return
 			
 		# 5. ROTAÇÃO DA CÂMERA (ANALÓGICO DIREITO)
-		if !camera_bullet_time_ON and not GlobalEvents.in_cutscene and not _cutscene_inputs_disabled and not GlobalEvents.telefone_cutscene_active:
+		if !camera_bullet_time_ON and not are_cutscene_inputs_blocked():
 			var joy_dir = Input.get_vector("ui_look_left", "ui_look_right", "ui_look_up", "ui_look_down")
 			if joy_dir.length() > DEADZONE:
 				var camera_atual = get_viewport().get_camera_3d()
@@ -670,7 +687,7 @@ func _physics_process(delta: float) -> void:
 		if dash_cooldown_timer > 0:
 			dash_cooldown_timer -= delta
 
-		if not _cutscene_inputs_disabled and Input.is_action_just_pressed("ui_dash") and not is_dashing and dash_cooldown_timer <= 0 and (current_stamina >= 30.0 or infinite_stamina_test):
+		if not are_cutscene_inputs_blocked() and Input.is_action_just_pressed("ui_dash") and not is_dashing and dash_cooldown_timer <= 0 and (current_stamina >= 30.0 or infinite_stamina_test):
 			if not infinite_stamina_test:
 				current_stamina -= 30.0
 			stamina_fade_timer = 2.0
@@ -682,7 +699,7 @@ func _physics_process(delta: float) -> void:
 		var input_dir := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 		
 		# --- CUTSCENE INPUT OVERRIDES ---
-		if GlobalEvents.in_cutscene or _cutscene_inputs_disabled:
+		if are_cutscene_inputs_blocked():
 			input_dir = Vector2.ZERO
 		if _cutscene_auto_walk:
 			input_dir.y = -1.0
@@ -776,7 +793,8 @@ func _physics_process(delta: float) -> void:
 			elif not is_running and not is_first_person:
 				cur_fov_speed = 0.8
 				
-			camera.fov = lerp(camera.fov, target_run_fov, cur_fov_speed * delta)
+			if not are_cutscene_inputs_blocked() and not _cutscene_camera_disabled and camera and camera.current:
+				camera.fov = lerp(camera.fov, target_run_fov, cur_fov_speed * delta)
 			
 
 
@@ -803,12 +821,22 @@ func _physics_process(delta: float) -> void:
 		
 	# DAQUI PRA FRENTE É O MAYCOW SEM PODERES (E NORMAL APOS PROLOGO)
 	else:
-		var normal_can_aim = SaveManager.prolog_finished and not _cutscene_inputs_disabled
+		var cutscene_blocked = are_cutscene_inputs_blocked()
+		var normal_can_aim = SaveManager.prolog_finished and not cutscene_blocked
+		if cutscene_blocked:
+			if is_aiming:
+				is_aiming = false
+				if amulet_selected_enemies.size() == 0:
+					AudioServer.playback_speed_scale = 1.0
+				_on_amulet_magic_released()
+			elif AudioServer.playback_speed_scale != 1.0 and amulet_selected_enemies.size() == 0:
+				AudioServer.playback_speed_scale = 1.0
+
 		is_aiming = normal_can_aim and Input.is_action_pressed("ui_hold_first_person_view")
 
 		# A troca de câmera para 1ª pessoa é controlada pelo poder do amuleto
 		# (player_amulet.gd), que faz o zoom gradual da 3ª pessoa antes de trocar.
-		if not GlobalEvents.in_cutscene and not _cutscene_camera_disabled and not is_first_person:
+		if not are_cutscene_inputs_blocked() and not _cutscene_camera_disabled and not is_first_person:
 			if camera_third_person and not camera_third_person.current:
 				camera_third_person.make_current()
 
@@ -862,7 +890,7 @@ func _physics_process(delta: float) -> void:
 			velocity += get_gravity() * delta
 
 		# 5. ROTAÇÃO DA CÂMERA (ANALÓGICO DIREITO)
-		if !camera_bullet_time_ON and not GlobalEvents.in_cutscene and not _cutscene_inputs_disabled and not GlobalEvents.telefone_cutscene_active:
+		if !camera_bullet_time_ON and not are_cutscene_inputs_blocked():
 			var joy_dir = Input.get_vector("ui_look_left", "ui_look_right", "ui_look_up", "ui_look_down")
 			if joy_dir.length() > DEADZONE:
 				var camera_atual = get_viewport().get_camera_3d()
@@ -883,7 +911,7 @@ func _physics_process(delta: float) -> void:
 		var input_dir := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 		
 		# --- CUTSCENE INPUT OVERRIDES ---
-		if GlobalEvents.in_cutscene or _cutscene_inputs_disabled:
+		if are_cutscene_inputs_blocked():
 			input_dir = Vector2.ZERO
 		if _cutscene_auto_walk:
 			input_dir.y = -1.0
@@ -958,11 +986,16 @@ func _physics_process(delta: float) -> void:
 		elif not is_running and not is_first_person:
 			fov_lerp_speed = 0.8
 			
-		var camera = get_viewport().get_camera_3d()
-		if camera:
-			if not is_first_person and input_dir.length() < 0.1 and not is_aiming:
-				target_fov -= 12.0
-			camera.fov = lerp(camera.fov, target_fov, fov_lerp_speed * delta)
+		if not are_cutscene_inputs_blocked() and not _cutscene_camera_disabled:
+			var cam_target: Camera3D = null
+			if is_first_person and camera and camera.current:
+				cam_target = camera
+			elif not is_first_person and camera_third_person and camera_third_person.current:
+				cam_target = camera_third_person
+			if cam_target:
+				if not is_first_person and input_dir.length() < 0.1 and not is_aiming:
+					target_fov -= 12.0
+				cam_target.fov = lerp(cam_target.fov, target_fov, fov_lerp_speed * delta)
 
 
 		# 8. ROTAÇÃO VISUAL E POSIÇÃO DO MODELO (MAYCOW LOPES NORMAL)
@@ -1313,6 +1346,14 @@ func _get_all_meshes(node: Node) -> Array:
 func _on_amulet_magic_released() -> void:
 	var comp = get_node_or_null("PlayerAmulet")
 	if comp: comp._on_amulet_magic_released()
+
+## Chamado pelo inimigo que encostou no Maycow normal enquanto andava pela
+## cidade (ver enemy.gd). true = o toque virou batalha forçada e o inimigo não
+## deve aplicar o dano normal dele.
+func force_battle_from_touch(enemy: Node3D) -> bool:
+	var comp = get_node_or_null("PlayerAmulet")
+	if comp: return comp.force_battle_from_touch(enemy)
+	return false
 
 func play_return_from_arena_effect() -> void:
 	var comp = get_node_or_null("PlayerAmulet")

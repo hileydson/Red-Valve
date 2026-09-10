@@ -1,12 +1,23 @@
 extends Node
 
+## --- Batalha forçada pelo toque ---
+## Quanto do sangue que o Maycow normal ainda tem vai embora no encostão.
+const TOQUE_FRACAO_DANO := 0.5
+## Escala de tempo da câmera lenta que separa este dano de um tranco comum.
+const TOQUE_TIME_SCALE := 0.25
+## Quanto tempo REAL a câmera lenta segura (o timer ignora o time_scale).
+const TOQUE_SLOWMO_SEGUNDOS := 1.6
+## Resto da animação de dano (overlay de sangue, blur, batida do coração), já em
+## velocidade normal, antes da viagem para a arena começar.
+const TOQUE_ESPERA_FIM_DANO := 1.1
+
 var player: CharacterBody3D
 
 func _ready() -> void:
 	player = get_parent()
 
 func _process_amulet_magic(delta: float) -> void:
-	if not GlobalEvents.is_maycow_normal or not SaveManager.prolog_finished or player.is_reloading or player.is_using_ultimate:
+	if not GlobalEvents.is_maycow_normal or not SaveManager.prolog_finished or player.is_reloading or player.is_using_ultimate or (player and player.has_method("are_cutscene_inputs_blocked") and player.are_cutscene_inputs_blocked()):
 		_hide_amulet_magic()
 		return
 
@@ -181,7 +192,7 @@ func _hide_amulet_magic() -> void:
 	player.amulet_selected_enemies.clear()
 
 func _process_amulet_targeting() -> void:
-	if not GlobalEvents.is_maycow_normal:
+	if not GlobalEvents.is_maycow_normal or (player and player.has_method("are_cutscene_inputs_blocked") and player.are_cutscene_inputs_blocked()):
 		_clear_amulet_hover()
 		return
 
@@ -600,6 +611,85 @@ func _remove_magic_aura(enemy: Node) -> void:
 	var aura = enemy.get_node_or_null(AURA_NAME)
 	if aura: aura.queue_free()
 
+## Batalha forçada: um inimigo que andava pela cidade encostou no Maycow normal.
+## Ele perde metade do sangue que ainda tinha, a pancada roda em câmera lenta
+## (é o que faz este dano parecer diferente de todos os outros) e, quando a
+## animação de dano termina, a viagem para a arena sai sozinha — a mesma de
+## `_on_amulet_magic_released`, só que sem mira nenhuma e com esse inimigo como
+## único capturado.
+##
+## Devolve true quando assume o toque (mesmo que o dano tenha matado o jogador),
+## para o inimigo não somar o dano normal dele por cima.
+func force_battle_from_touch(enemy: Node3D) -> bool:
+	if GlobalEvents.forced_battle_running:
+		return false
+	if not is_instance_valid(player) or not is_instance_valid(enemy):
+		return false
+	# Já viajando, voltando da arena, invulnerável, em cutscene ou no ultimate:
+	# o toque não vira batalha nem tira vida — seria dano em cima de cinemática.
+	if player.is_teleporting_enemies or player.is_playing_return_effect:
+		return false
+	if player.invulnerable or GlobalEvents.in_cutscene or player.is_using_ultimate:
+		return false
+	if player.current_health <= 0:
+		return false
+
+	GlobalEvents.forced_battle_running = true
+
+	# Metade arredondada para BAIXO: com 1 de sangue o toque não mata, senão o
+	# jogador seria levado para a arena e para o game over no mesmo instante.
+	var dano := int(floor(player.current_health * TOQUE_FRACAO_DANO))
+	player.take_damage(dano)
+
+	if player.current_health <= 0:
+		GlobalEvents.forced_battle_running = false
+		return true
+
+	_forced_battle_sequence(enemy)
+	return true
+
+
+## Corre solta (sem await de quem chamou): segura a animação de dano em câmera
+## lenta, espera ela acabar e só então entrega o inimigo para a viagem.
+func _forced_battle_sequence(enemy: Node3D) -> void:
+	var tree := get_tree()
+
+	# Câmera lenta momentânea. Os efeitos que o `take_damage` acabou de soltar
+	# (overlay de sangue, motion blur, tremor) andam em tempo de jogo, então é
+	# justamente eles que ficam lentos; o timer abaixo ignora o time_scale e
+	# conta segundos de verdade.
+	Engine.time_scale = TOQUE_TIME_SCALE
+	AudioServer.playback_speed_scale = TOQUE_TIME_SCALE
+	GlobalUtils.vibrate_controller(null, 0.9, 0.9, 0.5)
+
+	await tree.create_timer(TOQUE_SLOWMO_SEGUNDOS, true, false, true).timeout
+
+	Engine.time_scale = 1.0
+	AudioServer.playback_speed_scale = 1.0
+
+	# Deixa a animação de dano terminar em velocidade normal antes da viagem.
+	await tree.create_timer(TOQUE_ESPERA_FIM_DANO, true, false, true).timeout
+
+	if not is_instance_valid(player) or player.current_health <= 0:
+		GlobalEvents.forced_battle_running = false
+		return
+
+	# O inimigo pode ter morrido ou sumido durante a cinemática (tiro do próprio
+	# jogador, o spawner liberando quem ficou longe). Sem ele não há batalha.
+	if not is_instance_valid(enemy) or (("dead" in enemy) and enemy.dead):
+		GlobalEvents.forced_battle_running = false
+		return
+
+	# A arena constrói um Maycow de combate novo: este é o sangue dele.
+	GlobalEvents.forced_battle_health = player.current_health
+
+	player.amulet_selected_enemies.clear()
+	player.amulet_selected_enemies.append(enemy)
+	await _on_amulet_magic_released()
+
+	GlobalEvents.forced_battle_running = false
+
+
 func _on_amulet_magic_released() -> void:
 	if player.amulet_selected_enemies.size() == 0:
 		return
@@ -746,6 +836,11 @@ func _on_amulet_magic_released() -> void:
 	tree.current_scene = battlefield_scene
 
 func play_return_from_arena_effect() -> void:
+	# Volta da arena: a batalha forçada acabou aqui. Zerar a trava neste ponto
+	# garante que um travamento no meio da sequência não desligue a mecânica
+	# para o resto da partida.
+	GlobalEvents.forced_battle_running = false
+
 	# O combate na arena (Maycow não normal) consome o mesmo SaveManager.current_mp
 	# usado pelo poder do amuleto. Sem isso, o jogador podia voltar da arena sem mana
 	# e o amuleto (mão, giro, mira) simplesmente não aparecia mais no mundo normal.
