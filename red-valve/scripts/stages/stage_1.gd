@@ -279,5 +279,5 @@ func _ligar_spawner_de_inimigos() -> void:
 func _novo_arquivo(id: String) -> void:
 	if not SaveManager.desbloquear_arquivo(id):
 		return
-	GlobalUtils.show_center_message("novo_arquivo",
-		tr("FILES_NEW") % ArquivosDados.titulo(id), 18, 5.0)
+	# O aviso espera a cutscene acabar (ver GlobalUtils.show_new_file_message).
+	GlobalUtils.show_new_file_message(id)

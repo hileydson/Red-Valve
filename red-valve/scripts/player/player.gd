@@ -496,6 +496,9 @@ func _physics_process(delta: float) -> void:
 	var is_in_house = get_tree().current_scene.name == "the_house" if get_tree() and get_tree().current_scene else false
 	var can_run_normal = GlobalEvents.is_maycow_normal and not is_in_house
 	var stamina_active = not GlobalEvents.is_maycow_normal or can_run_normal
+	# Do capítulo 1 em diante, o Maycow normal não mostra a barra de estamina
+	# (a estamina continua funcionando, só o HUD some).
+	var show_stamina_bar = stamina_active and not (GlobalEvents.is_maycow_normal and SaveManager.prolog_finished)
 	
 	var camera_atual_check = get_viewport().get_camera_3d()
 	var current_camera_rot_x = camera_atual_check.rotation.x if camera_atual_check else 0.0
@@ -540,7 +543,7 @@ func _physics_process(delta: float) -> void:
 					stamina_bar.modulate.a = move_toward(stamina_bar.modulate.a, 0.0, delta)
 	
 	if is_instance_valid(stamina_bar):
-		stamina_bar.visible = stamina_active
+		stamina_bar.visible = show_stamina_bar
 		stamina_bar.max_value = max_stamina
 		stamina_bar.value = current_stamina
 		

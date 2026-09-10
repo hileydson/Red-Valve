@@ -85,6 +85,32 @@ func hide_center_message(message_id: String) -> void:
 			if is_instance_valid(label):
 				label.queue_free()
 
+## Aviso de "novo arquivo desbloqueado", o unico aviso do jogo que nao nasce de
+## uma acao do jogador — ele cai no meio do que estiver acontecendo. Por isso
+## NUNCA entra durante cutscene: fica esperando a cutscene acabar e so entao
+## aparece. Sem isso o aviso brigava com a cena (ex: a intro do Capitulo 1) e o
+## setter de in_cutscene ainda podia apaga-lo no meio, via clear_all_messages().
+func show_new_file_message(id: String) -> void:
+	var cena := get_tree().current_scene
+	while _em_cutscene():
+		await get_tree().process_frame
+		# Trocou de cena enquanto esperava: o aviso perdeu o contexto, desiste.
+		if get_tree().current_scene != cena:
+			return
+		# Respiro depois da cutscene, pra nao emendar no ultimo quadro dela.
+		if not _em_cutscene():
+			await get_tree().create_timer(1.0, false).timeout
+			if get_tree().current_scene != cena:
+				return
+
+	show_center_message("novo_arquivo",
+		tr("FILES_NEW") % ArquivosDados.titulo(id), 18, 5.0)
+
+
+func _em_cutscene() -> bool:
+	return GlobalEvents.in_cutscene or in_cinematic_cutscene
+
+
 func clear_all_messages() -> void:
 	for id in active_messages.keys():
 		var label = active_messages[id]
