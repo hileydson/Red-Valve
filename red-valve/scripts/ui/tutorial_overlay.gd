@@ -127,6 +127,12 @@ func _montar(textura: Texture2D) -> void:
 	_seta.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	_seta.add_theme_font_size_override("font_size", 24)
 	_seta.add_theme_color_override("font_color", SETA_COR)
+	# Sem isto a seta ficava no fallback do tema padrao: no editor o fallback
+	# tem o glifo \u25BC, mas no jogo exportado (outra maquina, sem as fontes do
+	# sistema do editor) o glifo sumia/quebrava. A Montserrat-ExtraBold e a
+	# mesma fonte ja embutida no projeto pra `_frase`, e tem o glifo.
+	if fonte:
+		_seta.add_theme_font_override("font", fonte)
 	_seta.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_seta.modulate.a = 0.0
 	coluna.add_child(_seta)

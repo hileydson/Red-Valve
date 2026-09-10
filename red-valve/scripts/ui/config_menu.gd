@@ -1,5 +1,11 @@
 extends CanvasLayer
 
+## Aba DEBUG: só pra este momento de testes do prólogo/arena — vida infinita
+## fixa via export quebra a luta perdida obrigatória, então isto liga/desliga
+## em tempo real por Player.set_infinite_health_debug. Remover quando os
+## testes acabarem.
+const PlayerScript := preload("res://scripts/player/player.gd")
+
 var bg: ColorRect
 var title_label: Label
 var tab_container: TabContainer
@@ -47,6 +53,11 @@ var cel_check: CheckButton
 var cel_intensity_label: Label
 var cel_intensity_slider: HSlider
 
+# Debug Tab (só pra esta fase de testes)
+var tab_debug: MarginContainer
+var debug_infinite_hp_label: Label
+var debug_infinite_hp_check: CheckButton
+
 func _ready() -> void:
 	self.layer = 130 # Fica acima de tudo
 	self.process_mode = Node.PROCESS_MODE_ALWAYS
@@ -83,6 +94,7 @@ func _ready() -> void:
 	_build_gameplay_tab()
 	_build_controls_tab()
 	_build_video_tab()
+	_build_debug_tab()
 	
 	_update_tab_titles()
 	
@@ -106,6 +118,8 @@ func _focus_first_item() -> void:
 		deadzone_slider.grab_focus()
 	elif tab_container.current_tab == 2 and is_instance_valid(display_option):
 		display_option.grab_focus()
+	elif tab_container.current_tab == 3 and is_instance_valid(debug_infinite_hp_check):
+		debug_infinite_hp_check.grab_focus()
 
 func _wire_option_popup(option: OptionButton) -> void:
 	# Enquanto a lista está aberta ela é a única a receber navegação: soltamos o
@@ -155,6 +169,7 @@ func _update_tab_titles():
 	tab_container.set_tab_title(0, tr("CONFIG_TAB_GAMEPLAY"))
 	tab_container.set_tab_title(1, tr("CONFIG_TAB_CONTROLS"))
 	tab_container.set_tab_title(2, tr("CONFIG_TAB_VIDEO"))
+	tab_container.set_tab_title(3, tr("CONFIG_TAB_DEBUG"))
 
 func _build_gameplay_tab():
 	tab_gameplay = MarginContainer.new()
@@ -474,6 +489,34 @@ func _update_cel_shading_ui() -> void:
 		cel_intensity_label.modulate.a = 1.0 if on else 0.4
 		cel_intensity_label.text = "%s: %d%%" % [tr("CONFIG_CEL_SHADING_INTENSITY"), int(cel_intensity_slider.value)]
 
+func _build_debug_tab():
+	tab_debug = MarginContainer.new()
+	tab_debug.name = "Debug"
+	tab_debug.add_theme_constant_override("margin_left", 40)
+	tab_debug.add_theme_constant_override("margin_right", 40)
+	tab_debug.add_theme_constant_override("margin_top", 30)
+	tab_debug.add_theme_constant_override("margin_bottom", 30)
+
+	var vbox = VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 20)
+	tab_debug.add_child(vbox)
+
+	debug_infinite_hp_label = Label.new()
+	debug_infinite_hp_label.text = tr("CONFIG_DEBUG_INFINITE_HP")
+	debug_infinite_hp_label.add_theme_font_size_override("font_size", 20)
+	vbox.add_child(debug_infinite_hp_label)
+
+	debug_infinite_hp_check = CheckButton.new()
+	debug_infinite_hp_check.add_theme_font_size_override("font_size", 20)
+	debug_infinite_hp_check.button_pressed = PlayerScript.is_infinite_health_debug()
+	debug_infinite_hp_check.toggled.connect(_on_debug_infinite_hp_toggled)
+	vbox.add_child(debug_infinite_hp_check)
+
+	tab_container.add_child(tab_debug)
+
+func _on_debug_infinite_hp_toggled(pressed: bool) -> void:
+	PlayerScript.set_infinite_health_debug(pressed)
+
 func _on_display_mode_selected(index: int):
 	if index == 0:
 		SaveManager.config["display_mode"] = "fullscreen"
@@ -520,6 +563,7 @@ func _on_lang_selected(index: int) -> void:
 	if is_instance_valid(brightness_label): brightness_label.text = tr("CONFIG_BRIGHTNESS")
 	if is_instance_valid(cel_label): cel_label.text = tr("CONFIG_CEL_SHADING")
 	_update_cel_shading_ui()
+	if is_instance_valid(debug_infinite_hp_label): debug_infinite_hp_label.text = tr("CONFIG_DEBUG_INFINITE_HP")
 	
 	back_btn.text = tr("BTN_BACK")
 

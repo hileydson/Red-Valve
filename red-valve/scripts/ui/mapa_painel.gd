@@ -28,7 +28,9 @@ extends Control
 
 const COR_TIPO := {
 	"marco": Color(0.55, 0.86, 0.70),
-	"local": Color(0.95, 0.62, 0.30),
+	# antes era um laranja (0.95, 0.62, 0.30) que sumia em cima da rua clara do
+	# mapa; magenta bem saturado destaca melhor a oficina do Jimmy.
+	"local": Color(0.95, 0.25, 0.80),
 	"casa": Color(0.62, 0.80, 0.96),
 }
 const COR_PADRAO := Color(0.85, 0.85, 0.85)

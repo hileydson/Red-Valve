@@ -333,9 +333,17 @@ func _ready() -> void:
 		_acender_fogo_parasita()
 	_setup_old_film_filter()
 	_start_menu_loop()
-	
+
 	await get_tree().create_timer(2.0).timeout
 	input_locked = false
+	# O _process acima larga o foco a cada quadro enquanto input_locked é true
+	# (pra travar navegação durante a intro), então o load_btn.grab_focus() lá
+	# em cima nunca sobrevivia até aqui: o menu abria sem nada selecionado e o
+	# controle não tinha de onde navegar. Foca de novo agora que já destravou.
+	if is_instance_valid(load_btn) and not load_btn.disabled:
+		load_btn.grab_focus()
+	elif is_instance_valid(new_game) and not new_game.disabled:
+		new_game.grab_focus()
 
 func _show_slots_menu(is_new_game: bool) -> void:
 	GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/selecionar_item.mp3")

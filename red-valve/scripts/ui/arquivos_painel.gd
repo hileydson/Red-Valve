@@ -121,15 +121,27 @@ func _moldura() -> StyleBoxFlat:
 func ativar() -> void:
 	_ativo = true
 	set_process_input(true)
+	set_process(true)
 	_ids = ArquivosDados.desbloqueados()
 	_indice = clampi(_indice, 0, maxi(_ids.size() - 1, 0))
 	_montar_lista()
 	_mostrar_selecionado()
+	_atualizar_ajuda()
 
 
 func desativar() -> void:
 	_ativo = false
 	set_process_input(false)
+	set_process(false)
+
+
+## A legenda da roda do mouse não faz sentido pra quem está no controle.
+func _process(_delta: float) -> void:
+	_atualizar_ajuda()
+
+
+func _atualizar_ajuda() -> void:
+	_ajuda_label.text = tr("FILES_HELP_PAD" if GlobalEvents.usando_controle else "FILES_HELP")
 
 
 func _montar_lista() -> void:
@@ -164,7 +176,7 @@ func _montar_lista() -> void:
 	_titulo_label.visible = not vazio
 	_corpo_scroll.visible = not vazio
 	_ajuda_label.visible = not vazio
-	_ajuda_label.text = tr("FILES_HELP")
+	_atualizar_ajuda()
 
 
 func _selecionar(idx: int) -> void:

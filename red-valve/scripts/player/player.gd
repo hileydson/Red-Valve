@@ -99,6 +99,17 @@ var blur_overlay: ColorRect
 static var _vida_infinita_na_sessao: bool = false
 static var _stamina_infinita_na_sessao: bool = false
 
+## Liga/desliga a vida infinita para a sessao inteira, em tempo real — usado
+## pela aba DEBUG do menu de configuracoes. Ao contrario da caixinha do
+## editor (que so soma flags, nunca desliga), isto e o unico jeito de tirar a
+## vida infinita sem reiniciar o jogo.
+static func set_infinite_health_debug(ligado: bool) -> void:
+	_vida_infinita_na_sessao = ligado
+
+
+static func is_infinite_health_debug() -> bool:
+	return _vida_infinita_na_sessao
+
 var max_stamina: float = 100.0
 var current_stamina: float = 100.0
 var stamina_bar: ProgressBar
@@ -252,8 +263,11 @@ var last_camera_rot_x: float = 0.0
 
 var is_toggle_aim_active: bool = false
 
-var clip_pistol_ammo: int = 5
-var max_clip_pistol: int = 5
+## 20 e nao 5: a arena constroi um Maycow de combate novo a cada batalha, entao
+## e este valor inicial (5 + 15 de bonus de teste) quem decide com quantas
+## balas o jogador entra em cada luta.
+var clip_pistol_ammo: int = 20
+var max_clip_pistol: int = 20
 var ammo_label: Label
 var ammo_icon: TextureRect
 
@@ -556,9 +570,9 @@ func _physics_process(delta: float) -> void:
 	var is_in_house = get_tree().current_scene.name == "the_house" if get_tree() and get_tree().current_scene else false
 	var can_run_normal = GlobalEvents.is_maycow_normal and not is_in_house
 	var stamina_active = not GlobalEvents.is_maycow_normal or can_run_normal
-	# Do capítulo 1 em diante, o Maycow normal não mostra a barra de estamina
-	# (a estamina continua funcionando, só o HUD some).
-	var show_stamina_bar = stamina_active and not (GlobalEvents.is_maycow_normal and SaveManager.prolog_finished)
+	# O Maycow normal tem estamina infinita (não cansa correndo pela cidade):
+	# a barra nunca faz sentido pra ele, prólogo incluso.
+	var show_stamina_bar = stamina_active and not GlobalEvents.is_maycow_normal
 	
 	var camera_atual_check = get_viewport().get_camera_3d()
 	var current_camera_rot_x = camera_atual_check.rotation.x if camera_atual_check else 0.0
@@ -586,9 +600,9 @@ func _physics_process(delta: float) -> void:
 		is_exhausted = false
 		
 	# --- STAMINA LOGIC ---
-	var is_running_stam = _run_toggle_active and velocity.length() > 0.1 and (current_stamina > 0 or infinite_stamina_test) and stamina_active and not is_exhausted and not is_aiming
+	var is_running_stam = _run_toggle_active and velocity.length() > 0.1 and (current_stamina > 0 or infinite_stamina_test or GlobalEvents.is_maycow_normal) and stamina_active and not is_exhausted and not is_aiming
 	if is_running_stam:
-		if not infinite_stamina_test:
+		if not infinite_stamina_test and not GlobalEvents.is_maycow_normal:
 			current_stamina -= 20.0 * delta
 		if current_stamina < 0: current_stamina = 0
 		stamina_fade_timer = 2.0
@@ -1262,7 +1276,7 @@ func take_damage(number:int):
 	# Teste de vida infinita: zera o valor aqui em vez de sair da funcao, pra
 	# todo o retorno do golpe (sangue, tremor, vibracao, blur) continuar
 	# rodando logo abaixo.
-	if infinite_health_test:
+	if infinite_health_test or _vida_infinita_na_sessao:
 		number = 0
 
 	current_health -= number

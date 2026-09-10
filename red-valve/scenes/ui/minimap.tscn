@@ -44,5 +44,10 @@ mouse_filter = 2
 
 [node name="Seta" type="Polygon2D" parent="Raiz"]
 position = Vector2(95, 95)
-color = Color(1, 0.93, 0.65, 1)
+color = Color(1, 0.15, 0.15, 1)
 polygon = PackedVector2Array(0, -11, 7.5, 8, 0, 4, -7.5, 8)
+
+[node name="Borda" type="Line2D" parent="Raiz/Seta"]
+points = PackedVector2Array(0, -11, 7.5, 8, 0, 4, -7.5, 8, 0, -11)
+width = 1.6
+default_color = Color(0.05, 0.05, 0.05, 0.9)

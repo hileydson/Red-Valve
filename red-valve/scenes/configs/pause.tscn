@@ -15,7 +15,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.2627451, 0.2627451, 0.2627451, 0.5294118)
+color = Color(0.04, 0.04, 0.06, 0.8)
 
 [node name="Control" type="Control" parent="." unique_id=952863432]
 layout_mode = 3

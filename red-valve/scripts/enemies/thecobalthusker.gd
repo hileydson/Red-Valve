@@ -19,6 +19,10 @@ const ACCEL = 4.0
 
 @export var max_health = 150
 @export var iron_rusks_value: int = 4
+## Ligado só na cena da oficina do Jimmy: ele continua perseguindo, olhando,
+## rosnando e atacando normalmente, só não anda de verdade pelo cenário — fica
+## preso no lugar dele. No resto do jogo fica desligado e ele anda normal.
+@export var preso_no_lugar: bool = false
 var current_health = max_health
 var update_timer = 0.0
 
@@ -72,18 +76,26 @@ func _physics_process(delta: float) -> void:
 			
 			direction.y = 0 # FORÇA o inimigo a não subir
 			direction = direction.normalized()
-			
-			# Aplica a velocidade suavemente
-			velocity.x = lerp(velocity.x, direction.x * SPEED, delta * ACCEL)
-			velocity.z = lerp(velocity.z, direction.z * SPEED, delta * ACCEL)
-			
+
+			# Aplica a velocidade suavemente (preso_no_lugar: só desacelera até
+			# zero, nunca ganha velocidade na direção do player)
+			if preso_no_lugar:
+				velocity.x = move_toward(velocity.x, 0, SPEED)
+				velocity.z = move_toward(velocity.z, 0, SPEED)
+			else:
+				velocity.x = lerp(velocity.x, direction.x * SPEED, delta * ACCEL)
+				velocity.z = lerp(velocity.z, direction.z * SPEED, delta * ACCEL)
+
 			# 4. Rotação (Olha para o player, mas mantém o corpo reto)
 			var look_pos = player.global_position
 			look_pos.y = global_position.y
 			if global_position.distance_to(look_pos) > 0.5:
 				look_at(look_pos, Vector3.UP)
-			
-			if steps.playing == false and !dead: steps.play()
+
+			if preso_no_lugar:
+				steps.stop()
+			elif steps.playing == false and !dead:
+				steps.play()
 		else:
 			steps.stop()
 			# Para gradualmente ao chegar

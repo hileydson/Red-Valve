@@ -46,8 +46,13 @@ anchor_bottom = 1.0
 mouse_filter = 2
 
 [node name="Seta" type="Polygon2D" parent="Painel"]
-color = Color(1, 0.93, 0.65, 1)
+color = Color(1, 0.15, 0.15, 1)
 polygon = PackedVector2Array(0, -15, 10, 11, 0, 5, -10, 11)
+
+[node name="Borda" type="Line2D" parent="Painel/Seta"]
+points = PackedVector2Array(0, -15, 10, 11, 0, 5, -10, 11, 0, -15)
+width = 2.0
+default_color = Color(0.05, 0.05, 0.05, 0.9)
 
 [node name="Escala" type="Label" parent="."]
 layout_mode = 1

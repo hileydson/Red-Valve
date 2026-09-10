@@ -18,7 +18,14 @@ func _ready() -> void:
 	player = get_parent()
 
 func _process_amulet_magic(delta: float) -> void:
-	if not GlobalEvents.is_maycow_normal or not SaveManager.prolog_finished or player.is_reloading or player.is_using_ultimate or (player and player.has_method("are_cutscene_inputs_blocked") and player.are_cutscene_inputs_blocked()):
+	# `SaveManager.prolog_finished or GlobalEvents.entering_chapter_1`, e nao so
+	# o primeiro: e a mesma checagem "e o Capitulo 1?" que stage_1.gd usa em
+	# setup_player_spawn(). Sem o entering_chapter_1 aqui, um save chegando no
+	# Capitulo 1 com prolog_finished ainda desatualizado (save antigo, ou save
+	# em outra maquina) deixava so a batalha por toque disponivel — a selecao
+	# pelo amuleto simplesmente nunca ligava.
+	var capitulo_1 := SaveManager.prolog_finished or GlobalEvents.entering_chapter_1
+	if not GlobalEvents.is_maycow_normal or not capitulo_1 or player.is_reloading or player.is_using_ultimate or (player and player.has_method("are_cutscene_inputs_blocked") and player.are_cutscene_inputs_blocked()):
 		_hide_amulet_magic()
 		return
 

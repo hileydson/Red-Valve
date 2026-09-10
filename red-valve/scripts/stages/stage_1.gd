@@ -91,7 +91,7 @@ func setup_player_spawn() -> void:
 			jogador = find_child("player", true, false)
 		if jogador:
 			jogador.global_position = Vector3(638.568, 6.75, -148.692)
-			jogador.global_rotation.y = -PI * 0.5
+			jogador.global_rotation.y = PI * 0.5
 	elif is_chapter_1:
 		var spawn_point = get_node_or_null("itens_caminho_jimmy/auto_pecas_jimmy/maykow_capitulo_1_inicio")
 		var player = get_node_or_null("Player")

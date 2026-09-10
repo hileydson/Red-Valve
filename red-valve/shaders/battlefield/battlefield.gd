@@ -221,7 +221,7 @@ func _start_final_sequence() -> void:
 	# completar a queda; com a janela curta, o time_scale voltava a 1.0 no meio
 	# da animação e ela "acelerava" de repente, parecendo que o inimigo nunca
 	# ficou em câmera lenta.
-	await get_tree().create_timer(9.0, true, false, true).timeout
+	await get_tree().create_timer(7.0, true, false, true).timeout
 
 	# 5. Restaura e vai para a Cutscene
 	Engine.time_scale = 1.0
