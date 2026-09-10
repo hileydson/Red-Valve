@@ -238,6 +238,23 @@ func _setup_areas_casas() -> void:
 		area_maycow.body_entered.connect(_ao_entrar_area_casa_maycow)
 		area_maycow.body_exited.connect(_ao_sair_area_casa_maycow)
 
+		if get_node_or_null("itens_caminho_jimmy/colisao_casa_maycow") == null and get_node_or_null("colisao_casa_maycow") == null:
+			var col_maycow = StaticBody3D.new()
+			col_maycow.name = "colisao_casa_maycow"
+			col_maycow.collision_layer = 2
+			col_maycow.collision_mask = 0
+			var c_shape = CollisionShape3D.new()
+			var c_box = BoxShape3D.new()
+			c_box.size = Vector3(17.0, 13.0, 15.0)
+			c_shape.shape = c_box
+			col_maycow.add_child(c_shape)
+			var parent_node = get_node_or_null("itens_caminho_jimmy")
+			if parent_node:
+				parent_node.add_child(col_maycow)
+			else:
+				add_child(col_maycow)
+			col_maycow.global_position = Vector3(649.5, 10.5, -150.45)
+
 
 func _ao_entrar_area_casa_maycow(body: Node3D) -> void:
 	if not _eh_o_player(body):

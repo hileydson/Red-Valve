@@ -360,6 +360,12 @@
 [ext_resource type="MultiMesh" uid="uid://duhqu5mexvw8d" path="res://assets/3d_model/city/multimesh/mm_BUSH_4_2_LOD.tres" id="345_8rmem"]
 [ext_resource type="Script" uid="uid://t0fdb01d5dk8" path="res://tools/godot/citybuild/city_neblina.gd" id="383_i676f"]
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_igreja"]
+size = Vector3(21.75, 26.55, 20.4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_casa_maycow_city"]
+size = Vector3(9.2, 7.9, 9.5)
+
 [sub_resource type="BoxMesh" id="BoxMesh_htm2q"]
 size = Vector3(0.07, 1.85, 0.07)
 
@@ -3109,14 +3115,38 @@ CasaSrMaycow: vaga (6.5, 76.1), placa célula 11"
 [node name="Igreja" parent="Marcos" unique_id=1898502413 instance=ExtResource("87_oft1q")]
 transform = Transform3D(-0.69913435, 0, -14.983699, 0, 14.999999, 0, 14.983699, 0, -0.69913435, -50.03893, 23.898256, -37.181614)
 
+[node name="colisao_igreja" type="StaticBody3D" parent="Marcos" unique_id=1898502414]
+transform = Transform3D(-0.04660896, 0, -0.99891333, 0, 1, 0, 0.99891333, 0, -0.04660896, -50.03893, 22.909756, -37.181614)
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Marcos/colisao_igreja" unique_id=1898502415]
+shape = SubResource("BoxShape3D_igreja")
+
 [node name="Pracinha" parent="Marcos" unique_id=1150023158 instance=ExtResource("88_djoxf")]
 transform = Transform3D(20, 0, 0, 0, 20, 0, 0, 0, 20, -13.270223, 19.75, 10.444345)
 
 [node name="CasaSraNice" parent="Marcos" unique_id=939067544 instance=ExtResource("90_y1c4q")]
 transform = Transform3D(0.25537023, 0, -4.9934745, 0, 5, 0, 4.9934745, 0, 0.25537023, 61.53776, 8.7, 187.23)
 
+[node name="colisao_casa_nice_city" type="StaticBody3D" parent="Marcos" unique_id=939067545]
+transform = Transform3D(0.05107405, 0, -0.9986949, 0, 1, 0, 0.9986949, 0, 0.05107405, 61.53776, 8.7, 187.23)
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Marcos/colisao_casa_nice_city" unique_id=939067546]
+shape = SubResource("BoxShape3D_casa_maycow_city")
+
 [node name="CasaSrMaycow" parent="Marcos" unique_id=1758518956 instance=ExtResource("90_y1c4q")]
 transform = Transform3D(0.37961614, 0, -4.985568, 0, 5, 0, 4.985568, 0, 0.37961614, 6.51, 12.34, 76.11)
+
+[node name="colisao_casa_maycow_city" type="StaticBody3D" parent="Marcos" unique_id=1758518957]
+transform = Transform3D(0.07592323, 0, -0.9971136, 0, 1, 0, 0.9971136, 0, 0.07592323, 6.51, 12.34, 76.11)
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Marcos/colisao_casa_maycow_city" unique_id=1758518958]
+shape = SubResource("BoxShape3D_casa_maycow_city")
 
 [node name="CasaSraNice_Placa" type="Node3D" parent="Marcos" unique_id=263447389]
 transform = Transform3D(0.051074047, 0, -0.9986949, 0, 1, 0, 0.9986949, 0, 0.051074047, 62.68165, 4.75, 194.10602)

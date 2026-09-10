@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3]
+[gd_scene load_steps=26 format=3]
 
 [ext_resource type="Texture2D" uid="uid://bsp6rsxmhl1ts" path="res://assets/images/textures/wood_wall.png" id="1_wood_wall"]
 [ext_resource type="Texture2D" uid="uid://dnrfoykxfgqup" path="res://assets/images/textures/wood_ceiling.png" id="2_wood_ceiling"]
@@ -86,12 +86,21 @@ size = Vector3(4.6, 0.18, 2.4)
 [sub_resource type="BoxShape3D" id="forma_entrada"]
 size = Vector3(7.0, 4.0, 6.5)
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_corpo"]
+size = Vector3(16.4, 6.2, 12.4)
+
 [node name="casa_jimmy_exterior" type="Node3D"]
 
-[node name="casca" type="CSGCombiner3D" parent="."]
-use_collision = true
+[node name="colisao_corpo" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.1, 0)
 collision_layer = 2
 collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="colisao_corpo"]
+shape = SubResource("BoxShape3D_corpo")
+
+[node name="casca" type="CSGCombiner3D" parent="."]
+use_collision = false
 
 [node name="corpo" type="CSGBox3D" parent="casca"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)

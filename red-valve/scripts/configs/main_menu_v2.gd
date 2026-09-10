@@ -31,6 +31,10 @@ const PARASITE_FIRE_SCENE := preload("res://scenes/effects/parasite_fire.tscn")
 
 
 func _process(delta: float) -> void:
+	if input_locked:
+		var focused = get_viewport().gui_get_focus_owner()
+		if focused:
+			focused.release_focus()
 	if amulet_node:
 		amulet_node.rotation.y += amulet_spin_velocity * delta
 		# Desacelera suavemente de volta para a velocidade base (0.3)
@@ -316,7 +320,7 @@ func _ready() -> void:
 				
 				# Conectar sinais para efeito de foco
 				btn.focus_entered.connect(func(): _on_button_focus(btn))
-				btn.mouse_entered.connect(func(): btn.grab_focus())
+				btn.mouse_entered.connect(func(): if not input_locked: btn.grab_focus())
 				
 				btn.gui_input.connect(func(event: InputEvent):
 					if input_locked: return
@@ -414,9 +418,10 @@ func _show_slots_menu(is_new_game: bool) -> void:
 			btn.scale = Vector2(1.15, 1.15)
 			tween.tween_property(btn, "scale", Vector2(1.0, 1.0), 0.4).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
 		)
-		btn.mouse_entered.connect(func(): if not btn.disabled: btn.grab_focus())
+		btn.mouse_entered.connect(func(): if not input_locked and not btn.disabled: btn.grab_focus())
 		
 		btn.pressed.connect(func():
+			if input_locked: return
 			if is_new_game:
 				_on_slot_selected(slot_idx, is_new_game)
 			else:
@@ -433,6 +438,7 @@ func _show_slots_menu(is_new_game: bool) -> void:
 	back_btn.add_theme_stylebox_override("normal", btn_style)
 	back_btn.add_theme_font_size_override("font_size", 22)
 	back_btn.pressed.connect(func():
+		if input_locked: return
 		GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/selecionar_item_voltar.mp3")
 		panel.queue_free()
 		if slots_panel == panel:
@@ -450,9 +456,26 @@ func _show_slots_menu(is_new_game: bool) -> void:
 	else:
 		back_btn.grab_focus()
 
+func _lock_all_inputs() -> void:
+	input_locked = true
+	var focused = get_viewport().gui_get_focus_owner()
+	if focused:
+		focused.release_focus()
+	for node in $UI.find_children("*", "Button", true, false):
+		if node is Button:
+			node.focus_mode = Control.FOCUS_NONE
+			node.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	if not $UI.has_node("InputBlocker"):
+		var blocker = Control.new()
+		blocker.name = "InputBlocker"
+		blocker.set_anchors_preset(Control.PRESET_FULL_RECT)
+		blocker.mouse_filter = Control.MOUSE_FILTER_STOP
+		blocker.z_index = 4096
+		$UI.add_child(blocker)
+
 func _on_slot_selected(slot_id: int, is_new_game: bool) -> void:
 	if input_locked: return
-	input_locked = true
+	_lock_all_inputs()
 	GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/entrar_super.mp3")
 	
 	var audio_out_tween = create_tween()
@@ -469,9 +492,11 @@ func _on_slot_selected(slot_id: int, is_new_game: bool) -> void:
 		SaveManager.load_game(slot_id)
 
 func _on_load_pressed() -> void:
+	if input_locked: return
 	_show_slots_menu(false)
 
 func _on_start_pressed() -> void:
+	if input_locked: return
 	_show_slots_menu(true)
 
 func _on_config_pressed() -> void:
@@ -497,7 +522,9 @@ func _on_exit_pressed() -> void:
 	get_tree().quit()
 
 func _input(event: InputEvent) -> void:
-	if input_locked: return
+	if input_locked:
+		get_viewport().set_input_as_handled()
+		return
 	var is_back = event.is_action_pressed("ui_cancel") or (event is InputEventJoypadButton and event.button_index == JOY_BUTTON_B and event.pressed)
 	if is_back:
 		if is_instance_valid(slots_panel) and slots_panel.visible:
@@ -574,16 +601,18 @@ func _show_slot_action_menu(slot_idx: int, trigger_btn: Button) -> void:
 		b.add_theme_stylebox_override("hover", style_focus)
 		b.add_theme_font_size_override("font_size", 24)
 		
-		b.focus_entered.connect(func(): GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/mudar_selecao.mp3"))
-		b.mouse_entered.connect(func(): b.grab_focus())
+		b.focus_entered.connect(func(): if not input_locked: GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/mudar_selecao.mp3"))
+		b.mouse_entered.connect(func(): if not input_locked: b.grab_focus())
 		vbox.add_child(b)
 	
 	btn_load.pressed.connect(func():
+		if input_locked: return
 		menu.queue_free()
 		_on_slot_selected(slot_idx, false)
 	)
 	
 	btn_delete.pressed.connect(func():
+		if input_locked: return
 		menu.queue_free()
 		_show_delete_prompt(slot_idx, false, trigger_btn)
 	)
@@ -643,11 +672,12 @@ func _show_delete_prompt(slot_idx: int, is_new_game: bool, trigger_btn: Button) 
 		b.add_theme_stylebox_override("hover", style_focus)
 		b.add_theme_font_size_override("font_size", 24)
 		
-		b.focus_entered.connect(func(): GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/mudar_selecao.mp3"))
-		b.mouse_entered.connect(func(): b.grab_focus())
+		b.focus_entered.connect(func(): if not input_locked: GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/mudar_selecao.mp3"))
+		b.mouse_entered.connect(func(): if not input_locked: b.grab_focus())
 		hbox.add_child(b)
 	
 	btn_no.pressed.connect(func():
+		if input_locked: return
 		GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/selecionar_item_voltar.mp3")
 		prompt.queue_free()
 		if is_instance_valid(trigger_btn):
@@ -655,6 +685,7 @@ func _show_delete_prompt(slot_idx: int, is_new_game: bool, trigger_btn: Button) 
 	)
 	
 	btn_yes.pressed.connect(func():
+		if input_locked: return
 		GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/entrar_super.mp3")
 		SaveManager.delete_save(slot_idx)
 		prompt.queue_free()
