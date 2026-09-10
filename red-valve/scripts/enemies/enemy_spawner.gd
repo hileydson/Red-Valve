@@ -12,7 +12,10 @@ const ShadowRoads := preload("res://scripts/npcs/shadow_roads.gd")
 ##      um inimigo reciclado voltaria com a barra pela metade ou no meio da
 ##      animacao de morte. Cada um nasce novo e e liberado de vez
 ##      (`queue_free`) quando fica longe demais.
-##   2. Nunca ha muitos ao mesmo tempo — isto e encontro de rua, nao horda.
+##   2. Cada tipo tem o proprio relogio e o proprio teto de vivos. Zumbi e
+##      encontro comum de rua e aparece bem mais; o Cobalt Husker e a excecao.
+##      Mexer na frequencia de um nao mexe na do outro — era isso que um
+##      sorteio unico com relogio unico nao permitia.
 ##
 ## Regras que protegem a ilusao (herdadas do ShadowCrowd):
 ##   - ninguem nasce dentro do campo de visao, a nao ser bem longe, onde a
@@ -26,21 +29,35 @@ const ShadowRoads := preload("res://scripts/npcs/shadow_roads.gd")
 ## de continuar vazio.
 
 @export_group("Inimigos")
-## Cenas sorteadas a cada nascimento. Vazio = zombie_1 + the_cobalt_husker.
-@export var enemy_scenes: Array[PackedScene] = []
-## Quantos podem estar vivos ao mesmo tempo vindos daqui.
-@export var max_active: int = 3
+## Teto de inimigos vivos somando TODOS os tipos. Trava de desempenho: cada um
+## carrega luz propria, esqueleto animado e barra de vida.
+@export var max_active: int = 6
 ## Sobrescreve o `distance_to_aproach` do inimigo, para que ele perceba o
 ## jogador a partir do anel onde nasceu. 0 = deixa o valor da cena.
 @export var distance_to_aproach: float = 45.0
+
+@export_group("Zumbis")
+## Vazio = res://scenes/enemies/zombie_1.tscn.
+@export var zombie_scene: PackedScene
+## Quantos zumbis podem estar vivos ao mesmo tempo.
+@export var zombie_max_active: int = 4
+## Faixa de espera entre um zumbi e o proximo, sorteada a cada vez.
+@export var zombie_min_interval: float = 5.0
+@export var zombie_max_interval: float = 12.0
+
+@export_group("The Cobalt Husker")
+## Vazio = res://scenes/enemies/the_cobalt_husker.tscn. 0 ativos = desliga.
+@export var cobalt_scene: PackedScene
+## Quantos Cobalt podem estar vivos ao mesmo tempo.
+@export var cobalt_max_active: int = 2
+## Faixa de espera entre um Cobalt e o proximo.
+@export var cobalt_min_interval: float = 22.0
+@export var cobalt_max_interval: float = 60.0
 
 @export_group("Ritmo")
 ## Espera antes do primeiro inimigo, contada do inicio do capitulo. Da tempo da
 ## intro do Capitulo 1 sair da tela.
 @export var initial_delay: float = 20.0
-## Faixa de espera entre um nascimento e o proximo, sorteada a cada vez.
-@export var min_interval: float = 12.0
-@export var max_interval: float = 35.0
 ## De quanto em quanto tempo o sistema reavalia quem entra e quem sai.
 @export var tick_interval: float = 0.5
 ## Tentativas de sorteio de ponto antes de desistir e tentar no proximo tick.
@@ -85,11 +102,13 @@ const ShadowRoads := preload("res://scripts/npcs/shadow_roads.gd")
 ## trata como erro de parse (INFERRED_DECLARATION).
 const NO_SPOT := Vector3(0.0, -99999.0, 0.0)
 
-## Cada item: {raiz: Node3D da cena do inimigo, corpo: CharacterBody3D dele}.
+## Cada item: {raiz: Node3D da cena, corpo: CharacterBody3D dele, tipo: int}.
 var _spawned: Array[Dictionary] = []
+## Um por tipo de inimigo: {cena, nome, max_ativos, min_intervalo,
+## max_intervalo, cooldown}.
+var _tipos: Array[Dictionary] = []
 var _rng := RandomNumberGenerator.new()
 var _tick := 0.0
-var _cooldown := 0.0
 var _player: Node3D = null
 var _player_retry := 0.0
 var _warned_no_nav := false
@@ -97,24 +116,41 @@ var _warned_no_nav := false
 
 func _ready() -> void:
 	_rng.randomize()
-	if enemy_scenes.is_empty():
-		_carrega_cenas_padrao()
-	if enemy_scenes.is_empty():
+	_monta_tipos()
+	if _tipos.is_empty():
 		push_error("EnemySpawner: nenhuma cena de inimigo; a cidade fica sem encontros.")
 		set_physics_process(false)
 		return
 	ShadowRoads.setup(get_tree(), road_node_name, road_group)
-	_cooldown = initial_delay
 
 
-func _carrega_cenas_padrao() -> void:
-	for caminho in [
-		"res://scenes/enemies/zombie_1.tscn",
-		"res://scenes/enemies/the_cobalt_husker.tscn",
-	]:
-		var cena := load(caminho) as PackedScene
-		if cena != null:
-			enemy_scenes.append(cena)
+## Monta a lista de tipos. O `initial_delay` entra como primeiro cooldown de
+## todo mundo: ninguem nasce enquanto o "CAPITULO 1" ainda esta na tela.
+func _monta_tipos() -> void:
+	_registra_tipo("zumbi", zombie_scene, "res://scenes/enemies/zombie_1.tscn",
+		zombie_max_active, zombie_min_interval, zombie_max_interval)
+	_registra_tipo("cobalt", cobalt_scene, "res://scenes/enemies/the_cobalt_husker.tscn",
+		cobalt_max_active, cobalt_min_interval, cobalt_max_interval)
+
+
+func _registra_tipo(nome: String, cena: PackedScene, caminho_padrao: String,
+		max_ativos: int, min_intervalo: float, max_intervalo: float) -> void:
+	if max_ativos <= 0:
+		return
+	var pack := cena
+	if pack == null:
+		pack = load(caminho_padrao) as PackedScene
+	if pack == null:
+		push_warning("EnemySpawner: cena de '%s' nao encontrada." % nome)
+		return
+	_tipos.append({
+		"cena": pack,
+		"nome": nome,
+		"max_ativos": max_ativos,
+		"min_intervalo": min_intervalo,
+		"max_intervalo": max_intervalo,
+		"cooldown": initial_delay,
+	})
 
 
 # ------------------------------------------------------------------- loop
@@ -143,21 +179,29 @@ func _physics_process(delta: float) -> void:
 	if GlobalEvents.in_cutscene:
 		return
 
-	_cooldown -= tick_interval
-	if _cooldown > 0.0:
-		return
-	if _vivos() >= max_active:
-		return
+	# Cada tipo anda com o proprio relogio. So um nascimento por tick, mesmo
+	# que dois relogios batam junto: dois inimigos brotando no mesmo instante
+	# denunciam o sistema.
+	var total := _vivos()
+	for tipo in _tipos:
+		tipo["cooldown"] = float(tipo["cooldown"]) - tick_interval
+		if float(tipo["cooldown"]) > 0.0:
+			continue
+		if total >= max_active or _vivos_do_tipo(tipo) >= int(tipo["max_ativos"]):
+			# Lotado: espera um pouco e olha de novo, sem gastar o intervalo cheio.
+			tipo["cooldown"] = 2.0
+			continue
 
-	var pos := _sorteia_ponto(ppos, cam)
-	if pos == NO_SPOT:
-		# Nao achou lugar bom agora (jogador dentro de um beco, tudo na tela):
-		# tenta de novo logo, sem gastar o intervalo cheio.
-		_cooldown = 1.0
-		return
+		var pos := _sorteia_ponto(ppos, cam)
+		if pos == NO_SPOT:
+			# Nao achou lugar bom agora (jogador num beco, tudo na tela): tenta
+			# de novo logo.
+			tipo["cooldown"] = 1.0
+			continue
 
-	_nasce(pos, ppos)
-	_cooldown = _rng.randf_range(min_interval, max_interval)
+		_nasce(tipo, pos, ppos)
+		tipo["cooldown"] = _rng.randf_range(float(tipo["min_intervalo"]), float(tipo["max_intervalo"]))
+		return
 
 
 ## Apaga da memoria quem ficou para tras e esquece quem saiu daqui (o amuleto
@@ -212,6 +256,18 @@ func _libera(raiz, corpo) -> void:
 		raiz.queue_free()
 
 
+## Quantos deste tipo contam para o teto dele.
+func _vivos_do_tipo(tipo: Dictionary) -> int:
+	var n := 0
+	for reg in _spawned:
+		if reg.get("tipo") != tipo["nome"]:
+			continue
+		var corpo = reg["corpo"]
+		if is_instance_valid(corpo) and not ("dead" in corpo and corpo.dead):
+			n += 1
+	return n
+
+
 ## Quantos contam para o teto. Os que ja morreram nao seguram a vaga do
 ## proximo: senao o mapa ficaria parado por 20 s depois de cada briga.
 func _vivos() -> int:
@@ -225,8 +281,8 @@ func _vivos() -> int:
 
 # ----------------------------------------------------------- nascimento
 
-func _nasce(pos: Vector3, ppos: Vector3) -> void:
-	var cena: PackedScene = enemy_scenes[_rng.randi() % enemy_scenes.size()]
+func _nasce(tipo: Dictionary, pos: Vector3, ppos: Vector3) -> void:
+	var cena: PackedScene = tipo["cena"]
 	var raiz := cena.instantiate() as Node3D
 	if raiz == null:
 		return
@@ -245,9 +301,9 @@ func _nasce(pos: Vector3, ppos: Vector3) -> void:
 	if distance_to_aproach > 0.0 and "distance_to_aproach" in corpo:
 		corpo.distance_to_aproach = distance_to_aproach
 
-	_spawned.append({"raiz": raiz, "corpo": corpo})
+	_spawned.append({"raiz": raiz, "corpo": corpo, "tipo": tipo["nome"]})
 	if debug_log:
-		print("EnemySpawner: ", raiz.name, " nasceu a ", int(ppos.distance_to(pos)), " m.")
+		print("EnemySpawner: ", tipo["nome"], " nasceu a ", int(ppos.distance_to(pos)), " m.")
 
 
 ## As cenas de inimigo sao um Node3D de embrulho com o CharacterBody3D "enemy"
@@ -356,4 +412,5 @@ func clear_all(pausa := 0.0) -> void:
 	for reg in _spawned:
 		_libera(reg["raiz"], reg["corpo"])
 	_spawned.clear()
-	_cooldown = maxf(_cooldown, pausa)
+	for tipo in _tipos:
+		tipo["cooldown"] = maxf(float(tipo["cooldown"]), pausa)
