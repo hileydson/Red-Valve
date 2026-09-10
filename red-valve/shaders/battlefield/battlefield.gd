@@ -38,7 +38,8 @@ func _ready() -> void:
 		
 	# Limpa inimigos do editor sem apagar os marcadores (Marker3D)
 	for child in enemies_node.get_children():
-		if child.is_in_group("enemies") or child.has_method("take_damage"):
+		if child.is_in_group("enemies") or child.has_method("take_damage") \
+			or _resolve_enemy_body(child) != null:
 			child.queue_free()
 
 	if not SaveManager.prolog_finished:
@@ -51,8 +52,14 @@ func _ready() -> void:
 				enemies_node.add_child(enemy_inst)
 				enemy_inst.global_position = marker.global_position
 				enemy_inst.global_rotation = marker.global_rotation
-				if not enemy_inst.is_in_group("enemies"):
-					enemy_inst.add_to_group("enemies")
+				# ATENÇÃO: a raiz de the_cobalt_husker.tscn é um Node3D "casca"
+				# SEM script — quem tem vida/`dead`/`died` é o filho "enemy".
+				# Colocar a casca no grupo fazia a arena tratá-la como o inimigo
+				# e, como casca nenhuma tem `dead`, a checagem de "todos mortos"
+				# passava assim que a cutscene acabava (câmera lenta na hora).
+				var body := _resolve_enemy_body(enemy_inst)
+				if body and not body.is_in_group("enemies"):
+					body.add_to_group("enemies")
 	else:
 		# Pós-Prólogo: Transporta os inimigos capturados pelo amuleto
 		if GlobalEvents.amulet_captured_enemies.size() > 0:
@@ -78,10 +85,15 @@ func _ready() -> void:
 	# mas ainda dentro da árvore enquanto a batalha rola, e seus inimigos
 	# continuam no grupo "enemies" mesmo parados — o que fazia a checagem de
 	# "todos mortos" nunca bater, já que eles nunca morrem.
+	# Resolve para o CORPO do inimigo (o nó com o script), e não para uma
+	# eventual raiz-casca do .tscn, senão `dead`/`died` nunca são encontrados.
 	enemies = []
 	for c in enemies_node.get_children():
-		if is_instance_valid(c) and c.is_in_group("enemies"):
-			enemies.append(c)
+		if not is_instance_valid(c):
+			continue
+		var body := _resolve_enemy_body(c)
+		if body and not enemies.has(body):
+			enemies.append(body)
 
 	if player:
 		# Trava a cena para modo cutscene
@@ -250,6 +262,21 @@ func _find_player_recursive(node: Node) -> Node:
 		var found = _find_player_recursive(child)
 		if found: return found
 	return null
+
+## Devolve o nó que de fato guarda o estado do inimigo (`dead`, sinal `died`).
+## Algumas cenas de inimigo (ex: the_cobalt_husker.tscn) têm uma raiz Node3D
+## sem script, com o CharacterBody3D do inimigo como filho.
+func _resolve_enemy_body(node: Node) -> Node:
+	if not is_instance_valid(node):
+		return null
+	if "dead" in node and node.has_signal("died"):
+		return node
+	for child in node.get_children():
+		var found := _resolve_enemy_body(child)
+		if found:
+			return found
+	return null
+
 
 func _get_enemy_script(enemy: Node) -> Node:
 	if "cutscene_mode" in enemy:
