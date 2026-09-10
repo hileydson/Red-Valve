@@ -49,6 +49,23 @@ var ranged_attack_timer: float = 5.0 # O primeiro ataque é mais rápido
 
 @export var shoots_fireball: bool = false
 
+# --- Escudo de Defesa (a animacao "attack" do The Cobalt Husker) ---
+## Liga o poder de defesa: de tempos em tempos o inimigo para, executa a
+## animacao "attack" e se fecha numa esfera que absorve a maior parte do dano.
+@export var has_defense_shield: bool = false
+## Quanto tempo a esfera fica de pe.
+@export var defense_shield_duration: float = 12.0
+## Fracao do dano que a esfera corta enquanto esta ativa (0.8 = 80% mais fraco).
+@export var defense_shield_reduction: float = 0.8
+## Faixa de espera entre um uso do poder e o proximo.
+@export var defense_shield_min_interval: float = 16.0
+@export var defense_shield_max_interval: float = 30.0
+var shield_active: bool = false
+var _shield_node: Node3D = null
+var _shield_cooldown: float = 0.0
+var _ultimo_hit_melee: float = 0.0
+# ------------------------------------------------------------------
+
 @export var max_health = 100
 @export var iron_rusks_value: int = 2
 var current_health = max_health
@@ -85,6 +102,10 @@ const NAV_TOLERANCIA := 3.0
 func _ready() -> void:
 	current_health = max_health
 	playback = animation_tree["parameters/playback"]
+
+	# Primeiro uso do escudo mais cedo que o intervalo normal, pra o jogador ver
+	# o poder logo no comeco da luta.
+	_shield_cooldown = randf_range(6.0, 14.0)
 
 	# Limpa componentes da barra 3D antiga da cena herdada
 	var old_sprite = get_node_or_null("HealthBarSprite")
@@ -184,17 +205,40 @@ func _physics_process(delta: float) -> void:
 		move_and_slide()
 		return
 
+	if has_defense_shield and not shield_active and not is_attacking and _shield_cooldown > 0.0:
+		_shield_cooldown -= delta
+
 	if is_attacking:
-		steps.stop()
-		velocity.x = move_toward(velocity.x, 0, SPEED)
-		velocity.z = move_toward(velocity.z, 0, SPEED)
-		if is_instance_valid(player):
-			var look_pos = player.global_position
-			look_pos.y = global_position.y
-			if global_position.distance_to(look_pos) > 0.5:
-				look_at(look_pos, Vector3.UP)
-		move_and_slide()
-		return
+		if is_ranged_attacker or shoots_fireball or shield_active:
+			steps.stop()
+			velocity.x = move_toward(velocity.x, 0, SPEED)
+			velocity.z = move_toward(velocity.z, 0, SPEED)
+			if is_instance_valid(player):
+				var look_pos = player.global_position
+				look_pos.y = global_position.y
+				if global_position.distance_to(look_pos) > 0.5:
+					look_at(look_pos, Vector3.UP)
+			move_and_slide()
+			return
+		else:
+			# Durante o ataque corpo a corpo, continua avançando na direção do player até encostar
+			if is_instance_valid(player):
+				var dist_p = global_position.distance_to(player.global_position)
+				if dist_p > 0.6:
+					var dir = (player.global_position - global_position)
+					dir.y = 0
+					dir = dir.normalized()
+					velocity.x = lerp(velocity.x, dir.x * SPEED, delta * ACCEL)
+					velocity.z = lerp(velocity.z, dir.z * SPEED, delta * ACCEL)
+				else:
+					velocity.x = move_toward(velocity.x, 0, SPEED)
+					velocity.z = move_toward(velocity.z, 0, SPEED)
+				var look_pos = player.global_position
+				look_pos.y = global_position.y
+				if global_position.distance_to(look_pos) > 0.5:
+					look_at(look_pos, Vector3.UP)
+			move_and_slide()
+			return
 
 	if player and nav_agent:
 		var distancia_to_player = self.global_position.distance_to(player.global_position)
@@ -206,30 +250,44 @@ func _physics_process(delta: float) -> void:
 			update_timer = 0.0
 			_atualiza_navegacao_disponivel()
 
-		# 3. Calcula o movimento se ainda não chegou no alvo
-		# Sem navmesh cobrindo este pedaço do mapa (o caso da cidade da stage_1),
-		# "chegou no alvo" é sempre verdadeiro e o inimigo ficaria parado; ali o
-		# critério passa a ser a distância crua até o jogador.
-		var ainda_indo: bool = distancia_to_player > 1.0
-		if _nav_disponivel:
-			ainda_indo = not nav_agent.is_navigation_finished()
-		if ainda_indo and (distancia_to_player<distance_to_aproach):
+		# 3. Persegue o jogador enquanto estiver no alcance de aproximação.
+		# Não para a 1m nem quando a navegação avisa que chegou perto: continua
+		# andando direto para o jogador até encostar de verdade (distancia <= 0.6).
+		var em_alcance_perseguicao: bool = distancia_to_player < distance_to_aproach
+		var precisa_andar: bool = distancia_to_player > 0.6
+		if em_alcance_perseguicao and precisa_andar:
 			
+			# O poder de defesa tem prioridade: quando o tempo dele vence, o
+			# inimigo levanta a esfera em vez de atacar naquele momento.
+			var vai_defender = false
+			if has_defense_shield and not shield_active and _shield_cooldown <= 0.0:
+				if randf() < 0.7:
+					vai_defender = true
+					_shield_cooldown = randf_range(defense_shield_min_interval, defense_shield_max_interval)
+				else:
+					# Nao saiu desta vez: tenta de novo daqui a pouco (e o que
+					# deixa o poder "eventual" em vez de cronometrado).
+					_shield_cooldown = 3.0
+
 			# Verifica se vai atacar corpo a corpo ou à distância
 			var vai_atacar = false
 			var disparou_agora = false
 			
-			if is_ranged_attacker or shoots_fireball:
+			if not vai_defender and (is_ranged_attacker or shoots_fireball):
 				ranged_attack_timer -= delta
 				if ranged_attack_timer <= 0.0:
 					vai_atacar = true
 					disparou_agora = true
 					ranged_attack_timer = 6.0 if shoots_fireball else ranged_attack_cooldown
 					
-			if not vai_atacar and distancia_to_player < 2.5:
+			if not vai_defender and not vai_atacar and distancia_to_player < 1.5:
 				vai_atacar = true
-				
-			if vai_atacar:
+
+			if vai_defender:
+				steps.stop()
+				if !growl_attack.playing: growl_attack.play()
+				_exec_defense_attack()
+			elif vai_atacar:
 				steps.stop()
 				if !growl_attack.playing: growl_attack.play()
 				
@@ -241,7 +299,7 @@ func _physics_process(delta: float) -> void:
 				else:
 					_exec_melee_attack()
 			else:
-				var next_p = nav_agent.get_next_path_position() if _nav_disponivel \
+				var next_p = nav_agent.get_next_path_position() if (_nav_disponivel and not nav_agent.is_navigation_finished()) \
 					else player.global_position
 				var direction = (next_p - global_position)
 
@@ -264,7 +322,7 @@ func _physics_process(delta: float) -> void:
 		else:
 			steps.stop()			
 			_travel("idle")
-			# Para gradualmente ao chegar
+			# Para gradualmente ao chegar ou se o player estiver longe
 			velocity.x = move_toward(velocity.x, 0, SPEED)
 			velocity.z = move_toward(velocity.z, 0, SPEED)
 
@@ -280,6 +338,7 @@ func _physics_process(delta: float) -> void:
 func remover_em_silencio() -> void:
 	dead = true
 	is_attacking = false
+	_derruba_escudo()
 	set_physics_process(false)
 	if is_instance_valid(steps):
 		steps.stop()
@@ -299,6 +358,12 @@ func _esconde_hud_de_chefe() -> void:
 
 
 func take_damage(amount):
+	# Esfera de defesa de pe: o golpe chega bem mais fraco, e a casca reage.
+	if shield_active:
+		amount = max(1, int(round(float(amount) * (1.0 - defense_shield_reduction))))
+		if is_instance_valid(_shield_node) and _shield_node.has_method("flash"):
+			_shield_node.flash()
+
 	if growl_damage_taken.playing == false: growl_damage_taken.play()
 	blood_out.play()
 	current_health -= amount
@@ -324,6 +389,7 @@ func take_damage(amount):
 func die():
 	dead = true
 	is_attacking = false
+	_derruba_escudo()
 	died.emit()
 	growl_death.play()
 	SaveManager.add_iron_rusks(iron_rusks_value)
@@ -349,24 +415,33 @@ func _on_timer_timeout() -> void:
 
 
 func _on_attack_body_entered(body: Node3D) -> void:
-	if body is CharacterBody3D and !dead:
-		
-		# 1. Calcula a direção oposta ao impacto
-		var direcao = (body.global_position - global_position).normalized()
-		direcao.y = 0 # Mantém no chão
-		
-		# 2. Define o ponto de destino (ex: 3 metros para trás)
-		var destino = body.global_position + (direcao * 3.0)
-		
-		# 3. Cria o movimento suave
-		var tween = create_tween()
-		tween.tween_property(body, "global_position", destino, 0.2).set_trans(Tween.TRANS_QUAD)
-		
-		# 4. Chama o tremor de tela
-		GlobalUtils.shake_camera(0.2, 0.2)
-		
-		#lanca damage no player
-		body.take_damage(attack_damage)
+	if (body == player or body.is_in_group("player")) and !dead:
+		_acertar_player(body)
+
+func _acertar_player(body: Node3D) -> void:
+	if dead or not is_inside_tree() or not is_instance_valid(body):
+		return
+	var agora = Time.get_ticks_msec() / 1000.0
+	if agora - _ultimo_hit_melee < 0.6:
+		return
+	_ultimo_hit_melee = agora
+	
+	# 1. Calcula a direção oposta ao impacto
+	var direcao = (body.global_position - global_position).normalized()
+	direcao.y = 0 # Mantém no chão
+	
+	# 2. Define o ponto de destino (ex: 3 metros para trás)
+	var destino = body.global_position + (direcao * 3.0)
+	
+	# 3. Cria o movimento suave
+	var tween = create_tween()
+	tween.tween_property(body, "global_position", destino, 0.2).set_trans(Tween.TRANS_QUAD)
+	
+	# 4. Chama o tremor de tela
+	GlobalUtils.shake_camera(0.2, 0.2)
+	
+	# Lança dano no player
+	body.take_damage(attack_damage)
 
 func _exec_fireball_attack() -> void:
 	is_attacking = true
@@ -378,12 +453,68 @@ func _exec_ranged_attack() -> void:
 	_travel("attack_2")
 	_throw_random_projectile()
 
-func _exec_melee_attack() -> void:
+## Poder de defesa: a mesma animacao "attack", mas o que sai dela e a esfera.
+func _exec_defense_attack() -> void:
 	is_attacking = true
 	_travel("attack")
+	_levanta_escudo()
+
+func _levanta_escudo() -> void:
+	if not is_inside_tree() or get_tree() == null:
+		is_attacking = false
+		return
+	# Espera o inimigo abrir os bracos na animacao antes da esfera aparecer.
+	await get_tree().create_timer(0.8).timeout
+	if dead or not is_inside_tree():
+		is_attacking = false
+		return
+
+	var shield_script = load("res://scripts/effects/defense_shield.gd")
+	if shield_script:
+		var shield = shield_script.new()
+		shield.duration = defense_shield_duration
+		add_child(shield)
+		shield.position = Vector3(0, 1.1, 0)
+		_shield_node = shield
+		shield_active = true
+		# A esfera se apaga sozinha no fim da duracao; e ela quem avisa.
+		shield.expired.connect(_on_escudo_expirado)
+
+	await get_tree().create_timer(0.8).timeout
+	is_attacking = false
+
+func _on_escudo_expirado() -> void:
+	shield_active = false
+	_shield_node = null
+
+## Tira a esfera na hora (morte do inimigo).
+func _derruba_escudo() -> void:
+	shield_active = false
+	if is_instance_valid(_shield_node):
+		if _shield_node.has_method("encerrar"):
+			_shield_node.encerrar()
+		else:
+			_shield_node.queue_free()
+	_shield_node = null
+
+func _exec_melee_attack() -> void:
+	is_attacking = true
 	if shoots_fireball:
+		_travel("attack_2")
 		ranged_attack_timer = 10.0
+	else:
+		_travel("attack")
+	_verificar_impacto_melee()
 	_finish_melee_attack()
+
+func _verificar_impacto_melee() -> void:
+	if not is_inside_tree() or get_tree() == null: return
+	# No meio do golpe (0.35s), se o jogador estiver encostado/na área, conecta o dano
+	await get_tree().create_timer(0.35).timeout
+	if dead or not is_inside_tree() or not is_instance_valid(player): return
+	var area = get_node_or_null("attack") as Area3D
+	if area and area.has_overlapping_body(player):
+		_acertar_player(player)
 
 func _finish_melee_attack() -> void:
 	if not is_inside_tree() or get_tree() == null: return

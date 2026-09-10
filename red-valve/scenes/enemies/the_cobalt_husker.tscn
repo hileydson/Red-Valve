@@ -84,6 +84,7 @@ distance_to_aproach = 50
 attack_damage = 40
 enemy_name = "THE COBALT HUSKER"
 shoots_fireball = true
+has_defense_shield = true
 max_health = 250
 
 [node name="attack" parent="enemy" index="1" unique_id=331778345]
