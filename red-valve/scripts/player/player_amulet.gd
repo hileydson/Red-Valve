@@ -753,7 +753,9 @@ func play_return_from_arena_effect() -> void:
 
 	player.is_playing_return_effect = true
 	GlobalUtils.vibrate_controller(null, 0.8, 0.8, 1.0)
-	GlobalUtils.shake_camera(0.6, 1.0)
+	# Sem tremor de camera aqui: a volta da arena e o flash + camera lenta +
+	# motion blur, e o shake (que mexe em h_offset/v_offset da camera do player,
+	# agora a MESMA camera da cena restaurada) so sujava o efeito.
 
 	# Câmera lenta momentânea ao voltar da arena
 	Engine.time_scale = 0.3
