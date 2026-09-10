@@ -25,6 +25,9 @@ var stage_1_saved_position: Dictionary = {}
 ## Ligado so no momento em que um save e carregado; o stage_1 consome pra saber que
 ## deve nascer na posicao gravada em vez do ponto de entrada do capitulo.
 var spawn_from_saved_position: bool = false
+## O tutorial do amuleto (levar o inimigo pra arena) ja foi mostrado? Ele aparece
+## uma unica vez na vida do save, no comeco da gameplay do Capitulo 1 na cidade.
+var tutorial_amuleto_visto: bool = false
 ## Ids dos arquivos de texto (aba ARQUIVOS do menu) que o jogador ja encontrou.
 ## O conteudo mora em ArquivosDados; aqui so fica o que ja foi liberado.
 var arquivos_desbloqueados: Array = []
@@ -257,6 +260,7 @@ func save_game(scene_path: String = ""):
 		"current_mp": current_mp,
 		"iron_rusks": iron_rusks,
 		"arquivos_desbloqueados": arquivos_desbloqueados,
+		"tutorial_amuleto_visto": tutorial_amuleto_visto,
 		"stage_1_saved_position": stage_1_saved_position
 	}
 	
@@ -310,6 +314,7 @@ func load_game(slot_id: int = -1) -> bool:
 				iron_rusks = data.get("iron_rusks", 0)
 				iron_rusks_display = iron_rusks
 				arquivos_desbloqueados = data.get("arquivos_desbloqueados", [])
+				tutorial_amuleto_visto = data.get("tutorial_amuleto_visto", false)
 				stage_1_saved_position = data.get("stage_1_saved_position", {})
 				# So vale pro mapa da cidade: e la que a posicao exata foi gravada.
 				spawn_from_saved_position = not stage_1_saved_position.is_empty() \
@@ -334,6 +339,7 @@ func reset_progress() -> void:
 	iron_rusks = 0
 	iron_rusks_display = 0
 	arquivos_desbloqueados = []
+	tutorial_amuleto_visto = false
 	stage_1_saved_position = {}
 	spawn_from_saved_position = false
 
@@ -382,6 +388,15 @@ func desbloquear_arquivo(id: String) -> bool:
 	arquivos_desbloqueados.append(id)
 	save_game()
 	return true
+
+## Marca o tutorial do amuleto como visto e grava na hora: e progresso de uma vez
+## so, e o jogador nao pode ve-lo de novo se fechar o jogo logo depois.
+func marcar_tutorial_amuleto_visto() -> void:
+	if tutorial_amuleto_visto:
+		return
+	tutorial_amuleto_visto = true
+	save_game()
+
 
 func add_iron_rusks(amount: int) -> void:
 	iron_rusks += amount

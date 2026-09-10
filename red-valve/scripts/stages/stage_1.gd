@@ -4,6 +4,12 @@ extends Node3D
 # o Capitulo 1 comeca.
 const ARQUIVO_CADERNO := "caderno_do_jimmy"
 
+# Tutorial do amuleto: aparece uma unica vez, depois de o jogador ter andado um
+# pouco pela cidade ja no Capitulo 1 (ver _agendar_tutorial_amuleto).
+const TUTORIAL_AMULETO_IMAGEM := "res://assets/tutorial/tutorial_1.png"
+const TUTORIAL_AMULETO_ESPERA := 15.0
+const TUTORIAL_AMULETO_TEXTOS := ["TUTORIAL_AMULET_1", "TUTORIAL_AMULET_2", "TUTORIAL_AMULET_3"]
+
 @onready var navigation_region_3d: NavigationRegion3D = $NavigationRegion3D
 @onready var real_time_label: Label = $real_time_label
 @onready var sky_3d: Sky3D = $WorldEnvironment/Sky3D
@@ -137,6 +143,7 @@ func setup_player_spawn() -> void:
 		prompt_label.set_meta("container", center_container)
 	
 	# Inicia a exibição do texto introdutório
+	_agendar_tutorial_amuleto(is_chapter_1)
 	_play_intro_text()
 
 
@@ -337,6 +344,68 @@ func _play_intro_text() -> void:
 		await get_tree().create_timer(4.5, false).timeout
 		GlobalUtils.hide_center_message("intro_stage_1")
 		await get_tree().create_timer(0.5, false).timeout
+
+
+## O tutorial do amuleto: so no Capitulo 1, so uma vez na vida do save, e so
+## depois de TUTORIAL_AMULETO_ESPERA segundos de gameplay de verdade — cutscene,
+## menu aberto e a ida pra arena nao contam (ver _esperar_gameplay).
+func _agendar_tutorial_amuleto(is_chapter_1: bool) -> void:
+	if not is_chapter_1:
+		return
+	if SaveManager.tutorial_amuleto_visto:
+		return
+	_rodar_tutorial_amuleto()
+
+
+func _rodar_tutorial_amuleto() -> void:
+	if not await _esperar_gameplay(TUTORIAL_AMULETO_ESPERA):
+		return
+
+	# Nao emenda por cima de outro aviso no centro da tela (o "novo arquivo" do
+	# comeco do capitulo, por exemplo): espera a tela limpar.
+	while not GlobalUtils.active_messages.is_empty():
+		if not await _esperar_gameplay(0.5):
+			return
+
+	# Grava antes de exibir: se o jogo fechar no meio do tutorial, ele ja foi
+	# dado como visto e nao volta.
+	SaveManager.marcar_tutorial_amuleto_visto()
+
+	var textura: Texture2D = load(TUTORIAL_AMULETO_IMAGEM)
+	if textura == null:
+		push_warning("Tutorial do amuleto: imagem nao encontrada em " + TUTORIAL_AMULETO_IMAGEM)
+		return
+
+	var textos: Array = []
+	for chave in TUTORIAL_AMULETO_TEXTOS:
+		textos.append(tr(chave))
+
+	var overlay = load("res://scripts/ui/tutorial_overlay.gd").new()
+	overlay.name = "TutorialAmuleto"
+	get_tree().root.add_child(overlay)
+	overlay.mostrar(textura, textos)
+
+
+## Deixa passar `segundos` de gameplay do Maycow normal nesta cena. Devolve false
+## se a espera perdeu o sentido no meio (cena trocada ou descarregada).
+func _esperar_gameplay(segundos: float) -> bool:
+	var restante := segundos
+	while restante > 0.0:
+		await get_tree().process_frame
+		if not is_inside_tree():
+			return false
+		if get_tree().paused:
+			continue # menu, pause ou outro tutorial na tela
+		if GlobalEvents.in_cutscene or GlobalUtils.in_cinematic_cutscene:
+			continue
+		if not GlobalEvents.is_maycow_normal:
+			continue # Maycow de combate: o jogador esta na arena
+		if not visible:
+			continue # a cena fica escondida (e nao removida) durante a arena
+		if get_tree().get_first_node_in_group("player") == null:
+			continue # sem player na cidade nao ha gameplay pra contar
+		restante -= get_process_delta_time()
+	return true
 
 
 ## A cidade do Capitulo 1 tem de ter inimigo aparecendo enquanto o Maycow anda.
