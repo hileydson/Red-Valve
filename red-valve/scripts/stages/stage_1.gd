@@ -169,7 +169,6 @@ func _process(delta: float) -> void:
 
 
 func _mostrar_prompt(texto: String) -> void:
-	GlobalUtils.show_center_message("interacao_stage_1", texto, 18)
 	if not is_instance_valid(prompt_label):
 		return
 	prompt_label.text = texto
@@ -179,7 +178,6 @@ func _mostrar_prompt(texto: String) -> void:
 
 
 func _esconder_prompt() -> void:
-	GlobalUtils.hide_center_message("interacao_stage_1")
 	if not is_instance_valid(prompt_label):
 		return
 	if prompt_label.has_meta("container"):

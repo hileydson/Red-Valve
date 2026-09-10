@@ -203,23 +203,29 @@ func _start_final_sequence() -> void:
 	
 	# 1. Ultra Câmera Lenta
 	Engine.time_scale = 0.15
-	
+	AudioServer.set_playback_speed_scale(0.15) # Mantém o áudio (growl_death, drop_dead) em sincronia com o slowmo visual
+
 	# 2. Esconde Interface
 	var ui = get_tree().root.get_node_or_null("GlobalEnemyHealthUI")
 	if ui: ui.queue_free()
-	
+
 	# 3. Faz o Fade Out super lento (ignorando time_scale)
 	var fade = get_node_or_null("fade")
 	if fade:
 		fade.modulate.a = 0.0
 		var tween = create_tween().set_ignore_time_scale(true)
 		tween.tween_property(fade, "modulate:a", 1.0, 4.0) # 4 segundos de fade
-		
-	# 4. Espera a animação terminar em tempo real
-	await get_tree().create_timer(5.0, true, false, true).timeout
-	
+
+	# 4. Espera a animação terminar em tempo real.
+	# A 0.15x, a animação "dead" do inimigo precisa de bem mais que 5s reais pra
+	# completar a queda; com a janela curta, o time_scale voltava a 1.0 no meio
+	# da animação e ela "acelerava" de repente, parecendo que o inimigo nunca
+	# ficou em câmera lenta.
+	await get_tree().create_timer(9.0, true, false, true).timeout
+
 	# 5. Restaura e vai para a Cutscene
 	Engine.time_scale = 1.0
+	AudioServer.set_playback_speed_scale(1.0)
 	GlobalEvents.in_cutscene = false
 	if not SaveManager.prolog_finished:
 		get_tree().change_scene_to_file("res://scenes/stages/prolog/fight_with_power/cutscene_fight_with_power.tscn")

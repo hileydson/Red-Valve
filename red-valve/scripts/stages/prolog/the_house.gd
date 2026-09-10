@@ -41,16 +41,24 @@ func _ready() -> void:
 		_show_intro_text()
 		_play_phone_ring_after_delay()
 	else:
+		GlobalEvents.entrando_na_casa_maycow = false
 		telefone_atendido = true
 		telefone_tocando = false
+		var b1 = find_child("bloque_player", true, false)
+		if b1:
+			b1.queue_free()
+		var b2 = find_child("bloque_player2", true, false)
+		if b2:
+			b2.queue_free()
 		var player = get_node_or_null("Player")
 		if not player:
 			player = find_child("Player", true, false)
 		if not player:
 			player = find_child("player", true, false)
 		if player:
-			player.global_position = Vector3(1.24, 1.52, -9.5)
+			player.global_position = Vector3(1.84, 2.0, -10.5)
 			player.global_rotation.y = 0.0
+			player.velocity = Vector3.ZERO
 
 func _play_phone_ring_after_delay() -> void:
 	# Aguarda o tempo configurado no inspetor usando um Timer que respeita o pause
@@ -257,6 +265,13 @@ func _start_phone_cutscene() -> void:
 	GlobalEvents.telefone_cutscene_active = false
 	GlobalEvents.in_cutscene = false
 	
+	var b1 = find_child("bloque_player", true, false)
+	if b1:
+		b1.queue_free()
+	var b2 = find_child("bloque_player2", true, false)
+	if b2:
+		b2.queue_free()
+		
 	_novo_arquivo(ARQUIVO_TELEFONE)
 
 
