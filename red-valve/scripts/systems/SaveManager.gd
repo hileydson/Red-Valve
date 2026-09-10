@@ -18,6 +18,13 @@ var prolog_finished: bool = false
 var battlefield_1_intro_played: bool = false
 var stage_1_intro_played: bool = false
 var iron_rusks: int = 0
+## Posicao exata do player no stage_1, gravada pela opcao "Salvar" do menu de pause.
+## Fica vazio enquanto o jogador nunca usou essa opcao — nesse caso o stage_1 usa o
+## ponto de spawn de sempre. Formato: {"x": float, "y": float, "z": float, "ry": float}.
+var stage_1_saved_position: Dictionary = {}
+## Ligado so no momento em que um save e carregado; o stage_1 consome pra saber que
+## deve nascer na posicao gravada em vez do ponto de entrada do capitulo.
+var spawn_from_saved_position: bool = false
 ## Ids dos arquivos de texto (aba ARQUIVOS do menu) que o jogador ja encontrou.
 ## O conteudo mora em ArquivosDados; aqui so fica o que ja foi liberado.
 var arquivos_desbloqueados: Array = []
@@ -249,7 +256,8 @@ func save_game(scene_path: String = ""):
 		"max_mp": max_mp,
 		"current_mp": current_mp,
 		"iron_rusks": iron_rusks,
-		"arquivos_desbloqueados": arquivos_desbloqueados
+		"arquivos_desbloqueados": arquivos_desbloqueados,
+		"stage_1_saved_position": stage_1_saved_position
 	}
 	
 	save_config() # Sempre salvar config junto
@@ -302,6 +310,10 @@ func load_game(slot_id: int = -1) -> bool:
 				iron_rusks = data.get("iron_rusks", 0)
 				iron_rusks_display = iron_rusks
 				arquivos_desbloqueados = data.get("arquivos_desbloqueados", [])
+				stage_1_saved_position = data.get("stage_1_saved_position", {})
+				# So vale pro mapa da cidade: e la que a posicao exata foi gravada.
+				spawn_from_saved_position = not stage_1_saved_position.is_empty() \
+					and current_stage == "res://scenes/stages/stage_1/stage_1.tscn"
 				
 				if current_stage != "" and ResourceLoader.exists(current_stage):
 					print("Game Loaded from slot ", current_slot, "! ", current_stage)
@@ -322,6 +334,37 @@ func reset_progress() -> void:
 	iron_rusks = 0
 	iron_rusks_display = 0
 	arquivos_desbloqueados = []
+	stage_1_saved_position = {}
+	spawn_from_saved_position = false
+
+
+
+## Grava a posicao exata do player no mapa da cidade e salva na hora. So faz sentido
+## no stage_1 e a partir do capitulo 1 — quem chama e o menu de pause, que ja checa isso.
+func save_player_position(pos: Vector3, rot_y: float) -> void:
+	stage_1_saved_position = {"x": pos.x, "y": pos.y, "z": pos.z, "ry": rot_y}
+	save_game()
+
+
+## Ha uma posicao gravada no stage_1 pela opcao "Salvar"?
+func has_saved_position() -> bool:
+	return not stage_1_saved_position.is_empty()
+
+
+## Devolve a posicao gravada, ou Vector3.ZERO se nao houver nenhuma.
+func get_saved_position() -> Vector3:
+	if stage_1_saved_position.is_empty():
+		return Vector3.ZERO
+	return Vector3(
+		float(stage_1_saved_position.get("x", 0.0)),
+		float(stage_1_saved_position.get("y", 0.0)),
+		float(stage_1_saved_position.get("z", 0.0))
+	)
+
+
+## Rotacao Y gravada junto com a posicao.
+func get_saved_rotation_y() -> float:
+	return float(stage_1_saved_position.get("ry", 0.0))
 
 
 ## O jogador ja tem este arquivo?

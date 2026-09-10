@@ -1,6 +1,12 @@
 extends CanvasLayer
 
 @onready var resume: Button = $Control/VSplitContainer/resume
+@onready var salvar: Button = $Control/VSplitContainer/salvar
+
+## A cena onde salvar a posicao exata faz sentido: so o mapa da cidade.
+const CENA_STAGE_1 := "res://scenes/stages/stage_1/stage_1.tscn"
+
+var _aviso_salvo: Label
 
 func _ready() -> void:
 	self.visible = false
@@ -32,6 +38,7 @@ func toogle_pause():
 		get_tree().paused = true
 		self.visible = true
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+		_atualiza_botao_salvar()
 		resume.grab_focus()
 
 func _on_resume_pressed() -> void:
@@ -65,3 +72,56 @@ func _on_config_pressed() -> void:
 		# Certificar de que toca som ao voltar das config no pause menu (se possível)
 		# Normalmente config_menu_voltar emitirá som por conta do script do config menu, 
 		# mas caso precise, aqui seria reconectado.
+
+
+## O botao "Salvar" fica sempre visivel, mas so clicavel fora do prologo, dentro do
+## mapa da cidade e com o Maycow normal (o de combate nao salva posicao).
+func pode_salvar() -> bool:
+	if not SaveManager.prolog_finished:
+		return false
+	if not GlobalEvents.is_maycow_normal:
+		return false
+	var cena := get_tree().current_scene
+	if not is_instance_valid(cena) or cena.scene_file_path != CENA_STAGE_1:
+		return false
+	return _pega_player() != null
+
+
+func _pega_player() -> Node3D:
+	for p in get_tree().get_nodes_in_group("player"):
+		if is_instance_valid(p) and p is Node3D:
+			return p
+	return null
+
+
+func _atualiza_botao_salvar() -> void:
+	if is_instance_valid(salvar):
+		salvar.disabled = not pode_salvar()
+	if is_instance_valid(_aviso_salvo):
+		_aviso_salvo.visible = false
+
+
+func _on_salvar_pressed() -> void:
+	if not pode_salvar():
+		return
+	var player := _pega_player()
+	if player == null:
+		return
+	GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/selecionar_item.mp3")
+	SaveManager.save_player_position(player.global_position, player.global_rotation.y)
+	_mostra_aviso_salvo()
+
+
+func _mostra_aviso_salvo() -> void:
+	if not is_instance_valid(_aviso_salvo):
+		_aviso_salvo = Label.new()
+		_aviso_salvo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_aviso_salvo.add_theme_font_size_override("font_size", 20)
+		_aviso_salvo.add_theme_constant_override("outline_size", 4)
+		_aviso_salvo.set_anchors_preset(Control.PRESET_TOP_WIDE)
+		_aviso_salvo.offset_top = 60.0
+		_aviso_salvo.offset_bottom = 100.0
+		_aviso_salvo.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_aviso_salvo.text = "TXT_GAME_SAVED"
+		add_child(_aviso_salvo)
+	_aviso_salvo.visible = true

@@ -56,6 +56,10 @@ func _ready() -> void:
 
 func setup_player_spawn() -> void:
 	var is_chapter_1 = GlobalEvents.entering_chapter_1 or SaveManager.prolog_finished
+	# Consome a flag aqui em cima pra ela nunca sobrar ligada quando o jogador
+	# chegar ao mapa por outro caminho (voltando de uma casa, por exemplo).
+	var usa_posicao_salva = SaveManager.spawn_from_saved_position and SaveManager.has_saved_position()
+	SaveManager.spawn_from_saved_position = false
 
 	# Voltando do interior da casa do Jimmy: o jogador tem de reaparecer na
 	# soleira, e não no ponto de entrada normal do mapa.
@@ -89,7 +93,12 @@ func setup_player_spawn() -> void:
 			player = find_child("Player", true, false)
 		if not player:
 			player = find_child("player", true, false)
-		if player and spawn_point:
+		# Se o save veio da opcao "Salvar" do menu de pause, o jogador volta na
+		# posicao exata em que gravou; senao, no ponto de entrada do capitulo 1.
+		if player and usa_posicao_salva:
+			player.global_position = SaveManager.get_saved_position()
+			player.global_rotation.y = SaveManager.get_saved_rotation_y()
+		elif player and spawn_point:
 			player.global_position = spawn_point.global_position
 			player.global_rotation.y = spawn_point.global_rotation.y + PI
 
