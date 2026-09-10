@@ -192,8 +192,8 @@ var is_playing_return_effect: bool = false
 var heartbeat_tween: Tween
 
 @export_group("Damage Feedback")
-@export var damage_camera_shake_strength: float = 0.003
-@export var damage_camera_shake_duration: float = 0.15
+@export var damage_camera_shake_duration: float = 0.20
+@export var damage_camera_shake_strength: float = 0.25
 # ---------------------------
 
 const SPEED = 5.0
@@ -275,6 +275,7 @@ var is_magic_attacking: bool = false
 var is_blade_returning: bool = false
 var blade_return_speed: float = 15.0
 var damage_blur_timer: float = 0.0
+var damage_blur_tween: Tween
 var is_reloading: bool = false
 var magic_blade_pos_original
 var camera_bullet_time_position
@@ -462,6 +463,9 @@ var velocidade_giro = 4.0
 func _physics_process(delta: float) -> void:
 	if not is_inside_tree() or get_tree() == null: return
 	
+	if damage_blur_timer > 0.0:
+		damage_blur_timer -= delta
+	
 	# --- CUTSCENE CAMERA SHAKE ---
 	if _cutscene_camera_shake_intensity > 0.0 and is_instance_valid(camera_third_person):
 		if not _is_cutscene_shaking:
@@ -610,7 +614,7 @@ func _physics_process(delta: float) -> void:
 			if point: point.visible = not GlobalEvents.in_cutscene and not _cutscene_hud_hidden
 			
 			# Desativa o Motion Blur
-			if is_instance_valid(hud_layer) and not is_playing_return_effect:
+			if is_instance_valid(hud_layer) and not is_playing_return_effect and not is_dashing and damage_blur_timer <= 0.0:
 				var motion_blur = hud_layer.get_node_or_null("MotionBlurOverlay")
 				if motion_blur:
 					motion_blur.material.set_shader_parameter("blur_strength", 0.0)
@@ -829,7 +833,7 @@ func _physics_process(delta: float) -> void:
 				if is_instance_valid(amulet_crosshair): amulet_crosshair.visible = false
 				if point: point.visible = not GlobalEvents.in_cutscene and not _cutscene_hud_hidden
 				
-				if is_instance_valid(hud_layer) and not is_playing_return_effect:
+				if is_instance_valid(hud_layer) and not is_playing_return_effect and not is_dashing and damage_blur_timer <= 0.0:
 					var motion_blur = hud_layer.get_node_or_null("MotionBlurOverlay")
 					if motion_blur:
 						motion_blur.material.set_shader_parameter("blur_strength", 0.0)
@@ -842,7 +846,7 @@ func _physics_process(delta: float) -> void:
 			# O ataque da cogblade é exclusivo do Maycow parasita.
 		else:
 			if is_instance_valid(amulet_crosshair): amulet_crosshair.visible = false
-			if is_instance_valid(hud_layer) and not is_playing_return_effect:
+			if is_instance_valid(hud_layer) and not is_playing_return_effect and not is_dashing and damage_blur_timer <= 0.0:
 				var motion_blur = hud_layer.get_node_or_null("MotionBlurOverlay")
 				if motion_blur:
 					motion_blur.material.set_shader_parameter("blur_strength", 0.0)
@@ -1150,7 +1154,7 @@ func take_damage(number:int):
 		_trigger_game_over()
 		
 	GlobalUtils.vibrate_controller(Input, 0.5, 0.5, 0.2)
-	GlobalUtils.shake_camera(damage_camera_shake_strength, damage_camera_shake_duration)
+	GlobalUtils.shake_camera(damage_camera_shake_duration, damage_camera_shake_strength)
 	
 	if is_instance_valid(blood_overlay):
 		var mat = blood_overlay.material as ShaderMaterial
@@ -1161,12 +1165,17 @@ func take_damage(number:int):
 	if is_instance_valid(hud_layer):
 		var motion_blur = hud_layer.get_node_or_null("MotionBlurOverlay")
 		if motion_blur:
+			if damage_blur_tween and damage_blur_tween.is_valid():
+				damage_blur_tween.kill()
 			motion_blur.visible = true
 			motion_blur.material.set_shader_parameter("blur_strength", 0.8)
-			damage_blur_timer = 0.4
-			var tween_blur = create_tween().set_parallel(true)
-			tween_blur.tween_property(motion_blur.material, "shader_parameter/blur_strength", 0.0, 0.4)
-			tween_blur.chain().tween_callback(func(): if not _run_toggle_active: motion_blur.visible = false)
+			damage_blur_timer = 0.35
+			damage_blur_tween = create_tween()
+			damage_blur_tween.tween_property(motion_blur.material, "shader_parameter/blur_strength", 0.0, 0.35).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+			damage_blur_tween.tween_callback(func(): 
+				if is_instance_valid(motion_blur) and not is_aiming and not is_dashing:
+					motion_blur.visible = false
+			)
 	
 	print("Damage taken by the player: "+str(number) + " | HP: " + str(current_health))
 	

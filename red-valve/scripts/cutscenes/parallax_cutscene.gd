@@ -9,11 +9,48 @@ class_name ParallaxCutscene
 ## o deslocamento relativo, a mudanca de escala e a oclusao entre camadas saem
 ## corretos de graca, e particulas e bruma podem ficar ENTRE as camadas.
 ##
-## A subclasse so precisa fornecer os dados: veja `_build_slides()` e `_on_finished()`.
+## COMO CRIAR UMA CUTSCENE NOVA
+## 1. Crie a cena HERDADA de res://scenes/cutscenes/parallax_cutscene_base.tscn
+##    (no editor: Cena > Nova Cena Herdada). Todo o aparato — SubViewport 3D,
+##    post-processing, tarjas, legenda, fade, skip — ja vem pronto e e o MESMO
+##    de todas as outras; ajustar o visual la muda em todas de uma vez.
+## 2. Anexe um script que estenda ParallaxCutscene e sobrescreva `_build_slides()`.
+## 3. Aponte `next_scene_path` para a proxima cena. So sobrescreva `_on_finished()`
+##    se precisar de algo alem de trocar de cena (salvar progresso, por exemplo).
+##
+## A subclasse so escreve DADOS. Veja `_build_slides()` para o formato do slide.
 
 const LAYER_SHADER := "res://shaders/cutscenes/parallax_layer.gdshader"
 const HAZE_SHADER := "res://shaders/cutscenes/cutscene_haze.gdshader"
 const IMAGE_EXTENSIONS := ["png", "jpeg", "jpg", "webp"]
+
+## Presets de atmosfera. Um slide pede `"atmosphere": "fogo"` e ganha bruma e brasas
+## ja encaixadas ENTRE as camadas — as profundidades saem das proprias camadas do
+## slide, entao nao ha numero para acertar na mao. Passar `haze` ou `embers`
+## explicitos no slide sempre vence o preset (util para um plano especifico).
+## `"atmosphere_strength"` (padrao 1.0) calibra o preset inteiro num numero so.
+const ATMOSPHERES := {
+	"fogo": {
+		"haze_tint": Color(0.95, 0.32, 0.14), "haze_intensity": 0.07,
+		"ember_color": Color(1.35, 0.50, 0.16), "ember_amount": 45,
+		"ember_scale": 0.010, "ember_speed": 0.30, "ember_lifetime": 11.0,
+		"near_color": Color(0.95, 0.42, 0.18),
+	},
+	"brasa": {
+		"haze_tint": Color(1.0, 0.36, 0.14), "haze_intensity": 0.06,
+		"ember_color": Color(1.35, 0.50, 0.16), "ember_amount": 60,
+		"ember_scale": 0.011, "ember_speed": 0.45, "ember_lifetime": 9.0,
+		"near_color": Color(1.1, 0.46, 0.18),
+	},
+	"poeira": {
+		"haze_tint": Color(0.85, 0.66, 0.40), "haze_intensity": 0.05,
+		"ember_color": Color(0.16, 0.15, 0.14), "ember_amount": 40,
+		"ember_scale": 0.008, "ember_speed": 0.12, "ember_lifetime": 14.0,
+		"near_color": Color(0.20, 0.19, 0.17), "spread": 45.0, "lift": 0.10,
+		"turbulence": 0.35,
+	},
+	"nenhuma": {},
+}
 
 # --- ajuste global -----------------------------------------------------------
 @export var base_fov: float = 45.0
@@ -31,6 +68,12 @@ const IMAGE_EXTENSIONS := ["png", "jpeg", "jpg", "webp"]
 @export var typing_sound_path: String = "res://assets/sounds/episodios/prologo/typing.mp3"
 ## Intensidade do acento de camera a cada nova fala. 0 desliga.
 @export var punch_scale: float = 0.35
+## Musica de fundo. Usada apenas se o no Begin ja nao tiver um stream na cena.
+@export var music_path: String = "res://assets/cutscenes/sound/begin.mp3"
+## Cena carregada quando a cutscene termina (ou e pulada). Veja `_on_finished()`.
+@export_file("*.tscn") var next_scene_path: String = ""
+## Passa pelo LoadingScreen em vez de trocar de cena direto.
+@export var next_scene_via_loading_screen: bool = false
 
 # --- nos --------------------------------------------------------------------
 @onready var stage: SubViewportContainer = $Stage
@@ -100,9 +143,19 @@ func _build_slides() -> Array:
 	return []
 
 
-## Chamado quando a cutscene termina (ou e pulada). A subclasse faz a transicao.
+## Chamado quando a cutscene termina (ou e pulada).
+##
+## O padrao ja resolve o caso comum: despausa e vai para `next_scene_path`. So
+## sobrescreva quando houver algo a mais (salvar progresso, marcar uma flag).
 func _on_finished() -> void:
-	pass
+	get_tree().paused = false
+	if next_scene_path.is_empty():
+		push_warning("ParallaxCutscene: sem next_scene_path e sem _on_finished(); a cutscene termina em nada.")
+		return
+	if next_scene_via_loading_screen:
+		LoadingScreen.load_scene(next_scene_path)
+	else:
+		get_tree().change_scene_to_file(next_scene_path)
 
 
 # =============================================================================
@@ -169,9 +222,15 @@ func _setup_world() -> void:
 
 
 func _setup_post() -> void:
-	post_material = stage.material as ShaderMaterial
-	if post_material == null:
+	var shared := stage.material as ShaderMaterial
+	if shared == null:
 		push_warning("ParallaxCutscene: Stage sem ShaderMaterial de post-processing.")
+		return
+	# O .tres e compartilhado por todas as cutscenes e o script escreve nele em
+	# runtime (aberracao por slide, borrao nas transicoes). Duplicar impede que a
+	# proxima cutscene comece com os valores que esta deixou.
+	post_material = shared.duplicate()
+	stage.material = post_material
 
 
 func _setup_ui() -> void:
@@ -204,6 +263,10 @@ func _setup_skip() -> void:
 func _setup_audio() -> void:
 	if audio_player == null:
 		return
+	if audio_player.stream == null and not music_path.is_empty() \
+			and ResourceLoader.exists(music_path):
+		audio_player.stream = load(music_path)
+		audio_player.play()
 	var target_volume := audio_player.volume_db
 	audio_player.volume_db = -80.0
 	var t := create_tween()
@@ -291,6 +354,11 @@ func _build_slide(slide: Dictionary) -> void:
 	# (proporcional a profundidade), entao todas as camadas andam juntas e a
 	# composicao continua batendo com a arte original.
 	var frame_offset: Vector2 = slide.get("frame_offset", Vector2.ZERO)
+	# Bruma/brasas vem do preset de atmosfera do slide; `haze`/`embers` explicitos
+	# no slide tem prioridade.
+	var atmosphere := _resolve_atmosphere(slide, defs)
+	var haze_defs: Array = slide.get("haze", atmosphere["haze"])
+	var ember_defs: Array = slide.get("embers", atmosphere["embers"])
 
 	for layer_index in range(defs.size()):
 		var def: Dictionary = defs[layer_index]
@@ -371,12 +439,84 @@ func _build_slide(slide: Dictionary) -> void:
 		# unica em vez de dar profundidade. O slide roda so com a camera e o post.
 		if _using_fallback:
 			continue
-		for haze_def in slide.get("haze", []):
+		for haze_def in haze_defs:
 			if int(haze_def.get("after", -1)) == layer_index:
 				_build_haze(haze_def, scale_k, order + 5)
-		for ember_def in slide.get("embers", []):
+		for ember_def in ember_defs:
 			if int(ember_def.get("after", -1)) == layer_index:
 				_build_embers(ember_def, order + 6)
+
+
+## Monta bruma e brasas a partir do preset pedido pelo slide, encaixando cada
+## elemento entre duas camadas vizinhas. Sem preset (ou com menos de 2 camadas)
+## devolve vazio — nao ha planos para separar.
+func _resolve_atmosphere(slide: Dictionary, defs: Array) -> Dictionary:
+	var empty := {"haze": [], "embers": []}
+	var key := str(slide.get("atmosphere", "nenhuma"))
+	if not ATMOSPHERES.has(key):
+		push_warning("ParallaxCutscene: atmosfera '%s' nao existe." % key)
+		return empty
+	var p: Dictionary = ATMOSPHERES[key]
+	if p.is_empty() or defs.size() < 2:
+		return empty
+	# Um unico numero para calibrar o preset por slide. Arte de fundo escura pede
+	# menos: brasa aditiva sobre preto pesa muito mais do que sobre fogo.
+	var strength := maxf(float(slide.get("atmosphere_strength", 1.0)), 0.0)
+	if is_zero_approx(strength):
+		return empty
+
+	var depths: Array[float] = []
+	for d in defs:
+		depths.append(float(d.get("depth", 20.0)))
+	var last := depths.size() - 1
+
+	var tint: Color = p["haze_tint"]
+	var intensity: float = float(p["haze_intensity"]) * strength
+	var color: Color = p["ember_color"]
+	var amount: int = maxi(1, int(round(float(p["ember_amount"]) * strength)))
+	var scale: float = float(p["ember_scale"])
+	var speed: float = float(p["ember_speed"])
+	var lifetime: float = float(p["ember_lifetime"])
+	var spread: float = float(p.get("spread", 24.0))
+	var lift: float = float(p.get("lift", 0.35))
+	var turbulence: float = float(p.get("turbulence", 0.55))
+
+	var haze: Array = [{
+		"after": 0, "depth": lerpf(depths[0], depths[1], 0.35),
+		"tint": tint, "intensity": intensity,
+		"scroll": Vector2(0.010, -0.005), "uv_scale": 2.2,
+	}]
+	var embers: Array = [{
+		"after": 0, "depth": lerpf(depths[0], depths[1], 0.22),
+		"amount": amount, "scale": scale, "speed": speed,
+		"lifetime": lifetime, "color": color,
+		"spread": spread, "lift": lift, "turbulence": turbulence,
+	}]
+
+	if last >= 2:
+		haze.append({
+			"after": 1, "depth": lerpf(depths[1], depths[2], 0.40),
+			"tint": tint, "intensity": intensity * 0.55,
+			"scroll": Vector2(-0.016, -0.008), "uv_scale": 3.0, "size": 1.25,
+		})
+		embers.append({
+			"after": last - 1,
+			"depth": lerpf(depths[last - 1], depths[last], 0.35),
+			"amount": int(amount * 0.45), "scale": scale, "speed": speed * 1.4,
+			"lifetime": lifetime * 0.75, "color": color, "drift": 0.25,
+			"spread": spread, "lift": lift, "turbulence": turbulence,
+		})
+
+	# Campo proximo: poucas e desfocadas, cruzando na frente de TUDO. E o elemento
+	# que mais vende profundidade — e o que mais suja a tela se exagerar.
+	embers.append({
+		"after": last, "depth": depths[last] * 0.78,
+		"amount": maxi(3, int(amount * 0.12)), "scale": scale * 1.2,
+		"speed": speed * 2.4, "lifetime": lifetime * 0.55,
+		"color": p.get("near_color", color), "drift": 0.5,
+		"spread": spread * 1.5, "lift": lift, "turbulence": turbulence * 1.6,
+	})
+	return {"haze": haze, "embers": embers}
 
 
 func _build_haze(def: Dictionary, scale_k: float, priority: int) -> void:
