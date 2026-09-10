@@ -176,20 +176,20 @@ func magic_hand_attack() -> void:
 	var pos_final_global: Vector3
 	
 	if nearest_enemy:
-		var target_pos: Vector3 = nearest_enemy.global_position + Vector3(0.0, 1.0, 0.0)
-		if nearest_enemy.has_node("heart"):
-			var heart_node = nearest_enemy.get_node("heart")
-			if heart_node is Node3D:
-				target_pos = heart_node.global_position
-		
-		var to_enemy: Vector3 = target_pos - start_pos
-		var dist: float = to_enemy.length()
-		dir = to_enemy.normalized() if dist > 0.001 else -player.camera.global_transform.basis.z
+		var to_enemy_h: Vector3 = Vector3(nearest_enemy.global_position.x - start_pos.x, 0.0, nearest_enemy.global_position.z - start_pos.z)
+		var dist: float = to_enemy_h.length()
+		dir = to_enemy_h.normalized() if dist > 0.001 else -player.camera.global_transform.basis.z
+		dir.y = 0.0
+		dir = dir.normalized()
 		travel_dist = clampf(dist + 2.0, 5.0, 30.0)
 		pos_final_global = start_pos + (dir * travel_dist)
+		pos_final_global.y = start_pos.y - 0.05
 	else:
 		dir = -player.camera.global_transform.basis.z
+		dir.y = 0.0
+		dir = dir.normalized() if dir.length_squared() > 0.001 else -player.camera.global_transform.basis.z
 		pos_final_global = start_pos + (dir * travel_dist)
+		pos_final_global.y = start_pos.y - 0.05
 	
 	var yaw_deg: float = rad_to_deg(atan2(-dir.x, -dir.z)) if (absf(dir.x) > 0.001 or absf(dir.z) > 0.001) else player.camera.global_rotation_degrees.y
 	player.crescent_cogblade.global_rotation_degrees = Vector3(player.cogblade_tilt_x, yaw_deg + player.cogblade_tilt_y, player.cogblade_tilt_z)
