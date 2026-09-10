@@ -14,6 +14,10 @@ const TOQUE_ESPERA_FIM_DANO := 0.7
 
 var player: CharacterBody3D
 
+## Estado do gatilho de seleção no frame anterior — ver o comentário em
+## `_process_amulet_targeting`.
+var _gatilho_selecionar_estava_pressionado: bool = false
+
 func _ready() -> void:
 	player = get_parent()
 
@@ -231,7 +235,19 @@ func _process_amulet_targeting() -> void:
 			else:
 				_apply_silhouette(target, Color(1.0, 1.0, 1.0, 0.5)) # Branco fraco (Hover)
 
-	if Input.is_action_just_pressed("ui_shoot") and player.amulet_hovered_enemy:
+	# `Input.is_action_just_pressed` direto, aqui, e' o que falhava so' no jogo
+	# exportado com o gatilho de fato: `ui_shoot` e' mapeado num eixo analogico
+	# (gatilho direito), e nesta funcao ele e' lido junto com `ui_hold_first_person_view`
+	# (gatilho esquerdo, tambem eixo) segurado ao mesmo tempo — dois eixos
+	# analogicos cruzando o deadzone no mesmo instante e' exatamente o caso em
+	# que o "just pressed" interno do Godot fica menos confiavel entre editor e
+	# build exportada. Detectar a borda na mao, comparando com o frame
+	# anterior, remove essa dependencia.
+	var gatilho_pressionado_agora := Input.get_action_strength("ui_shoot") > 0.5
+	var gatilho_acabou_de_apertar := gatilho_pressionado_agora and not _gatilho_selecionar_estava_pressionado
+	_gatilho_selecionar_estava_pressionado = gatilho_pressionado_agora
+
+	if gatilho_acabou_de_apertar and player.amulet_hovered_enemy:
 		var enemy = player.amulet_hovered_enemy
 		if player.amulet_selected_enemies.has(enemy):
 			# Já estava selecionado: remove a seleção
