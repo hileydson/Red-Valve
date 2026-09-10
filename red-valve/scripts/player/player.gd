@@ -238,7 +238,7 @@ var speed_multiplier: float = 1.0
 var _slow_timer: float = 0.0
 
 #CHANGE LATER - DYNAMICLY
-@export var damage_crescent_cogblade:int = 20
+@export var damage_crescent_cogblade:int = 5
 @export var damage_pistol:int = 10 #3 
 @export var damage_headshoot:int = 100
 var current_weapon #: AnimatedSprite2D

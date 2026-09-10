@@ -79,6 +79,67 @@ func reload() -> void:
 			
 		player.is_reloading = false
 
+func _resolve_enemy_target(node: Node) -> Node3D:
+	if not is_instance_valid(node):
+		return null
+	if node is Area3D and is_instance_valid(node.get_parent()) and node.get_parent() is CharacterBody3D:
+		return node.get_parent() as Node3D
+	if "dead" in node or node.has_method("take_damage"):
+		if node is Node3D:
+			return node as Node3D
+	for child in node.get_children():
+		if "dead" in child or child.has_method("take_damage"):
+			if child is Node3D:
+				return child as Node3D
+	return node as Node3D if node is Node3D else null
+
+
+func _get_nearest_enemy() -> Node3D:
+	if not is_inside_tree() or get_tree() == null:
+		return null
+
+	var origin: Vector3 = player.global_position
+	var nearest_enemy: Node3D = null
+	var nearest_dist_sq: float = INF
+	var seen: Dictionary = {}
+
+	var candidate_nodes: Array = get_tree().get_nodes_in_group("enemies")
+	if candidate_nodes.is_empty():
+		var scene_enemies = get_tree().current_scene.find_child("enemies", true, false)
+		if scene_enemies:
+			for child in scene_enemies.get_children():
+				if child is Node3D:
+					candidate_nodes.append(child)
+
+	for node in candidate_nodes:
+		if not is_instance_valid(node):
+			continue
+		var enemy: Node3D = _resolve_enemy_target(node)
+		if not is_instance_valid(enemy) or enemy in seen:
+			continue
+		seen[enemy] = true
+
+		if enemy == player or enemy.is_in_group("player"):
+			continue
+		if not enemy.is_inside_tree() or not enemy.can_process():
+			continue
+		if not enemy.is_visible_in_tree():
+			continue
+		if "dead" in enemy and bool(enemy.dead):
+			continue
+		if "current_health" in enemy and float(enemy.current_health) <= 0.0:
+			continue
+		if "health" in enemy and float(enemy.health) <= 0.0:
+			continue
+
+		var d_sq: float = origin.distance_squared_to(enemy.global_position)
+		if d_sq < nearest_dist_sq:
+			nearest_dist_sq = d_sq
+			nearest_enemy = enemy
+
+	return nearest_enemy
+
+
 func magic_hand_attack() -> void:
 	# A cogblade pertence só ao Maycow parasita.
 	if GlobalEvents.is_maycow_normal: return
@@ -108,12 +169,33 @@ func magic_hand_attack() -> void:
 	var faiscas = player.crescent_cogblade.get_node_or_null("Faiscas") 
 	if faiscas: faiscas.emitting = true
 	
-	player.crescent_cogblade.global_rotation_degrees = Vector3(player.cogblade_tilt_x, player.camera.global_rotation_degrees.y + player.cogblade_tilt_y, player.cogblade_tilt_z)
+	var nearest_enemy: Node3D = _get_nearest_enemy()
+	var start_pos: Vector3 = player.crescent_cogblade.global_transform.origin
+	var dir: Vector3
+	var travel_dist: float = 11.0
+	var pos_final_global: Vector3
 	
-	var dir = -player.camera.global_transform.basis.z
-	var pos_final_global = player.crescent_cogblade.global_transform.origin + (dir * 11.0)
+	if nearest_enemy:
+		var target_pos: Vector3 = nearest_enemy.global_position + Vector3(0.0, 1.0, 0.0)
+		if nearest_enemy.has_node("heart"):
+			var heart_node = nearest_enemy.get_node("heart")
+			if heart_node is Node3D:
+				target_pos = heart_node.global_position
+		
+		var to_enemy: Vector3 = target_pos - start_pos
+		var dist: float = to_enemy.length()
+		dir = to_enemy.normalized() if dist > 0.001 else -player.camera.global_transform.basis.z
+		travel_dist = clampf(dist + 2.0, 5.0, 30.0)
+		pos_final_global = start_pos + (dir * travel_dist)
+	else:
+		dir = -player.camera.global_transform.basis.z
+		pos_final_global = start_pos + (dir * travel_dist)
 	
-	tween_magic.tween_property(player.crescent_cogblade, "global_transform:origin", pos_final_global, 1.2)\
+	var yaw_deg: float = rad_to_deg(atan2(-dir.x, -dir.z)) if (absf(dir.x) > 0.001 or absf(dir.z) > 0.001) else player.camera.global_rotation_degrees.y
+	player.crescent_cogblade.global_rotation_degrees = Vector3(player.cogblade_tilt_x, yaw_deg + player.cogblade_tilt_y, player.cogblade_tilt_z)
+	
+	var travel_time: float = clampf((travel_dist / 11.0) * 1.2, 0.5, 2.0)
+	tween_magic.tween_property(player.crescent_cogblade, "global_transform:origin", pos_final_global, travel_time)\
 		.set_trans(Tween.TRANS_QUAD)\
 		.set_ease(Tween.EASE_OUT)
 	
