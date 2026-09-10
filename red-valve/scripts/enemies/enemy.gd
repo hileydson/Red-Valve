@@ -205,7 +205,9 @@ func _physics_process(delta: float) -> void:
 		move_and_slide()
 		return
 
-	if has_defense_shield and not shield_active and not is_attacking and _shield_cooldown > 0.0:
+	# Fora da arena o relogio do escudo nem anda: assim o inimigo que for
+	# arrastado da cidade para a batalha nao chega la com o poder ja vencido.
+	if not is_attacking and _shield_cooldown > 0.0 and _pode_usar_escudo():
 		_shield_cooldown -= delta
 
 	if is_attacking:
@@ -260,7 +262,7 @@ func _physics_process(delta: float) -> void:
 			# O poder de defesa tem prioridade: quando o tempo dele vence, o
 			# inimigo levanta a esfera em vez de atacar naquele momento.
 			var vai_defender = false
-			if has_defense_shield and not shield_active and _shield_cooldown <= 0.0:
+			if _shield_cooldown <= 0.0 and _pode_usar_escudo():
 				if randf() < 0.7:
 					vai_defender = true
 					_shield_cooldown = randf_range(defense_shield_min_interval, defense_shield_max_interval)
@@ -488,8 +490,25 @@ func _exec_ranged_attack() -> void:
 	_travel("attack_2")
 	_throw_random_projectile()
 
+## O poder de defesa so vale dentro da arena, na batalha contra o Maycow de
+## combate (`is_maycow_normal == false`). Na cidade o Cobalt e um encontro de
+## rua com o Maycow normal: la ele continua so com a bola de fogo e o corpo a
+## corpo, sem esfera nenhuma.
+func _pode_usar_escudo() -> bool:
+	if not has_defense_shield or shield_active:
+		return false
+	if GlobalEvents.is_maycow_normal:
+		return false
+	if not is_inside_tree() or get_tree() == null:
+		return false
+	var cena := get_tree().current_scene
+	return cena != null and cena.scene_file_path.contains("battlefield")
+
+
 ## Poder de defesa: a mesma animacao "attack", mas o que sai dela e a esfera.
 func _exec_defense_attack() -> void:
+	if not _pode_usar_escudo():
+		return
 	is_attacking = true
 	_travel("attack")
 	_levanta_escudo()
@@ -500,7 +519,9 @@ func _levanta_escudo() -> void:
 		return
 	# Espera o inimigo abrir os bracos na animacao antes da esfera aparecer.
 	await get_tree().create_timer(0.8).timeout
-	if dead or not is_inside_tree():
+	# Nesses 0.8 s a batalha pode ter acabado e a cena voltado para a cidade:
+	# a esfera nao pode subir fora da arena.
+	if dead or not is_inside_tree() or not _pode_usar_escudo():
 		is_attacking = false
 		return
 
@@ -548,7 +569,10 @@ func _verificar_impacto_melee() -> void:
 	await get_tree().create_timer(0.35).timeout
 	if dead or not is_inside_tree() or not is_instance_valid(player): return
 	var area = get_node_or_null("attack") as Area3D
-	if area and area.has_overlapping_body(player):
+	# Area3D nao tem `has_overlapping_body(corpo)` — o que existe e o
+	# `has_overlapping_bodies()` sem argumento. Para perguntar por UM corpo
+	# especifico e a lista mesmo.
+	if area and area.get_overlapping_bodies().has(player):
 		_acertar_player(player)
 
 func _finish_melee_attack() -> void:

@@ -71,6 +71,33 @@ var blur_overlay: ColorRect
 # STAMINA & MP
 @export_group("Debug & Testing")
 @export var infinite_stamina_test: bool = false
+## Vida infinita pra testar ataques de inimigo sem morrer. O golpe continua
+## CONECTANDO com todo o retorno de sempre (sangue na tela, tremor, vibracao,
+## batimento) — so a vida nao desce. Isso e de proposito: num teste o que
+## importa e ver se o ataque acertou, e uma barra parada sem nenhum sinal nao
+## diz se o golpe pegou ou passou longe.
+##
+## Marcar em UMA instancia basta: vale pros dois Maycows e pra sessao inteira
+## (ver `_vida_infinita_na_sessao`).
+##
+## Nao cobre a morte por queda (`_trigger_fall_death`): cair fora do mapa nao e
+## dano, e a unica saida de quem furou o chao — sem ela o teste ficaria caindo
+## pra sempre.
+@export var infinite_health_test: bool = false
+
+# --- Interruptor de sessao das flags de teste acima ---
+#
+# Os dois Maycows sao instancias DIFERENTES do player.tscn, cada uma na sua
+# cena (stage_1.tscn, battlefield_1.tscn, the_house.tscn...), e a arena ainda
+# constroi um player novo a cada batalha. Marcar a caixa numa cena nao marca nas
+# outras: era por isso que a vida infinita pegava so no Maycow normal.
+#
+# Qualquer instancia que nasca com a caixa marcada liga a flag para a sessao
+# inteira, e todo player criado depois — o Maycow de combate da arena incluido —
+# ja nasce com ela. Como sao `static`, morrem com o processo: para desligar,
+# desmarque e rode o jogo de novo.
+static var _vida_infinita_na_sessao: bool = false
+static var _stamina_infinita_na_sessao: bool = false
 
 var max_stamina: float = 100.0
 var current_stamina: float = 100.0
@@ -203,6 +230,13 @@ const SENSITIVITY = 0.003 # Sensibilidade do mouse
 @export var WALK_SPEED_NORMAL: float = 2.8
 @export var RUN_SPEED: float = 4.8 # Velocidade maior para a corrida
 
+## --- Lentidao vinda de fora (anel de magia do Shadow Seraph) ---
+## Multiplica a velocidade de caminhada/corrida nas DUAS variantes do Maycow.
+## 1.0 = normal, 0.4 = 60% mais lento. O dash de proposito NAO passa por aqui:
+## o impulso continua sendo a saida de quem esta preso no anel.
+var speed_multiplier: float = 1.0
+var _slow_timer: float = 0.0
+
 #CHANGE LATER - DYNAMICLY
 @export var damage_crescent_cogblade:int = 20
 @export var damage_pistol:int = 10 #3 
@@ -238,7 +272,7 @@ var t_bob = 0.0         # Contador de tempo para o cálculo do Seno
 
 # DASH
 @export_group("Dash Settings")
-@export var DASH_SPEED : float = 30.0    # Velocidade durante o dash
+@export var DASH_SPEED : float = 20.0    # Velocidade durante o dash
 @export var DASH_DURATION : float = 0.2  # Quanto tempo dura (em segundos)
 @export var DASH_COOLDOWN : float = 1.0  # Tempo de espera para usar de novo
 
@@ -320,6 +354,8 @@ var _cutscene_hud_hidden: bool = false
 var _cutscene_camera_disabled: bool = false
 
 func _ready():
+	_sincroniza_flags_de_teste()
+
 	$CollisionShape3D.scale = Vector3(1, 1, 1) # Corrigir colisão oval travando nas quinas
 		
 	hand_pistol_pos_original = hand_with_pistol.position
@@ -463,11 +499,32 @@ var hold_timer: float = 0.0
 var hold_threshold: float = 0.15 # 200 milisegundos para confirmar o "segurar"
 var limite_rotacao_lateral = deg_to_rad(15) # O máximo que ele pode "virar" (ex: 35 graus)
 var velocidade_giro = 4.0
+## Espalha as flags de debug por todas as instancias de player da sessao, nos
+## dois sentidos: quem nasce marcado liga o interruptor, quem nasce desmarcado
+## herda o que ja estava ligado. Assim o resto do script continua lendo apenas
+## `infinite_health_test`/`infinite_stamina_test`, sem saber da estatica.
+func _sincroniza_flags_de_teste() -> void:
+	if infinite_health_test:
+		_vida_infinita_na_sessao = true
+	elif _vida_infinita_na_sessao:
+		infinite_health_test = true
+
+	if infinite_stamina_test:
+		_stamina_infinita_na_sessao = true
+	elif _stamina_infinita_na_sessao:
+		infinite_stamina_test = true
+
+
 func _physics_process(delta: float) -> void:
 	if not is_inside_tree() or get_tree() == null: return
 	
 	if damage_blur_timer > 0.0:
 		damage_blur_timer -= delta
+
+	if _slow_timer > 0.0:
+		_slow_timer -= delta
+		if _slow_timer <= 0.0:
+			speed_multiplier = 1.0
 	
 	# --- CUTSCENE CAMERA SHAKE ---
 	if _cutscene_camera_shake_intensity > 0.0 and is_instance_valid(camera_third_person):
@@ -656,7 +713,7 @@ func _physics_process(delta: float) -> void:
 			if Input.is_action_just_pressed("ui_reload") and !transition_camera and !is_magic_attacking:
 				reload()
 			
-			if Input.is_action_just_pressed("ui_shoot") and !transition_camera and !is_magic_attacking:
+			if Input.is_action_just_pressed("ui_shoot") and !transition_camera and !is_using_ultimate and !cogblade_melee_active:
 				shoot(Input)
 			
 			# O Cogblade Thrown saiu do botão Y: agora ele é uma das opções da
@@ -730,6 +787,7 @@ func _physics_process(delta: float) -> void:
 			# Mais lento ao andar para trás
 			if input_dir.y > 0.1:
 				velocidade_atual *= 0.65
+			velocidade_atual *= speed_multiplier
 				
 			var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 			var velocity_Y_zero: bool = velocity.y <= 0
@@ -924,6 +982,7 @@ func _physics_process(delta: float) -> void:
 		var velocidade_atual = RUN_SPEED if is_running else WALK_SPEED_NORMAL
 		if input_dir.y > 0.1:
 			velocidade_atual *= 0.65
+		velocidade_atual *= speed_multiplier
 		var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 		var velocity_Y_zero: bool = velocity.y <= 0
 		var target_fov: float = 75.0
@@ -1173,6 +1232,23 @@ func spawn_blood_effect(body: Node3D):
 	var comp = get_node_or_null("PlayerCombat")
 	if comp: comp.spawn_blood_effect(body)
 
+## Deixa o jogador mais lento por um tempo. Chamado pelo anel de magia do
+## Shadow Seraph (`seraph_slow_ring.gd`) quando ele encosta.
+##
+## Nao empilha: um segundo anel chegando no meio do primeiro vale o efeito mais
+## forte e o prazo mais longo dos dois, em vez de multiplicar um pelo outro e
+## deixar o jogador praticamente parado.
+func apply_slow(multiplier: float, duration: float) -> void:
+	speed_multiplier = minf(speed_multiplier, clampf(multiplier, 0.05, 1.0))
+	_slow_timer = maxf(_slow_timer, duration)
+
+
+## Tira a lentidao na hora (fim de batalha, respawn, cutscene).
+func clear_slow() -> void:
+	speed_multiplier = 1.0
+	_slow_timer = 0.0
+
+
 func take_damage(number:int):
 	if invulnerable:
 		return
@@ -1182,7 +1258,13 @@ func take_damage(number:int):
 		return
 	if current_health <= 0:
 		return
-		
+
+	# Teste de vida infinita: zera o valor aqui em vez de sair da funcao, pra
+	# todo o retorno do golpe (sangue, tremor, vibracao, blur) continuar
+	# rodando logo abaixo.
+	if infinite_health_test:
+		number = 0
+
 	current_health -= number
 	if current_health <= 0:
 		current_health = 0

@@ -8,8 +8,9 @@ const TOQUE_TIME_SCALE := 0.25
 ## Quanto tempo REAL a câmera lenta segura (o timer ignora o time_scale).
 const TOQUE_SLOWMO_SEGUNDOS := 1.6
 ## Resto da animação de dano (overlay de sangue, blur, batida do coração), já em
-## velocidade normal, antes da viagem para a arena começar.
-const TOQUE_ESPERA_FIM_DANO := 1.1
+## velocidade normal, antes da viagem para a arena começar. Curto de propósito:
+## a viagem entra com a reação do dano ainda no ar, e não depois dela esfriar.
+const TOQUE_ESPERA_FIM_DANO := 0.7
 
 var player: CharacterBody3D
 
@@ -755,8 +756,10 @@ func _on_amulet_magic_released() -> void:
 		center_pos += e.global_position
 	center_pos /= GlobalEvents.amulet_captured_enemies.size()
 
-	cine_cam.global_position = center_pos + Vector3(0, 1.5, 4.5)
+	# Entra na árvore ANTES de receber posição global: fora dela o Node3D não
+	# tem transform global e o motor reclama ("!is_inside_tree()").
 	current.add_child(cine_cam)
+	cine_cam.global_position = center_pos + Vector3(0, 1.5, 4.5)
 	cine_cam.look_at(center_pos + Vector3(0, 1.0, 0), Vector3.UP)
 	cine_cam.make_current()
 

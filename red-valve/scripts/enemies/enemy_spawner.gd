@@ -12,8 +12,10 @@ const ShadowRoads := preload("res://scripts/npcs/shadow_roads.gd")
 ##      um inimigo reciclado voltaria com a barra pela metade ou no meio da
 ##      animacao de morte. Cada um nasce novo e e liberado de vez
 ##      (`queue_free`) quando fica longe demais.
-##   2. Cada tipo tem o proprio relogio e o proprio teto de vivos. Zumbi e
-##      encontro comum de rua e aparece bem mais; o Cobalt Husker e a excecao.
+##   2. Cada tipo tem o proprio relogio, o proprio teto de vivos e, se quiser,
+##      o proprio raio de percepcao. Zumbi e encontro comum de rua e aparece
+##      bem mais; o Cobalt Husker e a excecao; e o Shadow Seraph e aparicao
+##      rara, que ainda vaga pela cidade um bom tempo antes de notar alguem.
 ##      Mexer na frequencia de um nao mexe na do outro — era isso que um
 ##      sorteio unico com relogio unico nao permitia.
 ##
@@ -53,6 +55,20 @@ const ShadowRoads := preload("res://scripts/npcs/shadow_roads.gd")
 ## Faixa de espera entre um Cobalt e o proximo.
 @export var cobalt_min_interval: float = 22.0
 @export var cobalt_max_interval: float = 60.0
+
+@export_group("The Shadow Seraph")
+## Vazio = res://scenes/enemies/shadow_seraph.tscn. 0 ativos = desliga.
+@export var seraph_scene: PackedScene
+## Quantos Seraph podem estar vivos ao mesmo tempo. Ele e caro (corpo montado
+## por codigo, asas, particulas) e e uma aparicao de peso: um basta.
+@export var seraph_max_active: int = 1
+## Faixa de espera entre um Seraph e o proximo.
+@export var seraph_min_interval: float = 70.0
+@export var seraph_max_interval: float = 150.0
+## Distancia em que ELE percebe o jogador. Fica abaixo do `distance_to_aproach`
+## geral de proposito: o Seraph tem de ser visto VAGANDO pela cidade antes de
+## sair atras de alguem, senao ninguem ve o bicho andando por ai.
+@export var seraph_aproximacao: float = 26.0
 
 @export_group("Ritmo")
 ## Espera antes do primeiro inimigo, contada do inicio do capitulo. Da tempo da
@@ -131,10 +147,16 @@ func _monta_tipos() -> void:
 		zombie_max_active, zombie_min_interval, zombie_max_interval)
 	_registra_tipo("cobalt", cobalt_scene, "res://scenes/enemies/the_cobalt_husker.tscn",
 		cobalt_max_active, cobalt_min_interval, cobalt_max_interval)
+	_registra_tipo("seraph", seraph_scene, "res://scenes/enemies/shadow_seraph.tscn",
+		seraph_max_active, seraph_min_interval, seraph_max_interval, seraph_aproximacao)
 
 
+## `aproximacao` > 0 sobrescreve, so pra este tipo, o `distance_to_aproach`
+## geral. Serve pra quem nao deve sair correndo atras do jogador do outro lado
+## da rua (o Shadow Seraph, que tem de ser visto vagando primeiro).
 func _registra_tipo(nome: String, cena: PackedScene, caminho_padrao: String,
-		max_ativos: int, min_intervalo: float, max_intervalo: float) -> void:
+		max_ativos: int, min_intervalo: float, max_intervalo: float,
+		aproximacao: float = 0.0) -> void:
 	if max_ativos <= 0:
 		return
 	var pack := cena
@@ -149,6 +171,7 @@ func _registra_tipo(nome: String, cena: PackedScene, caminho_padrao: String,
 		"max_ativos": max_ativos,
 		"min_intervalo": min_intervalo,
 		"max_intervalo": max_intervalo,
+		"aproximacao": aproximacao,
 		"cooldown": initial_delay,
 	})
 
@@ -298,8 +321,11 @@ func _nasce(tipo: Dictionary, pos: Vector3, ppos: Vector3) -> void:
 	if corpo == null:
 		raiz.queue_free()
 		return
-	if distance_to_aproach > 0.0 and "distance_to_aproach" in corpo:
-		corpo.distance_to_aproach = distance_to_aproach
+	var aprox := float(tipo.get("aproximacao", 0.0))
+	if aprox <= 0.0:
+		aprox = distance_to_aproach
+	if aprox > 0.0 and "distance_to_aproach" in corpo:
+		corpo.distance_to_aproach = aprox
 
 	_spawned.append({"raiz": raiz, "corpo": corpo, "tipo": tipo["nome"]})
 	if debug_log:

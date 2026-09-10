@@ -172,6 +172,7 @@ func _set_cine_param(valor: float, nome: String) -> void:
 func _on_animation_finished(anim_name: StringName) -> void:
 	if anim_name != ANIM_INTRO:
 		return
+	unset_in_cutscene()
 	_remover_filtro_cinematografico()
 
 

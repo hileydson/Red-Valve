@@ -141,6 +141,7 @@ func cast_spell() -> void:
 func shoot(input: Variant) -> void:
 	if not SaveManager.is_equipped("pistol"): return
 	if player.is_reloading: return
+	if player.is_using_ultimate or player.cogblade_melee_active: return
 	
 	if player.can_shoot_again and player.camera.current:
 		if player.clip_pistol_ammo <= 0:
