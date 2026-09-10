@@ -66,6 +66,12 @@ var _shield_cooldown: float = 0.0
 var _ultimo_hit_melee: float = 0.0
 # ------------------------------------------------------------------
 
+## Ligado só em cenas pontuais (ex.: a oficina do Jimmy): o inimigo continua
+## perseguindo, olhando, rosnando e atacando normalmente — só a translação de
+## verdade (andar pelo cenário) fica cortada, preso onde ele nasceu. No resto
+## do jogo fica desligado e ele anda normal.
+@export var preso_no_lugar: bool = false
+
 @export var max_health = 100
 @export var iron_rusks_value: int = 2
 var current_health = max_health
@@ -151,6 +157,14 @@ func _check_proximity() -> void:
 		velocity = Vector3.ZERO
 		set_physics_process(false)
 
+## Corta a translação horizontal sem mexer em mais nada (ataques, animação,
+## olhar pro player continuam decidindo tudo normalmente antes de chamar isto).
+func _trava_no_lugar_se_preso() -> void:
+	if preso_no_lugar:
+		velocity.x = 0.0
+		velocity.z = 0.0
+
+
 ## Troca de estado da AnimationTree sem explodir quando o inimigo nao tem aquele
 ## estado. O The Cobalt Husker, por exemplo, nao tem "idle" na maquina de
 ## estados: sem esta guarda, cada frame parado dele despeja tres erros no
@@ -220,6 +234,7 @@ func _physics_process(delta: float) -> void:
 				look_pos.y = global_position.y
 				if global_position.distance_to(look_pos) > 0.5:
 					look_at(look_pos, Vector3.UP)
+			_trava_no_lugar_se_preso()
 			move_and_slide()
 			return
 		else:
@@ -239,6 +254,7 @@ func _physics_process(delta: float) -> void:
 				look_pos.y = global_position.y
 				if global_position.distance_to(look_pos) > 0.5:
 					look_at(look_pos, Vector3.UP)
+			_trava_no_lugar_se_preso()
 			move_and_slide()
 			return
 
@@ -318,17 +334,21 @@ func _physics_process(delta: float) -> void:
 				if global_position.distance_to(look_pos) > 0.5:
 					look_at(look_pos, Vector3.UP)
 				
-				if steps.playing == false and !dead: 
+				if preso_no_lugar:
+					steps.stop()
+					_travel("idle")
+				elif steps.playing == false and !dead:
 					steps.play()
 					_travel("walk")
 		else:
-			steps.stop()			
+			steps.stop()
 			_travel("idle")
 			# Para gradualmente ao chegar ou se o player estiver longe
 			velocity.x = move_toward(velocity.x, 0, SPEED)
 			velocity.z = move_toward(velocity.z, 0, SPEED)
 
 	# 5. Move o corpo físico
+	_trava_no_lugar_se_preso()
 	move_and_slide()
 	
 	
@@ -431,10 +451,28 @@ func _acertar_player(body: Node3D) -> void:
 	# 1. Calcula a direção oposta ao impacto
 	var direcao = (body.global_position - global_position).normalized()
 	direcao.y = 0 # Mantém no chão
-	
+
 	# 2. Define o ponto de destino (ex: 3 metros para trás)
 	var destino = body.global_position + (direcao * 3.0)
-	
+
+	# 2b. O empurrão acima é um tween direto em global_position, sem passar por
+	# move_and_slide — ele ignora paredes. Numa sala pequena (a oficina do
+	# Jimmy, por exemplo) isso atravessava o player pra fora do cenário e ele
+	# caia no infinito. Um raycast na direção do empurrão encurta o destino
+	# pra parar um pouco antes de qualquer parede no caminho.
+	if body is PhysicsBody3D:
+		var espaco = get_world_3d().direct_space_state
+		var altura := Vector3(0, 1.0, 0)
+		var origem: Vector3 = body.global_position + altura
+		var alvo: Vector3 = destino + altura
+		var consulta := PhysicsRayQueryParameters3D.create(origem, alvo, body.collision_mask)
+		consulta.exclude = [body.get_rid()]
+		var acerto := espaco.intersect_ray(consulta)
+		if acerto:
+			var margem := 0.4
+			var dist_livre := maxf(origem.distance_to(acerto.position) - margem, 0.0)
+			destino = body.global_position + direcao * dist_livre
+
 	# 3. Cria o movimento suave
 	var tween = create_tween()
 	tween.tween_property(body, "global_position", destino, 0.2).set_trans(Tween.TRANS_QUAD)
