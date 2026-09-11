@@ -18,6 +18,13 @@ var default_language:String = language_pt_br
 var is_maycow_normal = false
 var entering_chapter_1: bool = false
 
+## Ligado enquanto a volta da arena para a stage_1 está em andamento. A sequência
+## final da batalha liga `in_cutscene` (que mata TODO o input) antes de uma espera
+## longa e só desliga depois da troca de cena; se essa corrente quebrar no meio, o
+## jogo fica sem input, com a câmera parada na arena. Isto é o que o watchdog em
+## GlobalUtils.watchdog_volta_da_arena() usa para perceber e destravar.
+var arena_retorno_pendente: bool = false
+
 ## Ligado pela cena do interior da casa do Jimmy no instante em que o jogador
 ## sai pela porta. O stage_1 consome (e zera) isto no spawn para devolver o
 ## jogador à soleira da casa em vez do ponto de entrada padrão do mapa.

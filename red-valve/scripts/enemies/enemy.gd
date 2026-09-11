@@ -170,21 +170,7 @@ func _trava_no_lugar_se_preso() -> void:
 ## estados: sem esta guarda, cada frame parado dele despeja tres erros no
 ## console (foram 6 mil em um teste de 3 minutos) e o log fica ilegivel.
 func _travel(estado: StringName) -> void:
-	if playback == null:
-		return
-	var maquina := animation_tree.tree_root as AnimationNodeStateMachine
-	# Se `maquina` vier nula (o `tree_root` ainda nao respondeu, ou nao e' um
-	# AnimationNodeStateMachine de verdade), a condicao antiga `maquina !=
-	# null and not maquina.has_node(estado)` dava falso e deixava passar um
-	# `travel()` sem checar nada. Um unico travel assim, pra um estado que a
-	# maquina nao tem, deixa a AnimationTree tentando resolver o "current
-	# state" pra sempre — o proprio motor reimprime o erro TODO quadro daí em
-	# diante, nao so quando a gente chama de novo. Em maquinas mais lentas
-	# (relatado num Steam Deck) isso sozinho e' spam suficiente pra travar o
-	# jogo de vez; no desktop do dev passava despercebido.
-	if maquina == null or not maquina.has_node(estado):
-		return
-	playback.travel(estado)
+	GlobalUtils.safe_travel(animation_tree, estado)
 
 
 ## O navmesh cobre o chão debaixo deste inimigo? Consultado 5 vezes por segundo,

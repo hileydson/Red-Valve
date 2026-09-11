@@ -598,7 +598,9 @@ func _play_selection_burst(enemy: Node3D) -> void:
 
 	GlobalUtils.vibrate_controller(null, 0.25, 0.4, 0.15)
 
-	var tw := create_tween().set_parallel(true)
+	# Preso ao proprio efeito, nao a este componente: quando o burst e' liberado,
+	# o tween vai junto em vez de ficar pendurado no PlayerAmulet.
+	var tw := burst.create_tween().set_parallel(true)
 	tw.tween_property(ring, "scale", Vector3(2.4, 2.4, 2.4), 0.45).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
 	tw.tween_property(ring_mat, "albedo_color:a", 0.0, 0.45).set_trans(Tween.TRANS_SINE)
 	tw.tween_property(flash, "light_energy", 0.0, 0.3).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
@@ -647,12 +649,21 @@ func _apply_magic_aura(enemy: Node3D) -> void:
 		ring.position.y = -0.15 if i == 0 else 0.35
 		aura.add_child(ring)
 
-		# Giro infinito (sentidos opostos) e pulsar de escala
-		var spin := create_tween().set_loops()
+		# Giro infinito (sentidos opostos) e pulsar de escala.
+		#
+		# `ring.create_tween()` e NAO `create_tween()`: preso ao proprio anel, o
+		# tween morre junto com ele. Preso a este componente (PlayerAmulet), como
+		# era antes, cada inimigo seleionado deixava DOIS tweens de loop infinito
+		# pendurados aqui pra sempre — as auras sao destruidas ao viajar pra
+		# arena, mas os tweens nao. Enquanto o PlayerAmulet dormia durante a
+		# batalha eles ficavam congelados; ao religa-lo na volta, todos
+		# retomavam no mesmo quadro e a thread principal morria seca, sem
+		# imprimir nada. Era este o travamento do fim da batalha.
+		var spin := ring.create_tween().set_loops()
 		var dir := 1.0 if i == 0 else -1.0
 		spin.tween_property(ring, "rotation:y", ring.rotation.y + dir * TAU, 2.4 + float(i)).from_current()
 
-		var pulse := create_tween().set_loops()
+		var pulse := ring.create_tween().set_loops()
 		pulse.tween_property(ring, "scale", Vector3(1.08, 1.08, 1.08), 0.6).set_trans(Tween.TRANS_SINE)
 		pulse.tween_property(ring, "scale", Vector3(0.94, 0.94, 0.94), 0.6).set_trans(Tween.TRANS_SINE)
 
@@ -698,7 +709,8 @@ func _apply_magic_aura(enemy: Node3D) -> void:
 
 	# Entrada: a aura nasce do chão e cresce
 	aura.scale = Vector3(0.1, 0.1, 0.1)
-	var grow := create_tween()
+	# Preso a' aura (mesma razao do spin/pulse acima): morre junto com ela.
+	var grow := aura.create_tween()
 	grow.tween_property(aura, "scale", Vector3.ONE, 0.35).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 func _remove_magic_aura(enemy: Node) -> void:

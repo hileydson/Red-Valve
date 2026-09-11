@@ -23,6 +23,83 @@ var _cutscene_skip_layer: CanvasLayer = null
 
 signal cinematic_cutscene_finished
 
+# ---------------------------------------------------------------------------
+# Troca de estado de AnimationTree à prova de estado inexistente
+# ---------------------------------------------------------------------------
+## UM ÚNICO `playback.travel()` para um estado que a máquina não tem deixa a
+## AnimationTree tentando resolver aquele estado PARA SEMPRE: o próprio motor
+## reimprime o erro todo quadro dali em diante, mesmo que ninguém chame
+## `travel()` de novo. Num PC rápido o spam passa batido; num aparelho mais
+## lento (foi relatado num Steam Deck rodando o build via Proton) só o custo de
+## imprimir isso 60x por segundo já trava o jogo de vez.
+##
+## Por isso NINGUÉM deve chamar `playback.travel()` direto — use isto.
+## Devolve true se o travel realmente aconteceu.
+var _travels_ja_avisados: Dictionary = {}
+
+func safe_travel(tree: AnimationTree, estado: StringName) -> bool:
+	if not is_instance_valid(tree):
+		return false
+	var playback = tree.get("parameters/playback")
+	if playback == null:
+		return false
+
+	var maquina := _achar_state_machine(tree.tree_root)
+	if maquina == null or not maquina.has_node(estado):
+		# Avisa UMA vez por (árvore, estado): o objetivo é aparecer no log sem
+		# virar o mesmo spam que estamos evitando.
+		var caminho := str(tree.get_path()) if tree.is_inside_tree() else str(tree)
+		var chave := "%s|%s" % [caminho, estado]
+		if not _travels_ja_avisados.has(chave):
+			_travels_ja_avisados[chave] = true
+			push_warning("safe_travel: estado '%s' nao existe na AnimationTree '%s' — travel ignorado." % [estado, caminho])
+		return false
+
+	playback.travel(estado)
+	return true
+
+
+## O `tree_root` nem sempre É a máquina de estados: pode ser um
+## AnimationNodeBlendTree com a máquina pendurada dentro. Nesse caso um
+## `as AnimationNodeStateMachine` seco devolve null e a checagem seria pulada.
+func _achar_state_machine(no: AnimationNode) -> AnimationNodeStateMachine:
+	if no == null:
+		return null
+	var direto := no as AnimationNodeStateMachine
+	if direto != null:
+		return direto
+	var blend := no as AnimationNodeBlendTree
+	if blend != null:
+		for nome in blend.get_node_list():
+			var achado := _achar_state_machine(blend.get_node(nome))
+			if achado != null:
+				return achado
+	return null
+
+
+## Rede de segurança da volta da arena.
+##
+## A sequência final da batalha liga `GlobalEvents.in_cutscene` (que bloqueia
+## TODO o input do jogador) e só desliga depois de uma espera longa + troca de
+## cena. Essa corrotina vive no nó da arena — justamente o nó que a troca
+## destrói. Se ela morrer no meio, `in_cutscene` fica ligado para sempre: sem
+## input, câmera parada na arena, e o áudio da stage_1 (que nunca parou, porque
+## AudioStreamPlayer tocando ignora process_mode) continuando por cima. Era
+## exatamente esse o travamento relatado.
+##
+## Este watchdog roda num autoload, então sobrevive à troca de cena.
+func watchdog_volta_da_arena(segundos: float) -> void:
+	await get_tree().create_timer(segundos, true, false, true).timeout
+	if not GlobalEvents.arena_retorno_pendente:
+		return # a volta terminou direitinho
+
+	GlobalEvents.arena_retorno_pendente = false
+	push_warning("Volta da arena nao terminou em %.0fs — destravando input e time_scale." % segundos)
+	GlobalEvents.in_cutscene = false
+	Engine.time_scale = 1.0
+	AudioServer.playback_speed_scale = 1.0
+
+
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	message_canvas_layer = CanvasLayer.new()

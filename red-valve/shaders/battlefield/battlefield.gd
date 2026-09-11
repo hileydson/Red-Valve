@@ -197,7 +197,15 @@ func _check_all_dead() -> void:
 func _start_final_sequence() -> void:
 	final_sequence_started = true
 	GlobalEvents.in_cutscene = true
-	
+
+	# `in_cutscene` acima mata todo o input e so' volta la' embaixo, depois de
+	# uma espera longa E da troca de cena. Esta corrotina mora no no' da arena,
+	# que e' o no' que a propria troca destroi — se ela morrer no meio, o jogo
+	# fica sem input com a camera parada aqui. O watchdog (autoload, sobrevive a'
+	# troca) desfaz as travas se isso acontecer.
+	GlobalEvents.arena_retorno_pendente = true
+	GlobalUtils.watchdog_volta_da_arena(14.0)
+
 	if is_instance_valid(player):
 		player.invulnerable = true
 	
@@ -214,52 +222,75 @@ func _start_final_sequence() -> void:
 	if fade:
 		fade.modulate.a = 0.0
 		var tween = create_tween().set_ignore_time_scale(true)
-		tween.tween_property(fade, "modulate:a", 1.0, 4.0) # 4 segundos de fade
+		tween.tween_property(fade, "modulate:a", 1.0, 3.0) # fade até o preto
 
 	# 4. Espera a animação terminar em tempo real.
-	# A 0.15x, a animação "dead" do inimigo precisa de bem mais que 5s reais pra
-	# completar a queda; com a janela curta, o time_scale voltava a 1.0 no meio
-	# da animação e ela "acelerava" de repente, parecendo que o inimigo nunca
-	# ficou em câmera lenta.
-	await get_tree().create_timer(7.0, true, false, true).timeout
+	# A 0.15x, a animação "dead" do inimigo precisa de vários segundos REAIS pra
+	# completar a queda; com a janela curta demais, o time_scale voltava a 1.0 no
+	# meio da animação e ela "acelerava" de repente. Estes 5 s dão a queda inteira
+	# e ainda deixam ~2 s de tela preta antes da troca — se quiser mais curto,
+	# baixe os dois números juntos (o fade tem de terminar antes da espera).
+	await get_tree().create_timer(5.0, true, false, true).timeout
 
 	# 5. Restaura e vai para a Cutscene
 	Engine.time_scale = 1.0
 	AudioServer.set_playback_speed_scale(1.0)
 	GlobalEvents.in_cutscene = false
 	if not SaveManager.prolog_finished:
+		GlobalEvents.arena_retorno_pendente = false
 		get_tree().change_scene_to_file("res://scenes/stages/prolog/fight_with_power/cutscene_fight_with_power.tscn")
 	else:
-		if is_instance_valid(GlobalEvents.paused_scene_for_amulet):
-			var tree = get_tree()
-			var root = tree.root
-			var current = tree.current_scene
-			
-			root.remove_child(current)
-			current.queue_free()
+		var volta: Node = GlobalEvents.paused_scene_for_amulet
+		if is_instance_valid(volta):
+			var tree := get_tree()
+			var arena := tree.current_scene
 
-			# A cena pausada nunca saiu da árvore (ver player_amulet.gd), só
-			# ficou escondida/sem processar. Aqui só a reativamos, o que evita
-			# o bug do chão (Terrain3D) perdendo a textura ao ser readicionado.
-			GlobalEvents.paused_scene_for_amulet.visible = true
-			GlobalEvents.paused_scene_for_amulet.process_mode = Node.PROCESS_MODE_INHERIT
-			GlobalUtils.set_canvas_layers_hidden(GlobalEvents.paused_scene_for_amulet, false)
-			tree.current_scene = GlobalEvents.paused_scene_for_amulet
+			# A stage_1 nunca saiu da árvore (ver player_amulet.gd): ficou só
+			# escondida e sem processar. Aqui ela é reativada inteira, num quadro
+			# só — isso evita o bug do chão (Terrain3D) perdendo a textura ao ser
+			# readicionado, e mantém a troca instantânea.
+			#
+			# `is_maycow_normal` volta ANTES de a stage_1 processar: o Maycow de lá
+			# é o normal, e se ele acordasse com a flag do combate rodaria o ramo do
+			# parasita, que mexe em `$maycow_lopes` — nó liberado no _ready dele.
+			GlobalEvents.is_maycow_normal = GlobalEvents.previous_is_maycow_normal
+
+			# ORDEM IMPORTA: revive a stage_1 ANTES de mexer na arena. Antes era o
+			# contrário (remove_child na arena primeiro), e um `remove_child()`
+			# chamado daqui pode falhar com "Parent node is busy adding/removing
+			# children" — quando falhava, a arena ficava por cima e o jogador ficava
+			# preso nela.
+			volta.process_mode = Node.PROCESS_MODE_INHERIT
+			volta.visible = true
+			GlobalUtils.set_canvas_layers_hidden(volta, false)
+			tree.current_scene = volta
+
+			# Só agora a arena sai de cena. `queue_free()` já tira da árvore ao
+			# liberar, e em diferido — sem o remove_child síncrono que podia falhar
+			# no meio de um callback.
+			if is_instance_valid(arena) and arena != volta:
+				arena.queue_free()
 
 			# Toca o efeito de retorno na câmera da cena restaurada
-			var p = _find_player_recursive(GlobalEvents.paused_scene_for_amulet)
+			var p = _find_player_recursive(volta)
 			if p:
 				if not p.is_in_group("player"):
 					p.add_to_group("player")
 				if p.has_method("play_return_from_arena_effect"):
 					p.play_return_from_arena_effect()
-			
-			# Restaura o estado normal/combat do jogador
-			GlobalEvents.is_maycow_normal = GlobalEvents.previous_is_maycow_normal
-			
+
+			# (o estado normal/combat do jogador já foi restaurado lá em cima,
+			# antes de qualquer nó da stage_1 voltar a processar)
 			GlobalEvents.paused_scene_for_amulet = null
+			GlobalEvents.arena_retorno_pendente = false
 		else:
-			get_tree().change_scene_to_file("res://scenes/stages/stage_1.tscn")
+			# Caminho de emergência (a cena pausada sumiu). Era
+			# "res://scenes/stages/stage_1.tscn", que NÃO existe — o arquivo
+			# mora em stage_1/stage_1.tscn. Com o caminho errado a troca falhava
+			# e o jogador ficava presos na arena, sem saída.
+			push_warning("Volta da arena: cena pausada invalida, recarregando a stage_1 do zero.")
+			GlobalEvents.arena_retorno_pendente = false
+			get_tree().change_scene_to_file("res://scenes/stages/stage_1/stage_1.tscn")
 
 func _find_player_recursive(node: Node) -> Node:
 	if node.is_in_group("player") or node.name.to_lower() == "player":

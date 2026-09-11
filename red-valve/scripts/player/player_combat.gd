@@ -29,10 +29,13 @@ func process_combat(delta: float) -> void:
 			if faiscas: faiscas.emitting = false
 			
 			player.is_magic_attacking = false
-			if player.hand_magic_tree:
-				var pb = player.hand_magic_tree["parameters/playback"]
-				if pb: pb.travel("idle")
-				
+			# Aqui havia um `travel("idle")`, mas "idle" NAO existe nesta arvore
+			# (ela so tem magic_holding_gun, magic_holding_shoot, magic_reload e
+			# magic_thrown). O travel falhava e ainda deixava a AnimationTree
+			# reclamando todo quadro pra sempre. A mao ja' fica na pose certa sem
+			# trocar de estado nenhum aqui — que e' como sempre se comportou na
+			# pratica, ja' que o travel nunca funcionou.
+
 			var tween_hand = create_tween()
 			tween_hand.tween_interval(0.2)
 			tween_hand.tween_property(player.hand_magic_3d, "position", player.hand_magic_3d_pos_hidden, 1.5).set_trans(Tween.TRANS_SINE)
@@ -61,9 +64,7 @@ func reload() -> void:
 			player.hand_magic_3d.position = player.hand_magic_3d_pos_original
 			player.hand_magic_3d.visible = true
 			
-		if player.hand_magic_tree:
-			var pb = player.hand_magic_tree["parameters/playback"]
-			if pb: pb.travel("magic_reload")
+		GlobalUtils.safe_travel(player.hand_magic_tree, "magic_reload")
 		
 		if player.hand_animations:
 			player.hand_animations.play("reload")
@@ -151,10 +152,11 @@ func magic_hand_attack() -> void:
 	player.slay_it.play()
 	player.blade_out.play()
 	
-	if player.hand_magic_tree:
-		var pb = player.hand_magic_tree["parameters/playback"]
-		if pb: pb.travel("attack")
-		
+	# Aqui havia um `travel("attack")` — estado que NAO existe nesta arvore. Como
+	# acima, o travel nunca funcionou (so' corrompia a AnimationTree), entao a
+	# animacao do golpe sempre veio do tween/`hand_animations` abaixo. Nao trocar
+	# de estado mantem a mao exatamente como sempre foi.
+
 	var tween_magic = create_tween().set_parallel(true)
 	
 	var pos_alvo = player.hand_magic_3d_pos_original + Vector3(0, 0, 0.1)

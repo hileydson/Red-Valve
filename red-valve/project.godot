@@ -28,6 +28,7 @@ config/name_localized={
 config/version="1.0"
 run/main_scene="res://scenes/configs/language.tscn"
 config/features=PackedStringArray("4.6", "Mobile")
+run/flush_stdout_on_print=true
 boot_splash/bg_color=Color(0, 0, 0, 1)
 boot_splash/use_filter=false
 boot_splash/image="res://assets/images/loadings/splash.png"
