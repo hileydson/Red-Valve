@@ -513,9 +513,14 @@ func _tenta_batalha_forcada(body: Node3D) -> bool:
 		return false
 
 	# Sequência já em andamento (outro inimigo encostou primeiro, ou este mesmo
-	# no frame anterior): o toque não faz nada. Deixar cair no dano normal seria
-	# tirar vida por cima da cinemática — e poderia matar o jogador no meio dela.
+	# no frame anterior). O toque continua CONSUMIDO de qualquer jeito: deixar
+	# cair no dano normal seria tirar vida por cima da cinemática, e poderia
+	# matar o jogador no meio dela.
+	#
+	# Mas antes de descartar, oferece este inimigo à sequência em curso — se ela
+	# ainda não viajou, ele embarca junto e os dois vão para a arena.
 	if GlobalEvents.forced_battle_running:
+		body.force_battle_from_touch(self)
 		return true
 
 	return body.force_battle_from_touch(self)

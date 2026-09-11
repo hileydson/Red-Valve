@@ -2230,9 +2230,12 @@ func _tenta_batalha_forcada(corpo: Node3D) -> bool:
 	if cena == null or not cena.scene_file_path.contains("stage_1"):
 		return false
 
-	# Sequencia ja em andamento (outro inimigo encostou primeiro): o toque nao
-	# faz nada. Cair no dano normal seria tirar vida por cima da cinematica.
+	# Sequencia ja em andamento (outro inimigo encostou primeiro). O toque segue
+	# CONSUMIDO: cair no dano normal seria tirar vida por cima da cinematica.
+	# Antes de descartar, oferece este inimigo a sequencia — se ela ainda nao
+	# viajou, ele embarca junto (ver player_amulet._juntar_na_batalha_forcada).
 	if GlobalEvents.forced_battle_running:
+		corpo.force_battle_from_touch(self)
 		return true
 
 	return corpo.force_battle_from_touch(self)

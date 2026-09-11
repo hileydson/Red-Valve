@@ -22,6 +22,14 @@ const VOLTA_CARENCIA_SEGUNDOS := 3.0
 
 var player: CharacterBody3D
 
+## --- Companhia na batalha forçada ---
+## Quem encostou no Maycow durante a janela da batalha forçada. O primeiro é
+## quem dispara (e cobra o sangue); os que encostarem enquanto a câmera lenta
+## ainda está rolando entram de carona, sem dano extra.
+var _toque_inimigos: Array[Node] = []
+## Aberta do primeiro toque até a viagem começar de fato.
+var _toque_aceita_companhia: bool = false
+
 ## Estado do gatilho de seleção no frame anterior — ver o comentário em
 ## `_process_amulet_targeting`.
 var _gatilho_selecionar_estava_pressionado: bool = false
@@ -737,7 +745,10 @@ func _remove_magic_aura(enemy: Node) -> void:
 ## para o inimigo não somar o dano normal dele por cima.
 func force_battle_from_touch(enemy: Node3D) -> bool:
 	if GlobalEvents.forced_battle_running:
-		return false
+		# Já existe uma sequência em curso. Se ela ainda não viajou, este inimigo
+		# entra JUNTO em vez de ser ignorado — dois encostões quase simultâneos
+		# levam os dois para a arena.
+		return _juntar_na_batalha_forcada(enemy)
 	if not is_instance_valid(player) or not is_instance_valid(enemy):
 		return false
 	# Já viajando, voltando da arena, invulnerável, em cutscene ou no ultimate:
@@ -750,6 +761,8 @@ func force_battle_from_touch(enemy: Node3D) -> bool:
 		return false
 
 	GlobalEvents.forced_battle_running = true
+	_toque_inimigos = [enemy]
+	_toque_aceita_companhia = true
 
 	# Metade arredondada para BAIXO: com 1 de sangue o toque não mata, senão o
 	# jogador seria levado para a arena e para o game over no mesmo instante.
@@ -757,16 +770,45 @@ func force_battle_from_touch(enemy: Node3D) -> bool:
 	player.take_damage(dano)
 
 	if player.current_health <= 0:
+		_toque_aceita_companhia = false
+		_toque_inimigos.clear()
 		GlobalEvents.forced_battle_running = false
 		return true
 
-	_forced_battle_sequence(enemy)
+	_forced_battle_sequence()
+	return true
+
+
+## Um segundo (ou terceiro) inimigo encostou enquanto a sequência do primeiro
+## ainda estava na câmera lenta. Ele pega carona na mesma viagem.
+##
+## SEM dano extra de propósito: o toque cobra metade do sangue que resta, e
+## cobrar isso de novo por inimigo mataria o jogador só pelo azar de dois
+## chegarem juntos — que é exatamente o caso que isto existe para atender.
+func _juntar_na_batalha_forcada(enemy: Node3D) -> bool:
+	if not _toque_aceita_companhia:
+		return false
+	if not is_instance_valid(player) or not is_instance_valid(enemy):
+		return false
+	if _toque_inimigos.has(enemy):
+		return false
+	if ("dead" in enemy) and enemy.dead:
+		return false
+	# Mesmo teto da seleção pelo amuleto: a arena não recebe mais que isso.
+	if _toque_inimigos.size() >= player.max_amulet_targets:
+		return false
+
+	_toque_inimigos.append(enemy)
 	return true
 
 
 ## Corre solta (sem await de quem chamou): segura a animação de dano em câmera
-## lenta, espera ela acabar e só então entrega o inimigo para a viagem.
-func _forced_battle_sequence(enemy: Node3D) -> void:
+## lenta, espera ela acabar e só então entrega os inimigos para a viagem.
+##
+## A lista não é parâmetro porque ela cresce DURANTE esta espera: quem encostar
+## no Maycow enquanto a câmera lenta roda entra em `_toque_inimigos` pelo
+## `_juntar_na_batalha_forcada()` e viaja junto.
+func _forced_battle_sequence() -> void:
 	var tree := get_tree()
 
 	# Câmera lenta momentânea. Os efeitos que o `take_damage` acabou de soltar
@@ -789,9 +831,19 @@ func _forced_battle_sequence(enemy: Node3D) -> void:
 		GlobalEvents.forced_battle_running = false
 		return
 
-	# O inimigo pode ter morrido ou sumido durante a cinemática (tiro do próprio
-	# jogador, o spawner liberando quem ficou longe). Sem ele não há batalha.
-	if not is_instance_valid(enemy) or (("dead" in enemy) and enemy.dead):
+	# A viagem começa aqui: a partir deste ponto não entra mais ninguém.
+	_toque_aceita_companhia = false
+
+	# Qualquer um deles pode ter morrido ou sumido durante a câmera lenta (tiro
+	# do próprio jogador, o spawner liberando quem ficou longe). Sem ninguém de
+	# pé, não há batalha.
+	var levar: Array[Node] = []
+	for e in _toque_inimigos:
+		if is_instance_valid(e) and not (("dead" in e) and e.dead):
+			levar.append(e)
+	_toque_inimigos.clear()
+
+	if levar.is_empty():
 		GlobalEvents.forced_battle_running = false
 		return
 
@@ -799,7 +851,8 @@ func _forced_battle_sequence(enemy: Node3D) -> void:
 	GlobalEvents.forced_battle_health = player.current_health
 
 	player.amulet_selected_enemies.clear()
-	player.amulet_selected_enemies.append(enemy)
+	for e in levar:
+		player.amulet_selected_enemies.append(e)
 	await _on_amulet_magic_released()
 
 	GlobalEvents.forced_battle_running = false
