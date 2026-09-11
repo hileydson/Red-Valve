@@ -8429,6 +8429,7 @@ label_settings = SubResource("LabelSettings_dovo2")
 
 [node name="hand_with_magic" type="Node3D" parent="Camera3D" unique_id=1139019690]
 transform = Transform3D(-0.3089843, 0.95097756, -0.013051391, -0.74703693, -0.2511686, -0.61550844, -0.5886128, -0.1804325, 0.78802234, 0.09794366, -0.47211754, -0.51191336)
+visible = false
 script = ExtResource("12_uniwh")
 
 [node name="hand_magic" parent="Camera3D/hand_with_magic" unique_id=1185696949 instance=ExtResource("12_j4nxn")]
@@ -8445,6 +8446,7 @@ anim_player = NodePath("../AnimationPlayer")
 
 [node name="hand_with_pistol" parent="Camera3D" unique_id=1109781536 instance=ExtResource("5_kvlxm")]
 transform = Transform3D(-0.011178756, 0.03977711, -0.36271065, 0.0060710586, 0.3527789, 0.040586524, 0.25817004, -0.0065735094, -0.016659787, 0.31141216, -0.24224794, -0.5220645)
+visible = false
 script = ExtResource("10_3j4b4")
 
 [node name="Mesh_0" parent="Camera3D/hand_with_pistol" index="0" unique_id=1030102779]

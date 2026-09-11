@@ -65,6 +65,9 @@ func mostrar(textura: Texture2D, textos: Array) -> void:
 	await saida.finished
 
 	get_tree().paused = false
+	# A última frase é confirmada com ui_accept OU ui_dash — e o ui_dash é o
+	# mesmo botão do dash. Sem isto, fechar o tutorial fazia o Maycow disparar.
+	GlobalEvents.bloquear_dash_por()
 	finalizado.emit()
 	queue_free()
 

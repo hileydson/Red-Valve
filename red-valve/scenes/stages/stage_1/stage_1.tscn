@@ -839,7 +839,6 @@ metadata/_edit_lock_ = true
 
 [node name="Player" parent="." unique_id=663958156 instance=ExtResource("1_23usu")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 638.568, 6.749998, -148.69229)
-infinite_health_test = true
 
 [node name="enemies" type="Node3D" parent="." unique_id=1935818346]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 714.9369, 2.015886, 441.17017)

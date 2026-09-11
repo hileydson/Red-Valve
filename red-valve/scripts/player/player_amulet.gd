@@ -883,6 +883,8 @@ func _on_amulet_magic_released() -> void:
 		player.camera_third_person.fov = 75.0
 	if is_instance_valid(player.hand_with_magic):
 		player.hand_with_magic.visible = false
+	if is_instance_valid(player.hand_with_pistol):
+		player.hand_with_pistol.visible = false
 	if is_instance_valid(player.amulet_crosshair): player.amulet_crosshair.visible = false
 	if player.point: player.point.visible = false
 	if is_instance_valid(player.amulet_counter_label): player.amulet_counter_label.visible = false

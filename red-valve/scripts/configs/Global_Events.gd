@@ -18,6 +18,23 @@ var default_language:String = language_pt_br
 var is_maycow_normal = false
 var entering_chapter_1: bool = false
 
+## --- Janelinha anti-dash ao fechar menu ---
+## O `ui_dash` está no mesmo botão do controle (B) que fecha o pause, o
+## inventário e o tutorial. Ao sair do menu, o jogo despausa no mesmo quadro em
+## que a tecla foi apertada, e o `is_action_just_pressed("ui_dash")` do player
+## via a MESMA tecla — o Maycow saía em disparada só por ter fechado o menu.
+## Quem fecha o menu chama `bloquear_dash_por()`; o dash consulta o resto.
+var _dash_liberado_em_ms: int = 0
+
+## Segura o dash por alguns milissegundos. Curto de propósito: só o bastante pra
+## a tecla que fechou o menu não ser lida como dash.
+func bloquear_dash_por(ms: int = 250) -> void:
+	_dash_liberado_em_ms = Time.get_ticks_msec() + ms
+
+
+func dash_bloqueado() -> bool:
+	return Time.get_ticks_msec() < _dash_liberado_em_ms
+
 ## Ligado enquanto a volta da arena para a stage_1 está em andamento. A sequência
 ## final da batalha liga `in_cutscene` (que mata TODO o input) antes de uma espera
 ## longa e só desliga depois da troca de cena; se essa corrente quebrar no meio, o

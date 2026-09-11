@@ -112,5 +112,8 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 func close():
+	# Fecha com QUALQUER botão do controle — inclusive o B, que é o mesmo do
+	# dash. Sem esta janelinha o Maycow dispara ao fechar a inspeção.
+	GlobalEvents.bloquear_dash_por()
 	inspector_closed.emit()
 	queue_free()

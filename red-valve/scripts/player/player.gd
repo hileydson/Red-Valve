@@ -85,17 +85,16 @@ var blur_overlay: ColorRect
 ## pra sempre.
 @export var infinite_health_test: bool = false
 
-# --- Interruptor de sessao das flags de teste acima ---
+# --- Interruptor de sessao das flags de teste (aba DEBUG das configuracoes) ---
 #
-# Os dois Maycows sao instancias DIFERENTES do player.tscn, cada uma na sua
-# cena (stage_1.tscn, battlefield_1.tscn, the_house.tscn...), e a arena ainda
-# constroi um player novo a cada batalha. Marcar a caixa numa cena nao marca nas
-# outras: era por isso que a vida infinita pegava so no Maycow normal.
+# Os dois Maycows sao instancias DIFERENTES do player.tscn, cada uma na sua cena
+# (stage_1.tscn, battlefield_1.tscn, the_house.tscn...), e a arena ainda
+# constroi um player novo a cada batalha. Por isso o interruptor e' `static`:
+# vale pra todo player da sessao, inclusive os que nascerem depois.
 #
-# Qualquer instancia que nasca com a caixa marcada liga a flag para a sessao
-# inteira, e todo player criado depois — o Maycow de combate da arena incluido —
-# ja nasce com ela. Como sao `static`, morrem com o processo: para desligar,
-# desmarque e rode o jogo de novo.
+# SOMENTE MEMORIA. Comecam sempre DESLIGADOS, nao vao pro save nem pro
+# project.godot, e morrem com o processo — fechar e abrir o jogo volta ao
+# padrao. Quem liga/desliga e' a aba DEBUG, em tempo real.
 static var _vida_infinita_na_sessao: bool = false
 static var _stamina_infinita_na_sessao: bool = false
 
@@ -392,6 +391,7 @@ var _cutscene_shake_v_base: float = 0.0
 var _is_cutscene_shaking: bool = false
 var _cutscene_hud_hidden: bool = false
 var _cutscene_camera_disabled: bool = false
+var _was_cutscene_blocked: bool = false
 
 func _ready():
 	_sincroniza_flags_de_teste()
@@ -419,6 +419,12 @@ func _ready():
 	hand_magic_3d_pos_hidden = hand_magic_3d_pos_original + left_hand_idle_offset
 	hand_magic_3d.position = hand_magic_3d_pos_hidden
 	#hand_magic_3d.visible = false
+	
+	# Garante que mãos e controles em 1ª pessoa comecem invisíveis desde o primeiro instante
+	hand_with_pistol.visible = false
+	if hand_with_magic: hand_with_magic.visible = false
+	control_magic.visible = false
+	control_weapons.visible = false
 	
 	# Desativa a física por um breve momento
 	set_physics_process(false)
@@ -539,20 +545,18 @@ var hold_timer: float = 0.0
 var hold_threshold: float = 0.15 # 200 milisegundos para confirmar o "segurar"
 var limite_rotacao_lateral = deg_to_rad(15) # O máximo que ele pode "virar" (ex: 35 graus)
 var velocidade_giro = 4.0
-## Espalha as flags de debug por todas as instancias de player da sessao, nos
-## dois sentidos: quem nasce marcado liga o interruptor, quem nasce desmarcado
-## herda o que ja estava ligado. Assim o resto do script continua lendo apenas
-## `infinite_health_test`/`infinite_stamina_test`, sem saber da estatica.
+## Antes esta funcao espalhava as flags nos DOIS sentidos, e o sentido
+## "estatica -> instancia" era um caminho sem volta: bastava a sessao estar
+## ligada uma vez pra `infinite_health_test` ficar `true` PARA SEMPRE naquela
+## instancia. Como a checagem le `instancia OR sessao`, desligar pela aba DEBUG
+## nao surtia efeito nenhum — o botao parecia morto.
+##
+## Agora os dois mecanismos sao independentes:
+##   - a caixinha do editor liga a flag SO naquela instancia (uso manual);
+##   - a aba DEBUG liga/desliga a sessao inteira, em RAM, e manda de verdade.
+## Nenhum dos dois vai para o save: fechar o jogo zera os dois.
 func _sincroniza_flags_de_teste() -> void:
-	if infinite_health_test:
-		_vida_infinita_na_sessao = true
-	elif _vida_infinita_na_sessao:
-		infinite_health_test = true
-
-	if infinite_stamina_test:
-		_stamina_infinita_na_sessao = true
-	elif _stamina_infinita_na_sessao:
-		infinite_stamina_test = true
+	pass
 
 
 func _physics_process(delta: float) -> void:
@@ -667,6 +671,12 @@ func _physics_process(delta: float) -> void:
 		
 	if global_position.y < -10.0 and current_health > 0 and not is_falling_dead:
 		_trigger_fall_death()
+
+	if are_cutscene_inputs_blocked():
+		if is_instance_valid(hand_with_pistol) and hand_with_pistol.visible:
+			hand_with_pistol.visible = false
+		if is_instance_valid(hand_with_magic) and hand_with_magic.visible:
+			hand_with_magic.visible = false
 		
 	# PARASITE MAYCOW (1ª Pessoa)
 	if !GlobalEvents.is_maycow_normal:
@@ -674,8 +684,10 @@ func _physics_process(delta: float) -> void:
 		# 1. LÓGICA DE MIRA (AIM/ZOOM EM PRIMEIRA PESSOA)
 		is_first_person = true # Sempre em primeira pessoa
 		
+		var cutscene_blocked = are_cutscene_inputs_blocked()
+		
 		# Força a câmera de 1ª pessoa a ser a atual se não for (ex: ao entrar na cena)
-		if not are_cutscene_inputs_blocked() and not _cutscene_camera_disabled and not camera.current and not transition_camera and not camera_bullet_time_ON:
+		if not cutscene_blocked and not _cutscene_camera_disabled and not camera.current and not transition_camera and not camera_bullet_time_ON:
 			camera.make_current()
 			if camera_third_person:
 				camera_third_person.current = false
@@ -684,7 +696,6 @@ func _physics_process(delta: float) -> void:
 			if hand_with_magic: hand_with_magic.visible = true
 			control_magic.visible = true
 			
-		var cutscene_blocked = are_cutscene_inputs_blocked()
 		var wants_to_aim = not cutscene_blocked and Input.is_action_pressed("ui_hold_first_person_view")
 		var has_mp = SaveManager.current_mp > 0
 		
@@ -697,6 +708,14 @@ func _physics_process(delta: float) -> void:
 			if is_instance_valid(gun_load): gun_load.play()
 
 		if cutscene_blocked:
+			if hand_with_pistol and hand_with_pistol.visible:
+				hand_with_pistol.visible = false
+			if hand_with_magic and hand_with_magic.visible:
+				hand_with_magic.visible = false
+			if control_weapons and control_weapons.visible:
+				control_weapons.visible = false
+			if control_magic and control_magic.visible:
+				control_magic.visible = false
 			if is_aiming:
 				is_aiming = false
 				if amulet_selected_enemies.size() == 0:
@@ -704,6 +723,15 @@ func _physics_process(delta: float) -> void:
 				_on_amulet_magic_released()
 			elif AudioServer.playback_speed_scale != 1.0 and amulet_selected_enemies.size() == 0:
 				AudioServer.playback_speed_scale = 1.0
+		elif _was_cutscene_blocked:
+			# Acabou de sair de cutscene: restaura mãos e controles para o gameplay
+			if not transition_camera and not camera_bullet_time_ON and not is_using_ultimate:
+				control_weapons.visible = true
+				hand_with_pistol.visible = SaveManager.is_equipped("pistol") and not is_reloading
+				if hand_with_magic: hand_with_magic.visible = true
+				control_magic.visible = true
+
+		_was_cutscene_blocked = cutscene_blocked
 
 		is_aiming = wants_to_aim and has_mp
 		
@@ -784,7 +812,7 @@ func _physics_process(delta: float) -> void:
 		if dash_cooldown_timer > 0:
 			dash_cooldown_timer -= delta
 
-		if not are_cutscene_inputs_blocked() and Input.is_action_just_pressed("ui_dash") and not is_dashing and dash_cooldown_timer <= 0 and (current_stamina >= 30.0 or _stamina_infinita()):
+		if not are_cutscene_inputs_blocked() and Input.is_action_just_pressed("ui_dash") and not GlobalEvents.dash_bloqueado() and not is_dashing and dash_cooldown_timer <= 0 and (current_stamina >= 30.0 or _stamina_infinita()):
 			if not _stamina_infinita():
 				current_stamina -= 30.0
 			stamina_fade_timer = 2.0

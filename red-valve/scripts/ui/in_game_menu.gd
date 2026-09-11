@@ -553,6 +553,10 @@ func close_menu() -> void:
 	await get_tree().process_frame
 	get_tree().paused = false
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-	get_tree().call_group("player", "prevent_dash_leak")
+	# Antes aqui havia um `call_group("player", "prevent_dash_leak")` — método
+	# que NÃO existe em lugar nenhum, e `call_group` para método inexistente é
+	# silencioso: a proteção nunca chegou a valer. O B que fecha este menu é o
+	# mesmo botão do dash, daí a disparada ao sair.
+	GlobalEvents.bloquear_dash_por()
 	get_tree().call_group("player", "update_equipment_visuals")
 	queue_free()

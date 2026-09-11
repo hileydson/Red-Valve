@@ -112,13 +112,17 @@ func _ready() -> void:
 					enemy_script.cutscene_mode = true
 		GlobalEvents.in_cutscene = true
 
-		# Esconde a mão em primeira pessoa (hand_with_magic) durante a cutscene de intro:
-		# como ela é filha da Camera3D do player, continua visível no mundo mesmo com outra
+		# Esconde as mãos em primeira pessoa (hand_with_magic e hand_with_pistol) durante a cutscene de intro:
+		# como são filhas da Camera3D do player, continuam visíveis no mundo mesmo com outra
 		# câmera (a de intro) ativa, flutuando em cena. Restaura o estado original no final.
 		var hand_magic_was_visible = false
+		var hand_pistol_was_visible = false
 		if "hand_with_magic" in player and is_instance_valid(player.hand_with_magic):
 			hand_magic_was_visible = player.hand_with_magic.visible
 			player.hand_with_magic.visible = false
+		if "hand_with_pistol" in player and is_instance_valid(player.hand_with_pistol):
+			hand_pistol_was_visible = player.hand_with_pistol.visible
+			player.hand_with_pistol.visible = false
 
 		var is_first_time = not SaveManager.prolog_finished
 
@@ -146,6 +150,8 @@ func _ready() -> void:
 				player.camera_third_person.make_current()
 			if "hand_with_magic" in player and is_instance_valid(player.hand_with_magic):
 				player.hand_with_magic.visible = hand_magic_was_visible
+			if "hand_with_pistol" in player and is_instance_valid(player.hand_with_pistol):
+				player.hand_with_pistol.visible = hand_pistol_was_visible
 				
 		if is_instance_valid(player):
 			player.process_mode = Node.PROCESS_MODE_INHERIT
@@ -162,10 +168,13 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	# HACK EXCLUSIVO: Mantém a mão mágica invisível SOMENTE durante a cutscene do início (primeira vez no prólogo)
-	if animation_intro.is_playing() and animation_intro.current_animation == "intro_first_time":
-		if is_instance_valid(player) and player.get("hand_with_magic") and is_instance_valid(player.hand_with_magic):
-			player.hand_with_magic.visible = false
+	# Mantém as mãos de primeira pessoa invisíveis durante qualquer cutscene na arena
+	if GlobalEvents.in_cutscene:
+		if is_instance_valid(player):
+			if player.get("hand_with_magic") and is_instance_valid(player.hand_with_magic):
+				player.hand_with_magic.visible = false
+			if player.get("hand_with_pistol") and is_instance_valid(player.hand_with_pistol):
+				player.hand_with_pistol.visible = false
 
 	if is_instance_valid(camera_intro):
 		camera_intro.make_current()
@@ -208,6 +217,10 @@ func _start_final_sequence() -> void:
 
 	if is_instance_valid(player):
 		player.invulnerable = true
+		if "hand_with_magic" in player and is_instance_valid(player.hand_with_magic):
+			player.hand_with_magic.visible = false
+		if "hand_with_pistol" in player and is_instance_valid(player.hand_with_pistol):
+			player.hand_with_pistol.visible = false
 	
 	# 1. Ultra Câmera Lenta
 	Engine.time_scale = 0.15

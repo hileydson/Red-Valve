@@ -17,6 +17,10 @@ const TUTORIAL_AMULETO_TEXTOS := ["TUTORIAL_AMULET_1", "TUTORIAL_AMULET_2", "TUT
 var player_na_oficina: bool = false
 var player_na_casa_jimmy: bool = false
 var player_na_casa_maycow: bool = false
+## Engole UMA entrada na área da casa do Maycow. Ligado quando o jogador volta
+## de dentro da casa: ele reaparece na soleira, já dentro da área, e sem isto o
+## prompt de "entrar" pipocaria no mesmo instante em que ele acabou de sair.
+var _ignorar_prompt_casa_maycow: bool = false
 var prompt_label: Label
 var intro_label: Label
 var ui_layer: CanvasLayer
@@ -84,6 +88,9 @@ func setup_player_spawn() -> void:
 			jogador.global_rotation.y = saida.global_rotation.y
 	elif GlobalEvents.voltando_da_casa_maycow:
 		GlobalEvents.voltando_da_casa_maycow = false
+		# Ele reaparece dentro da própria área de entrada: segura o prompt até
+		# ele sair e decidir voltar (ver _ao_entrar_area_casa_maycow).
+		_ignorar_prompt_casa_maycow = true
 		var jogador = get_node_or_null("Player")
 		if not jogador:
 			jogador = find_child("Player", true, false)
@@ -125,12 +132,21 @@ func setup_player_spawn() -> void:
 		_ligar_spawner_de_inimigos()
 
 	if not is_instance_valid(prompt_label):
+		# Faixa ESQUERDA da tela, não o centro. Os avisos do prólogo (e o
+		# "novo arquivo") aparecem centralizados, e o prompt de entrar na casa
+		# caía exatamente por cima deles. Ancorado por proporção, não por pixel,
+		# pra continuar valendo em qualquer resolução.
 		var center_container = CenterContainer.new()
 		center_container.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		
+		center_container.anchor_right = 0.42
+		center_container.offset_left = 40
+		center_container.offset_right = 0
+		center_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
 		prompt_label = Label.new()
 		prompt_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		prompt_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		prompt_label.autowrap_mode = TextServer.AUTOWRAP_WORD
 		prompt_label.add_theme_font_size_override("font_size", 24)
 		prompt_label.add_theme_constant_override("outline_size", 4)
 		
@@ -260,6 +276,16 @@ func _ao_entrar_area_casa_maycow(body: Node3D) -> void:
 	if not _eh_o_player(body):
 		return
 	player_na_casa_maycow = true
+
+	# Acabou de sair pela porta: o jogador reaparece DENTRO da área, então o
+	# `body_entered` dispara na hora e o prompt voltaria pedindo pra entrar de
+	# novo. Aqui ele é engolido uma vez; o prompt só volta quando o jogador sair
+	# da área e resolver voltar.
+	if _ignorar_prompt_casa_maycow:
+		_ignorar_prompt_casa_maycow = false
+		_esconder_prompt()
+		return
+
 	_mostrar_prompt(tr("PROMPT_ENTER_MAYCOW_HOUSE"))
 
 
@@ -267,6 +293,8 @@ func _ao_sair_area_casa_maycow(body: Node3D) -> void:
 	if not _eh_o_player(body):
 		return
 	player_na_casa_maycow = false
+	# Saiu da área de verdade: a próxima entrada volta a mostrar o prompt.
+	_ignorar_prompt_casa_maycow = false
 	_esconder_prompt()
 
 

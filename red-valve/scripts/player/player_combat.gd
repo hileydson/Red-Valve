@@ -777,7 +777,10 @@ func _start_cogblade_pulse() -> void:
 
 func update_equipment_visuals() -> void:
 	if player.is_first_person and not player.is_reloading and player.control_weapons.visible:
-		player.hand_with_pistol.visible = SaveManager.is_equipped("pistol")
+		if not player.are_cutscene_inputs_blocked():
+			player.hand_with_pistol.visible = SaveManager.is_equipped("pistol")
+		else:
+			player.hand_with_pistol.visible = false
 
 func _on_area_3d_body_entered(body: Node3D) -> void:
 	if player.is_magic_attacking:

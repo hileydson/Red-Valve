@@ -32,6 +32,9 @@ func toogle_pause():
 		GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/sair_menu.mp3")
 		get_tree().paused = false
 		self.visible = false
+		# O B que fechou o menu é o mesmo botão do dash: sem isto o Maycow sai
+		# em disparada ao despausar.
+		GlobalEvents.bloquear_dash_por()
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	else:
 		GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/entrar_menu.mp3")
@@ -45,6 +48,7 @@ func _on_resume_pressed() -> void:
 	GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/selecionar_item_voltar.mp3")
 	get_tree().paused = false
 	self.visible = false
+	GlobalEvents.bloquear_dash_por()
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 func _on_exit_pressed() -> void:
