@@ -146,7 +146,10 @@ func setup_player_spawn() -> void:
 		prompt_label = Label.new()
 		prompt_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		prompt_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		prompt_label.autowrap_mode = TextServer.AUTOWRAP_WORD
+		# SEM autowrap de propósito. Dentro de um CenterContainer o filho é
+		# dimensionado pelo tamanho MÍNIMO, e o mínimo de um Label com autowrap
+		# é a largura da maior PALAVRA — o texto quebrava palavra por palavra.
+		# Sem autowrap o mínimo é a frase inteira, numa linha só.
 		prompt_label.add_theme_font_size_override("font_size", 24)
 		prompt_label.add_theme_constant_override("outline_size", 4)
 		
