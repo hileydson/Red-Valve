@@ -37,10 +37,31 @@ signal cinematic_cutscene_finished
 ## Devolve true se o travel realmente aconteceu.
 var _travels_ja_avisados: Dictionary = {}
 
+## Onde mora o `playback` depende de COMO a arvore esta montada: com a maquina
+## de estados na raiz o caminho e' "parameters/playback"; aninhada dentro de um
+## BlendTree (caso do Maycow normal, que ganhou um TimeScale pra rampa de
+## velocidade do giro) vira "parameters/<no>/playback". Procurar em vez de
+## assumir deixa os dois formatos funcionando — inclusive se a montagem de
+## alguma arvore mudar de novo la' na frente.
+func achar_playback(tree: AnimationTree):
+	if not is_instance_valid(tree):
+		return null
+	var pb = tree.get("parameters/playback")
+	if pb != null:
+		return pb
+	var blend := tree.tree_root as AnimationNodeBlendTree
+	if blend != null:
+		for nome in blend.get_node_list():
+			pb = tree.get("parameters/%s/playback" % nome)
+			if pb != null:
+				return pb
+	return null
+
+
 func safe_travel(tree: AnimationTree, estado: StringName) -> bool:
 	if not is_instance_valid(tree):
 		return false
-	var playback = tree.get("parameters/playback")
+	var playback = achar_playback(tree)
 	if playback == null:
 		return false
 

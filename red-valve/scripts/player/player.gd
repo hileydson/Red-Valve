@@ -289,10 +289,25 @@ var last_camera_rot_x: float = 0.0
 ## CORPO: olhar para cima/baixo não vira o Maycow, então animar passos por causa
 ## do pitch ficaria estranho.
 var _girando_no_lugar: bool = false
-## Giro mínimo por quadro (radianos) para contar como "girando". Acima de zero
-## de propósito: com qualquer tremidinha de analógico ou mouse ele ficaria
-## piscando entre andar e parar.
-@export var GIRO_MINIMO_PARA_ANDAR: float = 0.004
+## Velocidade do giro do corpo AGORA, em radianos por segundo. Em rad/s e não
+## por quadro: assim o comportamento não muda se a taxa de física mudar.
+var _giro_velocidade: float = 0.0
+## Giro mínimo (rad/s) para contar como "girando". Acima de zero de propósito:
+## com qualquer tremidinha de analógico ou mouse ele ficaria piscando entre
+## andar e parar. (0.25 rad/s ≈ os 0.004 rad/quadro de antes, a 60 Hz.)
+@export var GIRO_VEL_MINIMA: float = 0.25
+## A partir desta velocidade de giro (rad/s) a animação já roda na velocidade
+## cheia. Entre GIRO_VEL_MINIMA e este valor ela é interpolada — girar devagar
+## mantém a animação lenta, girar rápido leva ela ao normal.
+@export var GIRO_VEL_ANIM_CHEIA: float = 2.5
+## Velocidade da animação no giro mais lento aceito. Só vale para o Maycow
+## normal — é a árvore dele que tem o nó TimeScale.
+@export var GIRO_ANIM_VEL_INICIAL: float = 0.3
+## Suavização (por segundo) entre a velocidade atual e a que o giro pede. O
+## mouse chega em solavancos; sem isto a animação tremeria de velocidade a cada
+## quadro.
+@export var GIRO_ANIM_SUAVIZACAO: float = 8.0
+var _giro_anim_atual: float = 0.3
 
 var is_toggle_aim_active: bool = false
 
@@ -322,6 +337,33 @@ var ammo_icon: TextureRect
 @export var PITCH_MAX_3P: float = 20.0
 @export var PITCH_MIN_1P: float = -70.0  # era -60: desce um pouco mais
 @export var PITCH_MAX_1P: float = 60.0
+
+
+## Velocidade da animação do Maycow normal, via o nó TimeScale da AnimationTree
+## dele. Se a árvore não tiver esse nó, o `set` simplesmente não encontra o
+## parâmetro e nada acontece — então isto é seguro mesmo antes/depois de mexer
+## na montagem da árvore.
+func _set_anim_time_scale(valor: float) -> void:
+	if is_instance_valid(animation_tree_normal):
+		animation_tree_normal.set("parameters/TimeScale/scale", valor)
+
+
+## Velocidade que a animação deve ter agora, ACOMPANHANDO o quão rápido a câmera
+## está girando: giro lento mantém a animação lenta, giro rápido leva ela até a
+## velocidade normal. `girando` false volta tudo ao normal na hora.
+func _velocidade_anim_giro(girando: bool, delta: float) -> float:
+	if not girando:
+		# Rearma no valor lento: o próximo giro tem de começar devagar de novo,
+		# e não herdar a velocidade do giro anterior.
+		_giro_anim_atual = GIRO_ANIM_VEL_INICIAL
+		return 1.0
+
+	var t := clampf(inverse_lerp(GIRO_VEL_MINIMA, GIRO_VEL_ANIM_CHEIA, _giro_velocidade), 0.0, 1.0)
+	var alvo := lerpf(GIRO_ANIM_VEL_INICIAL, 1.0, t)
+	# Persegue o alvo em vez de saltar pra ele: é o que mantém a sensação
+	# progressiva mesmo com a leitura do mouse aos trancos.
+	_giro_anim_atual = lerpf(_giro_anim_atual, alvo, clampf(delta * GIRO_ANIM_SUAVIZACAO, 0.0, 1.0))
+	return _giro_anim_atual
 
 
 ## Limites (baixo, cima) em graus para a câmera que estiver ativa.
@@ -435,7 +477,7 @@ func _ready():
 	# Captura o mouse e o esconde ao iniciar o jogo
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	
-	playback = animation_tree["parameters/playback"]
+	playback = GlobalUtils.achar_playback(animation_tree)
 	
 	# a priori sera a pistola... mas precisa ter um change da arma para mudar 
 	current_weapon = pistola
@@ -482,7 +524,7 @@ func _ready():
 	
 	#check if esta no prologo para carregar modelo correto
 	if GlobalEvents.is_maycow_normal:
-		playback = animation_tree_normal["parameters/playback"]
+		playback = GlobalUtils.achar_playback(animation_tree_normal)
 		$maycow_lopes.queue_free()
 		modelo_visual = $maycow_lopes_normal/Armature/Skeleton3D/char1
 	else:
@@ -639,8 +681,9 @@ func _physics_process(delta: float) -> void:
 	var camera_atual_check = get_viewport().get_camera_3d()
 	var current_camera_rot_x = camera_atual_check.rotation.x if camera_atual_check else 0.0
 	var giro_do_corpo = abs(rotation.y - last_rotation_y)
+	_giro_velocidade = giro_do_corpo / delta if delta > 0.0 else 0.0
 	var is_turning_camera = giro_do_corpo > 0.001 or abs(current_camera_rot_x - last_camera_rot_x) > 0.001
-	_girando_no_lugar = giro_do_corpo > GIRO_MINIMO_PARA_ANDAR
+	_girando_no_lugar = _giro_velocidade > GIRO_VEL_MINIMA
 	last_rotation_y = rotation.y
 	last_camera_rot_x = current_camera_rot_x
 	
@@ -1110,6 +1153,9 @@ func _physics_process(delta: float) -> void:
 				target_fov = 40.0 # Zoom IN pesado na terceira pessoa (alvo)
 
 		if direction:
+			# Andando de verdade: a rampa do giro não tem vez, e a animação volta
+			# à velocidade cheia na hora.
+			_set_anim_time_scale(_velocidade_anim_giro(false, delta))
 			if is_on_floor():
 				# Calcula se a direção do movimento é paralela ou oposta à frente do personagem
 				if alinhamento < -0.2:
@@ -1149,7 +1195,9 @@ func _physics_process(delta: float) -> void:
 			if is_on_floor():
 				# Girando a câmera parado, o corpo do Maycow roda junto — e com o
 				# "idle" ele girava de pé, deslizando feito um pião. A animação
-				# de andar dá os passinhos do giro.
+				# de andar dá os passinhos do giro, entrando devagar e acelerando
+				# até a velocidade normal (ver _velocidade_anim_giro).
+				_set_anim_time_scale(_velocidade_anim_giro(_girando_no_lugar, delta))
 				if _girando_no_lugar:
 					playback.travel("walk")
 				else:

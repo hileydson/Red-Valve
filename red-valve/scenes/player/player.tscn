@@ -8126,6 +8126,16 @@ size = Vector2(0.1, 0.1)
 
 [sub_resource type="Skin" id="Skin_007i1"]
 
+[sub_resource type="AnimationNodeTimeScale" id="AnimationNodeTimeScale_rvgiro"]
+
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_rvgiro"]
+nodes/StateMachine/node = SubResource("AnimationNodeStateMachine_tffgl")
+nodes/StateMachine/position = Vector2(-240, 60)
+nodes/TimeScale/node = SubResource("AnimationNodeTimeScale_rvgiro")
+nodes/TimeScale/position = Vector2(40, 60)
+nodes/output/position = Vector2(300, 60)
+node_connections = [&"output", 0, &"TimeScale", &"TimeScale", 0, &"StateMachine"]
+
 [node name="Player" type="CharacterBody3D" unique_id=448699446 groups=["player"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1128244, 0)
 collision_mask = 2
@@ -8225,7 +8235,7 @@ transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, -
 surface_material_override/0 = SubResource("StandardMaterial3D_28m0y")
 
 [node name="AnimationTree" type="AnimationTree" parent="maycow_lopes_normal" unique_id=1537583329]
-tree_root = SubResource("AnimationNodeStateMachine_tffgl")
+tree_root = SubResource("AnimationNodeBlendTree_rvgiro")
 anim_player = NodePath("../AnimationPlayer")
 
 [node name="maycow_lopes" parent="." unique_id=664068214 instance=ExtResource("2_fm80t")]

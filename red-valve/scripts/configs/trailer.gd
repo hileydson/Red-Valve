@@ -765,7 +765,7 @@ func cutscene_trailer_sequence() -> void:
 		var anim_tree = model.get_node("AnimationTree") as AnimationTree
 		anim_tree.active = true
 		if "playback" in player:
-			player.playback = anim_tree.get("parameters/playback")
+			player.playback = GlobalUtils.achar_playback(anim_tree)
 	
 	player.global_position = inicio.global_position + Vector3(0, 1.0, 0)
 	var target_pos = fim.global_position
