@@ -57,6 +57,8 @@ var cel_intensity_slider: HSlider
 var tab_debug: MarginContainer
 var debug_infinite_hp_label: Label
 var debug_infinite_hp_check: CheckButton
+var debug_infinite_stamina_label: Label
+var debug_infinite_stamina_check: CheckButton
 
 func _ready() -> void:
 	self.layer = 130 # Fica acima de tudo
@@ -512,10 +514,24 @@ func _build_debug_tab():
 	debug_infinite_hp_check.toggled.connect(_on_debug_infinite_hp_toggled)
 	vbox.add_child(debug_infinite_hp_check)
 
+	debug_infinite_stamina_label = Label.new()
+	debug_infinite_stamina_label.text = tr("CONFIG_DEBUG_INFINITE_STAMINA")
+	debug_infinite_stamina_label.add_theme_font_size_override("font_size", 20)
+	vbox.add_child(debug_infinite_stamina_label)
+
+	debug_infinite_stamina_check = CheckButton.new()
+	debug_infinite_stamina_check.add_theme_font_size_override("font_size", 20)
+	debug_infinite_stamina_check.button_pressed = PlayerScript.is_infinite_stamina_debug()
+	debug_infinite_stamina_check.toggled.connect(_on_debug_infinite_stamina_toggled)
+	vbox.add_child(debug_infinite_stamina_check)
+
 	tab_container.add_child(tab_debug)
 
 func _on_debug_infinite_hp_toggled(pressed: bool) -> void:
 	PlayerScript.set_infinite_health_debug(pressed)
+
+func _on_debug_infinite_stamina_toggled(pressed: bool) -> void:
+	PlayerScript.set_infinite_stamina_debug(pressed)
 
 func _on_display_mode_selected(index: int):
 	if index == 0:
@@ -564,6 +580,7 @@ func _on_lang_selected(index: int) -> void:
 	if is_instance_valid(cel_label): cel_label.text = tr("CONFIG_CEL_SHADING")
 	_update_cel_shading_ui()
 	if is_instance_valid(debug_infinite_hp_label): debug_infinite_hp_label.text = tr("CONFIG_DEBUG_INFINITE_HP")
+	if is_instance_valid(debug_infinite_stamina_label): debug_infinite_stamina_label.text = tr("CONFIG_DEBUG_INFINITE_STAMINA")
 	
 	back_btn.text = tr("BTN_BACK")
 

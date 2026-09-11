@@ -110,6 +110,24 @@ static func set_infinite_health_debug(ligado: bool) -> void:
 static func is_infinite_health_debug() -> bool:
 	return _vida_infinita_na_sessao
 
+
+## Mesma dupla para a stamina infinita.
+static func set_infinite_stamina_debug(ligado: bool) -> void:
+	_stamina_infinita_na_sessao = ligado
+
+
+static func is_infinite_stamina_debug() -> bool:
+	return _stamina_infinita_na_sessao
+
+
+## A stamina esta infinita agora? Junta a caixinha do editor com o interruptor
+## da aba DEBUG. E' consultada em vez de `infinite_stamina_test` direto porque a
+## flag da instancia so e' sincronizada no _ready: lida assim, ligar/desligar no
+## menu vale na hora, inclusive pra desligar.
+func _stamina_infinita() -> bool:
+	return infinite_stamina_test or _stamina_infinita_na_sessao
+
+
 var max_stamina: float = 100.0
 var current_stamina: float = 100.0
 var stamina_bar: ProgressBar
@@ -240,6 +258,14 @@ const SENSITIVITY = 0.003 # Sensibilidade do mouse
 @export var WALK_SPEED: float = 3.0
 @export var WALK_SPEED_NORMAL: float = 2.8
 @export var RUN_SPEED: float = 4.8 # Velocidade maior para a corrida
+## Quanto o movimento precisa estar alinhado com a frente do corpo para a
+## corrida valer (produto escalar: 1 = direto para frente, 0 = totalmente de
+## lado, -1 = de costas).
+##
+## 0.45 deixa correr para frente e na diagonal (45° dá 0.71), mas corta a
+## corrida a partir de ~63° — de lado com a câmera para frente ele volta a
+## andar, animação e velocidade, igual ao que já acontecia andando para trás.
+@export_range(0.0, 1.0) var CORRIDA_ALINHAMENTO_MIN: float = 0.45
 
 ## --- Lentidao vinda de fora (anel de magia do Shadow Seraph) ---
 ## Multiplica a velocidade de caminhada/corrida nas DUAS variantes do Maycow.
@@ -600,9 +626,9 @@ func _physics_process(delta: float) -> void:
 		is_exhausted = false
 		
 	# --- STAMINA LOGIC ---
-	var is_running_stam = _run_toggle_active and velocity.length() > 0.1 and (current_stamina > 0 or infinite_stamina_test or GlobalEvents.is_maycow_normal) and stamina_active and not is_exhausted and not is_aiming
+	var is_running_stam = _run_toggle_active and velocity.length() > 0.1 and (current_stamina > 0 or _stamina_infinita() or GlobalEvents.is_maycow_normal) and stamina_active and not is_exhausted and not is_aiming
 	if is_running_stam:
-		if not infinite_stamina_test and not GlobalEvents.is_maycow_normal:
+		if not _stamina_infinita() and not GlobalEvents.is_maycow_normal:
 			current_stamina -= 20.0 * delta
 		if current_stamina < 0: current_stamina = 0
 		stamina_fade_timer = 2.0
@@ -758,8 +784,8 @@ func _physics_process(delta: float) -> void:
 		if dash_cooldown_timer > 0:
 			dash_cooldown_timer -= delta
 
-		if not are_cutscene_inputs_blocked() and Input.is_action_just_pressed("ui_dash") and not is_dashing and dash_cooldown_timer <= 0 and (current_stamina >= 30.0 or infinite_stamina_test):
-			if not infinite_stamina_test:
+		if not are_cutscene_inputs_blocked() and Input.is_action_just_pressed("ui_dash") and not is_dashing and dash_cooldown_timer <= 0 and (current_stamina >= 30.0 or _stamina_infinita()):
+			if not _stamina_infinita():
 				current_stamina -= 30.0
 			stamina_fade_timer = 2.0
 			stamina_bar.modulate.a = 1.0
@@ -795,7 +821,7 @@ func _physics_process(delta: float) -> void:
 				velocidade_atual = WALK_SPEED * 0.45
 			elif is_aiming:
 				velocidade_atual = WALK_SPEED * 0.4
-			elif _run_toggle_active and (current_stamina > 0 or infinite_stamina_test) and not is_exhausted:
+			elif _run_toggle_active and (current_stamina > 0 or _stamina_infinita()) and not is_exhausted:
 				velocidade_atual = RUN_SPEED
 			
 			# Mais lento ao andar para trás
@@ -807,7 +833,7 @@ func _physics_process(delta: float) -> void:
 			var velocity_Y_zero: bool = velocity.y <= 0
 
 			if direction and !transition_camera:
-				var is_actually_running = _run_toggle_active and (current_stamina > 0 or infinite_stamina_test) and not is_exhausted and not is_aiming
+				var is_actually_running = _run_toggle_active and (current_stamina > 0 or _stamina_infinita()) and not is_exhausted and not is_aiming
 
 				# Animações e Sons
 				if is_actually_running:
@@ -843,7 +869,7 @@ func _physics_process(delta: float) -> void:
 		# FX DURANTE CORRIDA (FOV e Blur leve - Diferenciado para 1ª Pessoa e 3ª Pessoa)
 		var camera = get_viewport().get_camera_3d()
 		if camera and not is_dashing:
-			var is_running = _run_toggle_active and velocity.length() > 0.1 and (current_stamina > 0 or infinite_stamina_test) and not is_exhausted and not is_aiming
+			var is_running = _run_toggle_active and velocity.length() > 0.1 and (current_stamina > 0 or _stamina_infinita()) and not is_exhausted and not is_aiming
 			var direction_check := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 			var visao_frente = -global_transform.basis.z
 			var alinhamento = direction_check.dot(visao_frente) if direction_check else 0.0
@@ -882,7 +908,7 @@ func _physics_process(delta: float) -> void:
 				alvo_y = PI + (limite_rotacao_lateral * 1.8) 
 				speed_y = 0.6
 				speed_x = 1.5
-				var current_is_running = _run_toggle_active and velocity.length() > 0.1 and (current_stamina > 0 or infinite_stamina_test) and not is_exhausted and not is_aiming
+				var current_is_running = _run_toggle_active and velocity.length() > 0.1 and (current_stamina > 0 or _stamina_infinita()) and not is_exhausted and not is_aiming
 				if not current_is_running:
 					alvo_pos_x = -0.15
 
@@ -992,12 +1018,25 @@ func _physics_process(delta: float) -> void:
 			input_dir.y = -1.0
 			_run_toggle_active = true
 		# MOVIMENTO NORMAL (WALK/RUN)
-		var is_running = _run_toggle_active and (current_stamina > 0 or infinite_stamina_test) and can_run_normal and not is_exhausted and not is_aiming
+		var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
+
+		# O quanto o movimento aponta para a frente do corpo. É o mesmo número
+		# que decide o "walk_back" mais abaixo; aqui ele também decide se a
+		# corrida vale. Parado (sem direção), 1.0 para não atrapalhar nada.
+		var visao_frente := -global_transform.basis.z
+		var alinhamento := direction.dot(visao_frente) if direction else 1.0
+
+		var is_running = _run_toggle_active and (current_stamina > 0 or _stamina_infinita()) and can_run_normal and not is_exhausted and not is_aiming
+		# Correr só para frente (e na diagonal). Indo totalmente de lado com a
+		# câmera apontada para frente, a corrida é cortada e ele volta a andar —
+		# animação E velocidade — do mesmo jeito que já acontecia de costas.
+		if alinhamento < CORRIDA_ALINHAMENTO_MIN:
+			is_running = false
+
 		var velocidade_atual = RUN_SPEED if is_running else WALK_SPEED_NORMAL
 		if input_dir.y > 0.1:
 			velocidade_atual *= 0.65
 		velocidade_atual *= speed_multiplier
-		var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 		var velocity_Y_zero: bool = velocity.y <= 0
 		var target_fov: float = 75.0
 		if is_aiming:
@@ -1007,9 +1046,6 @@ func _physics_process(delta: float) -> void:
 				target_fov = 40.0 # Zoom IN pesado na terceira pessoa (alvo)
 
 		if direction:
-			var visao_frente = -global_transform.basis.z
-			var alinhamento = direction.dot(visao_frente)
-			
 			if is_on_floor():
 				# Calcula se a direção do movimento é paralela ou oposta à frente do personagem
 				if alinhamento < -0.2:
