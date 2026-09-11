@@ -146,6 +146,29 @@ static func has_map() -> bool:
 	return _built and not _fallback
 
 
+## Quanto um ponto pode ficar acima do asfalto e ainda contar como "na rua".
+## Folga pra meio-fio, rampa e a imprecisao da propria rasterizacao.
+const NIVEL_RUA_TOLERANCIA := 2.5
+
+## O ponto esta MESMO na rua, ou em cima de algo construido sobre ela?
+##
+## Quem encaixa no chao dispara um raio de ~40 m acima do candidato e fica com o
+## PRIMEIRO corpo no caminho — e telhado tambem e chao fisico. Pior: `_mark_tri`
+## marca a caixa do triangulo, entao a rua "vaza" um pouco pra baixo das casas
+## da esquina; o candidato passa no `is_road`, o raio bate na laje e o NPC (ou
+## inimigo) nasce no telhado. Comparar com a altura do asfalto da celula separa
+## os dois casos.
+static func esta_no_nivel_da_rua(pos: Vector3, tolerancia := NIVEL_RUA_TOLERANCIA) -> bool:
+	# Sem mapa de ruas a politica e a mesma do `is_road`: permissivo, senao a
+	# cidade inteira ficaria vazia.
+	if _fallback or not _built:
+		return true
+	var y := road_y(pos)
+	if is_nan(y):
+		return false
+	return absf(pos.y - y) <= tolerancia
+
+
 ## Ponto de rua mais proximo, em aneis crescentes. Devolve `from` se nao achar.
 static func nearest(from: Vector3, max_radius := 30.0, rings := 8, per_ring := 16) -> Vector3:
 	if not has_map() or is_road(from):

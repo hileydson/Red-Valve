@@ -344,7 +344,14 @@ func _snap_to_ground(cand: Vector3, map: RID, has_nav: bool) -> Vector3:
 	var hit := space.intersect_ray(q)
 	if hit.is_empty():
 		return NO_SPOT
-	return hit["position"]
+
+	# O raio vem de 40 m acima e para no PRIMEIRO corpo — e telhado tambem e
+	# chao fisico. Sem esta conferencia contra a altura do asfalto, as sombras
+	# nasciam em cima das casas em vez de nas ruas.
+	var p: Vector3 = hit["position"]
+	if not ShadowRoads.esta_no_nivel_da_rua(p):
+		return NO_SPOT
+	return p
 
 
 func _too_close_to_others(pos: Vector3) -> bool:

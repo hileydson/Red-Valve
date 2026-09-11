@@ -394,7 +394,14 @@ func _encaixa_no_chao(cand: Vector3, map: RID, tem_nav: bool) -> Vector3:
 	var hit := space.intersect_ray(q)
 	if hit.is_empty():
 		return NO_SPOT
-	return hit["position"]
+
+	# O raio vem de 40 m acima e para no PRIMEIRO corpo — e telhado tambem e
+	# chao fisico. Sem esta conferencia contra a altura do asfalto, inimigo
+	# nascia em cima das casas.
+	var p: Vector3 = hit["position"]
+	if not ShadowRoads.esta_no_nivel_da_rua(p):
+		return NO_SPOT
+	return p
 
 
 func _perto_demais_de_outro(pos: Vector3) -> bool:
