@@ -12,6 +12,14 @@ const TOQUE_SLOWMO_SEGUNDOS := 1.6
 ## a viagem entra com a reação do dano ainda no ar, e não depois dela esfriar.
 const TOQUE_ESPERA_FIM_DANO := 0.7
 
+## Carência de dano ao voltar da arena para a cidade.
+##
+## A stage_1 fica CONGELADA durante a batalha (process_mode desligado), então o
+## jogador reaparece exatamente na cena que deixou — inclusive dentro de um golpe
+## que já estava a caminho. Sem esta janela ele leva o dano antes de conseguir
+## entender o que está acontecendo, quanto mais desviar.
+const VOLTA_CARENCIA_SEGUNDOS := 3.0
+
 var player: CharacterBody3D
 
 ## Estado do gatilho de seleção no frame anterior — ver o comentário em
@@ -956,6 +964,7 @@ func play_return_from_arena_effect() -> void:
 	SaveManager.current_mp = SaveManager.max_mp
 
 	player.is_playing_return_effect = true
+	_carencia_apos_voltar()
 	GlobalUtils.vibrate_controller(null, 0.8, 0.8, 1.0)
 	# Sem tremor de camera aqui: a volta da arena e o flash + camera lenta +
 	# motion blur, e o shake (que mexe em h_offset/v_offset da camera do player,
@@ -998,6 +1007,25 @@ func play_return_from_arena_effect() -> void:
 	await _play_iron_rusks_tally()
 
 	SaveManager.save_game()
+
+## Liga a carência de dano da volta e a desliga sozinha depois.
+##
+## Roda solta (sem `await` de quem chama): o efeito de retorno segue normalmente
+## enquanto isto conta. Enquanto `invulnerable` está ligado, o jogador não leva
+## dano, não é empurrado e nem é arrastado para uma batalha forçada por toque
+## (ver `force_battle_from_touch` e `enemy._acertar_player`).
+func _carencia_apos_voltar() -> void:
+	if not is_instance_valid(player):
+		return
+	player.invulnerable = true
+
+	# Tempo REAL: a volta roda em câmera lenta (time_scale 0.3) e o timer com
+	# `process_always` + `ignore_time_scale` conta os 3 s de relógio de verdade.
+	await get_tree().create_timer(VOLTA_CARENCIA_SEGUNDOS, true, false, true).timeout
+
+	if is_instance_valid(player):
+		player.invulnerable = false
+
 
 func _play_iron_rusks_tally() -> void:
 	var earned = SaveManager.iron_rusks_pending

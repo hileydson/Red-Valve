@@ -438,6 +438,13 @@ func _on_attack_body_entered(body: Node3D) -> void:
 func _acertar_player(body: Node3D) -> void:
 	if dead or not is_inside_tree() or not is_instance_valid(body):
 		return
+
+	# Carência de dano (o jogador acabou de voltar da arena, por exemplo): sai
+	# ANTES do empurrão. Se só o `take_damage` lá embaixo respeitasse isso, ele
+	# continuaria sendo arremessado 3 metros sem levar dano — o que na prática é
+	# o mesmo problema, já que ele volta sem tempo de reagir.
+	if body.get("invulnerable") == true:
+		return
 	var agora = Time.get_ticks_msec() / 1000.0
 	if agora - _ultimo_hit_melee < 0.6:
 		return
