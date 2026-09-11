@@ -285,6 +285,14 @@ var fall_cam: Camera3D = null
 
 var last_rotation_y: float = 0.0
 var last_camera_rot_x: float = 0.0
+## Girando a câmera parado (só o Maycow normal usa). Guarda apenas o giro do
+## CORPO: olhar para cima/baixo não vira o Maycow, então animar passos por causa
+## do pitch ficaria estranho.
+var _girando_no_lugar: bool = false
+## Giro mínimo por quadro (radianos) para contar como "girando". Acima de zero
+## de propósito: com qualquer tremidinha de analógico ou mouse ele ficaria
+## piscando entre andar e parar.
+@export var GIRO_MINIMO_PARA_ANDAR: float = 0.004
 
 var is_toggle_aim_active: bool = false
 
@@ -298,6 +306,24 @@ var ammo_icon: TextureRect
 
 # CONFIGURACAO DO CONTROLE
 @export var JOY_SENSITIVITY: float = 0.04 # Sensibilidade para o analógico
+
+# --- Limites verticais da câmera, em graus (negativo = olhando para baixo) ---
+#
+# Ficavam repetidos como número solto em quatro lugares (mouse, analógico nos
+# dois Maycows e o aim assist), o que fazia mexer num só sair pela culatra: a
+# mira descia mais que a câmera, ou o controle mais que o mouse. Agora todos
+# leem daqui, então mouse e controle são obrigatoriamente iguais.
+@export var PITCH_MIN_3P: float = -32.0  # era -25: desce um pouco mais
+@export var PITCH_MAX_3P: float = 20.0
+@export var PITCH_MIN_1P: float = -70.0  # era -60: desce um pouco mais
+@export var PITCH_MAX_1P: float = 60.0
+
+
+## Limites (baixo, cima) em graus para a câmera que estiver ativa.
+func _limites_pitch(cam: Camera3D) -> Vector2:
+	if cam == camera_third_person:
+		return Vector2(PITCH_MIN_3P, PITCH_MAX_3P)
+	return Vector2(PITCH_MIN_1P, PITCH_MAX_1P)
 @export var DEADZONE: float = 0.1
 
 
@@ -533,8 +559,9 @@ func _input(event):
 		var camera_atual = get_viewport().get_camera_3d()
 		
 		# Trava o ângulo vertical (modifica rotation.x diretamente para evitar 'flip' do Euler)
-		var v_down = -25 if camera_atual == camera_third_person else -60
-		var v_up = 20 if camera_atual == camera_third_person else 60
+		var _lim := _limites_pitch(camera_atual)
+		var v_down = _lim.x
+		var v_up = _lim.y
 		
 		var target_pitch = camera_atual.rotation.x - (event.relative.y * SENSITIVITY * sens_mult)
 		camera_atual.rotation.x = clamp(target_pitch, deg_to_rad(v_down), deg_to_rad(v_up))
@@ -606,7 +633,9 @@ func _physics_process(delta: float) -> void:
 	
 	var camera_atual_check = get_viewport().get_camera_3d()
 	var current_camera_rot_x = camera_atual_check.rotation.x if camera_atual_check else 0.0
-	var is_turning_camera = abs(rotation.y - last_rotation_y) > 0.001 or abs(current_camera_rot_x - last_camera_rot_x) > 0.001
+	var giro_do_corpo = abs(rotation.y - last_rotation_y)
+	var is_turning_camera = giro_do_corpo > 0.001 or abs(current_camera_rot_x - last_camera_rot_x) > 0.001
+	_girando_no_lugar = giro_do_corpo > GIRO_MINIMO_PARA_ANDAR
 	last_rotation_y = rotation.y
 	last_camera_rot_x = current_camera_rot_x
 	
@@ -802,8 +831,9 @@ func _physics_process(delta: float) -> void:
 				rotate_y(-joy_dir.x * JOY_SENSITIVITY * sens_mult * delta * 100)
 				
 				# Girar a câmera (Vertical) evitando flip
-				var v_down = -25 if camera_atual == camera_third_person else -60
-				var v_up = 20 if camera_atual == camera_third_person else 60
+				var _lim := _limites_pitch(camera_atual)
+				var v_down = _lim.x
+				var v_up = _lim.y
 				
 				var target_pitch = camera_atual.rotation.x - (joy_dir.y * JOY_SENSITIVITY * sens_mult * delta * 100)
 				camera_atual.rotation.x = clamp(target_pitch, deg_to_rad(v_down), deg_to_rad(v_up))
@@ -1026,8 +1056,9 @@ func _physics_process(delta: float) -> void:
 				rotate_y(-joy_dir.x * JOY_SENSITIVITY * sens_mult * delta * 100)
 				
 				# Girar a câmera (Vertical) evitando flip
-				var v_down = -25 if camera_atual == camera_third_person else -60
-				var v_up = 20 if camera_atual == camera_third_person else 60
+				var _lim := _limites_pitch(camera_atual)
+				var v_down = _lim.x
+				var v_up = _lim.y
 				
 				var target_pitch = camera_atual.rotation.x - (joy_dir.y * JOY_SENSITIVITY * sens_mult * delta * 100)
 				camera_atual.rotation.x = clamp(target_pitch, deg_to_rad(v_down), deg_to_rad(v_up))
@@ -1110,11 +1141,17 @@ func _physics_process(delta: float) -> void:
 			velocity.z = direction.z * velocidade_atual
 		else:
 			# IDLE / PARADA
-			if is_on_floor(): 
-				playback.travel("idle")
+			if is_on_floor():
+				# Girando a câmera parado, o corpo do Maycow roda junto — e com o
+				# "idle" ele girava de pé, deslizando feito um pião. A animação
+				# de andar dá os passinhos do giro.
+				if _girando_no_lugar:
+					playback.travel("walk")
+				else:
+					playback.travel("idle")
 			velocity.x = move_toward(velocity.x, 0, velocidade_atual)
 			velocity.z = move_toward(velocity.z, 0, velocidade_atual)
-			if passos.playing: 
+			if passos.playing:
 				passos.stop()
 
 		var fov_lerp_speed = 5.0

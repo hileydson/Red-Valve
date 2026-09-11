@@ -167,10 +167,11 @@ func _pull_towards(cam: Camera3D, target: Node3D, delta: float) -> void:
 	var pitch_current := asin(clampf(forward.y, -1.0, 1.0))
 	var pitch_target := asin(clampf(to_target.y, -1.0, 1.0))
 	var pitch_delta := clampf(pitch_target - pitch_current, -max_step, max_step)
-	var is_third_person: bool = cam == player.camera_third_person
-	var v_down := -25.0 if is_third_person else -60.0
-	var v_up := 20.0 if is_third_person else 60.0
-	cam.rotation.x = clampf(cam.rotation.x + pitch_delta, deg_to_rad(v_down), deg_to_rad(v_up))
+	# Mesmos limites do olhar manual (player._limites_pitch): tinha cópia dos
+	# números aqui, e bastava mexer num lado pra assist e jogador discordarem —
+	# a mira empurrava a câmera até um ângulo que o jogador não conseguia manter.
+	var lim: Vector2 = player._limites_pitch(cam)
+	cam.rotation.x = clampf(cam.rotation.x + pitch_delta, deg_to_rad(lim.x), deg_to_rad(lim.y))
 
 func _look_input_strength() -> float:
 	# 0 = jogador parado (assist no máximo), 1 = girando a câmera com força
