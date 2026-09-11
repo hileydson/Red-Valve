@@ -296,11 +296,16 @@ var _girando_no_lugar: bool = false
 
 var is_toggle_aim_active: bool = false
 
-## 20 e nao 5: a arena constroi um Maycow de combate novo a cada batalha, entao
-## e este valor inicial (5 + 15 de bonus de teste) quem decide com quantas
-## balas o jogador entra em cada luta.
-var clip_pistol_ammo: int = 20
-var max_clip_pistol: int = 20
+## Tamanho do pente: 8 tiros antes de precisar recarregar.
+##
+## Os dois andam juntos de proposito. `max_clip_pistol` e' ate' onde o reload
+## enche (ver player_combat.reload), e `clip_pistol_ammo` e' com quanto o Maycow
+## nasce — e a arena constroi um Maycow de combate NOVO a cada batalha, entao e'
+## este valor inicial que decide com quantas balas ele entra em cada luta.
+## Deixar um maior que o outro faria ele comecar com um pente que o reload nunca
+## mais conseguiria repor.
+var clip_pistol_ammo: int = 8
+var max_clip_pistol: int = 8
 var ammo_label: Label
 var ammo_icon: TextureRect
 

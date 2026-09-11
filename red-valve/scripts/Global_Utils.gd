@@ -100,6 +100,91 @@ func watchdog_volta_da_arena(segundos: float) -> void:
 	AudioServer.playback_speed_scale = 1.0
 
 
+# ---------------------------------------------------------------------------
+# OBJETIVOS / PISTAS — aviso discreto no canto superior esquerdo
+# ---------------------------------------------------------------------------
+## Diferente do `show_center_message`, que planta o texto no meio da tela e
+## interrompe, este e' periferico e informativo: entra devagar, fica um tempo e
+## sai sozinho, sem pedir atencao. E' a pista do que o jogador deve fazer agora.
+##
+## Uso: GlobalUtils.mostrar_objetivo(tr("OBJ_X"))  -> 30s por padrao
+##      GlobalUtils.mostrar_objetivo(tr("OBJ_X"), 0.0)  -> fica ate' mandarem sair
+##      GlobalUtils.esconder_objetivo()
+##
+## Entra e sai sempre em fade (OBJETIVO_FADE), nos dois sentidos.
+##
+## So aparece para o Maycow NORMAL. Na arena (Maycow de combate) e durante
+## cutscene ele some sozinho e volta depois — inclusive um objetivo de duracao
+## longa sobrevive a ida e volta da batalha sem precisar ser remontado.
+const OBJETIVO_MARGEM_ESQ := 30.0
+## Abaixo do minimapa, que ocupa y 26..216 nesse mesmo canto — sem isto o texto
+## cairia em cima dele.
+const OBJETIVO_MARGEM_TOPO := 232.0
+const OBJETIVO_FADE := 0.6
+const OBJETIVO_DURACAO_PADRAO := 30.0
+
+var _objetivo_layer: CanvasLayer
+var _objetivo_label: Label
+## Cada chamada recebe um numero. Se outro objetivo entrar antes de o tempo do
+## anterior acabar, o timer do antigo percebe que ficou pra tras e nao apaga o
+## texto novo.
+var _objetivo_geracao: int = 0
+
+
+func mostrar_objetivo(texto: String, duracao: float = OBJETIVO_DURACAO_PADRAO) -> void:
+	_montar_objetivo()
+	_objetivo_geracao += 1
+	var geracao := _objetivo_geracao
+
+	_objetivo_label.text = texto
+	var entrada := create_tween()
+	entrada.bind_node(_objetivo_label)
+	entrada.tween_property(_objetivo_label, "modulate:a", 1.0, OBJETIVO_FADE)
+
+	if duracao <= 0.0:
+		return
+
+	# `false` no process_always: o relogio para junto com o jogo, entao abrir o
+	# menu no meio nao come o tempo do aviso.
+	await get_tree().create_timer(duracao, false).timeout
+	if geracao != _objetivo_geracao:
+		return # outro objetivo tomou o lugar deste
+	esconder_objetivo()
+
+
+func esconder_objetivo() -> void:
+	if not is_instance_valid(_objetivo_label):
+		return
+	# Invalida qualquer timer pendente, senao ele apagaria um objetivo futuro.
+	_objetivo_geracao += 1
+	var saida := create_tween()
+	saida.bind_node(_objetivo_label)
+	saida.tween_property(_objetivo_label, "modulate:a", 0.0, OBJETIVO_FADE)
+
+
+func _montar_objetivo() -> void:
+	if is_instance_valid(_objetivo_label):
+		return
+
+	# Camada propria (118, logo abaixo das mensagens centrais em 120): assim o
+	# `clear_all_messages` nao leva o objetivo junto, e uma mensagem central
+	# importante ainda aparece por cima dele.
+	_objetivo_layer = CanvasLayer.new()
+	_objetivo_layer.layer = 118
+	add_child(_objetivo_layer)
+
+	_objetivo_label = Label.new()
+	_objetivo_label.position = Vector2(OBJETIVO_MARGEM_ESQ, OBJETIVO_MARGEM_TOPO)
+	_objetivo_label.add_theme_font_size_override("font_size", 16)
+	# Cinza claro, nao branco puro: informativo, nao um alerta.
+	_objetivo_label.add_theme_color_override("font_color", Color(0.82, 0.80, 0.76))
+	_objetivo_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.85))
+	_objetivo_label.add_theme_constant_override("outline_size", 4)
+	_objetivo_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_objetivo_label.modulate.a = 0.0
+	_objetivo_layer.add_child(_objetivo_label)
+
+
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	message_canvas_layer = CanvasLayer.new()
@@ -200,6 +285,12 @@ func clear_all_messages() -> void:
 # neste autoload e não são destruídas junto com a cena do jogo.
 func force_clear_all_screen_messages() -> void:
 	clear_all_messages()
+
+	# O objetivo mora neste autoload, entao sobrevive a troca de cena: sem isto
+	# ele ficaria flutuando por cima do menu principal.
+	_objetivo_geracao += 1
+	if is_instance_valid(_objetivo_label):
+		_objetivo_label.modulate.a = 0.0
 
 	if is_instance_valid(_cutscene_skip_ui):
 		_cutscene_skip_ui.queue_free()
@@ -490,6 +581,12 @@ func _on_cinematic_skipped() -> void:
 	_end_cinematic_text()
 
 func _process(delta: float) -> void:
+	# O objetivo e' informacao do Maycow NORMAL: some na arena (Maycow de
+	# combate) e durante cutscene, em vez de ficar pendurado por cima delas.
+	# Some, nao apaga — um objetivo permanente continua la' quando ele voltar.
+	if is_instance_valid(_objetivo_layer):
+		_objetivo_layer.visible = GlobalEvents.is_maycow_normal and not _em_cutscene()
+
 	if in_cinematic_cutscene:
 		if Input.is_action_just_pressed("ui_accept"):
 			if _cutscene_text_transitioning and _cutscene_label and _cutscene_label.visible_characters < _cutscene_label.text.length():

@@ -13,113 +13,113 @@ PROMPT_ENTER_WORKSHOP,Enter Jimmy's workshop?,Entrar na oficina do Jimmy?
 PROMPT_ENTER_JIMMY_HOUSE,Enter Jimmy's house?,Entrar na casa do Jimmy?
 PROMPT_ENTER_MAYCOW_HOUSE,Enter Maycow's house?,Entrar na casa do Maycow?
 GAME_OVER_TEXT,GAME OVER,GAME OVER
-MENU_TAB_INVENTORY,"INVENTORY","INVENTÁRIO"
-MENU_TAB_MAP,"MAP","MAPA"
-MENU_TAB_FILES,"FILES","ARQUIVOS"
-BTN_LOAD_GAME,"Load Game","Carregar Jogo"
-ITEM_MAYCOW_WATCH_NAME,"Maycow's Watch","Relógio do Maycow"
+MENU_TAB_INVENTORY,INVENTORY,INVENTÁRIO
+MENU_TAB_MAP,MAP,MAPA
+MENU_TAB_FILES,FILES,ARQUIVOS
+BTN_LOAD_GAME,Load Game,Carregar Jogo
+ITEM_MAYCOW_WATCH_NAME,Maycow's Watch,Relógio do Maycow
 ITEM_MAYCOW_WATCH_DESC,"A worn wristwatch. The hands are frozen, but the mechanism still emits a faint ticking sound. It belongs to Maycow.","Um relógio de pulso desgastado. Os ponteiros estão congelados, mas o mecanismo ainda emite um leve tique-taque. Pertence ao Maycow."
-WITH_POWER_1_1,"One of the Huskes violently attacks Maycow.","Um dos Huskes ataca Maycow violentamente."
-WITH_POWER_1_2,"The workshop begins to be devastated.","A oficina começa a ser devastada."
-WITH_POWER_1_3,"Tools fly.","Ferramentas voam."
-WITH_POWER_1_4,"Machines are destroyed.","Máquinas são destruídas."
+WITH_POWER_1_1,One of the Huskes violently attacks Maycow.,Um dos Huskes ataca Maycow violentamente.
+WITH_POWER_1_2,The workshop begins to be devastated.,A oficina começa a ser devastada.
+WITH_POWER_1_3,Tools fly.,Ferramentas voam.
+WITH_POWER_1_4,Machines are destroyed.,Máquinas são destruídas.
 WITH_POWER_2_1,"Amidst the confusion, Maycow notices something strange.","Entre a confusão, Maycow percebe algo estranho."
-WITH_POWER_2_2,"A hidden passage between ancient machines.","Uma passagem escondida entre máquinas antigas."
-WITH_POWER_2_3,"A space he had never noticed before.","Um espaço que ele nunca havia notado antes."
-WITH_POWER_2_4,"Without a choice…","Sem escolha…"
-WITH_POWER_2_5,"He begins to drag himself there.","Ele começa a se arrastar até lá."
-WITH_POWER_3_1,"Maycow reaches the passage.","Maycow chega até a passagem."
-WITH_POWER_3_2,"There was an ancient metal door.","Ali havia uma porta metálica antiga."
-WITH_POWER_3_3,"A red valve.","Uma válvula vermelha."
-WITH_POWER_3_4,"He forces the valve.","Ele força a válvula."
-WITH_POWER_3_5,"Blood drips down his hand…","Sangue escorre por sua mão…"
-WITH_POWER_3_6,"And falls on the metal.","E cai sobre o metal."
-WITH_POWER_3_7,"The valve begins to turn on its own.","A válvula começa a girar sozinha."
-WITH_POWER_3_8,"The door opens.","A porta se abre."
-WITH_POWER_4_1,"On the other side was a hidden shelter.","Do outro lado havia um abrigo escondido."
-WITH_POWER_4_2,"A room full of files and notes.","Uma sala cheia de arquivos e anotações."
-WITH_POWER_4_3,"On a table lay two objects.","Sobre uma mesa estavam dois objetos."
-WITH_POWER_5_1,"A strange artifact.","Um artefato estranho."
-WITH_POWER_5_2,"And a mechanical weapon formed by gears.","E uma arma mecânica formada por engrenagens."
-WITH_POWER_5_3,"The Cogblade.","A Cogblade."
-WITH_POWER_5_4,"The artifact did not look like a common gear.","O artefato não parecia uma engrenagem comum."
-WITH_POWER_5_5,"Its shape was impossible.","Sua forma era impossível."
-WITH_POWER_5_6,"Misaligned gears.","Engrenagens desalinhadas."
-WITH_POWER_5_7,"Something that clearly did not belong to the Waking World.","Algo que claramente não pertencia ao Mundo da Vigília."
-WITH_POWER_6_1,"Maycow grabs the artifact.","Maycow pega o artefato."
-WITH_POWER_6_2,"In that instant, the Huske invades the shelter.","No mesmo instante o Huske invade o abrigo."
-WITH_POWER_6_3,"Maycow raises the object out of instinct.","Maycow ergue o objeto por instinto."
-WITH_POWER_6_4,"Reality tears again.","A realidade rasga novamente."
-WITH_POWER_6_5,"Maycow and the creature are pulled elsewhere.","Maycow e a criatura são puxados para outro lugar."
-WITH_POWER_6_6,"The Iron Abyss.","O Abismo de Ferro."
-WITH_POWER_7_1,"The air was heavy.","O ar era pesado."
-WITH_POWER_7_2,"Among these echoes were other sounds.","Entre esses ecos havia outros sons."
-WITH_POWER_7_3,"Sounds that should not exist.","Sons que não deveriam existir."
-WITH_POWER_7_4,"The Huske tries to attack again.","O Huske tenta atacar novamente."
-WITH_POWER_7_5,"But something had changed.","Mas algo havia mudado."
-WITH_POWER_7_6,"Maycow felt his body lighter.","Maycow sentia seu corpo mais leve."
-WITH_POWER_7_7,"Faster and stronger.","Mais rápido e forte."
-WITH_POWER_7_8,"In his hand was the Cogblade.","Em sua mão estava a Cogblade."
-WITH_POWER_7_9,"It bleeds...","Ela sangra..."
-UI_HOLD,"HOLD","SEGURE"
-ITEM_PISTOL_NAME,"Pistol","Pistola"
-ITEM_PISTOL_DESC,"A standard firearm.","Uma arma de fogo padrão."
-ITEM_COGBLADE_NAME,"Crescent Cogblade","Crescent Cogblade"
-ITEM_COGBLADE_DESC,"A gear-powered blade.","Uma lâmina de engrenagem."
-ITEM_AMMO_NAME,"Pistol Ammo","Balas de Pistola"
-ITEM_AMMO_DESC,"Ammunition for your gun.","Munição para a sua arma."
-MENU_CONFIG,"Configuration","Configurações"
-CONFIG_AIM_MODE,"Aim Mode","Modo de Mira"
-CONFIG_AIM_HOLD,"Hold","Segurar"
-CONFIG_AIM_TOGGLE,"Toggle","Alternar"
-CONFIG_LANGUAGE,"Language","Idioma"
-CONFIG_LANG_PT,"Portuguese","Português"
-CONFIG_LANG_EN,"English","Inglês"
-BTN_BACK,"Back","Voltar"
-LOADING_TEXT_1,"Anti-Lopes: Creatures that inhabit the forgotten outskirts.","Anti-Lopes: Criaturas que habitam os arredores esquecidos."
-LOADING_TEXT_2,"The Red Valve: The artifact that tore reality.","A Válvula Vermelha: O artefato que rasgou a realidade."
-LOADING_TEXT_3,"'The Negotiator' Projectile: Made to pierce any armor.","Projétil 'The Negotiator': Feito para perfurar qualquer armadura."
-LOADING_TEXT_4,"The Negotiator (V1): A powerful and rustic weapon.","The Negotiator (V1): Uma arma poderosa e rústica."
-LOADING_TEXT_5,"The Negotiator (V2): The evolution of firepower.","The Negotiator (V2): A evolução do poder de fogo."
-CONFIG_TAB_GAMEPLAY,"Gameplay","Gameplay"
-CONFIG_TAB_CONTROLS,"Controls","Controles"
-CONFIG_TAB_VIDEO,"Video","Vídeo"
-CONFIG_TAB_DEBUG,"Debug","Debug"
-CONFIG_DEBUG_INFINITE_HP,"Infinite HP","Vida infinita"
-CONFIG_DEBUG_INFINITE_STAMINA,"Infinite stamina","Estamina infinita"
-CONFIG_RUN_MODE,"Run Mode","Modo de Corrida"
-CONFIG_RUN_HOLD,"Hold to Run","Segurar para Correr"
-CONFIG_RUN_TOGGLE,"Toggle Run","Alternar Corrida"
-CONFIG_DEADZONE,"Deadzone (Analog)","Deadzone (Analógico)"
-CONFIG_SENS_LOOK,"Look Sensitivity","Sensibilidade da Câmera"
-CONFIG_SENS_AIM,"Aim Sensitivity","Sensibilidade da Mira"
-CONFIG_MAPPED_CONTROLS,"Mapped Controls:","Comandos Mapeados:"
-CONFIG_RESOLUTION,"Resolution","Resolução"
-CONFIG_BRIGHTNESS,"Global Brightness","Brilho Global"
-CONFIG_DISPLAY_MODE,"Display Mode","Modo de Tela"
-CONFIG_DISPLAY_FULLSCREEN,"Fullscreen","Tela Cheia"
-CONFIG_DISPLAY_WINDOWED,"Windowed","Modo Janela"
-CONFIG_CEL_SHADING,"Cel Shading (Cartoon)","Cel Shading (Cartoon)"
-CONFIG_CEL_SHADING_INTENSITY,"Cel Shading Intensity","Intensidade do Cel Shading"
-CONFIG_AIM_ASSIST,"Aim Assist","Assistente de Mira"
-CONFIG_AIM_ASSIST_STRENGTH,"Aim Assist Strength","Intensidade da Assistência"
-TXT_PROLOGUE,"PROLOGUE","PRÓLOGO"
-TXT_CHAPTER_1,"CHAPTER 1","CAPÍTULO 1"
+WITH_POWER_2_2,A hidden passage between ancient machines.,Uma passagem escondida entre máquinas antigas.
+WITH_POWER_2_3,A space he had never noticed before.,Um espaço que ele nunca havia notado antes.
+WITH_POWER_2_4,Without a choice…,Sem escolha…
+WITH_POWER_2_5,He begins to drag himself there.,Ele começa a se arrastar até lá.
+WITH_POWER_3_1,Maycow reaches the passage.,Maycow chega até a passagem.
+WITH_POWER_3_2,There was an ancient metal door.,Ali havia uma porta metálica antiga.
+WITH_POWER_3_3,A red valve.,Uma válvula vermelha.
+WITH_POWER_3_4,He forces the valve.,Ele força a válvula.
+WITH_POWER_3_5,Blood drips down his hand…,Sangue escorre por sua mão…
+WITH_POWER_3_6,And falls on the metal.,E cai sobre o metal.
+WITH_POWER_3_7,The valve begins to turn on its own.,A válvula começa a girar sozinha.
+WITH_POWER_3_8,The door opens.,A porta se abre.
+WITH_POWER_4_1,On the other side was a hidden shelter.,Do outro lado havia um abrigo escondido.
+WITH_POWER_4_2,A room full of files and notes.,Uma sala cheia de arquivos e anotações.
+WITH_POWER_4_3,On a table lay two objects.,Sobre uma mesa estavam dois objetos.
+WITH_POWER_5_1,A strange artifact.,Um artefato estranho.
+WITH_POWER_5_2,And a mechanical weapon formed by gears.,E uma arma mecânica formada por engrenagens.
+WITH_POWER_5_3,The Cogblade.,A Cogblade.
+WITH_POWER_5_4,The artifact did not look like a common gear.,O artefato não parecia uma engrenagem comum.
+WITH_POWER_5_5,Its shape was impossible.,Sua forma era impossível.
+WITH_POWER_5_6,Misaligned gears.,Engrenagens desalinhadas.
+WITH_POWER_5_7,Something that clearly did not belong to the Waking World.,Algo que claramente não pertencia ao Mundo da Vigília.
+WITH_POWER_6_1,Maycow grabs the artifact.,Maycow pega o artefato.
+WITH_POWER_6_2,"In that instant, the Huske invades the shelter.",No mesmo instante o Huske invade o abrigo.
+WITH_POWER_6_3,Maycow raises the object out of instinct.,Maycow ergue o objeto por instinto.
+WITH_POWER_6_4,Reality tears again.,A realidade rasga novamente.
+WITH_POWER_6_5,Maycow and the creature are pulled elsewhere.,Maycow e a criatura são puxados para outro lugar.
+WITH_POWER_6_6,The Iron Abyss.,O Abismo de Ferro.
+WITH_POWER_7_1,The air was heavy.,O ar era pesado.
+WITH_POWER_7_2,Among these echoes were other sounds.,Entre esses ecos havia outros sons.
+WITH_POWER_7_3,Sounds that should not exist.,Sons que não deveriam existir.
+WITH_POWER_7_4,The Huske tries to attack again.,O Huske tenta atacar novamente.
+WITH_POWER_7_5,But something had changed.,Mas algo havia mudado.
+WITH_POWER_7_6,Maycow felt his body lighter.,Maycow sentia seu corpo mais leve.
+WITH_POWER_7_7,Faster and stronger.,Mais rápido e forte.
+WITH_POWER_7_8,In his hand was the Cogblade.,Em sua mão estava a Cogblade.
+WITH_POWER_7_9,It bleeds...,Ela sangra...
+UI_HOLD,HOLD,SEGURE
+ITEM_PISTOL_NAME,Pistol,Pistola
+ITEM_PISTOL_DESC,A standard firearm.,Uma arma de fogo padrão.
+ITEM_COGBLADE_NAME,Crescent Cogblade,Crescent Cogblade
+ITEM_COGBLADE_DESC,A gear-powered blade.,Uma lâmina de engrenagem.
+ITEM_AMMO_NAME,Pistol Ammo,Balas de Pistola
+ITEM_AMMO_DESC,Ammunition for your gun.,Munição para a sua arma.
+MENU_CONFIG,Configuration,Configurações
+CONFIG_AIM_MODE,Aim Mode,Modo de Mira
+CONFIG_AIM_HOLD,Hold,Segurar
+CONFIG_AIM_TOGGLE,Toggle,Alternar
+CONFIG_LANGUAGE,Language,Idioma
+CONFIG_LANG_PT,Portuguese,Português
+CONFIG_LANG_EN,English,Inglês
+BTN_BACK,Back,Voltar
+LOADING_TEXT_1,Anti-Lopes: Creatures that inhabit the forgotten outskirts.,Anti-Lopes: Criaturas que habitam os arredores esquecidos.
+LOADING_TEXT_2,The Red Valve: The artifact that tore reality.,A Válvula Vermelha: O artefato que rasgou a realidade.
+LOADING_TEXT_3,'The Negotiator' Projectile: Made to pierce any armor.,Projétil 'The Negotiator': Feito para perfurar qualquer armadura.
+LOADING_TEXT_4,The Negotiator (V1): A powerful and rustic weapon.,The Negotiator (V1): Uma arma poderosa e rústica.
+LOADING_TEXT_5,The Negotiator (V2): The evolution of firepower.,The Negotiator (V2): A evolução do poder de fogo.
+CONFIG_TAB_GAMEPLAY,Gameplay,Gameplay
+CONFIG_TAB_CONTROLS,Controls,Controles
+CONFIG_TAB_VIDEO,Video,Vídeo
+CONFIG_TAB_DEBUG,Debug,Debug
+CONFIG_DEBUG_INFINITE_HP,Infinite HP,Vida infinita
+CONFIG_DEBUG_INFINITE_STAMINA,Infinite stamina,Estamina infinita
+CONFIG_RUN_MODE,Run Mode,Modo de Corrida
+CONFIG_RUN_HOLD,Hold to Run,Segurar para Correr
+CONFIG_RUN_TOGGLE,Toggle Run,Alternar Corrida
+CONFIG_DEADZONE,Deadzone (Analog),Deadzone (Analógico)
+CONFIG_SENS_LOOK,Look Sensitivity,Sensibilidade da Câmera
+CONFIG_SENS_AIM,Aim Sensitivity,Sensibilidade da Mira
+CONFIG_MAPPED_CONTROLS,Mapped Controls:,Comandos Mapeados:
+CONFIG_RESOLUTION,Resolution,Resolução
+CONFIG_BRIGHTNESS,Global Brightness,Brilho Global
+CONFIG_DISPLAY_MODE,Display Mode,Modo de Tela
+CONFIG_DISPLAY_FULLSCREEN,Fullscreen,Tela Cheia
+CONFIG_DISPLAY_WINDOWED,Windowed,Modo Janela
+CONFIG_CEL_SHADING,Cel Shading (Cartoon),Cel Shading (Cartoon)
+CONFIG_CEL_SHADING_INTENSITY,Cel Shading Intensity,Intensidade do Cel Shading
+CONFIG_AIM_ASSIST,Aim Assist,Assistente de Mira
+CONFIG_AIM_ASSIST_STRENGTH,Aim Assist Strength,Intensidade da Assistência
+TXT_PROLOGUE,PROLOGUE,PRÓLOGO
+TXT_CHAPTER_1,CHAPTER 1,CAPÍTULO 1
 ACTION_USE,Use,Usar
 ACTION_EQUIP,Equip,Equipar
 ACTION_UNEQUIP,Unequip,Remover
 ACTION_INSPECT,Inspect,Inspecionar
-MAP_POI_PRACINHA,"Town Square","Pracinha"
-MAP_POI_IGREJA,"Main Church","Igreja Matriz"
-MAP_POI_OFICINA_JIMMY,"Jimmy's Workshop","Oficina do Jimmy"
-MAP_POI_CASA_JIMMY,"Jimmy's House","Casa do Jimmy"
-MAP_POI_CASA_NICE,"Ms. Nice's House","Casa da Dona Nice"
-MAP_POI_CASA_MAYCOW,"Maycow's House","Casa do Maycow"
-MAP_RECENTER,"Recenter","Centralizar"
-MAP_SCALE,"{h} m across  ·  zoom {z}x","{h} m de altura  ·  zoom {z}x"
-MAP_HELP_PAD,"Left stick: move  |  Right stick: zoom","Analógico esquerdo: mover  |  Analógico direito: zoom"
-MAP_HELP_MOUSE,"Mouse wheel: zoom  |  drag: move  |  R: recenter on player","Roda do mouse: zoom  |  arrastar: mover  |  R: centralizar no player"
-MAP_UNAVAILABLE,"No map available here.","Nenhum mapa disponível aqui."
+MAP_POI_PRACINHA,Town Square,Pracinha
+MAP_POI_IGREJA,Main Church,Igreja Matriz
+MAP_POI_OFICINA_JIMMY,Jimmy's Workshop,Oficina do Jimmy
+MAP_POI_CASA_JIMMY,Jimmy's House,Casa do Jimmy
+MAP_POI_CASA_NICE,Ms. Nice's House,Casa da Dona Nice
+MAP_POI_CASA_MAYCOW,Maycow's House,Casa do Maycow
+MAP_RECENTER,Recenter,Centralizar
+MAP_SCALE,{h} m across  ·  zoom {z}x,{h} m de altura  ·  zoom {z}x
+MAP_HELP_PAD,Left stick: move  |  Right stick: zoom,Analógico esquerdo: mover  |  Analógico direito: zoom
+MAP_HELP_MOUSE,Mouse wheel: zoom  |  drag: move  |  R: recenter on player,Roda do mouse: zoom  |  arrastar: mover  |  R: centralizar no player
+MAP_UNAVAILABLE,No map available here.,Nenhum mapa disponível aqui.
 BTN_NEW_GAME,New Game,Novo Jogo
 UI_SELECT_SAVE_SLOT,Select Save Slot,Selecionar Slot de Jogo
 UI_SLOT,Slot,Slot
@@ -128,13 +128,20 @@ UI_CONFIRM_DELETE,Delete,Deseja deletar o
 BTN_DELETE,Delete,Deletar
 BTN_YES,Yes,Sim
 BTN_NO,No,Não
-FILE_APOS_DIA_TRABALHO_TITLE,"After a Day's Work","Após um dia de trabalho"
-FILE_TELEFONEMA_NICE_TITLE,"Mrs. Nice's Phone Call","Telefonema da Dona Nice"
-FILE_CADERNO_JIMMY_TITLE,"Jimmy's Notebook","O Caderno de Jimmy"
-FILES_EMPTY,"You haven't found any files yet.","Você ainda não encontrou nenhum arquivo."
-FILES_HELP,"Up / Down: change file  |  Mouse wheel: scroll the text","Cima / Baixo: trocar de arquivo  |  Roda do mouse: rolar o texto"
-FILES_HELP_PAD,"Up / Down: change file","Cima / Baixo: trocar de arquivo"
-FILES_NEW,"New file: %s","Novo arquivo: %s"
-TUTORIAL_AMULET_1,"Now you can drag enemies into the parallel world using the amulet!","Agora você pode levar os inimigos para o mundo paralelo usando o amuleto!"
+FILE_APOS_DIA_TRABALHO_TITLE,After a Day's Work,Após um dia de trabalho
+FILE_TELEFONEMA_NICE_TITLE,Mrs. Nice's Phone Call,Telefonema da Dona Nice
+FILE_CADERNO_JIMMY_TITLE,Jimmy's Notebook,O Caderno de Jimmy
+FILES_EMPTY,You haven't found any files yet.,Você ainda não encontrou nenhum arquivo.
+FILES_HELP,Up / Down: change file  |  Mouse wheel: scroll the text,Cima / Baixo: trocar de arquivo  |  Roda do mouse: rolar o texto
+FILES_HELP_PAD,Up / Down: change file,Cima / Baixo: trocar de arquivo
+FILES_NEW,New file: %s,Novo arquivo: %s
+TUTORIAL_AMULET_1,Now you can drag enemies into the parallel world using the amulet!,Agora você pode levar os inimigos para o mundo paralelo usando o amuleto!
 TUTORIAL_AMULET_2,"In the real world you do not have the same abilities you have in the parallel world, so take them to the other side to be able to defeat them!","No mundo real você não possui as mesmas habilidades que no mundo paralelo, então os leve para o outro mundo para então conseguir derrotá-los!"
-TUTORIAL_AMULET_3,"To drag an enemy into that arena you must aim and then select the enemy with the trigger!","Para levar o inimigo para essa arena você deve usar a mira e então selecionar o inimigo com o gatilho!"
+TUTORIAL_AMULET_3,To drag an enemy into that arena you must aim and then select the enemy with the trigger!,Para levar o inimigo para essa arena você deve usar a mira e então selecionar o inimigo com o gatilho!
+OBJ_OFICINA_JIMMY,- I need to go to Jimmy's workshop...,- Preciso ir na oficina do Jimmy...
+OBJ_EXPLORAR_CIDADE,Explore the city in search of information!,Explore a cidade em busca de informações!
+OFICINA_FALA_1,What happened here?,O que houve aqui?
+OFICINA_FALA_2,There is something wrong with this place...,Tem algo errado nesse lugar...
+OFICINA_FALA_3,I'll push this bookcase... this noise is coming from there...,Vou empurrar essa estante... esse barulho está vindo daí...
+OFICINA_FALA_4,What just happened?,O que acabou de acontecer?
+HUD_COGBLADE_POWER,COGBLADE POWER,PODER DA COGBLADE

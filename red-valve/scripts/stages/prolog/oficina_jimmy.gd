@@ -422,13 +422,12 @@ func iniciar_cutscene() -> void:
 	label.modulate.a = 0.0
 	text_layer.add_child(label)
 	
-	var is_en = SaveManager.config.get("language", "pt") == "en"
 	
 	await get_tree().create_timer(0.2).timeout
 	if cutscene_skipped: return
 	
 	# Frase 1
-	label.text = "What happened here?" if is_en else "O que houve aqui?"
+	label.text = tr("OFICINA_FALA_1")
 	var t1 = create_tween()
 	t1.tween_property(label, "modulate:a", 1.0, 0.8)
 	
@@ -523,7 +522,7 @@ func iniciar_cutscene() -> void:
 	if cutscene_skipped: return
 	
 
-	label.text = "There is something wrong with this place..." if is_en else "Tem algo errado nesse lugar..."
+	label.text = tr("OFICINA_FALA_2")
 	var t3 = create_tween()
 	t3.tween_property(label, "modulate:a", 1.0, 0.8)
 	
@@ -565,7 +564,7 @@ func iniciar_cutscene() -> void:
 	await get_tree().create_timer(0.3).timeout
 	if cutscene_skipped: return
 	
-	label.text = "I'll push this bookcase... this noise is coming from there..." if is_en else "Vou empurrar essa estante... esse barulho está vindo dai..."
+	label.text = tr("OFICINA_FALA_3")
 	var t5 = create_tween()
 	t5.tween_property(label, "modulate:a", 1.0, 0.8)
 	
@@ -884,7 +883,7 @@ func iniciar_cutscene_antiga() -> void:
 	# ---------------------------------------------------------
 	# FASE 4: Frase "O que acabou de acontecer?" (E aguarda sumir)
 	# ---------------------------------------------------------
-	label.text = "What just happened?" if SaveManager.config.get("language", "pt") == "en" else "O que acabou de acontecer?"
+	label.text = tr("OFICINA_FALA_4")
 	
 	var label_in_tween = create_tween()
 	label_in_tween.tween_property(label, "modulate:a", 1.0, 0.8).set_trans(Tween.TRANS_SINE)

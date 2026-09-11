@@ -1,11 +1,11 @@
 keys,en,pt
-WITH_POWER_1_1,The two are thrown into some kind of arena.,Os dois são lançados em uma espécie de arena.
-WITH_POWER_1_2,"Before Maycow, a weapon resembling a scythe materializes in his hands.","Diante de Maycow, uma arma semelhante a uma foice se materializa em suas mãos."
-WITH_POWER_1_3,"Not understanding how, he holds it firmly.","Sem entender como, ele a segura com firmeza."
-WITH_POWER_1_4,And charges at the Huske.,E parte para cima do Huske.
+WITH_POWER_1_1,The two face each other in some kind of arena!,Os dois se enfrentam em uma espécie de arena!
+WITH_POWER_1_2,Maycow realizes he now holds powers never seen before,Maycow percebe que agora ele possui poderes nunca antes visto
+WITH_POWER_1_3,Without quite understanding what is happening…,Sem entender direito o que está acontecendo…
+WITH_POWER_1_4,He knows this is his destiny and charges at the Cobalt Huske!,Ele sabe que esse é o destino dele e parte pra cima do Huske Cobalt!
 WITH_POWER_2_1,Maycow delivers the final blow.,Maycow desfere o golpe final.
-WITH_POWER_2_2,The Huske disintegrates.,O Huske se desfaz.
-WITH_POWER_2_3,Maycow faints.,Maycow desmaia.
+WITH_POWER_2_2,The Cogblade falls at his side...,A Cogblade cai ao seu lado...
+WITH_POWER_2_3,The Huske dissolves and Maycow passes out…,O Huske se desfaz e Maycow desmaia…
 WITH_POWER_3_1,When he wakes up…,Quando acorda…
 WITH_POWER_3_2,He is back in the ruined workshop.,Ele está novamente na oficina destruída.
 WITH_POWER_3_3,Back in Aurora City and the door was locked again.,Novamente em Aurora City e a porta estava novamente trancada.
@@ -29,41 +29,18 @@ END_FIGHT_3_1,"The Husker spots Maycow and charges at him again. But this time, 
 END_FIGHT_3_2,The amulet in his pocket begins to heat up.,O amuleto em seu bolso começa a esquentar.
 END_FIGHT_3_3,"In an instant, the two are ripped away and thrown somewhere else.","Num instante, os dois são arrancados e lançados para outro lugar."
 END_FIGHT_3_4,A weapon resembling a scythe materializes in his hands.,Uma arma semelhante a uma foice se materializa em suas mãos.
-NO_POWER_1_1,The streets were empty.,As ruas estavam vazias.
-NO_POWER_1_2,Maycow walked alone to the workshop.,Maycow seguia sozinho até a oficina.
-NO_POWER_1_3,"When he arrived, he found the door closed.","Quando chegou, encontrou a porta fechada."
-NO_POWER_1_4,He stopped.,Ele parou.
-NO_POWER_1_5,There was something strange about that place.,Havia algo estranho naquele lugar.
-NO_POWER_1_6,It was as if the workshop were... waiting for him.,Era como se a oficina estivesse... esperando por ele.
-NO_POWER_2_1,Maycow opens the workshop door.,Maycow abre a porta da oficina.
-NO_POWER_2_2,"As soon as he enters, he hears something, muffled thuds.","Assim que entra, escuta algo, batidas abafadas."
-NO_POWER_2_3,"Then, a heavy sound of something being dragged.","Depois, um som pesado de algo sendo arrastado."
-NO_POWER_2_4,He stops and tries to identify where it's coming from.,Ele para e tenta identificar de onde vem.
-NO_POWER_2_5,The noise seems to come through the walls.,O barulho parece atravessar as paredes.
-NO_POWER_3_1,"As he approaches the cabinet, the noise gets louder.","Ao se aproximar do armário, o barulho fica mais intenso."
-NO_POWER_3_2,Maycow pushes it aside.,Maycow o empurra para o lado.
-NO_POWER_3_3,"Behind it, something appears that he had never seen in the workshop.","Atrás dele, surge algo que ele jamais havia visto na oficina."
-NO_POWER_3_4,A door.,Uma porta.
-NO_POWER_4_1,— I had never seen this door... Could Jimmy be trapped on the other side?,— Nunca tinha visto essa porta... Será que o Jimmy está preso do outro lado?
-NO_POWER_4_2,Maycow turns the valve.,Maycow gira a válvula.
-NO_POWER_4_3,A metallic crack echoes through the workshop.,Um estalo metálico ecoa pela oficina.
-NO_POWER_4_4,The door begins to open.,A porta começa a se abrir.
-NO_POWER_5_1,Before he can see what's on the other side...,Antes que ele consiga enxergar o que há do outro lado...
-NO_POWER_5_2,a creature charges at him.,uma criatura avança sobre ele.
-NO_POWER_5_3,Maycow is violently thrown to the ground.,Maycow é derrubado com violência.
-NO_POWER_5_4,Everything happens in seconds.,Tudo acontece em segundos.
 PROLOG_BEGIN_1_1,"Aurora City, 1994.","Aurora City, 1994."
 PROLOG_BEGIN_1_2,Kraycik Industrial District.,Distrito Industrial de Kraycik.
-PROLOG_BEGIN_1_3,21:00.,21:00.
-PROLOG_BEGIN_1_4,The rain fell on the almost deserted streets.,A chuva caía sobre as ruas quase desertas.
-PROLOG_BEGIN_1_5,"That night, something was about to change.","Naquela noite, algo estava prestes a mudar."
-PROLOG_BEGIN_2_1,"Maycow arrives home, the day had been long.","Maycow chega em casa, o dia havia sido longo."
-PROLOG_BEGIN_3_1,The exhaustion and worry weighed heavily.,O cansaço e a preocupação pesavam.
-PROLOG_BEGIN_3_2,"Jimmy, his friend, had been missing for a week.","Jimmy, seu amigo, estava desaparecido havia uma semana."
-PROLOG_BEGIN_4_1,Maycow stared at the strange gift Jimmy had given him days before.,Maycow encarava o estranho presente que Jimmy havia lhe dado dias antes.
-PROLOG_BEGIN_4_2,He had never quite understood why he chose something so unusual.,Nunca tinha entendido muito bem por que ele escolhera algo tão incomum.
-PROLOG_BEGIN_4_3,He observes it for a few seconds.,Ele o observa por alguns segundos.
-PROLOG_BEGIN_4_4,"— Where have you been, my friend?","— Onde você se meteu, meu amigo?"
+PROLOG_BEGIN_1_3,21:00,21:00
+PROLOG_BEGIN_1_4,The rain fell on the almost deserted streets,A chuva caía sobre as ruas quase desertas
+PROLOG_BEGIN_1_5,"That night, something was about to change","Naquela noite, algo estava prestes a mudar"
+PROLOG_BEGIN_2_1,"Maycow arrives home, the day had been long","Maycow chega em casa, o dia havia sido longo"
+PROLOG_BEGIN_3_1,The exhaustion and worry weighed heavily,O cansaço e a preocupação pesavam
+PROLOG_BEGIN_3_2,"Jimmy, his friend, had been missing for a week","Jimmy, seu amigo, estava desaparecido havia uma semana"
+PROLOG_BEGIN_4_1,Maycow stared at the strange gift Jimmy had given him days before…,Maycow encarava o estranho presente que Jimmy havia lhe dado dias antes…
+PROLOG_BEGIN_4_2,A strange amulet; he had never quite understood why he chose something so unusual.,"Um amuleto estranho, nunca tinha entendido muito bem por que a escolha de algo tão incomum."
+PROLOG_BEGIN_4_3,He observes the gift for a few seconds.,Ele observa o presente por alguns segundos.
+PROLOG_BEGIN_4_4,"Where have you been, my friend? What does this amulet mean?","Onde você se meteu, meu amigo? O que esse amuleto significa?"
 PROLOG_PHONE_1_1,— Hello?,— Alô?
 PROLOG_PHONE_1_2,For a second he expects to hear a different voice.,Por um segundo ele espera ouvir uma voz diferente.
 PROLOG_PHONE_1_3,Maybe someone with some information.,Talvez alguém com alguma informação.
@@ -76,16 +53,12 @@ PROLOG_PHONE_2_2,— But I thought you should know.,— Mas achei que você deve
 PROLOG_PHONE_2_3,Maycow straightens his posture.,Maycow endireita a postura.
 PROLOG_PHONE_2_4,— What happened?,— O que aconteceu?
 PROLOG_PHONE_2_5,— I heard a strange noise coming from Jimmy's workshop.,— Eu ouvi um barulho estranho vindo da oficina do Jimmy.
-PROLOG_PHONE_2_6,— Nothing too loud... something subtle... like metal being moved... or something dragging.,— Nada muito alto… algo sutil… como metal sendo mexido… ou alguma coisa se arrastando.
-PROLOG_PHONE_2_7,She continues:,Ela continua:
-PROLOG_PHONE_2_8,— And the workshop light is still on.,— E a luz da oficina ainda está acesa.
-PROLOG_PHONE_3_1,For a moment Maycow thought Jimmy might have returned.,Por um momento Maycow pensou que Jimmy poderia ter voltado.
-PROLOG_PHONE_3_2,But he takes a deep breath.,Mas ele respira fundo.
-PROLOG_PHONE_3_3,"— Thanks for letting me know, Mrs. Nice.","— Obrigado por avisar, dona Nice."
-PROLOG_PHONE_3_4,— I'll go there and check.,— Eu vou lá verificar.
-TXT_OFICINA_JIMMY_1,What is happening?,O que está acontecendo?
-TXT_OFICINA_JIMMY_2,What is this thing?,O que é essa coisa?
-TXT_OFICINA_JIMMY_3,What just happened?,O que acabou de acontecer?
+PROLOG_PHONE_2_6,— Nothing too loud… something subtle… like a hiss… something dragging…,— Nada muito alto… algo sutil… como um chiado… algo se arrastando…
+PROLOG_PHONE_2_7,— And the workshop light is still on.,— E a luz da oficina ainda está acesa.
+PROLOG_PHONE_2_8,For a moment Maycow thought Jimmy might have returned.,Por um momento Maycow pensou que Jimmy poderia ter voltado.
+PROLOG_PHONE_3_1,But he takes a deep breath…,Mas ele respira fundo…
+PROLOG_PHONE_3_2,"— Thanks for letting me know, Mrs. Nice.","— Obrigado por avisar, dona Nice."
+PROLOG_PHONE_3_3,— I'll go there and check.,— Eu vou lá verificar.
 PROLOG_END_FIGHT_1_1,Maycow delivers the final blow.,Maycow desfere o golpe final.
 PROLOG_END_FIGHT_1_2,The Huske dissolves.,O Huske se desfaz.
 PROLOG_END_FIGHT_1_3,Maycow passes out.,Maycow desmaia.
@@ -103,27 +76,9 @@ PROLOG_END_FIGHT_5_1,"In the chest, there was a strange suit and a letter from J
 PROLOG_END_FIGHT_5_2,"He reveals that blood opens the door, and the artifact is from another world.","Ele revela que o sangue ativa a porta, e o artefato é de outro mundo."
 PROLOG_END_FIGHT_5_3,"The Cogblade reacts to it, but its origin in the Abyss is a mystery.","A Cogblade reage a ele, mas sua origem no Abismo é um mistério."
 PROLOG_END_FIGHT_5_4,Maycow wonders what else Jimmy was hiding.,Maycow se pergunta o que mais Jimmy estava escondendo.
-NO_POWER_1_WALK_1,The streets were empty and a heavy silence dominated the rainy night.,As ruas estavam vazias e um silêncio pesado dominava a noite de chuva.
+NO_POWER_1_WALK_1,The rainy night blended with the sounds of people and cars…,A noite chuvosa se somava aos sons de pessoas e carros…
 NO_POWER_1_WALK_2,"The wind dragged the water through the streets, creating an almost conscious whisper.","O vento arrastava a água pelas ruas, criando um sussurro quase consciente."
-NO_POWER_1_WALK_3,"Streetlights flickered in the distance, as if something passed between them.","Postes de luz piscavam ao longe, como se algo passasse entre eles."
-NO_POWER_1_WALK_4,"Maycow walks to the workshop, but something didn't feel right.","Maycow caminha até a oficina, mas algo não parecia certo."
+NO_POWER_1_WALK_3,"The noise was heavy, sounds of movement, but only shadows could be seen… without much of a clue about what might be happening…","O barulho estava pesado, sons de movimentos, mas somente se via sombras… sem muita pista do que pode estar acontecendo…"
+NO_POWER_1_WALK_4,"Maycow walks to Jimmy's workshop, but something didn't feel right.","Maycow caminha até a oficina de Jimmy, mas algo não parecia certo."
 NO_POWER_1_WALK_5,"It wasn't something he could see, it was just a bad feeling.","Não era algo que ele pudesse ver, era apenas uma sensação ruim."
 NO_POWER_1_WALK_6,As if the place were... waiting for him.,Como se o lugar estivesse… esperando por ele.
-NO_POWER_1_SUM_1,The streets were empty and a heavy silence dominated the rainy night.,As ruas estavam vazias e um silêncio pesado dominava a noite de chuva.
-NO_POWER_1_SUM_2,"Maycow walks to the workshop, but something didn't feel right.","Maycow caminha até a oficina, mas algo não parecia certo."
-NO_POWER_1_SUM_3,"It was a strange feeling, as if the place were waiting for him.","Era uma sensação estranha, como se o lugar estivesse esperando por ele."
-NO_POWER_3_SUM_1,"He enters through the window, finding the workshop intact, silent, and lit.","Ele entra pela janela e encontra a oficina intacta, silenciosa e iluminada."
-NO_POWER_3_SUM_2,No signs of a break-in. Not a single thing out of place.,Nenhum sinal de invasão. Nenhuma coisa fora do lugar.
-NO_POWER_3_SUM_3,The stillness was so heavy it swallowed the sound of his own breathing.,A quietude era tão pesada que engolia o som da sua própria respiração.
-NO_POWER_3_SUM_4,"""Must have been the wind..."" he says, his voice muffled.","— Deve ter sido o vento... — ele diz, com a voz abafada."
-NO_POWER_5_SUM_1,A violent boom tears reality apart like old fabric.,Um estrondo violento rasga a realidade como um tecido velho.
-NO_POWER_5_SUM_2,Maycow is brutally thrown against the wall.,Maycow é arremessado brutalmente contra a parede.
-NO_POWER_5_SUM_3,"Everything shakes for a second before an absolute, impossible silence takes over.",Tudo treme por um segundo antes de um silêncio absoluto e impossível tomar conta.
-NO_POWER_5_SUM_4,"In the center of the workshop, a cosmic rift opened, slicing through space itself.","No centro da oficina, uma fenda cósmica se abriu, cortando o próprio espaço."
-NO_POWER_6_SUM_1,"The creatures emerge and one growls: ""WHERE IS THE ARTIFACT?""",As criaturas emergem e uma delas rosna: — ONDE ESTÁ O ARTEFATO?
-NO_POWER_6_SUM_2,"Still stunned, Maycow grabs a wrench out of pure survival instinct.","Ainda atordoado, Maycow agarra uma chave inglesa por puro instinto de sobrevivência."
-NO_POWER_6_SUM_3,He charges with all his strength and strikes the monster.,Ele avança com toda a sua força e golpeia o monstro.
-NO_POWER_6_SUM_4,"The impact echoes a metallic clang, causing no scratch on the iron creature.","O impacto ecoa um estrondo metálico, sem causar qualquer arranhão na criatura de ferro."
-OFICINA_NEW_CUTSCENE_1,What happened here?,O que houve aqui?
-OFICINA_NEW_CUTSCENE_2,Is this noise coming from behind the closet?,Esse barulho vem de traz do armario?
-OFICINA_NEW_CUTSCENE_3,"I'm going to push this closet, I think there's something weird...","Vou empurrar esse armario, acho que tem algo esquisito..."

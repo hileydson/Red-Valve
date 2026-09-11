@@ -10,6 +10,17 @@ const TUTORIAL_AMULETO_IMAGEM := "res://assets/tutorial/tutorial_1.png"
 const TUTORIAL_AMULETO_ESPERA := 15.0
 const TUTORIAL_AMULETO_TEXTOS := ["TUTORIAL_AMULET_1", "TUTORIAL_AMULET_2", "TUTORIAL_AMULET_3"]
 
+# Primeiro objetivo do jogo: a pista discreta no canto, depois da narracao de
+# abertura da stage_1 (so na primeira vez, junto com ela).
+const OBJETIVO_ESPERA_APOS_INTRO := 6.0
+const OBJETIVO_PRIMEIRO_DURACAO := 30.0
+
+# Objetivo do Capitulo 1: nao entra junto com a abertura. Espera um tempo de
+# gameplay de VERDADE (ver _esperar_gameplay: pausa, cutscene e ida a arena nao
+# contam) e so' entao aparece, por tempo limitado.
+const OBJETIVO_CAP1_ESPERA := 60.0
+const OBJETIVO_CAP1_DURACAO := 120.0
+
 @onready var navigation_region_3d: NavigationRegion3D = $NavigationRegion3D
 @onready var real_time_label: Label = $real_time_label
 @onready var sky_3d: Sky3D = $WorldEnvironment/Sky3D
@@ -369,6 +380,15 @@ func _play_intro_text() -> void:
 		# diferentes.
 		await get_tree().create_timer(2.0, false).timeout
 		_novo_arquivo(ARQUIVO_CADERNO)
+
+		# Objetivo do Capitulo 1: entra DEPOIS de um minuto de jogo, nao junto
+		# com a abertura. `_esperar_gameplay` conta so' o tempo em que o jogador
+		# esta' de fato jogando com o Maycow normal nesta cena — menu aberto,
+		# cutscene e batalha na arena nao consomem o relogio, senao a dica
+		# apareceria sozinha num momento que nao faz sentido.
+		if not await _esperar_gameplay(OBJETIVO_CAP1_ESPERA):
+			return
+		GlobalUtils.mostrar_objetivo(tr("OBJ_EXPLORAR_CIDADE"), OBJETIVO_CAP1_DURACAO)
 		return
 
 	if SaveManager.prolog_finished:
@@ -392,6 +412,14 @@ func _play_intro_text() -> void:
 		await get_tree().create_timer(4.5, false).timeout
 		GlobalUtils.hide_center_message("intro_stage_1")
 		await get_tree().create_timer(0.5, false).timeout
+
+	# Primeiro objetivo do jogo. Entra DEPOIS de todo o ciclo de abertura, com um
+	# respiro: emendar no ultimo aviso faria parecer mais uma frase da narracao,
+	# e nao a pista do que fazer agora.
+	await get_tree().create_timer(OBJETIVO_ESPERA_APOS_INTRO, false).timeout
+	if not is_inside_tree():
+		return
+	GlobalUtils.mostrar_objetivo(tr("OBJ_OFICINA_JIMMY"), OBJETIVO_PRIMEIRO_DURACAO)
 
 
 ## O tutorial do amuleto: so no Capitulo 1, so uma vez na vida do save, e so

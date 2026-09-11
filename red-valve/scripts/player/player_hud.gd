@@ -111,7 +111,7 @@ void fragment() {
 		player.hud_layer.add_child(player.cogblade_hud)
 		
 		player.cogblade_hud_label = Label.new()
-		player.cogblade_hud_label.text = "PODER DA COGBLADE"
+		player.cogblade_hud_label.text = tr("HUD_COGBLADE_POWER")
 		player.cogblade_hud_label.add_theme_font_size_override("font_size", 64)
 		player.cogblade_hud_label.add_theme_color_override("font_color", Color(1, 0, 0, 1))
 		player.cogblade_hud_label.set_anchors_and_offsets_preset(Control.PRESET_CENTER)

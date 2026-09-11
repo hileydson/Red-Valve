@@ -16,7 +16,7 @@ var slides = [
 	},
 	{
 		"image_path": "res://assets/cutscenes/prolog/scene_telefone_4.png",
-		"texts": ["PROLOG_PHONE_3_1", "PROLOG_PHONE_3_2", "PROLOG_PHONE_3_3", "PROLOG_PHONE_3_4"]
+		"texts": ["PROLOG_PHONE_3_1", "PROLOG_PHONE_3_2", "PROLOG_PHONE_3_3"]
 	}
 ]
 
