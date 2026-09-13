@@ -1133,7 +1133,7 @@ func _physics_process(delta: float) -> void:
 		var visao_frente := -global_transform.basis.z
 		var alinhamento := direction.dot(visao_frente) if direction else 1.0
 
-		var is_running = _run_toggle_active and (current_stamina > 0 or _stamina_infinita()) and can_run_normal and not is_exhausted and not is_aiming
+		var is_running = _run_toggle_active and velocity.length() > 0.1 and (current_stamina > 0 or _stamina_infinita()) and can_run_normal and not is_exhausted and not is_aiming
 		# Correr só para frente (e na diagonal). Indo totalmente de lado com a
 		# câmera apontada para frente, a corrida é cortada e ele volta a andar —
 		# animação E velocidade — do mesmo jeito que já acontecia de costas.
@@ -1248,14 +1248,14 @@ func _physics_process(delta: float) -> void:
 				target_pos_x = normal_walkback_offset_x
 				target_pos_z = normal_walkback_offset_z
 				
-			var speed_x = 5.0
+			var speed_x = 2.0
 			if input_dir.x < -0.1:
-				speed_x = 1.5
+				speed_x = 1.0
 				if not is_running:
 					target_pos_x -= 0.15
-				
+
 			modelo.position.x = lerp(modelo.position.x, target_pos_x, speed_x * delta)
-			modelo.position.z = lerp(modelo.position.z, target_pos_z, 5.0 * delta)
+			modelo.position.z = lerp(modelo.position.z, target_pos_z, 2.0 * delta)
 
 		# Inclinação e Encolhimento da arma 2D ao correr (bloqueado ao mirar)
 		if is_instance_valid(pistola) and typeof(pistol_2d_pos_original) == TYPE_VECTOR2:
