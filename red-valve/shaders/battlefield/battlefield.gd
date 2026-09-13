@@ -594,6 +594,7 @@ const ROCK_COUNT: int = 80            # pedaços de pedra que sobem junto
 const ROCK_LIFETIME: float = 15.0     # tempo que as pedras ficam na arena
 const RISE_CAM_LAG: float = 4.2       # quanto MENOR, mais a câmera atrasa em relação ao alvo
 const RISE_CAM_AIM_LAG: float = 5.5   # atraso da mira (um pouco mais rápido que a posição)
+const SHADER_PEDRA := "res://shaders/effects/ember_rock.gdshader"
 
 func _play_rise_from_ground_intro() -> void:
 	# Guarda a posição final de todo mundo e joga todos pra debaixo da arena.
@@ -756,6 +757,19 @@ func _spawn_ground_burst(pos: Vector3) -> void:
 		_spawn_rock_chunk(pos)
 
 
+## Material das pedras da intro: o mesmo shader de carvão aceso do Shadow Seraph
+## (ver `shaders/effects/ember_rock.gdshader`). Um único material `static` serve
+## todas as pedras de todas as batalhas — são dezenas de malhas por intro e o
+## shader é caro de compilar.
+static var _mat_pedra: ShaderMaterial
+
+func _material_pedra() -> ShaderMaterial:
+	if _mat_pedra == null:
+		_mat_pedra = ShaderMaterial.new()
+		_mat_pedra.shader = load(SHADER_PEDRA)
+	return _mat_pedra
+
+
 func _spawn_rock_chunk(origin: Vector3) -> void:
 	var rock := RigidBody3D.new()
 	# Só colide com o chão da arena (layer 2): não empurra player nem inimigos.
@@ -778,16 +792,16 @@ func _spawn_rock_chunk(origin: Vector3) -> void:
 	mesh.height = size
 	mesh.radial_segments = 5
 	mesh.rings = 3
-	var mat := StandardMaterial3D.new()
-	var tone := randf_range(0.16, 0.32)
-	mat.albedo_color = Color(tone * 1.15, tone * 0.9, tone * 0.85)
-	mat.roughness = 1.0
-	mat.metallic = 0.0
-	mesh.material = mat
 
 	var mi := MeshInstance3D.new()
 	mi.mesh = mesh
 	mi.scale = Vector3(randf_range(0.7, 1.4), randf_range(0.6, 1.2), randf_range(0.7, 1.4))
+	# Mesmo visual do Shadow Seraph: carvão aceso com veias de brasa.
+	mi.material_override = _material_pedra()
+	# Um material só pras ~80 pedras; o que varia por pedaço vai nestes dois
+	# instance uniforms (senão todas respiram e estouram no mesmo instante).
+	mi.set_instance_shader_parameter("semente", randf())
+	mi.set_instance_shader_parameter("raio", size * 0.5)
 	rock.add_child(mi)
 
 	var shape := CollisionShape3D.new()
