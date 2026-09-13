@@ -9,8 +9,62 @@ extends Node
 
 var player: CharacterBody3D
 
+## O painel de QTE vem por `preload` em vez do nome global `CogbladeQTE`: assim
+## o poder não depende do editor já ter reindexado o arquivo novo.
+const QTE_SCRIPT := preload("res://scripts/player/cogblade_qte.gd")
+
+## Painel de quick time event dos poderes. Criado na primeira vez que algum
+## poder precisa dele e pendurado no próprio componente, então some junto com
+## o player.
+var _qte: QTE_SCRIPT = null
+
 func _ready() -> void:
 	player = get_parent()
+
+
+# =========================================================================
+# QUICK TIME EVENT
+# Cut, Fire Cross e Slain param em pontos combinados da cinemática e pedem
+# botões sorteados (A, B, X, Y, LB, RB). Acertando, o golpe segue inteiro;
+# errando, ele morre ali — cada poder decide o que isso significa. O Cogblade
+# Thrown é o único que não passa por aqui.
+# =========================================================================
+
+func _qte_no() -> QTE_SCRIPT:
+	if not is_instance_valid(_qte):
+		_qte = QTE_SCRIPT.new()
+		_qte.name = "CogbladeQTE"
+		add_child(_qte)
+	return _qte
+
+
+## Sorteia e espera `quantidade` botões. Devolve false se qualquer um deles for
+## errado ou estourar a janela de tempo.
+func _qte_rodar(quantidade: int) -> bool:
+	if quantidade <= 0:
+		return true
+	if not is_instance_valid(player):
+		return false
+	return await _qte_no().rodar(quantidade, player.qte_window)
+
+
+## Os poderes agora têm `await` no meio. Se a cena trocar (ou o player morrer)
+## enquanto a corrotina está parada, ela não pode voltar mexendo em nós já
+## liberados — nem deixar o jogo preso em câmera lenta para sempre.
+func _ult_ok(cine_cam: Camera3D) -> bool:
+	if is_inside_tree() and is_instance_valid(player) and is_instance_valid(cine_cam):
+		return true
+	_ult_restaurar()
+	return false
+
+
+func _ult_restaurar() -> void:
+	Engine.time_scale = 1.0
+	AudioServer.playback_speed_scale = 1.0
+	if is_instance_valid(player):
+		player.is_using_ultimate = false
+	if is_instance_valid(_qte):
+		_qte.cancelar()
 
 func _activate_cogblade_slain() -> void:
 	# Mata qualquer tween de câmera lenta pendente (ex: do impacto da cogblade)
@@ -42,6 +96,10 @@ func _activate_cogblade_slain() -> void:
 	cine_cam.global_transform = player.camera.global_transform
 	cine_cam.make_current()
 	player.camera.current = false
+	# Base da câmera ANTES de ela girar para o céu: é ela que posiciona a lâmina
+	# no mergulho (o código antigo lia isso na hora de montar o tween, ou seja,
+	# também aqui, com a câmera ainda parada olhando para frente).
+	var dive_basis: Basis = cine_cam.global_transform.basis
 	
 	# Passo 1: Olhar para cima lentamente
 	var seq = create_tween()
@@ -180,7 +238,12 @@ func _activate_cogblade_slain() -> void:
 	down_rot.x = deg_to_rad(-90) # 90 graus exatos pra baixo
 	seq.tween_property(cine_cam, "global_rotation", down_rot, 0.1)
 	
-	# A Cogblade surge e desliza suavemente para a posição ideal na tela
+	# A Cogblade surge e desliza suavemente para a posição ideal na tela.
+	# A entrada dela roda num tween próprio, criado dentro do callback; o
+	# mergulho lá embaixo precisa da referência para encerrá-lo antes de
+	# disputar o mesmo global_position.
+	var blade_anim: Array = [null]
+	var blade_alvo: Array = [null]
 	seq.tween_callback(func():
 		player.crescent_cogblade.show()
 		player.crescent_cogblade.top_level = true
@@ -207,19 +270,64 @@ func _activate_cogblade_slain() -> void:
 		var blade_tween = create_tween().set_parallel(true)
 		blade_tween.tween_property(player.crescent_cogblade, "global_position", final_blade_pos, 0.14).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 		blade_tween.tween_property(player.crescent_cogblade, "scale", Vector3.ONE, 0.14).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+		blade_anim[0] = blade_tween
+		blade_alvo[0] = final_blade_pos
 	)
 	
 	seq.tween_interval(0.14)
+	await seq.finished
+	if not _ult_ok(cine_cam): return
 	
-	# Passo 5: O mergulho.
+	# A entrada da lâmina tem tween próprio: ele precisa estar encerrado aqui,
+	# senão os dois escrevem no mesmo global_position no mesmo quadro.
+	if blade_anim[0] is Tween and (blade_anim[0] as Tween).is_valid():
+		(blade_anim[0] as Tween).kill()
+	if blade_alvo[0] != null and is_instance_valid(player.crescent_cogblade):
+		player.crescent_cogblade.global_position = blade_alvo[0]
+		player.crescent_cogblade.scale = Vector3.ONE
+	
+	# Passo 5: O mergulho, agora com o quick time event no meio da descida.
 	var impact_pos = start_pos + Vector3(0, 0.5, 0)
+	var blade_impact_pos: Vector3 = impact_pos - dive_basis.z * 1.0 + dive_basis.x * 0.35
+	
+	var qte_ok: bool = true
+	var qte_n: int = maxi(0, player.slain_qte_count)
+	if qte_n > 0 and is_instance_valid(player.crescent_cogblade):
+		# A lâmina começa a cair devagar enquanto os botões aparecem. Assim que
+		# o QTE acaba (acertando ou errando) essa descida lenta é cortada e vem
+		# o mergulho final, então quem responde rápido vê o golpe rápido.
+		var fatia: float = clampf(player.slain_qte_fall_ratio, 0.0, 0.95)
+		var cam_meio: Vector3 = cine_cam.global_position.lerp(impact_pos, fatia)
+		var blade_meio: Vector3 = player.crescent_cogblade.global_position.lerp(blade_impact_pos, fatia)
+		var queda := create_tween()
+		queda.set_parallel(true)
+		queda.tween_property(cine_cam, "global_position", cam_meio, maxf(player.slain_qte_fall_time, 0.05))\
+			.set_trans(Tween.TRANS_LINEAR)
+		queda.tween_property(player.crescent_cogblade, "global_position", blade_meio, maxf(player.slain_qte_fall_time, 0.05))\
+			.set_trans(Tween.TRANS_LINEAR)
+		
+		qte_ok = await _qte_rodar(qte_n)
+		if queda.is_valid(): queda.kill()
+		if not _ult_ok(cine_cam): return
 	
 	# A câmera e a cogblade descem exatamete juntas (com offset mantido)
-	seq.tween_property(cine_cam, "global_position", impact_pos, 0.12).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
-	seq.parallel().tween_property(player.crescent_cogblade, "global_position", impact_pos - cine_cam.global_transform.basis.z * 1.0 + cine_cam.global_transform.basis.x * 0.35, 0.12).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+	var mergulho := create_tween()
+	mergulho.tween_property(cine_cam, "global_position", impact_pos, 0.12)\
+		.set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+	if is_instance_valid(player.crescent_cogblade):
+		mergulho.parallel().tween_property(player.crescent_cogblade, "global_position", blade_impact_pos, 0.12)\
+			.set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+	await mergulho.finished
+	if not _ult_ok(cine_cam): return
 	
-	# IMPACTO!
-	seq.tween_callback(func():
+	_slain_impacto(impact_pos, start_pos, cine_cam, qte_ok)
+
+
+## Fim do Slain. `com_explosao` é o resultado do quick time event: acertando os
+## botões vem a explosão e o dano em área; errando, a lâmina só encosta no chão
+## e o golpe acaba sem machucar ninguém.
+func _slain_impacto(impact_pos: Vector3, start_pos: Vector3, cine_cam: Camera3D, com_explosao: bool) -> void:
+	if com_explosao:
 		# Tremer tela pesado
 		GlobalUtils.shake_camera(2.0, 1.0)
 		
@@ -234,28 +342,33 @@ func _activate_cogblade_slain() -> void:
 		
 		# Aplica dano AoE LENTAMENTE (um por um com pequeno atraso)
 		_apply_aoe_damage_slowly(impact_pos)
-		
-		# Esconde a cogblade
-		_reset_blade_to_hand()
-		
-		# Restaura câmera do player imediatamente após o impacto, mas MANTÉM a câmera lenta!
-		if is_instance_valid(cine_cam):
-			cine_cam.queue_free()
-		player.camera.make_current()
-		
-		_show_combat_hud()
-			
-		# Aguarda 0.15 segundos em slow motion antes de devolver controle
-		var end_tween = create_tween()
-		end_tween.tween_interval(0.15) 
-		end_tween.tween_callback(func():
-			player.global_position = start_pos # Garante que o player não é empurrado
-			player.velocity = Vector3.ZERO
-			Engine.time_scale = 1.0
-			AudioServer.playback_speed_scale = 1.0
-			player.is_using_ultimate = false
-		)
+	else:
+		# Sem os botões a lâmina desce sem força nenhuma: um tranco seco no
+		# chão, sem explosão e sem dano em inimigo nenhum.
+		GlobalUtils.shake_camera(0.35, 0.25)
+		_play_blade_sound("res://assets/sounds/player/blade_in.mp3", 0.8, -4.0)
+	
+	# Esconde a cogblade
+	_reset_blade_to_hand()
+	
+	# Restaura câmera do player imediatamente após o impacto, mas MANTÉM a câmera lenta!
+	if is_instance_valid(cine_cam):
+		cine_cam.queue_free()
+	player.camera.make_current()
+	
+	_show_combat_hud()
+	
+	# Aguarda 0.15 segundos em slow motion antes de devolver controle
+	var end_tween = create_tween()
+	end_tween.tween_interval(0.15)
+	end_tween.tween_callback(func():
+		player.global_position = start_pos # Garante que o player não é empurrado
+		player.velocity = Vector3.ZERO
+		Engine.time_scale = 1.0
+		AudioServer.playback_speed_scale = 1.0
+		player.is_using_ultimate = false
 	)
+
 
 # =========================================================================
 # HELPERS COMPARTILHADOS PELOS PODERES DA COGBLADE
@@ -423,12 +536,21 @@ func _activate_cogblade_cut() -> void:
 	# Passo 3: aguarda um pequeno instante antes dos cortes
 	seq.tween_interval(player.cut_blade_hold_time)
 	
-	# Passo 4: os cortes, acelerando de forma geométrica até ficarem altíssimos
+	# Passo 4: os cortes, acelerando de forma geométrica até ficarem altíssimos.
+	# Os primeiros `cut_qte_count` cortes pedem um botão cada: errar um deles
+	# interrompe a sequência ali mesmo e pula direto para o golpe final, sem a
+	# chuva de golpes que vinha depois — é isso que deixa o poder fraco.
+	await seq.finished
+	if not _ult_ok(cine_cam): return
+	
 	var count: int = maxi(3, player.cut_slash_count)
 	var d0: float = maxf(player.cut_slash_first_duration, 0.005)
 	var d1: float = clampf(player.cut_slash_last_duration, 0.001, d0)
 	var reach: float = player.cut_blade_distance * 3.0
 	
+	# O plano inteiro dos cortes sai de uma vez (direção, duração e lado), para
+	# que o sorteio das direções não dependa de onde o QTE interromper.
+	var plano: Array = []
 	var travel_sign: float = 1.0 # +1 começa pela direita (corta direita -> esquerda)
 	var last_theta: float = 0.0
 	for i in range(count):
@@ -445,65 +567,97 @@ func _activate_cogblade_cut() -> void:
 			theta = fmod(theta, PI)
 		last_theta = theta
 		
-		var dir: Vector3 = cam_basis.x * cos(theta) + cam_basis.y * sin(theta)
-		var from_pos: Vector3 = screen_center + dir * reach * travel_sign
-		var to_pos: Vector3 = screen_center - dir * reach * travel_sign
-		var rot_basis := _cut_blade_basis(cam_basis, cam_yaw, theta)
-		var kick: float = deg_to_rad(lerpf(1.0, 5.0, f)) * travel_sign
-		
-		var c_theta := theta
-		var c_sign := travel_sign
-		var c_dur := dur
-		var c_f := f
-		
-		seq.tween_callback(func(): _cut_begin_slash(fx_layer, c_theta, c_sign, c_f))
-		seq.tween_method(func(t: float):
-			_cut_set_blade(from_pos.lerp(to_pos, t), rot_basis, 1.0)
-			_cut_update_streak(t)
-			# Leve "chicote" da câmera acompanhando o corte (volta a zero no fim)
-			if is_instance_valid(cine_cam):
-				cine_cam.global_rotation.z = -sin(t * PI) * kick
-		, 0.0, 1.0, dur)
-		seq.tween_callback(func(): _cut_end_slash(c_dur))
-		
-		if i < count - 1:
-			seq.tween_interval(dur * player.cut_slash_gap_ratio)
-		
+		plano.append({"f": f, "dur": dur, "theta": theta, "sign": travel_sign})
 		travel_sign = -travel_sign
 	
-	# Passo 5: golpe final, dano em área e devolução do controle
+	# Os cortes com quick time event: um botão antes de cada um deles.
+	var qte_total: int = clampi(player.cut_qte_count, 0, count)
+	var acertos: int = 0
+	for i in range(qte_total):
+		var ok: bool = await _qte_rodar(1)
+		if not _ult_ok(cine_cam): return
+		if not ok:
+			break
+		acertos += 1
+		var passo := create_tween()
+		_cut_montar_corte(passo, plano[i], fx_layer, cine_cam, cam_basis, cam_yaw, screen_center, reach, i < count - 1)
+		await passo.finished
+		if not _ult_ok(cine_cam): return
+	
+	# A chuva de golpes só vem para quem acertou todos os botões.
+	if acertos >= qte_total and qte_total < count:
+		var resto := create_tween()
+		for i in range(qte_total, count):
+			_cut_montar_corte(resto, plano[i], fx_layer, cine_cam, cam_basis, cam_yaw, screen_center, reach, i < count - 1)
+		await resto.finished
+		if not _ult_ok(cine_cam): return
+	
+	# Passo 5: golpe final, dano em área e devolução do controle.
+	# Menos botões acertados = menos cortes no inimigo = menos dano no final.
+	var proporcao: float = 1.0 if qte_total <= 0 else float(acertos) / float(qte_total)
+	var dano: int = maxi(1, int(round(float(player.cut_damage) \
+		* lerpf(clampf(player.cut_qte_min_damage_ratio, 0.0, 1.0), 1.0, proporcao))))
 	var impact_pos: Vector3 = start_pos + Vector3(0, 0.5, 0)
-	seq.tween_callback(func():
-		if is_instance_valid(cine_cam): cine_cam.global_rotation.z = 0.0
-		
-		GlobalUtils.shake_camera(0.3, 0.9)
-		GlobalUtils.vibrate_controller(Input, 0.7, 0.7, 0.3)
-		_play_blade_sound("res://assets/sounds/common/explosao.mp3", 1.2, -4.0)
-		_cut_spawn_flash(fx_layer)
-		
-		# Dano em área igual ao do Slain, porém um pouco menor
-		_apply_aoe_damage_slowly(impact_pos, player.cut_damage, player.cut_damage_radius)
-		
-		_reset_blade_to_hand()
-		
-		# Devolve a câmera ao player, mas MANTÉM a câmera lenta por um instante
-		if is_instance_valid(cine_cam):
-			cine_cam.queue_free()
-		player.camera.make_current()
-		
-		_show_combat_hud()
-		
-		var end_tween := create_tween()
-		end_tween.tween_interval(0.15)
-		end_tween.tween_callback(func():
-			player.global_position = start_pos # Garante que o player não é empurrado
-			player.velocity = Vector3.ZERO
-			Engine.time_scale = 1.0
-			AudioServer.playback_speed_scale = 1.0
-			player.is_using_ultimate = false
-			if is_instance_valid(fx_layer): fx_layer.queue_free()
-		)
+	
+	if is_instance_valid(cine_cam): cine_cam.global_rotation.z = 0.0
+	
+	GlobalUtils.shake_camera(0.3, 0.9)
+	GlobalUtils.vibrate_controller(Input, 0.7, 0.7, 0.3)
+	_play_blade_sound("res://assets/sounds/common/explosao.mp3", 1.2, -4.0)
+	_cut_spawn_flash(fx_layer)
+	
+	# Dano em área igual ao do Slain, porém um pouco menor
+	_apply_aoe_damage_slowly(impact_pos, dano, player.cut_damage_radius)
+	
+	_reset_blade_to_hand()
+	
+	# Devolve a câmera ao player, mas MANTÉM a câmera lenta por um instante
+	if is_instance_valid(cine_cam):
+		cine_cam.queue_free()
+	player.camera.make_current()
+	
+	_show_combat_hud()
+	
+	var end_tween := create_tween()
+	end_tween.tween_interval(0.15)
+	end_tween.tween_callback(func():
+		player.global_position = start_pos # Garante que o player não é empurrado
+		player.velocity = Vector3.ZERO
+		Engine.time_scale = 1.0
+		AudioServer.playback_speed_scale = 1.0
+		player.is_using_ultimate = false
+		if is_instance_valid(fx_layer): fx_layer.queue_free()
 	)
+
+
+## Empilha UM corte (rasgo na tela, lâmina atravessando e o chicote da câmera)
+## no tween recebido. Separado do laço principal porque os cortes com quick
+## time event rodam um a um, esperando o botão, e o resto vai tudo num tween só.
+func _cut_montar_corte(seq: Tween, passo: Dictionary, fx_layer: CanvasLayer, cine_cam: Camera3D,
+		cam_basis: Basis, cam_yaw: float, screen_center: Vector3, reach: float, com_gap: bool) -> void:
+	var theta: float = passo["theta"]
+	var travel_sign: float = passo["sign"]
+	var dur: float = passo["dur"]
+	var f: float = passo["f"]
+	
+	var dir: Vector3 = cam_basis.x * cos(theta) + cam_basis.y * sin(theta)
+	var from_pos: Vector3 = screen_center + dir * reach * travel_sign
+	var to_pos: Vector3 = screen_center - dir * reach * travel_sign
+	var rot_basis := _cut_blade_basis(cam_basis, cam_yaw, theta)
+	var kick: float = deg_to_rad(lerpf(1.0, 5.0, f)) * travel_sign
+	
+	seq.tween_callback(func(): _cut_begin_slash(fx_layer, theta, travel_sign, f))
+	seq.tween_method(func(t: float):
+		_cut_set_blade(from_pos.lerp(to_pos, t), rot_basis, 1.0)
+		_cut_update_streak(t)
+		# Leve "chicote" da câmera acompanhando o corte (volta a zero no fim)
+		if is_instance_valid(cine_cam):
+			cine_cam.global_rotation.z = -sin(t * PI) * kick
+	, 0.0, 1.0, dur)
+	seq.tween_callback(func(): _cut_end_slash(dur))
+	
+	if com_gap:
+		seq.tween_interval(dur * player.cut_slash_gap_ratio)
 
 # Orientação da lâmina: parte da pose de arremesso (já calibrada no Inspector)
 # e gira no plano da tela para acompanhar a direção do corte.
@@ -955,6 +1109,12 @@ func _activate_cogblade_fire_cross() -> void:
 	seq.tween_interval(0.05)
 
 	# --- Passo 3: os dois cortes que desenham o X ---
+	# Cada corte pede `fire_qte_per_slash` botões antes de sair. Errar qualquer
+	# um deles derruba o golpe: o X até se forma, mas se desfaz no ar em vez de
+	# descer para a arena, e aí nenhum inimigo pega fogo.
+	await seq.finished
+	if not _ult_ok(cine_cam): return
+	
 	var reach: float = player.cut_blade_distance * 3.0
 	# Diagonal 1: canto superior ESQUERDO -> canto inferior DIREITO
 	# Diagonal 2: canto superior DIREITO  -> canto inferior ESQUERDO
@@ -962,7 +1122,15 @@ func _activate_cogblade_fire_cross() -> void:
 		{"dir": (-air_basis.x + air_basis.y).normalized(), "screen": Vector2(-1.0, -1.0)},
 		{"dir": (air_basis.x + air_basis.y).normalized(), "screen": Vector2(1.0, -1.0)},
 	]
+	var qte_ok: bool = true
+	var cortes_feitos: int = 0
 	for i in range(diagonais.size()):
+		var ok: bool = await _qte_rodar(maxi(0, player.fire_qte_per_slash))
+		if not _ult_ok(cine_cam): return
+		if not ok:
+			qte_ok = false
+			break
+		
 		var d: Dictionary = diagonais[i]
 		var wdir: Vector3 = d["dir"]
 		var sdir: Vector2 = d["screen"]
@@ -972,48 +1140,62 @@ func _activate_cogblade_fire_cross() -> void:
 		var theta: float = atan2(wdir.dot(air_basis.y), wdir.dot(air_basis.x))
 		var rot_basis := _fire_blade_basis(air_basis, theta)
 		var idx := i
-
-		seq.tween_callback(func(): _fire_begin_streak(fx_layer, sdir, idx))
-		seq.tween_method(func(t: float):
+		
+		var corte := create_tween()
+		corte.tween_callback(func(): _fire_begin_streak(fx_layer, sdir, idx))
+		corte.tween_method(func(t: float):
 			_cut_set_blade(from_pos.lerp(to_pos, t), rot_basis, 1.0)
 			_fire_update_streak(t)
 		, 0.0, 1.0, player.fire_slash_duration)
 		if i == 0:
-			seq.tween_interval(0.03)
-
+			corte.tween_interval(0.03)
+		await corte.finished
+		if not _ult_ok(cine_cam): return
+		cortes_feitos += 1
+	
 	# --- Passo 4: o X de fogo se forma e desce para a arena ---
+	# Se o primeiro botão já foi errado não saiu corte nenhum, e aí não há X
+	# para se formar: a lâmina volta para a mão e o golpe acaba em nada.
 	var impact_pos: Vector3 = start_pos + Vector3(0.0, 0.1, 0.0)
 	var x_node_ref := [null] # array só para o lambda conseguir guardar a referência
-
-	seq.tween_callback(func():
+	
+	var forma := create_tween()
+	forma.tween_callback(func():
 		_reset_blade_to_hand()
-		x_node_ref[0] = _fire_spawn_x(air_basis, blade_center)
-		GlobalUtils.shake_camera(0.2, 0.5)
-		_play_blade_sound("res://assets/sounds/common/explosao.mp3", 1.6, -12.0)
+		if cortes_feitos > 0:
+			x_node_ref[0] = _fire_spawn_x(air_basis, blade_center)
+			GlobalUtils.shake_camera(0.2, 0.5)
+			_play_blade_sound("res://assets/sounds/common/explosao.mp3", 1.6, -12.0)
 	)
-	seq.tween_interval(player.fire_x_hold_time)
-
-	# O X vira para o chão enquanto cai e cresce
-	var flat_basis := Basis(Vector3.UP, look_rot.y) * Basis(Vector3(1, 0, 0), Vector3(0, 0, -1), Vector3(0, 1, 0))
-	seq.tween_callback(func(): _fire_fade_streaks())
-	seq.tween_method(func(t: float):
-		var node = x_node_ref[0]
-		if not is_instance_valid(node): return
-		var e: float = ease(t, 2.4) # acelera na queda
-		node.global_position = blade_center.lerp(impact_pos, e)
-		var b: Basis = air_basis.slerp(flat_basis, e)
-		node.global_transform = Transform3D(b.scaled(Vector3.ONE * lerpf(1.0, 2.4, e)), node.global_position)
-	, 0.0, 1.0, player.fire_x_fall_time).set_trans(Tween.TRANS_LINEAR)
-
-	# --- Passo 5: impacto e o incêndio se espalhando pela arena ---
-	seq.tween_callback(func():
+	forma.tween_interval(player.fire_x_hold_time)
+	await forma.finished
+	if not _ult_ok(cine_cam): return
+	
+	_fire_fade_streaks()
+	
+	if qte_ok:
+		# O X vira para o chão enquanto cai e cresce
+		var flat_basis := Basis(Vector3.UP, look_rot.y) * Basis(Vector3(1, 0, 0), Vector3(0, 0, -1), Vector3(0, 1, 0))
+		var queda := create_tween()
+		queda.tween_method(func(t: float):
+			var node = x_node_ref[0]
+			if not is_instance_valid(node): return
+			var e: float = ease(t, 2.4) # acelera na queda
+			node.global_position = blade_center.lerp(impact_pos, e)
+			var b: Basis = air_basis.slerp(flat_basis, e)
+			node.global_transform = Transform3D(b.scaled(Vector3.ONE * lerpf(1.0, 2.4, e)), node.global_position)
+		, 0.0, 1.0, player.fire_x_fall_time).set_trans(Tween.TRANS_LINEAR)
+		await queda.finished
+		if not _ult_ok(cine_cam): return
+		
+		# --- Passo 5: impacto e o incêndio se espalhando pela arena ---
 		GlobalUtils.shake_camera(0.35, 1.4)
 		GlobalUtils.vibrate_controller(Input, 0.9, 0.9, 0.4)
 		_play_blade_sound("res://assets/sounds/common/explosao.mp3", 0.85, 0.0)
 		_fire_play_ambient(maxf(player.fire_duration, 0.5))
 		_fire_set_blur(0.5)
 		_cut_spawn_flash(fx_layer)
-
+		
 		var node = x_node_ref[0]
 		if is_instance_valid(node):
 			# O X marcado no chão apaga junto com o fogo tomando conta
@@ -1022,46 +1204,73 @@ func _activate_cogblade_fire_cross() -> void:
 			ft.tween_callback(func():
 				if is_instance_valid(node): node.queue_free()
 			)
-
+		
 		_fire_ignite_arena(impact_pos)
-	)
-
+	else:
+		# Botão errado: o X perde a força e se apaga ainda no ar. Sem queda,
+		# sem incêndio na arena e sem dano em inimigo nenhum.
+		_fire_apagar_x(x_node_ref[0])
+	
 	# Fica assistindo o fogo lá do alto, com a câmera respirando de leve
-	seq.tween_property(cine_cam, "fov", 78.0, player.fire_watch_time)\
+	var assistir := create_tween()
+	assistir.tween_property(cine_cam, "fov", 78.0, player.fire_watch_time)\
 		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-
+	await assistir.finished
+	if not _ult_ok(cine_cam): return
+	
 	# --- Passo 6: volta rápida para onde o poder começou ---
-	seq.tween_callback(func():
-		_fire_set_blur(0.85)
-		_play_blade_sound("res://assets/sounds/player/blade_out.mp3", 0.6, -4.0)
-	)
-	seq.tween_property(cine_cam, "global_position", start_cam_xf.origin, player.fire_return_time)\
+	_fire_set_blur(0.85)
+	_play_blade_sound("res://assets/sounds/player/blade_out.mp3", 0.6, -4.0)
+	
+	var volta := create_tween()
+	volta.tween_property(cine_cam, "global_position", start_cam_xf.origin, player.fire_return_time)\
 		.set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
-	seq.parallel().tween_property(cine_cam, "global_rotation", start_cam_xf.basis.get_euler(), player.fire_return_time)\
+	volta.parallel().tween_property(cine_cam, "global_rotation", start_cam_xf.basis.get_euler(), player.fire_return_time)\
 		.set_trans(Tween.TRANS_SINE)
-	seq.parallel().tween_property(cine_cam, "fov", 75.0, player.fire_return_time)
+	volta.parallel().tween_property(cine_cam, "fov", 75.0, player.fire_return_time)
+	await volta.finished
+	if not _ult_ok(cine_cam): return
+	
+	GlobalUtils.shake_camera(0.25, 0.7)
+	
+	if is_instance_valid(cine_cam):
+		cine_cam.queue_free()
+	player.camera.make_current()
+	
+	_show_combat_hud()
+	
+	var end_tween := create_tween()
+	end_tween.tween_interval(0.15)
+	end_tween.tween_callback(func():
+		player.global_position = start_pos
+		player.velocity = Vector3.ZERO
+		Engine.time_scale = 1.0
+		AudioServer.playback_speed_scale = 1.0
+		player.is_using_ultimate = false
+		_fire_restore_emitters() # o fogo volta à velocidade normal
+		_fire_fade_streaks()
+		if is_instance_valid(fx_layer): fx_layer.queue_free()
+	)
 
-	seq.tween_callback(func():
-		GlobalUtils.shake_camera(0.25, 0.7)
 
-		if is_instance_valid(cine_cam):
-			cine_cam.queue_free()
-		player.camera.make_current()
-
-		_show_combat_hud()
-
-		var end_tween := create_tween()
-		end_tween.tween_interval(0.15)
-		end_tween.tween_callback(func():
-			player.global_position = start_pos
-			player.velocity = Vector3.ZERO
-			Engine.time_scale = 1.0
-			AudioServer.playback_speed_scale = 1.0
-			player.is_using_ultimate = false
-			_fire_restore_emitters() # o fogo volta à velocidade normal
-			_fire_fade_streaks()
-			if is_instance_valid(fx_layer): fx_layer.queue_free()
-		)
+## O X de fogo se apagando no ar quando o quick time event falha: os emissores
+## param de cuspir partícula nova, a luz baixa e o que já estava no ar termina
+## de morrer sozinho. Nada disso encosta na arena, então ninguém toma dano.
+func _fire_apagar_x(node) -> void:
+	if not is_instance_valid(node): return
+	for filho in node.get_children():
+		if filho is CPUParticles3D:
+			(filho as CPUParticles3D).emitting = false
+	var t := create_tween()
+	t.set_parallel(true)
+	t.tween_property(node, "scale", Vector3.ONE * 0.15, 0.18)\
+		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	for filho in node.get_children():
+		if filho is OmniLight3D:
+			t.tween_property(filho, "light_energy", 0.0, 0.18)
+	t.chain().tween_interval(0.25)
+	t.chain().tween_callback(func():
+		if is_instance_valid(node): node.queue_free()
 	)
 
 # Todo emissor do incêndio passa por aqui: durante a cinemática ele roda

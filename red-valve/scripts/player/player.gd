@@ -210,6 +210,31 @@ var is_exhausted: bool = false
 @export var fire_burn_damage: int = 5
 @export var fire_burn_ticks: int = 4
 
+# --- QUICK TIME EVENT DOS PODERES DA COGBLADE ---
+# Os poderes rodam em câmera lenta (time_scale 0.1), mas a janela abaixo é
+# medida no relógio de parede: 1.0 aqui é 1 segundo REAL para apertar.
+@export_group("Cogblade Quick Time Event")
+## Tempo real que o jogador tem para acertar CADA botão sorteado.
+@export var qte_window: float = 1.0
+## Quantos dos primeiros cortes do Cut pedem um botão (um botão por corte).
+## Errar qualquer um interrompe os cortes e pula direto para o golpe final.
+@export var cut_qte_count: int = 5
+## Quanto do dano do Cut sobra quando o jogador erra logo no primeiro botão.
+## Com todos os botões acertados o dano é o cheio (cut_damage).
+@export var cut_qte_min_damage_ratio: float = 0.35
+## Quantos botões cada um dos dois cortes do Fire Cross pede. Errar qualquer um
+## faz o X de fogo se desfazer no ar: ninguém pega fogo e ninguém toma dano.
+@export var fire_qte_per_slash: int = 2
+## Quantos botões o Slain pede durante a descida da lâmina. Errar tira a
+## explosão e o dano: a cogblade só desce e para.
+@export var slain_qte_count: int = 5
+## Quanto tempo (em tempo de jogo, já em câmera lenta) a descida lenta do Slain
+## dura enquanto o QTE roda. Ela é interrompida assim que o QTE acaba.
+@export var slain_qte_fall_time: float = 0.9
+## Que fração do caminho até o chão essa descida lenta cobre (o resto é o
+## mergulho rápido final).
+@export var slain_qte_fall_ratio: float = 0.6
+
 # --- GOLPE MELEE DA COGBLADE (toque rápido em C / L1) ---
 @export_group("Cogblade Melee")
 ## Dano do golpe corpo a corpo da cogblade.
