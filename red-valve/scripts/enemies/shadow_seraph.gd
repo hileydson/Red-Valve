@@ -180,6 +180,7 @@ var _espada: Node3D
 var _bazuca: Node3D
 var _olho_l: MeshInstance3D
 var _olho_r: MeshInstance3D
+var _halo: MeshInstance3D
 var _luz_olhos: OmniLight3D
 var _rastro: GPUParticles3D
 var _brasa_espada: GPUParticles3D
@@ -355,6 +356,26 @@ func _parte(pai: Node3D, malha: Mesh, onde: Vector3) -> MeshInstance3D:
 	return mi
 
 
+## Uma peca MODELADA da biblioteca do Blender, ja escalada e posta no lugar.
+##
+## As pecas vem normalizadas (membro pendendo de y=0 a y=-1, tronco subindo de
+## y=0 a y=1, largura dentro de [-0.5, 0.5], frente no -Z), entao `escala` e o
+## tamanho real em metros de cada eixo e nao um fator misterioso.
+##
+## `reserva` e a malha primitiva que este pedaco usava antes. Se o `.glb` nao
+## estiver importado a peca cai nela: o inimigo fica feio, mas fica de pe. Um
+## chefe que some da tela por causa de um asset faltando e pior que um chefe
+## feio.
+func _peca(pai: Node3D, nome: String, onde: Vector3, escala: Vector3,
+		reserva: Mesh = null, giro := Vector3.ZERO) -> MeshInstance3D:
+	var malha := FX.peca(nome)
+	var mi := _parte(pai, malha if malha != null else reserva, onde)
+	if malha != null:
+		mi.scale = escala
+	mi.rotation = giro
+	return mi
+
+
 func _capsula(raio: float, comp: float) -> CapsuleMesh:
 	var m := CapsuleMesh.new()
 	m.radius = raio
@@ -373,17 +394,45 @@ func _esfera_malha(raio: float, achata := 1.0) -> SphereMesh:
 	return m
 
 
-## Osso: pivo + membro pendurado pra baixo a partir dele (mesma receita do
-## rig das ShadowPerson).
-func _osso(pai: Node3D, nome: String, comp: float, raio: float, onde: Vector3) -> Node3D:
+## Osso: pivo + membro pendurado pra baixo a partir dele.
+##
+## `peca` e o nome da malha modelada; sem ela cai na capsula de antes. A malha
+## pende do proprio pivo (y 0 -> -1), entao ela entra na posicao ZERO e o
+## comprimento vira escala — diferente da capsula, que precisava ser empurrada
+## meio comprimento pra baixo porque nasce centrada.
+func _osso(pai: Node3D, nome: String, comp: float, raio: float, onde: Vector3,
+		peca := "") -> Node3D:
 	var pivo := Node3D.new()
 	pivo.name = nome
 	pivo.position = onde
 	pai.add_child(pivo)
-	_parte(pivo, _capsula(raio, comp), Vector3(0, -comp * 0.5, 0))
+	if peca != "" and FX.peca(peca) != null:
+		_peca(pivo, peca, Vector3.ZERO, Vector3(raio * 2.0, comp, raio * 2.0))
+	else:
+		_parte(pivo, _capsula(raio, comp), Vector3(0, -comp * 0.5, 0))
 	return pivo
 
 
+## ============================================================================
+## O CORPO
+##
+## O rig (pivos Node3D) e o mesmo de antes de proposito: as poses dos seis
+## poderes dele estao todas escritas em cima destes pivos, e mexer no rig seria
+## reescrever o inimigo inteiro. O que mudou foi a MALHA pendurada em cada um —
+## de capsula e esfera pra peca modelada.
+##
+## As proporcoes tambem mudaram, e essas sao decisao de desenho:
+##   - CINTURA FINA e OMBRO LARGO. E o que separa "criatura" de "pessoa alta",
+##     e e o que faz a silhueta dele ser reconhecivel em contraluz na nevoa.
+##   - CAIXA DE COSTELAS VAZADA por cima do torax, com a brasa do peito
+##     aparecendo pelos vaos: o unico lugar do corpo onde o fogo esta DENTRO de
+##     alguma coisa em vez de pintado na superficie.
+##   - ELMO SEM ROSTO, bicudo, com uma fenda horizontal onde os olhos queimam,
+##     e uma coroa de seis chifres de tamanhos diferentes varrendo pra tras.
+##   - AURELA QUEBRADA atras da cabeca: diz "serafim" numa leitura so.
+##   - ASAS DE LAMINA, nao de pena (ver a nota no gerador do Blender).
+##   - MANTO esfarrapado nas costas, que da massa e mexe quando ele anda.
+## ============================================================================
 func _monta_corpo() -> void:
 	var h := altura
 	var perna := h * 0.46
@@ -396,6 +445,10 @@ func _monta_corpo() -> void:
 	var braco := h * 0.37          # bracos longos: leitura de criatura, nao de gente
 	var antebraco := braco * 0.47
 	var superior := braco - antebraco
+	# Largura e profundidade do tronco. Um numero so pros dois: o torax, o
+	# costelado e o peitoral sao autorados no MESMO espaco normalizado e tem de
+	# ser escalados igual, senao a gaiola de costelas nao encaixa no peito.
+	var tr := h * 0.25
 
 	_rig = Node3D.new()
 	_rig.name = "Rig"
@@ -405,47 +458,67 @@ func _monta_corpo() -> void:
 	_hips.name = "Hips"
 	_hips.position = Vector3(0, perna, 0)
 	_rig.add_child(_hips)
-	_parte(_hips, _capsula(h * 0.058, h * 0.10), Vector3.ZERO)
+	_peca(_hips, "pelve", Vector3.ZERO, Vector3(h * 0.24, h * 0.19, h * 0.23),
+		_capsula(h * 0.058, h * 0.10))
 
 	_spine = Node3D.new()
 	_spine.name = "Spine"
 	_hips.add_child(_spine)
-	# torax comprido e afunilado pra baixo
-	_parte(_spine, _capsula(h * 0.066, torso), Vector3(0, torso * 0.45, 0))
-	_parte(_spine, _esfera_malha(h * 0.072, 0.8), Vector3(0, torso * 0.70, 0)).scale = Vector3(1.1, 1.0, 0.85)
-	_parte(_spine, _capsula(h * 0.040, ombro_w * 2.0), Vector3(0, torso * 0.93, 0)).rotation.z = PI * 0.5
+	_peca(_spine, "torax", Vector3.ZERO, Vector3(tr, torso, tr),
+		_capsula(h * 0.066, torso))
+	_peca(_spine, "costelado", Vector3.ZERO, Vector3(tr, torso, tr))
+	_peca(_spine, "peitoral", Vector3.ZERO, Vector3(tr, torso, tr))
 
-	# pescoco, cranio alongado e dois chifres pra tras
+	# pescoco e elmo
 	_neck = Node3D.new()
 	_neck.name = "Neck"
-	_neck.position = Vector3(0, torso * 1.0, 0)
+	_neck.position = Vector3(0, torso * 0.96, 0)
 	_spine.add_child(_neck)
-	_parte(_neck, _capsula(h * 0.024, h * 0.060), Vector3(0, h * 0.026, 0))
-	var cranio := _parte(_neck, _esfera_malha(cabeca_r), Vector3(0, h * 0.056 + cabeca_r * 0.9, 0))
-	cranio.scale = Vector3(0.86, 1.18, 1.05)
-	for i in 2:
-		var lado := -1.0 if i == 0 else 1.0
-		var chifre := _parte(_neck, _capsula(cabeca_r * 0.16, cabeca_r * 1.7),
-			Vector3(lado * cabeca_r * 0.52, h * 0.056 + cabeca_r * 1.75, -cabeca_r * 0.35))
-		chifre.rotation = Vector3(deg_to_rad(-38.0), 0.0, deg_to_rad(-lado * 16.0))
+	_peca(_neck, "pescoco", Vector3.ZERO, Vector3(h * 0.155, h * 0.055, h * 0.155),
+		_capsula(h * 0.024, h * 0.060))
+	var ye := h * 0.046
+	_peca(_neck, "elmo", Vector3(0, ye, 0),
+		Vector3(h * 0.195, h * 0.205, h * 0.205), _esfera_malha(cabeca_r))
+	# Coroa: seis chifres de tamanhos diferentes. E a VARIACAO entre eles que
+	# faz uma coroa; dois chifres iguais faziam duas antenas.
+	var coroa := [[-0.78, 0.80, 26.0, -4.0], [-0.40, 1.10, 14.0, -10.0],
+		[-0.10, 1.30, 4.0, -14.0], [0.22, 1.18, -8.0, -12.0],
+		[0.58, 0.90, -20.0, -6.0], [0.86, 0.66, -30.0, -2.0]]
+	for c in coroa:
+		_peca(_neck, "chifre",
+			Vector3(float(c[0]) * cabeca_r * 0.9, ye + h * 0.105, cabeca_r * 0.10),
+			Vector3(cabeca_r * 0.62, cabeca_r * 1.55 * float(c[1]), cabeca_r * 0.62),
+			null, Vector3(deg_to_rad(float(c[3])), 0.0, deg_to_rad(float(c[2]))))
+	_halo = _peca(_neck, "halo", Vector3(0, ye + h * 0.060, h * 0.115),
+		Vector3(h * 0.215, h * 0.215, h * 0.215), null,
+		Vector3(deg_to_rad(18.0), 0.0, 0.0))
 
 	_monta_olhos(_neck, cabeca_r, h)
 
-	# bracos
-	_ombro_l = _osso(_spine, "OmbroL", superior, h * 0.028, Vector3(ombro_w, torso * 0.90, 0))
-	_cotovelo_l = _osso(_ombro_l, "CotoveloL", antebraco, h * 0.023, Vector3(0, -superior, 0))
+	# bracos, com ombreira por cima do ombro (espelhada no eixo X pro lado
+	# direito — a peca e autorada so uma vez, pro lado do +X)
+	_ombro_l = _osso(_spine, "OmbroL", superior, h * 0.038,
+		Vector3(ombro_w, torso * 0.90, 0), "braco")
+	_cotovelo_l = _osso(_ombro_l, "CotoveloL", antebraco, h * 0.032,
+		Vector3(0, -superior, 0), "antebraco")
 	_mao_l = _mao(_cotovelo_l, "MaoL", antebraco, h)
+	_peca(_spine, "ombreira", Vector3(ombro_w * 1.02, torso * 0.93, 0),
+		Vector3(h * 0.20, h * 0.21, h * 0.20))
 
-	_ombro_r = _osso(_spine, "OmbroR", superior, h * 0.028, Vector3(-ombro_w, torso * 0.90, 0))
-	_cotovelo_r = _osso(_ombro_r, "CotoveloR", antebraco, h * 0.023, Vector3(0, -superior, 0))
+	_ombro_r = _osso(_spine, "OmbroR", superior, h * 0.038,
+		Vector3(-ombro_w, torso * 0.90, 0), "braco")
+	_cotovelo_r = _osso(_ombro_r, "CotoveloR", antebraco, h * 0.032,
+		Vector3(0, -superior, 0), "antebraco")
 	_mao_r = _mao(_cotovelo_r, "MaoR", antebraco, h)
+	_peca(_spine, "ombreira", Vector3(-ombro_w * 1.02, torso * 0.93, 0),
+		Vector3(-h * 0.20, h * 0.21, h * 0.20))
 
 	# pernas: digitigrada (joelho pra tras), pra nao andar como uma pessoa
-	_coxa_l = _osso(_hips, "CoxaL", coxa, h * 0.038, Vector3(quadril_w, 0, 0))
-	_joelho_l = _osso(_coxa_l, "JoelhoL", canela, h * 0.030, Vector3(0, -coxa, 0))
+	_coxa_l = _osso(_hips, "CoxaL", coxa, h * 0.049, Vector3(quadril_w, 0, 0), "coxa")
+	_joelho_l = _osso(_coxa_l, "JoelhoL", canela, h * 0.036, Vector3(0, -coxa, 0), "canela")
 	_pe(_joelho_l, canela, h)
-	_coxa_r = _osso(_hips, "CoxaR", coxa, h * 0.038, Vector3(-quadril_w, 0, 0))
-	_joelho_r = _osso(_coxa_r, "JoelhoR", canela, h * 0.030, Vector3(0, -coxa, 0))
+	_coxa_r = _osso(_hips, "CoxaR", coxa, h * 0.049, Vector3(-quadril_w, 0, 0), "coxa")
+	_joelho_r = _osso(_coxa_r, "JoelhoR", canela, h * 0.036, Vector3(0, -coxa, 0), "canela")
 	_pe(_joelho_r, canela, h)
 
 	# ancora onde a magia se forma (na frente do peito)
@@ -454,11 +527,13 @@ func _monta_corpo() -> void:
 	_ancora_magia.position = Vector3(0, torso * 0.62, -h * 0.30)
 	_spine.add_child(_ancora_magia)
 
-	# costas: de onde saem asas, espada e bazuca
+	# costas: de onde saem asas, espada, bazuca e manto
 	_costas = Node3D.new()
 	_costas.name = "Costas"
-	_costas.position = Vector3(0, torso * 0.72, h * 0.045)
+	_costas.position = Vector3(0, torso * 0.76, h * 0.055)
 	_spine.add_child(_costas)
+	_peca(_spine, "manto", Vector3(0, torso * 0.84, h * 0.012),
+		Vector3(h * 0.25, torso * 1.05, h * 0.23))
 
 	_asa_l = _monta_asa(1.0, h)
 	_asa_r = _monta_asa(-1.0, h)
@@ -475,12 +550,15 @@ func _mao(cotovelo: Node3D, nome: String, antebraco: float, h: float) -> Node3D:
 	pivo.name = nome
 	pivo.position = Vector3(0, -antebraco - h * 0.012, 0)
 	cotovelo.add_child(pivo)
-	_parte(pivo, _esfera_malha(h * 0.030, 0.7), Vector3.ZERO)
-	# tres garras compridas: o que faz a mao ler como garra e nao como punho
+	_peca(pivo, "mao", Vector3.ZERO, Vector3(h * 0.066, h * 0.058, h * 0.066),
+		_esfera_malha(h * 0.030, 0.7))
+	# tres garras compridas: e o que faz a mao ler como garra e nao como punho
 	for i in 3:
-		var g := _parte(pivo, _capsula(h * 0.007, h * 0.055),
-			Vector3((float(i) - 1.0) * h * 0.018, -h * 0.035, -h * 0.008))
-		g.rotation.x = deg_to_rad(-12.0)
+		var g := float(i) - 1.0
+		_peca(pivo, "garra", Vector3(g * h * 0.016, -h * 0.044, -h * 0.008),
+			Vector3(h * 0.026, h * 0.056, h * 0.026),
+			_capsula(h * 0.007, h * 0.055),
+			Vector3(deg_to_rad(-16.0), 0.0, deg_to_rad(g * 7.0)))
 	return pivo
 
 
@@ -489,26 +567,28 @@ func _pe(joelho: Node3D, canela: float, h: float) -> void:
 	tornozelo.name = "Pe"
 	tornozelo.position = Vector3(0, -canela, 0)
 	joelho.add_child(tornozelo)
-	var box := BoxMesh.new()
-	box.size = Vector3(h * 0.050, h * 0.028, h * 0.125)
-	_parte(tornozelo, box, Vector3(0, -h * 0.012, -h * 0.028))
-	# garra dianteira
-	var garra := _parte(tornozelo, _capsula(h * 0.008, h * 0.045), Vector3(0, -h * 0.014, -h * 0.085))
-	garra.rotation.x = deg_to_rad(-75.0)
+	var caixa := BoxMesh.new()
+	caixa.size = Vector3(h * 0.050, h * 0.028, h * 0.125)
+	_peca(tornozelo, "pe", Vector3.ZERO,
+		Vector3(h * 0.115, h * 0.115, h * 0.135), caixa)
 
 
 ## Olhos de fogo: duas brasas no cranio, uma luz só pros dois (o renderer
 ## Mobile aceita 8 omnis por malha — gastar duas aqui seria desperdicio) e um
 ## fiozinho de chama subindo deles.
 func _monta_olhos(neck: Node3D, cabeca_r: float, h: float) -> void:
-	var y := h * 0.056 + cabeca_r * 1.0
-	var z := -cabeca_r * 0.72
+	# Colado na FENDA do elmo: o elmo entra em `h * 0.046` acima do pescoco e a
+	# fenda esta em 0,40 do espaco normalizado dele, com a frente em ~0,31 de
+	# raio. Derivar daqui em vez de repetir numeros soltos mantem os olhos na
+	# fenda se o elmo mudar de tamanho.
+	var y := h * 0.046 + 0.40 * (h * 0.205)
+	var z := -0.31 * (h * 0.205)
 	var mat := FX.emissivo(Color(1.0, 0.48, 0.10), 9.0)
 
 	_olho_l = MeshInstance3D.new()
 	_olho_l.mesh = _esfera_malha(cabeca_r * 0.22)
 	_olho_l.material_override = mat
-	_olho_l.position = Vector3(cabeca_r * 0.40, y, z)
+	_olho_l.position = Vector3(cabeca_r * 0.46, y, z)
 	_olho_l.scale = Vector3(1.5, 0.8, 1.0)
 	_olho_l.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	neck.add_child(_olho_l)
@@ -516,7 +596,7 @@ func _monta_olhos(neck: Node3D, cabeca_r: float, h: float) -> void:
 	_olho_r = MeshInstance3D.new()
 	_olho_r.mesh = _olho_l.mesh
 	_olho_r.material_override = mat
-	_olho_r.position = Vector3(-cabeca_r * 0.40, y, z)
+	_olho_r.position = Vector3(-cabeca_r * 0.46, y, z)
 	_olho_r.scale = _olho_l.scale
 	_olho_r.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	neck.add_child(_olho_r)
@@ -550,50 +630,93 @@ func _monta_olhos(neck: Node3D, cabeca_r: float, h: float) -> void:
 	_fogo_olhos.amount = 26
 	_fogo_olhos.lifetime = 0.7
 	_fogo_olhos.process_material = proc
-	_fogo_olhos.draw_pass_1 = FX.quad_particula()
+	# Quad PROPRIO com `billboard_keep_scale`. Sem essa bandeira o billboard
+	# descarta a escala da particula, e o `scale_min/max` de 2 a 7 cm ali em
+	# cima nao vale nada: as 26 faiscas saem do tamanho do quad e a cabeca dele
+	# vira uma bola branca do tamanho do elmo — que e exatamente o que estava
+	# acontecendo. O `FX.quad_particula()` compartilhado NAO leva a bandeira de
+	# propositto: os outros seis efeitos dele foram ajustados a olho em cima do
+	# tamanho errado, e liga-la la mudaria todos de uma vez.
+	var quad := QuadMesh.new()
+	quad.size = Vector2.ONE
+	var mq := StandardMaterial3D.new()
+	mq.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mq.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mq.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	mq.vertex_color_use_as_albedo = true
+	mq.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+	mq.billboard_keep_scale = true
+	mq.albedo_texture = FX.ponto_suave()
+	mq.disable_receive_shadows = true
+	quad.material = mq
+	_fogo_olhos.draw_pass_1 = quad
 	_fogo_olhos.position = Vector3(0, y, z)
 	_fogo_olhos.visibility_aabb = AABB(Vector3(-1, -1, -1), Vector3(2, 3, 2))
 	neck.add_child(_fogo_olhos)
 
 
-## Asa: dois ossos + penas de tamanho decrescente. Tudo com o material de
-## sombra, entao a asa tambem se desfaz nas pontas.
+## Asa: dois ossos + um leque de LAMINAS.
+##
+## Nao sao penas, e isso e decisao de desenho e nao economia: pena e macia, e
+## macio briga com tudo que este bicho e. Lasca comprida e afiada casa com a
+## linguagem de pedra e brasa do resto do jogo e desenha uma silhueta muito
+## melhor — que e o que se ve dele a vinte metros, na nevoa.
+##
+## As laminas saem em duas fiadas, uma por osso: as compridas no antebraco da
+## asa e as curtas no braco, mais pra dentro, como remiges e coberteiras.
 func _monta_asa(lado: float, h: float) -> Node3D:
 	var raiz := Node3D.new()
 	raiz.name = "AsaL" if lado > 0.0 else "AsaR"
-	raiz.position = Vector3(lado * h * 0.045, 0, 0)
+	raiz.position = Vector3(lado * h * 0.050, 0, 0)
 	_costas.add_child(raiz)
 
-	var osso1 := h * 0.40
-	var osso2 := h * 0.38
+	var osso1 := h * 0.34
+	var osso2 := h * 0.30
 
-	# o osso aponta pra fora (eixo X), entao o membro entra rotacionado
+	# O osso pende do pivo (y 0 -> -1) como todo membro; o giro em Z o deita
+	# apontando pra FORA. Rz(+90) manda o -Y pro +X, entao o sinal do giro e o
+	# lado da asa.
 	var braco := Node3D.new()
 	braco.name = "Braco"
 	raiz.add_child(braco)
-	_parte(braco, _capsula(h * 0.022, osso1), Vector3(lado * osso1 * 0.5, 0, 0)).rotation.z = PI * 0.5
+	_peca(braco, "asa_osso", Vector3.ZERO, Vector3(h * 0.056, osso1, h * 0.056),
+		_capsula(h * 0.022, osso1), Vector3(0, 0, lado * PI * 0.5))
+	if FX.peca("asa_osso") == null:
+		braco.get_child(0).position = Vector3(lado * osso1 * 0.5, 0, 0)
 
 	var meio := Node3D.new()
 	meio.name = "Meio"
 	meio.position = Vector3(lado * osso1, 0, 0)
 	braco.add_child(meio)
-	_parte(meio, _capsula(h * 0.017, osso2), Vector3(lado * osso2 * 0.5, 0, 0)).rotation.z = PI * 0.5
+	_peca(meio, "asa_osso", Vector3.ZERO, Vector3(h * 0.044, osso2, h * 0.044),
+		_capsula(h * 0.017, osso2), Vector3(0, 0, lado * PI * 0.5))
+	if FX.peca("asa_osso") == null:
+		meio.get_child(0).position = Vector3(lado * osso2 * 0.5, 0, 0)
 
-	# penas do antebraco (as longas) e do braco (as curtas, mais pra dentro)
-	var penas := [0.95, 0.88, 0.76, 0.62, 0.46]
-	for i in penas.size():
-		var f: float = penas[i]
-		var comp := h * 0.46 * f
-		var pena := _parte(meio, _capsula(h * 0.013 * f, comp),
-			Vector3(lado * osso2 * (0.25 + 0.18 * float(i)), -comp * 0.42, h * 0.012 * float(i)))
-		pena.scale = Vector3(1.0, 1.0, 0.35)
-		pena.rotation = Vector3(deg_to_rad(4.0 * float(i)), 0.0, deg_to_rad(lado * (14.0 + 9.0 * float(i))))
-	for i in 3:
-		var comp2 := h * 0.26 * (1.0 - 0.2 * float(i))
-		var pena2 := _parte(braco, _capsula(h * 0.012, comp2),
-			Vector3(lado * osso1 * (0.30 + 0.22 * float(i)), -comp2 * 0.45, h * 0.010))
-		pena2.scale = Vector3(1.0, 1.0, 0.35)
-		pena2.rotation.z = deg_to_rad(lado * (10.0 + 6.0 * float(i)))
+	# leque grande (antebraco da asa): as seis laminas longas
+	var longas := [[1.00, 0.40], [0.96, 0.38], [0.90, 0.355],
+		[0.82, 0.325], [0.72, 0.29], [0.60, 0.25]]
+	for i in longas.size():
+		var f: float = longas[i][0]
+		var comp: float = longas[i][1]
+		var nome := "pena_g" if i < 2 else ("pena_m" if i < 4 else "pena_p")
+		_peca(meio, nome,
+			Vector3(lado * osso2 * (0.08 + 0.175 * float(i)), -h * 0.008, h * 0.016 * float(i)),
+			Vector3(h * 0.115 * f, h * comp, h * 0.115 * f),
+			_capsula(h * 0.013 * f, h * comp),
+			Vector3(deg_to_rad(4.0 * float(i)), 0.0, deg_to_rad(lado * (24.0 + 12.0 * float(i)))))
+
+	# leque pequeno (braco da asa): as coberteiras, mais pra dentro
+	var curtas := [[0.52, 0.22], [0.44, 0.19], [0.36, 0.16]]
+	for i in curtas.size():
+		var f2: float = curtas[i][0]
+		var comp2: float = curtas[i][1]
+		_peca(braco, "pena_p",
+			Vector3(lado * osso1 * (0.30 + 0.24 * float(i)), -h * 0.006,
+				h * 0.020 + h * 0.014 * float(i)),
+			Vector3(h * 0.105 * f2, h * comp2, h * 0.105 * f2),
+			_capsula(h * 0.012, h * comp2),
+			Vector3(deg_to_rad(6.0 * float(i)), 0.0, deg_to_rad(lado * (16.0 + 9.0 * float(i)))))
 
 	if lado > 0.0:
 		_asa_meio_l = meio
@@ -606,7 +729,7 @@ func _monta_asa(lado: float, h: float) -> Node3D:
 	return raiz
 
 
-## Espada: lamina de sombra com fio de brasa. Nasce guardada nas costas e
+## Espada: lamina de pedra-carvao com o fio aceso. Nasce guardada nas costas e
 ## troca de pai pra mao direita no ataque 4 (ver `_segura_espada`).
 func _monta_espada(h: float) -> Node3D:
 	var arma := Node3D.new()
@@ -614,23 +737,20 @@ func _monta_espada(h: float) -> Node3D:
 	_costas.add_child(arma)
 
 	var lamina_len := h * 0.62
-	var lamina := _parte(arma, _capsula(h * 0.028, lamina_len), Vector3(0, lamina_len * 0.5, 0))
-	lamina.scale = Vector3(1.0, 1.0, 0.26)
+	# A lamina e autorada apontando pra CIMA (y 0 -> 1), entao entra na origem
+	# do punho e o comprimento vira escala.
+	var lam := _peca(arma, "espada_lamina", Vector3.ZERO,
+		Vector3(h * 0.13, lamina_len, h * 0.13), _capsula(h * 0.028, lamina_len))
+	if FX.peca("espada_lamina") == null:
+		lam.position = Vector3(0, lamina_len * 0.5, 0)
+		lam.scale = Vector3(1.0, 1.0, 0.26)
+	# O fio nao e mais uma barra emissiva colada por fora: ele esta assado na
+	# cor de vertice da malha (COLOR.r na quina), e o shader acende por ali.
+	# Uma barra separada brigava com a silhueta toda vez que a lamina girava.
 
-	# fio: faixa fina e emissiva correndo pela lamina
-	var fio := MeshInstance3D.new()
-	var box := BoxMesh.new()
-	box.size = Vector3(h * 0.004, lamina_len * 0.92, h * 0.018)
-	fio.mesh = box
-	fio.material_override = FX.emissivo(Color(1.0, 0.42, 0.08), 6.0)
-	fio.position = Vector3(h * 0.026, lamina_len * 0.5, 0)
-	fio.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	arma.add_child(fio)
-
-	# guarda e cabo
-	_parte(arma, _capsula(h * 0.012, h * 0.16), Vector3.ZERO).rotation.z = PI * 0.5
-	_parte(arma, _capsula(h * 0.013, h * 0.13), Vector3(0, -h * 0.065, 0))
-	_parte(arma, _esfera_malha(h * 0.020), Vector3(0, -h * 0.135, 0))
+	_peca(arma, "espada_punho", Vector3.ZERO,
+		Vector3(h * 0.16, h * 0.16, h * 0.10), _capsula(h * 0.012, h * 0.16),
+		Vector3(0, 0, PI * 0.5 if FX.peca("espada_punho") == null else 0.0))
 
 	_brasa_espada = _particulas_brasa(h * 0.03, 40, 0.8)
 	_brasa_espada.position = Vector3(0, lamina_len * 0.55, 0)
@@ -643,22 +763,34 @@ func _monta_espada(h: float) -> Node3D:
 	return arma
 
 
-## Bazuca: tubo de sombra com bocal de brasa. Tambem fica nas costas.
+## Bazuca: tubo de carvao com o bocal aceso. Tambem fica nas costas.
 func _monta_bazuca(h: float) -> Node3D:
 	var arma := Node3D.new()
 	arma.name = "Bazuca"
 	_costas.add_child(arma)
 
 	var tubo_len := h * 0.66
-	var tubo := _parte(arma, _capsula(h * 0.050, tubo_len), Vector3.ZERO)
-	tubo.rotation.x = PI * 0.5
-	# bocal
-	var bocal := _parte(arma, _capsula(h * 0.062, h * 0.10), Vector3(0, 0, tubo_len * 0.52))
-	bocal.rotation.x = PI * 0.5
-	# mira e empunhadura
-	_parte(arma, _capsula(h * 0.012, h * 0.07), Vector3(0, h * 0.055, -tubo_len * 0.15))
-	_parte(arma, _capsula(h * 0.016, h * 0.10), Vector3(0, -h * 0.055, tubo_len * 0.05)).rotation.x = deg_to_rad(18.0)
+	var malha := FX.peca("bazuca")
+	if malha != null:
+		# Peca inteira (tubo, bocal, mira e empunhadura numa malha so). Ela e
+		# autorada com a boca no -Z, e entra girada meia volta porque a arma
+		# aqui aponta pro +Z do pivo — que e a orientacao que as poses do
+		# ataque 2 ja esperam. Trocar isso mexeria na mira, e mira nao e
+		# assunto de modelagem.
+		_peca(arma, "bazuca", Vector3.ZERO,
+			Vector3(h * 0.30, h * 0.30, tubo_len), null, Vector3(0, PI, 0))
+	else:
+		var tubo := _parte(arma, _capsula(h * 0.050, tubo_len), Vector3.ZERO)
+		tubo.rotation.x = PI * 0.5
+		var bocal := _parte(arma, _capsula(h * 0.062, h * 0.10),
+			Vector3(0, 0, tubo_len * 0.52))
+		bocal.rotation.x = PI * 0.5
+		_parte(arma, _capsula(h * 0.012, h * 0.07), Vector3(0, h * 0.055, -tubo_len * 0.15))
+		_parte(arma, _capsula(h * 0.016, h * 0.10),
+			Vector3(0, -h * 0.055, tubo_len * 0.05)).rotation.x = deg_to_rad(18.0)
 
+	# anel de brasa na culatra: o unico pedaco emissivo de verdade da arma,
+	# porque e ele que anuncia que ela esta carregada
 	var anel := MeshInstance3D.new()
 	var toro := TorusMesh.new()
 	toro.inner_radius = h * 0.050
@@ -1631,6 +1763,22 @@ func _anima(delta: float) -> void:
 		if _act != Act.NENHUMA:
 			brilho += 2.2
 		_luz_olhos.light_energy = brilho
+
+	# A aurela nao e chapeu: ela fica solta atras da cabeca, girando devagar no
+	# proprio eixo e desfazendo em parte o giro do pescoco. Presa ao cranio ela
+	# lia como adereco; solta, le como coisa que esta ali por conta propria — e
+	# e ela que diz "serafim" a vinte metros de distancia, antes de dar pra ver
+	# qualquer outro detalhe do corpo.
+	if is_instance_valid(_halo):
+		var base := altura * 0.215
+		var respira := 1.0 + sin(_t * 0.8) * 0.035
+		if _act != Act.NENHUMA:
+			respira += 0.12
+		_halo.scale = Vector3(base, base, base) * respira
+		_halo.rotation = Vector3(
+			deg_to_rad(18.0) + sin(_t * 0.31) * 0.06,
+			-_neck.rotation.y * 0.6 + sin(_t * 0.23) * 0.10,
+			sin(_t * 0.37) * 0.20)
 
 	if dead:
 		_pose_morte(delta)

@@ -119,6 +119,31 @@ var _fase_t: float = 0.0
 
 var _t: float = 0.0
 var _passo_fase: float = 0.0
+## Velocidade decomposta no espaco do CORPO e suavizada: quanto ele anda pra
+## frente (negativo = de re) e quanto anda de lado, ambos em fracao do passo
+## atual. E o que permite o mesmo ciclo servir de caminhada, de re e de passo
+## lateral — ele encara o jogador enquanto circula em volta dele.
+var _av_frente: float = 0.0
+var _av_lado: float = 0.0
+## Velocidade de giro do corpo (rad/s, suavizada), pra inclinar na curva.
+var _giro: float = 0.0
+var _ry_ant: float = 0.0
+## Tranco da pisada: vai a 1 no instante em que o pe bate e decai. Alimenta o
+## afundamento do quadril e o safanao do pescoco.
+var _impacto: float = 0.0
+## Comprimento util da perna (quadril ate o tornozelo), medido do rig no
+## `_monta_corpo`. Toda a geometria da passada sai daqui.
+var _comp_perna: float = 1.0
+## Meia largura da bacia: distancia do centro ate cada quadril. Entra na conta
+## que desfaz a torcao da bacia nas pernas.
+var _meia_bacia: float = 0.3
+## Abertura do quadril que a passada de agora pede, ja repartida entre
+## frente/tras e lado. Calculadas no `_anima`, consumidas no `_pose_andando`.
+var _balanco: float = 0.0
+var _lateral: float = 0.0
+## Lado pra onde ele esta circulando, e quanto falta pra trocar.
+var _lado_sinal: float = 1.0
+var _troca_lado: float = 0.0
 var _respiro: float = 0.0
 var _esperas: Dictionary = {}
 var _rng := RandomNumberGenerator.new()
@@ -150,6 +175,8 @@ var _coxa_l: Node3D
 var _coxa_r: Node3D
 var _joelho_l: Node3D
 var _joelho_r: Node3D
+var _pe_l: Node3D
+var _pe_r: Node3D
 var _ancora_maos: Node3D
 var _olho_l: MeshInstance3D
 var _olho_r: MeshInstance3D
@@ -206,6 +233,34 @@ const PAR_VOLTA := 0.80
 ## A quantos metros na frente dele a parede sobe, e quanto ela anda depois.
 const PAREDE_DISTANCIA := 3.2
 const PAREDE_AVANCO := 7.5
+
+## ===========================================================================
+## A PASSADA MANDA NO ANDAR, e nao o contrario.
+##
+## Antes a cadencia era uma frequencia quase fixa (1,6 + v*0,55) e a perna
+## balancava numa senoide de amplitude fixa. As duas coisas nao conversavam:
+## a 2,45 m/s ele dava passada de 2,6 m com uma perna de 1,16 m, e o pe
+## escorregava dois metros por passo. Um pe que patina e o que o olho le como
+## "travado" — nao ha peso onde o pe nao crava.
+##
+## Agora a ordem e: velocidade -> comprimento da passada -> abertura da perna
+## (pela GEOMETRIA: o pe viaja 2 * perna * sin(abertura) no chao) -> cadencia
+## (meia volta de fase = um passo = uma passada de chao). Os tres numeros
+## passam a ser o mesmo numero visto de tres jeitos, e o pe fica onde pisou.
+## ===========================================================================
+
+## Passada de quem mal se move, e quanto ela cresce por m/s de velocidade.
+const PASSADA_MIN := 0.62
+const PASSADA_POR_VEL := 0.33
+const PASSADA_MAX := 1.55
+const CADENCIA_MIN := 1.0
+const CADENCIA_MAX := 7.0
+## Trava de bom senso na abertura do quadril (rad). Perna de pedra nao abre
+## em compasso.
+const ABERTURA_MAX := 0.72
+## Velocidade em que a caminhada ja esta com amplitude cheia. Abaixo disso ela
+## desaparece suavemente, pra ele nao ficar remexendo as pernas parado.
+const VEL_MINIMA := 0.45
 
 const GRAVIDADE := 20.0
 ## Tolerancia horizontal ate o navmesh pra considerar que ele serve aqui. Na
@@ -338,6 +393,9 @@ func _registra(nome: String, pivo: Node3D, pedras: Array, solta: bool, minimo: i
 func _monta_corpo() -> void:
 	var h := altura
 	var perna := h * 0.40
+	# Perna util pra conta da passada: o joelho de apoio fica levemente
+	# flexionado, entao o quadril nao chega a ficar `perna` acima do tornozelo.
+	_comp_perna = perna * 0.97
 	var coxa := perna * 0.52
 	var canela := perna - coxa
 	var torso := h * 0.34
@@ -432,12 +490,13 @@ func _monta_corpo() -> void:
 
 	# pernas: grossas e curtas. Nao se soltam — sem elas ele nao andaria, e o
 	# proposito da mutilacao aqui e ele CONTINUAR lutando aos pedacos.
+	_meia_bacia = quadril_w
 	_coxa_l = _osso(_hips, "coxa_l", coxa, h * 0.078, Vector3(quadril_w, 0, 0), 4, false, 2)
 	_joelho_l = _osso(_coxa_l, "canela_l", canela, h * 0.066, Vector3(0, -coxa, 0), 4, false, 2)
-	_monta_pe(_joelho_l, "pe_l", canela, h)
+	_pe_l = _monta_pe(_joelho_l, "pe_l", canela, h)
 	_coxa_r = _osso(_hips, "coxa_r", coxa, h * 0.078, Vector3(-quadril_w, 0, 0), 4, false, 2)
 	_joelho_r = _osso(_coxa_r, "canela_r", canela, h * 0.066, Vector3(0, -coxa, 0), 4, false, 2)
-	_monta_pe(_joelho_r, "pe_r", canela, h)
+	_pe_r = _monta_pe(_joelho_r, "pe_r", canela, h)
 
 	# Ancora entre as duas maos, na frente do peito: e onde o pedregulho passa a
 	# ser segurado e onde a espada cresce.
@@ -744,8 +803,11 @@ func _physics_process(delta: float) -> void:
 		player = _acha_player()
 
 	if cutscene_mode:
-		velocity.x = move_toward(velocity.x, 0.0, chase_speed)
-		velocity.z = move_toward(velocity.z, 0.0, chase_speed)
+		# `* delta`: o terceiro parametro do move_toward e uma quantidade
+		# absoluta, nao uma taxa por segundo. Sem ele, tres toneladas de pedra
+		# a 2,5 m/s paravam em UM quadro.
+		velocity.x = move_toward(velocity.x, 0.0, chase_speed * 2.0 * delta)
+		velocity.z = move_toward(velocity.z, 0.0, chase_speed * 2.0 * delta)
 		if is_instance_valid(player):
 			_encara(player.global_position, delta)
 		_anima(delta)
@@ -797,8 +859,17 @@ func _pensa(delta: float) -> void:
 	elif d < distancia_ideal - 2.5:
 		_caminha(-dir, chase_speed * 0.55, delta)
 	else:
-		var lado := Vector3(-dir.z, 0.0, dir.x) * (1.0 if int(_t * 0.22) % 2 == 0 else -1.0)
-		_caminha(lado, chase_speed * 0.4, delta)
+		# Circula em volta dele. O lado troca em intervalo SORTEADO, nao num
+		# relogio redondo: com `int(_t * 0.22) % 2` a troca caia sempre no
+		# mesmo compasso e, pior, invertia o alvo de velocidade num quadro so —
+		# o passo morria no meio e recomecava pro outro lado.
+		_troca_lado -= delta
+		if _troca_lado <= 0.0:
+			_troca_lado = _rng.randf_range(3.2, 7.0)
+			_lado_sinal = -_lado_sinal
+		var lado := Vector3(-dir.z, 0.0, dir.x) * _lado_sinal
+		# Um fiapo de avanco junto: circular puro le como esteira rolante.
+		_caminha((lado + dir * 0.2).normalized(), chase_speed * 0.45, delta)
 
 
 func _vaga(delta: float) -> void:
@@ -811,8 +882,8 @@ func _vaga(delta: float) -> void:
 
 	var dir := _direcao_para(_destino)
 	if dir == Vector3.ZERO:
-		velocity.x = move_toward(velocity.x, 0.0, walk_speed)
-		velocity.z = move_toward(velocity.z, 0.0, walk_speed)
+		velocity.x = move_toward(velocity.x, 0.0, walk_speed * 1.6 * delta)
+		velocity.z = move_toward(velocity.z, 0.0, walk_speed * 1.6 * delta)
 		return
 	_caminha(dir, walk_speed, delta)
 	_encara(global_position + dir, delta)
@@ -889,7 +960,13 @@ func _encara(alvo: Vector3, delta: float) -> void:
 	if global_position.distance_to(plano) < 0.3:
 		return
 	var desejado := atan2(global_position.x - alvo.x, global_position.z - alvo.z)
-	rotation.y = lerp_angle(rotation.y, desejado, clampf(delta * turn_speed, 0.0, 1.0))
+	# Gira mais rapido quanto MAIS fora de frente estiver o alvo. Com taxa
+	# fixa baixa, uma virada de 180 graus levava quase dois segundos — e nesses
+	# dois segundos ele andava de lado com a animacao de andar pra frente, que
+	# era metade da sensacao de travamento.
+	var falta := absf(angle_difference(rotation.y, desejado))
+	var v: float = turn_speed * (1.0 + falta * 0.55)
+	rotation.y = lerp_angle(rotation.y, desejado, clampf(delta * v, 0.0, 1.0))
 
 
 # ==================================================== roteiro dos poderes
@@ -1322,21 +1399,60 @@ func _anda_acao(delta: float) -> void:
 		if not (_act == Act.PAREDE and _fase >= 2):
 			_encara(player.global_position, delta)
 
-	velocity.x = move_toward(velocity.x, 0.0, chase_speed * 2.0)
-	velocity.z = move_toward(velocity.z, 0.0, chase_speed * 2.0)
+	# Freada de meio segundo, nao de um quadro (ver a nota do cutscene_mode).
+	# Um corpo deste peso que para instantaneamente pra conjurar e a coisa que
+	# mais denuncia que nao ha massa nenhuma ali.
+	velocity.x = move_toward(velocity.x, 0.0, chase_speed * 2.2 * delta)
+	velocity.z = move_toward(velocity.z, 0.0, chase_speed * 2.2 * delta)
 
 
 # ============================================================= animacao
 
 func _anima(delta: float) -> void:
 	var planar := Vector2(velocity.x, velocity.z).length()
-	var blend: float = clampf(planar / maxf(chase_speed, 0.01), 0.0, 1.0)
+	# A amplitude e medida contra o passo QUE ELE ESTA USANDO agora, nao contra
+	# o de perseguicao. Medindo tudo pelo `chase_speed`, o vagar pela cidade —
+	# que e metade da velocidade — saia com meia amplitude de perna, e meia
+	# amplitude de perna com o corpo andando inteiro e exatamente a leitura de
+	# "travado" que ele tinha na rua.
+	var referencia: float = chase_speed if state == State.PERSEGUINDO else walk_speed
+	var blend: float = clampf(planar / maxf(referencia, 0.01), 0.0, 1.0)
+
+	# Velocidade decomposta no espaco do corpo (`v * basis` = basis inversa
+	# aplicada ao vetor). O corpo olha pro -Z, entao a componente pra frente e
+	# `-local.z`.
+	var local := Vector3(velocity.x, 0.0, velocity.z) * global_transform.basis
+	var suave: float = clampf(delta * 6.0, 0.0, 1.0)
+	_av_frente = lerpf(_av_frente, clampf(-local.z / maxf(referencia, 0.01), -1.0, 1.0), suave)
+	_av_lado = lerpf(_av_lado, clampf(local.x / maxf(referencia, 0.01), -1.0, 1.0), suave)
+
+	# Quanto ele esta girando agora, pra tombar o corpo pra dentro da curva.
+	var dr := angle_difference(_ry_ant, rotation.y)
+	_ry_ant = rotation.y
+	_giro = lerpf(_giro, clampf(dr / maxf(delta, 0.0001), -2.5, 2.5), clampf(delta * 5.0, 0.0, 1.0))
+
+	_impacto = maxf(0.0, _impacto - delta * 4.2)
+
+	# Passada primeiro, cadencia e abertura DEPOIS (ver o bloco de constantes).
+	var passada: float = clampf(PASSADA_MIN + planar * PASSADA_POR_VEL, PASSADA_MIN, PASSADA_MAX)
+	var abertura: float = minf(asin(clampf(passada / (2.0 * _comp_perna), 0.0, 0.99)), ABERTURA_MAX)
+	# Some suave abaixo de `VEL_MINIMA` em vez de sumir com o `blend` contra a
+	# velocidade de perseguicao: era isso que deixava o vagar pela cidade com
+	# meia perna de amplitude.
+	var forca: float = clampf(planar / VEL_MINIMA, 0.0, 1.0)
+	var fr := 0.0
+	var ld := 0.0
+	if planar > 0.01:
+		fr = clampf(-local.z / planar, -1.0, 1.0)
+		ld = clampf(local.x / planar, -1.0, 1.0)
+	# A abertura se REPARTE entre andar pra frente e andar de lado: circulando
+	# em volta do jogador quase nao ha passada fore/aft, e sim passo lateral.
+	_balanco = lerpf(_balanco, abertura * fr * forca, suave)
+	_lateral = lerpf(_lateral, abertura * ld * forca * 0.55, suave)
 
 	if planar > 0.2 and is_on_floor():
 		var antes := _passo_fase
-		# Cadencia baixissima: passada longa e pesada. Um corpo de pedra de
-		# 2,9 m com frequencia de passo de gente parece patinar.
-		_passo_fase += delta * (1.6 + planar * 0.55)
+		_passo_fase += delta * clampf(PI * planar / passada, CADENCIA_MIN, CADENCIA_MAX)
 		var metade := int(floor(_passo_fase / PI))
 		if metade != int(floor(antes / PI)):
 			_pisa(planar)
@@ -1366,6 +1482,9 @@ func _anima(delta: float) -> void:
 func _pisa(planar: float) -> void:
 	if dead:
 		return
+	# O tranco que o resto da animacao consome: quadril afunda, pescoco leva um
+	# safanao. E o que liga o som da pisada ao corpo.
+	_impacto = 1.0
 	if _passos != null:
 		_passos.pitch_scale = clampf(0.38 + planar * 0.05, 0.34, 0.62) + _rng.randf_range(-0.03, 0.03)
 		_passos.play()
@@ -1434,43 +1553,169 @@ func _descanso_hips() -> float:
 	return _hips.position.y
 
 
-## Caminhada. Passada curta e larga, tronco balancando de um lado pro outro:
-## o andar de um peso que se joga de uma perna pra outra.
+## ===========================================================================
+## PERFIL DE UM PASSO. Devolve, em [-1, 1], o quanto o pe esta a FRENTE do
+## quadril medido na horizontal. E aqui que mora a diferenca entre um andar
+## que crava o pe e um que patina:
+##
+##   APOIO (pe no chao, meia volta do ciclo): desce em LINHA RETA. O pe anda
+##     pra tras em relacao ao quadril numa taxa constante, que e exatamente a
+##     taxa com que o corpo anda pra frente — resultado: o pe fica PARADO no
+##     mundo enquanto o corpo passa por cima dele. Uma senoide aqui joga o pe
+##     rapido no meio do apoio e devagar nas pontas, e nenhuma velocidade de
+##     corpo casa com as duas coisas ao mesmo tempo: sobra escorregao.
+##   BALANCO (pe no ar): volta pra frente com aceleracao e freada, que e o
+##     unico trecho em que o pe TEM de correr mais que o corpo.
+##
+## O angulo do quadril sai disto por `asin(sin(abertura) * perfil)` — o perfil
+## e horizontal, o quadril e angular, e o asin e quem converte um no outro.
+static func _perfil_passo(fase: float) -> float:
+	var f := fposmod(fase - PI * 0.5, TAU)
+	if f <= PI:
+		return 1.0 - 2.0 * (f / PI)
+	return -cos(PI * ((f - PI) / PI))
+
+
+## 1 enquanto o pe esta no chao, 0 no ar, com as bordas suavizadas pra nada
+## estalar na troca de apoio.
+static func _peso_no_pe(fase: float) -> float:
+	var f := fposmod(fase - PI * 0.5, TAU)
+	if f > PI:
+		return 0.0
+	return smoothstep(0.0, 0.30, f) * smoothstep(0.0, 0.30, PI - f)
+
+
+## Caminhada. O esqueleto e o de qualquer biped — pernas em contrafase, bracos
+## cruzados com elas — mas com quatro coisas que faltavam e que juntas eram o
+## "travado":
+##
+##   1. a passada sai da VELOCIDADE e a perna abre pela GEOMETRIA dela (ver o
+##      bloco de constantes), entao o pe pisa onde o corpo passa;
+##   2. o pe fica CRAVADO durante o apoio, pelo perfil linear acima;
+##   3. o peso troca de pe de verdade: o quadril desliza pro lado da perna de
+##      apoio, afunda o tanto que a geometria da perna aberta exige, o tronco
+##      tomba junto e o pescoco desfaz o tombo pra cabeca ficar nivelada;
+##   4. o ciclo responde a DIRECAO. Ele encara o jogador enquanto circula em
+##      volta dele — sem isso a animacao ia pra frente enquanto o corpo ia pro
+##      lado, e essa briga entre as duas coisas era metade do problema.
+##
+## Os pesos de interpolacao sao diferentes por grupo DE PROPOSITO: perna cola
+## na fase (se o filtro comer a amplitude, some a passada), braco chega
+## atrasado (e o atraso que da a inercia de pedra) e tronco fica no meio.
 func _pose_andando(delta: float, blend: float) -> void:
-	var w: float = clampf(delta * 5.0, 0.0, 1.0)
+	var wp: float = clampf(delta * 30.0, 0.0, 1.0)
+	var wt: float = clampf(delta * 6.5, 0.0, 1.0)
+	var wb: float = clampf(delta * 3.4, 0.0, 1.0)
+
 	var t := _passo_fase
-	var balanco := 0.44 * blend
-	var s := sin(t)
-	var s2 := sin(t + PI)
+	var perfil_l := _perfil_passo(t)
+	var perfil_r := _perfil_passo(t + PI)
+	var ap_l := _peso_no_pe(t)
+	var ap_r := _peso_no_pe(t + PI)
 
-	_para(_coxa_l, Vector3(s * balanco, 0.0, 0.0), w)
-	_para(_coxa_r, Vector3(s2 * balanco, 0.0, 0.0), w)
-	_para(_joelho_l, Vector3(-0.18 - maxf(0.0, -sin(t + 1.3)) * 0.85 * blend, 0.0, 0.0), w)
-	_para(_joelho_r, Vector3(-0.18 - maxf(0.0, -sin(t + PI + 1.3)) * 0.85 * blend, 0.0, 0.0), w)
+	# ------------------------------------------------------------ quadril
+	# O quadril vai PRIMEIRO, e as pernas leem dele o estado REAL depois. Se a
+	# compensacao la embaixo usasse o alvo em vez do valor efetivo, os dois
+	# lados usariam pesos de interpolacao diferentes (`wt` contra `wp`) e a
+	# conta nao fecharia justamente nos quadros em que ele muda de ritmo.
+	var seno_b := sin(_balanco)
+	var ang_l := asin(clampf(seno_b * perfil_l, -1.0, 1.0))
+	var ang_r := asin(clampf(seno_b * perfil_r, -1.0, 1.0))
+	var apoio: float = ap_l - ap_r
 
-	_hips.position.y = _descanso_hips() + absf(sin(t)) * 0.06 * blend
-	# gingado lateral: o Z do quadril e o que faz o peso passar de um pe pro outro
-	_para(_hips, Vector3(0.0, sin(t) * 0.07 * blend, sin(t) * 0.10 * blend), w)
-	# tronco pra FRENTE quando anda (negativo): peso indo na direcao do passo
-	_para(_spine, Vector3(-0.06 - 0.10 * blend, -sin(t) * 0.09 * blend, -sin(t) * 0.07 * blend), w)
+	# Afundamento EXATO: com a perna de apoio aberta num angulo, o quadril fica
+	# `perna * cos(angulo)` acima do tornozelo. Se ele nao descer esse tanto,
+	# ou o pe atravessa o chao ou o corpo flutua. Antes isto era um
+	# `absf(sin())` chutado — e com o sinal trocado, subindo justo no ponto
+	# mais BAIXO da caminhada, que e a passada aberta.
+	var ang_apoio: float = absf(ang_l) * ap_l + absf(ang_r) * ap_r
+	var queda: float = _comp_perna * (1.0 - cos(ang_apoio))
+	_hips.position.y = lerpf(_hips.position.y,
+		_descanso_hips() - queda - _impacto * 0.045 * blend, wt)
+	# Desliza pra cima do pe de apoio: sem isso o corpo anda equilibrado no
+	# vazio entre as duas pernas.
+	_hips.position.x = lerpf(_hips.position.x, apoio * 0.075 * blend, wt)
+	# rotation.y torce a bacia (a perna da frente vai junto); rotation.z faz a
+	# bacia CAIR do lado da perna que esta no ar.
+	_para(_hips, Vector3(0.0, (perfil_l - perfil_r) * 0.5 * _balanco * 0.18,
+		apoio * 0.05 * blend), wt)
 
-	# Bracos pesados, pendurados e ABERTOS pra fora. O sinal do Z importa: pro
-	# ombro esquerdo (que fica no +X) um Z positivo joga o braco pra FORA. Com
-	# os bracos fechados pra dentro — que e a pose do Seraph, um bicho magro —
-	# eles desapareciam dentro deste torso de um metro de largura e a silhueta
-	# virava uma pilha de pedra sem forma humana.
-	var bracos := 0.34 * blend
-	_para(_ombro_l, Vector3(s2 * bracos, 0.0, 0.17 + 0.05 * blend), w)
-	_para(_ombro_r, Vector3(s * bracos, 0.0, -0.17 - 0.05 * blend), w)
-	_para(_cotovelo_l, Vector3(0.28 + 0.22 * blend * maxf(0.0, s2), 0.0, -0.10), w)
-	_para(_cotovelo_r, Vector3(0.28 + 0.22 * blend * maxf(0.0, s), 0.0, 0.10), w)
+	# ------------------------------------------------------------ pernas
+	# COMPENSACAO DO GINGADO. O quadril desliza pro lado, rola e torce — e tem
+	# de fazer isso, e o que da peso ao corpo. Mas cada um desses tres
+	# movimentos ARRASTA junto o pe que esta plantado no chao, e pe arrastado e
+	# exatamente o que o olho le como travamento. Aqui as tres coisas sao
+	# desfeitas no quadril de cada perna, entao o tronco ginga por cima de um
+	# pe que nao sai do lugar. E o que um bicho de verdade faz: a bacia se move
+	# PORQUE o pe esta fixo, nao apesar disso.
+	#
+	#   - deslize lateral dx -> arrasta o pe dx pro lado -> tira asin(dx/perna)
+	#   - rolagem da bacia   -> gira a perna inteira     -> tira a rolagem
+	#   - torcao da bacia    -> leva o quadril de cada lado pra frente/tras
+	#                           `meia_bacia * sin(torcao)`, em sinais opostos
+	var anula_lado: float = -_hips.rotation.z \
+		- asin(clampf(_hips.position.x / _comp_perna, -0.5, 0.5))
+	var anula_torcao: float = asin(clampf(
+		_meia_bacia * sin(_hips.rotation.y) / _comp_perna, -0.5, 0.5))
+
+	var seno_x := sin(_lateral)
+	var abre_l := asin(clampf(seno_x * perfil_l, -1.0, 1.0))
+	var abre_r := asin(clampf(seno_x * perfil_r, -1.0, 1.0))
+
+	_para(_coxa_l, Vector3(ang_l - anula_torcao, 0.0, 0.10 + abre_l + anula_lado), wp)
+	_para(_coxa_r, Vector3(ang_r + anula_torcao, 0.0, -0.10 + abre_r + anula_lado), wp)
+
+	# Joelho quase reto no apoio (perna esticada segura o peso e mantem a
+	# altura do quadril) e dobrado no ar, que e como o pe passa raspando o chao
+	# sem esbarrar nele.
+	var forca: float = clampf(absf(_balanco) / 0.30, 0.0, 1.0)
+	_para(_joelho_l, Vector3(-0.13 - (1.0 - ap_l) * 0.92 * forca, 0.0, 0.0), wp)
+	_para(_joelho_r, Vector3(-0.13 - (1.0 - ap_r) * 0.92 * forca, 0.0, 0.0), wp)
+
+	# Tornozelo: a sola fica NIVELADA com o chao no apoio — o angulo do pe
+	# desfaz coxa + joelho — e rola pra ponta na hora de empurrar. Antes o pe
+	# ia de ponta o ciclo inteiro, que e meio caminho pra leitura de boneco.
+	var rolo: float = 0.30 * forca
+	if is_instance_valid(_pe_l):
+		_para(_pe_l, Vector3(-(_coxa_l.rotation.x + _joelho_l.rotation.x)
+			+ perfil_l * rolo * ap_l + 0.22 * (1.0 - ap_l) * forca, 0.0, 0.0), wp)
+	if is_instance_valid(_pe_r):
+		_para(_pe_r, Vector3(-(_coxa_r.rotation.x + _joelho_r.rotation.x)
+			+ perfil_r * rolo * ap_r + 0.22 * (1.0 - ap_r) * forca, 0.0, 0.0), wp)
+
+	# ------------------------------------------------------------ tronco
+	var frente := _av_frente
+	var lado := _av_lado
+	# Negativo inclina pra FRENTE. Andando de re ele se joga pra tras.
+	var inclina: float = -0.05 - 0.12 * blend * frente
+	# Tomba pro lado do pe de apoio (pro +X pede rotation.z NEGATIVO), mais o
+	# banco pra dentro da curva.
+	var tombo: float = -apoio * 0.09 * blend
+	_para(_spine, Vector3(inclina, -_hips.rotation.y * 1.6, tombo + _giro * 0.06), wt)
+
+	# ------------------------------------------------------------ bracos
+	# Pendurados, ABERTOS pra fora (fechados eles sumiam dentro de um torso de
+	# um metro de largura e a silhueta virava pilha de entulho) e cruzados com
+	# as pernas. `compensa` desfaz a inclinacao do tronco: braco de pedra pende
+	# na vertical do MUNDO, nao na do peito.
+	var bracos: float = _balanco * 0.85
+	var compensa: float = -inclina * 0.75
+	var abre_braco: float = 0.19 + 0.06 * blend
+	_para(_ombro_l, Vector3(perfil_r * bracos + compensa, 0.0, abre_braco + lado * 0.12), wb)
+	_para(_ombro_r, Vector3(perfil_l * bracos + compensa, 0.0, -abre_braco + lado * 0.12), wb)
+	_para(_cotovelo_l, Vector3(0.30 + 0.26 * forca * maxf(0.0, -perfil_r), 0.0, -0.10), wb)
+	_para(_cotovelo_r, Vector3(0.30 + 0.26 * forca * maxf(0.0, -perfil_l), 0.0, 0.10), wb)
+
+	# ------------------------------------------------------------ cabeca
+	# Desfaz o tombo e a torcao do tronco: bicho pesado balanca o corpo inteiro
+	# e mantem a cabeca quieta. Cabeca indo junto vira cambaleio de bebado.
+	_para(_neck, Vector3(-inclina * 0.55 + _impacto * 0.045 * blend,
+		_hips.rotation.y * 0.9, -tombo * 0.70), wt)
 
 	var p := 1.0 - blend
 	if p > 0.01:
 		_para(_neck, Vector3(sin(_t * 0.6) * 0.04 * p, sin(_t * 0.24) * 0.30 * p, 0.0), delta * 1.0)
 		_hips.position.y += sin(_t * 0.9) * 0.010 * p
-	else:
-		_para(_neck, Vector3.ZERO, w)
 
 
 ## Pernas plantadas e flexionadas: base de quem esta segurando muito peso.
@@ -1481,7 +1726,14 @@ func _pernas_firmes(w: float, flexao := 0.20) -> void:
 	_para(_coxa_r, Vector3(flexao * 0.5, 0.0, -0.22), w)
 	_para(_joelho_l, Vector3(-flexao, 0.0, 0.0), w)
 	_para(_joelho_r, Vector3(-flexao, 0.0, 0.0), w)
+	# Sola no chao: o angulo do tornozelo desfaz coxa + joelho.
+	if is_instance_valid(_pe_l):
+		_para(_pe_l, Vector3(flexao * 0.5, 0.0, 0.0), w)
+	if is_instance_valid(_pe_r):
+		_para(_pe_r, Vector3(flexao * 0.5, 0.0, 0.0), w)
 	_hips.position.y = lerpf(_hips.position.y, _descanso_hips() - flexao * 0.16, w)
+	# Desfaz o deslize lateral da caminhada: conjurando ele fica centrado.
+	_hips.position.x = lerpf(_hips.position.x, 0.0, w)
 
 
 func _pose_acao(delta: float) -> void:

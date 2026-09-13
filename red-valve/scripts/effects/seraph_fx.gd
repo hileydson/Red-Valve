@@ -22,6 +22,64 @@ static var _quad_fogo: QuadMesh
 static var _quad_magia: QuadMesh
 
 
+# ====================================================== corpo do Shadow Seraph
+
+## Biblioteca de pecas modeladas do Seraph (`tools/blender/seraph/`).
+##
+## O corpo dele era feito de `CapsuleMesh` e `SphereMesh` empilhadas — pilha de
+## balao, sem quina e sem placa. Serve pras sombras da cidade, que sao vulto de
+## passagem; nao serve pra um CHEFE que fica minutos na tela com barra de vida
+## no topo e que o jogador circunda de perto. Agora cada parte e uma malha
+## autorada, e o `.glb` carrega uma vez so pro jogo inteiro.
+##
+## As pecas chegam numa convencao fixa (documentada por extenso no gerador):
+## membro pende de y=0 a y=-1, tronco sobe de y=0 a y=1, tudo dentro de
+## [-0.5, 0.5] em x e z, e a frente e -Z. Por isso escalar por
+## (raio*2, comprimento, raio*2) poe a peca exatamente onde a capsula estava.
+const BIBLIOTECA_CORPO := "res://assets/3d_model/enemies/shadow_seraph/seraph.glb"
+
+static var _pecas: Dictionary = {}
+static var _pecas_lidas: bool = false
+
+
+## Uma peca do corpo pelo nome ("torax", "elmo", "garra"...). Devolve `null` se
+## o `.glb` nao estiver importado — quem chama cai no primitivo de antes em vez
+## de o inimigo sumir. Mesmo contrato da biblioteca de pedras do Shadow Rock.
+static func peca(nome: String) -> Mesh:
+	_carrega_pecas()
+	return _pecas.get(nome, null) as Mesh
+
+
+static func _carrega_pecas() -> void:
+	if _pecas_lidas:
+		return
+	_pecas_lidas = true
+	if not ResourceLoader.exists(BIBLIOTECA_CORPO):
+		push_warning("SeraphFX: %s nao encontrado; corpo cai nas primitivas."
+			% BIBLIOTECA_CORPO)
+		return
+	var cena := load(BIBLIOTECA_CORPO) as PackedScene
+	if cena == null:
+		return
+	var raiz := cena.instantiate()
+	_colhe(raiz)
+	raiz.queue_free()
+	if _pecas.is_empty():
+		push_warning("SeraphFX: %s nao tinha malha nenhuma." % BIBLIOTECA_CORPO)
+
+
+static func _colhe(no: Node) -> void:
+	if no is MeshInstance3D:
+		var mi := no as MeshInstance3D
+		if mi.mesh != null:
+			# String(): `name` e StringName e a chave tem de ser String pura,
+			# senao a busca por literal no dicionario nao acha (mesma armadilha
+			# que ja mordeu a ordenacao da biblioteca de pedras).
+			_pecas[String(mi.name)] = mi.mesh
+	for f in no.get_children():
+		_colhe(f)
+
+
 ## Ponto redondo com borda suave. Sem isto toda faisca sai quadrada.
 static func ponto_suave() -> GradientTexture2D:
 	if _ponto != null:

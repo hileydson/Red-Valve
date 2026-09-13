@@ -29,6 +29,26 @@ render_mode depth_draw_opaque, cull_back, unshaded, shadows_disabled;
 // sao aparicoes falhando. Este e solido e aceso — quando ele "falha", o que
 // acontece e as veias estourarem de luz (ver `flare`).
 //
+// ---------------------------------------------------------------------------
+// O QUE VEM DA MALHA (COLOR), desde que o corpo dele deixou de ser capsula
+//
+// O corpo agora e MODELADO (`tools/blender/seraph/gerar_seraph.py`), e a malha
+// traz dois canais de DADO na cor de vertice. Antes tudo aqui era sorteado por
+// ruido, entao o fogo caia em qualquer lugar — inclusive no meio de uma placa
+// lisa, onde nada deveria queimar. Com estes dois canais o desenho do fogo
+// passa a ser DECIDIDO no modelo:
+//
+//   COLOR.r  BRASA: 1 onde tem de queimar (fundo da caixa de costelas, fenda
+//            do elmo, juntas, fio das laminas, aurela), 0 no meio de uma
+//            placa de armadura. O ruido continua desenhando a TEXTURA da
+//            greta; este canal decide ONDE ela tem direito de acender.
+//   COLOR.g  QUINA: 1 numa aresta viva. Carvao lascado clareia na quina, e e
+//            isso que faz a peca ter volume mesmo sendo unshaded.
+//
+// Malha sem COLOR (as primitivas de reserva, se o `.glb` faltar) chega com
+// COLOR = branco, ou seja brasa 1 e quina 1 — o `mistura_brasa` existe pra
+// esse caso continuar parecido com o shader antigo em vez de virar tocha.
+//
 // Alpha scissor, nao blend, pelo mesmo motivo do shader das sombras: as partes
 // do corpo se sobrepoem e blending traria costura e ordenacao errada.
 
@@ -42,11 +62,28 @@ uniform vec4 brasa : source_color = vec4(1.0, 0.34, 0.06, 1.0);
 // nucleo das veias mais fundas, onde chega a amarelar
 uniform vec4 brasa_quente : source_color = vec4(1.0, 0.76, 0.30, 1.0);
 
+group_uniforms malha;
+// Quanto a mascara de brasa da MALHA manda. 0 = so ruido (comportamento
+// antigo); 1 = so a mascara. No meio, o ruido desenha a greta e a mascara diz
+// onde ela pode acender, que e o que se quer.
+uniform float mistura_brasa : hint_range(0.0, 1.0) = 0.78;
+// Piso de brasa fora da mascara: nem a placa mais lisa fica completamente
+// morta, senao o corpo racha em duas leituras (fogo e pedra) sem transicao.
+uniform float brasa_minima : hint_range(0.0, 1.0) = 0.09;
+// Clareado das quinas. E o unico "sombreamento" que um shader unshaded tem.
+uniform float quina_brilho : hint_range(0.0, 2.0) = 0.55;
+
 group_uniforms veias;
 uniform float veia_escala : hint_range(0.5, 20.0) = 4.6;
-// quanto da greta sobrevive ao corte: alto = poucas veias grossas
-uniform float veia_corte : hint_range(0.3, 0.99) = 0.70;
-uniform float veia_brilho : hint_range(0.0, 6.0) = 2.6;
+// Quanto da greta sobrevive ao corte: alto = poucas veias grossas.
+//
+// 0,90 e nao 0,70. O `ridged()` nao devolve valores espalhados por [0,1]: ele
+// e `1 - |2n-1|`, que AMONTOA tudo perto de 1. Cortar em 0,70 deixava passar a
+// superficie quase inteira e o bicho lia como LAVA — laranja continuo com
+// manchas escuras — em vez de carvao com veia. E a mesma armadilha que ja
+// tinha mordido o Shadow Rock, onde o corte teve de ir a 0,935.
+uniform float veia_corte : hint_range(0.3, 0.99) = 0.90;
+uniform float veia_brilho : hint_range(0.0, 6.0) = 1.9;
 // velocidade com que a brasa escorre pra cima dentro do corpo
 uniform float veia_fluxo : hint_range(0.0, 2.0) = 0.30;
 // respiro das veias (acende e apaga junto, como um folego)
@@ -56,9 +93,17 @@ uniform float flare_hz : hint_range(0.0, 2.0) = 0.23;
 uniform float flare_forca : hint_range(0.0, 3.0) = 1.1;
 
 group_uniforms borda;
-// a silhueta nao desaparece: ela queima. Isto e a largura da faixa acesa.
-uniform float borda_potencia : hint_range(0.2, 8.0) = 2.0;
-uniform float borda_brilho : hint_range(0.0, 6.0) = 1.5;
+// A silhueta nao desaparece: ela queima. Isto e a largura da faixa acesa.
+//
+// Os dois numeros mudaram quando o corpo virou malha MODELADA, e a razao e
+// geometrica: numa capsula lisa a normal so fica de raspao pro olho bem perto
+// do contorno, entao um fresnel largo (potencia 2, brilho 1,5) desenhava um
+// aro. Numa malha facetada de sombreamento plano ha faces inteiras de raspao
+// no meio do corpo — com os valores antigos o bicho inteiro acendia laranja e
+// nao sobrava nem placa nem quina pra ver. Faixa mais estreita e mais fraca
+// devolve a silhueta acesa sem incendiar a superficie.
+uniform float borda_potencia : hint_range(0.2, 8.0) = 3.6;
+uniform float borda_brilho : hint_range(0.0, 6.0) = 0.55;
 // erosao SO na borda (o miolo fica solido)
 uniform float borda_dissolve : hint_range(0.0, 2.0) = 1.25;
 uniform float corpo_dissolve : hint_range(0.0, 1.0) = 0.10;
@@ -67,13 +112,34 @@ uniform float fiapo_escala : hint_range(1.0, 60.0) = 20.0;
 
 group_uniforms volume;
 // infla a malha: a borda geometrica fica longe de onde o corpo parece acabar
-uniform float billow : hint_range(0.0, 0.4) = 0.12;
+// Baixo agora: 0,12 inflava a malha em ate 23 cm ao longo da normal, o que
+// fazia sentido quando o corpo era um monte de capsulas que precisavam se
+// encostar. Numa malha modelada isso engole quina, placa e silhueta — que sao
+// justamente as tres coisas que o modelo novo existe pra ter.
+uniform float billow : hint_range(0.0, 0.4) = 0.035;
 uniform float billow_bias : hint_range(0.0, 1.0) = 0.45;
 uniform float billow_escala : hint_range(0.5, 20.0) = 2.6;
 // lento de proposito: peso de bicho grande
 uniform float billow_speed : hint_range(0.0, 3.0) = 0.25;
 uniform float warp : hint_range(0.0, 1.0) = 0.30;
 uniform float warp_escala : hint_range(0.5, 10.0) = 1.8;
+
+group_uniforms forma;
+// LUZ DE MENTIRA. O shader e `unshaded` de proposito (ele e sombra, nao pode
+// receber a iluminacao da cidade e virar um boneco cinza no meio da rua), mas
+// unshaded puro sobre um carvao de albedo 0,02 significa que a unica coisa
+// visivel do corpo e onde a veia acende. Enquanto ele foi um monte de capsula
+// isso nao custou nada: nao havia forma pra mostrar. Agora ha — placa, quina,
+// costela, elmo, ombreira — e sem um termo de forma tudo isso fica invisivel.
+//
+// Entao entra uma unica direcao fixa, em espaco de MUNDO (nao de camera:
+// presa na camera, o corpo gira e a luz nao, e ele parece de plastico), com
+// meia-lambert bem fraca e tinta fria. E a diferenca entre ver um modelo e ver
+// uma silhueta com fogo dentro. A brasa apaga este termo onde ela e forte, pra
+// nao lavar a veia.
+uniform vec3 luz_dir = vec3(-0.45, 0.78, -0.44);
+uniform float luz_forca : hint_range(0.0, 2.0) = 0.60;
+uniform vec4 luz_cor : source_color = vec4(0.44, 0.40, 0.46, 1.0);
 
 group_uniforms cinzas;
 uniform float cinza_escala : hint_range(4.0, 80.0) = 34.0;
@@ -145,7 +211,7 @@ void fragment() {
 	// corte alto deixa so as cristas: e isso que separa greta de mancha
 	float veia = smoothstep(veia_corte, veia_corte + 0.09, greta);
 	// uma segunda escala, mais fina, quebra a veia em pedacos como carvao real
-	float veia_fina = smoothstep(0.74, 0.90, ridged(vp * 2.9 + 3.3));
+	float veia_fina = smoothstep(0.88, 0.97, ridged(vp * 2.9 + 3.3));
 	veia = clamp(veia + veia_fina * 0.45, 0.0, 1.0);
 
 	// folego: todas as veias acendem e apagam juntas...
@@ -153,6 +219,14 @@ void fragment() {
 	// ...e de vez em quando estouram de uma vez
 	float ciclo = fract(t * flare_hz);
 	float flare = smoothstep(0.0, 0.04, ciclo) * smoothstep(0.22, 0.06, ciclo);
+	// A MASCARA DA MALHA entra aqui: o ruido ja desenhou a greta, e agora a
+	// malha diz onde essa greta tem direito de acender.
+	float mascara = mix(1.0, max(COLOR.r, brasa_minima), mistura_brasa);
+	veia *= mascara;
+	// Onde a mascara e forte a brasa nao depende so do ruido: a fenda do elmo
+	// e o fundo das costelas queimam mesmo que nenhuma crista caia ali.
+	veia = max(veia, smoothstep(0.55, 1.0, COLOR.r) * 0.85);
+
 	float calor = veia * pulso * (1.0 + flare * flare_forca);
 
 	// ---- cinza subindo ----
@@ -170,6 +244,16 @@ void fragment() {
 	// a silhueta queima: aro aceso em vez de desaparecer
 	col += brasa.rgb * fres * borda_brilho * (0.55 + 0.45 * massa);
 	col += brasa_quente.rgb * faisca * 2.2;
+	// FORMA: meia-lambert contra uma direcao de mundo. `NORMAL` no fragment do
+	// Godot esta em espaco de CAMERA, entao volta pra mundo pelo
+	// INV_VIEW_MATRIX — sem isso a luz acompanha o giro da camera e o corpo
+	// perde volume justo quando o jogador circula em volta dele.
+	vec3 n_mundo = normalize((INV_VIEW_MATRIX * vec4(normalize(NORMAL), 0.0)).xyz);
+	float lam = clamp(dot(n_mundo, normalize(luz_dir)) * 0.5 + 0.5, 0.0, 1.0);
+	col += luz_cor.rgb * pow(lam, 1.7) * luz_forca * (1.0 - clamp(calor, 0.0, 1.0) * 0.75);
+	// quina: carvao lascado pega luz na aresta. Cinza clara, nao brasa — se a
+	// quina acendesse laranja o corpo inteiro viraria arame de neon.
+	col += luz_cor.rgb * COLOR.g * quina_brilho * (0.4 + 0.6 * massa);
 	ALBEDO = col;
 
 	// ---- recorte ----
@@ -185,6 +269,10 @@ void fragment() {
 	a -= corpo_dissolve * smoothstep(0.55, 0.95, fino * 0.6 + morde * 0.4);
 	// onde a veia esta acesa a massa NAO se apaga: brasa segura o corpo
 	a += calor * 0.45;
+	// A placa de armadura nao se desmancha: so a casca sem mascara e que vira
+	// cinza. Sem isto o modelo novo ficaria esburacado justo onde ele tem
+	// forma pra mostrar.
+	a += smoothstep(0.10, 0.55, 1.0 - COLOR.r) * 0.18;
 
 	ALPHA = clamp(a, 0.0, 1.0);
 	ALPHA_SCISSOR_THRESHOLD = 0.5;

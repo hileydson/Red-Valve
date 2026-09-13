@@ -211,7 +211,19 @@ func _no_corpo(corpo: Node3D) -> void:
 		return
 	if corpo != alvo and not corpo.is_in_group("player"):
 		return
-	_prende(corpo)
+	# Trava a fase JA (pra nao entrar duas vezes antes do proximo quadro) e
+	# adia o resto: `_prende` reparenta este Area3D pro jogador, e o Godot
+	# proibe mexer na arvore de um CollisionObject de dentro de um retorno de
+	# fisica — que e o que `body_entered` e. Sem isto o engine reclama em voz
+	# alta e o reparenteamento fica com comportamento indefinido.
+	#
+	# `alvo` e `_vida` entram JUNTO com a fase, e nao so la dentro: entre este
+	# quadro e a chamada adiada o `_process` ja roda o ramo PRESO, e ele
+	# encerra o anel se o alvo nao valer ou se a vida ja tiver estourado.
+	_fase = Fase.PRESO
+	alvo = corpo
+	_vida = 0.0
+	_prende.call_deferred(corpo)
 
 
 ## Encaixa o anel na cintura do jogador e manda a lentidao.
