@@ -858,6 +858,28 @@ func _forced_battle_sequence() -> void:
 	GlobalEvents.forced_battle_running = false
 
 
+## Grava o ponto da cidade de onde o jogador partiu pra arena.
+##
+## A arena nao serve de checkpoint (ver `SaveManager._pode_virar_checkpoint`),
+## entao quem fecha o jogo la dentro precisa de um lugar pra voltar — e esse
+## lugar e aqui, com o Maycow normal ainda de pe no mapa. Sem isto o save
+## apontaria pro ultimo checkpoint antigo, e o jogador perderia todo o caminho
+## que andou ate encontrar a briga.
+##
+## So a partir do capitulo 1, por dois motivos que se somam: no prologo a arena
+## E o checkpoint certo, e `stage_1_saved_position` so tem sentido no mapa da
+## cidade — e e la que a posicao vai ser lida de volta (`stage_1.setup_player_spawn`).
+func _grava_checkpoint_antes_da_arena() -> void:
+	if not SaveManager.prolog_finished:
+		return
+	if not is_instance_valid(player) or not player.is_inside_tree():
+		return
+	var cena := get_tree().current_scene
+	if cena == null or not cena.scene_file_path.contains("stage_1"):
+		return
+	SaveManager.save_player_position(player.global_position, player.global_rotation.y)
+
+
 func _on_amulet_magic_released() -> void:
 	if player.amulet_selected_enemies.size() == 0:
 		return
@@ -899,6 +921,11 @@ func _on_amulet_magic_released() -> void:
 	_hide_amulet_magic()
 
 	GlobalEvents.previous_is_maycow_normal = GlobalEvents.is_maycow_normal
+
+	# Checkpoint da IDA: grava onde o Maycow normal esta, ainda na cidade, antes
+	# de a viagem comecar. E o que faz o "Carregar" devolver o jogador a este
+	# ponto se ele fechar o jogo dentro da arena.
+	_grava_checkpoint_antes_da_arena()
 
 	player.is_teleporting_enemies = true
 

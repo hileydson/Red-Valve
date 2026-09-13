@@ -237,12 +237,40 @@ func get_slots_info() -> Array:
 		info.append({"empty": true, "slot": i, "chapter": ""})
 	return info
 
+## Cena que NAO pode virar checkpoint sozinha depois do prologo.
+##
+## A arena e lugar de PASSAGEM: entra-se nela pelo amuleto, de dentro do
+## stage_1, e sai-se dela de volta pro mesmo ponto da cidade. Gravar "voce
+## estava na arena" larga o jogador, ao carregar, dentro de um campo de batalha
+## vazio — sem inimigos, sem o Maycow normal e sem caminho de volta.
+##
+## No PROLOGO e o contrario: ali a arena e etapa obrigatoria do roteiro, e quem
+## fecha o jogo no meio dela tem de voltar PRA ELA. Por isso a trava so vale
+## depois que o prologo terminou.
+const CENA_DE_PASSAGEM := "battlefield"
+
+## O mapa da cidade. E pra ca que se volta quando o checkpoint gravado nao serve.
+const CENA_CIDADE := "res://scenes/stages/stage_1/stage_1.tscn"
+
+
+## Esta cena pode ser gravada como o ponto pra onde o "Carregar" leva?
+func _pode_virar_checkpoint(caminho: String) -> bool:
+	if caminho.contains("main_menu"):
+		return false
+	if prolog_finished and caminho.contains(CENA_DE_PASSAGEM):
+		return false
+	return true
+
+
+## `scene_path` explicito SEMPRE vence: quem passa um caminho a mao sabe onde
+## quer que o jogador reapareca (o fim do prologo faz isso pra mandar pro
+## stage_1). Sem ele, vale a cena atual — desde que ela sirva de checkpoint.
 func save_game(scene_path: String = ""):
 	var temp_stage = current_stage
 	
 	if scene_path != "":
 		temp_stage = scene_path
-	elif get_tree().current_scene and not get_tree().current_scene.scene_file_path.contains("main_menu"):
+	elif get_tree().current_scene and _pode_virar_checkpoint(get_tree().current_scene.scene_file_path):
 		temp_stage = get_tree().current_scene.scene_file_path
 		
 	if temp_stage != "":
@@ -316,9 +344,24 @@ func load_game(slot_id: int = -1) -> bool:
 				arquivos_desbloqueados = data.get("arquivos_desbloqueados", [])
 				tutorial_amuleto_visto = data.get("tutorial_amuleto_visto", false)
 				stage_1_saved_position = data.get("stage_1_saved_position", {})
+
+				# Conserto de save gravado dentro da arena. Ate a trava do
+				# `_pode_virar_checkpoint` existir, entrar na arena carimbava o
+				# checkpoint nela — e carregar esse save largava o jogador num
+				# campo de batalha vazio, sem inimigos e sem saida, com o save
+				# ja gravado la: nao dava nem pra sair andando.
+				#
+				# Fica aqui pra sempre, nao so como migracao: a arena nunca e um
+				# lugar valido pra reaparecer depois do prologo, venha o valor de
+				# onde vier. Com posicao gravada o jogador volta pra ela; sem
+				# ela, pro ponto de entrada do capitulo 1.
+				if prolog_finished and current_stage.contains(CENA_DE_PASSAGEM):
+					print("Save apontava pra arena; devolvendo pro mapa da cidade.")
+					current_stage = CENA_CIDADE
+
 				# So vale pro mapa da cidade: e la que a posicao exata foi gravada.
 				spawn_from_saved_position = not stage_1_saved_position.is_empty() \
-					and current_stage == "res://scenes/stages/stage_1/stage_1.tscn"
+					and current_stage == CENA_CIDADE
 				
 				if current_stage != "" and ResourceLoader.exists(current_stage):
 					print("Game Loaded from slot ", current_slot, "! ", current_stage)
@@ -346,7 +389,10 @@ func reset_progress() -> void:
 
 
 ## Grava a posicao exata do player no mapa da cidade e salva na hora. So faz sentido
-## no stage_1 e a partir do capitulo 1 — quem chama e o menu de pause, que ja checa isso.
+## no stage_1 e a partir do capitulo 1, e quem chama ja checa isso:
+##   - o menu de pause, na opcao "Salvar";
+##   - o amuleto, ao partir pra arena (`_grava_checkpoint_antes_da_arena`), pra
+##     que fechar o jogo dentro da batalha devolva o jogador a este ponto.
 func save_player_position(pos: Vector3, rot_y: float) -> void:
 	stage_1_saved_position = {"x": pos.x, "y": pos.y, "z": pos.z, "ry": rot_y}
 	save_game()

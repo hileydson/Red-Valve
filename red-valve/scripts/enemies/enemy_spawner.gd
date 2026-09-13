@@ -14,10 +14,10 @@ const ShadowRoads := preload("res://scripts/npcs/shadow_roads.gd")
 ##      (`queue_free`) quando fica longe demais.
 ##   2. Cada tipo tem o proprio relogio, o proprio teto de vivos e, se quiser,
 ##      o proprio raio de percepcao. Zumbi e encontro comum de rua e aparece
-##      bem mais; o Cobalt Husker e a excecao; e o Shadow Seraph e aparicao
-##      rara, que ainda vaga pela cidade um bom tempo antes de notar alguem.
-##      Mexer na frequencia de um nao mexe na do outro — era isso que um
-##      sorteio unico com relogio unico nao permitia.
+##      bem mais; o Cobalt Husker e a excecao; e o Shadow Seraph e o Shadow
+##      Rock sao aparicoes raras, que ainda vagam pela cidade um bom tempo
+##      antes de notar alguem. Mexer na frequencia de um nao mexe na do outro —
+##      era isso que um sorteio unico com relogio unico nao permitia.
 ##
 ## Regras que protegem a ilusao (herdadas do ShadowCrowd):
 ##   - ninguem nasce dentro do campo de visao, a nao ser bem longe, onde a
@@ -69,6 +69,21 @@ const ShadowRoads := preload("res://scripts/npcs/shadow_roads.gd")
 ## geral de proposito: o Seraph tem de ser visto VAGANDO pela cidade antes de
 ## sair atras de alguem, senao ninguem ve o bicho andando por ai.
 @export var seraph_aproximacao: float = 26.0
+
+@export_group("The Shadow Rock")
+## Vazio = res://scenes/enemies/shadow_rock.tscn. 0 ativos = desliga.
+@export var rock_scene: PackedScene
+## Quantos Shadow Rock podem estar vivos ao mesmo tempo. Como o Seraph, ele e
+## caro (corpo montado pedra por pedra, e cada dano cospe mais pedra no chao) e
+## e uma aparicao de peso: um basta.
+@export var rock_max_active: int = 1
+## Faixa de espera entre um Shadow Rock e o proximo.
+@export var rock_min_interval: float = 80.0
+@export var rock_max_interval: float = 160.0
+## Distancia em que ELE percebe o jogador. Baixa pelo mesmo motivo da do
+## Seraph, e um pouco mais ainda: ele anda devagar, e o jogador tem de ter
+## tempo de VER o bloco de pedra atravessando a rua antes de virar alvo.
+@export var rock_aproximacao: float = 24.0
 
 @export_group("Ritmo")
 ## Espera antes do primeiro inimigo, contada do inicio do capitulo. Da tempo da
@@ -149,6 +164,8 @@ func _monta_tipos() -> void:
 		cobalt_max_active, cobalt_min_interval, cobalt_max_interval)
 	_registra_tipo("seraph", seraph_scene, "res://scenes/enemies/shadow_seraph.tscn",
 		seraph_max_active, seraph_min_interval, seraph_max_interval, seraph_aproximacao)
+	_registra_tipo("rock", rock_scene, "res://scenes/enemies/shadow_rock.tscn",
+		rock_max_active, rock_min_interval, rock_max_interval, rock_aproximacao)
 
 
 ## `aproximacao` > 0 sobrescreve, so pra este tipo, o `distance_to_aproach`

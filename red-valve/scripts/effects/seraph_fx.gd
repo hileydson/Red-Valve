@@ -7,6 +7,12 @@ extends RefCounted
 ## ao mesmo tempo. Sao seis efeitos diferentes (raio, foguete, orbe, espada,
 ## esfera de fogo, anel) e cada um criava a mesma textura de faisca do zero —
 ## no renderer Mobile isso virava dezenas de texturas identicas na VRAM.
+##
+## O nome diz Seraph porque foi pra ele que este arquivo nasceu, mas o cache e
+## de TODO MUNDO: o Shadow Rock (`rock_fx.gd`) puxa daqui o ponto suave, as
+## rampas, a curva de pico, o quad de particula, o `mundo()` e o
+## `som_no_mundo()` em vez de fazer uma segunda copia de cada um. Duplicar era
+## exatamente o que este arquivo existe pra impedir.
 
 const SOM_EXPLOSAO := "res://assets/sounds/common/explosao.mp3"
 const SOM_FOGO := "res://assets/sounds/common/fire_cracling.mp3"
