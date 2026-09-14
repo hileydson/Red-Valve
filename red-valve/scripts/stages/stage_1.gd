@@ -94,8 +94,25 @@ func _ready() -> void:
 	ui_layer = CanvasLayer.new()
 	ui_layer.layer = 128
 	add_child(ui_layer)
+	_garantir_amuleto_no_inventario()
 	_setup_areas_casas()
 	setup_player_spawn()
+
+## Rede de segurança do amuleto.
+##
+## Quem entra no Capítulo 1 pela abertura recebe o amuleto com tela e tudo (ver
+## `executa_capitulo_1.gd`). Mas há vários outros caminhos de chegada — save
+## carregado no meio do capítulo, volta de dentro de uma casa, volta da arena —
+## e nenhum deles passa por aquela cutscene. Sem isto, o jogador usa o amuleto
+## no jogo e não o encontra no menu.
+func _garantir_amuleto_no_inventario() -> void:
+	if GlobalEvents.entering_chapter_1:
+		return   # a abertura vai entregar, com tela
+	if not SaveManager.prolog_finished:
+		return   # ainda é o prólogo: o amuleto ainda não é dele
+	if not SaveManager.tem_item("amuleto"):
+		SaveManager.add_item("amuleto", 1)
+
 
 func setup_player_spawn() -> void:
 	var is_chapter_1 = GlobalEvents.entering_chapter_1 or SaveManager.prolog_finished

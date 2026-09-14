@@ -20,8 +20,11 @@ extends CanvasLayer
 signal fechado
 
 const GIRO_POR_SEGUNDO := 0.7
-const ESPERA_ANTES_DE_ACEITAR := 0.45   # não engole o mesmo botão que abriu
-const FADE := 0.45
+## Só aceita "continuar" depois disto, contado a partir do fim do fade in. Sem
+## essa folga a tela engolia o mesmo botão que a abriu e piscava.
+const ESPERA_ANTES_DE_ACEITAR := 0.35
+const FADE_ENTRADA := 0.55
+const FADE_SAIDA := 0.45
 
 @onready var pivot: Node3D = $SubViewportContainer/SubViewport/Pivot
 @onready var rotulo: Label = $Texto
@@ -46,6 +49,15 @@ func _ready() -> void:
 	rotulo.text = texto
 	dica.text = tr("PICKUP_CONTINUE")
 	_montar_modelo()
+
+	# Entra por fade: a tela nasce preta por cima de tudo e abre. Aparecer de
+	# estalo no meio da ação é o que fazia isto parecer erro de cena em vez de
+	# momento de jogo — e é a mesma cortina que fecha no fim.
+	fade.color.a = 1.0
+	var tw := create_tween()
+	tw.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	tw.tween_property(fade, "color:a", 0.0, FADE_ENTRADA)
+	await tw.finished
 
 	await get_tree().create_timer(ESPERA_ANTES_DE_ACEITAR, true, false, true).timeout
 	_aceita_input = true
@@ -116,7 +128,7 @@ func fechar() -> void:
 	_fechando = true
 	var tw := create_tween()
 	tw.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
-	tw.tween_property(fade, "color:a", 1.0, FADE)
+	tw.tween_property(fade, "color:a", 1.0, FADE_SAIDA)
 	await tw.finished
 	get_tree().paused = false
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)

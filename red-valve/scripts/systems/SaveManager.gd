@@ -77,6 +77,14 @@ var item_db = {
 		"stackable": false,
 		"type": "inspectable"
 	},
+	"amuleto": {
+		"name_key": "ITEM_AMULETO_NAME",
+		"desc_key": "ITEM_AMULETO_DESC",
+		"icon_path": "res://assets/images/menu/itens/amuleto_2d.png",
+		"model_path": "res://assets/3d_model/player/Maycow Lopes/amuleto_power.glb",
+		"stackable": false,
+		"type": "inspectable"
+	},
 	"lanterna": {
 		"name_key": "ITEM_LANTERNA_NAME",
 		"desc_key": "ITEM_LANTERNA_DESC",

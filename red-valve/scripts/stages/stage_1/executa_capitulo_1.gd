@@ -3,6 +3,19 @@ extends AnimationPlayer
 ## Cutscene de abertura do Capitulo 1 (nó "cutscene_primeira_vez" da stage_1).
 const ANIM_INTRO := "intro"
 
+# --- A entrega do amuleto ----------------------------------------------------
+# O Capitulo 1 comeca com o Maycow ja' de posse do amuleto (o prologo termina
+# com ele esquentando no bolso), mas ate' agora isso so' existia na ficcao: o
+# item nao estava no menu. Aqui ele entra de verdade, com a mesma tela de
+# "voce pegou" da lanterna.
+const ITEM_AMULETO := "amuleto"
+const MODELO_AMULETO := "res://assets/3d_model/player/Maycow Lopes/amuleto_power.glb"
+const CENA_ITEM_OBTIDO := "res://scenes/ui/item_obtido.tscn"
+## Respiro entre o fim da cutscene e a tela. O filtro cinematografico leva
+## FADE_OUT_FILTRO para sumir; entrar por cima dele emendaria uma coisa na
+## outra e o jogador nao entenderia que a cutscene acabou.
+const ESPERA_ANTES_DO_AMULETO := 1.8
+
 # Look cinematografico da intro. Nada de VHS: aqui o objetivo e a leitura de
 # filme (letterbox, grade quente/fria, halacao nas nuvens, grao fino), sem os
 # artefatos de fita.
@@ -24,6 +37,11 @@ func _ready() -> void:
 	if GlobalEvents.voltando_da_casa_jimmy:
 		return
 	if GlobalEvents.voltando_da_casa_maycow:
+		return
+	# A igreja é um caminho de volta como os outros: sem esta guarda, sair de
+	# lá com `entering_chapter_1` ainda ligado repetia a cutscene de abertura
+	# do capítulo no meio da cidade.
+	if GlobalEvents.voltando_da_igreja:
 		return
 	if not has_animation(ANIM_INTRO):
 		return
@@ -176,6 +194,27 @@ func _on_animation_finished(anim_name: StringName) -> void:
 		return
 	unset_in_cutscene()
 	_remover_filtro_cinematografico()
+	_entregar_amuleto()
+
+
+## Põe o amuleto no inventário e mostra a tela do objeto.
+##
+## Uma vez só: a checagem é no inventário, então quem já recebeu (inclusive em
+## outra partida, pelo save) não vê a tela de novo ao rever a abertura.
+func _entregar_amuleto() -> void:
+	if SaveManager.tem_item(ITEM_AMULETO):
+		return
+	await get_tree().create_timer(ESPERA_ANTES_DO_AMULETO).timeout
+	if not is_inside_tree():
+		return
+
+	SaveManager.add_item(ITEM_AMULETO, 1)
+	SaveManager.save_game()
+
+	var tela: CanvasLayer = load(CENA_ITEM_OBTIDO).instantiate()
+	tela.model_path = MODELO_AMULETO
+	tela.texto = tr("PICKUP_AMULETO")
+	get_tree().root.add_child(tela)
 
 
 func _remover_filtro_cinematografico() -> void:

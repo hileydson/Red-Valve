@@ -14,6 +14,9 @@ PROMPT_ENTER_JIMMY_HOUSE,Enter Jimmy's house?,Entrar na casa do Jimmy?
 PROMPT_ENTER_MAYCOW_HOUSE,Enter Maycow's house?,Entrar na casa do Maycow?
 PROMPT_ENTER_CHURCH,Enter the church?,Entrar na igreja?
 PROMPT_TAKE_FLASHLIGHT,Take the flashlight?,Pegar a lanterna?
+ITEM_AMULETO_NAME,Gear Amulet,Amuleto da Engrenagem
+ITEM_AMULETO_DESC,"The Gear Amulet, forged by the Calixto family. It warms in the pocket when something from Arorua is close — and it is what drags the enemies over there.","O Amuleto da Engrenagem, forjado pela família Calixto. Esquenta no bolso quando algo de Arorua está perto — e é ele que arrasta os inimigos para lá."
+PICKUP_AMULETO,"You now carry the amulet, the gateway to the parallel universe of Arorua","Agora você possui o amuleto, o portal para o universo paralelo de Arorua"
 ITEM_LANTERNA_NAME,Flashlight,Lanterna
 ITEM_LANTERNA_DESC,"A heavy hand lamp, found still lit on the church floor. The beam holds up.","Lanterna de mão pesada, achada ainda acesa no chão da igreja. O facho aguenta firme."
 PICKUP_FLASHLIGHT_L3,"You picked up the flashlight, press L3 to turn it on","Você pegou a lanterna, aperte L3 para ativá-la"
