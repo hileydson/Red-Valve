@@ -14,10 +14,10 @@
 [ext_resource type="Script" uid="uid://deo0gxkmk2ahd" path="res://addons/sky_3d/src/Sky3D.gd" id="9_osxep"]
 [ext_resource type="Script" uid="uid://b4tkplvh7fq40" path="res://addons/sky_3d/src/SkyDome.gd" id="10_vt4l1"]
 [ext_resource type="Script" uid="uid://cjmkcj8hwm7ts" path="res://addons/sky_3d/src/TimeOfDay.gd" id="11_n2v7u"]
-[ext_resource type="PackedScene" path="res://assets/3d_model/stages/prolog/mesa_telefone_leve2.glb" id="13_5llxv"]
+[ext_resource type="PackedScene" uid="uid://cn2c5reya8v4l" path="res://assets/3d_model/stages/prolog/mesa_telefone_leve2.glb" id="13_5llxv"]
 [ext_resource type="Texture2D" uid="uid://buf1a4max6ykx" path="res://assets/3d_model/texturas/textura_casa_prologo/textura_escada.jpg" id="13_vx3rs"]
 [ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/gray_l_shaped_couch_leve.tscn" id="14_7yhl5"]
-[ext_resource type="PackedScene" path="res://assets/3d_model/stages/prolog/cozinha_armario_leve2.glb" id="14_q7orc"]
+[ext_resource type="PackedScene" uid="uid://criyelgkk5t7c" path="res://assets/3d_model/stages/prolog/cozinha_armario_leve2.glb" id="14_q7orc"]
 [ext_resource type="PackedScene" uid="uid://by8kf6nndagu5" path="res://assets/3d_model/stages/prolog/modern_entertainment_center_free.glb" id="15_n3kvr"]
 [ext_resource type="AudioStream" uid="uid://bq52kfcrl8whl" path="res://assets/3d_model/stages/prolog/video_mapa_1_test.mp3" id="16_avu31"]
 [ext_resource type="VideoStream" uid="uid://b7gf0dajsnkca" path="res://assets/3d_model/stages/prolog/video_mapa_1_test.ogv" id="16_n3kvr"]
@@ -78,7 +78,7 @@ shader_parameter/moon_texture_flip_u = false
 shader_parameter/moon_texture_flip_v = false
 shader_parameter/moon_size = 0.07
 shader_parameter/atm_moon_mie_tint = Color(0.137255, 0.184314, 0.292196, 1)
-shader_parameter/atm_moon_mie_intensity = 0.522202051281929
+shader_parameter/atm_moon_mie_intensity = 0.5222020304203033
 shader_parameter/atm_moon_partial_mie_phase = Vector3(0.36, 1.64, 1.6)
 shader_parameter/starmap_color = Color(0.709804, 0.709804, 0.709804, 0.854902)
 shader_parameter/starmap_texture = ExtResource("8_avu31")
@@ -102,8 +102,8 @@ shader_parameter/cirrus_absorption = 2.0
 shader_parameter/cirrus_sky_tint_fade = 0.5
 shader_parameter/cirrus_size = 1.0
 shader_parameter/cirrus_uv = Vector2(0.16, 0.11)
-shader_parameter/cirrus_position1 = Vector2(0.013364264, 0.013364264)
-shader_parameter/cirrus_position2 = Vector2(0.013364264, 0.013364264)
+shader_parameter/cirrus_position1 = Vector2(0.28117657, 0.28117657)
+shader_parameter/cirrus_position2 = Vector2(0.28117657, 0.28117657)
 shader_parameter/cirrus_texture = ExtResource("3_01ffe")
 shader_parameter/cumulus_visible = true
 shader_parameter/cumulus_intensity = 0.6
@@ -113,7 +113,7 @@ shader_parameter/cumulus_absorption = 2.0
 shader_parameter/cumulus_noise_freq = 2.7
 shader_parameter/cumulus_sky_tint_fade = 0.0
 shader_parameter/cumulus_size = 0.5
-shader_parameter/cumulus_position = Vector2(0.06682131, 0.06682131)
+shader_parameter/cumulus_position = Vector2(1.4058115, 1.4058115)
 shader_parameter/cumulus_texture = ExtResource("4_qysyv")
 shader_parameter/cumulus_partial_mie_phase = Vector3(0.957564, 1.042436, 0.412)
 shader_parameter/cumulus_mie_intensity = 1.0
@@ -144,10 +144,10 @@ tonemap_white = 6.0
 interior = true
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_5llxv"]
-size = Vector3(0.17730713, 1, 0.36825562)
+size = Vector3(0.29263306, 1, 0.37184906)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_qysyv"]
-size = Vector3(0.6123047, 3.1695557, 4.4477844)
+size = Vector3(0.36462402, 3.1695557, 4.4477844)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_q7orc"]
 size = Vector3(1.3323364, 4.4993286, 6.6671295)
@@ -879,6 +879,9 @@ size = Vector3(2.0829468, 1, 2.142456)
 [sub_resource type="BoxShape3D" id="BoxShape3D_ljprc"]
 size = Vector3(2.4598389, 1, 5.3363647)
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_vxyp4"]
+size = Vector3(1.09906, 1, 7.110077)
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_ov8eb"]
 size = Vector3(10.098511, 2.868164, 1.3094482)
 
@@ -969,7 +972,7 @@ transform = Transform3D(7.0902934, 0, 0, 0, 1, 0, 0, 0, 7.373153, -0.39042187, -
 collision_layer = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="ambient/casa/porta_saida/Area3D" unique_id=1970946723]
-transform = Transform3D(0.9999997, 0, 0, 0, 2.23227, 0, 0, 0, 1, 0.06289676, 1.3514606, -0.1544646)
+transform = Transform3D(0.9999997, 0, 0, 0, 2.2322247, 0, 0, 0, 1, 0.12055971, 1.3514597, -0.15626132)
 shape = SubResource("BoxShape3D_5llxv")
 
 [node name="bloqueios" type="Node3D" parent="ambient/casa" unique_id=1755008350]
@@ -979,7 +982,7 @@ transform = Transform3D(1.6972352, 0, 0, 0, 1, 0, 0, 0, 1, 5.9710464, 0, -23.578
 collision_layer = 2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="ambient/casa/bloqueios/StaticBody3D" unique_id=896038660]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.56984067, -3.1782987, 1.0847778, 5.358389)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.56984067, -3.302139, 1.0847778, 5.358389)
 shape = SubResource("BoxShape3D_qysyv")
 
 [node name="StaticBody3D3" type="StaticBody3D" parent="ambient/casa/bloqueios" unique_id=1133008542]
@@ -1373,6 +1376,10 @@ collision_layer = 2
 [node name="CollisionShape3D" type="CollisionShape3D" parent="ambient/casa/itens_da_casa/objetos_aleatorios/mesa_telefone/bloque_player" unique_id=1473952611]
 transform = Transform3D(1, 0, 5.8300793e-07, 0, 0.9999805, 0, 0, 0, 0.99998003, 3.0219393, 0.082948685, 2.379939)
 shape = SubResource("BoxShape3D_ljprc")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="ambient/casa/itens_da_casa/objetos_aleatorios/mesa_telefone/bloque_player" unique_id=74797971]
+transform = Transform3D(1, 0, 8.363277e-07, 0, 0.99997014, 0, 0, 0, 0.99997115, -2.368166, 0.082948804, 8.897912)
+shape = SubResource("BoxShape3D_vxyp4")
 
 [node name="bloque_player2" type="StaticBody3D" parent="ambient/casa/itens_da_casa/objetos_aleatorios/mesa_telefone" unique_id=357474165]
 transform = Transform3D(0.9999997, 0, -5.5879354e-09, 0, 1, 0, -3.7252903e-09, 0, 0.9999998, -2.2230392, 0.10249174, -0.15206051)
