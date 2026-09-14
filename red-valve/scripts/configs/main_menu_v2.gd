@@ -242,6 +242,9 @@ func _on_button_focus(btn: Button) -> void:
 
 func _ready() -> void:
 	get_tree().paused = false
+	var version_label := get_node_or_null("UI/VersionLabel") as Label
+	if version_label:
+		version_label.text = "v" + str(ProjectSettings.get_setting("application/config/version", "0.0"))
 	# Rede de segurança: qualquer caminho que traga o jogador de volta ao menu
 	# não pode deixar cena/HUD/sangue do jogo pendurados na árvore.
 	GlobalUtils.cleanup_gameplay_leftovers()

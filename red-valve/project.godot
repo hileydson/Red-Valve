@@ -25,7 +25,7 @@ config/name_localized={
 "en_US": "",
 "pt_BR": ""
 }
-config/version="1.0"
+config/version="1.0.1"
 run/main_scene="res://scenes/configs/language.tscn"
 config/features=PackedStringArray("4.6", "Mobile")
 run/flush_stdout_on_print=true

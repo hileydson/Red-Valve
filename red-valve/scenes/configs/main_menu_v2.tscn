@@ -99,6 +99,19 @@ text = "MENU_CONFIG"
 layout_mode = 2
 text = "BTN_EXIT"
 
+[node name="VersionLabel" type="Label" parent="UI" unique_id=1004829371]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = -32.0
+offset_right = 216.0
+offset_bottom = -8.0
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 1, 1, 0.4)
+theme_override_font_sizes/font_size = 14
+text = "v1.0"
+
 [node name="fade" parent="UI" unique_id=13596553 instance=ExtResource("4_fade")]
 
 [connection signal="pressed" from="UI/Control/VBoxContainer/load" to="." method="_on_load_pressed"]
