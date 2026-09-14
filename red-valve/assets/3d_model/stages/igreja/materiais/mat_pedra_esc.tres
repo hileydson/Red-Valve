@@ -1,0 +1,12 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/3d_model/texturas/rock023_alb_ht.png" id="1_tex"]
+[ext_resource type="Texture2D" path="res://assets/3d_model/texturas/textura_pedras.jpg" id="2_tex"]
+
+[resource]
+albedo_color = Color(0.34, 0.33, 0.315, 1)
+albedo_texture = ExtResource("1_tex")
+roughness = 0.96
+uv1_scale = Vector3(0.42, 0.42, 0.42)
+uv1_triplanar = true
+uv1_world_triplanar = true

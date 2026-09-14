@@ -3116,7 +3116,7 @@ CasaSrMaycow: vaga (6.5, 76.1), placa célula 11"
 transform = Transform3D(-0.69913435, 0, -14.983699, 0, 14.999999, 0, 14.983699, 0, -0.69913435, -50.03893, 23.898256, -37.181614)
 
 [node name="colisao_igreja" type="StaticBody3D" parent="Marcos" unique_id=1898502414]
-transform = Transform3D(-0.04660896, 0, -0.99891333, 0, 1, 0, 0.99891333, 0, -0.04660896, -50.03893, 22.909756, -37.181614)
+transform = Transform3D(-0.04660896, 0, -0.99891335, 0, 1, 0, 0.99891335, 0, -0.04660896, -50.03893, 22.909756, -37.181614)
 collision_layer = 2
 collision_mask = 0
 

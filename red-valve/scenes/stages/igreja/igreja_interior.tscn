@@ -1,0 +1,373 @@
+[gd_scene load_steps=16 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/3d_model/stages/igreja/igreja_interior.glb" id="1_modelo"]
+[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="2_player"]
+[ext_resource type="PackedScene" path="res://scenes/configs/pause.tscn" id="3_pause"]
+[ext_resource type="PackedScene" path="res://scenes/configs/fade.tscn" id="4_fade"]
+[ext_resource type="Script" path="res://scripts/stages/igreja/igreja_interior.gd" id="5_script"]
+[ext_resource type="Script" path="res://scripts/stages/igreja/igreja_materiais.gd" id="6_materiais"]
+[ext_resource type="AudioStream" path="res://assets/sounds/episodios/ambiente_noise_sublime.mp3" id="7_ambiente"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ceu_mat"]
+sky_top_color = Color(0.10, 0.12, 0.17, 1)
+sky_horizon_color = Color(0.26, 0.27, 0.31, 1)
+sky_curve = 0.18
+ground_bottom_color = Color(0.03, 0.03, 0.035, 1)
+ground_horizon_color = Color(0.1, 0.1, 0.12, 1)
+sun_angle_max = 3.0
+use_debanding = true
+
+[sub_resource type="Sky" id="ceu"]
+sky_material = SubResource("ceu_mat")
+
+[sub_resource type="Environment" id="ambiente"]
+background_mode = 2
+sky = SubResource("ceu")
+background_energy_multiplier = 0.9
+ambient_light_source = 3
+ambient_light_color = Color(0.30, 0.33, 0.42, 1)
+ambient_light_sky_contribution = 0.5
+ambient_light_energy = 1.7
+reflected_light_source = 2
+tonemap_mode = 3
+tonemap_exposure = 1.05
+tonemap_white = 6.0
+ssr_enabled = false
+ssao_enabled = true
+ssao_radius = 1.8
+ssao_intensity = 3.2
+ssao_power = 1.6
+ssao_light_affect = 0.25
+ssil_enabled = true
+ssil_intensity = 0.8
+sdfgi_enabled = false
+glow_enabled = true
+glow_intensity = 0.55
+glow_strength = 1.05
+glow_bloom = 0.12
+glow_blend_mode = 1
+glow_hdr_threshold = 0.92
+fog_enabled = true
+fog_light_color = Color(0.20, 0.22, 0.27, 1)
+fog_light_energy = 0.8
+fog_density = 0.008
+fog_sky_affect = 0.2
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.022
+volumetric_fog_albedo = Color(0.72, 0.74, 0.80, 1)
+volumetric_fog_emission_energy = 0.05
+volumetric_fog_length = 90.0
+volumetric_fog_detail_spread = 1.8
+volumetric_fog_ambient_inject = 0.4
+adjustment_enabled = true
+adjustment_brightness = 1.02
+adjustment_contrast = 1.08
+adjustment_saturation = 0.88
+
+[sub_resource type="BoxShape3D" id="caixa_porta"]
+size = Vector3(6, 3.4, 3.6)
+
+[sub_resource type="StandardMaterial3D" id="mat_poeira"]
+transparency = 1
+blend_mode = 1
+shading_mode = 0
+vertex_color_use_as_albedo = true
+albedo_color = Color(0.74, 0.76, 0.84, 0.16)
+billboard_mode = 3
+billboard_keep_scale = true
+disable_receive_shadows = true
+
+[sub_resource type="QuadMesh" id="malha_poeira"]
+material = SubResource("mat_poeira")
+size = Vector2(0.03, 0.03)
+
+[sub_resource type="ParticleProcessMaterial" id="proc_poeira_rombo"]
+lifetime_randomness = 0.6
+emission_shape = 3
+emission_box_extents = Vector3(3.4, 10.0, 3.4)
+direction = Vector3(0.1, -1, 0.05)
+spread = 25.0
+initial_velocity_min = 0.12
+initial_velocity_max = 0.45
+gravity = Vector3(0.05, -0.22, 0)
+scale_min = 0.4
+scale_max = 1.5
+color = Color(1, 1, 1, 0.30)
+turbulence_enabled = true
+turbulence_noise_strength = 0.22
+turbulence_noise_scale = 1.6
+
+[sub_resource type="ParticleProcessMaterial" id="proc_poeira_nave"]
+lifetime_randomness = 0.8
+emission_shape = 3
+emission_box_extents = Vector3(12.0, 6.0, 20.0)
+direction = Vector3(0, -1, 0)
+spread = 60.0
+initial_velocity_min = 0.02
+initial_velocity_max = 0.16
+gravity = Vector3(0.02, -0.05, 0.01)
+scale_min = 0.3
+scale_max = 1.4
+color = Color(1, 1, 1, 0.16)
+turbulence_enabled = true
+turbulence_noise_strength = 0.15
+
+[node name="igreja_interior" type="Node3D"]
+script = ExtResource("5_script")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("ambiente")
+
+[node name="modelo" parent="." instance=ExtResource("1_modelo")]
+script = ExtResource("6_materiais")
+
+[node name="luzes" type="Node3D" parent="."]
+
+[node name="feixe_rombo" type="SpotLight3D" parent="luzes"]
+transform = Transform3D(-0.99920, -0.03997, 0.00000, -0.00397, 0.09935, 0.99505, -0.03977, 0.99425, -0.09942, 0.60000, 27.70000, 14.90000)
+distance_fade_enabled = false
+light_color = Color(0.7400, 0.8200, 0.9800, 1.0000)
+light_energy = 26.0
+light_indirect_energy = 1.6
+light_volumetric_fog_energy = 3.2
+shadow_bias = 0.06
+shadow_enabled = true
+spot_angle = 33.0
+spot_angle_attenuation = 0.6
+spot_attenuation = 0.9
+spot_range = 36.0
+
+[node name="feixe_rombo_interno" type="SpotLight3D" parent="luzes"]
+transform = Transform3D(-0.99980, -0.02000, 0.00000, -0.00080, 0.03995, 0.99920, -0.01998, 0.99900, -0.03996, 0.20000, 24.40000, 15.50000)
+light_color = Color(0.7000, 0.7900, 0.9600, 1.0000)
+light_energy = 9.0
+light_volumetric_fog_energy = 4.0
+shadow_enabled = false
+spot_angle = 22.0
+spot_angle_attenuation = 1.4
+spot_range = 28.0
+
+[node name="rebote_rombo" type="OmniLight3D" parent="luzes"]
+transform = Transform3D(1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 2.20000, 15.50000)
+light_color = Color(0.6200, 0.7000, 0.9200, 1.0000)
+light_energy = 4.0
+light_volumetric_fog_energy = 0.4
+omni_range = 11.0
+
+[node name="feixe_baixa_8" type="SpotLight3D" parent="luzes"]
+transform = Transform3D(-0.00000, 0.00000, 1.00000, 0.48192, 0.87622, 0.00000, -0.87622, 0.48192, -0.00000, -16.00000, 5.80000, 8.50000)
+light_color = Color(0.5800, 0.6600, 0.9200, 1.0000)
+light_energy = 9.0
+light_volumetric_fog_energy = 2.4
+shadow_bias = 0.04
+shadow_enabled = true
+shadow_normal_bias = 1.2
+spot_angle = 34.0
+spot_angle_attenuation = 0.8
+spot_range = 24.0
+
+[node name="feixe_baixa_22" type="SpotLight3D" parent="luzes"]
+transform = Transform3D(-0.00000, 0.00000, -1.00000, -0.48192, 0.87622, 0.00000, 0.87622, 0.48192, -0.00000, 16.00000, 5.80000, 22.50000)
+light_color = Color(0.5500, 0.6200, 0.8800, 1.0000)
+light_energy = 8.0
+light_volumetric_fog_energy = 2.4
+shadow_bias = 0.04
+shadow_enabled = true
+shadow_normal_bias = 1.2
+spot_angle = 34.0
+spot_angle_attenuation = 0.8
+spot_range = 24.0
+
+[node name="feixe_galeria_29" type="SpotLight3D" parent="luzes"]
+transform = Transform3D(-0.00000, 0.00000, -1.00000, -0.48192, 0.87622, 0.00000, 0.87622, 0.48192, -0.00000, 16.00000, 14.80000, 29.50000)
+light_color = Color(0.6000, 0.6600, 0.9000, 1.0000)
+light_energy = 7.0
+light_volumetric_fog_energy = 2.4
+shadow_bias = 0.04
+shadow_enabled = false
+shadow_normal_bias = 1.2
+spot_angle = 32.0
+spot_angle_attenuation = 0.8
+spot_range = 22.0
+
+[node name="feixe_rosacea" type="SpotLight3D" parent="luzes"]
+transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 0.84990, 0.52694, -0.00000, 0.52694, -0.84990, 0.00000, 15.00000, 1.20000)
+light_color = Color(0.9500, 0.6200, 0.4000, 1.0000)
+light_energy = 9.0
+light_volumetric_fog_energy = 2.6
+shadow_enabled = false
+spot_angle = 34.0
+spot_angle_attenuation = 0.7
+spot_range = 30.0
+
+[node name="feixe_abside" type="SpotLight3D" parent="luzes"]
+transform = Transform3D(1.00000, -0.00000, 0.00000, 0.00000, 0.89443, -0.44721, -0.00000, 0.44721, 0.89443, 0.00000, 8.60000, 46.40000)
+light_color = Color(1.0000, 0.8400, 0.5500, 1.0000)
+light_energy = 6.0
+light_volumetric_fog_energy = 2.2
+shadow_bias = 0.05
+shadow_enabled = true
+spot_angle = 38.0
+spot_range = 22.0
+
+[node name="tocha_0" type="OmniLight3D" parent="luzes"]
+transform = Transform3D(1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, -11.63000, 3.00000, 7.00000)
+light_color = Color(1.0000, 0.5200, 0.2000, 1.0000)
+light_energy = 6.8
+light_volumetric_fog_energy = 1.1
+omni_range = 5.5
+shadow_enabled = true
+metadata/piscar = "quebrado"
+
+[node name="tocha_1" type="OmniLight3D" parent="luzes"]
+transform = Transform3D(1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 11.63000, 3.00000, 12.00000)
+light_color = Color(1.0000, 0.5200, 0.2000, 1.0000)
+light_energy = 6.8
+light_volumetric_fog_energy = 1.1
+omni_range = 5.5
+shadow_enabled = false
+metadata/piscar = "nervoso"
+
+[node name="tocha_2" type="OmniLight3D" parent="luzes"]
+transform = Transform3D(1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, -11.63000, 3.00000, 17.00000)
+light_color = Color(1.0000, 0.5200, 0.2000, 1.0000)
+light_energy = 6.8
+light_volumetric_fog_energy = 1.1
+omni_range = 5.5
+shadow_enabled = false
+metadata/piscar = "nervoso"
+
+[node name="tocha_3" type="OmniLight3D" parent="luzes"]
+transform = Transform3D(1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 11.63000, 3.00000, 22.00000)
+light_color = Color(1.0000, 0.5200, 0.2000, 1.0000)
+light_energy = 6.8
+light_volumetric_fog_energy = 1.1
+omni_range = 5.5
+shadow_enabled = false
+metadata/piscar = "quebrado"
+
+[node name="tocha_4" type="OmniLight3D" parent="luzes"]
+transform = Transform3D(1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, -11.63000, 3.00000, 27.00000)
+light_color = Color(1.0000, 0.5200, 0.2000, 1.0000)
+light_energy = 6.8
+light_volumetric_fog_energy = 1.1
+omni_range = 5.5
+shadow_enabled = false
+metadata/piscar = "nervoso"
+
+[node name="tocha_5" type="OmniLight3D" parent="luzes"]
+transform = Transform3D(1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 11.63000, 3.00000, 31.00000)
+light_color = Color(1.0000, 0.5200, 0.2000, 1.0000)
+light_energy = 6.8
+light_volumetric_fog_energy = 1.1
+omni_range = 5.5
+shadow_enabled = false
+metadata/piscar = "nervoso"
+
+[node name="tocha_6" type="OmniLight3D" parent="luzes"]
+transform = Transform3D(1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, -11.63000, 12.70000, 20.50000)
+light_color = Color(1.0000, 0.5200, 0.2000, 1.0000)
+light_energy = 6.8
+light_volumetric_fog_energy = 1.1
+omni_range = 5.5
+shadow_enabled = false
+metadata/piscar = "quebrado"
+
+[node name="tocha_7" type="OmniLight3D" parent="luzes"]
+transform = Transform3D(1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 11.63000, 12.70000, 10.00000)
+light_color = Color(1.0000, 0.5200, 0.2000, 1.0000)
+light_energy = 6.8
+light_volumetric_fog_energy = 1.1
+omni_range = 5.5
+shadow_enabled = false
+metadata/piscar = "nervoso"
+
+[node name="tocha_8" type="OmniLight3D" parent="luzes"]
+transform = Transform3D(1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 11.63000, 12.70000, 29.00000)
+light_color = Color(1.0000, 0.5200, 0.2000, 1.0000)
+light_energy = 6.8
+light_volumetric_fog_energy = 1.1
+omni_range = 5.5
+shadow_enabled = false
+metadata/piscar = "nervoso"
+
+[node name="candelabro_0" type="OmniLight3D" parent="luzes"]
+transform = Transform3D(1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 13.65000, 8.00000)
+light_color = Color(1.0000, 0.6200, 0.2800, 1.0000)
+light_energy = 4.0
+light_volumetric_fog_energy = 0.9
+omni_range = 6.0
+metadata/piscar = "nervoso"
+
+[node name="candelabro_1" type="OmniLight3D" parent="luzes"]
+transform = Transform3D(1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 13.25000, 28.00000)
+light_color = Color(1.0000, 0.6200, 0.2800, 1.0000)
+light_energy = 4.0
+light_volumetric_fog_energy = 0.9
+omni_range = 6.0
+metadata/piscar = "nervoso"
+
+[node name="vela_0" type="OmniLight3D" parent="luzes"]
+transform = Transform3D(1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, -2.80000, 1.95000, 42.20000)
+light_color = Color(1.0000, 0.6800, 0.3200, 1.0000)
+light_energy = 1.8
+omni_range = 4.0
+metadata/piscar = "nervoso"
+
+[node name="vela_1" type="OmniLight3D" parent="luzes"]
+transform = Transform3D(1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 2.90000, 1.95000, 43.30000)
+light_color = Color(1.0000, 0.6800, 0.3200, 1.0000)
+light_energy = 1.8
+omni_range = 4.0
+metadata/piscar = "nervoso"
+
+[node name="vela_2" type="OmniLight3D" parent="luzes"]
+transform = Transform3D(1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, -3.20000, 1.95000, 44.80000)
+light_color = Color(1.0000, 0.6800, 0.3200, 1.0000)
+light_energy = 1.8
+omni_range = 4.0
+metadata/piscar = "nervoso"
+
+[node name="poeira" type="Node3D" parent="."]
+
+[node name="poeira_rombo" type="GPUParticles3D" parent="poeira"]
+transform = Transform3D(1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.40000, 14.00000, 15.50000)
+amount = 150
+lifetime = 16.0
+preprocess = 8.0
+visibility_aabb = AABB(-6, -14, -6, 12, 28, 12)
+process_material = SubResource("proc_poeira_rombo")
+draw_pass_1 = SubResource("malha_poeira")
+
+[node name="poeira_nave" type="GPUParticles3D" parent="poeira"]
+transform = Transform3D(1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 7.00000, 18.00000)
+amount = 160
+lifetime = 26.0
+preprocess = 14.0
+visibility_aabb = AABB(-14, -8, -22, 28, 16, 44)
+process_material = SubResource("proc_poeira_nave")
+draw_pass_1 = SubResource("malha_poeira")
+
+[node name="porta" type="Area3D" parent="."]
+transform = Transform3D(1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 1.70000, 2.00000)
+collision_layer = 0
+collision_mask = 1
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="porta"]
+shape = SubResource("caixa_porta")
+
+[node name="ponto_de_entrada" type="Marker3D" parent="."]
+transform = Transform3D(-1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 0.15000, 4.20000)
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+transform = Transform3D(-1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 0.15000, 4.20000)
+
+[node name="ambiente_som" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_ambiente")
+volume_db = -14.0
+autoplay = true
+
+[node name="fade" parent="." instance=ExtResource("4_fade")]
+
+[node name="pause" parent="." instance=ExtResource("3_pause")]

@@ -21,6 +21,23 @@ const OBJETIVO_PRIMEIRO_DURACAO := 30.0
 const OBJETIVO_CAP1_ESPERA := 60.0
 const OBJETIVO_CAP1_DURACAO := 120.0
 
+# --- Igreja da praca ---------------------------------------------------------
+# O adro da igreja, em coordenadas de MUNDO. A igreja e' um no' da city.tscn,
+# que entra aqui deslocada de (640, 0, -280); estes numeros ja' sao o resultado
+# somado, pra nao depender do transform interno da cidade.
+#
+# De onde saem: a fachada da torre (com a porta) esta' em x = 582,1 e cobre
+# z = -321 a -314,5, ou seja, a porta fica em z = -317,7. Mas a caixa de
+# colisao da igreja na city.tscn engloba o muro do adro e vai ate' x = 579,1 —
+# o jogador PARA ali, no muro, e nao encosta na porta. Por isso o ponto de
+# interacao fica a 578: e' o mais perto que da' pra chegar de verdade.
+const IGREJA_PORTA := Vector3(578.0, 11.0, -317.7)
+# Ao voltar de dentro ele aparece de costas pra igreja, olhando pra praca. O
+# corpo do Maycow olha pro -Z com rotacao zero; PI/2 vira ele pro -X, que e'
+# a direcao da praca aqui.
+const IGREJA_OLHAR_Y := PI * 0.5
+const CENA_IGREJA := "res://scenes/stages/igreja/igreja_interior.tscn"
+
 @onready var navigation_region_3d: NavigationRegion3D = $NavigationRegion3D
 @onready var real_time_label: Label = $real_time_label
 @onready var sky_3d: Sky3D = $WorldEnvironment/Sky3D
@@ -28,6 +45,11 @@ const OBJETIVO_CAP1_DURACAO := 120.0
 var player_na_oficina: bool = false
 var player_na_casa_jimmy: bool = false
 var player_na_casa_maycow: bool = false
+var player_na_igreja: bool = false
+## Engole UMA entrada na área da igreja, pelo mesmo motivo da casa do Maycow:
+## quem volta de dentro reaparece no adro, já dentro da área, e sem isto o
+## prompt de "entrar" pipocaria no instante em que ele acabou de sair.
+var _ignorar_prompt_igreja: bool = false
 ## Engole UMA entrada na área da casa do Maycow. Ligado quando o jogador volta
 ## de dentro da casa: ele reaparece na soleira, já dentro da área, e sem isto o
 ## prompt de "entrar" pipocaria no mesmo instante em que ele acabou de sair.
@@ -97,6 +119,9 @@ func setup_player_spawn() -> void:
 		if jogador and saida:
 			jogador.global_position = saida.global_position
 			jogador.global_rotation.y = saida.global_rotation.y
+	elif GlobalEvents.voltando_da_igreja:
+		GlobalEvents.voltando_da_igreja = false
+		_devolver_ao_adro_da_igreja()
 	elif GlobalEvents.voltando_da_casa_maycow:
 		GlobalEvents.voltando_da_casa_maycow = false
 		# Ele reaparece dentro da própria área de entrada: segura o prompt até
@@ -203,6 +228,12 @@ func _process(delta: float) -> void:
 		$fade.fade_out()
 		await get_tree().create_timer(2.0).timeout
 		LoadingScreen.load_scene("res://scenes/stages/prolog/the_house.tscn")
+	elif player_na_igreja:
+		player_na_igreja = false
+		_esconder_prompt()
+		$fade.fade_out()
+		await get_tree().create_timer(2.0).timeout
+		LoadingScreen.load_scene(CENA_IGREJA)
 
 
 func _mostrar_prompt(texto: String) -> void:
@@ -214,8 +245,21 @@ func _mostrar_prompt(texto: String) -> void:
 	prompt_label.visible = true
 
 
-func _esconder_prompt() -> void:
+## `forcado` = apaga mesmo com o jogador dentro de alguma área de entrada.
+##
+## O prompt é UM só, compartilhado pelas quatro entradas do mapa (oficina, casa
+## do Jimmy, casa do Maycow, igreja). Sem esta guarda, a área que o jogador
+## acaba de DEIXAR apaga o aviso que outra acabou de mostrar. Era o que
+## acontecia ao voltar de dentro da igreja: ele reaparece no adro, a área da
+## igreja mostra "Entrar na igreja?" e, no mesmo quadro, o `body_exited` de
+## outra área apagava o texto — o prompt existia, com o texto certo, e ficava
+## invisível. Quem zera a própria flag antes de chamar (todos os pontos de
+## saída fazem isso) continua conseguindo apagar.
+func _esconder_prompt(forcado: bool = false) -> void:
 	if not is_instance_valid(prompt_label):
+		return
+	if not forcado and (player_na_oficina or player_na_casa_jimmy
+			or player_na_casa_maycow or player_na_igreja):
 		return
 	if prompt_label.has_meta("container"):
 		prompt_label.get_meta("container").visible = false
@@ -252,6 +296,8 @@ func _setup_areas_casas() -> void:
 		if not casa_jimmy_area.body_exited.is_connected(_ao_sair_area_casa_jimmy):
 			casa_jimmy_area.body_exited.connect(_ao_sair_area_casa_jimmy)
 
+	_criar_area_igreja()
+
 	if get_node_or_null("area_entrada_casa_maycow") == null:
 		var area_maycow = Area3D.new()
 		area_maycow.name = "area_entrada_casa_maycow"
@@ -286,6 +332,87 @@ func _setup_areas_casas() -> void:
 			col_maycow.global_position = Vector3(649.5, 10.5, -150.45)
 
 
+## Area do adro. Criada por codigo (e nao na city.tscn) pelo mesmo motivo da
+## area da casa do Maycow: a cena da cidade e' compartilhada, enorme, e o que e'
+## regra de jogo mora no script da stage.
+func _criar_area_igreja() -> void:
+	if get_node_or_null("area_entrada_igreja") != null:
+		return
+	var area := Area3D.new()
+	area.name = "area_entrada_igreja"
+	area.collision_layer = 0
+	area.collision_mask = 1
+	area.monitorable = false
+	var forma := CollisionShape3D.new()
+	var caixa := BoxShape3D.new()
+	# Alta de proposito (10 m): o adro tem degraus e o terreno da praca nao e'
+	# plano, e uma caixa rasa erraria o jogador por meio metro de desnivel.
+	caixa.size = Vector3(7.0, 10.0, 8.0)
+	forma.shape = caixa
+	area.add_child(forma)
+	add_child(area)
+	area.global_position = IGREJA_PORTA
+	area.body_entered.connect(_ao_entrar_area_igreja)
+	area.body_exited.connect(_ao_sair_area_igreja)
+
+
+func _ao_entrar_area_igreja(body: Node3D) -> void:
+	if not _eh_o_player(body):
+		return
+	player_na_igreja = true
+	if _ignorar_prompt_igreja:
+		_ignorar_prompt_igreja = false
+		_esconder_prompt(true)
+		return
+	_mostrar_prompt(tr("PROMPT_ENTER_CHURCH"))
+
+
+func _ao_sair_area_igreja(body: Node3D) -> void:
+	if not _eh_o_player(body):
+		return
+	player_na_igreja = false
+	# Saiu da área de verdade: a próxima entrada volta a mostrar o prompt.
+	_ignorar_prompt_igreja = false
+	_esconder_prompt()
+
+
+## Devolve o jogador ao adro depois de sair de dentro da igreja.
+##
+## O Y vem de um raycast, e nao de uma constante: o chao ali e' o terreno do
+## Terrain3D e a altura exata depende do que o terreno tem naquele ponto. Pondo
+## um numero fixo, ou o jogador nasce enterrado ou cai de dois metros toda vez
+## que alguem reesculpir a praca.
+func _devolver_ao_adro_da_igreja() -> void:
+	var jogador = get_node_or_null("Player")
+	if not jogador:
+		jogador = find_child("Player", true, false)
+	if not jogador:
+		jogador = find_child("player", true, false)
+	if not jogador:
+		return
+	_ignorar_prompt_igreja = true
+	jogador.global_position = IGREJA_PORTA
+	jogador.global_rotation.y = IGREJA_OLHAR_Y
+	# Adiado: `_pousar_no_chao` espera um quadro de fisica, e o spawn roda
+	# dentro do `_ready`, antes de existir qualquer estado de colisao pra
+	# consultar. Sem o defer, o raycast sai vazio e o jogador fica pendurado.
+	_pousar_no_chao.call_deferred(jogador, IGREJA_PORTA)
+
+
+func _pousar_no_chao(no: Node3D, alvo: Vector3, alcance: float = 14.0) -> void:
+	await get_tree().physics_frame
+	if not is_instance_valid(no):
+		return
+	var espaco := get_world_3d().direct_space_state
+	var consulta := PhysicsRayQueryParameters3D.create(
+		alvo + Vector3.UP * alcance, alvo + Vector3.DOWN * alcance)
+	# Layer 2: e' onde vive o chao do jogo (o player tem collision_mask = 2).
+	consulta.collision_mask = 2
+	var batida := espaco.intersect_ray(consulta)
+	if batida:
+		no.global_position = batida.position + Vector3.UP * 0.2
+
+
 func _ao_entrar_area_casa_maycow(body: Node3D) -> void:
 	if not _eh_o_player(body):
 		return
@@ -297,7 +424,7 @@ func _ao_entrar_area_casa_maycow(body: Node3D) -> void:
 	# da área e resolver voltar.
 	if _ignorar_prompt_casa_maycow:
 		_ignorar_prompt_casa_maycow = false
-		_esconder_prompt()
+		_esconder_prompt(true)
 		return
 
 	_mostrar_prompt(tr("PROMPT_ENTER_MAYCOW_HOUSE"))
