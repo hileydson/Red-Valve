@@ -73,10 +73,21 @@ const JUNTAS := {
 	"foot_r":     [["RightFoot", 1.0]],
 }
 
-## Quanto o ombro fecha contra o corpo, em radianos. Existe pra cancelar a
-## pose em A com que os modelos vem do arquivo: sem isso o NPC anda de bracos
-## abertos, como um boneco de loja.
-const BRACO_FECHADO := 0.20
+## Quanto o braco deve ficar afastado do corpo depois de ajustado, em radianos
+## (uns 15 graus). Nao e um valor fixo de correcao, e um ALVO: os modelos do
+## pacote vem com poses em A muito diferentes — o espalhamento de repouso vai
+## de 12 a 40 graus — e fechar a mesma quantidade em todos deixa o braco de
+## quem ja nascia fechado enfiado no torso. O quanto fechar (ou abrir) sai da
+## medida do proprio rig, no setup.
+##
+## O valor e a mediana do que o pacote dava antes, quando o fecho era fixo:
+## e o afastamento que a maioria ja tinha e que ficou bom. O ajuste por modelo
+## nao muda a maioria — leva os extremos pra perto dela.
+const BRACO_ALVO := 0.27
+
+## Limite do ajuste, pra um rig estranho nao virar uma pose esquisita.
+const AJUSTE_BRACO_MIN := -0.12
+const AJUSTE_BRACO_MAX := 0.40
 
 ## Quanto o joelho dobra no pico do balanco, em radianos. E o que levanta o
 ## calcanhar atras do corpo: alto demais e o NPC parece estar dando um coice a
@@ -102,6 +113,11 @@ var _repouso := {}      # indice -> base local de repouso
 var _hips_idx := -1
 var _hips_repouso := Vector3.ZERO
 var _giro := Basis.IDENTITY
+
+## Quanto fechar cada ombro pra chegar no BRACO_ALVO. Medido por modelo no
+## setup; positivo fecha, negativo abre.
+var _ajuste_braco_l := 0.0
+var _ajuste_braco_r := 0.0
 
 ## Altura do quadril em repouso, em metros. Serve de escala pra tudo que e
 ## medido em distancia (balanco vertical, abaixada).
@@ -153,7 +169,26 @@ func setup(sk: Skeleton3D, giro_y: float = 0.0) -> bool:
 		topo = _acha_osso("Head")
 	if topo >= 0:
 		altura_total = maxf(skeleton.get_bone_global_rest(topo).origin.y * 1.06, 0.5)
+
+	_ajuste_braco_l = clampf(_espalhamento("LeftArm", "LeftHand", 1.0) - BRACO_ALVO,
+		AJUSTE_BRACO_MIN, AJUSTE_BRACO_MAX)
+	_ajuste_braco_r = clampf(_espalhamento("RightArm", "RightHand", -1.0) - BRACO_ALVO,
+		AJUSTE_BRACO_MIN, AJUSTE_BRACO_MAX)
 	return true
+
+
+## Quanto o braco ja esta aberto na pose de repouso do arquivo, em radianos.
+## `lado` e +1 pro braco que fica em +X e -1 pro outro, pra os dois devolverem
+## um numero positivo quando estao abertos.
+func _espalhamento(osso: String, ponta: String, lado: float) -> float:
+	var a := _acha_osso(osso)
+	var b := _acha_osso(ponta)
+	if a < 0 or b < 0:
+		return BRACO_ALVO   # sem medida, nao mexe
+	var d: Vector3 = skeleton.get_bone_global_rest(b).origin - skeleton.get_bone_global_rest(a).origin
+	if d.y >= -0.001:
+		return BRACO_ALVO   # braco nao pende pra baixo; melhor nao inventar
+	return atan2(d.x * lado, -d.y)
 
 
 func _acha_osso(nome: String) -> int:
@@ -238,9 +273,9 @@ func pose_locomocao(t: float, tg: float, blend: float, abertura: float) -> void:
 	# modelo anda com os bracos abertos, por causa da pose em A do arquivo.
 	# balanca contra a perna, mas a partir do seno cru: o vies pra frente e
 	# coisa de quadril, e no braco so deixaria os dois pendurados pra tras
-	var fecha := BRACO_FECHADO + 0.03 * blend
-	junta("shoulder_l", Vector3(s * abertura * 0.72, 0.0, -fecha))
-	junta("shoulder_r", Vector3(-s * abertura * 0.72, 0.0, fecha))
+	var extra := 0.03 * blend
+	junta("shoulder_l", Vector3(s * abertura * 0.72, 0.0, -_ajuste_braco_l - extra))
+	junta("shoulder_r", Vector3(-s * abertura * 0.72, 0.0, _ajuste_braco_r + extra))
 	junta("elbow_l", Vector3(-(0.14 + 0.26 * blend * maxf(0.0, -s)), 0.0, 0.0))
 	junta("elbow_r", Vector3(-(0.14 + 0.26 * blend * maxf(0.0, s)), 0.0, 0.0))
 
@@ -272,8 +307,8 @@ func pose_conversando(t: float, falando: bool) -> void:
 	# pessoa gesticula de pe. Braco esticado pra frente vira zumbi.
 	var alto_l := -(0.24 + sin(tt * 1.3) * 0.22) * amp
 	var alto_r := -(0.20 + sin(tt * 1.1 + 1.7) * 0.22) * amp
-	junta("shoulder_l", Vector3(alto_l, 0.0, -BRACO_FECHADO - sin(tt * 0.8) * 0.10 * amp))
-	junta("shoulder_r", Vector3(alto_r, 0.0, BRACO_FECHADO + sin(tt * 0.9 + 0.6) * 0.10 * amp))
+	junta("shoulder_l", Vector3(alto_l, 0.0, -_ajuste_braco_l - sin(tt * 0.8) * 0.10 * amp))
+	junta("shoulder_r", Vector3(alto_r, 0.0, _ajuste_braco_r + sin(tt * 0.9 + 0.6) * 0.10 * amp))
 	junta("elbow_l", Vector3(-(1.05 + sin(tt * 1.7 + 0.4) * 0.35) * amp - 0.14, 0.0, 0.0))
 	junta("elbow_r", Vector3(-(1.00 + sin(tt * 1.5 + 2.2) * 0.35) * amp - 0.14, 0.0, 0.0))
 
@@ -312,9 +347,9 @@ func pose_catando(p: float) -> void:
 	# braco direito desce ate o chao e fecha a mao no fim; o esquerdo vai pra
 	# tras fazendo contrapeso
 	var pega := smoothstep(0.55, 1.0, p)
-	junta("shoulder_r", Vector3(-0.75 * p, 0.0, BRACO_FECHADO * (1.0 - p) + 0.10 * p))
+	junta("shoulder_r", Vector3(-0.75 * p, 0.0, _ajuste_braco_r * (1.0 - p) + 0.10 * p))
 	junta("elbow_r", Vector3(-(0.20 * p + 0.55 * (1.0 - pega) * p) - 0.14 * (1.0 - p), 0.0, 0.0))
-	junta("shoulder_l", Vector3(0.35 * p, 0.0, -BRACO_FECHADO - 0.12 * p))
+	junta("shoulder_l", Vector3(0.35 * p, 0.0, -_ajuste_braco_l - 0.12 * p))
 	junta("elbow_l", Vector3(-0.45 * p - 0.14 * (1.0 - p), 0.0, 0.0))
 
 	# o quadril desce o que as pernas dobradas encurtaram
