@@ -1,278 +1,1403 @@
-[gd_scene load_steps=26 format=3]
+[gd_scene format=3]
 
-[ext_resource type="Texture2D" uid="uid://bsp6rsxmhl1ts" path="res://assets/images/textures/wood_wall.png" id="1_wood_wall"]
-[ext_resource type="Texture2D" uid="uid://dnrfoykxfgqup" path="res://assets/images/textures/wood_ceiling.png" id="2_wood_ceiling"]
-[ext_resource type="Texture2D" uid="uid://buf1a4max6ykx" path="res://assets/3d_model/texturas/textura_casa_prologo/textura_escada.jpg" id="3_textura_escada"]
+[ext_resource type="Texture2D" path="res://assets/images/textures/polyhaven/weathered_brown_planks_diff.jpg" id="weathered_brown_planks_diff"]
+[ext_resource type="Texture2D" path="res://assets/images/textures/polyhaven/weathered_brown_planks_nor_gl.jpg" id="weathered_brown_planks_nor_gl"]
+[ext_resource type="Texture2D" path="res://assets/images/textures/polyhaven/weathered_brown_planks_arm.jpg" id="weathered_brown_planks_arm"]
+[ext_resource type="Texture2D" path="res://assets/images/textures/polyhaven/roof_slates_02_diff.jpg" id="roof_slates_02_diff"]
+[ext_resource type="Texture2D" path="res://assets/images/textures/polyhaven/roof_slates_02_nor_gl.jpg" id="roof_slates_02_nor_gl"]
+[ext_resource type="Texture2D" path="res://assets/images/textures/polyhaven/roof_slates_02_arm.jpg" id="roof_slates_02_arm"]
+[ext_resource type="Texture2D" path="res://assets/images/textures/polyhaven/brushed_concrete_03_diff.jpg" id="brushed_concrete_03_diff"]
+[ext_resource type="Texture2D" path="res://assets/images/textures/polyhaven/brushed_concrete_03_nor_gl.jpg" id="brushed_concrete_03_nor_gl"]
+[ext_resource type="Texture2D" path="res://assets/images/textures/polyhaven/brushed_concrete_03_arm.jpg" id="brushed_concrete_03_arm"]
+[ext_resource type="Texture2D" path="res://assets/images/textures/polyhaven/brick_wall_02_diff.jpg" id="brick_wall_02_diff"]
+[ext_resource type="Texture2D" path="res://assets/images/textures/polyhaven/brick_wall_02_nor_gl.jpg" id="brick_wall_02_nor_gl"]
+[ext_resource type="Texture2D" path="res://assets/images/textures/polyhaven/brick_wall_02_arm.jpg" id="brick_wall_02_arm"]
+[ext_resource type="Texture2D" path="res://assets/images/textures/polyhaven/dark_wooden_planks_diff.jpg" id="dark_wooden_planks_diff"]
+[ext_resource type="Texture2D" path="res://assets/images/textures/polyhaven/dark_wooden_planks_nor_gl.jpg" id="dark_wooden_planks_nor_gl"]
+[ext_resource type="Texture2D" path="res://assets/images/textures/polyhaven/dark_wooden_planks_arm.jpg" id="dark_wooden_planks_arm"]
+[ext_resource type="Texture2D" path="res://assets/images/textures/polyhaven/wood_floor_worn_diff.jpg" id="wood_floor_worn_diff"]
+[ext_resource type="Texture2D" path="res://assets/images/textures/polyhaven/wood_floor_worn_nor_gl.jpg" id="wood_floor_worn_nor_gl"]
+[ext_resource type="Texture2D" path="res://assets/images/textures/polyhaven/wood_floor_worn_arm.jpg" id="wood_floor_worn_arm"]
+[ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/Rockingchair_01/Rockingchair_01_1k.gltf" id="ph_Rockingchair_01"]
+[ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/wooden_lantern_01/wooden_lantern_01_1k.gltf" id="ph_wooden_lantern_01"]
+[ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/planter_box_02/planter_box_02_1k.gltf" id="ph_planter_box_02"]
+[ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/security_light/security_light_1k.gltf" id="ph_security_light"]
+[ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/cardboard_box_01/cardboard_box_01_1k.gltf" id="ph_cardboard_box_01"]
+[ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/stone_fire_pit/stone_fire_pit_1k.gltf" id="ph_stone_fire_pit"]
+[ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/tree_stump_01/tree_stump_01_1k.gltf" id="ph_tree_stump_01"]
+[ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/dead_tree_trunk_02/dead_tree_trunk_02_1k.gltf" id="ph_dead_tree_trunk_02"]
+[ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/Barrel_02/Barrel_02_1k.gltf" id="ph_Barrel_02"]
+[ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/shrub_02/shrub_02_1k.gltf" id="ph_shrub_02"]
+[ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/shrub_03/shrub_03_1k.gltf" id="ph_shrub_03"]
 
-[sub_resource type="StandardMaterial3D" id="mat_parede_ext"]
-albedo_color = Color(0.58, 0.52, 0.45, 1)
-albedo_texture = ExtResource("1_wood_wall")
-roughness = 0.97
-uv1_scale = Vector3(0.3, 0.3, 0.3)
+[sub_resource type="StandardMaterial3D" id="mat_tabua"]
+albedo_color = Color(0.52, 0.44, 0.38, 1)
+albedo_texture = ExtResource("weathered_brown_planks_diff")
+normal_enabled = true
+normal_texture = ExtResource("weathered_brown_planks_nor_gl")
+normal_scale = 1
+roughness = 1
+roughness_texture = ExtResource("weathered_brown_planks_arm")
+roughness_texture_channel = 1
+ao_enabled = true
+ao_texture = ExtResource("weathered_brown_planks_arm")
+ao_texture_channel = 0
+ao_light_affect = 0.4
+metallic = 0
+metallic_specular = 0.3
+uv1_scale = Vector3(0.55, 0.55, 0.55)
 uv1_triplanar = true
+uv1_world_triplanar = true
 
-[sub_resource type="StandardMaterial3D" id="mat_telhado"]
-albedo_color = Color(0.36, 0.31, 0.27, 1)
-albedo_texture = ExtResource("2_wood_ceiling")
-roughness = 1.0
+[sub_resource type="StandardMaterial3D" id="mat_telha"]
+albedo_color = Color(0.4, 0.4, 0.44, 1)
+albedo_texture = ExtResource("roof_slates_02_diff")
+normal_enabled = true
+normal_texture = ExtResource("roof_slates_02_nor_gl")
+normal_scale = 1
+roughness = 1
+roughness_texture = ExtResource("roof_slates_02_arm")
+roughness_texture_channel = 1
+ao_enabled = true
+ao_texture = ExtResource("roof_slates_02_arm")
+ao_texture_channel = 0
+ao_light_affect = 0.4
+metallic = 0
+metallic_specular = 0.3
+uv1_scale = Vector3(0.32, 0.32, 0.32)
+uv1_triplanar = true
+uv1_world_triplanar = true
+
+[sub_resource type="StandardMaterial3D" id="mat_alicerce"]
+albedo_color = Color(0.45, 0.43, 0.4, 1)
+albedo_texture = ExtResource("brushed_concrete_03_diff")
+normal_enabled = true
+normal_texture = ExtResource("brushed_concrete_03_nor_gl")
+normal_scale = 1
+roughness = 1
+roughness_texture = ExtResource("brushed_concrete_03_arm")
+roughness_texture_channel = 1
+ao_enabled = true
+ao_texture = ExtResource("brushed_concrete_03_arm")
+ao_texture_channel = 0
+ao_light_affect = 0.4
+metallic = 0
+metallic_specular = 0.3
+uv1_scale = Vector3(0.4, 0.4, 0.4)
+uv1_triplanar = true
+uv1_world_triplanar = true
+
+[sub_resource type="StandardMaterial3D" id="mat_tijolo"]
+albedo_color = Color(0.5, 0.4, 0.36, 1)
+albedo_texture = ExtResource("brick_wall_02_diff")
+normal_enabled = true
+normal_texture = ExtResource("brick_wall_02_nor_gl")
+normal_scale = 1
+roughness = 1
+roughness_texture = ExtResource("brick_wall_02_arm")
+roughness_texture_channel = 1
+ao_enabled = true
+ao_texture = ExtResource("brick_wall_02_arm")
+ao_texture_channel = 0
+ao_light_affect = 0.4
+metallic = 0
+metallic_specular = 0.3
 uv1_scale = Vector3(0.45, 0.45, 0.45)
 uv1_triplanar = true
+uv1_world_triplanar = true
 
-[sub_resource type="StandardMaterial3D" id="mat_madeira_ext"]
-albedo_color = Color(0.4, 0.32, 0.25, 1)
-albedo_texture = ExtResource("3_textura_escada")
-roughness = 0.92
-uv1_scale = Vector3(0.6, 0.6, 0.6)
+[sub_resource type="StandardMaterial3D" id="mat_madeira"]
+albedo_color = Color(0.4, 0.33, 0.27, 1)
+albedo_texture = ExtResource("dark_wooden_planks_diff")
+normal_enabled = true
+normal_texture = ExtResource("dark_wooden_planks_nor_gl")
+normal_scale = 1
+roughness = 1
+roughness_texture = ExtResource("dark_wooden_planks_arm")
+roughness_texture_channel = 1
+ao_enabled = true
+ao_texture = ExtResource("dark_wooden_planks_arm")
+ao_texture_channel = 0
+ao_light_affect = 0.4
+metallic = 0
+metallic_specular = 0.3
+uv1_scale = Vector3(0.8, 0.8, 0.8)
 uv1_triplanar = true
+uv1_world_triplanar = true
 
-[sub_resource type="StandardMaterial3D" id="mat_vidro_ext"]
-transparency = 1
-albedo_color = Color(0.07, 0.06, 0.05, 0.85)
+[sub_resource type="StandardMaterial3D" id="mat_deck"]
+albedo_color = Color(0.44, 0.38, 0.32, 1)
+albedo_texture = ExtResource("wood_floor_worn_diff")
+normal_enabled = true
+normal_texture = ExtResource("wood_floor_worn_nor_gl")
+normal_scale = 1
+roughness = 1
+roughness_texture = ExtResource("wood_floor_worn_arm")
+roughness_texture_channel = 1
+ao_enabled = true
+ao_texture = ExtResource("wood_floor_worn_arm")
+ao_texture_channel = 0
+ao_light_affect = 0.4
+metallic = 0
+metallic_specular = 0.3
+uv1_scale = Vector3(0.5, 0.5, 0.5)
+uv1_triplanar = true
+uv1_world_triplanar = true
+
+[sub_resource type="StandardMaterial3D" id="mat_vidro_aceso"]
+albedo_color = Color(0.1, 0.07, 0.04, 1)
 emission_enabled = true
 emission = Color(1, 0.66, 0.33, 1)
-emission_energy_multiplier = 1.6
+emission_energy_multiplier = 2.2
 roughness = 0.25
 
 [sub_resource type="StandardMaterial3D" id="mat_vidro_apagado"]
-transparency = 1
-albedo_color = Color(0.05, 0.05, 0.06, 0.92)
-roughness = 0.2
+albedo_color = Color(0.035, 0.04, 0.05, 1)
+metallic = 0.5
+roughness = 0.14
 
-[sub_resource type="BoxMesh" id="malha_chamine"]
-size = Vector3(0.85, 2.4, 0.85)
+[sub_resource type="StandardMaterial3D" id="mat_miolo"]
+albedo_color = Color(0.01, 0.01, 0.012, 1)
+roughness = 1
 
-[sub_resource type="BoxMesh" id="malha_porta_ext"]
-size = Vector3(1.1, 2.12, 0.09)
+[sub_resource type="BoxShape3D" id="forma_corpo"]
+size = Vector3(20.4, 8, 15.4)
 
-[sub_resource type="BoxMesh" id="malha_vidro_0"]
-size = Vector3(1.3, 1.2, 0.06)
+[sub_resource type="BoxMesh" id="bm_20p5_1p5_15p5"]
+size = Vector3(20.5, 1.5, 15.5)
 
-[sub_resource type="BoxMesh" id="malha_vidro_1"]
-size = Vector3(1.3, 1.2, 0.06)
+[sub_resource type="BoxMesh" id="bm_20p26_0p1_15p26"]
+size = Vector3(20.26, 0.1, 15.26)
 
-[sub_resource type="BoxMesh" id="malha_vidro_2"]
-size = Vector3(1.3, 1.2, 0.06)
+[sub_resource type="BoxMesh" id="bm_19p5_3p4_14p5"]
+size = Vector3(19.5, 3.4, 14.5)
 
-[sub_resource type="BoxMesh" id="malha_vidro_3"]
-size = Vector3(0.06, 1.2, 1.3)
+[sub_resource type="BoxMesh" id="bm_1p65_3p4_0p2"]
+size = Vector3(1.65, 3.4, 0.2)
 
-[sub_resource type="BoxMesh" id="malha_vidro_4"]
-size = Vector3(0.06, 1.2, 1.3)
+[sub_resource type="BoxMesh" id="bm_1p5_0p95_0p2"]
+size = Vector3(1.5, 0.95, 0.2)
 
-[sub_resource type="BoxMesh" id="malha_vidro_5"]
-size = Vector3(1.3, 1.2, 0.06)
+[sub_resource type="BoxMesh" id="bm_1p5_1p2_0p2"]
+size = Vector3(1.5, 1.2, 0.2)
 
-[sub_resource type="BoxMesh" id="malha_vidro_6"]
-size = Vector3(1.3, 1.2, 0.06)
+[sub_resource type="BoxMesh" id="bm_1p7_3p4_0p2"]
+size = Vector3(1.7, 3.4, 0.2)
 
-[sub_resource type="BoxMesh" id="malha_vidro_7"]
-size = Vector3(1.3, 1.2, 0.06)
+[sub_resource type="BoxMesh" id="bm_1p4_3p4_0p2"]
+size = Vector3(1.4, 3.4, 0.2)
 
-[sub_resource type="BoxMesh" id="malha_vidro_8"]
-size = Vector3(1.3, 1.2, 0.06)
+[sub_resource type="BoxMesh" id="bm_1p3_0p95_0p2"]
+size = Vector3(1.3, 0.95, 0.2)
 
-[sub_resource type="BoxMesh" id="malha_deck"]
-size = Vector3(4.2, 0.24, 2.0)
+[sub_resource type="BoxMesh" id="bm_1p3_1p2_0p2"]
+size = Vector3(1.3, 1.2, 0.2)
 
-[sub_resource type="BoxMesh" id="malha_degrau"]
-size = Vector3(2.2, 0.14, 0.6)
+[sub_resource type="BoxMesh" id="bm_0p625_3p4_0p2"]
+size = Vector3(0.625, 3.4, 0.2)
 
-[sub_resource type="BoxMesh" id="malha_pilar"]
-size = Vector3(0.18, 2.6, 0.18)
+[sub_resource type="BoxMesh" id="bm_1p25_1p1_0p2"]
+size = Vector3(1.25, 1.1, 0.2)
 
-[sub_resource type="BoxMesh" id="malha_teto_alpendre"]
-size = Vector3(4.6, 0.18, 2.4)
+[sub_resource type="BoxMesh" id="bm_1p45_3p4_0p2"]
+size = Vector3(1.45, 3.4, 0.2)
+
+[sub_resource type="BoxMesh" id="bm_1p4_0p95_0p2"]
+size = Vector3(1.4, 0.95, 0.2)
+
+[sub_resource type="BoxMesh" id="bm_1p4_1p2_0p2"]
+size = Vector3(1.4, 1.2, 0.2)
+
+[sub_resource type="BoxMesh" id="bm_1p8_3p4_0p2"]
+size = Vector3(1.8, 3.4, 0.2)
+
+[sub_resource type="BoxMesh" id="bm_1p1_3p4_0p2"]
+size = Vector3(1.1, 3.4, 0.2)
+
+[sub_resource type="BoxMesh" id="bm_1p75_3p4_0p2"]
+size = Vector3(1.75, 3.4, 0.2)
+
+[sub_resource type="BoxMesh" id="bm_3p3_3p4_0p2"]
+size = Vector3(3.3, 3.4, 0.2)
+
+[sub_resource type="BoxMesh" id="bm_3_3p4_0p2"]
+size = Vector3(3, 3.4, 0.2)
+
+[sub_resource type="BoxMesh" id="bm_2p45_3p4_0p2"]
+size = Vector3(2.45, 3.4, 0.2)
+
+[sub_resource type="BoxMesh" id="bm_1p85_3p4_0p2"]
+size = Vector3(1.85, 3.4, 0.2)
+
+[sub_resource type="BoxMesh" id="bm_0p9_1p45_0p2"]
+size = Vector3(0.9, 1.45, 0.2)
+
+[sub_resource type="BoxMesh" id="bm_0p9_1p1_0p2"]
+size = Vector3(0.9, 1.1, 0.2)
+
+[sub_resource type="BoxMesh" id="bm_0p95_3p4_0p2"]
+size = Vector3(0.95, 3.4, 0.2)
+
+[sub_resource type="BoxMesh" id="bm_0p2_3p4_2p85"]
+size = Vector3(0.2, 3.4, 2.85)
+
+[sub_resource type="BoxMesh" id="bm_0p2_0p95_1p5"]
+size = Vector3(0.2, 0.95, 1.5)
+
+[sub_resource type="BoxMesh" id="bm_0p2_1p2_1p5"]
+size = Vector3(0.2, 1.2, 1.5)
+
+[sub_resource type="BoxMesh" id="bm_0p2_3p4_7p6"]
+size = Vector3(0.2, 3.4, 7.6)
+
+[sub_resource type="BoxMesh" id="bm_0p2_0p95_1p3"]
+size = Vector3(0.2, 0.95, 1.3)
+
+[sub_resource type="BoxMesh" id="bm_0p2_1p2_1p3"]
+size = Vector3(0.2, 1.2, 1.3)
+
+[sub_resource type="BoxMesh" id="bm_0p2_3p4_1p75"]
+size = Vector3(0.2, 3.4, 1.75)
+
+[sub_resource type="BoxMesh" id="bm_0p2_3p4_10p65"]
+size = Vector3(0.2, 3.4, 10.65)
+
+[sub_resource type="BoxMesh" id="bm_0p26_3p4_0p26"]
+size = Vector3(0.26, 3.4, 0.26)
+
+[sub_resource type="PrismMesh" id="prisma_empena"]
+size = Vector3(20, 3, 15)
+
+[sub_resource type="BoxMesh" id="bm_10p990307_0p22_16p1"]
+size = Vector3(10.990307, 0.22, 16.1)
+
+[sub_resource type="BoxMesh" id="bm_0p55_0p2_16p1"]
+size = Vector3(0.55, 0.2, 16.1)
+
+[sub_resource type="BoxMesh" id="bm_21p1_0p3_0p08"]
+size = Vector3(21.1, 0.3, 0.08)
+
+[sub_resource type="BoxMesh" id="bm_1_6p4_1"]
+size = Vector3(1, 6.4, 1)
+
+[sub_resource type="BoxMesh" id="bm_1p26_0p18_1p26"]
+size = Vector3(1.26, 0.18, 1.26)
+
+[sub_resource type="BoxMesh" id="bm_1p5_1p25_0p04"]
+size = Vector3(1.5, 1.25, 0.04)
+
+[sub_resource type="BoxMesh" id="bm_0p07_1p25_0p05"]
+size = Vector3(0.07, 1.25, 0.05)
+
+[sub_resource type="BoxMesh" id="bm_1p8_0p16_0p12"]
+size = Vector3(1.8, 0.16, 0.12)
+
+[sub_resource type="BoxMesh" id="bm_1p8_0p1_0p16"]
+size = Vector3(1.8, 0.1, 0.16)
+
+[sub_resource type="BoxMesh" id="bm_0p14_1p35_0p1"]
+size = Vector3(0.14, 1.35, 0.1)
+
+[sub_resource type="BoxMesh" id="bm_1p3_1p25_0p04"]
+size = Vector3(1.3, 1.25, 0.04)
+
+[sub_resource type="BoxMesh" id="bm_1p6_0p16_0p12"]
+size = Vector3(1.6, 0.16, 0.12)
+
+[sub_resource type="BoxMesh" id="bm_1p6_0p1_0p16"]
+size = Vector3(1.6, 0.1, 0.16)
+
+[sub_resource type="BoxMesh" id="bm_1p4_1p25_0p04"]
+size = Vector3(1.4, 1.25, 0.04)
+
+[sub_resource type="BoxMesh" id="bm_1p7_0p16_0p12"]
+size = Vector3(1.7, 0.16, 0.12)
+
+[sub_resource type="BoxMesh" id="bm_1p7_0p1_0p16"]
+size = Vector3(1.7, 0.1, 0.16)
+
+[sub_resource type="BoxMesh" id="bm_0p9_0p85_0p04"]
+size = Vector3(0.9, 0.85, 0.04)
+
+[sub_resource type="BoxMesh" id="bm_0p07_0p85_0p05"]
+size = Vector3(0.07, 0.85, 0.05)
+
+[sub_resource type="BoxMesh" id="bm_1p2_0p16_0p12"]
+size = Vector3(1.2, 0.16, 0.12)
+
+[sub_resource type="BoxMesh" id="bm_1p2_0p1_0p16"]
+size = Vector3(1.2, 0.1, 0.16)
+
+[sub_resource type="BoxMesh" id="bm_0p14_0p95_0p1"]
+size = Vector3(0.14, 0.95, 0.1)
+
+[sub_resource type="BoxMesh" id="bm_0p04_1p25_1p5"]
+size = Vector3(0.04, 1.25, 1.5)
+
+[sub_resource type="BoxMesh" id="bm_0p05_1p25_0p07"]
+size = Vector3(0.05, 1.25, 0.07)
+
+[sub_resource type="BoxMesh" id="bm_0p12_0p16_1p8"]
+size = Vector3(0.12, 0.16, 1.8)
+
+[sub_resource type="BoxMesh" id="bm_0p16_0p1_1p8"]
+size = Vector3(0.16, 0.1, 1.8)
+
+[sub_resource type="BoxMesh" id="bm_0p1_1p35_0p14"]
+size = Vector3(0.1, 1.35, 0.14)
+
+[sub_resource type="BoxMesh" id="bm_0p04_1p25_1p3"]
+size = Vector3(0.04, 1.25, 1.3)
+
+[sub_resource type="BoxMesh" id="bm_0p12_0p16_1p6"]
+size = Vector3(0.12, 0.16, 1.6)
+
+[sub_resource type="BoxMesh" id="bm_0p16_0p1_1p6"]
+size = Vector3(0.16, 0.1, 1.6)
+
+[sub_resource type="BoxMesh" id="bm_1p9_0p22_0p05"]
+size = Vector3(1.9, 0.22, 0.05)
+
+[sub_resource type="BoxMesh" id="bm_1p19_2p26_0p07"]
+size = Vector3(1.19, 2.26, 0.07)
+
+[sub_resource type="BoxMesh" id="bm_1p5_2p5_0p05"]
+size = Vector3(1.5, 2.5, 0.05)
+
+[sub_resource type="BoxMesh" id="bm_0p07_0p07_0p14"]
+size = Vector3(0.07, 0.07, 0.14)
+
+[sub_resource type="BoxMesh" id="bm_6p4_0p18_3"]
+size = Vector3(6.4, 0.18, 3)
+
+[sub_resource type="BoxMesh" id="bm_2p6_0p14_0p34"]
+size = Vector3(2.6, 0.14, 0.34)
+
+[sub_resource type="BoxMesh" id="bm_0p18_2p9_0p18"]
+size = Vector3(0.18, 2.9, 0.18)
+
+[sub_resource type="BoxMesh" id="bm_6p9_0p18_3p6"]
+size = Vector3(6.9, 0.18, 3.6)
+
+[sub_resource type="BoxMesh" id="bm_6p9_0p28_0p1"]
+size = Vector3(6.9, 0.28, 0.1)
+
+[sub_resource type="BoxMesh" id="bm_0p12_0p1_2p8"]
+size = Vector3(0.12, 0.1, 2.8)
+
+[sub_resource type="BoxMesh" id="bm_0p07_0p9_0p07"]
+size = Vector3(0.07, 0.9, 0.07)
+
+[sub_resource type="BoxMesh" id="bm_1p1_0p22_0p22"]
+size = Vector3(1.1, 0.22, 0.22)
 
 [sub_resource type="BoxShape3D" id="forma_entrada"]
-size = Vector3(7.0, 4.0, 6.5)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_corpo"]
-size = Vector3(16.4, 6.2, 12.4)
+size = Vector3(7, 4, 6)
 
 [node name="casa_jimmy_exterior" type="Node3D"]
 
 [node name="colisao_corpo" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.1, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 0)
 collision_layer = 2
 collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="colisao_corpo"]
-shape = SubResource("BoxShape3D_corpo")
+shape = SubResource("forma_corpo")
 
-[node name="casca" type="CSGCombiner3D" parent="."]
-use_collision = false
+[node name="casca" type="Node3D" parent="."]
 
-[node name="corpo" type="CSGBox3D" parent="casca"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
-size = Vector3(16.4, 3.2, 12.4)
-material = SubResource("mat_parede_ext")
+[node name="alicerce" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.075, 0)
+mesh = SubResource("bm_20p5_1p5_15p5")
+material_override = SubResource("mat_alicerce")
 
-[node name="alicerce" type="CSGBox3D" parent="casca"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.12, 0)
-size = Vector3(16.9, 0.6, 12.9)
-material = SubResource("mat_madeira_ext")
+[node name="faixa_alicerce" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.48, 0)
+mesh = SubResource("bm_20p26_0p1_15p26")
+material_override = SubResource("mat_madeira")
 
-[node name="corte_porta" type="CSGBox3D" parent="casca"]
-operation = 2
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.4, 1.08, -6.2)
-size = Vector3(1.2, 2.16, 0.7)
-material = SubResource("mat_madeira_ext")
+[node name="miolo" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.15, 0)
+mesh = SubResource("bm_19p5_3p4_14p5")
+material_override = SubResource("mat_miolo")
 
-[node name="corte_janela_0" type="CSGBox3D" parent="casca"]
-operation = 2
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.2, 1.75, -6.2)
-size = Vector3(1.3, 1.2, 0.7)
-material = SubResource("mat_madeira_ext")
+[node name="parede_norte_0" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.175, 2.15, -7.4)
+mesh = SubResource("bm_1p65_3p4_0p2")
+material_override = SubResource("mat_tabua")
 
-[node name="corte_janela_1" type="CSGBox3D" parent="casca"]
-operation = 2
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1.75, -6.2)
-size = Vector3(1.3, 1.2, 0.7)
-material = SubResource("mat_madeira_ext")
+[node name="parede_norte_1" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.6, 0.925, -7.4)
+mesh = SubResource("bm_1p5_0p95_0p2")
+material_override = SubResource("mat_tabua")
 
-[node name="corte_janela_2" type="CSGBox3D" parent="casca"]
-operation = 2
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.4, 1.75, -6.2)
-size = Vector3(1.3, 1.2, 0.7)
-material = SubResource("mat_madeira_ext")
+[node name="parede_norte_2" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.6, 3.25, -7.4)
+mesh = SubResource("bm_1p5_1p2_0p2")
+material_override = SubResource("mat_tabua")
 
-[node name="corte_janela_3" type="CSGBox3D" parent="casca"]
-operation = 2
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.2, 1.75, -2.8)
-size = Vector3(0.7, 1.2, 1.3)
-material = SubResource("mat_madeira_ext")
+[node name="parede_norte_3" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 2.15, -7.4)
+mesh = SubResource("bm_1p7_3p4_0p2")
+material_override = SubResource("mat_tabua")
 
-[node name="corte_janela_4" type="CSGBox3D" parent="casca"]
-operation = 2
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.2, 1.75, -3)
-size = Vector3(0.7, 1.2, 1.3)
-material = SubResource("mat_madeira_ext")
+[node name="parede_norte_4" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4, 0.925, -7.4)
+mesh = SubResource("bm_1p5_0p95_0p2")
+material_override = SubResource("mat_tabua")
 
-[node name="corte_janela_5" type="CSGBox3D" parent="casca"]
-operation = 2
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.9, 1.75, 6.2)
-size = Vector3(1.3, 1.2, 0.7)
-material = SubResource("mat_madeira_ext")
+[node name="parede_norte_5" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4, 3.25, -7.4)
+mesh = SubResource("bm_1p5_1p2_0p2")
+material_override = SubResource("mat_tabua")
 
-[node name="corte_janela_6" type="CSGBox3D" parent="casca"]
-operation = 2
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.1, 1.75, 6.2)
-size = Vector3(1.3, 1.2, 0.7)
-material = SubResource("mat_madeira_ext")
+[node name="parede_norte_6" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.95, 2.15, -7.4)
+mesh = SubResource("bm_1p4_3p4_0p2")
+material_override = SubResource("mat_tabua")
 
-[node name="corte_janela_7" type="CSGBox3D" parent="casca"]
-operation = 2
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 1.75, 6.2)
-size = Vector3(1.3, 1.2, 0.7)
-material = SubResource("mat_madeira_ext")
+[node name="parede_norte_7" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6, 0.925, -7.4)
+mesh = SubResource("bm_1p3_0p95_0p2")
+material_override = SubResource("mat_tabua")
 
-[node name="corte_janela_8" type="CSGBox3D" parent="casca"]
-operation = 2
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.7, 1.75, 6.2)
-size = Vector3(1.3, 1.2, 0.7)
-material = SubResource("mat_madeira_ext")
+[node name="parede_norte_8" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6, 3.25, -7.4)
+mesh = SubResource("bm_1p3_1p2_0p2")
+material_override = SubResource("mat_tabua")
 
-[node name="telhado" type="CSGPolygon3D" parent="."]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 8.6, 3.2, 0)
-polygon = PackedVector2Array(-6.9, 0, 6.9, 0, 0, 3)
-depth = 17.2
-material = SubResource("mat_telhado")
+[node name="parede_norte_9" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6375, 2.15, -7.4)
+mesh = SubResource("bm_0p625_3p4_0p2")
+material_override = SubResource("mat_tabua")
 
-[node name="chamine" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 5.7, 1)
-mesh = SubResource("malha_chamine")
-material_override = SubResource("mat_madeira_ext")
+[node name="parede_norte_10" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 3.3, -7.4)
+mesh = SubResource("bm_1p25_1p1_0p2")
+material_override = SubResource("mat_tabua")
 
-[node name="detalhes" type="Node3D" parent="."]
+[node name="parede_norte_11" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2375, 2.15, -7.4)
+mesh = SubResource("bm_0p625_3p4_0p2")
+material_override = SubResource("mat_tabua")
 
-[node name="porta_frente" type="MeshInstance3D" parent="detalhes"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.4, 1.06, -6.22)
-mesh = SubResource("malha_porta_ext")
-material_override = SubResource("mat_madeira_ext")
+[node name="parede_norte_12" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2, 0.925, -7.4)
+mesh = SubResource("bm_1p3_0p95_0p2")
+material_override = SubResource("mat_tabua")
 
-[node name="vidro_0" type="MeshInstance3D" parent="detalhes"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.2, 1.75, -6.2)
-mesh = SubResource("malha_vidro_0")
-material_override = SubResource("mat_vidro_ext")
+[node name="parede_norte_13" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2, 3.25, -7.4)
+mesh = SubResource("bm_1p3_1p2_0p2")
+material_override = SubResource("mat_tabua")
 
-[node name="vidro_1" type="MeshInstance3D" parent="detalhes"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1.75, -6.2)
-mesh = SubResource("malha_vidro_1")
-material_override = SubResource("mat_vidro_ext")
+[node name="parede_norte_14" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.575, 2.15, -7.4)
+mesh = SubResource("bm_1p45_3p4_0p2")
+material_override = SubResource("mat_tabua")
 
-[node name="vidro_2" type="MeshInstance3D" parent="detalhes"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.4, 1.75, -6.2)
-mesh = SubResource("malha_vidro_2")
+[node name="parede_norte_15" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0.925, -7.4)
+mesh = SubResource("bm_1p4_0p95_0p2")
+material_override = SubResource("mat_tabua")
+
+[node name="parede_norte_16" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 3.25, -7.4)
+mesh = SubResource("bm_1p4_1p2_0p2")
+material_override = SubResource("mat_tabua")
+
+[node name="parede_norte_17" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.6, 2.15, -7.4)
+mesh = SubResource("bm_1p8_3p4_0p2")
+material_override = SubResource("mat_tabua")
+
+[node name="parede_norte_18" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.2, 0.925, -7.4)
+mesh = SubResource("bm_1p4_0p95_0p2")
+material_override = SubResource("mat_tabua")
+
+[node name="parede_norte_19" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.2, 3.25, -7.4)
+mesh = SubResource("bm_1p4_1p2_0p2")
+material_override = SubResource("mat_tabua")
+
+[node name="parede_norte_20" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.45, 2.15, -7.4)
+mesh = SubResource("bm_1p1_3p4_0p2")
+material_override = SubResource("mat_tabua")
+
+[node name="parede_sul_0" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.125, 2.15, 7.4)
+mesh = SubResource("bm_1p75_3p4_0p2")
+material_override = SubResource("mat_tabua")
+
+[node name="parede_sul_1" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0.925, 7.4)
+mesh = SubResource("bm_1p5_0p95_0p2")
+material_override = SubResource("mat_tabua")
+
+[node name="parede_sul_2" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 3.25, 7.4)
+mesh = SubResource("bm_1p5_1p2_0p2")
+material_override = SubResource("mat_tabua")
+
+[node name="parede_sul_3" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.1, 2.15, 7.4)
+mesh = SubResource("bm_3p3_3p4_0p2")
+material_override = SubResource("mat_tabua")
+
+[node name="parede_sul_4" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.7, 0.925, 7.4)
+mesh = SubResource("bm_1p5_0p95_0p2")
+material_override = SubResource("mat_tabua")
+
+[node name="parede_sul_5" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.7, 3.25, 7.4)
+mesh = SubResource("bm_1p5_1p2_0p2")
+material_override = SubResource("mat_tabua")
+
+[node name="parede_sul_6" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.45, 2.15, 7.4)
+mesh = SubResource("bm_3_3p4_0p2")
+material_override = SubResource("mat_tabua")
+
+[node name="parede_sul_7" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8, 0.925, 7.4)
+mesh = SubResource("bm_1p5_0p95_0p2")
+material_override = SubResource("mat_tabua")
+
+[node name="parede_sul_8" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8, 3.25, 7.4)
+mesh = SubResource("bm_1p5_1p2_0p2")
+material_override = SubResource("mat_tabua")
+
+[node name="parede_sul_9" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.775, 2.15, 7.4)
+mesh = SubResource("bm_2p45_3p4_0p2")
+material_override = SubResource("mat_tabua")
+
+[node name="parede_sul_10" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.65, 0.925, 7.4)
+mesh = SubResource("bm_1p3_0p95_0p2")
+material_override = SubResource("mat_tabua")
+
+[node name="parede_sul_11" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.65, 3.25, 7.4)
+mesh = SubResource("bm_1p3_1p2_0p2")
+material_override = SubResource("mat_tabua")
+
+[node name="parede_sul_12" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.225, 2.15, 7.4)
+mesh = SubResource("bm_1p85_3p4_0p2")
+material_override = SubResource("mat_tabua")
+
+[node name="parede_sul_13" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.6, 1.175, 7.4)
+mesh = SubResource("bm_0p9_1p45_0p2")
+material_override = SubResource("mat_tabua")
+
+[node name="parede_sul_14" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.6, 3.3, 7.4)
+mesh = SubResource("bm_0p9_1p1_0p2")
+material_override = SubResource("mat_tabua")
+
+[node name="parede_sul_15" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.525, 2.15, 7.4)
+mesh = SubResource("bm_0p95_3p4_0p2")
+material_override = SubResource("mat_tabua")
+
+[node name="parede_oeste_0" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.9, 2.15, -6.075)
+mesh = SubResource("bm_0p2_3p4_2p85")
+material_override = SubResource("mat_tabua")
+
+[node name="parede_oeste_1" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.9, 0.925, -3.9)
+mesh = SubResource("bm_0p2_0p95_1p5")
+material_override = SubResource("mat_tabua")
+
+[node name="parede_oeste_2" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.9, 3.25, -3.9)
+mesh = SubResource("bm_0p2_1p2_1p5")
+material_override = SubResource("mat_tabua")
+
+[node name="parede_oeste_3" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.9, 2.15, 0.65)
+mesh = SubResource("bm_0p2_3p4_7p6")
+material_override = SubResource("mat_tabua")
+
+[node name="parede_oeste_4" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.9, 0.925, 5.1)
+mesh = SubResource("bm_0p2_0p95_1p3")
+material_override = SubResource("mat_tabua")
+
+[node name="parede_oeste_5" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.9, 3.25, 5.1)
+mesh = SubResource("bm_0p2_1p2_1p3")
+material_override = SubResource("mat_tabua")
+
+[node name="parede_oeste_6" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.9, 2.15, 6.625)
+mesh = SubResource("bm_0p2_3p4_1p75")
+material_override = SubResource("mat_tabua")
+
+[node name="parede_leste_0" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.9, 2.15, -6.075)
+mesh = SubResource("bm_0p2_3p4_2p85")
+material_override = SubResource("mat_tabua")
+
+[node name="parede_leste_1" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.9, 0.925, -3.9)
+mesh = SubResource("bm_0p2_0p95_1p5")
+material_override = SubResource("mat_tabua")
+
+[node name="parede_leste_2" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.9, 3.25, -3.9)
+mesh = SubResource("bm_0p2_1p2_1p5")
+material_override = SubResource("mat_tabua")
+
+[node name="parede_leste_3" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.9, 2.15, 2.175)
+mesh = SubResource("bm_0p2_3p4_10p65")
+material_override = SubResource("mat_tabua")
+
+[node name="cunhal_0" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.89, 2.15, -7.39)
+mesh = SubResource("bm_0p26_3p4_0p26")
+material_override = SubResource("mat_madeira")
+
+[node name="cunhal_1" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.89, 2.15, -7.39)
+mesh = SubResource("bm_0p26_3p4_0p26")
+material_override = SubResource("mat_madeira")
+
+[node name="cunhal_2" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.89, 2.15, 7.39)
+mesh = SubResource("bm_0p26_3p4_0p26")
+material_override = SubResource("mat_madeira")
+
+[node name="cunhal_3" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.89, 2.15, 7.39)
+mesh = SubResource("bm_0p26_3p4_0p26")
+material_override = SubResource("mat_madeira")
+
+[node name="telhado" type="Node3D" parent="."]
+
+[node name="empena" type="MeshInstance3D" parent="telhado"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.35, 0)
+mesh = SubResource("prisma_empena")
+material_override = SubResource("mat_tabua")
+
+[node name="agua_oeste" type="MeshInstance3D" parent="telhado"]
+transform = Transform3D(0.957826, -0.287348, 0, 0.287348, 0.957826, 0, 0, 0, 1, -5.29501, 5.37634, 0)
+mesh = SubResource("bm_10p990307_0p22_16p1")
+material_override = SubResource("mat_telha")
+
+[node name="agua_leste" type="MeshInstance3D" parent="telhado"]
+transform = Transform3D(0.957826, 0.287348, 0, -0.287348, 0.957826, 0, 0, 0, 1, 5.29501, 5.37634, 0)
+mesh = SubResource("bm_10p990307_0p22_16p1")
+material_override = SubResource("mat_telha")
+
+[node name="cumeeira" type="MeshInstance3D" parent="telhado"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.004, 0)
+mesh = SubResource("bm_0p55_0p2_16p1")
+material_override = SubResource("mat_telha")
+
+[node name="testeira_norte" type="MeshInstance3D" parent="telhado"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.8, -7.95)
+mesh = SubResource("bm_21p1_0p3_0p08")
+material_override = SubResource("mat_madeira")
+
+[node name="testeira_sul" type="MeshInstance3D" parent="telhado"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.8, 7.95)
+mesh = SubResource("bm_21p1_0p3_0p08")
+material_override = SubResource("mat_madeira")
+
+[node name="chamine" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.6, 3.2, 2)
+mesh = SubResource("bm_1_6p4_1")
+material_override = SubResource("mat_tijolo")
+
+[node name="chamine_capa" type="MeshInstance3D" parent="casca"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.6, 6.48, 2)
+mesh = SubResource("bm_1p26_0p18_1p26")
+material_override = SubResource("mat_alicerce")
+
+[node name="janelas" type="Node3D" parent="."]
+
+[node name="vidro_jan_estar_n1" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.6, 2.025, -7.4)
+mesh = SubResource("bm_1p5_1p25_0p04")
+material_override = SubResource("mat_vidro_aceso")
+
+[node name="montante_jan_estar_n1" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.6, 2.025, -7.44)
+mesh = SubResource("bm_0p07_1p25_0p05")
+material_override = SubResource("mat_madeira")
+
+[node name="verga_jan_estar_n1" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.6, 2.73, -7.46)
+mesh = SubResource("bm_1p8_0p16_0p12")
+material_override = SubResource("mat_madeira")
+
+[node name="peitoril_jan_estar_n1" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.6, 1.34, -7.47)
+mesh = SubResource("bm_1p8_0p1_0p16")
+material_override = SubResource("mat_madeira")
+
+[node name="ombreira_jan_estar_n1_0" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.43, 2.025, -7.45)
+mesh = SubResource("bm_0p14_1p35_0p1")
+material_override = SubResource("mat_madeira")
+
+[node name="ombreira_jan_estar_n1_1" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.77, 2.025, -7.45)
+mesh = SubResource("bm_0p14_1p35_0p1")
+material_override = SubResource("mat_madeira")
+
+[node name="vidro_jan_estar_n2" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4, 2.025, -7.4)
+mesh = SubResource("bm_1p5_1p25_0p04")
+material_override = SubResource("mat_vidro_aceso")
+
+[node name="montante_jan_estar_n2" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4, 2.025, -7.44)
+mesh = SubResource("bm_0p07_1p25_0p05")
+material_override = SubResource("mat_madeira")
+
+[node name="verga_jan_estar_n2" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4, 2.73, -7.46)
+mesh = SubResource("bm_1p8_0p16_0p12")
+material_override = SubResource("mat_madeira")
+
+[node name="peitoril_jan_estar_n2" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4, 1.34, -7.47)
+mesh = SubResource("bm_1p8_0p1_0p16")
+material_override = SubResource("mat_madeira")
+
+[node name="ombreira_jan_estar_n2_0" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.23, 2.025, -7.45)
+mesh = SubResource("bm_0p14_1p35_0p1")
+material_override = SubResource("mat_madeira")
+
+[node name="ombreira_jan_estar_n2_1" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.57, 2.025, -7.45)
+mesh = SubResource("bm_0p14_1p35_0p1")
+material_override = SubResource("mat_madeira")
+
+[node name="vidro_jan_sala_n1" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6, 2.025, -7.4)
+mesh = SubResource("bm_1p3_1p25_0p04")
+material_override = SubResource("mat_vidro_aceso")
+
+[node name="montante_jan_sala_n1" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6, 2.025, -7.44)
+mesh = SubResource("bm_0p07_1p25_0p05")
+material_override = SubResource("mat_madeira")
+
+[node name="verga_jan_sala_n1" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6, 2.73, -7.46)
+mesh = SubResource("bm_1p6_0p16_0p12")
+material_override = SubResource("mat_madeira")
+
+[node name="peitoril_jan_sala_n1" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6, 1.34, -7.47)
+mesh = SubResource("bm_1p6_0p1_0p16")
+material_override = SubResource("mat_madeira")
+
+[node name="ombreira_jan_sala_n1_0" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.33, 2.025, -7.45)
+mesh = SubResource("bm_0p14_1p35_0p1")
+material_override = SubResource("mat_madeira")
+
+[node name="ombreira_jan_sala_n1_1" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.87, 2.025, -7.45)
+mesh = SubResource("bm_0p14_1p35_0p1")
+material_override = SubResource("mat_madeira")
+
+[node name="vidro_jan_sala_n2" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2, 2.025, -7.4)
+mesh = SubResource("bm_1p3_1p25_0p04")
 material_override = SubResource("mat_vidro_apagado")
 
-[node name="vidro_3" type="MeshInstance3D" parent="detalhes"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.2, 1.75, -2.8)
-mesh = SubResource("malha_vidro_3")
+[node name="montante_jan_sala_n2" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2, 2.025, -7.44)
+mesh = SubResource("bm_0p07_1p25_0p05")
+material_override = SubResource("mat_madeira")
+
+[node name="verga_jan_sala_n2" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2, 2.73, -7.46)
+mesh = SubResource("bm_1p6_0p16_0p12")
+material_override = SubResource("mat_madeira")
+
+[node name="peitoril_jan_sala_n2" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2, 1.34, -7.47)
+mesh = SubResource("bm_1p6_0p1_0p16")
+material_override = SubResource("mat_madeira")
+
+[node name="ombreira_jan_sala_n2_0" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.47, 2.025, -7.45)
+mesh = SubResource("bm_0p14_1p35_0p1")
+material_override = SubResource("mat_madeira")
+
+[node name="ombreira_jan_sala_n2_1" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.93, 2.025, -7.45)
+mesh = SubResource("bm_0p14_1p35_0p1")
+material_override = SubResource("mat_madeira")
+
+[node name="vidro_jan_coz_n1" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 2.025, -7.4)
+mesh = SubResource("bm_1p4_1p25_0p04")
+material_override = SubResource("mat_vidro_aceso")
+
+[node name="montante_jan_coz_n1" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 2.025, -7.44)
+mesh = SubResource("bm_0p07_1p25_0p05")
+material_override = SubResource("mat_madeira")
+
+[node name="verga_jan_coz_n1" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 2.73, -7.46)
+mesh = SubResource("bm_1p7_0p16_0p12")
+material_override = SubResource("mat_madeira")
+
+[node name="peitoril_jan_coz_n1" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 1.34, -7.47)
+mesh = SubResource("bm_1p7_0p1_0p16")
+material_override = SubResource("mat_madeira")
+
+[node name="ombreira_jan_coz_n1_0" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.22, 2.025, -7.45)
+mesh = SubResource("bm_0p14_1p35_0p1")
+material_override = SubResource("mat_madeira")
+
+[node name="ombreira_jan_coz_n1_1" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.78, 2.025, -7.45)
+mesh = SubResource("bm_0p14_1p35_0p1")
+material_override = SubResource("mat_madeira")
+
+[node name="vidro_jan_coz_n2" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.2, 2.025, -7.4)
+mesh = SubResource("bm_1p4_1p25_0p04")
+material_override = SubResource("mat_vidro_aceso")
+
+[node name="montante_jan_coz_n2" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.2, 2.025, -7.44)
+mesh = SubResource("bm_0p07_1p25_0p05")
+material_override = SubResource("mat_madeira")
+
+[node name="verga_jan_coz_n2" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.2, 2.73, -7.46)
+mesh = SubResource("bm_1p7_0p16_0p12")
+material_override = SubResource("mat_madeira")
+
+[node name="peitoril_jan_coz_n2" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.2, 1.34, -7.47)
+mesh = SubResource("bm_1p7_0p1_0p16")
+material_override = SubResource("mat_madeira")
+
+[node name="ombreira_jan_coz_n2_0" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.42, 2.025, -7.45)
+mesh = SubResource("bm_0p14_1p35_0p1")
+material_override = SubResource("mat_madeira")
+
+[node name="ombreira_jan_coz_n2_1" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.98, 2.025, -7.45)
+mesh = SubResource("bm_0p14_1p35_0p1")
+material_override = SubResource("mat_madeira")
+
+[node name="vidro_jan_q1" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 2.025, 7.4)
+mesh = SubResource("bm_1p5_1p25_0p04")
+material_override = SubResource("mat_vidro_aceso")
+
+[node name="montante_jan_q1" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 2.025, 7.44)
+mesh = SubResource("bm_0p07_1p25_0p05")
+material_override = SubResource("mat_madeira")
+
+[node name="verga_jan_q1" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 2.73, 7.46)
+mesh = SubResource("bm_1p8_0p16_0p12")
+material_override = SubResource("mat_madeira")
+
+[node name="peitoril_jan_q1" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 1.34, 7.47)
+mesh = SubResource("bm_1p8_0p1_0p16")
+material_override = SubResource("mat_madeira")
+
+[node name="ombreira_jan_q1_0" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.33, 2.025, 7.45)
+mesh = SubResource("bm_0p14_1p35_0p1")
+material_override = SubResource("mat_madeira")
+
+[node name="ombreira_jan_q1_1" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.67, 2.025, 7.45)
+mesh = SubResource("bm_0p14_1p35_0p1")
+material_override = SubResource("mat_madeira")
+
+[node name="vidro_jan_q2" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.7, 2.025, 7.4)
+mesh = SubResource("bm_1p5_1p25_0p04")
+material_override = SubResource("mat_vidro_aceso")
+
+[node name="montante_jan_q2" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.7, 2.025, 7.44)
+mesh = SubResource("bm_0p07_1p25_0p05")
+material_override = SubResource("mat_madeira")
+
+[node name="verga_jan_q2" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.7, 2.73, 7.46)
+mesh = SubResource("bm_1p8_0p16_0p12")
+material_override = SubResource("mat_madeira")
+
+[node name="peitoril_jan_q2" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.7, 1.34, 7.47)
+mesh = SubResource("bm_1p8_0p1_0p16")
+material_override = SubResource("mat_madeira")
+
+[node name="ombreira_jan_q2_0" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.53, 2.025, 7.45)
+mesh = SubResource("bm_0p14_1p35_0p1")
+material_override = SubResource("mat_madeira")
+
+[node name="ombreira_jan_q2_1" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.87, 2.025, 7.45)
+mesh = SubResource("bm_0p14_1p35_0p1")
+material_override = SubResource("mat_madeira")
+
+[node name="vidro_jan_q3" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8, 2.025, 7.4)
+mesh = SubResource("bm_1p5_1p25_0p04")
 material_override = SubResource("mat_vidro_apagado")
 
-[node name="vidro_4" type="MeshInstance3D" parent="detalhes"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.2, 1.75, -3)
-mesh = SubResource("malha_vidro_4")
-material_override = SubResource("mat_vidro_ext")
+[node name="montante_jan_q3" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8, 2.025, 7.44)
+mesh = SubResource("bm_0p07_1p25_0p05")
+material_override = SubResource("mat_madeira")
 
-[node name="vidro_5" type="MeshInstance3D" parent="detalhes"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.9, 1.75, 6.2)
-mesh = SubResource("malha_vidro_5")
+[node name="verga_jan_q3" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8, 2.73, 7.46)
+mesh = SubResource("bm_1p8_0p16_0p12")
+material_override = SubResource("mat_madeira")
+
+[node name="peitoril_jan_q3" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8, 1.34, 7.47)
+mesh = SubResource("bm_1p8_0p1_0p16")
+material_override = SubResource("mat_madeira")
+
+[node name="ombreira_jan_q3_0" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.97, 2.025, 7.45)
+mesh = SubResource("bm_0p14_1p35_0p1")
+material_override = SubResource("mat_madeira")
+
+[node name="ombreira_jan_q3_1" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.63, 2.025, 7.45)
+mesh = SubResource("bm_0p14_1p35_0p1")
+material_override = SubResource("mat_madeira")
+
+[node name="vidro_jan_q4" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.65, 2.025, 7.4)
+mesh = SubResource("bm_1p3_1p25_0p04")
 material_override = SubResource("mat_vidro_apagado")
 
-[node name="vidro_6" type="MeshInstance3D" parent="detalhes"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.1, 1.75, 6.2)
-mesh = SubResource("malha_vidro_6")
-material_override = SubResource("mat_vidro_ext")
+[node name="montante_jan_q4" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.65, 2.025, 7.44)
+mesh = SubResource("bm_0p07_1p25_0p05")
+material_override = SubResource("mat_madeira")
 
-[node name="vidro_7" type="MeshInstance3D" parent="detalhes"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 1.75, 6.2)
-mesh = SubResource("malha_vidro_7")
-material_override = SubResource("mat_vidro_apagado")
+[node name="verga_jan_q4" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.65, 2.73, 7.46)
+mesh = SubResource("bm_1p6_0p16_0p12")
+material_override = SubResource("mat_madeira")
 
-[node name="vidro_8" type="MeshInstance3D" parent="detalhes"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.7, 1.75, 6.2)
-mesh = SubResource("malha_vidro_8")
-material_override = SubResource("mat_vidro_apagado")
+[node name="peitoril_jan_q4" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.65, 1.34, 7.47)
+mesh = SubResource("bm_1p6_0p1_0p16")
+material_override = SubResource("mat_madeira")
 
-[node name="alpendre" type="MeshInstance3D" parent="detalhes"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.4, 0.12, -7.2)
-mesh = SubResource("malha_deck")
-material_override = SubResource("mat_madeira_ext")
+[node name="ombreira_jan_q4_0" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.92, 2.025, 7.45)
+mesh = SubResource("bm_0p14_1p35_0p1")
+material_override = SubResource("mat_madeira")
 
-[node name="degrau" type="MeshInstance3D" parent="detalhes"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.4, 0.07, -8.35)
-mesh = SubResource("malha_degrau")
-material_override = SubResource("mat_madeira_ext")
+[node name="ombreira_jan_q4_1" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.38, 2.025, 7.45)
+mesh = SubResource("bm_0p14_1p35_0p1")
+material_override = SubResource("mat_madeira")
 
-[node name="pilar_0" type="MeshInstance3D" parent="detalhes"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 1.34, -8.05)
-mesh = SubResource("malha_pilar")
-material_override = SubResource("mat_madeira_ext")
+[node name="vidro_jan_banho" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.6, 2.325, 7.4)
+mesh = SubResource("bm_0p9_0p85_0p04")
+material_override = SubResource("mat_vidro_aceso")
 
-[node name="pilar_1" type="MeshInstance3D" parent="detalhes"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.3, 1.34, -8.05)
-mesh = SubResource("malha_pilar")
-material_override = SubResource("mat_madeira_ext")
+[node name="montante_jan_banho" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.6, 2.325, 7.44)
+mesh = SubResource("bm_0p07_0p85_0p05")
+material_override = SubResource("mat_madeira")
 
-[node name="teto_alpendre" type="MeshInstance3D" parent="detalhes"]
-transform = Transform3D(1, 0, 0, 0, 0.994522, 0.104528, 0, -0.104528, 0.994522, 0.4, 2.68, -7.3)
-mesh = SubResource("malha_teto_alpendre")
-material_override = SubResource("mat_telhado")
+[node name="verga_jan_banho" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.6, 2.83, 7.46)
+mesh = SubResource("bm_1p2_0p16_0p12")
+material_override = SubResource("mat_madeira")
 
-[node name="luz_varanda" type="OmniLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.4, 2.35, -6.7)
+[node name="peitoril_jan_banho" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.6, 1.84, 7.47)
+mesh = SubResource("bm_1p2_0p1_0p16")
+material_override = SubResource("mat_madeira")
+
+[node name="ombreira_jan_banho_0" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.07, 2.325, 7.45)
+mesh = SubResource("bm_0p14_0p95_0p1")
+material_override = SubResource("mat_madeira")
+
+[node name="ombreira_jan_banho_1" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.13, 2.325, 7.45)
+mesh = SubResource("bm_0p14_0p95_0p1")
+material_override = SubResource("mat_madeira")
+
+[node name="vidro_jan_estar_o" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.9, 2.025, -3.9)
+mesh = SubResource("bm_0p04_1p25_1p5")
+material_override = SubResource("mat_vidro_aceso")
+
+[node name="montante_jan_estar_o" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.94, 2.025, -3.9)
+mesh = SubResource("bm_0p05_1p25_0p07")
+material_override = SubResource("mat_madeira")
+
+[node name="verga_jan_estar_o" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.96, 2.73, -3.9)
+mesh = SubResource("bm_0p12_0p16_1p8")
+material_override = SubResource("mat_madeira")
+
+[node name="peitoril_jan_estar_o" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.97, 1.34, -3.9)
+mesh = SubResource("bm_0p16_0p1_1p8")
+material_override = SubResource("mat_madeira")
+
+[node name="ombreira_jan_estar_o_0" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.95, 2.025, -4.73)
+mesh = SubResource("bm_0p1_1p35_0p14")
+material_override = SubResource("mat_madeira")
+
+[node name="ombreira_jan_estar_o_1" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.95, 2.025, -3.07)
+mesh = SubResource("bm_0p1_1p35_0p14")
+material_override = SubResource("mat_madeira")
+
+[node name="vidro_jan_q1_o" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.9, 2.025, 5.1)
+mesh = SubResource("bm_0p04_1p25_1p3")
+material_override = SubResource("mat_vidro_aceso")
+
+[node name="montante_jan_q1_o" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.94, 2.025, 5.1)
+mesh = SubResource("bm_0p05_1p25_0p07")
+material_override = SubResource("mat_madeira")
+
+[node name="verga_jan_q1_o" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.96, 2.73, 5.1)
+mesh = SubResource("bm_0p12_0p16_1p6")
+material_override = SubResource("mat_madeira")
+
+[node name="peitoril_jan_q1_o" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.97, 1.34, 5.1)
+mesh = SubResource("bm_0p16_0p1_1p6")
+material_override = SubResource("mat_madeira")
+
+[node name="ombreira_jan_q1_o_0" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.95, 2.025, 4.37)
+mesh = SubResource("bm_0p1_1p35_0p14")
+material_override = SubResource("mat_madeira")
+
+[node name="ombreira_jan_q1_o_1" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.95, 2.025, 5.83)
+mesh = SubResource("bm_0p1_1p35_0p14")
+material_override = SubResource("mat_madeira")
+
+[node name="vidro_jan_coz_l" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.9, 2.025, -3.9)
+mesh = SubResource("bm_0p04_1p25_1p5")
+material_override = SubResource("mat_vidro_aceso")
+
+[node name="montante_jan_coz_l" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.94, 2.025, -3.9)
+mesh = SubResource("bm_0p05_1p25_0p07")
+material_override = SubResource("mat_madeira")
+
+[node name="verga_jan_coz_l" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.96, 2.73, -3.9)
+mesh = SubResource("bm_0p12_0p16_1p8")
+material_override = SubResource("mat_madeira")
+
+[node name="peitoril_jan_coz_l" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.97, 1.34, -3.9)
+mesh = SubResource("bm_0p16_0p1_1p8")
+material_override = SubResource("mat_madeira")
+
+[node name="ombreira_jan_coz_l_0" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.95, 2.025, -4.73)
+mesh = SubResource("bm_0p1_1p35_0p14")
+material_override = SubResource("mat_madeira")
+
+[node name="ombreira_jan_coz_l_1" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.95, 2.025, -3.07)
+mesh = SubResource("bm_0p1_1p35_0p14")
+material_override = SubResource("mat_madeira")
+
+[node name="tabua_q3_0" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8, 1.7, 7.46)
+mesh = SubResource("bm_1p9_0p22_0p05")
+material_override = SubResource("mat_madeira")
+
+[node name="tabua_q3_1" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8, 2.25, 7.46)
+mesh = SubResource("bm_1p9_0p22_0p05")
+material_override = SubResource("mat_madeira")
+
+[node name="tabua_q3_2" type="MeshInstance3D" parent="janelas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8, 2.8, 7.46)
+mesh = SubResource("bm_1p9_0p22_0p05")
+material_override = SubResource("mat_madeira")
+
+[node name="portao" type="Node3D" parent="."]
+
+[node name="folha_entrada" type="MeshInstance3D" parent="portao"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 1.58, -7.46)
+mesh = SubResource("bm_1p19_2p26_0p07")
+material_override = SubResource("mat_madeira")
+
+[node name="batente_entrada" type="MeshInstance3D" parent="portao"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 1.65, -7.48)
+mesh = SubResource("bm_1p5_2p5_0p05")
+material_override = SubResource("mat_madeira")
+
+[node name="macaneta_entrada" type="MeshInstance3D" parent="portao"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.78, 1.5, -7.52)
+mesh = SubResource("bm_0p07_0p07_0p14")
+material_override = SubResource("mat_madeira")
+
+[node name="alpendre" type="Node3D" parent="."]
+
+[node name="deck" type="MeshInstance3D" parent="alpendre"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 0.36, -9)
+mesh = SubResource("bm_6p4_0p18_3")
+material_override = SubResource("mat_deck")
+
+[node name="degrau_0" type="MeshInstance3D" parent="alpendre"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 0.3, -10.72)
+mesh = SubResource("bm_2p6_0p14_0p34")
+material_override = SubResource("mat_deck")
+
+[node name="degrau_1" type="MeshInstance3D" parent="alpendre"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 0.15, -11.02)
+mesh = SubResource("bm_2p6_0p14_0p34")
+material_override = SubResource("mat_deck")
+
+[node name="degrau_2" type="MeshInstance3D" parent="alpendre"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 0, -11.32)
+mesh = SubResource("bm_2p6_0p14_0p34")
+material_override = SubResource("mat_deck")
+
+[node name="pilar_0" type="MeshInstance3D" parent="alpendre"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6, 1.9, -10.34)
+mesh = SubResource("bm_0p18_2p9_0p18")
+material_override = SubResource("mat_madeira")
+
+[node name="pilar_1" type="MeshInstance3D" parent="alpendre"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.65, 1.9, -10.34)
+mesh = SubResource("bm_0p18_2p9_0p18")
+material_override = SubResource("mat_madeira")
+
+[node name="pilar_2" type="MeshInstance3D" parent="alpendre"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.85, 1.9, -10.34)
+mesh = SubResource("bm_0p18_2p9_0p18")
+material_override = SubResource("mat_madeira")
+
+[node name="pilar_3" type="MeshInstance3D" parent="alpendre"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2, 1.9, -10.34)
+mesh = SubResource("bm_0p18_2p9_0p18")
+material_override = SubResource("mat_madeira")
+
+[node name="teto_alpendre" type="MeshInstance3D" parent="alpendre"]
+transform = Transform3D(1, 0, 0, 0, 0.993956, 0.109778, 0, -0.109778, 0.993956, 0.3, 3.45, -9.1)
+mesh = SubResource("bm_6p9_0p18_3p6")
+material_override = SubResource("mat_telha")
+
+[node name="frente_alpendre" type="MeshInstance3D" parent="alpendre"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 3.27, -10.4)
+mesh = SubResource("bm_6p9_0p28_0p1")
+material_override = SubResource("mat_madeira")
+
+[node name="corrimao_oeste" type="MeshInstance3D" parent="alpendre"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.9, 1.4, -9)
+mesh = SubResource("bm_0p12_0p1_2p8")
+material_override = SubResource("mat_madeira")
+
+[node name="balaustre_oeste_0" type="MeshInstance3D" parent="alpendre"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.9, 0.95, -10.15)
+mesh = SubResource("bm_0p07_0p9_0p07")
+material_override = SubResource("mat_madeira")
+
+[node name="balaustre_oeste_1" type="MeshInstance3D" parent="alpendre"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.9, 0.95, -9.6)
+mesh = SubResource("bm_0p07_0p9_0p07")
+material_override = SubResource("mat_madeira")
+
+[node name="balaustre_oeste_2" type="MeshInstance3D" parent="alpendre"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.9, 0.95, -9.05)
+mesh = SubResource("bm_0p07_0p9_0p07")
+material_override = SubResource("mat_madeira")
+
+[node name="balaustre_oeste_3" type="MeshInstance3D" parent="alpendre"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.9, 0.95, -8.5)
+mesh = SubResource("bm_0p07_0p9_0p07")
+material_override = SubResource("mat_madeira")
+
+[node name="balaustre_oeste_4" type="MeshInstance3D" parent="alpendre"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.9, 0.95, -7.95)
+mesh = SubResource("bm_0p07_0p9_0p07")
+material_override = SubResource("mat_madeira")
+
+[node name="corrimao_leste" type="MeshInstance3D" parent="alpendre"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 1.4, -9)
+mesh = SubResource("bm_0p12_0p1_2p8")
+material_override = SubResource("mat_madeira")
+
+[node name="balaustre_leste_0" type="MeshInstance3D" parent="alpendre"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0.95, -10.15)
+mesh = SubResource("bm_0p07_0p9_0p07")
+material_override = SubResource("mat_madeira")
+
+[node name="balaustre_leste_1" type="MeshInstance3D" parent="alpendre"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0.95, -9.6)
+mesh = SubResource("bm_0p07_0p9_0p07")
+material_override = SubResource("mat_madeira")
+
+[node name="balaustre_leste_2" type="MeshInstance3D" parent="alpendre"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0.95, -9.05)
+mesh = SubResource("bm_0p07_0p9_0p07")
+material_override = SubResource("mat_madeira")
+
+[node name="balaustre_leste_3" type="MeshInstance3D" parent="alpendre"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0.95, -8.5)
+mesh = SubResource("bm_0p07_0p9_0p07")
+material_override = SubResource("mat_madeira")
+
+[node name="balaustre_leste_4" type="MeshInstance3D" parent="alpendre"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0.95, -7.95)
+mesh = SubResource("bm_0p07_0p9_0p07")
+material_override = SubResource("mat_madeira")
+
+[node name="luzes" type="Node3D" parent="."]
+
+[node name="luz_varanda" type="OmniLight3D" parent="luzes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 2.95, -8.5)
 light_color = Color(1, 0.72, 0.42, 1)
-light_energy = 3.2
-light_volumetric_fog_energy = 3.0
+light_energy = 4
 light_specular = 0.4
 shadow_enabled = true
 shadow_bias = 0.04
-omni_range = 11.0
-omni_attenuation = 1.2
+omni_range = 9
+omni_attenuation = 1.3
+
+[node name="luz_lateral" type="SpotLight3D" parent="luzes"]
+transform = Transform3D(-0.316228, 0.736885, -0.597496, 0, 0.629816, 0.776744, 0.948683, 0.245628, -0.199165, 9.5, 3.45, 3)
+light_color = Color(0.85, 0.88, 1, 1)
+light_energy = 3
+light_specular = 0.3
+spot_range = 9
+spot_angle = 46
+spot_angle_attenuation = 1.1
+metadata/piscar = "nervoso"
+
+[node name="objetos" type="Node3D" parent="."]
+
+[node name="cadeira_balanco" parent="objetos" instance=ExtResource("ph_Rockingchair_01")]
+transform = Transform3D(-0.939373, 0, 0.342898, 0, 1, 0, -0.342898, 0, -0.939373, -1.7, 0.35, -8.8)
+
+[node name="lanterna_alpendre" parent="objetos" instance=ExtResource("ph_wooden_lantern_01")]
+transform = Transform3D(0.921061, 0, -0.389418, 0, 1, 0, 0.389418, 0, 0.921061, 2.5, 0.45, -8.1)
+
+[node name="floreira_1" parent="objetos" instance=ExtResource("ph_planter_box_02")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.6, 0.45, -10.15)
+
+[node name="luz_seguranca" parent="objetos" instance=ExtResource("ph_security_light")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 9.88, 3.3, 1.5)
+
+[node name="lanterna_porta" parent="objetos" instance=ExtResource("ph_wooden_lantern_01")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 1.25, 2.5, -7.78)
+
+[node name="caixa_alpendre" parent="objetos" instance=ExtResource("ph_cardboard_box_01")]
+transform = Transform3D(0.825336, 0, 0.564642, 0, 1, 0, -0.564642, 0, 0.825336, -2.7, 0.45, -9.9)
+
+[node name="fogueira" parent="objetos" instance=ExtResource("ph_stone_fire_pit")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0.05, -11.5)
+
+[node name="toco" parent="objetos" instance=ExtResource("ph_tree_stump_01")]
+transform = Transform3D(0.696707, 0, 0.717356, 0, 1, 0, -0.717356, 0, 0.696707, 7, 0.1, -10.2)
+
+[node name="tronco_caido" parent="objetos" instance=ExtResource("ph_dead_tree_trunk_02")]
+transform = Transform3D(0.362358, 0, 0.932039, 0, 1, 0, -0.932039, 0, 0.362358, -11.5, 0.35, 4)
+
+[node name="barril" parent="objetos" instance=ExtResource("ph_Barrel_02")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.6, 0, 5.4)
+
+[node name="floreira_2" parent="objetos" instance=ExtResource("ph_planter_box_02")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -10.6, 0, -2)
+
+[node name="mato_1" parent="objetos" instance=ExtResource("ph_shrub_02")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0.15, -6)
+
+[node name="mato_2" parent="objetos" instance=ExtResource("ph_shrub_02")]
+transform = Transform3D(0.453596, 0, 0.891207, 0, 1, 0, -0.891207, 0, 0.453596, 12.5, 0.15, 1)
+
+[node name="mato_3" parent="objetos" instance=ExtResource("ph_shrub_03")]
+transform = Transform3D(0.921061, 0, 0.389418, 0, 1, 0, -0.389418, 0, 0.921061, -9, 0, -9.5)
+
+[node name="mato_4" parent="objetos" instance=ExtResource("ph_shrub_03")]
+transform = Transform3D(0.825336, 0, -0.564642, 0, 1, 0, 0.564642, 0, 0.825336, 6, 0, 9.4)
+
+[node name="mato_5" parent="objetos" instance=ExtResource("ph_shrub_03")]
+transform = Transform3D(0.070737, 0, 0.997495, 0, 1, 0, -0.997495, 0, 0.070737, -3.5, 0, 9.6)
+
+[node name="lenha_0" type="MeshInstance3D" parent="objetos"]
+transform = Transform3D(0, 0, 1, -0.039989, 0.9992, 0, -0.9992, -0.039989, 0, 9.3, 0.12, 2)
+mesh = SubResource("bm_1p1_0p22_0p22")
+material_override = SubResource("mat_madeira")
+
+[node name="lenha_1" type="MeshInstance3D" parent="objetos"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 9.3, 0.12, 2.26)
+mesh = SubResource("bm_1p1_0p22_0p22")
+material_override = SubResource("mat_madeira")
+
+[node name="lenha_2" type="MeshInstance3D" parent="objetos"]
+transform = Transform3D(0, 0, 1, 0.039989, 0.9992, 0, -0.9992, 0.039989, 0, 9.3, 0.12, 2.52)
+mesh = SubResource("bm_1p1_0p22_0p22")
+material_override = SubResource("mat_madeira")
+
+[node name="lenha_3" type="MeshInstance3D" parent="objetos"]
+transform = Transform3D(0, 0, 1, -0.039989, 0.9992, 0, -0.9992, -0.039989, 0, 9.3, 0.12, 2.78)
+mesh = SubResource("bm_1p1_0p22_0p22")
+material_override = SubResource("mat_madeira")
+
+[node name="lenha_4" type="MeshInstance3D" parent="objetos"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 9.3, 0.36, 2)
+mesh = SubResource("bm_1p1_0p22_0p22")
+material_override = SubResource("mat_madeira")
+
+[node name="lenha_5" type="MeshInstance3D" parent="objetos"]
+transform = Transform3D(0, 0, 1, 0.039989, 0.9992, 0, -0.9992, 0.039989, 0, 9.3, 0.36, 2.26)
+mesh = SubResource("bm_1p1_0p22_0p22")
+material_override = SubResource("mat_madeira")
+
+[node name="lenha_6" type="MeshInstance3D" parent="objetos"]
+transform = Transform3D(0, 0, 1, -0.039989, 0.9992, 0, -0.9992, -0.039989, 0, 9.3, 0.36, 2.52)
+mesh = SubResource("bm_1p1_0p22_0p22")
+material_override = SubResource("mat_madeira")
 
 [node name="area_entrada" type="Area3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.4, 1.4, -8.2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 1.4, -10.9)
 collision_layer = 0
 collision_mask = 1
 monitorable = false
@@ -281,4 +1406,5 @@ monitorable = false
 shape = SubResource("forma_entrada")
 
 [node name="ponto_de_saida" type="Marker3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.4, 0.3, -8.8)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 0.3, -11.7)
+
