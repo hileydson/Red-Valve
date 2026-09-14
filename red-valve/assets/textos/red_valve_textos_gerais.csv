@@ -13,6 +13,12 @@ PROMPT_ENTER_WORKSHOP,Enter Jimmy's workshop?,Entrar na oficina do Jimmy?
 PROMPT_ENTER_JIMMY_HOUSE,Enter Jimmy's house?,Entrar na casa do Jimmy?
 PROMPT_ENTER_MAYCOW_HOUSE,Enter Maycow's house?,Entrar na casa do Maycow?
 PROMPT_ENTER_CHURCH,Enter the church?,Entrar na igreja?
+PROMPT_TAKE_FLASHLIGHT,Take the flashlight?,Pegar a lanterna?
+ITEM_LANTERNA_NAME,Flashlight,Lanterna
+ITEM_LANTERNA_DESC,"A heavy hand lamp, found still lit on the church floor. The beam holds up.","Lanterna de mão pesada, achada ainda acesa no chão da igreja. O facho aguenta firme."
+PICKUP_FLASHLIGHT_L3,"You picked up the flashlight, press L3 to turn it on","Você pegou a lanterna, aperte L3 para ativá-la"
+PICKUP_FLASHLIGHT_KEY,"You picked up the flashlight, press Y to turn it on","Você pegou a lanterna, aperte Y para ativá-la"
+PICKUP_CONTINUE,Press any button to continue,Aperte qualquer botão para continuar
 PROMPT_LEAVE_CHURCH,Leave the church?,Sair da igreja?
 GAME_OVER_TEXT,GAME OVER,GAME OVER
 MENU_TAB_INVENTORY,INVENTORY,INVENTÁRIO

@@ -136,9 +136,23 @@ ESC_X0, ESC_X1 = -PAR_INT, -PAR_INT + 2.5   # escada reta encostada na parede no
 ESC_Z0, ESC_Z1 = 2.2, 9.2                   # lance 1
 ESC_PAT_Z = 11.2                            # fim do patamar
 ESC_Z2 = 17.6                               # fim do lance 2
-CARACOL = (10.4, 28.6)                      # poste da escada em caracol (x, z)
-CARACOL_R = 2.05
+# Encostada na parede e mais estreita do que a primeira versao: com raio 2,05
+# e centro em x=10,4 ela deixava 65 cm de piso entre o poco e o parapeito da
+# galeria, o que e' menos que a largura do jogador — andar pela galeria sul
+# significava cair no poco.
+CARACOL = (10.9, 28.6)                      # poste da escada em caracol (x, z)
+CARACOL_R = 1.7
+# Tres voltas exatas: com 2,5 voltas a boca de baixo e a de cima ficavam em
+# lados opostos, e a de cima saia encostada na parede. Multiplo de 360 faz
+# entrada e saida apontarem ambas pra dentro da nave (-X).
+CARACOL_GIRO = 1080.0
+POCO_X = CARACOL[0] - CARACOL_R - 0.25     # borda interna do poco (piso ate' aqui)
+# ...e a laje encosta na ponta do degrau, pra nao sobrar fresta entre as duas.
+POCO_Z0 = CARACOL[1] - CARACOL_R - 0.45
+POCO_Z1 = CARACOL[1] + CARACOL_R + 0.45
+POCO_SAIDA = 1.15                          # meia-largura da boca, no lado -X
 PASSARELA_Z = 22.0    # passarela de tabuas no meio da nave
+PASSARELA_BOCA = 1.6  # meia-largura do vao aberto no parapeito, dos dois lados
 JUBE_Z0, JUBE_Z1 = 31.6, 34.6   # jube' de pedra sobre o arco triunfal
 
 BAIA_ROMPIDA = 2      # indice da baia cuja abobada da nave caiu (12-19)
@@ -225,14 +239,27 @@ class Igreja:
         # colisao do chao: uma laje lisa so'
         self.colide([caixa((-PAR_INT, -0.5, Z_OESTE_EXT), (PAR_INT, 0.0, Z_CRUZ + 1.2))])
 
-        # coro elevado + tres degraus na largura da nave central
+        # Coro elevado + os tres degraus que sobem ate' o altar.
+        #
+        # Os degraus sao SO' VISUAIS. Quem carrega o jogador e' uma rampa lisa
+        # invisivel por cima deles: `CharacterBody3D` nao tem step-up, e degrau
+        # de 30 cm em quina viva simplesmente barra o corpo — era por isso que
+        # nao dava pra subir no altar.
         self.solido("pedra_esc", [caixa((-NAVE_X, -0.5, Z_CRUZ + 1.2),
                                         (NAVE_X, CORO_Y, Z_CORO + 0.4))])
+        z_deg0 = Z_CRUZ + 0.2
         for k in range(3):
             y = CORO_Y * (k + 1) / 3.0
-            z0 = Z_CRUZ + 0.2 + 0.34 * k
-            self.solido("pedra_esc", [caixa((-NAVE_X - 1.2, -0.3, z0),
-                                            (NAVE_X + 1.2, y, z0 + 0.34))])
+            z0 = z_deg0 + 0.34 * k
+            self.por("pedra_esc", [caixa((-NAVE_X - 1.2, -0.3, z0),
+                                         (NAVE_X + 1.2, y, z0 + 0.34))],
+                     z_ref=z0)
+        z_deg1 = z_deg0 + 0.34 * 3
+        self.colide([hexaedro([
+            (-NAVE_X - 1.2, -0.3, z_deg0 - 0.5), (NAVE_X + 1.2, -0.3, z_deg0 - 0.5),
+            (NAVE_X + 1.2, -0.3, Z_CRUZ + 1.3), (-NAVE_X - 1.2, -0.3, Z_CRUZ + 1.3),
+            (-NAVE_X - 1.2, 0.0, z_deg0 - 0.5), (NAVE_X + 1.2, 0.0, z_deg0 - 0.5),
+            (NAVE_X + 1.2, CORO_Y, Z_CRUZ + 1.3), (-NAVE_X - 1.2, CORO_Y, Z_CRUZ + 1.3)])])
         # piso da abside (poligono aproximado por lajes radiais)
         for k in range(9):
             a0 = -math.pi / 2 + math.pi * k / 9
@@ -306,21 +333,37 @@ class Igreja:
             trechos = [(ESC_Z2, Z_CRUZ + 1.6)]      # antes disso: vao aberto
         for (za, zb) in trechos:
             if lado > 0:
-                # furo retangular onde a escada em caracol desemboca
-                zc0, zc1 = CARACOL[1] - CARACOL_R - 0.5, CARACOL[1] + CARACOL_R + 0.5
+                # Poco da escada em caracol. O furo e' o MENOR possivel: antes
+                # ele comia quase toda a largura da galeria e sobrava uma
+                # passagem de meio metro na beirada — quem andasse pela galeria
+                # sul caia no vazio sem encostar em nada. Agora sobra 1,65 m de
+                # piso do lado de dentro, e o poco e' cercado (ver cercar_poco).
+                zc0, zc1 = POCO_Z0, POCO_Z1
                 self.laje_galeria(x0, x1, za, zc0)
-                self.laje_galeria(x0, CARACOL[0] - CARACOL_R - 0.35, zc0, zc1)
+                self.laje_galeria(x0, POCO_X, zc0, zc1)
                 self.laje_galeria(x0, x1, zc1, zb)
+                self.cercar_poco()
             else:
                 self.laje_galeria(x0, x1, za, zb)
 
-        # --- parapeito na borda interna (sobre a arcada)
+        # --- parapeito na borda interna (sobre a arcada), COM A BOCA DA
+        # PASSARELA ABERTA. O parapeito corria inteiro e tapava justamente o
+        # ponto onde a passarela de tabuas encosta: dava pra ver a travessia e
+        # nao dava pra usar. Aqui ele e' cortado em dois trechos, com o vao da
+        # passarela no meio — no visual E na colisao.
         za = ESC_Z2 if lado < 0 else Z_OESTE + 0.4
-        self.por("pedra", parapeito_rendilhado(mp, za, Z_CRUZ - 1.0, Y_GAL,
-                                               Y_PARAPEITO, ARC_W0, ARC_W1 * 0.2,
-                                               rnd=rnd, falhas=0.14), z_ref=20)
-        self.colide([caixa((eixo + ARC_W0, Y_GAL, za),
-                           (eixo + ARC_W1 * 0.2, Y_PARAPEITO, Z_CRUZ - 1.0))])
+        zb = Z_CRUZ - 1.0
+        boca0 = PASSARELA_Z - PASSARELA_BOCA
+        boca1 = PASSARELA_Z + PASSARELA_BOCA
+        for (ta, tb) in ((za, boca0), (boca1, zb)):
+            if tb - ta < 0.6:
+                continue
+            self.por("pedra", parapeito_rendilhado(mp, ta, tb, Y_GAL,
+                                                   Y_PARAPEITO, ARC_W0,
+                                                   ARC_W1 * 0.2, rnd=rnd,
+                                                   falhas=0.14), z_ref=(ta + tb) / 2)
+            self.colide([caixa((eixo + ARC_W0, Y_GAL, ta),
+                               (eixo + ARC_W1 * 0.2, Y_PARAPEITO, tb))])
 
         # --- triforio: arcada vazada entre a galeria e a nave
         vaos_trif = []
@@ -359,6 +402,36 @@ class Igreja:
             self.por("pedra", p, z_ref=sum(v[2] for v in p[0]) / 8)
         for v in vaos_cler:
             self.vitral(mapa_x(eixo), v, "lanceta", ARC_W1 * 0.4, lado)
+
+    def cercar_poco(self) -> None:
+        """Guarda-corpo em volta do poco do caracol, com a boca da saida aberta.
+
+        Sem isto o poco e' um alcapao de 4 m no meio do caminho da galeria sul.
+        A abertura fica exatamente onde a helice desemboca (lado -X), que e'
+        por onde o jogador sai — o resto e' fechado.
+        """
+        rnd = self.rnd
+        x1 = PAR_INT
+        cz = CARACOL[1]
+        # bordas em Z (topo e fundo do poco), atravessando a largura toda
+        for z in (POCO_Z0, POCO_Z1):
+            mpz = mapa_z(z)
+            self.por("pedra", parapeito_rendilhado(mpz, POCO_X, x1, Y_GAL,
+                                                   Y_PARAPEITO, -0.12, 0.12,
+                                                   rnd=rnd, falhas=0.1), z_ref=z)
+            self.colide([caixa((POCO_X, Y_GAL, z - 0.12),
+                               (x1, Y_PARAPEITO, z + 0.12))])
+        # borda interna, menos a boca por onde se sai da escada
+        mpx = mapa_x(POCO_X)
+        for (za, zb) in ((POCO_Z0, cz - POCO_SAIDA), (cz + POCO_SAIDA, POCO_Z1)):
+            if zb - za < 0.3:
+                continue
+            self.por("pedra", parapeito_rendilhado(mpx, za, zb, Y_GAL,
+                                                   Y_PARAPEITO, -0.12, 0.12,
+                                                   rnd=rnd, falhas=0.1),
+                     z_ref=(za + zb) / 2)
+            self.colide([caixa((POCO_X - 0.12, Y_GAL, za),
+                               (POCO_X + 0.12, Y_PARAPEITO, zb))])
 
     def laje_galeria(self, x0, x1, z0, z1):
         if z1 - z0 < 0.4:
@@ -699,6 +772,7 @@ class Igreja:
         # parapeito do lado aberto
         mpe = mapa_x(ESC_X1)
         for (za, zb, ya, yb) in ((ESC_Z0, ESC_Z1, 0.0, 5.2),
+                                 (ESC_Z1, ESC_PAT_Z, 5.2, 5.2),   # o patamar
                                  (ESC_PAT_Z, ESC_Z2, 5.2, Y_GAL)):
             n = 9
             for k in range(n):
@@ -721,18 +795,31 @@ class Igreja:
             (ESC_X1 - 0.2, 1.5, ESC_Z0), (ESC_X1, 1.5, ESC_Z0),
             (ESC_X1, Y_GAL + 1.1, ESC_Z2), (ESC_X1 - 0.2, Y_GAL + 1.1, ESC_Z2)])])
 
+        # Boca do poço, no alto: da galeria norte, o vão por onde a escada sobe
+        # fica logo ATRÁS de quem acaba de chegar. Um passo pra trás e a queda é
+        # de 10 m. Cerca a boca toda menos a largura da escada, que é por onde
+        # se entra e se sai.
+        mpp = mapa_z(ESC_Z2 - 0.15)
+        # a faixa da escada (de ESC_X0 a ESC_X1) fica ABERTA: é a porta.
+        self.por("pedra", parapeito_rendilhado(mpp, ESC_X1, -LAT_X0, Y_GAL,
+                                               Y_PARAPEITO, -0.12, 0.12,
+                                               rnd=rnd, falhas=0.08),
+                 z_ref=ESC_Z2)
+        self.colide([caixa((ESC_X1, Y_GAL, ESC_Z2 - 0.27),
+                           (-LAT_X0, Y_PARAPEITO, ESC_Z2 - 0.03))])
+
         # ---- escada em caracol, nave lateral sul
         cx, cz = CARACOL
         self.solido("pedra", [cilindro(cx, cz, 0.42, 0.0, Y_GAL + 1.2, 8)], z_ref=cz)
         pecas, rampas = escada_caracol(cx, cz, 0.40, CARACOL_R, 0.0, Y_GAL,
-                                       40, math.radians(900.0), fase=math.pi)
+                                       44, math.radians(CARACOL_GIRO), fase=math.pi)
         self.por("pedra", pecas, z_ref=cz)
         self.colide(rampas)
         # corrimao de ferro acompanhando a helice
         pts = []
-        for k in range(41):
-            a = math.pi + math.radians(900.0) * k / 40.0
-            pts.append((cx + CARACOL_R * 0.94 * math.cos(a), Y_GAL * k / 40.0 + 1.0,
+        for k in range(45):
+            a = math.pi + math.radians(CARACOL_GIRO) * k / 44.0
+            pts.append((cx + CARACOL_R * 0.94 * math.cos(a), Y_GAL * k / 44.0 + 1.0,
                         cz + CARACOL_R * 0.94 * math.sin(a)))
         self.por("metal", [tubo(pts, 0.07, 0.07)], z_ref=cz)
 
@@ -773,19 +860,28 @@ class Igreja:
                                               rnd.uniform(-0.03, 0.03))], z_ref=Z_CRUZ)
         self.colide([caixa((-2.5, Y_GAL - 0.14, JUBE_Z0 + 0.1),
                            (2.5, Y_GAL, JUBE_Z1 - 0.1))])
-        # parapeitos do jube' nos dois lados, com falha no meio
+        # Parapeitos do jube', SO' no trecho que atravessa a nave (|x| < 7,45).
+        #
+        # Antes eles corriam de parede a parede, inclusive nas duas pontas onde
+        # o jube' encosta nas galerias — e essas pontas sao justamente por onde
+        # se entra nele. O guarda-corpo fechava a unica porta: dava pra ver a
+        # travessia do outro lado e nao dava pra pisar nela. Agora as pontas
+        # ficam abertas (ali nao ha' queda: e' piso de galeria dos dois lados)
+        # e o parapeito existe onde existe o vazio, sobre o arco triunfal.
         for s in (-1, 1):
             mpj = mapa_z(JUBE_Z0 - 0.12 if s < 0 else JUBE_Z1 + 0.12)
-            for (xa, xb) in ((-PAR_INT, -2.6), (2.6, PAR_INT)):
+            for (xa, xb) in ((-LAT_X0, -2.6), (2.6, LAT_X0)):
                 self.por("pedra", parapeito_rendilhado(mpj, xa, xb, Y_GAL,
                                                        Y_PARAPEITO, -0.14, 0.14,
                                                        rnd=rnd, falhas=0.2),
                          z_ref=Z_CRUZ)
             zc0 = JUBE_Z0 - 0.26 if s < 0 else JUBE_Z1
-            self.colide([caixa((-PAR_INT, Y_GAL, zc0),
-                               (PAR_INT, Y_PARAPEITO, zc0 + 0.26))])
+            for (xa, xb) in ((-LAT_X0, -2.6), (2.6, LAT_X0)):
+                self.colide([caixa((xa, Y_GAL, zc0), (xb, Y_PARAPEITO, zc0 + 0.26))])
         # pedaco do parapeito caido la' embaixo
-        self.solido("pedra", [caixa_girada(0.9, 0.45, Z_CRUZ - 2.6, 2.6, 0.9, 0.4,
+        # (encostado no pilar, fora do corredor: no meio da nave virava um
+        # tropeco de 90 cm bem na linha de quem anda em direcao ao altar)
+        self.solido("pedra", [caixa_girada(5.6, 0.45, Z_CRUZ - 2.6, 2.6, 0.9, 0.4,
                                            0.3, 0.15, rnd, 0.06)], z_ref=Z_CRUZ - 2.6)
 
     # -- ruina, mobilia, atmosfera ----------------------------------------
@@ -794,21 +890,32 @@ class Igreja:
         za, zb = BAIAS[BAIA_ROMPIDA]
         cz = (za + zb) / 2.0
 
-        # A pilha debaixo do buraco da abobada. Ela atravessa a nave inteira de
-        # proposito — quem quiser chegar ao altar pela nave central sobe nela —
-        # mas as naves laterais continuam livres, entao ninguem fica preso.
-        self.por("pedra", entulho(-0.8, cz, 5.2, 70, rnd, tamanho=(0.4, 1.25),
-                                  altura_pilha=1.6), z_ref=cz)
-        self.por("pedra_esc", entulho(0.0, cz, 7.2, 40, rnd, tamanho=(0.18, 0.5)),
+        # A pedra que caiu da abobada foi EMPURRADA PROS CANTOS. A pilha
+        # ficava no meio da nave, debaixo do rombo, o que e' o realista — e
+        # era um tropeco permanente bem no caminho de quem entra e quer chegar
+        # ao altar. Ficou assim: o corredor central limpo, com cacos rasos que
+        # nao barram ninguem, e as montanhas de pedra encostadas nos pilares e
+        # nas paredes, onde ninguem precisa passar. Continua lendo como
+        # "isto desabou daqui de cima", sem ser um muro.
+        for (px, pz, raio, n, alto) in (
+                (-9.8, cz - 2.0, 3.0, 34, 1.5),
+                (9.9, cz + 1.5, 3.1, 34, 1.5),
+                (-5.6, cz + 4.4, 2.0, 16, 0.9),
+                (5.4, cz - 4.6, 2.1, 16, 0.9)):
+            self.por("pedra", entulho(px, pz, raio, n, rnd, tamanho=(0.4, 1.2),
+                                      altura_pilha=alto), z_ref=pz)
+            self.colide([domo(px, pz, raio + 0.4, alto * 0.9, 12)])
+        # o que sobrou no meio: caco raso, so' pra sujar o chao
+        self.por("pedra_esc", entulho(0.0, cz, 6.4, 55, rnd, tamanho=(0.14, 0.42)),
                  z_ref=cz)
-        # colisao: um monte liso por baixo das pedras (ver geo.domo)
-        self.colide([domo(-0.8, cz, 5.6, 1.45)])
-        self.pontos["escombros"].append([0.0, 1.2, cz])
+        self.pontos["escombros"].append([0.0, 0.6, cz])
         # vigas do telhado que vieram junto
+        # As tercas caidas encostam nas pilhas dos cantos, e nao atravessam o
+        # corredor: viga no meio do caminho e' a mesma armadilha da pilha.
         for (x0, y0, z0, x1, y1, z1) in (
-                (-5.0, 3.4, cz - 3.0, 2.2, 0.4, cz + 1.4),
-                (4.6, 2.9, cz - 2.4, -1.0, 0.35, cz + 3.2),
-                (-2.0, 0.5, cz + 4.0, 5.4, 0.4, cz + 5.2)):
+                (-12.0, 3.2, cz - 3.4, -5.6, 0.5, cz - 0.4),
+                (12.1, 2.9, cz + 3.0, 6.0, 0.45, cz + 0.2),
+                (-11.4, 0.5, cz + 4.6, -6.2, 0.4, cz + 5.6)):
             self.solido("madeira", [viga_caida(x0, y0, z0, x1, y1, z1, 0.32, 0.38)],
                         z_ref=cz)
 
@@ -821,6 +928,9 @@ class Igreja:
         for _ in range(90):
             x = rnd.uniform(-PAR_INT + 1.0, PAR_INT - 1.0)
             z = rnd.uniform(Z_OESTE + 1.0, Z_CORO)
+            # corredor central sempre limpo, em toda a nave
+            if abs(x) < 3.2:
+                continue
             if abs(x) < 7.6 and abs(z - cz) < 6.0:
                 continue
             s = rnd.uniform(0.15, 0.45)

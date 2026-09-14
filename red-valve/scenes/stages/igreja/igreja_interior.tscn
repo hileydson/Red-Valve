@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3]
+[gd_scene load_steps=18 format=3]
 
 [ext_resource type="PackedScene" path="res://assets/3d_model/stages/igreja/igreja_interior.glb" id="1_modelo"]
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="2_player"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" path="res://scripts/stages/igreja/igreja_interior.gd" id="5_script"]
 [ext_resource type="Script" path="res://scripts/stages/igreja/igreja_materiais.gd" id="6_materiais"]
 [ext_resource type="AudioStream" path="res://assets/sounds/episodios/ambiente_noise_sublime.mp3" id="7_ambiente"]
+[ext_resource type="PackedScene" path="res://assets/3d_model/player/lanterna/lanterna.glb" id="8_lanterna"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ceu_mat"]
 sky_top_color = Color(0.10, 0.12, 0.17, 1)
@@ -66,6 +67,9 @@ adjustment_saturation = 0.88
 
 [sub_resource type="BoxShape3D" id="caixa_porta"]
 size = Vector3(6, 3.4, 3.6)
+
+[sub_resource type="BoxShape3D" id="caixa_lanterna"]
+size = Vector3(3.0, 2.6, 3.0)
 
 [sub_resource type="StandardMaterial3D" id="mat_poeira"]
 transparency = 1
@@ -348,6 +352,36 @@ visibility_aabb = AABB(-14, -8, -22, 28, 16, 44)
 process_material = SubResource("proc_poeira_nave")
 draw_pass_1 = SubResource("malha_poeira")
 
+[node name="lanterna_no_chao" type="Node3D" parent="."]
+
+[node name="modelo" parent="lanterna_no_chao" instance=ExtResource("8_lanterna")]
+transform = Transform3D(0.00000, 0.02233, -0.15843, -0.00000, 0.15843, 0.02233, 0.16000, 0.00000, 0.00000, 1.15000, 0.05000, 8.20000)
+
+[node name="facho" type="SpotLight3D" parent="lanterna_no_chao"]
+transform = Transform3D(-0.99820, 0.00000, 0.05989, -0.00328, 0.99850, -0.05472, -0.05980, -0.05482, -0.99670, 1.15000, 0.08000, 8.38000)
+light_color = Color(1.0000, 0.9400, 0.8200, 1.0000)
+light_energy = 13.0
+light_volumetric_fog_energy = 4.0
+shadow_enabled = false
+spot_range = 26.0
+spot_angle = 30.0
+spot_angle_attenuation = 0.45
+
+[node name="brilho" type="OmniLight3D" parent="lanterna_no_chao"]
+transform = Transform3D(1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 1.15000, 0.17000, 8.30000)
+light_color = Color(1.0000, 0.9000, 0.7500, 1.0000)
+light_energy = 3.6
+omni_range = 6.0
+
+[node name="area" type="Area3D" parent="lanterna_no_chao"]
+transform = Transform3D(1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 1.15000, 1.05000, 8.20000)
+collision_layer = 0
+collision_mask = 1
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="lanterna_no_chao/area"]
+shape = SubResource("caixa_lanterna")
+
 [node name="porta" type="Area3D" parent="."]
 transform = Transform3D(1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 1.70000, 2.00000)
 collision_layer = 0
@@ -358,10 +392,10 @@ monitorable = false
 shape = SubResource("caixa_porta")
 
 [node name="ponto_de_entrada" type="Marker3D" parent="."]
-transform = Transform3D(-1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 0.15000, 4.20000)
+transform = Transform3D(-1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 0.15000, 5.00000)
 
 [node name="Player" parent="." instance=ExtResource("2_player")]
-transform = Transform3D(-1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 0.15000, 4.20000)
+transform = Transform3D(-1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 0.15000, 5.00000)
 
 [node name="ambiente_som" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("7_ambiente")

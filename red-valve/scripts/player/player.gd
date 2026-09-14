@@ -35,6 +35,7 @@ var _passo_pe_alternado: bool = false # alterna a cada passo p/ dar sensação d
 @onready var animation_tree_normal: AnimationTree = $maycow_lopes_normal/AnimationTree
 @onready var hand_animations: AnimationPlayer = $Camera3D/hand_animations
 @onready var point: Label = $Camera3D/point
+@onready var lanterna: SpotLight3D = $Camera3D/lanterna
 @onready var camera_top_view: Camera3D = $camera_top_view
 @onready var hand_with_pistol: Node3D = $Camera3D/hand_with_pistol
 @onready var hand_with_magic: Node3D = $Camera3D/hand_with_magic
@@ -491,8 +492,107 @@ var _cutscene_hud_hidden: bool = false
 var _cutscene_camera_disabled: bool = false
 var _was_cutscene_blocked: bool = false
 
+# ==============================================================================
+# LANTERNA
+# ==============================================================================
+## Item pego no chão da igreja. Antes desta mudança o `SpotLight3D` da câmera
+## vivia aceso o tempo todo, com 1,4 de energia e 17 m de alcance: dava um
+## borrãozinho claro a dois passos do Maycow e nada mais — parecia bug, não
+## lanterna. Agora ele é uma lanterna de verdade (facho longo, miolo forte,
+## borda suave, com sombra) e só existe depois que o jogador pega o objeto.
+const LANTERNA_ITEM := "lanterna"
+## Som de acender: é o "entrar_super" do menu, puxado para baixo no pitch. Fica
+## com corpo de interruptor grande em vez de bipe de interface — e o jogador
+## não reconhece o som do menu.
+const LANTERNA_SOM := "res://assets/sounds/menu_itens/entrar_super.mp3"
+const LANTERNA_SOM_PITCH := 0.62
+## Quanto o facho aponta para BAIXO em relação à linha de visão. Lanterna
+## apontada exatamente para o centro da tela ilumina o horizonte e deixa o chão
+## à frente dos pés no escuro, que é justamente onde se anda.
+const LANTERNA_INCLINACAO := 0.16
+
+var lanterna_ligada: bool = false
+var _lanterna_som: AudioStreamPlayer = null
+
+
+func _configurar_lanterna() -> void:
+	if not is_instance_valid(lanterna):
+		return
+	# À FRENTE do peito, não dentro dele. A luz nasceu dentro da malha do
+	# Maycow: com sombra ligada, o próprio corpo tapava o facho e o que
+	# chegava ao chão era um resto. Puxada 75 cm para a frente (e um palmo
+	# para a direita, como quem segura a lanterna), o corpo fica atrás da
+	# fonte e a sombra dele passa a cair para trás, que é o certo.
+	lanterna.position = Vector3(0.16, -0.05, -0.75)
+	lanterna.shadow_blur = 1.4
+	lanterna.shadow_transmittance_bias = 0.05
+	lanterna.light_color = Color(1.0, 0.96, 0.88)
+	# Números altos de propósito. A igreja roda com luz ambiente forte
+	# (`ambient_light_energy` 1,7) e tonemap filmic, que lavam qualquer facho
+	# discreto: com 5 de energia a lanterna existia no papel e sumia na tela.
+	lanterna.light_energy = 14.0
+	lanterna.light_indirect_energy = 1.0
+	lanterna.light_volumetric_fog_energy = 2.6
+	lanterna.spot_range = 45.0
+	lanterna.spot_angle = 28.0
+	lanterna.spot_angle_attenuation = 0.6    # miolo forte, borda que some
+	lanterna.spot_attenuation = 0.7          # cai devagar: é um facho longo
+	lanterna.shadow_enabled = true
+	lanterna.shadow_bias = 0.04
+	lanterna.shadow_normal_bias = 1.4
+	lanterna.distance_fade_enabled = false
+	lanterna.visible = false
+	lanterna_ligada = false
+
+	_lanterna_som = AudioStreamPlayer.new()
+	_lanterna_som.name = "lanterna_som"
+	if ResourceLoader.exists(LANTERNA_SOM):
+		_lanterna_som.stream = load(LANTERNA_SOM)
+	_lanterna_som.pitch_scale = LANTERNA_SOM_PITCH
+	_lanterna_som.volume_db = -4.0
+	add_child(_lanterna_som)
+
+
+## Liga/desliga. Sem o item no inventário não acontece nada — é o que impede o
+## jogador de ter lanterna antes de achar a lanterna.
+func alternar_lanterna() -> void:
+	if not is_instance_valid(lanterna):
+		return
+	if not SaveManager.tem_item(LANTERNA_ITEM):
+		return
+	lanterna_ligada = not lanterna_ligada
+	lanterna.visible = lanterna_ligada
+	if is_instance_valid(_lanterna_som) and _lanterna_som.stream:
+		# variação pequena no pitch a cada clique: dois cliques idênticos
+		# seguidos soam gravados, e este é um som que o jogador vai ouvir muito
+		_lanterna_som.pitch_scale = LANTERNA_SOM_PITCH + randf_range(-0.05, 0.05)
+		_lanterna_som.play()
+
+
+## Chamado quando o jogador acaba de pegar a lanterna: já entra acesa.
+func acender_lanterna_agora() -> void:
+	if not is_instance_valid(lanterna):
+		return
+	lanterna_ligada = true
+	lanterna.visible = true
+
+
+## O facho segue o pitch da câmera que estiver valendo. Em terceira pessoa quem
+## sobe e desce é a `camera_third_person`; a `Camera3D` (1ª pessoa, mãe da luz)
+## fica parada, e sem isto a lanterna apontaria sempre para o horizonte.
+func _atualizar_mira_lanterna() -> void:
+	if not lanterna_ligada or not is_instance_valid(lanterna):
+		return
+	var cam := get_viewport().get_camera_3d()
+	if cam == null or cam == camera:
+		return
+	lanterna.rotation.x = lerp_angle(lanterna.rotation.x,
+		cam.rotation.x - LANTERNA_INCLINACAO, 0.25)
+
+
 func _ready():
 	_sincroniza_flags_de_teste()
+	_configurar_lanterna()
 
 	$CollisionShape3D.scale = Vector3(1, 1, 1) # Corrigir colisão oval travando nas quinas
 		
@@ -611,6 +711,12 @@ func are_cutscene_inputs_blocked() -> bool:
 func _input(event):
 	if are_cutscene_inputs_blocked():
 		return
+
+	# Lanterna antes de qualquer outra trava: acender não é ação de combate, e
+	# ficar sem luz porque se está mirando ou no bullet time seria absurdo.
+	if event.is_action_pressed("ui_lanterna"):
+		alternar_lanterna()
+		return
 		
 	# A ação "ui_cogblade_power" (C / L1) agora é tratada pelo componente
 	# PlayerCogbladeMenu: precisa ser SEGURADA para abrir o menu radial de
@@ -660,6 +766,8 @@ func _sincroniza_flags_de_teste() -> void:
 
 func _physics_process(delta: float) -> void:
 	if not is_inside_tree() or get_tree() == null: return
+
+	_atualizar_mira_lanterna()
 	
 	if damage_blur_timer > 0.0:
 		damage_blur_timer -= delta

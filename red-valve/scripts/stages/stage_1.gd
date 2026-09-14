@@ -31,7 +31,7 @@ const OBJETIVO_CAP1_DURACAO := 120.0
 # colisao da igreja na city.tscn engloba o muro do adro e vai ate' x = 579,1 —
 # o jogador PARA ali, no muro, e nao encosta na porta. Por isso o ponto de
 # interacao fica a 578: e' o mais perto que da' pra chegar de verdade.
-const IGREJA_PORTA := Vector3(578.0, 11.0, -317.7)
+const IGREJA_PORTA := Vector3(577.6, 11.6, -317.5)
 # Ao voltar de dentro ele aparece de costas pra igreja, olhando pra praca. O
 # corpo do Maycow olha pro -Z com rotacao zero; PI/2 vira ele pro -X, que e'
 # a direcao da praca aqui.
@@ -399,18 +399,38 @@ func _devolver_ao_adro_da_igreja() -> void:
 	_pousar_no_chao.call_deferred(jogador, IGREJA_PORTA)
 
 
-func _pousar_no_chao(no: Node3D, alvo: Vector3, alcance: float = 14.0) -> void:
-	await get_tree().physics_frame
-	if not is_instance_valid(no):
-		return
-	var espaco := get_world_3d().direct_space_state
-	var consulta := PhysicsRayQueryParameters3D.create(
-		alvo + Vector3.UP * alcance, alvo + Vector3.DOWN * alcance)
-	# Layer 2: e' onde vive o chao do jogo (o player tem collision_mask = 2).
-	consulta.collision_mask = 2
-	var batida := espaco.intersect_ray(consulta)
-	if batida:
-		no.global_position = batida.position + Vector3.UP * 0.2
+## Acha o chão sob `alvo` e põe o nó em pé nele.
+##
+## Três cuidados, todos por causa de bug visto em jogo (o jogador reaparecia
+## enterrado até a cintura e ficava travado, porque `CharacterBody3D` não é
+## empurrado para fora de um corpo estático):
+##
+##  - INSISTE. O chão da praça é o Terrain3D, que monta a colisão em pedaços,
+##    em alguns quadros depois da cena abrir. Um raycast único no primeiro
+##    quadro costuma não achar nada.
+##  - olha TODAS as layers. O chão do jogo é a 2, mas calçada, degrau de adro e
+##    props usam outras, e o que interessa aqui é a superfície mais alta.
+##  - deixa uma FOLGA e entrega o resto à gravidade. Encostar o corpo no
+##    milímetro é o que produz o afundamento; um palmo no ar cai sozinho.
+func _pousar_no_chao(no: Node3D, alvo: Vector3, alcance: float = 30.0,
+		tentativas: int = 40) -> void:
+	var espaco: PhysicsDirectSpaceState3D = null
+	for _i in range(tentativas):
+		await get_tree().physics_frame
+		if not is_instance_valid(no):
+			return
+		espaco = get_world_3d().direct_space_state
+		var consulta := PhysicsRayQueryParameters3D.create(
+			alvo + Vector3.UP * alcance, alvo + Vector3.DOWN * alcance)
+		consulta.collision_mask = 0xFFFFFFFF
+		consulta.exclude = [no.get_rid()]
+		var batida := espaco.intersect_ray(consulta)
+		if batida:
+			no.global_position = batida.position + Vector3.UP * 0.9
+			return
+	# Nada achado: fica na altura nominal, alto o bastante para cair até o chão
+	# em vez de nascer dentro dele.
+	no.global_position = alvo + Vector3.UP * 1.5
 
 
 func _ao_entrar_area_casa_maycow(body: Node3D) -> void:

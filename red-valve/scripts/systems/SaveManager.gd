@@ -77,6 +77,14 @@ var item_db = {
 		"stackable": false,
 		"type": "inspectable"
 	},
+	"lanterna": {
+		"name_key": "ITEM_LANTERNA_NAME",
+		"desc_key": "ITEM_LANTERNA_DESC",
+		"icon_path": "res://assets/images/menu/itens/lanterna_2d.png",
+		"model_path": "res://assets/3d_model/player/lanterna/lanterna.glb",
+		"stackable": false,
+		"type": "inspectable"
+	},
 	"pistol": {
 		"name_key": "ITEM_PISTOL_NAME",
 		"desc_key": "ITEM_PISTOL_DESC",
@@ -468,6 +476,21 @@ func add_item(item_id: String, amount: int = 1):
 				break
 		if not found:
 			inventory.append({"id": item_id, "amount": 1})
+
+## O jogador TEM este item, esteja ele no inventário do Maycow normal ou no do
+## de combate?
+##
+## `inventory` sozinho não serve para isto: ele devolve um inventário ou outro
+## conforme `GlobalEvents.is_maycow_normal`, e quem pergunta "já peguei a
+## lanterna?" (o player, para acender; a igreja, para não oferecer de novo)
+## precisa da resposta certa nos dois lados.
+func tem_item(item_id: String) -> bool:
+	for lista in [inventory_normal, inventory_combat]:
+		for item in lista:
+			if item.get("id", "") == item_id and int(item.get("amount", 0)) > 0:
+				return true
+	return false
+
 
 func get_item_amount(item_id: String) -> int:
 	for item in inventory:
