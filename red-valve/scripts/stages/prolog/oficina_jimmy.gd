@@ -127,6 +127,7 @@ func _finalizar_cutscene_tudo() -> void:
 		camera_oficina.queue_free()
 
 func _ready() -> void:
+	GlobalUtils.esconder_objetivo()
 	GlobalEvents.in_cutscene = true
 	SaveManager.save_game()
 	GlobalEvents.is_maycow_normal = true

@@ -31,7 +31,7 @@ func _ready() -> void:
 	ui_layer = CanvasLayer.new()
 	ui_layer.layer = 128
 	add_child(ui_layer)
-	
+
 	if not GlobalEvents.entrando_na_casa_maycow and not SaveManager.prolog_finished:
 		SaveManager.prolog_finished = false
 		# a introdução do jogo, que o jogador acabou de ver na cutscene do prólogo,
@@ -44,12 +44,6 @@ func _ready() -> void:
 		GlobalEvents.entrando_na_casa_maycow = false
 		telefone_atendido = true
 		telefone_tocando = false
-		var b1 = find_child("bloque_player", true, false)
-		if b1:
-			b1.queue_free()
-		var b2 = find_child("bloque_player2", true, false)
-		if b2:
-			b2.queue_free()
 		var player = get_node_or_null("Player")
 		if not player:
 			player = find_child("Player", true, false)
@@ -264,14 +258,7 @@ func _start_phone_cutscene() -> void:
 	
 	GlobalEvents.telefone_cutscene_active = false
 	GlobalEvents.in_cutscene = false
-	
-	var b1 = find_child("bloque_player", true, false)
-	if b1:
-		b1.queue_free()
-	var b2 = find_child("bloque_player2", true, false)
-	if b2:
-		b2.queue_free()
-		
+
 	_novo_arquivo(ARQUIVO_TELEFONE)
 
 

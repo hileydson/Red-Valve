@@ -847,9 +847,6 @@ func _forced_battle_sequence() -> void:
 		GlobalEvents.forced_battle_running = false
 		return
 
-	# A arena constrói um Maycow de combate novo: este é o sangue dele.
-	GlobalEvents.forced_battle_health = player.current_health
-
 	player.amulet_selected_enemies.clear()
 	for e in levar:
 		player.amulet_selected_enemies.append(e)
@@ -883,6 +880,12 @@ func _grava_checkpoint_antes_da_arena() -> void:
 func _on_amulet_magic_released() -> void:
 	if player.amulet_selected_enemies.size() == 0:
 		return
+
+	# A arena constrói um Maycow de combate novo: este é o sangue dele. Vale
+	# tanto pro toque forçado quanto pro uso manual do amuleto — sem isto o
+	# Maycow da arena sempre nascia com vida cheia, ignorando o dano que o
+	# Maycow normal já tinha levado na cidade.
+	GlobalEvents.forced_battle_health = player.current_health
 
 	# Guardamos os inimigos para transferir
 	_clear_enemy_highlights()

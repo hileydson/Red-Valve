@@ -229,6 +229,8 @@ func _process(delta: float) -> void:
 	if player_na_oficina:
 		player_na_oficina = false
 		_esconder_prompt()
+		GlobalUtils.esconder_objetivo()
+		GlobalUtils.hide_center_message("intro_stage_1")
 		$fade.fade_out()
 		await get_tree().create_timer(2.0).timeout
 		get_tree().change_scene_to_file("res://scenes/stages/prolog/oficina_jimmy.tscn")
@@ -497,6 +499,7 @@ func _on_area_3d_jimmy_house_body_entered(body: Node3D) -> void:
 	if _eh_o_player(body):
 		player_na_oficina = true
 		_mostrar_prompt(tr("PROMPT_ENTER_WORKSHOP"))
+		GlobalUtils.esconder_objetivo()
 
 
 func _on_area_3d_jimmy_house_body_exited(body: Node3D) -> void:
@@ -565,6 +568,11 @@ func _play_intro_text() -> void:
 	
 	# Pequena pausa antes de começar para não ser tão brusco
 	await get_tree().create_timer(1.5, false).timeout
+	if not is_inside_tree() or SaveManager.prolog_finished:
+		return
+
+	# Primeiro objetivo do jogo. Aparece logo no inicio da stage_1 no prologo.
+	GlobalUtils.mostrar_objetivo(tr("OBJ_OFICINA_JIMMY"), OBJETIVO_PRIMEIRO_DURACAO)
 	
 	var intro_keys = [
 		"NO_POWER_1_WALK_1", "NO_POWER_1_WALK_2", "NO_POWER_1_WALK_3", 
@@ -572,18 +580,15 @@ func _play_intro_text() -> void:
 	]
 	
 	for key in intro_keys:
+		if not is_inside_tree() or SaveManager.prolog_finished or player_na_oficina:
+			break
 		GlobalUtils.show_center_message("intro_stage_1", tr(key), 18)
 		await get_tree().create_timer(4.5, false).timeout
+		if not is_inside_tree() or SaveManager.prolog_finished or player_na_oficina:
+			GlobalUtils.hide_center_message("intro_stage_1")
+			break
 		GlobalUtils.hide_center_message("intro_stage_1")
 		await get_tree().create_timer(0.5, false).timeout
-
-	# Primeiro objetivo do jogo. Entra DEPOIS de todo o ciclo de abertura, com um
-	# respiro: emendar no ultimo aviso faria parecer mais uma frase da narracao,
-	# e nao a pista do que fazer agora.
-	await get_tree().create_timer(OBJETIVO_ESPERA_APOS_INTRO, false).timeout
-	if not is_inside_tree():
-		return
-	GlobalUtils.mostrar_objetivo(tr("OBJ_OFICINA_JIMMY"), OBJETIVO_PRIMEIRO_DURACAO)
 
 
 ## O tutorial do amuleto: so no Capitulo 1, so uma vez na vida do save, e so
