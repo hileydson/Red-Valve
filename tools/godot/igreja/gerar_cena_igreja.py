@@ -52,6 +52,10 @@ EXTERNOS = [
     ("Script", "res://scripts/stages/igreja/igreja_materiais.gd", "6_materiais"),
     ("AudioStream", "res://assets/sounds/episodios/ambiente_noise_sublime.mp3", "7_ambiente"),
     ("PackedScene", "res://assets/3d_model/player/lanterna/lanterna.glb", "8_lanterna"),
+    # O minimapa: a igreja tem planta propria (nao e' a da cidade), desenhada
+    # por `make_mapa_igreja.py`. Ele tambem e' quem diz a' aba MAPA do menu
+    # qual mapa mostrar enquanto o jogador esta' aqui dentro.
+    ("PackedScene", "res://scenes/ui/minimap_igreja.tscn", "9_minimapa"),
 ]
 
 # --------------------------------------------------------------------------
@@ -72,6 +76,21 @@ EXTERNOS = [
 LANTERNA_POS = (1.15, 0.05, 8.2)
 LANTERNA_ESCALA = 0.16
 LANTERNA_GIRO = math.pi * 0.5
+
+# --------------------------------------------------------------------------
+# O ITEM SECRETO
+#
+# Marcador vazio, sem nada dentro ainda: o item que vai nascer aqui e' assunto
+# de outro dia. O que ja' existe hoje e' a INTERROGACAO no mapa em cima dele
+# (`make_mapa_igreja.py` le' esta posicao daqui), e por isso ele precisa estar
+# no gerador: colocado so' pelo editor, a proxima regeracao da cena o apagaria
+# e o mapa apontaria para um marcador que nao existe mais.
+#
+# O lugar e' de proposito o canto mais dificil da igreja: galeria SUL, junto a'
+# fachada. A escada de pedra sobe pela galeria NORTE, entao chegar ate' aqui
+# obriga a subir de um lado, atravessar pela passarela de tabuas no meio da
+# nave (Z=22) e voltar 16 m pelo outro lado.
+ITEM_SECRETO_POS = (10.8866, 10.0872, 5.7526)
 
 
 def vetor(v):
@@ -517,6 +536,9 @@ def gerar():
     no("Player", pai=".", instancia="2_player", props=[
         ("transform", transform_pos((0.0, 0.15, 5.0), math.pi))])
 
+    no("item_secreto", tipo="Marker3D", pai=".", props=[
+        ("transform", transform_pos(ITEM_SECRETO_POS))])
+
     no("ambiente_som", tipo="AudioStreamPlayer", pai=".", props=[
         ("stream", "ExtResource(\"7_ambiente\")"),
         ("volume_db", "-14.0"),
@@ -524,6 +546,7 @@ def gerar():
     ])
     no("fade", pai=".", instancia="4_fade")
     no("pause", pai=".", instancia="3_pause")
+    no("minimapa", pai=".", instancia="9_minimapa")
 
     os.makedirs(os.path.dirname(SAIDA), exist_ok=True)
     with open(SAIDA, "w") as fp:

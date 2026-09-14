@@ -1074,6 +1074,10 @@ class Igreja:
         self.pontos["porta"] = [0.0, 0.0, 1.4]
         self.pontos["buraco_teto"] = [0.0, Y_NAVE_ARR + NAVE_FLECHA,
                                       sum(BAIAS[BAIA_ROMPIDA]) / 2.0]
+        # A segunda metade deste bloco (de "lat_x" pra baixo) existe para o
+        # desenhista da PLANTA BAIXA, `tools/godot/igreja/make_mapa_igreja.py`:
+        # ele desenha o mapa do menu a partir daqui em vez de repetir os
+        # numeros, entao mover um pilar no Blender move o pilar no mapa.
         self.pontos["planta"] = {
             "nave_x": NAVE_X, "parede_x": PAR_INT, "z_portal": Z_OESTE,
             "z_cruz": Z_CRUZ, "z_coro": Z_CORO, "y_galeria": Y_GAL,
@@ -1082,6 +1086,16 @@ class Igreja:
             "caracol": [CARACOL[0], 0.0, CARACOL[1]],
             "passarela": [0.0, Y_GAL, PASSARELA_Z],
             "jube": [0.0, Y_GAL, (JUBE_Z0 + JUBE_Z1) / 2],
+
+            "lat_x": LAT_X0, "eixo_x": EIXO, "parede_ext": PAR_EXT,
+            "z_portal_ext": Z_OESTE_EXT, "abside_r": ABS_R, "coro_y": CORO_Y,
+            "pilar_z": list(PILAR_Z), "baias": [list(b) for b in BAIAS],
+            "baia_rompida": BAIA_ROMPIDA,
+            "escada": [ESC_X0, ESC_X1, ESC_Z0, ESC_Z1, ESC_PAT_Z, ESC_Z2],
+            "caracol_r": CARACOL_R,
+            "poco": [POCO_X, POCO_Z0, POCO_Z1, POCO_SAIDA],
+            "passarela_boca": PASSARELA_BOCA,
+            "jube_z": [JUBE_Z0, JUBE_Z1],
         }
 
 

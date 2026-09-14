@@ -46,3 +46,39 @@ static func disponivel(arvore: SceneTree) -> bool:
 	if GlobalEvents.in_cutscene:
 		return false
 	return arvore.get_first_node_in_group("mapa_cidade") != null
+
+
+## O nó que declara QUAL mapa esta cena usa.
+##
+## É o próprio minimapa do HUD: ele já precisa estar na cena para aparecer no
+## canto da tela, já carrega a textura e já está no grupo. A aba MAPA do menu
+## pergunta a ele em vez de ter uma lista de cena -> mapa em algum lugar — cena
+## nova com mapa novo é só instanciar o minimapa certo lá dentro.
+static func perfil(arvore: SceneTree) -> Node:
+	return arvore.get_first_node_in_group("mapa_cidade")
+
+
+## Caminho do JSON de mapa da cena atual, ou "" se esta cena não tem mapa.
+static func caminho_da_cena(arvore: SceneTree) -> String:
+	var no := perfil(arvore)
+	if no == null:
+		return ""
+	# `get` devolve null quando a propriedade não existe — um minimapa antigo,
+	# sem o export, ainda vale como "esta cena tem o mapa da cidade".
+	var c = no.get("dados_json")
+	if typeof(c) != TYPE_STRING or String(c).is_empty():
+		return CAMINHO
+	return String(c)
+
+
+## Este ponto deve aparecer agora?
+##
+## `oculto_com_item` some quando o jogador tem o item no inventário — é assim
+## que a interrogação da lanterna desaparece no instante em que ela é pega. A
+## pergunta é ao inventário, e não a uma flag à parte: um save antigo que já
+## tenha a lanterna também chega aqui com o mapa limpo.
+static func ponto_visivel(p: Dictionary) -> bool:
+	var item := String(p.get("oculto_com_item", ""))
+	if item.is_empty():
+		return true
+	return not SaveManager.tem_item(item)

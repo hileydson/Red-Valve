@@ -7,17 +7,25 @@ extends Control
 ##
 ## Controles: analógico esquerdo move, analógico direito dá zoom, roda do
 ## mouse dá zoom no ponto sob o cursor, arrastar move, R centraliza.
+##
+## QUAL mapa é mostrado não é decisão deste painel: ele pergunta à cena. Quem
+## responde é o minimapa do HUD (grupo "mapa_cidade"), que carrega o JSON, a
+## textura e a faixa de zoom da fase — na cidade, a cidade; dentro da igreja, a
+## planta do interior dela. Por isso tudo o que depende da fonte é montado em
+## `ativar()`, e não uma vez só no `_ready`: o menu é o mesmo nó a vida toda,
+## as fases é que trocam por baixo dele.
 
-## Altura da janela visível, em metros, nos extremos do zoom.
+## Altura da janela visível, em metros, nos extremos do zoom. São os valores
+## da CIDADE; o perfil da cena sobrescreve os três em `ativar()`.
 ##
 ## 80 e não 40: a textura tem 3,01 px/m, e a 40 m de altura o painel a amplia
 ## 4,5 vezes — vira borrão. A 80 m a ampliação é 2,2x, que ainda lê bem.
-@export var zoom_min_m: float = 80.0
+var zoom_min_m: float = 80.0
 ## 560 e não 680 (o lado inteiro da textura): o papel tem 680 m mas a cidade
 ## só ocupa 600 x 420 no meio dele. Deixar afastar até ver o papel inteiro só
 ## rendia margem de mata vazia em volta.
-@export var zoom_max_m: float = 560.0
-@export var zoom_inicial_m: float = 260.0
+var zoom_max_m: float = 560.0
+var zoom_inicial_m: float = 260.0
 ## Quanto cada passo da roda multiplica o zoom.
 @export var passo_zoom: float = 1.18
 ## Janelas por segundo com o analógico esquerdo no talo.
@@ -34,6 +42,8 @@ const COR_TIPO := {
 	"casa": Color(0.62, 0.80, 0.96),
 }
 const COR_PADRAO := Color(0.85, 0.85, 0.85)
+## Mesmo amarelo do minimapa: "tem coisa aqui e o jogo não vai dizer o quê".
+const COR_INTERROGACAO := Color(1.0, 0.86, 0.25)
 
 @onready var _painel: Control = $Painel
 @onready var _mapa: ColorRect = $Painel/Mapa
@@ -52,15 +62,13 @@ var _centro := Vector2(0.5, 0.5)
 var _meia: float = 0.09
 var _arrastando: bool = false
 var _ativo: bool = false
+## Fonte em uso, para não remontar marcador a cada vez que a aba abre.
+var _fonte: String = ""
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	_dados = MapaDados.new()
 	_mat = _mapa.material as ShaderMaterial
-	if _dados.ok and _mat:
-		_mat.set_shader_parameter("grade_uv", 100.0 / _dados.tam)
-		_criar_marcadores()
 	_btn_centralizar.text = tr("MAP_RECENTER")
 	_btn_centralizar.pressed.connect(centralizar)
 	_ajuda_pad.text = tr("MAP_HELP_PAD")
@@ -72,7 +80,8 @@ func _ready() -> void:
 
 ## Chamado pela aba quando ela entra em foco.
 func ativar() -> void:
-	_ativo = _dados.ok and MapaDados.disponivel(get_tree())
+	_carregar_fonte()
+	_ativo = _dados != null and _dados.ok and MapaDados.disponivel(get_tree())
 	_painel.visible = _ativo
 	_escala.visible = _ativo
 	_btn_centralizar.visible = _ativo
@@ -90,16 +99,97 @@ func desativar() -> void:
 	set_process(false)
 
 
+## Pega da cena o mapa desta fase. Sai cedo quando nada mudou: remontar
+## marcador toda vez que a aba abre custaria caro à toa, e a cidade tem seis.
+func _carregar_fonte() -> void:
+	var caminho := MapaDados.caminho_da_cena(get_tree())
+	if caminho == "":
+		return
+	var perfil := MapaDados.perfil(get_tree())
+	# a faixa de zoom vem sempre, mesmo sem trocar de mapa: é barata e evita
+	# que um perfil ajustado no editor só valha depois de trocar de fase
+	if perfil:
+		zoom_min_m = _do_perfil(perfil, "zoom_min_m", zoom_min_m)
+		zoom_max_m = _do_perfil(perfil, "zoom_max_m", zoom_max_m)
+		zoom_inicial_m = _do_perfil(perfil, "zoom_inicial_m", zoom_inicial_m)
+	if caminho == _fonte:
+		return
+	var novos := MapaDados.new(caminho)
+	if not novos.ok:
+		return
+	_fonte = caminho
+	_dados = novos
+	if perfil and perfil.get("textura_mapa") != null:
+		_mat.set_shader_parameter("mapa", perfil.get("textura_mapa"))
+	var grade: float = _do_perfil(perfil, "grade_m", 100.0) if perfil else 100.0
+	_mat.set_shader_parameter("grade_uv", maxf(grade, 1.0) / _dados.tam)
+	# remove_child ANTES do queue_free: queue_free só apaga no fim do quadro, e
+	# até lá o marcador velho continuaria na lista que `_atualizar` percorre —
+	# o mapa da igreja abriria com os pontos da cidade em cima dele.
+	for velho_no in _marcas.get_children():
+		_marcas.remove_child(velho_no)
+		velho_no.queue_free()
+	_criar_marcadores()
+
+
+## Número do perfil da cena, com queda para o valor da cidade quando o nó não
+## tem a propriedade (minimapa de antes deste sistema).
+func _do_perfil(perfil: Node, prop: String, padrao: float) -> float:
+	var v = perfil.get(prop)
+	if typeof(v) != TYPE_FLOAT and typeof(v) != TYPE_INT:
+		return padrao
+	return float(v)
+
+
 func _criar_marcadores() -> void:
 	for p in _dados.pontos:
-		var cor: Color = COR_TIPO.get(String(p.get("tipo", "")), COR_PADRAO)
+		var tipo := String(p.get("tipo", ""))
+		if tipo == "interrogacao":
+			_marcas.add_child(_interrogacao(p))
+			continue
+		var cor: Color = COR_TIPO.get(tipo, COR_PADRAO)
 		_marcas.add_child(_marca(cor, 7.0, String(p.get("chave", "")), p))
+
+
+## Interrogação: o ponto que diz que tem alguma coisa ali sem dizer o quê.
+##
+## Sem o nome do item ao lado, de propósito — com o nome escrito deixaria de
+## ser uma interrogação. O rótulo, quando existe, é só o ANDAR, e isso não
+## entrega nada: apenas evita que o jogador procure no chão da nave um item
+## que está dez metros acima da cabeça dele, lá na galeria.
+func _interrogacao(dados: Dictionary) -> Control:
+	var no := Control.new()
+	no.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	no.set_meta("mundo", Vector2(float(dados["x"]), float(dados["z"])))
+	no.set_meta("ponto", dados)
+
+	var lb := Label.new()
+	lb.text = "?"
+	lb.add_theme_font_size_override("font_size", 34)
+	lb.add_theme_color_override("font_color", COR_INTERROGACAO)
+	lb.add_theme_color_override("font_outline_color", Color(0.04, 0.03, 0.02, 1))
+	lb.add_theme_constant_override("outline_size", 10)
+	lb.position = Vector2(-10.0, -27.0)
+	no.add_child(lb)
+
+	var andar := String(dados.get("andar", ""))
+	if andar != "":
+		var sub := Label.new()
+		sub.text = tr(andar)
+		sub.add_theme_font_size_override("font_size", 13)
+		sub.add_theme_color_override("font_color", COR_INTERROGACAO)
+		sub.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.9))
+		sub.add_theme_constant_override("outline_size", 5)
+		sub.position = Vector2(12.0, -10.0)
+		no.add_child(sub)
+	return no
 
 
 func _marca(cor: Color, r: float, chave: String, dados: Dictionary) -> Control:
 	var no := Control.new()
 	no.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	no.set_meta("mundo", Vector2(float(dados["x"]), float(dados["z"])))
+	no.set_meta("ponto", dados)
 
 	var losango := Polygon2D.new()
 	losango.polygon = PackedVector2Array([
@@ -182,6 +272,11 @@ func _atualizar() -> void:
 		_seta.visible = false
 
 	for no in _marcas.get_children():
+		# a cada quadro: a interrogação da lanterna some no instante em que ela
+		# é pega, mesmo com o menu aberto por cima
+		if not MapaDados.ponto_visivel(no.get_meta("ponto", {})):
+			no.visible = false
+			continue
 		var m: Vector2 = no.get_meta("mundo")
 		var q := _para_tela(_dados.uv(m.x, m.y), tam, aspecto)
 		no.position = q
@@ -230,6 +325,8 @@ func _dentro(q: Vector2, tam: Vector2) -> bool:
 
 # ----------------------------------------------------------------- entrada
 func centralizar() -> void:
+	if _dados == null or not _dados.ok:
+		return
 	if not is_instance_valid(_player):
 		_player = get_tree().get_first_node_in_group("player") as Node3D
 	if is_instance_valid(_player):

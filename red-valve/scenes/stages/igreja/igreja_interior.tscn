@@ -8,6 +8,7 @@
 [ext_resource type="Script" uid="uid://2fanem5ncv8p" path="res://scripts/stages/igreja/igreja_materiais.gd" id="6_materiais"]
 [ext_resource type="AudioStream" uid="uid://b3ahi8d8px8qi" path="res://assets/sounds/episodios/ambiente_noise_sublime.mp3" id="7_ambiente"]
 [ext_resource type="PackedScene" uid="uid://bcaxl6o85d803" path="res://assets/3d_model/player/lanterna/lanterna.glb" id="8_lanterna"]
+[ext_resource type="PackedScene" path="res://scenes/ui/minimap_igreja.tscn" id="9_minimapa"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ceu_mat"]
 sky_top_color = Color(0.1, 0.12, 0.17, 1)
@@ -392,3 +393,5 @@ autoplay = true
 
 [node name="item_secreto" type="Marker3D" parent="." unique_id=2001930263]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.886559, 10.087212, 5.7525587)
+
+[node name="minimapa" parent="." instance=ExtResource("9_minimapa")]
