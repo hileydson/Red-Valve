@@ -102,8 +102,8 @@ shader_parameter/cirrus_absorption = 2.0
 shader_parameter/cirrus_sky_tint_fade = 0.5
 shader_parameter/cirrus_size = 1.0
 shader_parameter/cirrus_uv = Vector2(0.16, 0.11)
-shader_parameter/cirrus_position1 = Vector2(0.28117657, 0.28117657)
-shader_parameter/cirrus_position2 = Vector2(0.28117657, 0.28117657)
+shader_parameter/cirrus_position1 = Vector2(0.44605058, 0.44605058)
+shader_parameter/cirrus_position2 = Vector2(0.44605058, 0.44605058)
 shader_parameter/cirrus_texture = ExtResource("3_01ffe")
 shader_parameter/cumulus_visible = true
 shader_parameter/cumulus_intensity = 0.6
@@ -113,7 +113,7 @@ shader_parameter/cumulus_absorption = 2.0
 shader_parameter/cumulus_noise_freq = 2.7
 shader_parameter/cumulus_sky_tint_fade = 0.0
 shader_parameter/cumulus_size = 0.5
-shader_parameter/cumulus_position = Vector2(1.4058115, 1.4058115)
+shader_parameter/cumulus_position = Vector2(2.2301571, 2.2301571)
 shader_parameter/cumulus_texture = ExtResource("4_qysyv")
 shader_parameter/cumulus_partial_mie_phase = Vector3(0.957564, 1.042436, 0.412)
 shader_parameter/cumulus_mie_intensity = 1.0
@@ -877,7 +877,7 @@ shadow_mesh = SubResource("ArrayMesh_5llxv")
 size = Vector3(2.0829468, 1, 2.142456)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ljprc"]
-size = Vector3(2.4598389, 1, 5.3363647)
+size = Vector3(1.9032898, 1, 12.831268)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_vxyp4"]
 size = Vector3(1.09906, 1, 7.110077)
@@ -1374,7 +1374,7 @@ transform = Transform3D(0.9999999, 0, -1.8626451e-09, 0, 1, 0, 0, 0, 0.9999999, 
 collision_layer = 2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="ambient/casa/itens_da_casa/objetos_aleatorios/mesa_telefone/bloque_player" unique_id=1473952611]
-transform = Transform3D(1, 0, 5.8300793e-07, 0, 0.9999805, 0, 0, 0, 0.99998003, 3.0219393, 0.082948685, 2.379939)
+transform = Transform3D(1, 0, 1.0188669e-06, 0, 0.9999629, 0, 0, 0, 0.999965, 3.3002205, 0.082948685, 6.127301)
 shape = SubResource("BoxShape3D_ljprc")
 
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="ambient/casa/itens_da_casa/objetos_aleatorios/mesa_telefone/bloque_player" unique_id=74797971]
