@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="PackedScene" uid="uid://dy356o67p6jyn" path="res://scenes/configs/fade.tscn" id="1_fade"]
 [ext_resource type="Material" path="res://shaders/cutscenes/cutscene_post.tres" id="2_post"]
 [ext_resource type="Material" path="res://shaders/cutscenes/caption_gradient.tres" id="3_capt"]
+[ext_resource type="FontFile" uid="uid://5rc24n3t0r0o" path="res://assets/fonts/Montserrat-ExtraBold.ttf" id="4_arrow_font"]
 
 [node name="ParallaxCutscene" type="Control"]
 process_mode = 3
@@ -125,6 +126,7 @@ grow_horizontal = 0
 grow_vertical = 0
 mouse_filter = 2
 theme_override_colors/font_color = Color(1, 0.72, 0.42, 1)
+theme_override_fonts/font = ExtResource("4_arrow_font")
 theme_override_font_sizes/font_size = 24
 text = "▼"
 horizontal_alignment = 1
