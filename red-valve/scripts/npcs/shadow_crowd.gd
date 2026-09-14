@@ -27,6 +27,14 @@ const ShadowRoads := preload("res://scripts/npcs/shadow_roads.gd")
 ## anel proprio (maior, porque carro anda mais rapido) e uma exigencia a mais —
 ## o ponto tem que estar sobre o no das ruas e ter pista continuando a frente,
 ## senao o carro nasceria entalado numa quina.
+##
+## Prologo x Capitulo 1
+## --------------------
+## No PROLOGO a cidade ainda e uma cidade: quem anda na rua sao os moradores
+## (CityNpc, com modelo e textura), e nao passa carro nenhum. Do Capitulo 1 em
+## diante ela ja virou, e a rua e das sombras — ShadowPerson e ShadowCar. Este
+## no decide qual dos dois montar no `_ready`, olhando o estado do prologo; o
+## resto do sistema (pool, anel, garagem) e identico nos dois casos.
 
 @export_group("Populacao")
 ## Cena da sombra. Se ficar vazio, usa res://scenes/npcs/shadow_person.tscn.
@@ -38,6 +46,12 @@ const ShadowRoads := preload("res://scripts/npcs/shadow_roads.gd")
 ## Raio em que cada sombra vaga a partir de onde nasceu. 0 = nao mexe no valor
 ## que vier da cena.
 @export var wander_radius: float = 16.0
+
+@export_group("Prologo")
+## Quem povoa a rua enquanto o prologo nao acabou. Vazio = city_npc.tscn.
+@export var npc_prologo_scene: PackedScene
+## Desligue para a cidade usar sombras tambem no prologo.
+@export var trocar_no_prologo: bool = true
 
 @export_group("Carros")
 ## Cena do carro. Vazio = res://scenes/npcs/shadow_car.tscn. 0 carros = desliga.
@@ -128,6 +142,8 @@ var _last_car_heading := 0.0
 
 func _ready() -> void:
 	_rng.randomize()
+	if trocar_no_prologo and not _e_capitulo_1():
+		_veste_o_prologo()
 	if shadow_scene == null:
 		shadow_scene = load("res://scenes/npcs/shadow_person.tscn") as PackedScene
 	if shadow_scene == null:
@@ -144,6 +160,30 @@ func _ready() -> void:
 	await get_tree().physics_frame
 	await get_tree().physics_frame
 	_sync_nav_layers()
+
+
+## O prologo ainda nao acabou? Entao a rua e dos moradores: troca a cena do
+## pool pelo CityNpc e zera os carros. Zerar `car_pool_size` ja basta —
+## `_build_car_pool` desiste sozinho com ele em 0.
+func _veste_o_prologo() -> void:
+	if npc_prologo_scene == null:
+		npc_prologo_scene = load("res://scenes/npcs/city_npc.tscn") as PackedScene
+	if npc_prologo_scene == null:
+		push_warning("ShadowCrowd: city_npc.tscn nao encontrada; o prologo fica com as sombras.")
+		return
+	shadow_scene = npc_prologo_scene
+	car_pool_size = 0
+	max_active_cars = 0
+	if debug_log:
+		print("ShadowCrowd: prologo — a cidade vai de moradores, sem carros.")
+
+
+## Mesmo teste que a stage_1 usa pra saber em que capitulo o jogador esta. O
+## `entering_chapter_1` existe porque na primeira entrada do Capitulo 1 o
+## `prolog_finished` ja esta gravado, mas quem chega por outro caminho (save no
+## meio, volta de dentro de uma casa) so tem o segundo — ler os dois cobre tudo.
+func _e_capitulo_1() -> bool:
+	return GlobalEvents.entering_chapter_1 or SaveManager.prolog_finished
 
 
 ## Mesmo esquema do pool de pessoas, so que para os carros. Cada carro nasce
