@@ -2,7 +2,7 @@
 
 [sub_resource type="Gradient" id="Gradient_0cusm"]
 offsets = PackedFloat32Array(0.166667, 0.5, 0.833333)
-colors = PackedColorArray(0.658824, 0.792157, 0.345098, 1, 0.458824, 0.654902, 0.262745, 1, 0.27451, 0.509804, 0.196078, 1)
+colors = PackedColorArray(0.65098, 0.7, 0.454902, 1, 0.469, 0.55, 0.33, 1, 0.305882, 0.4, 0.223529, 1)
 metadata/_snap_enabled = true
 metadata/_snap_count = 12
 
