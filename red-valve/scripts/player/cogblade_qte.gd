@@ -34,6 +34,13 @@ const COR_APAGADO := Color(0.55, 0.55, 0.60)
 const COR_ACERTO := Color(0.45, 1.0, 0.55)
 const COR_ERRO := Color(1.0, 0.30, 0.28)
 
+## Retorno do acerto: um tranco curto de câmera + vibração leve. Tudo em tempo
+## REAL (tween com ignore_time_scale), senão a câmera lenta do poder esticaria o
+## tranco em quase dois segundos.
+const TREMOR_FORCA := 0.045   # offset da câmera, em unidades de h_offset/v_offset
+const TREMOR_DUR := 0.16      # segundos reais
+const TREMOR_PASSOS := 5
+
 const SOM_ACERTO := "res://assets/sounds/menu_itens/selecionar_item.mp3"
 const SOM_ERRO := "res://assets/sounds/menu_itens/negacao.mp3"
 
@@ -45,6 +52,7 @@ var _coluna: VBoxContainer = null
 var _fileira: HBoxContainer = null
 var _trilho: Control = null
 var _barra: ColorRect = null
+var _flash: TextureRect = null  # mancha vermelha do erro, cobre a tela inteira
 var _slots: Array = []        # um Dictionary por botão: {raiz, painel, rotulo, legenda, estilo}
 
 var _sequencia: Array = []    # índices em BOTOES, sorteados no começo da rodada
@@ -53,6 +61,10 @@ var _ativo: bool = false
 var _janela: float = 1.0      # segundos REAIS para apertar o botão da vez
 var _inicio_ms: int = 0
 var _rodando: bool = false
+
+var _tremor_tween: Tween = null
+var _tremor_h_base: float = 0.0
+var _tremor_v_base: float = 0.0
 
 
 func _ready() -> void:
@@ -116,6 +128,7 @@ func cancelar() -> void:
 	_rodando = false
 	_indice = -1
 	set_process(false)
+	_parar_tremor()
 	if is_instance_valid(_raiz):
 		_raiz.visible = false
 
@@ -206,6 +219,18 @@ func _montar() -> void:
 	_raiz.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_raiz.visible = false
 	add_child(_raiz)
+
+	# Mancha vermelha do erro: fica ATRÁS da fileira de botões (adicionada antes
+	# da coluna) para tingir a tela sem apagar o botão que acabou de falhar.
+	_flash = TextureRect.new()
+	_flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_flash.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_flash.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_flash.stretch_mode = TextureRect.STRETCH_SCALE
+	_flash.texture = _textura_mancha()
+	_flash.modulate = Color(1, 1, 1, 0.0)
+	_flash.visible = false
+	_raiz.add_child(_flash)
 
 	# Ocupa a tela inteira menos o rodapé e joga o conteúdo para baixo: assim a
 	# fileira fica na parte de baixo sem tapar o meio da tela, que é justamente
@@ -350,7 +375,12 @@ func _reagir(i: int, acertou: bool) -> void:
 	estilo.bg_color = Color(cor.r, cor.g, cor.b, 0.28)
 	rotulo.add_theme_color_override("font_color", Color(1, 1, 1))
 	_som(SOM_ACERTO if acertou else SOM_ERRO, 1.0 if acertou else 0.9)
-	if not acertou:
+	if acertou:
+		# Tranco de confirmação: sutil de propósito, são até 5 ou 6 seguidos.
+		_tremor()
+		GlobalUtils.vibrate_controller(Input, 0.12, 0.28, 0.10)
+	else:
+		_mancha_vermelha()
 		GlobalUtils.vibrate_controller(Input, 0.25, 0.6, 0.25)
 
 	var t := create_tween()
@@ -362,6 +392,80 @@ func _reagir(i: int, acertou: bool) -> void:
 		t.parallel().tween_property(_coluna, "modulate", Color(1, 0.6, 0.6, 1.0), 0.10)
 		t.tween_interval(0.18)
 	await t.finished
+
+
+## Tranco curto na câmera 3D ativa. Guarda o offset de origem uma vez só (como
+## o `shake_camera` do GlobalUtils) para que trancos encadeados não acumulem
+## deriva na câmera.
+func _tremor() -> void:
+	var cam := get_viewport().get_camera_3d()
+	if not is_instance_valid(cam):
+		return
+	if _tremor_tween and _tremor_tween.is_valid():
+		_tremor_tween.kill()
+	else:
+		_tremor_h_base = cam.h_offset
+		_tremor_v_base = cam.v_offset
+
+	_tremor_tween = create_tween()
+	_tremor_tween.set_ignore_time_scale(true)
+	var passo := TREMOR_DUR / float(TREMOR_PASSOS)
+	for i in range(TREMOR_PASSOS):
+		# Amortece: o primeiro solavanco é o mais forte, o resto vai morrendo.
+		var queda: float = 1.0 - float(i) / float(TREMOR_PASSOS)
+		var forca: float = TREMOR_FORCA * queda
+		_tremor_tween.tween_property(cam, "h_offset", _tremor_h_base + randf_range(-forca, forca), passo)
+		_tremor_tween.parallel().tween_property(cam, "v_offset", _tremor_v_base + randf_range(-forca, forca), passo)
+	_tremor_tween.tween_property(cam, "h_offset", _tremor_h_base, 0.05)
+	_tremor_tween.parallel().tween_property(cam, "v_offset", _tremor_v_base, 0.05)
+
+
+## Corta um tremor pela metade e devolve a câmera ao lugar (poder cancelado).
+func _parar_tremor() -> void:
+	if _tremor_tween and _tremor_tween.is_valid():
+		_tremor_tween.kill()
+		var cam := get_viewport().get_camera_3d()
+		if is_instance_valid(cam):
+			cam.h_offset = _tremor_h_base
+			cam.v_offset = _tremor_v_base
+	_tremor_tween = null
+
+
+## Piscada vermelha na tela toda quando o botão erra (ou o tempo acaba). Entra
+## quase instantânea e sai em fade; dura menos que o `_reagir` do erro, então
+## termina antes do painel sumir.
+func _mancha_vermelha() -> void:
+	if not is_instance_valid(_flash):
+		return
+	_flash.visible = true
+	_flash.modulate = Color(1, 1, 1, 0.0)
+	var t := create_tween()
+	t.set_ignore_time_scale(true)
+	t.tween_property(_flash, "modulate:a", 1.0, 0.04)
+	t.tween_property(_flash, "modulate:a", 0.0, 0.26).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	t.tween_callback(func():
+		if is_instance_valid(_flash): _flash.visible = false
+	)
+
+
+## Vermelho mais aberto no meio e fechando nas bordas: tinge a tela inteira sem
+## virar um retângulo chapado por cima da ação.
+func _textura_mancha() -> GradientTexture2D:
+	var grad := Gradient.new()
+	grad.offsets = PackedFloat32Array([0.0, 0.55, 1.0])
+	grad.colors = PackedColorArray([
+		Color(0.78, 0.02, 0.03, 0.34),
+		Color(0.60, 0.01, 0.02, 0.58),
+		Color(0.32, 0.0, 0.0, 0.92),
+	])
+	var tex := GradientTexture2D.new()
+	tex.gradient = grad
+	tex.fill = GradientTexture2D.FILL_RADIAL
+	tex.fill_from = Vector2(0.5, 0.5)
+	tex.fill_to = Vector2(1.0, 0.5)
+	tex.width = 256
+	tex.height = 256
+	return tex
 
 
 func _entrar() -> void:

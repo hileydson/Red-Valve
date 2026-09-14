@@ -23,6 +23,33 @@ const LETTERBOX_ALVO := 0.11
 const FADE_IN_FILTRO := 1.2
 const FADE_OUT_FILTRO := 0.8
 
+# --- As poças dos postes ------------------------------------------------------
+# Cada poste tem, além do SpotLight3D, um quad aceso deitado no chão (city_lights.gd,
+# nó "Pocas"): é o que faz a luz aparecer na pista, já que o Forward Mobile limita as
+# fontes por objeto e a pista é um mesh só.
+#
+# O quad usa T_lightpool.png, uma elipse suave em fundo preto — e é aí que a câmera
+# aérea da abertura estraga tudo. A poça tem ~6 m e a câmera está a centenas de
+# metros: o sampler cai num mipmap alto, onde a elipse já virou um cinza quase
+# uniforme. O quad inteiro acende por igual e o que se vê é o RETÂNGULO do mesh.
+#
+# A troca abaixo desenha a mesma mancha por cálculo, a partir da UV, em vez de
+# amostrar a textura. Sem textura não há mipmap para achatar, e a poça continua
+# sendo uma mancha macia em qualquer distância — a cidade segue com as luzes acesas
+# vista de cima, sem os quadrados.
+const CAMINHO_POCAS := "../../City/PoleLights/Pocas"
+## Sódio, como em city_lights.gd (cor * poca_forca do material original).
+const POCA_COR := Color(0.75, 0.54, 0.315)
+## De cima a poça é vista de chapa (no chão ela é sempre rasante), então ela lê
+## mais forte do que no jogo; daí o valor abaixo de 1.
+const POCA_FORCA := 0.75
+## A luminária tipo cobra joga um oval ao longo da rua, não um círculo. >1 aperta
+## a mancha no eixo V, que é o transversal à pista.
+const POCA_OVAL := 1.35
+
+var pocas: GeometryInstance3D = null
+var pocas_material_original: Material = null
+
 var cine_layer: CanvasLayer = null
 var cine_mat: ShaderMaterial = null
 
@@ -46,6 +73,7 @@ func _ready() -> void:
 	if not has_animation(ANIM_INTRO):
 		return
 
+	_poca_modo_aereo()
 	_setup_filtro_cinematografico()
 	if not animation_finished.is_connected(_on_animation_finished):
 		animation_finished.connect(_on_animation_finished)
@@ -60,6 +88,69 @@ func set_in_cutscene()->void:
 	GlobalEvents.set_in_cutscene()
 func unset_in_cutscene()->void:
 	GlobalEvents.unset_in_cutscene()
+
+
+# ==============================================================================
+# POÇAS DE LUZ DOS POSTES NA VISTA AEREA
+# ==============================================================================
+
+func _poca_modo_aereo() -> void:
+	pocas = get_node_or_null(CAMINHO_POCAS) as GeometryInstance3D
+	if not pocas:
+		return
+	pocas_material_original = pocas.material_override
+	pocas.material_override = _material_poca_aerea()
+
+
+func _poca_modo_normal() -> void:
+	if is_instance_valid(pocas):
+		pocas.material_override = pocas_material_original
+	pocas = null
+	pocas_material_original = null
+
+
+## Sair da stage_1 no meio da abertura (pular para a casa do Jimmy, um load) não
+## pode deixar a cidade com o material da cutscene na próxima vez que ela aparecer.
+func _exit_tree() -> void:
+	_poca_modo_normal()
+
+
+## Mesma mancha, desenhada pela UV. `blend_add` e `unshaded` como no material
+## original: a poça soma luz ao asfalto, não é uma decalcomania opaca.
+func _material_poca_aerea() -> ShaderMaterial:
+	var shader := Shader.new()
+	shader.code = """
+	shader_type spatial;
+	render_mode unshaded, blend_add, cull_disabled, depth_draw_never,
+		shadows_disabled, fog_disabled;
+
+	uniform vec3 cor : source_color = vec3(0.75, 0.54, 0.315);
+	uniform float forca = 0.75;
+	uniform float oval = 1.35;
+
+	void fragment() {
+		// UV do PlaneMesh vai de 0 a 1; centra e normaliza para raio 1 na borda.
+		vec2 d = (UV - vec2(0.5)) * 2.0;
+		d.y *= oval;
+		float r = length(d);
+		// Expoente alto concentra o brilho no centro e deixa a borda morrer
+		// dentro do quad — se ela chegasse acesa na aresta, o quadrado voltava.
+		float queda = pow(clamp(1.0 - r, 0.0, 1.0), 2.4);
+		// Núcleo mais quente, como o miolo claro da textura.
+		queda += 0.35 * pow(clamp(1.0 - r * 1.8, 0.0, 1.0), 3.0);
+
+		ALBEDO = cor * forca;
+		ALPHA = clamp(queda, 0.0, 1.0);
+	}
+	"""
+
+	var mat := ShaderMaterial.new()
+	mat.shader = shader
+	mat.set_shader_parameter("cor", POCA_COR)
+	mat.set_shader_parameter("forca", POCA_FORCA)
+	mat.set_shader_parameter("oval", POCA_OVAL)
+	mat.render_priority = 1
+	return mat
 
 
 # ==============================================================================
@@ -193,6 +284,7 @@ func _on_animation_finished(anim_name: StringName) -> void:
 	if anim_name != ANIM_INTRO:
 		return
 	unset_in_cutscene()
+	_poca_modo_normal()
 	_remover_filtro_cinematografico()
 	_entregar_amuleto()
 
