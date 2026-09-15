@@ -734,15 +734,21 @@ class Arena:
         plinto = ((2.0, 0.40), (1.6, 0.76), (1.2, 1.12))
         for k, (dr, dy) in enumerate(plinto):
             dr_int = plinto[k + 1][0] if k + 1 < len(plinto) else 0.9
+            # o piso do degrau sai 4 cm ALEM da saia e entra 4 cm por baixo
+            # do que vem de dentro: encostando certinho, as faces verticais
+            # ficavam no mesmo plano e o espelho do degrau piscava
             self.m.add_pecas("adro", "pedra_esc",
                              [prisma_oct(R_PLAT + dr, dy - 0.40,
                                          R_PLAT + dr, dy, tampa=False),
-                              coroa_oct2(R_PLAT + dr_int, R_PLAT + dr, dy)])
+                              coroa_oct2(R_PLAT + dr_int - 0.04,
+                                         R_PLAT + dr + 0.04, dy)])
             self.col.append(prisma_oct(R_PLAT + dr, -0.4, R_PLAT + dr, dy))
         # tampo, furado no meio pra Boca — ate' a borda de COLISAO, senao
         # sobra a tal prateleira
+        # 4 cm de beiral alem do corpo: rente, as duas faces verticais
+        # dividiam o mesmo plano e a borda do adro piscava
         self.m.add_pecas("adro", "pedra",
-                         [coroa_oct(R_BOCA, R_PLAT + 0.9, H_PLAT)])
+                         [coroa_oct(R_BOCA, R_PLAT + 0.94, H_PLAT)])
         self.col.append(prisma_oct(R_PLAT + 0.9, -0.4, R_PLAT + 0.9, H_PLAT,
                                    tampa=False))
 
@@ -778,8 +784,13 @@ class Arena:
             vl = [p(AP_LINGUETA, -meia, H_PLAT), p(AP_LINGUETA, meia, H_PLAT),
                   p(AP_ADRO, meia, H_PLAT), p(AP_ADRO, -meia, H_PLAT)]
             basel = [(q[0], -0.4, q[2]) for q in vl]
-            self.m.add_pecas("adro", "pedra", [hexaedro(basel + vl)])
             self.col.append(hexaedro(basel + vl))
+            # O DESENHO da lingueta fica 2 cm mais baixo que a colisao. Ela
+            # mora POR BAIXO do tampo do adro, e as duas no mesmo plano
+            # brigavam no z-buffer bem no alto da rampa — que e' justamente
+            # por onde o jogador sobe.
+            vlv = [(q[0], H_PLAT - 0.02, q[2]) for q in vl]
+            self.m.add_pecas("adro", "pedra", [hexaedro(basel + vlv)])
             # murete dos dois lados da rampa, pra ela ler de longe
             for s in (-1, 1):
                 a0 = p(AP_LINGUETA, s * meia, 0.0)
@@ -810,8 +821,8 @@ class Arena:
             self.col.append(cilindro(x, z, 1.15, H_PLAT, H_PLAT + alt, n=8))
             self.bloquear(x, z, 1.5)
             self.m.add_pecas("adro", "pedra_esc",
-                             entulho(x + self.rnd.uniform(-1.5, 1.5), z + self.rnd.uniform(-1.5, 1.5),
-                                     1.6, 7, self.rnd, y=H_PLAT, tamanho=(0.3, 0.8)))
+                             self._pedras(x + self.rnd.uniform(-1.5, 1.5), z + self.rnd.uniform(-1.5, 1.5),
+                                          1.6, 7, y=H_PLAT, tamanho=(0.3, 0.8)))
 
     def boca(self):
         """A BOCA: a cratera de carne no meio do adro.
@@ -980,7 +991,7 @@ class Arena:
             w = self.rnd.uniform(-5.0, 1.5)
             p = mapa(u, 0.0, w)
             self.m.add_pecas(setor, "pedra_esc",
-                             entulho(p[0], p[2], 2.4, 9, self.rnd, tamanho=(0.5, 1.5),
+                             self._pedras(p[0], p[2], 2.4, 9, tamanho=(0.5, 1.5),
                                      altura_pilha=1.1))
         p = mapa(0.0, 0.0, -1.5)
         self._monte(setor, p[0], p[2], 6.5, 1.6)
@@ -1025,7 +1036,7 @@ class Arena:
                             "pedra_esc")
                 p = mapa(uc, 0.0, 0.4)
                 self.m.add_pecas(setor, "pedra_esc",
-                                 entulho(p[0], p[2], 3.0, 14, self.rnd,
+                                 self._pedras(p[0], p[2], 3.0, 14,
                                          tamanho=(0.45, 1.5), altura_pilha=1.6))
                 self._monte(setor, p[0], p[2], 3.4, 1.8)
                 self.bloquear(p[0], p[2], 3.0)
@@ -1104,7 +1115,7 @@ class Arena:
         self.bloquear(p[0], p[2], 7.0)
         p = mapa(-2.0, 0.0, -3.6)
         self.m.add_pecas(setor, "pedra_esc",
-                         entulho(p[0], p[2], 4.5, 22, self.rnd, tamanho=(0.5, 1.8),
+                         self._pedras(p[0], p[2], 4.5, 22, tamanho=(0.5, 1.8),
                                  altura_pilha=2.0))
         self._monte(setor, p[0], p[2], 5.0, 2.2, n=12)
         self.bloquear(p[0], p[2], 4.2)
@@ -1164,8 +1175,8 @@ class Arena:
                               pz + dirz * (d0 + comp * t) + perpz * desvio,
                               lado * 0.6)
             self.m.add_pecas(setor, "pedra_esc",
-                             entulho(cx + perpx * lado, cz + perpz * lado, 3.0, 10,
-                                     self.rnd, tamanho=(0.4, 1.2)))
+                             self._pedras(cx + perpx * lado, cz + perpz * lado, 3.0, 10,
+                                          tamanho=(0.4, 1.2)))
 
         # a ponta arrebentou: sobrou a casca, e da' pra ver os pisos caidos
         # la' dentro. E' o unico lugar da arena que mostra a torre POR DENTRO.
@@ -1192,10 +1203,9 @@ class Arena:
         self.bloquear(fx, fz, lado * 0.8)
         # a ponta da torre e' o alto mais facil da arena (2,3 m): marca ela
         # pro `parkour` encostar uma escadaria, vinda do centro da praca
-        self.escaladas.append((fx + dirx * 3.4, fz + dirz * 3.4,
-                               -dirx, -dirz, cy + lado / 2.0))
+        self.escaladas.append((fx, fz, perpx, perpz, cy + lado / 2.0))
         self.m.add_pecas(setor, "pedra_esc",
-                         entulho(fx + dirx * 3.0, fz + dirz * 3.0, 4.0, 14, self.rnd,
+                         self._pedras(fx + dirx * 3.0, fz + dirz * 3.0, 4.0, 14,
                                  tamanho=(0.4, 1.4), altura_pilha=1.2))
 
         p = (px + dirx * 16.0, pz + dirz * 16.0)
@@ -1292,7 +1302,7 @@ class Arena:
         for i in range(5):
             p = mapa(self.rnd.uniform(-13, 13), 0.0, self.rnd.uniform(-6.5, -1.0))
             self.m.add_pecas(setor, "pedra_esc",
-                             entulho(p[0], p[2], 3.2, 13, self.rnd,
+                             self._pedras(p[0], p[2], 3.2, 13,
                                      tamanho=(0.5, 1.7), altura_pilha=1.4))
             self._monte(setor, p[0], p[2], 3.6, 1.5)
             self.bloquear(p[0], p[2], 3.0)
@@ -1365,9 +1375,11 @@ class Arena:
                 continue     # este ja' desabou; o entulho conta a historia
             alt_pil = 5.0 + (k % 2) * 0.8
             pb = mapa(u, 0.0, -7.5)
+            # o fuste para 6 cm antes do capitel: rente, as duas faces de
+            # cima ficavam no mesmo plano e a pedra piscava
             self.m.add_pecas(setor, "pedra",
                              [caixa((pb[0] - 1.1, -0.4, pb[2] - 1.1),
-                                    (pb[0] + 1.1, alt_pil, pb[2] + 1.1))])
+                                    (pb[0] + 1.1, alt_pil - 0.06, pb[2] + 1.1))])
             self.m.add_pecas(setor, "pedra_esc",
                              [caixa((pb[0] - 1.4, alt_pil - 0.35, pb[2] - 1.4),
                                     (pb[0] + 1.4, alt_pil, pb[2] + 1.4))])
@@ -1385,7 +1397,7 @@ class Arena:
             self.m.add_pecas(setor, "pedra_esc", [tubo(pts, 0.45, 1.6)])
         p = mapa(6.0, 0.0, -7.5)
         self.m.add_pecas(setor, "pedra_esc",
-                         entulho(p[0], p[2], 4.0, 18, self.rnd, tamanho=(0.5, 1.6),
+                         self._pedras(p[0], p[2], 4.0, 18, tamanho=(0.5, 1.6),
                                  altura_pilha=1.8))
         self._monte(setor, p[0], p[2], 4.4, 2.0)
         self.bloquear(p[0], p[2], 3.8)
@@ -1667,9 +1679,10 @@ class Arena:
             # `y` pelo piso do lugar: a praca tem cratera de ate' 60 cm, e
             # pedra empilhada no zero absoluto fica pendurada acima dela
             self.m.add_pecas(self.quadrante(x, z), "pedra_esc",
-                             entulho(x, z, raio, int(raio * 5), self.rnd,
-                                     y=self._altura_piso(x, z),
-                                     tamanho=(0.45, 1.5), altura_pilha=raio * 0.45))
+                             self._pedras(x, z, raio, int(raio * 5),
+                                          y=self._altura_piso(x, z),
+                                          tamanho=(0.45, 1.5),
+                                          altura_pilha=raio * 0.45))
             self._monte(self.quadrante(x, z), x, z, raio + 0.4, raio * 0.5)
             # o monte e' RAMPA, nao muro: da' pra subir nele. Bloqueia so' o
             # miolo, que e' onde ele fica alto demais pro passo do inimigo.
@@ -1738,6 +1751,23 @@ class Arena:
     # laje nasce ENTERRADA no piso daquele ponto. Laje comecando no zero
     # absoluto boia em cima de cratera, e peca boiando foi a reclamacao.
 
+    def _pedras(self, cx, cz, raio, quantos, **kw):
+        """`entulho` com um desencontro de altura POR PEDRA.
+
+        Duas pedras do mesmo tamanho caem quase na mesma altura, e os topos
+        delas acabam dividindo o mesmo plano: e' o mesmo z-fight das lajes,
+        so' que espalhado pelo escombro — a textura pisca conforme o jogador
+        anda. Tres centimetros de diferenca resolvem e ninguem ve'. O
+        desencontro sai da POSICAO, e nao do sorteio, para nao mexer no
+        stream do `random` e mudar o cenario inteiro de lugar.
+        """
+        saida = []
+        for k, (verts, faces) in enumerate(
+                entulho(cx, cz, raio, quantos, self.rnd, **kw)):
+            dy = 0.028 * math.sin(cx * 5.1 + cz * 3.3 + k * 2.399)
+            saida.append(([(a, b + dy, c) for (a, b, c) in verts], faces))
+        return saida
+
     def _monte(self, setor, x, z, raio, altura, n=10):
         """O monte de entulho: a CASCA lisa e a colisao, de uma vez so'.
 
@@ -1754,11 +1784,23 @@ class Arena:
 
     def _lance(self, x, z, giro, topo, larg=3.0, prof=2.2):
         """Uma laje de cantaria caida: do chao ate' `topo`. E' onde se pisa."""
+        # 1,5 cm de desencontro, tirado da posicao (nao do sorteio, pra nao
+        # mexer no resto do cenario): a laje cai em cima de escombro e de
+        # bolha de carne, e altura redonda demais faz duas superficies
+        # diferentes dividirem o mesmo plano — e' ai' que a textura pisca
+        topo += 0.015 * math.sin(x * 3.7 + z * 2.3)
         y0 = self._altura_piso(x, z) - 0.4
-        peca = caixa_girada(x, (y0 + topo) / 2.0, z, larg, topo - y0, prof, giro)
         setor = self.quadrante(x, z, "degrau")
-        self.m.add_pecas(setor, "pedra", [peca])
-        self.col.append(peca)
+        # O CORPO PARA 8 CM ANTES DO TOPO. A capa e' quem fecha em cima, e as
+        # duas faces no MESMO plano brigavam no z-buffer: a textura da laje
+        # piscava conforme o jogador andava. Terminando o corpo por dentro da
+        # capa, so' uma superficie chega ao plano do topo.
+        self.m.add_pecas(setor, "pedra",
+                         [caixa_girada(x, (y0 + topo - 0.08) / 2.0, z, larg,
+                                       topo - 0.08 - y0, prof, giro)])
+        # a colisao vai ate' o topo de verdade, que e' onde se pisa
+        self.col.append(caixa_girada(x, (y0 + topo) / 2.0, z, larg,
+                                     topo - y0, prof, giro))
         # capa escura: sem ela a laje le' como caixote de madeira; com ela
         # le' como bloco de cantaria que caiu da ruina
         self.m.add_pecas(setor, "pedra_esc",
@@ -1844,13 +1886,23 @@ class Arena:
         # 2. na ponta da torre caida: a subida pro unico caminho ALTO que
         #    atravessa a arena inteira — de cima dela da' pra correr ate' a
         #    ruina sem pisar no chao
-        for (ex, ez, dx, dz, topo) in self.escaladas:
-            a = math.atan2(dx, dz)
+        for (ex, ez, px, pz, topo) in self.escaladas:
+            # SOBE PELO LADO DA TORRE, nao pela ponta. Pela ponta a escadaria
+            # avancava seis metros na direcao do centro e as duas ultimas
+            # lajes caiam DENTRO do adro — uma delas aparecia tres centimetros
+            # acima do tampo, brigando com a pedra dele.
+            lado = 1.0
+            if not self._livre(ex + px * 4.0, ez + pz * 4.0, 2.2):
+                lado = -1.0
+            a = math.atan2(-px * lado, -pz * lado)
             self.n_escadarias += 1
             n = max(2, int(round((topo - 0.15) / DEGRAU_PARKOUR)))
             for i in range(n):
-                cx = ex - dx * (n - 1 - i) * 2.0
-                cz = ez - dz * (n - 1 - i) * 2.0
+                d = (n - i) * 1.9
+                cx = ex + px * lado * d
+                cz = ez + pz * lado * d
+                if dentro_oct(cx, cz, R_PLAT + 4.0):
+                    continue
                 self._lance(cx, cz, a,
                             self._altura_piso(cx, cz) + DEGRAU_PARKOUR * (i + 1),
                             larg=3.4, prof=2.2)
@@ -1962,7 +2014,7 @@ class Arena:
             self.pontos["sigilos"].append([round(x - math.sin(a) * 1.1, 2), alt * 0.6,
                                            round(z - math.cos(a) * 1.1, 2)])
             self.m.add_pecas(self.quadrante(x, z, "monolito"), "pedra_esc",
-                             entulho(x, z, 2.2, 6, self.rnd, tamanho=(0.3, 0.8)))
+                             self._pedras(x, z, 2.2, 6, tamanho=(0.3, 0.8)))
 
     def horizonte(self):
         """Cidade morta na linha do horizonte: so' silhueta, sem detalhe.
