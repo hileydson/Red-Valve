@@ -200,45 +200,51 @@ def raio_oct(ang, r, fase=math.pi / 8):
     return r * math.cos(math.pi / 8) / math.cos(a)
 
 
-def coroa_oct(r_int, r_ext, y, n=48):
-    """Chapa entre um circulo interno e a borda do octogono. E' o tampo do
-    adro com o furo da Boca no meio: sem o furo, a chapa cobre a tigela e a
-    Boca vira uma mancha de pedra."""
-    verts, faces = [], []
-    for k in range(n):
-        a0 = 2 * math.pi * k / n
-        a1 = 2 * math.pi * (k + 1) / n
-        re0, re1 = raio_oct(a0, r_ext), raio_oct(a1, r_ext)
-        base = len(verts)
-        verts.extend([(r_int * math.sin(a0), y, r_int * math.cos(a0)),
-                      (re0 * math.sin(a0), y, re0 * math.cos(a0)),
-                      (re1 * math.sin(a1), y, re1 * math.cos(a1)),
-                      (r_int * math.sin(a1), y, r_int * math.cos(a1))])
-        faces.append([base, base + 1, base + 2, base + 3])
-    return verts, faces
+def _coroa_solida(r_int_f, r_ext_f, y, n, esp):
+    """Anel entre dois contornos, como SOLIDO fino de vertices compartilhados.
 
+    As duas coisas aqui sao de vida ou morte e foram aprendidas na marra:
 
-def coroa_oct2(r_int, r_ext, y, n=48):
-    """Chapa entre DOIS octogonos — o PISO dos degraus do adro.
-
-    Sem ela o degrau e' so' uma saia vertical: de cima se ve' pelo vao entre
-    uma saia e a de dentro, e o adro fica com um anel de chao faltando em
-    volta. `n` e' multiplo de 8 pra os cantos do octogono cairem em cima de
-    um vertice, senao a chapa corta a quina.
+    1. SOLIDO, nao chapa. O `normals_make_consistent` do Blender decide o
+       "fora" de cada pedaco por raio, e numa chapa plana a decisao e' cara ou
+       coroa. O tampo do adro saia com um terco dos quadrilateros virado pra
+       baixo: em jogo, cunhas PRETAS no meio do adro, que o jogador leu (com
+       razao) como buraco no chao — e a mesma coroa e' a colisao do tampo,
+       entao ele ainda afundava e enganchava nessas cunhas.
+    2. VERTICES COMPARTILHADOS. Antes cada quadrilatero trazia os quatro
+       vertices dele, e o anel eram 48 PEDACOS SOLTOS — cada um sorteava a
+       propria orientacao. Compartilhando, o anel e' uma peca so'.
     """
     verts, faces = [], []
+    for (rf, yy) in ((r_int_f, y), (r_ext_f, y),
+                     (r_int_f, y - esp), (r_ext_f, y - esp)):
+        for k in range(n):
+            a = 2 * math.pi * k / n
+            r = rf(a)
+            verts.append((r * math.sin(a), yy, r * math.cos(a)))
+
+    def q(anel, k):
+        return anel * n + (k % n)
+
     for k in range(n):
-        a0 = 2 * math.pi * k / n
-        a1 = 2 * math.pi * (k + 1) / n
-        ri0, ri1 = raio_oct(a0, r_int), raio_oct(a1, r_int)
-        re0, re1 = raio_oct(a0, r_ext), raio_oct(a1, r_ext)
-        base = len(verts)
-        verts.extend([(ri0 * math.sin(a0), y, ri0 * math.cos(a0)),
-                      (re0 * math.sin(a0), y, re0 * math.cos(a0)),
-                      (re1 * math.sin(a1), y, re1 * math.cos(a1)),
-                      (ri1 * math.sin(a1), y, ri1 * math.cos(a1))])
-        faces.append([base, base + 1, base + 2, base + 3])
+        j = k + 1
+        faces.append([q(0, k), q(1, k), q(1, j), q(0, j)])   # tampo (pra cima)
+        faces.append([q(2, j), q(3, j), q(3, k), q(2, k)])   # fundo
+        faces.append([q(1, k), q(3, k), q(3, j), q(1, j)])   # costado de fora
+        faces.append([q(2, k), q(0, k), q(0, j), q(2, j)])   # costado de dentro
     return verts, faces
+
+
+def coroa_oct(r_int, r_ext, y, n=48, esp=0.18):
+    """Tampo do adro: circulo por dentro (o furo da Boca), octogono por fora."""
+    return _coroa_solida(lambda a: r_int, lambda a: raio_oct(a, r_ext),
+                         y, n, esp)
+
+
+def coroa_oct2(r_int, r_ext, y, n=48, esp=0.16):
+    """Piso de um degrau do plinto: octogono dos dois lados."""
+    return _coroa_solida(lambda a: raio_oct(a, r_int),
+                         lambda a: raio_oct(a, r_ext), y, n, esp)
 
 
 def chapa_grossa(celulas, passo, altura, esp):
@@ -789,14 +795,9 @@ class Arena:
                 # rampa pelo lado, e a peca vira enfeite que mente
                 self.col.append(murete)
 
-        # colisao do tampo: coroa com o mesmo furo do visual, engrossada pra
-        # baixo. O furo e' fechado pela casca da tigela, la' na `boca()`.
-        vc, fc = coroa_oct(R_BOCA, R_PLAT + 0.9, H_PLAT)
-        base = len(vc)
-        vc = vc + [(x, y - 0.6, z) for (x, y, z) in vc]
-        for f in list(fc):
-            fc.append([k + base for k in reversed(f)])
-        self.col.append((vc, fc))
+        # colisao do tampo: a MESMA coroa do visual, so' que grossa. O furo
+        # do meio e' fechado pela casca da tigela, la' na `boca()`.
+        self.col.append(coroa_oct(R_BOCA, R_PLAT + 0.9, H_PLAT, esp=0.6))
 
         # quatro cotos de pilar no tampo: sobrou isso do cimborio
         for k in range(4):

@@ -66,14 +66,21 @@ EXTERNOS = [
 # (caminho, altura_do_pivo, caixa_de_colisao ou None)
 #
 # `altura_do_pivo` corrige quem foi modelado com a origem no MEIO em vez de na
-# base — o carro coberto, o arbusto e o tronco vem com o pivo enterrado.
+# base — e' o caso do PNEU (origem no eixo) e da FOGUEIRA DE PEDRA.
+#
+# Os numeros aqui sao MEDIDOS, nao chutados: importei cada .gltf no Blender e
+# li o Y minimo da malha. O carro, o arbusto e a escada estavam sendo
+# levantados 30, 29 e 110 cm sem precisar — todos os tres ja' vem com a base
+# no zero — e por isso flutuavam. O tronco morto tem uma raiz fina que desce
+# a -0,33, mas o corpo dele comeca no zero: levantar pela raiz punha o tronco
+# inteiro no ar, entao ele entra com pivo zero e a raiz enterra.
 #
 # A escolha do modelo e' orcamento de triangulo, nao gosto: varios props do
 # Poly Haven passam de 20 mil triangulos POR PECA (o poste modular tem 200
 # mil, a cerca de alambrado 89 mil) e a arena inteira tem 35 mil. Os que
 # entraram aqui custam de 800 a 12 mil.
 PROPS = {
-    "carro": (PH + "/covered_car/covered_car_1k.gltf", 0.30, (1.80, 1.70, 4.40)),
+    "carro": (PH + "/covered_car/covered_car_1k.gltf", -0.02, (1.80, 1.45, 4.40)),
     "barreira": (PH + "/concrete_road_barrier/concrete_road_barrier_1k.gltf", 0.01,
                  (1.55, 0.82, 0.62)),
     # tambor de MADEIRA: o `barrel_03` e o `Barrel_02` do Poly Haven sao
@@ -84,11 +91,11 @@ PROPS = {
     "caixa": (PH + "/wooden_crate_02/wooden_crate_02_1k.gltf", 0.01, None),
     "pneu": (PH + "/old_tyre/old_tyre_1k.gltf", 0.30, None),
     "gerador": (PH + "/utility_box_02/utility_box_02_1k.gltf", 0.0, (0.92, 1.12, 0.43)),
-    "arbusto": (PH + "/shrub_02/shrub_02_1k.gltf", 0.29, None),
-    "tronco": (PH + "/dead_tree_trunk_02/dead_tree_trunk_02_1k.gltf", 0.33,
-               (4.00, 1.00, 1.00)),
+    "arbusto": (PH + "/shrub_02/shrub_02_1k.gltf", -0.05, None),
+    "tronco": (PH + "/dead_tree_trunk_02/dead_tree_trunk_02_1k.gltf", -0.04,
+               (4.00, 0.75, 1.00)),
     "entulho_saco": (PH + "/cement_bag/cement_bag_1k.gltf", 0.0, None),
-    "escada": (PH + "/wooden_ladder/wooden_ladder_1k.gltf", 1.10, None),
+    "escada": (PH + "/wooden_ladder/wooden_ladder_1k.gltf", -0.01, None),
     "hidrante": (PH + "/fire_hydrant/fire_hydrant_1k.gltf", 0.0, None),
     # os dois que marcam fogueira
     # o "barrel stove" e' literalmente um tambor virado fogareiro; custa
