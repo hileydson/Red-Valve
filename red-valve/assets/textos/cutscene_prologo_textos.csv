@@ -32,13 +32,13 @@ END_FIGHT_3_4,A weapon resembling a scythe materializes in his hands.,Uma arma s
 PROLOG_BEGIN_1_1,"Aurora City, 1994.","Aurora City, 1994."
 PROLOG_BEGIN_1_2,Kraycik Industrial District.,Distrito Industrial de Kraycik.
 PROLOG_BEGIN_1_3,21:00,21:00
-PROLOG_BEGIN_1_4,The rain fell on the almost deserted streets,A chuva caía sobre as ruas quase desertas
+PROLOG_BEGIN_1_4,The rain fell over the streets and people,A chuva caía sobre as ruas e pessoas
 PROLOG_BEGIN_1_5,"That night, something was about to change","Naquela noite, algo estava prestes a mudar"
-PROLOG_BEGIN_2_1,"Maycow arrives home, the day had been long","Maycow chega em casa, o dia havia sido longo"
-PROLOG_BEGIN_3_1,The exhaustion and worry weighed heavily,O cansaço e a preocupação pesavam
+PROLOG_BEGIN_2_1,"Even with all the city's usual movement, something wasn't right…","Mesmo com todo o movimento usual da cidade, algo não estava certo…"
+PROLOG_BEGIN_3_1,The exhaustion and worry weighed on Maycow,O cansaço e a preocupação pesavam para Maycow
 PROLOG_BEGIN_3_2,"Jimmy, his friend, had been missing for a week","Jimmy, seu amigo, estava desaparecido havia uma semana"
 PROLOG_BEGIN_4_1,Maycow stared at the strange gift Jimmy had given him days before…,Maycow encarava o estranho presente que Jimmy havia lhe dado dias antes…
-PROLOG_BEGIN_4_2,A strange amulet; he had never quite understood why he chose something so unusual.,"Um amuleto estranho, nunca tinha entendido muito bem por que a escolha de algo tão incomum."
+PROLOG_BEGIN_4_2,"A strange amulet, without understanding the choice of something so unusual.","Um amuleto estranho, sem entender a escolha de algo tão incomum."
 PROLOG_BEGIN_4_3,He observes the gift for a few seconds.,Ele observa o presente por alguns segundos.
 PROLOG_BEGIN_4_4,"Where have you been, my friend? What does this amulet mean?","Onde você se meteu, meu amigo? O que esse amuleto significa?"
 PROLOG_PHONE_1_1,— Hello?,— Alô?
@@ -76,9 +76,9 @@ PROLOG_END_FIGHT_5_1,"In the chest, there was a strange suit and a letter from J
 PROLOG_END_FIGHT_5_2,"He reveals that blood opens the door, and the artifact is from another world.","Ele revela que o sangue ativa a porta, e o artefato é de outro mundo."
 PROLOG_END_FIGHT_5_3,"The Cogblade reacts to it, but its origin in the Abyss is a mystery.","A Cogblade reage a ele, mas sua origem no Abismo é um mistério."
 PROLOG_END_FIGHT_5_4,Maycow wonders what else Jimmy was hiding.,Maycow se pergunta o que mais Jimmy estava escondendo.
-NO_POWER_1_WALK_1,The rainy night blended with the sounds of people and cars…,A noite chuvosa se somava aos sons de pessoas e carros…
+NO_POWER_1_WALK_1,The rainy night blended with the sounds of people around the city…,A noite chuvosa se somava aos sons de pessoas pela cidade…
 NO_POWER_1_WALK_2,"The wind dragged the water through the streets, creating an almost conscious whisper.","O vento arrastava a água pelas ruas, criando um sussurro quase consciente."
-NO_POWER_1_WALK_3,"The noise was heavy, sounds of movement, but only shadows could be seen… without much of a clue about what might be happening…","O barulho estava pesado, sons de movimentos, mas somente se via sombras… sem muita pista do que pode estar acontecendo…"
+NO_POWER_1_WALK_3,"The noise was intense, people went about their lives…","O barulho era intenso, pessoas seguiam suas vidas…"
 NO_POWER_1_WALK_4,"Maycow walks to Jimmy's workshop, but something didn't feel right.","Maycow caminha até a oficina de Jimmy, mas algo não parecia certo."
 NO_POWER_1_WALK_5,"It wasn't something he could see, it was just a bad feeling.","Não era algo que ele pudesse ver, era apenas uma sensação ruim."
 NO_POWER_1_WALK_6,As if the place were... waiting for him.,Como se o lugar estivesse… esperando por ele.

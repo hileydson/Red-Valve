@@ -77,6 +77,7 @@
 [ext_resource type="ArrayMesh" uid="uid://cx1wkqpbd6kw7" path="res://assets/3d_model/city/malhas_props/street_rat.res" id="78_0de24"]
 [ext_resource type="ArrayMesh" uid="uid://dum4xpa3xiuv1" path="res://assets/3d_model/city/malhas_props/water_manhole_cover.res" id="79_4ieuf"]
 [ext_resource type="Script" uid="uid://b6781x3j14vwg" path="res://scripts/stages/fix_materials.gd" id="99_fixmat"]
+[ext_resource type="Script" path="res://scripts/stages/stage_1/intro_takes_cidade.gd" id="100_takes"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_5de2w"]
 shader = ExtResource("25_g6ibx")
@@ -363,45 +364,45 @@ tracks/3/keys = {
 
 [sub_resource type="Animation" id="Animation_8nye0"]
 resource_name = "intro"
-length = 33.6
+length = 39.6
 tracks/0/type = "position_3d"
 tracks/0/imported = false
 tracks/0/enabled = true
 tracks/0/path = NodePath("camera")
 tracks/0/interp = 2
 tracks/0/loop_wrap = true
-tracks/0/keys = PackedFloat32Array(0.033333335, 1, 1265.2556, 0.7342415, -231.15642, 4.4333334, 1, 941.72473, 24.754597, -231.15642, 7.5333333, 1, 875.3467, 32.293827, -231.15642, 10.633333, 1, 837.51855, 44.92996, -231.15642, 14.966666, 1, 784.3225, 49.70116, -231.15642, 19.866667, 1, 741.73334, 49.70116, -249.71582, 23.566668, 1, 686.1316, 51.09374, -217.94308, 28.033333, 1, 593.2521, 51.09374, -184.70657, 31.686062, 1, 526.8343, 33.39303, -141.70491, 33.466667, 1, 526.8343, 33.39303, -141.70491)
+tracks/0/keys = PackedFloat32Array(0.033333335, 1, 1265.2556, 0.7342415, -231.15642, 4.4333334, 1, 941.72473, 24.754597, -231.15642, 7.5333333, 1, 875.3467, 32.293827, -231.15642, 10.633333, 1, 837.51855, 44.92996, -231.15642, 14.966666, 1, 784.3225, 49.70116, -231.15642, 19.866667, 1, 741.73334, 49.70116, -249.71582, 23.566668, 1, 686.1316, 51.09374, -217.94308, 28.033333, 1, 593.2521, 51.09374, -184.70657, 31.686062, 1, 526.8343, 33.39303, -141.70491, 39.466667, 1, 526.8343, 33.39303, -141.70491)
 tracks/1/type = "rotation_3d"
 tracks/1/imported = false
 tracks/1/enabled = true
 tracks/1/path = NodePath("camera")
 tracks/1/interp = 2
 tracks/1/loop_wrap = true
-tracks/1/keys = PackedFloat32Array(0, 1, 0, 0.70710677, 0, 0.70710677, 4.4666667, 1, 0, 0.70710677, 0, 0.70710677, 7.5, 1, -0.15291941, 0.6903736, 0.1529194, 0.69037354, 10.633333, 1, -0.23944262, 0.66533244, 0.23944259, 0.66533244, 14.933333, 1, -0.0925682, 0.83575267, 0.2575737, 0.4760299, 19.866667, 1, -0.06094204, 0.88690454, 0.26683173, 0.37213877, 23.533333, 1, -0.08604178, 0.84749395, 0.25982678, 0.45479757, 28, 1, -0.07542804, 0.8652501, 0.26310405, 0.42003468, 31.686062, 1, -0.08797726, 0.8154692, 0.24785566, 0.5155943, 33.466667, 1, -0.08797726, 0.8154692, 0.24785566, 0.5155943)
+tracks/1/keys = PackedFloat32Array(0, 1, 0, 0.70710677, 0, 0.70710677, 4.4666667, 1, 0, 0.70710677, 0, 0.70710677, 7.5, 1, -0.15291941, 0.6903736, 0.1529194, 0.69037354, 10.633333, 1, -0.23944262, 0.66533244, 0.23944259, 0.66533244, 14.933333, 1, -0.0925682, 0.83575267, 0.2575737, 0.4760299, 19.866667, 1, -0.06094204, 0.88690454, 0.26683173, 0.37213877, 23.533333, 1, -0.08604178, 0.84749395, 0.25982678, 0.45479757, 28, 1, -0.07542804, 0.8652501, 0.26310405, 0.42003468, 31.686062, 1, -0.08797726, 0.8154692, 0.24785566, 0.5155943, 39.466667, 1, -0.08797726, 0.8154692, 0.24785566, 0.5155943)
 tracks/2/type = "scale_3d"
 tracks/2/imported = false
 tracks/2/enabled = true
 tracks/2/path = NodePath("camera")
 tracks/2/interp = 2
 tracks/2/loop_wrap = true
-tracks/2/keys = PackedFloat32Array(0, 1, 1, 1, 1, 4.4, 1, 1, 1, 1, 7.5333333, 1, 1, 1, 1, 10.7, 1, 1, 1, 1, 14.966666, 1, 1, 0.99999994, 1, 19.833334, 1, 1, 1.0000001, 1, 23.5, 1, 1, 1, 1, 28, 1, 0.99999994, 1.0000001, 1, 31.686062, 1, 1, 1, 1, 33.466667, 1, 1, 1, 1)
+tracks/2/keys = PackedFloat32Array(0, 1, 1, 1, 1, 4.4, 1, 1, 1, 1, 7.5333333, 1, 1, 1, 1, 10.7, 1, 1, 1, 1, 14.966666, 1, 1, 0.99999994, 1, 19.833334, 1, 1, 1.0000001, 1, 23.5, 1, 1, 1, 1, 28, 1, 0.99999994, 1.0000001, 1, 31.686062, 1, 1, 1, 1, 39.466667, 1, 1, 1, 1)
 tracks/3/type = "position_3d"
 tracks/3/imported = false
-tracks/3/enabled = true
+tracks/3/enabled = false
 tracks/3/path = NodePath("camera_2")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = PackedFloat32Array(7.5, 1, 687.11, 6.74955, -217.65205, 9.166667, 1, 607.7886, 9.453072, -241.67606)
 tracks/4/type = "rotation_3d"
 tracks/4/imported = false
-tracks/4/enabled = true
+tracks/4/enabled = false
 tracks/4/path = NodePath("camera_2")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = PackedFloat32Array(7.5333333, 1, 0, 0.70710677, 0, 0.70710677, 9.133333, 1, 0.11049694, 0.7557667, -0.09337548, 0.63866115)
 tracks/5/type = "scale_3d"
 tracks/5/imported = false
-tracks/5/enabled = true
+tracks/5/enabled = false
 tracks/5/path = NodePath("camera_2")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
@@ -413,22 +414,22 @@ tracks/6/path = NodePath("camera:current")
 tracks/6/interp = 1
 tracks/6/loop_wrap = true
 tracks/6/keys = {
-"times": PackedFloat32Array(0, 33.5),
-"transitions": PackedFloat32Array(1, 1),
+"times": PackedFloat32Array(0, 12, 15, 17, 20, 22, 32, 39.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
 "update": 1,
-"values": [true, false]
+"values": [true, false, true, false, true, false, true, false]
 }
 tracks/7/type = "value"
 tracks/7/imported = false
-tracks/7/enabled = false
+tracks/7/enabled = true
 tracks/7/path = NodePath("camera_2:current")
 tracks/7/interp = 1
 tracks/7/loop_wrap = true
 tracks/7/keys = {
-"times": PackedFloat32Array(0, 7.5, 9.166667),
-"transitions": PackedFloat32Array(1, 1, 1),
+"times": PackedFloat32Array(0, 12, 15, 17, 20, 22, 32),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
 "update": 1,
-"values": [false, true, false]
+"values": [false, true, false, true, false, true, false]
 }
 tracks/8/type = "method"
 tracks/8/imported = false
@@ -437,7 +438,7 @@ tracks/8/path = NodePath("executa_capitulo_1")
 tracks/8/interp = 1
 tracks/8/loop_wrap = true
 tracks/8/keys = {
-"times": PackedFloat32Array(0, 33.533333),
+"times": PackedFloat32Array(0, 39.533333),
 "transitions": PackedFloat32Array(1, 1),
 "values": [{
 "args": [],
@@ -522,7 +523,7 @@ tracks/13/path = NodePath("../fade")
 tracks/13/interp = 1
 tracks/13/loop_wrap = true
 tracks/13/keys = {
-"times": PackedFloat32Array(0.03333333, 30.9, 33.433334),
+"times": PackedFloat32Array(0.03333333, 36.9, 39.433334),
 "transitions": PackedFloat32Array(1, 1, 1),
 "values": [{
 "args": [],
@@ -533,6 +534,41 @@ tracks/13/keys = {
 }, {
 "args": [],
 "method": &"fade_in"
+}]
+}
+tracks/14/type = "method"
+tracks/14/imported = false
+tracks/14/enabled = true
+tracks/14/path = NodePath("takes_cidade")
+tracks/14/interp = 1
+tracks/14/loop_wrap = true
+tracks/14/keys = {
+"times": PackedFloat32Array(1, 12, 15, 17, 20, 22, 32, 38),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"values": [{
+"args": [],
+"method": &"preparar_takes"
+}, {
+"args": [],
+"method": &"take_1"
+}, {
+"args": [],
+"method": &"voltar_camera_principal"
+}, {
+"args": [],
+"method": &"take_2"
+}, {
+"args": [],
+"method": &"voltar_camera_principal"
+}, {
+"args": [],
+"method": &"take_3"
+}, {
+"args": [],
+"method": &"take_cidade_tomada"
+}, {
+"args": [],
+"method": &"encerrar_takes"
 }]
 }
 
@@ -4014,6 +4050,9 @@ script = ExtResource("42_mchwq")
 
 [node name="camera_2" type="Camera3D" parent="cutscene_primeira_vez" unique_id=342308569]
 transform = Transform3D(-0.15980473, 0.28629044, 0.9447222, 0.047749247, 0.9581429, -0.28228036, -0.9859931, 3.7252903e-08, -0.16678591, 687.11, 6.74955, -217.65205)
+
+[node name="takes_cidade" type="Node3D" parent="cutscene_primeira_vez" unique_id=1904772311]
+script = ExtResource("100_takes")
 
 [node name="PropsExtra" type="Node3D" parent="." unique_id=843965595]
 script = ExtResource("42_0imvl")
