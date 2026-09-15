@@ -14,10 +14,12 @@ const ShadowRoads := preload("res://scripts/npcs/shadow_roads.gd")
 ##      (`queue_free`) quando fica longe demais.
 ##   2. Cada tipo tem o proprio relogio, o proprio teto de vivos e, se quiser,
 ##      o proprio raio de percepcao. Zumbi e encontro comum de rua e aparece
-##      bem mais; o Cobalt Husker e a excecao; e o Shadow Seraph e o Shadow
-##      Rock sao aparicoes raras, que ainda vagam pela cidade um bom tempo
-##      antes de notar alguem. Mexer na frequencia de um nao mexe na do outro —
-##      era isso que um sorteio unico com relogio unico nao permitia.
+##      bem mais; o Unknown Neighbor tambem, porque ele so funciona se for
+##      COMUM (ele se passa por morador, e um morador sozinho no mapa inteiro
+##      nao engana ninguem); o Cobalt Husker e a excecao; e o Shadow Seraph e
+##      o Shadow Rock sao aparicoes raras, que ainda vagam pela cidade um bom
+##      tempo antes de notar alguem. Mexer na frequencia de um nao mexe na do
+##      outro — era isso que um sorteio unico com relogio unico nao permitia.
 ##
 ## Regras que protegem a ilusao (herdadas do ShadowCrowd):
 ##   - ninguem nasce dentro do campo de visao, a nao ser bem longe, onde a
@@ -46,6 +48,24 @@ const ShadowRoads := preload("res://scripts/npcs/shadow_roads.gd")
 ## Faixa de espera entre um zumbi e o proximo, sorteada a cada vez.
 @export var zombie_min_interval: float = 5.0
 @export var zombie_max_interval: float = 12.0
+
+@export_group("Unknown Neighbor")
+## Vazio = res://scenes/enemies/folded_neighbor.tscn. 0 ativos = desliga.
+@export var vizinho_scene: PackedScene
+## Quantos podem estar vivos ao mesmo tempo. Ele e um ENCONTRO COMUM, como o
+## zumbi: a cidade e feita de gente, e a graca dele so existe se houver varios
+## espalhados — se fosse aparicao rara nunca daria tempo de o jogador aprender
+## que nem todo morador na calcada e um morador.
+@export var vizinho_max_active: int = 3
+## Faixa de espera entre um e o proximo.
+@export var vizinho_min_interval: float = 11.0
+@export var vizinho_max_interval: float = 26.0
+## Distancia em que ELE percebe o jogador. Baixa DE PROPOSITO, e a mais baixa de
+## todas: ele tem de ser visto ANDANDO NA RUA, como morador, antes de virar
+## ameaca. Um vizinho que atravessa a praca correndo na sua direcao entrega o
+## truque na primeira vez; um que so vira quando voce chega perto demais nao
+## entrega nunca.
+@export var vizinho_aproximacao: float = 14.0
 
 @export_group("The Cobalt Husker")
 ## Vazio = res://scenes/enemies/the_cobalt_husker.tscn. 0 ativos = desliga.
@@ -160,6 +180,8 @@ func _ready() -> void:
 func _monta_tipos() -> void:
 	_registra_tipo("zumbi", zombie_scene, "res://scenes/enemies/zombie_1.tscn",
 		zombie_max_active, zombie_min_interval, zombie_max_interval)
+	_registra_tipo("vizinho", vizinho_scene, "res://scenes/enemies/folded_neighbor.tscn",
+		vizinho_max_active, vizinho_min_interval, vizinho_max_interval, vizinho_aproximacao)
 	_registra_tipo("cobalt", cobalt_scene, "res://scenes/enemies/the_cobalt_husker.tscn",
 		cobalt_max_active, cobalt_min_interval, cobalt_max_interval)
 	_registra_tipo("seraph", seraph_scene, "res://scenes/enemies/shadow_seraph.tscn",

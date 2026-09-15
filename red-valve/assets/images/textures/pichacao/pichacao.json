@@ -1,0 +1,669 @@
+{
+ "nota": "gerado por tools/texturas/gerar_pichacao.py — nao editar a mao",
+ "atlas": {
+  "parede": "res://assets/images/textures/pichacao/pichacao_parede.png",
+  "chao": "res://assets/images/textures/pichacao/pichacao_chao.png"
+ },
+ "artes": [
+  {
+   "n": "alto_antilopes",
+   "atlas": "parede",
+   "papel": "alto",
+   "uv": [
+    0.001953,
+    0.780449,
+    0.25,
+    0.102564
+   ],
+   "px": [
+    512,
+    256
+   ],
+   "largura": [
+    3.4,
+    5.2
+   ],
+   "peso": 4
+  },
+  {
+   "n": "alto_arorua",
+   "atlas": "parede",
+   "papel": "alto",
+   "uv": [
+    0.253906,
+    0.780449,
+    0.25,
+    0.102564
+   ],
+   "px": [
+    512,
+    256
+   ],
+   "largura": [
+    2.6,
+    4.0
+   ],
+   "peso": 3
+  },
+  {
+   "n": "simb_engrenagem_alto",
+   "atlas": "parede",
+   "papel": "alto",
+   "uv": [
+    0.001953,
+    0.884615,
+    0.125,
+    0.102564
+   ],
+   "px": [
+    256,
+    256
+   ],
+   "largura": [
+    1.2,
+    2.2
+   ],
+   "peso": 3
+  },
+  {
+   "n": "cartaz_01",
+   "atlas": "parede",
+   "papel": "cartaz",
+   "uv": [
+    0.443359,
+    0.208333,
+    0.125,
+    0.153846
+   ],
+   "px": [
+    256,
+    384
+   ],
+   "largura": [
+    0.32,
+    0.46
+   ],
+   "peso": 6
+  },
+  {
+   "n": "cartaz_02",
+   "atlas": "parede",
+   "papel": "cartaz",
+   "uv": [
+    0.570312,
+    0.208333,
+    0.125,
+    0.153846
+   ],
+   "px": [
+    256,
+    384
+   ],
+   "largura": [
+    0.32,
+    0.46
+   ],
+   "peso": 6
+  },
+  {
+   "n": "cartaz_03",
+   "atlas": "parede",
+   "papel": "cartaz",
+   "uv": [
+    0.697266,
+    0.208333,
+    0.125,
+    0.153846
+   ],
+   "px": [
+    256,
+    384
+   ],
+   "largura": [
+    0.32,
+    0.46
+   ],
+   "peso": 6
+  },
+  {
+   "n": "chao_limo",
+   "atlas": "chao",
+   "papel": "mancha_chao",
+   "uv": [
+    0.246094,
+    0.007812,
+    0.242188,
+    0.96875
+   ],
+   "px": [
+    496,
+    496
+   ],
+   "largura": [
+    1.2,
+    2.8
+   ],
+   "peso": 7
+  },
+  {
+   "n": "chao_terra",
+   "atlas": "chao",
+   "papel": "mancha_chao",
+   "uv": [
+    0.001953,
+    0.007812,
+    0.242188,
+    0.96875
+   ],
+   "px": [
+    496,
+    496
+   ],
+   "largura": [
+    1.6,
+    3.6
+   ],
+   "peso": 10
+  },
+  {
+   "n": "escorrido_ferrugem",
+   "atlas": "parede",
+   "papel": "mancha_parede",
+   "uv": [
+    0.001953,
+    0.001603,
+    0.125,
+    0.205128
+   ],
+   "px": [
+    256,
+    512
+   ],
+   "largura": [
+    1.0,
+    2.4
+   ],
+   "peso": 8
+  },
+  {
+   "n": "escorrido_umidade",
+   "atlas": "parede",
+   "papel": "mancha_parede",
+   "uv": [
+    0.128906,
+    0.001603,
+    0.125,
+    0.205128
+   ],
+   "px": [
+    256,
+    512
+   ],
+   "largura": [
+    1.2,
+    2.8
+   ],
+   "peso": 8
+  },
+  {
+   "n": "mancha_reboco",
+   "atlas": "parede",
+   "papel": "mancha_parede",
+   "uv": [
+    0.255859,
+    0.001603,
+    0.25,
+    0.205128
+   ],
+   "px": [
+    512,
+    512
+   ],
+   "largura": [
+    1.4,
+    3.0
+   ],
+   "peso": 6
+  },
+  {
+   "n": "rua_oleo",
+   "atlas": "chao",
+   "papel": "mancha_rua",
+   "uv": [
+    0.490234,
+    0.007812,
+    0.242188,
+    0.96875
+   ],
+   "px": [
+    496,
+    496
+   ],
+   "largura": [
+    1.0,
+    2.4
+   ],
+   "peso": 9
+  },
+  {
+   "n": "rua_queimado",
+   "atlas": "chao",
+   "papel": "mancha_rua",
+   "uv": [
+    0.734375,
+    0.007812,
+    0.242188,
+    0.96875
+   ],
+   "px": [
+    496,
+    496
+   ],
+   "largura": [
+    0.8,
+    1.8
+   ],
+   "peso": 5
+  },
+  {
+   "n": "bomba_al",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.001953,
+    0.208333,
+    0.25,
+    0.153846
+   ],
+   "px": [
+    512,
+    384
+   ],
+   "largura": [
+    2.2,
+    3.4
+   ],
+   "peso": 4
+  },
+  {
+   "n": "bomba_rv",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.507812,
+    0.001603,
+    0.25,
+    0.153846
+   ],
+   "px": [
+    512,
+    384
+   ],
+   "largura": [
+    2.2,
+    3.4
+   ],
+   "peso": 4
+  },
+  {
+   "n": "bomba_xis",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.253906,
+    0.208333,
+    0.1875,
+    0.153846
+   ],
+   "px": [
+    384,
+    384
+   ],
+   "largura": [
+    1.4,
+    2.2
+   ],
+   "peso": 3
+  },
+  {
+   "n": "risco_01",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.128906,
+    0.884615,
+    0.25,
+    0.102564
+   ],
+   "px": [
+    512,
+    256
+   ],
+   "largura": [
+    1.4,
+    2.8
+   ],
+   "peso": 6
+  },
+  {
+   "n": "risco_02",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.380859,
+    0.884615,
+    0.25,
+    0.102564
+   ],
+   "px": [
+    512,
+    256
+   ],
+   "largura": [
+    1.4,
+    2.8
+   ],
+   "peso": 6
+  },
+  {
+   "n": "simb_engrenagem",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.505859,
+    0.780449,
+    0.125,
+    0.102564
+   ],
+   "px": [
+    256,
+    256
+   ],
+   "largura": [
+    0.8,
+    1.6
+   ],
+   "peso": 6
+  },
+  {
+   "n": "simb_olho",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.759766,
+    0.780449,
+    0.125,
+    0.102564
+   ],
+   "px": [
+    256,
+    256
+   ],
+   "largura": [
+    0.7,
+    1.3
+   ],
+   "peso": 4
+  },
+  {
+   "n": "simb_valvula",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.632812,
+    0.780449,
+    0.125,
+    0.102564
+   ],
+   "px": [
+    256,
+    256
+   ],
+   "largura": [
+    0.8,
+    1.5
+   ],
+   "peso": 5
+  },
+  {
+   "n": "tag_13",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.001953,
+    0.676282,
+    0.25,
+    0.102564
+   ],
+   "px": [
+    512,
+    256
+   ],
+   "largura": [
+    0.8850000000000001,
+    1.475
+   ],
+   "peso": 4
+  },
+  {
+   "n": "tag_171",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.253906,
+    0.676282,
+    0.25,
+    0.102564
+   ],
+   "px": [
+    512,
+    256
+   ],
+   "largura": [
+    1.1400000000000001,
+    1.9
+   ],
+   "peso": 3
+  },
+  {
+   "n": "tag_al",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.505859,
+    0.572115,
+    0.25,
+    0.102564
+   ],
+   "px": [
+    512,
+    256
+   ],
+   "largura": [
+    0.8850000000000001,
+    1.475
+   ],
+   "peso": 5
+  },
+  {
+   "n": "tag_antilopes",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.253906,
+    0.363782,
+    0.25,
+    0.102564
+   ],
+   "px": [
+    512,
+    256
+   ],
+   "largura": [
+    2.9250000000000003,
+    4.875
+   ],
+   "peso": 8
+  },
+  {
+   "n": "tag_arorua",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.001953,
+    0.363782,
+    0.25,
+    0.102564
+   ],
+   "px": [
+    512,
+    256
+   ],
+   "largura": [
+    1.905,
+    3.175
+   ],
+   "peso": 7
+  },
+  {
+   "n": "tag_bica",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.001953,
+    0.572115,
+    0.25,
+    0.102564
+   ],
+   "px": [
+    512,
+    256
+   ],
+   "largura": [
+    1.395,
+    2.325
+   ],
+   "peso": 4
+  },
+  {
+   "n": "tag_calixto",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.505859,
+    0.363782,
+    0.25,
+    0.102564
+   ],
+   "px": [
+    512,
+    256
+   ],
+   "largura": [
+    2.16,
+    3.6000000000000005
+   ],
+   "peso": 5
+  },
+  {
+   "n": "tag_lopes",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.001953,
+    0.467949,
+    0.25,
+    0.102564
+   ],
+   "px": [
+    512,
+    256
+   ],
+   "largura": [
+    1.6500000000000001,
+    2.75
+   ],
+   "peso": 4
+  },
+  {
+   "n": "tag_maycow",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.253906,
+    0.467949,
+    0.25,
+    0.102564
+   ],
+   "px": [
+    512,
+    256
+   ],
+   "largura": [
+    1.905,
+    3.175
+   ],
+   "peso": 3
+  },
+  {
+   "n": "tag_nice",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.505859,
+    0.467949,
+    0.25,
+    0.102564
+   ],
+   "px": [
+    512,
+    256
+   ],
+   "largura": [
+    1.395,
+    2.325
+   ],
+   "peso": 3
+  },
+  {
+   "n": "tag_rv",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.253906,
+    0.572115,
+    0.25,
+    0.102564
+   ],
+   "px": [
+    512,
+    256
+   ],
+   "largura": [
+    0.8850000000000001,
+    1.475
+   ],
+   "peso": 6
+  },
+  {
+   "n": "tag_xv",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.505859,
+    0.676282,
+    0.25,
+    0.102564
+   ],
+   "px": [
+    512,
+    256
+   ],
+   "largura": [
+    0.8850000000000001,
+    1.475
+   ],
+   "peso": 3
+  }
+ ]
+}

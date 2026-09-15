@@ -354,3 +354,73 @@ func pose_catando(p: float) -> void:
 
 	# o quadril desce o que as pernas dobradas encurtaram
 	desloca_quadril(-comprimento_perna * (1.0 - cos(coxa)) * 1.0)
+
+
+# ------------------------------------------------------- parado num lugar
+
+## Sentado num banco. `altura_assento` e a altura do assento acima do chao, em
+## metros, medida no modelo do banco (0,53 m no `painted_wooden_bench`).
+##
+## Quem desce o corpo ate o banco e o `desloca_quadril`, e nao a posicao do
+## NPC: o CharacterBody3D precisa continuar com os pes no chao, senao ele cai
+## do proprio colisor. Descer so o quadril leva a coluna, os bracos e a cabeca
+## junto — os pes ficam pra tras porque a coxa ja girou 80 graus pra frente, e
+## e exatamente onde eles deveriam estar.
+##
+## `tg` e o relogio solto dos gestos: respiracao e olhar em volta. Sem ele a
+## pessoa sentada vira estatua, que e pior do que nao ter ninguem sentado.
+func pose_sentado(tg: float, altura_assento: float) -> void:
+	# coxa quase horizontal (x negativo = pra frente), canela quase vertical
+	var coxa := -1.42
+	var joelho := 1.36
+	junta("hip_l", Vector3(coxa, 0.0, 0.09))
+	junta("hip_r", Vector3(coxa, 0.0, -0.09))
+	junta("knee_l", Vector3(joelho, 0.0, 0.0))
+	junta("knee_r", Vector3(joelho * 0.97, 0.0, 0.0))
+	# a sola volta a ficar paralela ao chao
+	junta("foot_l", Vector3(-(coxa + joelho) * 0.85, 0.0, 0.0))
+	junta("foot_r", Vector3(-(coxa + joelho * 0.97) * 0.85, 0.0, 0.0))
+
+	# tronco levemente pra frente, com a respiracao por cima
+	junta("hips", Vector3(0.0, sin(tg * 0.5) * 0.03, 0.0))
+	junta("spine", Vector3(0.11 + sin(tg * 1.1) * 0.012, sin(tg * 0.4) * 0.06, 0.0))
+	junta("neck", Vector3(-0.05 - sin(tg * 0.9) * 0.03, sin(tg * 0.3) * 0.45, 0.0))
+
+	# maos descansando na coxa: ombro pouco a frente, cotovelo bem fechado
+	junta("shoulder_l", Vector3(-0.30, 0.0, -_ajuste_braco_l - 0.06))
+	junta("shoulder_r", Vector3(-0.28, 0.0, _ajuste_braco_r + 0.06))
+	junta("elbow_l", Vector3(-0.85 - sin(tg * 0.8) * 0.05, 0.0, 0.0))
+	junta("elbow_r", Vector3(-0.80 - sin(tg * 0.7 + 1.2) * 0.05, 0.0, 0.0))
+
+	desloca_quadril(altura_assento - comprimento_perna + sin(tg * 1.1) * 0.005)
+
+
+## Encostado numa parede, de bracos cruzados, com um pe apoiado atras.
+##
+## `lado` = -1 ou 1 escolhe qual perna dobra. O corpo ja chega virado pra fora
+## da parede (quem chama poe o giro), entao aqui a inclinacao pra tras e x
+## NEGATIVO na coluna — o tronco cai na direcao da parede.
+func pose_encostado(tg: float, lado: float) -> void:
+	# perna de apoio esticada; a outra dobra e encosta a sola na parede
+	var dobra := 0.62
+	junta("hip_l", Vector3(0.10 if lado > 0.0 else -0.04, 0.0, 0.05))
+	junta("hip_r", Vector3(-0.04 if lado > 0.0 else 0.10, 0.0, -0.05))
+	junta("knee_l", Vector3(dobra if lado > 0.0 else 0.08, 0.0, 0.0))
+	junta("knee_r", Vector3(0.08 if lado > 0.0 else dobra, 0.0, 0.0))
+	junta("foot_l", Vector3(-0.18 if lado > 0.0 else -0.04, 0.0, 0.0))
+	junta("foot_r", Vector3(-0.04 if lado > 0.0 else -0.18, 0.0, 0.0))
+
+	# peso num pe so: o quadril cai pro lado da perna esticada
+	junta("hips", Vector3(0.0, 0.0, -0.07 * lado))
+	junta("spine", Vector3(-0.07 + sin(tg * 1.0) * 0.012, 0.05 * lado, 0.04 * lado))
+	junta("neck", Vector3(0.04 - sin(tg * 0.8) * 0.03, sin(tg * 0.28) * 0.5, 0.0))
+
+	# bracos cruzados: ombro a frente, cotovelo quase fechado, os dois fechados
+	# contra o torso. O leve descompasso entre os dois lados e o que impede a
+	# pose de parecer um boneco de vitrine.
+	junta("shoulder_l", Vector3(-0.52, 0.0, -_ajuste_braco_l - 0.34))
+	junta("shoulder_r", Vector3(-0.48, 0.0, _ajuste_braco_r + 0.32))
+	junta("elbow_l", Vector3(-1.72 - sin(tg * 0.6) * 0.04, 0.0, 0.0))
+	junta("elbow_r", Vector3(-1.78 - sin(tg * 0.5 + 0.9) * 0.04, 0.0, 0.0))
+
+	desloca_quadril(-comprimento_perna * 0.03 + sin(tg * 1.1) * 0.006)

@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/tools/teste_vizinho.gd" id="1_teste"]
+
+[node name="test_vizinho" type="Node3D"]
+script = ExtResource("1_teste")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.985, 0.174, 0, -0.174, 0.985, 0, 1.9, 7.0)
+
+[node name="Sol" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.5, 0.86, 0, -0.86, 0.5, 0, 8, 0)
+light_energy = 1.4
+shadow_enabled = true
+
+[node name="Ambiente" type="WorldEnvironment" parent="."]

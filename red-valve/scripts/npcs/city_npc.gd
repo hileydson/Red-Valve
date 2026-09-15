@@ -72,6 +72,21 @@ const GIRO_DO_MODELO := 0.0
 ## de distancia, na nevoa, ninguem conta os quadros da passada.
 @export var distancia_pose_cheia: float = 14.0
 
+@export_group("Parar num lugar")
+## Liga a ida ate' banco e muro. Desligue pra os moradores so' vagarem, que e'
+## o comportamento que o ShadowPerson ja' dava sozinho.
+@export var usa_pontos_de_parada: bool = true
+## Arquivo com os lugares, gravado pelo `tools/godot/citybuild/city_urbano.gd`.
+@export var pontos_json: String = "res://assets/3d_model/city/pontos_de_parada.json"
+## Ate' onde procurar um lugar livre.
+@export var alcance_do_ponto: float = 26.0
+## Intervalo entre uma tentativa de parar e a proxima.
+@export var intervalo_de_parada := Vector2(22.0, 70.0)
+## Quanto tempo se fica no lugar.
+@export var duracao_da_parada := Vector2(14.0, 42.0)
+## Desiste de chegar depois disto.
+@export var paciencia_ate_chegar: float = 22.0
+
 @export_group("Modelo")
 ## Cena a usar. Vazio = sorteia um da lista acima.
 @export var modelo: PackedScene
@@ -86,6 +101,26 @@ const GIRO_DO_MODELO := 0.0
 
 var _poser
 var _modelo_raiz: Node3D
+
+## Lugares de sentar/encostar, lidos UMA vez por jogo e compartilhados por
+## todos os NPCs — sao centenas de pontos e dezenas de NPCs no pool.
+static var _pontos: Array = []
+static var _pontos_lidos := false
+## indice do ponto -> NPC que o reservou. Dois moradores sentando no mesmo
+## lugar do banco e' pior do que nenhum sentado.
+static var _reservados: Dictionary = {}
+
+enum Parada { NENHUMA, INDO, PARADO }
+var _parada: int = Parada.NENHUMA
+var _ponto_idx := -1
+var _ponto_pos := Vector3.ZERO
+var _ponto_giro := 0.0
+var _ponto_altura := 0.0
+var _ponto_tipo := ""
+var _parada_relogio := 0.0
+var _proxima_parada := 0.0
+var _rig_y_base := 0.0
+var _encosto_lado := 1.0
 var _abertura := 0.0
 var _planar := 0.0
 var _pose_espera := 0
@@ -103,6 +138,8 @@ func _ready() -> void:
 	age_group = 1
 	super._ready()
 	add_to_group("city_npc")
+	_carregar_pontos()
+	_proxima_parada = randf_range(intervalo_de_parada.x, intervalo_de_parada.y)
 
 
 ## O pool do ShadowCrowd reaproveita o mesmo NPC em outro canto da cidade. A
@@ -110,10 +147,20 @@ func _ready() -> void:
 ## anterior, pra ele nao reaparecer com as pernas abertas no meio de um passo
 ## que nao esta mais dando.
 func relocate(pos: Vector3) -> void:
+	_soltar_ponto()
 	super.relocate(pos)
 	_abertura = 0.0
 	_planar = 0.0
 	_pose_espera = 0
+	_proxima_parada = randf_range(intervalo_de_parada.x, intervalo_de_parada.y)
+
+
+## O pool do ShadowCrowd recolhe o NPC sem avisar, e o `_exit_tree` da base nao
+## sabe do ponto reservado. Sem soltar aqui, um assento some do mapa pro resto
+## da partida cada vez que alguem e' recolhido enquanto estava sentado.
+func _exit_tree() -> void:
+	_soltar_ponto()
+	super._exit_tree()
 
 
 ## Entra no lugar do `_build_body` do ShadowPerson, que montava a silhueta com
@@ -226,6 +273,18 @@ func _animate(delta: float) -> void:
 
 	var blend := clampf(_planar / maxf(walk_speed, 0.01), 0.0, 1.0)
 
+	# parado num ponto tem prioridade sobre a maquina de estados da base: o
+	# `state` continua WANDER o tempo todo (e e' de proposito — assim a base
+	# nao precisa saber que existe banco de praca), entao e' aqui que a pose
+	# sentada ou encostada entra na frente.
+	if _parada == Parada.PARADO:
+		var tg := _gesture_phase + _gesture_seed
+		if _ponto_tipo == "sentar":
+			_poser.pose_sentado(tg, _ponto_altura)
+		else:
+			_poser.pose_encostado(tg, _encosto_lado)
+		return
+
 	match state:
 		State.PICKUP:
 			var passado := _pickup_dur - _state_timer
@@ -258,3 +317,143 @@ func _camera_agora() -> Vector3:
 		if cam != null:
 			_cam_pos = cam.global_position
 	return _cam_pos
+
+
+# ------------------------------------------------------ parar num lugar
+
+## Vagar o dia inteiro e conversar de dois em dois e' o que o ShadowPerson ja
+## fazia. Uma cidade viva tem gente PARADA fazendo alguma coisa: sentada no
+## banco da praca olhando o obelisco, encostada no muro vendo a rua passar.
+##
+## Estes pontos NAO sao decididos aqui — eles saem do `city_urbano.gd`, que e
+## quem sabe onde ele mesmo poe os bancos e onde tem muro virado pra rua. A
+## lista vem por arquivo, num `static`: sao centenas de pontos, e ler um JSON
+## por NPC do pool seria ler o mesmo arquivo dezenas de vezes.
+##
+## Por que isto vive no CityNpc e nao no ShadowPerson: o ShadowPerson tambem e
+## a sombra do Capitulo 1, e sombra nao senta em banco de praca. Alem disso a
+## maquina de estados dele e usada pelo prologo E pelo capitulo; mexer na base
+## pra um comportamento que so o morador tem seria arriscar os dois.
+##
+## O `_physics_process` abaixo INTERCEPTA o da base em vez de estende-lo: com o
+## NPC sentado, nada do que a base faz num quadro (vagar, procurar parceiro de
+## conversa, voltar pra rua) e desejavel. Enquanto ele nao esta parado, o
+## comportamento e o de sempre, e a unica coisa a mais e a chance de decidir ir
+## pra um ponto.
+func _physics_process(delta: float) -> void:
+	if not usa_pontos_de_parada or _parada == Parada.NENHUMA:
+		super._physics_process(delta)
+		_pensar_em_parar(delta)
+		return
+
+	if not is_on_floor():
+		velocity.y -= 18.0 * delta
+	else:
+		velocity.y = 0.0
+
+	_parada_relogio -= delta
+	match _parada:
+		Parada.INDO:
+			_move_towards(_ponto_pos, delta)
+			var d := Vector2(_ponto_pos.x - global_position.x,
+				_ponto_pos.z - global_position.z).length()
+			if d < 0.45:
+				_chegou_no_ponto()
+			elif _parada_relogio <= 0.0:
+				_soltar_ponto()          # nao achou caminho; volta a vagar
+		Parada.PARADO:
+			velocity.x = move_toward(velocity.x, 0.0, walk_speed * 8.0 * delta)
+			velocity.z = move_toward(velocity.z, 0.0, walk_speed * 8.0 * delta)
+			rotation.y = rotate_toward(rotation.y, _ponto_giro, turn_speed * delta)
+			if _parada_relogio <= 0.0:
+				_soltar_ponto()
+
+	move_and_slide()
+	_animate(delta)
+
+
+static func _carregar_pontos() -> void:
+	if _pontos_lidos:
+		return
+	_pontos_lidos = true
+	var txt := FileAccess.get_file_as_string(
+		"res://assets/3d_model/city/pontos_de_parada.json")
+	if txt.is_empty():
+		return
+	var d = JSON.parse_string(txt)
+	if typeof(d) == TYPE_DICTIONARY:
+		_pontos = d.get("pontos", [])
+
+
+func _pensar_em_parar(delta: float) -> void:
+	# so interrompe quem esta vagando sozinho: quem esta no meio de uma
+	# conversa ou de uma catada termina o que comecou
+	if _pontos.is_empty() or state != State.WANDER or partner != null:
+		return
+	_proxima_parada -= delta
+	if _proxima_parada > 0.0:
+		return
+	_proxima_parada = randf_range(intervalo_de_parada.x, intervalo_de_parada.y)
+	_procurar_ponto()
+
+
+func _procurar_ponto() -> void:
+	"""Pega o ponto livre mais perto, com um pouco de aleatorio pra dois NPCs
+	que saem juntos nao irem sempre pro mesmo lugar."""
+	var melhor := -1
+	var melhor_d := alcance_do_ponto * alcance_do_ponto
+	var passo := maxi(1, _pontos.size() / 90)   # amostra: a lista e grande
+	var inicio := _rng.randi_range(0, passo - 1) if passo > 1 else 0
+	for i in range(inicio, _pontos.size(), passo):
+		if _reservados.has(i):
+			continue
+		var pt: Dictionary = _pontos[i]
+		var dx := float(pt["x"]) - global_position.x
+		var dz := float(pt["z"]) - global_position.z
+		var d := dx * dx + dz * dz
+		if d < melhor_d:
+			melhor_d = d
+			melhor = i
+	if melhor < 0:
+		return
+	var pt: Dictionary = _pontos[melhor]
+	_ponto_idx = melhor
+	_reservados[melhor] = get_instance_id()
+	_ponto_pos = Vector3(float(pt["x"]), float(pt["y"]), float(pt["z"]))
+	_ponto_giro = float(pt["g"])
+	_ponto_altura = float(pt.get("h", 0.0))
+	_ponto_tipo = String(pt.get("t", "encostar"))
+	_encosto_lado = 1.0 if _rng.randf() < 0.5 else -1.0
+	_parada = Parada.INDO
+	_parada_relogio = paciencia_ate_chegar
+	# `road_only` arrastaria o NPC de volta pro asfalto no meio do caminho: o
+	# banco da praca e o pe do muro estao, por definicao, FORA da rua
+	road_only = false
+	_repath = 0.0
+
+
+func _chegou_no_ponto() -> void:
+	_parada = Parada.PARADO
+	_parada_relogio = randf_range(duracao_da_parada.x, duracao_da_parada.y)
+	velocity.x = 0.0
+	velocity.z = 0.0
+	# encaixa no lugar: sentado torto no banco denuncia mais do que ninguem
+	# sentado. O y NAO e forcado — quem levanta o corpo ate o assento e o
+	# `desloca_quadril` da pose, pra o colisor continuar pisando no chao.
+	global_position.x = _ponto_pos.x
+	global_position.z = _ponto_pos.z
+
+
+func _soltar_ponto() -> void:
+	if _ponto_idx >= 0 and _reservados.get(_ponto_idx, 0) == get_instance_id():
+		_reservados.erase(_ponto_idx)
+	_ponto_idx = -1
+	if _parada != Parada.NENHUMA:
+		_parada = Parada.NENHUMA
+		road_only = true
+		state = State.WANDER
+		_pick_wander_target()
+
+
+func esta_parado() -> bool:
+	return _parada == Parada.PARADO
