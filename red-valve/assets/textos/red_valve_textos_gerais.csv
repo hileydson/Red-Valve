@@ -206,3 +206,5 @@ PROMPT_HOSP_ELEVADOR_SUBIR,Go up to the 2nd floor,Subir para o 2º andar
 PROMPT_HOSP_ELEVADOR_DESCER,Go down to the 1st floor,Descer para o 1º andar
 PROMPT_HOSP_ELEVADOR_VINDO,The elevator is coming...,O elevador está vindo...
 OBJ_HOSP_EXPLORAR,Find a way up to the second floor,Encontre um jeito de subir para o segundo andar
+PROMPT_ENTER_HOSPITAL,Enter the hospital?,Entrar no hospital?
+PROMPT_HOSP_SAIR,Leave the hospital,Sair do hospital

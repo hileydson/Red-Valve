@@ -24,8 +24,11 @@ if [ ! -x "$GODOT" ]; then
 	exit 1
 fi
 
-echo "== gerando =="
+echo "== gerando o interior =="
 python3 "$RAIZ/tools/godot/hospital/gerar_cena_hospital.py"
+
+echo "== gerando o exterior =="
+python3 "$RAIZ/tools/godot/hospital/gerar_cena_exterior.py"
 
 echo "== importando =="
 "$GODOT" --headless --path "$RAIZ/red-valve" --import 2>&1 \

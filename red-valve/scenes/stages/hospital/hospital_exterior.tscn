@@ -1,0 +1,188 @@
+[gd_scene load_steps=18 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/3d_model/stages/hospital/hospital_exterior.gltf" id="e0"]
+
+[sub_resource type="BoxShape3D" id="f0"]
+size = Vector3(56.0000, 6.0000, 68.0000)
+
+[sub_resource type="BoxShape3D" id="f1"]
+size = Vector3(56.0000, 5.3500, 64.4000)
+
+[sub_resource type="BoxShape3D" id="f2"]
+size = Vector3(10.0000, 1.6000, 25.0000)
+
+[sub_resource type="BoxShape3D" id="f3"]
+size = Vector3(0.5500, 1.4000, 19.0000)
+
+[sub_resource type="BoxShape3D" id="f4"]
+size = Vector3(0.5500, 1.2000, 19.0000)
+
+[sub_resource type="BoxShape3D" id="f5"]
+size = Vector3(0.5500, 1.0000, 19.0000)
+
+[sub_resource type="BoxShape3D" id="f6"]
+size = Vector3(0.8000, 3.9000, 0.8000)
+
+[sub_resource type="BoxShape3D" id="f7"]
+size = Vector3(6.7500, 13.7000, 6.4000)
+
+[sub_resource type="BoxShape3D" id="f8"]
+size = Vector3(2.8000, 18.2000, 2.6000)
+
+[sub_resource type="BoxShape3D" id="f9"]
+size = Vector3(65.0000, 0.7000, 4.5000)
+
+[sub_resource type="BoxShape3D" id="f10"]
+size = Vector3(4.5000, 0.7000, 68.0000)
+
+[sub_resource type="BoxShape3D" id="f11"]
+size = Vector3(4.5000, 0.7000, 28.6000)
+
+[sub_resource type="BoxShape3D" id="f12"]
+size = Vector3(10.5000, 0.7000, 6.0000)
+
+[sub_resource type="BoxShape3D" id="f13"]
+size = Vector3(4.5000, 0.7000, 33.4000)
+
+[sub_resource type="BoxShape3D" id="f14"]
+size = Vector3(17.0000, 0.7000, 33.0000)
+
+[sub_resource type="BoxShape3D" id="f15"]
+size = Vector3(21.0000, 5.0000, 20.0000)
+
+[node name="hospital_exterior" type="Node3D"]
+
+[node name="predio" type="Node3D" parent="."]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 13.00000, 0.60000, -34.20000)
+
+[node name="estrutura" parent="predio" instance=ExtResource("e0")]
+
+[node name="colisao" type="StaticBody3D" parent="predio"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="c0" type="CollisionShape3D" parent="predio/colisao"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 28.00000, 1.20000, 34.00000)
+shape = SubResource("f0")
+
+[node name="c1" type="CollisionShape3D" parent="predio/colisao"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 28.00000, 6.87500, 32.20000)
+shape = SubResource("f1")
+
+[node name="c2" type="CollisionShape3D" parent="predio/colisao"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -5.00000, -0.80000, 34.50000)
+shape = SubResource("f2")
+
+[node name="c3" type="CollisionShape3D" parent="predio/colisao"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -10.27500, -0.90000, 34.50000)
+shape = SubResource("f3")
+
+[node name="c4" type="CollisionShape3D" parent="predio/colisao"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -10.82500, -1.00000, 34.50000)
+shape = SubResource("f4")
+
+[node name="c5" type="CollisionShape3D" parent="predio/colisao"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -11.37500, -1.10000, 34.50000)
+shape = SubResource("f5")
+
+[node name="c6" type="CollisionShape3D" parent="predio/colisao"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -8.90000, 1.95000, 24.00000)
+shape = SubResource("f6")
+
+[node name="c7" type="CollisionShape3D" parent="predio/colisao"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -8.90000, 1.95000, 29.60000)
+shape = SubResource("f6")
+
+[node name="c8" type="CollisionShape3D" parent="predio/colisao"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -8.90000, 1.95000, 38.80000)
+shape = SubResource("f6")
+
+[node name="c9" type="CollisionShape3D" parent="predio/colisao"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -8.90000, 1.95000, 45.00000)
+shape = SubResource("f6")
+
+[node name="c10" type="CollisionShape3D" parent="predio/colisao"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 58.82500, 5.05000, 31.60000)
+shape = SubResource("f7")
+
+[node name="c11" type="CollisionShape3D" parent="predio/colisao"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 50.80000, 7.30000, 69.30000)
+shape = SubResource("f8")
+
+[node name="c12" type="CollisionShape3D" parent="predio/colisao"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 28.00000, -0.95000, -2.25000)
+shape = SubResource("f9")
+
+[node name="c13" type="CollisionShape3D" parent="predio/colisao"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 28.00000, -0.95000, 70.25000)
+shape = SubResource("f9")
+
+[node name="c14" type="CollisionShape3D" parent="predio/colisao"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -2.25000, -0.95000, 34.00000)
+shape = SubResource("f10")
+
+[node name="c15" type="CollisionShape3D" parent="predio/colisao"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 58.25000, -0.95000, 14.30000)
+shape = SubResource("f11")
+
+[node name="c16" type="CollisionShape3D" parent="predio/colisao"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 61.25000, -0.95000, 31.60000)
+shape = SubResource("f12")
+
+[node name="c17" type="CollisionShape3D" parent="predio/colisao"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 58.25000, -0.95000, 51.30000)
+shape = SubResource("f13")
+
+[node name="c18" type="CollisionShape3D" parent="predio/colisao"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -8.50000, -0.95000, 34.50000)
+shape = SubResource("f14")
+
+[node name="luzes" type="Node3D" parent="predio"]
+
+[node name="marquise_n" type="OmniLight3D" parent="predio/luzes"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -4.20000, 3.65000, 29.20000)
+light_color = Color(0.6200, 0.7400, 0.6400, 1.0000)
+light_energy = 2.400
+light_specular = 0.15
+shadow_enabled = false
+omni_range = 9.000
+omni_attenuation = 1.35
+
+[node name="marquise_s" type="OmniLight3D" parent="predio/luzes"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -4.20000, 3.65000, 39.20000)
+light_color = Color(0.6200, 0.7400, 0.6400, 1.0000)
+light_energy = 2.400
+light_specular = 0.15
+shadow_enabled = false
+omni_range = 9.000
+omni_attenuation = 1.35
+
+[node name="letreiro" type="OmniLight3D" parent="predio/luzes"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -1.40000, 5.37000, 34.20000)
+light_color = Color(0.4600, 0.7600, 0.5400, 1.0000)
+light_energy = 3.400
+light_specular = 0.15
+shadow_enabled = false
+omni_range = 15.000
+omni_attenuation = 1.35
+
+[node name="cruz_torre" type="OmniLight3D" parent="predio/luzes"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 63.20000, 8.40000, 31.60000)
+light_color = Color(0.8200, 0.1000, 0.0700, 1.0000)
+light_energy = 2.600
+light_specular = 0.15
+shadow_enabled = false
+omni_range = 7.500
+omni_attenuation = 1.35
+
+[node name="ponto_de_saida" type="Marker3D" parent="."]
+transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 9.50000, 0.75000, 0.00000)
+
+[node name="area_entrada" type="Area3D" parent="."]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 4.50000, 1.80000, 0.00000)
+collision_layer = 0
+collision_mask = 1
+monitorable = false
+
+[node name="forma" type="CollisionShape3D" parent="area_entrada"]
+shape = SubResource("f15")

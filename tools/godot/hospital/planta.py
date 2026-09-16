@@ -221,10 +221,16 @@ def muro(eixo, coord, a, b, vaos=(), andar=1, tipo="interna", esp=PAREDE):
             "andar": andar, "tipo": tipo, "esp": esp}
 
 
-def porta(c, l=PORTA_L, sala=None, ident=None, dupla=False, trancada=False):
+def porta(c, l=PORTA_L, sala=None, ident=None, dupla=False, trancada=False,
+          saida=False):
+    """`saida` = porta que nao abre: acionar ela LEVA PRA FORA DO PREDIO.
+
+    So' a da rua tem isso. Ela nao gira, nao fecha sozinha e nao tem folha
+    animada nenhuma: o prompt dela troca de cena.
+    """
     return {"c": c, "l": PORTA_DUPLA_L if dupla else l, "y0": 0.0, "y1": PORTA_H,
             "tipo": "porta", "sala": sala, "ident": ident, "dupla": dupla,
-            "trancada": trancada}
+            "trancada": trancada, "saida": saida}
 
 
 def janela(c, l=JANELA_L, y0=JANELA_Y0, y1=JANELA_Y1):
@@ -268,12 +274,12 @@ def muros_andar_1():
         janela(20.5, 2.0),
         # o janelao do hall: vai quase do chao ao teto, dos dois lados da porta
         janela(28.5, 3.2, 0.9, 3.05), janela(40.0, 3.2, 0.9, 3.05),
-        # A porta da rua fica TRANCADA. O hospital ainda nao esta ligado ao
-        # mapa da cidade, e uma porta que abrisse daqui jogaria o jogador num
-        # lugar sem chao. Trancada, ela tambem diz a coisa certa: quem entrou
-        # nao sai por onde entrou.
+        # A porta da rua. Ela e' a SAIDA do predio: acionar aqui devolve o
+        # jogador pro tablado da entrada, na cidade (ver `hospital.gd`).
+        # Ate' o hospital entrar no mapa ela ficava trancada, porque abrir uma
+        # porta pra lugar nenhum e' pior do que nao abrir.
         porta(34.20, sala="hall_principal", ident="entrada_principal",
-              dupla=True, trancada=True),
+              dupla=True, saida=True),
         janela(47.8, 2.4), janela(62.9, 2.0),
     ]))
     # leste: o vao do elevador mais janelas altas no corredor leste

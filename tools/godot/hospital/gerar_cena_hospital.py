@@ -578,6 +578,7 @@ def portas_da_planta():
                           "pos": pos, "giro": giro, "largura": v["l"],
                           "dupla": v["dupla"], "andar": m["andar"],
                           "trancada": v.get("trancada", False),
+                          "saida": v.get("saida", False),
                           "eixo": m["eixo"], "coord": m["coord"], "c": v["c"]})
     return saida
 
@@ -968,7 +969,8 @@ def _emitir_porta(no, peca, forma, d, id_script):
     metas = [("sala", '"%s"' % d["chave"]),
              ("largura", "%.3f" % d["largura"]),
              ("dupla", "true" if d["dupla"] else "false"),
-             ("trancada", "true" if d["trancada"] else "false")]
+             ("trancada", "true" if d["trancada"] else "false"),
+             ("saida", "true" if d["saida"] else "false")]
     no(d["ident"], tipo="Node3D", pai="portas",
        props_=[("transform", transform_pos(d["pos"], d["giro"])),
                ("script", 'ExtResource("%s")' % id_script)], metas=metas)

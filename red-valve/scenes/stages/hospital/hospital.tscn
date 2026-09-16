@@ -8463,7 +8463,8 @@ script = ExtResource("e4")
 metadata/sala = "HOSP_SALA_GENERICA"
 metadata/largura = 2.800
 metadata/dupla = true
-metadata/trancada = true
+metadata/trancada = false
+metadata/saida = true
 
 [node name="pivo" type="Node3D" parent="portas/entrada_principal"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -1.40000, 0.00000, 0.00000)
@@ -8508,6 +8509,7 @@ metadata/sala = "HOSP_SALA_101"
 metadata/largura = 2.200
 metadata/dupla = false
 metadata/trancada = false
+metadata/saida = false
 
 [node name="pivo" type="Node3D" parent="portas/p_101"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -1.10000, 0.00000, 0.00000)
@@ -8538,6 +8540,7 @@ metadata/sala = "HOSP_SALA_102"
 metadata/largura = 2.200
 metadata/dupla = false
 metadata/trancada = false
+metadata/saida = false
 
 [node name="pivo" type="Node3D" parent="portas/p_102"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -1.10000, 0.00000, 0.00000)
@@ -8568,6 +8571,7 @@ metadata/sala = "HOSP_SALA_103"
 metadata/largura = 2.200
 metadata/dupla = false
 metadata/trancada = false
+metadata/saida = false
 
 [node name="pivo" type="Node3D" parent="portas/p_103"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -1.10000, 0.00000, 0.00000)
@@ -8598,6 +8602,7 @@ metadata/sala = "HOSP_SALA_RAIOX"
 metadata/largura = 2.200
 metadata/dupla = false
 metadata/trancada = false
+metadata/saida = false
 
 [node name="pivo" type="Node3D" parent="portas/p_raiox"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -1.10000, 0.00000, 0.00000)
@@ -8628,6 +8633,7 @@ metadata/sala = "HOSP_SALA_LAB"
 metadata/largura = 2.200
 metadata/dupla = false
 metadata/trancada = false
+metadata/saida = false
 
 [node name="pivo" type="Node3D" parent="portas/p_lab"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -1.10000, 0.00000, 0.00000)
@@ -8658,6 +8664,7 @@ metadata/sala = "HOSP_SALA_104"
 metadata/largura = 2.200
 metadata/dupla = false
 metadata/trancada = false
+metadata/saida = false
 
 [node name="pivo" type="Node3D" parent="portas/p_104"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -1.10000, 0.00000, 0.00000)
@@ -8688,6 +8695,7 @@ metadata/sala = "HOSP_SALA_105"
 metadata/largura = 2.200
 metadata/dupla = false
 metadata/trancada = false
+metadata/saida = false
 
 [node name="pivo" type="Node3D" parent="portas/p_105"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -1.10000, 0.00000, 0.00000)
@@ -8718,6 +8726,7 @@ metadata/sala = "HOSP_SALA_CIRURGIA"
 metadata/largura = 2.800
 metadata/dupla = true
 metadata/trancada = false
+metadata/saida = false
 
 [node name="pivo" type="Node3D" parent="portas/p_cirurgia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -1.40000, 0.00000, 0.00000)
@@ -8762,6 +8771,7 @@ metadata/sala = "HOSP_SALA_UTI"
 metadata/largura = 2.800
 metadata/dupla = true
 metadata/trancada = false
+metadata/saida = false
 
 [node name="pivo" type="Node3D" parent="portas/p_uti"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -1.40000, 0.00000, 0.00000)
@@ -8806,6 +8816,7 @@ metadata/sala = "HOSP_SALA_PS"
 metadata/largura = 2.800
 metadata/dupla = true
 metadata/trancada = false
+metadata/saida = false
 
 [node name="pivo" type="Node3D" parent="portas/p_ps"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -1.40000, 0.00000, 0.00000)
@@ -8850,6 +8861,7 @@ metadata/sala = "HOSP_SALA_PS"
 metadata/largura = 2.200
 metadata/dupla = false
 metadata/trancada = false
+metadata/saida = false
 
 [node name="pivo" type="Node3D" parent="portas/p_ps_leste"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -1.10000, 0.00000, 0.00000)
@@ -8880,6 +8892,7 @@ metadata/sala = "HOSP_SALA_106"
 metadata/largura = 2.200
 metadata/dupla = false
 metadata/trancada = false
+metadata/saida = false
 
 [node name="pivo" type="Node3D" parent="portas/p_106"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -1.10000, 0.00000, 0.00000)
@@ -8910,6 +8923,7 @@ metadata/sala = "HOSP_SALA_107"
 metadata/largura = 2.200
 metadata/dupla = false
 metadata/trancada = false
+metadata/saida = false
 
 [node name="pivo" type="Node3D" parent="portas/p_107"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -1.10000, 0.00000, 0.00000)
@@ -8940,6 +8954,7 @@ metadata/sala = "HOSP_SALA_REFEITORIO"
 metadata/largura = 2.800
 metadata/dupla = true
 metadata/trancada = false
+metadata/saida = false
 
 [node name="pivo" type="Node3D" parent="portas/p_refeitorio"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -1.40000, 0.00000, 0.00000)
@@ -8984,6 +8999,7 @@ metadata/sala = "HOSP_SALA_NECROTERIO"
 metadata/largura = 2.800
 metadata/dupla = true
 metadata/trancada = false
+metadata/saida = false
 
 [node name="pivo" type="Node3D" parent="portas/p_necroterio"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -1.40000, 0.00000, 0.00000)
@@ -9028,6 +9044,7 @@ metadata/sala = "HOSP_SALA_108"
 metadata/largura = 2.200
 metadata/dupla = false
 metadata/trancada = false
+metadata/saida = false
 
 [node name="pivo" type="Node3D" parent="portas/p_108"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -1.10000, 0.00000, 0.00000)
@@ -9058,6 +9075,7 @@ metadata/sala = "HOSP_SALA_109"
 metadata/largura = 2.200
 metadata/dupla = false
 metadata/trancada = false
+metadata/saida = false
 
 [node name="pivo" type="Node3D" parent="portas/p_109"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -1.10000, 0.00000, 0.00000)
@@ -9088,6 +9106,7 @@ metadata/sala = "HOSP_SALA_FARMACIA"
 metadata/largura = 2.200
 metadata/dupla = false
 metadata/trancada = false
+metadata/saida = false
 
 [node name="pivo" type="Node3D" parent="portas/p_farmacia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -1.10000, 0.00000, 0.00000)
@@ -9118,6 +9137,7 @@ metadata/sala = "HOSP_SALA_ESTERIL"
 metadata/largura = 2.200
 metadata/dupla = false
 metadata/trancada = false
+metadata/saida = false
 
 [node name="pivo" type="Node3D" parent="portas/p_esteril"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -1.10000, 0.00000, 0.00000)
@@ -9148,6 +9168,7 @@ metadata/sala = "HOSP_SALA_MAQUINAS"
 metadata/largura = 2.200
 metadata/dupla = false
 metadata/trancada = false
+metadata/saida = false
 
 [node name="pivo" type="Node3D" parent="portas/p_maquinas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -1.10000, 0.00000, 0.00000)
@@ -9178,6 +9199,7 @@ metadata/sala = "HOSP_SALA_ARQUIVO"
 metadata/largura = 2.200
 metadata/dupla = false
 metadata/trancada = false
+metadata/saida = false
 
 [node name="pivo" type="Node3D" parent="portas/p_arquivo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -1.10000, 0.00000, 0.00000)
@@ -9208,6 +9230,7 @@ metadata/sala = "HOSP_SALA_201"
 metadata/largura = 2.200
 metadata/dupla = false
 metadata/trancada = false
+metadata/saida = false
 
 [node name="pivo" type="Node3D" parent="portas/p_201"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -1.10000, 0.00000, 0.00000)
@@ -9238,6 +9261,7 @@ metadata/sala = "HOSP_SALA_202"
 metadata/largura = 2.200
 metadata/dupla = false
 metadata/trancada = false
+metadata/saida = false
 
 [node name="pivo" type="Node3D" parent="portas/p_202"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -1.10000, 0.00000, 0.00000)
@@ -9268,6 +9292,7 @@ metadata/sala = "HOSP_SALA_203"
 metadata/largura = 2.200
 metadata/dupla = false
 metadata/trancada = false
+metadata/saida = false
 
 [node name="pivo" type="Node3D" parent="portas/p_203"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -1.10000, 0.00000, 0.00000)
@@ -9298,6 +9323,7 @@ metadata/sala = "HOSP_SALA_PSIQ"
 metadata/largura = 2.800
 metadata/dupla = true
 metadata/trancada = false
+metadata/saida = false
 
 [node name="pivo" type="Node3D" parent="portas/p_psiq"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -1.40000, 0.00000, 0.00000)
@@ -9342,6 +9368,7 @@ metadata/sala = "HOSP_SALA_TERAPIA"
 metadata/largura = 2.200
 metadata/dupla = false
 metadata/trancada = false
+metadata/saida = false
 
 [node name="pivo" type="Node3D" parent="portas/p_terapia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -1.10000, 0.00000, 0.00000)
@@ -9372,6 +9399,7 @@ metadata/sala = "HOSP_SALA_204"
 metadata/largura = 2.200
 metadata/dupla = false
 metadata/trancada = false
+metadata/saida = false
 
 [node name="pivo" type="Node3D" parent="portas/p_204"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -1.10000, 0.00000, 0.00000)
@@ -9402,6 +9430,7 @@ metadata/sala = "HOSP_SALA_205"
 metadata/largura = 2.200
 metadata/dupla = false
 metadata/trancada = false
+metadata/saida = false
 
 [node name="pivo" type="Node3D" parent="portas/p_205"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -1.10000, 0.00000, 0.00000)
@@ -9432,6 +9461,7 @@ metadata/sala = "HOSP_SALA_CIRURGIA2"
 metadata/largura = 2.800
 metadata/dupla = true
 metadata/trancada = false
+metadata/saida = false
 
 [node name="pivo" type="Node3D" parent="portas/p_cirurgia2"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -1.40000, 0.00000, 0.00000)
@@ -9476,6 +9506,7 @@ metadata/sala = "HOSP_SALA_OBSERVACAO"
 metadata/largura = 2.200
 metadata/dupla = false
 metadata/trancada = false
+metadata/saida = false
 
 [node name="pivo" type="Node3D" parent="portas/p_observacao"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -1.10000, 0.00000, 0.00000)

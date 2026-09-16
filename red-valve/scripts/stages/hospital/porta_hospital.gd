@@ -52,11 +52,14 @@ var _player: Node3D = null
 var _conta_regressiva: float = 0.0
 var _id_msg: String = ""
 var _trancada: bool = false
+## A porta da rua. Ela nao gira: acionar ela troca de cena (ver `_acionar`).
+var _saida: bool = false
 
 
 func _ready() -> void:
 	_id_msg = "hosp_porta_" + name
 	_trancada = get_meta("trancada", false)
+	_saida = get_meta("saida", false)
 	area.body_entered.connect(_ao_entrar)
 	area.body_exited.connect(_ao_sair)
 
@@ -81,6 +84,16 @@ func _process(delta: float) -> void:
 func _acionar() -> void:
 	if _trancada:
 		GlobalUtils.show_center_message(_id_msg, tr("PROMPT_HOSP_TRANCADA"), 16, 1.6)
+		return
+	# A porta da rua e' a unica que nao e' uma porta: quem manda nela e' a cena,
+	# porque sair daqui e' voltar pra cidade. O dono responde pelo metodo — nao
+	# por sinal — pra seguir o mesmo acordo que a igreja ja' usa com a dela.
+	if _saida:
+		_player_perto = false
+		GlobalUtils.hide_center_message(_id_msg)
+		var dono := owner if owner else get_parent()
+		if dono and dono.has_method("sair_do_hospital"):
+			dono.sair_do_hospital()
 		return
 	if aberta:
 		_fechar()
@@ -153,6 +166,9 @@ func _atualizar_prompt() -> void:
 		return
 	if _trancada:
 		GlobalUtils.show_center_message(_id_msg, tr("PROMPT_HOSP_TRANCADA"), 16)
+		return
+	if _saida:
+		GlobalUtils.show_center_message(_id_msg, tr("PROMPT_HOSP_SAIR"), 16)
 		return
 	if aberta:
 		GlobalUtils.show_center_message(_id_msg, tr("PROMPT_HOSP_FECHAR"), 16)

@@ -54,6 +54,10 @@ var entrando_na_casa_maycow: bool = false
 ## consome (e zera) isto no spawn para devolvê-lo ao adro, e não ao ponto de
 ## entrada padrão do mapa — que fica do outro lado da cidade.
 var voltando_da_igreja: bool = false
+## Ligado pelo interior do hospital quando o jogador sai pela porta da rua. O
+## stage_1 consome (e zera) isto no spawn para devolvê-lo ao tablado da
+## entrada, e não ao ponto de entrada padrão do mapa.
+var voltando_do_hospital: bool = false
 var game_weapon_events = {taken_pistol=false, taken_smg=false, taken_cogblade=false, taken_magic_hand_1=false}
 
 # --- estado de UI, só em memória (de propósito fora do save) ---

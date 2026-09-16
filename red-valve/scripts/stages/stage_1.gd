@@ -38,6 +38,19 @@ const IGREJA_PORTA := Vector3(577.6, 11.6, -317.5)
 const IGREJA_OLHAR_Y := PI * 0.5
 const CENA_IGREJA := "res://scenes/stages/igreja/igreja_interior.tscn"
 
+# --- Hospital ----------------------------------------------------------------
+# Ao contrário da igreja, aqui NÃO há coordenada escrita no código. O hospital
+# é uma instância só (`hospital_exterior.tscn`) pendurada no Marker3D
+# `hospital_local`, e ele ainda vai ser girado e reposicionado à mão no editor
+# até encaixar na rua. Uma constante com a posição da porta ficaria errada no
+# primeiro arrasto — e o erro só apareceria no jogo, com o jogador nascendo
+# dentro da parede.
+#
+# Por isso tanto a área do prompt quanto o ponto de volta são NÓS DA PRÓPRIA
+# INSTÂNCIA: giram e andam junto com ela, de graça.
+const NO_HOSPITAL := "locais_importantes/hospital_exterior"
+const CENA_HOSPITAL := "res://scenes/stages/hospital/hospital.tscn"
+
 @onready var navigation_region_3d: NavigationRegion3D = $NavigationRegion3D
 @onready var real_time_label: Label = $real_time_label
 @onready var sky_3d: Sky3D = $WorldEnvironment/Sky3D
@@ -46,10 +59,14 @@ var player_na_oficina: bool = false
 var player_na_casa_jimmy: bool = false
 var player_na_casa_maycow: bool = false
 var player_na_igreja: bool = false
+var player_no_hospital: bool = false
 ## Engole UMA entrada na área da igreja, pelo mesmo motivo da casa do Maycow:
 ## quem volta de dentro reaparece no adro, já dentro da área, e sem isto o
 ## prompt de "entrar" pipocaria no instante em que ele acabou de sair.
 var _ignorar_prompt_igreja: bool = false
+## Mesma coisa para o hospital: quem volta de dentro reaparece no tablado da
+## entrada, que é exatamente onde a área do prompt está.
+var _ignorar_prompt_hospital: bool = false
 ## Engole UMA entrada na área da casa do Maycow. Ligado quando o jogador volta
 ## de dentro da casa: ele reaparece na soleira, já dentro da área, e sem isto o
 ## prompt de "entrar" pipocaria no mesmo instante em que ele acabou de sair.
@@ -139,6 +156,9 @@ func setup_player_spawn() -> void:
 	elif GlobalEvents.voltando_da_igreja:
 		GlobalEvents.voltando_da_igreja = false
 		_devolver_ao_adro_da_igreja()
+	elif GlobalEvents.voltando_do_hospital:
+		GlobalEvents.voltando_do_hospital = false
+		_devolver_a_porta_do_hospital()
 	elif GlobalEvents.voltando_da_casa_maycow:
 		GlobalEvents.voltando_da_casa_maycow = false
 		# Ele reaparece dentro da própria área de entrada: segura o prompt até
@@ -253,6 +273,12 @@ func _process(delta: float) -> void:
 		$fade.fade_out()
 		await get_tree().create_timer(2.0).timeout
 		LoadingScreen.load_scene(CENA_IGREJA)
+	elif player_no_hospital:
+		player_no_hospital = false
+		_esconder_prompt()
+		$fade.fade_out()
+		await get_tree().create_timer(2.0).timeout
+		LoadingScreen.load_scene(CENA_HOSPITAL)
 
 
 func _mostrar_prompt(texto: String) -> void:
@@ -278,7 +304,7 @@ func _esconder_prompt(forcado: bool = false) -> void:
 	if not is_instance_valid(prompt_label):
 		return
 	if not forcado and (player_na_oficina or player_na_casa_jimmy
-			or player_na_casa_maycow or player_na_igreja):
+			or player_na_casa_maycow or player_na_igreja or player_no_hospital):
 		return
 	if prompt_label.has_meta("container"):
 		prompt_label.get_meta("container").visible = false
@@ -316,6 +342,7 @@ func _setup_areas_casas() -> void:
 			casa_jimmy_area.body_exited.connect(_ao_sair_area_casa_jimmy)
 
 	_criar_area_igreja()
+	_ligar_area_hospital()
 
 	if get_node_or_null("area_entrada_casa_maycow") == null:
 		var area_maycow = Area3D.new()
@@ -393,6 +420,84 @@ func _ao_sair_area_igreja(body: Node3D) -> void:
 	# Saiu da área de verdade: a próxima entrada volta a mostrar o prompt.
 	_ignorar_prompt_igreja = false
 	_esconder_prompt()
+
+
+# ==============================================================================
+# HOSPITAL
+#
+# O prédio inteiro é uma instância só, posta em cima do Marker3D
+# `hospital_local`. Ela já traz consigo as duas coisas de que este script
+# precisa, e é de propósito que elas morem lá e não aqui:
+#
+#   area_entrada    — cobre a escada, o tablado e a soleira
+#   ponto_de_saida  — em cima do tablado, de costas para a porta
+#
+# Girar ou arrastar o hospital no editor leva as duas junto. Se fossem
+# coordenadas escritas aqui, o primeiro ajuste de posição já as deixaria
+# mentindo, e ninguém perceberia até um jogador nascer dentro da parede.
+# ==============================================================================
+
+func _no_do_hospital() -> Node3D:
+	var no := get_node_or_null(NO_HOSPITAL)
+	if no == null:
+		no = find_child("hospital_exterior", true, false)
+	return no as Node3D
+
+
+func _ligar_area_hospital() -> void:
+	var hospital := _no_do_hospital()
+	if hospital == null:
+		return
+	var area := hospital.get_node_or_null("area_entrada") as Area3D
+	if area == null:
+		return
+	if not area.body_entered.is_connected(_ao_entrar_area_hospital):
+		area.body_entered.connect(_ao_entrar_area_hospital)
+	if not area.body_exited.is_connected(_ao_sair_area_hospital):
+		area.body_exited.connect(_ao_sair_area_hospital)
+
+
+func _ao_entrar_area_hospital(body: Node3D) -> void:
+	if not _eh_o_player(body):
+		return
+	player_no_hospital = true
+	if _ignorar_prompt_hospital:
+		_ignorar_prompt_hospital = false
+		_esconder_prompt(true)
+		return
+	_mostrar_prompt(tr("PROMPT_ENTER_HOSPITAL"))
+
+
+func _ao_sair_area_hospital(body: Node3D) -> void:
+	if not _eh_o_player(body):
+		return
+	player_no_hospital = false
+	_ignorar_prompt_hospital = false
+	_esconder_prompt()
+
+
+## Devolve o jogador ao tablado da entrada depois de sair de dentro do hospital.
+##
+## A cota vem de raycast, e não do Y do marcador, pelo mesmo motivo da igreja: o
+## chão ali é o terreno do Terrain3D e o hospital ainda vai ser reposicionado à
+## mão. Com número fixo, o jogador nasce enterrado ou despenca meio metro toda
+## vez que alguém encostar o prédio um pouco mais no morro.
+func _devolver_a_porta_do_hospital() -> void:
+	var jogador = get_node_or_null("Player")
+	if not jogador:
+		jogador = find_child("Player", true, false)
+	if not jogador:
+		jogador = find_child("player", true, false)
+	var hospital := _no_do_hospital()
+	if not jogador or hospital == null:
+		return
+	var saida := hospital.get_node_or_null("ponto_de_saida") as Node3D
+	if saida == null:
+		return
+	_ignorar_prompt_hospital = true
+	jogador.global_position = saida.global_position
+	jogador.global_rotation.y = saida.global_rotation.y
+	_pousar_no_chao.call_deferred(jogador, saida.global_position)
 
 
 ## Devolve o jogador ao adro depois de sair de dentro da igreja.

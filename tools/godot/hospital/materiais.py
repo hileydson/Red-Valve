@@ -125,6 +125,57 @@ MOVEIS = [
 ]
 
 # ==========================================================================
+# FACHADA — o predio visto de fora, ja' na cidade
+#
+# A regra aqui e' o CONTRARIO da de dentro. No interior a cor vem quase toda
+# do multiplicador, porque a luz e' artificial e controlada; na rua quem manda
+# e' o sol e a chuva da stage_1, e material claro demais vira um bloco branco
+# chapado no meio de uma cidade cinza. Entao o reboco ja' sai escuro, e o que
+# separa um plano do outro e' a TEXTURA (reboco liso x concreto escovado x
+# tijolo), nao o brilho.
+# ==========================================================================
+
+EXTERIOR = [
+    # embasamento e calcada: concreto encardido, o plano que encosta no chao
+    Material("fac_embasamento", (0.34, 0.34, 0.33), 0.0, 0.95,
+             textura="concrete_floor_worn_001", uv_escala=2.4),
+    Material("fac_calcada", (0.34, 0.34, 0.33), 0.0, 0.96,
+             textura="concrete_floor_worn_001", uv_escala=3.0),
+    Material("fac_laje", (0.33, 0.33, 0.32), 0.0, 0.94,
+             textura="concrete_floor_worn_001", uv_escala=3.4),
+    # os dois panos de parede: o limpo e o que ja' escorreu
+    Material("fac_reboco", (0.46, 0.47, 0.44), 0.0, 0.92,
+             textura="grey_plaster_02", uv_escala=3.0),
+    Material("fac_reboco_sujo", (0.41, 0.37, 0.28), 0.0, 0.94,
+             textura="yellow_plaster", uv_escala=3.0),
+    # concreto aparente: cinta, pilar, platibanda e a torre do elevador
+    Material("fac_concreto", (0.39, 0.39, 0.38), 0.0, 0.88,
+             textura="brushed_concrete_03", uv_escala=2.6),
+    Material("fac_tijolo", (0.35, 0.27, 0.24), 0.0, 0.95,
+             textura="brick_wall_02", uv_escala=2.0),
+    Material("fac_metal", (0.42, 0.38, 0.34), 0.60, 0.62,
+             textura="rusty_metal_02", uv_escala=2.0),
+    Material("fac_tabua", (0.36, 0.30, 0.24), 0.0, 0.92,
+             textura="weathered_brown_planks", uv_escala=1.2),
+    Material("fac_esquadria", (0.22, 0.23, 0.23), 0.40, 0.55),
+    # O fundo do vao. A casca e' OCA (ninguem entra por ela: entrar e' trocar
+    # de cena), entao toda janela precisa de um painel preto atras do vidro,
+    # senao da' pra ver o predio por dentro, vazio, pelo proprio buraco.
+    Material("fac_escuro", (0.02, 0.02, 0.025), 0.0, 0.95),
+    Material("fac_vidro", (0.09, 0.12, 0.13), 0.30, 0.18),
+    # A janela "acesa" e' emissiva, e nao uma luz de verdade: luz custa lugar
+    # no orcamento de 8 por malha do renderer mobile, e os postes da cidade ja'
+    # consomem esse orcamento perto do predio.
+    Material("fac_vidro_aceso", (0.22, 0.26, 0.19), 0.0, 0.30,
+             emissivo=(0.20, 0.25, 0.16)),
+    Material("fac_letra_acesa", (0.62, 0.72, 0.64), 0.0, 0.35,
+             emissivo=(0.72, 1.20, 0.84)),
+    Material("fac_letra_morta", (0.16, 0.17, 0.16), 0.10, 0.60),
+    Material("fac_cruz", (0.42, 0.06, 0.05), 0.0, 0.40,
+             emissivo=(0.72, 0.06, 0.04)),
+]
+
+# ==========================================================================
 # LUMINARIAS — malha propria porque a emissao delas e' o que da' a impressao
 # de "lampada acesa" mesmo quando a luz de verdade esta' piscando.
 # ==========================================================================

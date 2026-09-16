@@ -16,6 +16,7 @@ extends Node3D
 ## certos, mas um corpo colocado a mao pelo editor nasce na layer 1 e o jogador
 ## atravessaria o predio em queda livre — daí a varredura de conferencia.
 const LAYER_CHAO := 2
+const CENA_MAPA := "res://scenes/stages/stage_1/stage_1.tscn"
 
 @onready var fade: ColorRect = $fade
 
@@ -23,6 +24,10 @@ const LAYER_CHAO := 2
 ## tremor oscila em torno dela, senao a fluorescente do corredor e o foco
 ## cirurgico acabariam na mesma intensidade.
 var _lampadas: Array[Dictionary] = []
+
+## Trava a saida: o fade dura dois segundos, e sem isto cada aperto no botao
+## durante esses dois segundos empilha mais uma troca de cena.
+var _saindo: bool = false
 
 
 func _ready() -> void:
@@ -79,6 +84,23 @@ func _preparar_lampadas() -> void:
 			"base": (luz as Light3D).light_energy,
 			"proximo": randf() * 0.5,
 		})
+
+
+## Chamado pela porta da rua (`porta_hospital.gd`, meta `saida`).
+##
+## Marca a volta ANTES de trocar de cena: o stage_1 consome o sinal no spawn
+## para pôr o jogador no tablado da entrada, de costas para a porta. Sem isso
+## ele reapareceria no ponto de entrada padrão do mapa, do outro lado da cidade.
+func sair_do_hospital() -> void:
+	if _saindo:
+		return
+	_saindo = true
+	GlobalEvents.in_cutscene = true
+	GlobalEvents.voltando_do_hospital = true
+	GlobalUtils.esconder_objetivo()
+	fade.fade_out()
+	await get_tree().create_timer(2.0).timeout
+	LoadingScreen.load_scene(CENA_MAPA)
 
 
 func _process(delta: float) -> void:
