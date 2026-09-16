@@ -3,9 +3,10 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c0yq3842c50bj"
-path="res://.godot/imported/maos_fp_Baked_MetallicRoughness.png-9c08354f68227f9916ccae41effc968f.ctex"
+path.s3tc="res://.godot/imported/maos_fp_Baked_MetallicRoughness.png-9c08354f68227f9916ccae41effc968f.s3tc.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
 }
 generator_parameters={
 "md5": "975a94f3044df91c8ce96fc52de54739"
@@ -14,11 +15,11 @@ generator_parameters={
 [deps]
 
 source_file="res://assets/3d_model/player/hands/maos_fp/maos_fp_Baked_MetallicRoughness.png"
-dest_files=["res://.godot/imported/maos_fp_Baked_MetallicRoughness.png-9c08354f68227f9916ccae41effc968f.ctex"]
+dest_files=["res://.godot/imported/maos_fp_Baked_MetallicRoughness.png-9c08354f68227f9916ccae41effc968f.s3tc.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
@@ -40,4 +41,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=1
+detect_3d/compress_to=0
