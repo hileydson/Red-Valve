@@ -688,6 +688,18 @@ def main():
         ("navigation_layers", "4"),
     ])
 
+    # --- poleiros das gargulas de fogo
+    #
+    # Sao as duas gargulas da arena 1. La' elas pousam nos quatro rochedos de
+    # canto; aqui o poleiro e' o coroamento do anel de ruina, e sao dez pontos
+    # em volta da praca inteira. Quem instancia as gargulas e' o
+    # `battlefield_2.gd` — estes marcadores so' dizem ONDE da' pra pousar.
+    no("pousos", tipo="Node3D", pai=".")
+    for i, (x, y, z) in enumerate(pontos.get("pousos", [])):
+        no("pouso_%d" % i, tipo="Marker3D", pai="pousos",
+           props=[("transform", transform((x, y, z),
+                                          giro_y=math.atan2(-x, -z)))])
+
     # --- marcadores de inimigo (ninguem nasce aqui ainda)
     no("enemies", tipo="Node3D", pai=".")
     for i, (x, y, z) in enumerate(pontos["inimigos"]):
@@ -720,6 +732,7 @@ def main():
     print("  fogueiras=%d props=%d (com colisao: %d) inimigos=%d"
           % (len(pontos["fogos"]), len(pontos["props"]), solidos,
              len(pontos["inimigos"])))
+    print("  poleiros de gargula=%d" % len(pontos.get("pousos", [])))
     print("  navmesh: %d vertices, %d poligonos"
           % (len(pontos["navmesh"]["v"]), len(pontos["navmesh"]["p"])))
     print("  luzes omni: %d (limite do renderer mobile e' 8 POR MALHA)"

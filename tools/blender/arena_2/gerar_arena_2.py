@@ -157,6 +157,17 @@ LARG_RONDA = 3.6
 # raspando na quina.
 DEGRAU_PARKOUR = 0.8
 
+# Poleiro de gargula no topo do anel de ruina.
+#
+# O coroamento e' uma serra de blocos sorteados: a celula tem de ter chao
+# solido nos 8 vizinhos e menos de POUSO_DESNIVEL de degrau pra valer como
+# poleiro, senao a gargula pousa equilibrada na ponta de um dente.
+PASSO_POUSO = 0.9
+POUSO_MIN_Y = 9.0         # abaixo disto e' escombro do pe' do muro, nao topo
+POUSO_DESNIVEL = 0.35
+POUSO_SEPARACAO = 9.0
+POUSOS_POR_MODULO = 2
+
 LADO_U = R_ANEL * math.tan(math.pi / 8) + 1.0   # meia-largura de um modulo
 
 # cor de marcacao — o material de verdade e' o .tres da cena
@@ -192,6 +203,19 @@ def dentro_oct(x, z, r, fase=math.pi / 8):
         if x * math.sin(ang) + z * math.cos(ang) > a:
             return False
     return True
+
+
+def dentro_poli(x, z, pts):
+    """Ponto dentro do poligono, no plano XZ (raio pra direita)."""
+    dentro = False
+    n = len(pts)
+    for i in range(n):
+        a, b = pts[i], pts[(i - 1) % n]
+        if (a[2] > z) != (b[2] > z):
+            t = (z - a[2]) / (b[2] - a[2])
+            if x < a[0] + t * (b[0] - a[0]):
+                dentro = not dentro
+    return dentro
 
 
 def raio_oct(ang, r, fase=math.pi / 8):
@@ -466,6 +490,7 @@ class Arena:
             "sigilos": [],
             "brasas": [],
             "props": [],
+            "pousos": [],
             "navmesh": {"v": [], "p": []},
         }
         self.fissuras = self._sortear_fissuras()
@@ -584,6 +609,7 @@ class Arena:
         # o navmesh ANTES dos marcadores: eles sao escolhidos em cima dele
         self.navmesh()
         self.marcadores()
+        self.pousos()
 
     # ------------------------------------------------------------------
     # chao
@@ -2098,6 +2124,90 @@ class Arena:
                                             round(c[2], 2)])
 
     # ------------------------------------------------------------------
+    # poleiros das gargulas
+
+    def pousos(self):
+        """Onde as GARGULAS DE FOGO pousam: o coroamento do anel de ruina.
+
+        Nao sao pontos postos na mao. E' o mesmo metodo da arena 1 (ver
+        ARENA_CORNER_PEAKS em shaders/battlefield/battlefield.gd): varrer a
+        geometria ja' montada num heightmap e ficar com a celula MAIS ALTA que
+        ainda tem superficie solida na vizinhanca 3x3. La', o vertice mais alto
+        puro caia no vao entre duas torres em tres dos quatro cantos e a
+        gargula pousava no ar; aqui seria pior, porque o topo de cada muro e'
+        uma serra de blocos sorteados (`_topo_ruina`) e o ponto mais alto cai
+        quase sempre num dente de 40 cm de largura.
+
+        So' entra pedra: a gargula e' de fogo e pousar em cima da carne do
+        modulo 7 nao le' como poleiro. E so' acima de POUSO_MIN_Y, senao o
+        escombro do pe' do muro ganha poleiro no chao da praca.
+        """
+        topo, dono = {}, {}
+        for k in range(8):
+            setor = "anel_%d" % k
+            for mat in ("pedra", "pedra_esc"):
+                g = self.m.grupos.get((setor, mat))
+                if not g:
+                    continue
+                for face in g["f"]:
+                    pts = [g["v"][i] for i in face]
+                    nx, ny, nz = 0.0, 0.0, 0.0
+                    for i in range(len(pts)):
+                        a, b = pts[i], pts[(i + 1) % len(pts)]
+                        nx += (a[1] - b[1]) * (a[2] + b[2])
+                        ny += (a[2] - b[2]) * (a[0] + b[0])
+                        nz += (a[0] - b[0]) * (a[1] + b[1])
+                    comp = math.sqrt(nx * nx + ny * ny + nz * nz)
+                    if comp < 1e-9 or ny / comp < 0.8:
+                        continue
+                    y = sum(p[1] for p in pts) / float(len(pts))
+                    if y < POUSO_MIN_Y:
+                        continue
+                    i0 = int(math.floor(min(p[0] for p in pts) / PASSO_POUSO))
+                    i1 = int(math.ceil(max(p[0] for p in pts) / PASSO_POUSO))
+                    j0 = int(math.floor(min(p[2] for p in pts) / PASSO_POUSO))
+                    j1 = int(math.ceil(max(p[2] for p in pts) / PASSO_POUSO))
+                    for i in range(i0, i1 + 1):
+                        for j in range(j0, j1 + 1):
+                            cx, cz = i * PASSO_POUSO, j * PASSO_POUSO
+                            if not dentro_poli(cx, cz, pts):
+                                continue
+                            if y > topo.get((i, j), -1e9):
+                                topo[(i, j)] = y
+                                dono[(i, j)] = k
+
+        candidatos = []
+        for (i, j), y in topo.items():
+            firme = True
+            for di in (-1, 0, 1):
+                for dj in (-1, 0, 1):
+                    yv = topo.get((i + di, j + dj))
+                    if yv is None or abs(yv - y) > POUSO_DESNIVEL:
+                        firme = False
+            if firme:
+                candidatos.append((y, i, j))
+        candidatos.sort(reverse=True)
+
+        escolhidos, por_modulo = [], {}
+        for y, i, j in candidatos:
+            k = dono[(i, j)]
+            if por_modulo.get(k, 0) >= POUSOS_POR_MODULO:
+                continue
+            x, z = i * PASSO_POUSO, j * PASSO_POUSO
+            if any(math.hypot(x - ex, z - ez) < POUSO_SEPARACAO
+                   for ex, _, ez in escolhidos):
+                continue
+            por_modulo[k] = por_modulo.get(k, 0) + 1
+            escolhidos.append((x, y, z))
+
+        # em volta da arena, e nao na ordem em que sairam do heightmap: as
+        # gargulas irmas escolhem poleiro por indice e voar sempre pro vizinho
+        # do lado nao e' o mesmo que cruzar a praca
+        escolhidos.sort(key=lambda p: math.atan2(p[0], p[2]))
+        for x, y, z in escolhidos:
+            self.pontos["pousos"].append([round(x, 2), round(y, 2), round(z, 2)])
+
+    # ------------------------------------------------------------------
     # navmesh
 
     def _altura_nav(self, x, z):
@@ -2350,6 +2460,7 @@ def main():
     print("  escombro: %s" % arena.contagem)
     print("  muros escalaveis=%d escadarias=%d bloqueios=%d"
           % (len(arena.muros), arena.n_escadarias, len(arena.bloqueios)))
+    print("  poleiros de gargula=%d" % len(arena.pontos["pousos"]))
     print("  fogos=%d sigilos=%d brasas=%d props=%d inimigos=%d" % (
         len(arena.pontos["fogos"]), len(arena.pontos["sigilos"]),
         len(arena.pontos["brasas"]), len(arena.pontos["props"]),
