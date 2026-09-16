@@ -82,6 +82,60 @@ func _ready() -> void:
 	_corrigir_colisao()
 	_preparar_lampadas()
 	_preparar_fogareu()
+	_soltar_gargulas()
+
+
+# ==============================================================================
+# AS GÁRGULAS DE FOGO
+#
+# As mesmas duas da `battlefield_1`. Lá elas pousam nos quatro rochedos de
+# canto; aqui o poleiro é o coroamento do anel de ruína — dez pontos em volta
+# da praça inteira, de 10 a 38 m de altura. A gárgula fica uns segundos no
+# topo batendo asa e então cruza o céu até OUTRO topo sorteado, e o voo arqueia
+# para dentro: passa por cima da briga em vez de contornar a borda.
+#
+# Os pontos NÃO são postos à mão nem podem ser mexidos no editor: quem os
+# escolhe é o `pousos()` do gerador do Blender, varrendo o topo de cada módulo
+# do anel num heightmap e ficando com a célula mais alta que ainda tem 1,8 m
+# de laje firme em volta. Aqui só se lê o nó `pousos` da cena.
+#
+# ALCANCE DA LUZ: 10 e não os 14 de fábrica. Cada gárgula carrega uma omni, e
+# esta arena já gasta 8 (sete fogueiras + a Boca) contra o teto de 8 POR MALHA
+# do renderer mobile. Com 14 as duas entravam na AABB do piso e do escombro de
+# meio mapa e chutavam fogueira para fora; com 10 nenhuma malha da praça passa
+# de cinco. As três que ainda somam dez — o terreiro de cinza, a silhueta do
+# horizonte e o arco de carne — têm AABB do tamanho da arena inteira, então
+# qualquer luz em qualquer lugar conta para elas; as três vivem da luz
+# direcional e não muda nada visível ali.
+const GARGULA := preload("res://scenes/effects/fire_gargoyle.tscn")
+const GARGULAS := 2
+const GARGULA_ALCANCE := 10.0
+
+
+func _soltar_gargulas() -> void:
+	var raiz := get_node_or_null("pousos")
+	if raiz == null:
+		return
+	var poleiros: Array[Node3D] = []
+	for p in raiz.get_children():
+		if p is Node3D:
+			poleiros.append(p as Node3D)
+	if poleiros.size() < 2:
+		push_warning("arena 2: menos de dois poleiros — cena regerada sem `pousos`?")
+		return
+
+	var ninho := Node3D.new()
+	ninho.name = "gargulas"
+	add_child(ninho)
+	# Começam em poleiros OPOSTOS. Nascendo lado a lado, as duas fazem a
+	# primeira viagem juntas e metade do céu fica vazia até elas se desgarrarem.
+	var passo: int = maxi(1, poleiros.size() / GARGULAS)
+	for i in range(GARGULAS):
+		var g = GARGULA.instantiate()
+		# antes do add_child: o corpo e a luz são montados no `_ready` dela
+		g.light_range = GARGULA_ALCANCE
+		ninho.add_child(g)
+		g.setup(poleiros, (i * passo) % poleiros.size())
 
 
 ## Põe todo corpo estático vindo do .glb na layer do chão.
