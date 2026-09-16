@@ -121,6 +121,47 @@ func watchdog_volta_da_arena(segundos: float) -> void:
 	AudioServer.playback_speed_scale = 1.0
 
 
+## Mesma rede de segurança, para a cinemática do agarrão (player_grab.gd).
+##
+## A sequência vive num componente filho do jogador e liga `in_cutscene`. Se a
+## cena trocar no meio (o jogador morreu e caiu no game over, ou pisou num
+## gatilho que carrega outro mapa), esse componente morre com o jogador e
+## `in_cutscene` ficaria ligado para sempre no mapa seguinte: sem input e com a
+## câmera que o novo jogador nem usa.
+##
+## Este watchdog roda num autoload, então sobrevive à troca de cena.
+##
+## `id` é o número de série daquele agarrão. Sem ele, o watchdog armado pelo
+## primeiro agarrão acordaria no meio do SEGUNDO (o teto de 14 s é maior que a
+## espera entre um agarrão e o próximo) e cortaria uma cinemática que estava
+## perfeitamente viva. Testado: acontecia toda vez.
+func watchdog_agarrao(segundos: float, id: int) -> void:
+	await get_tree().create_timer(segundos, true, false, true).timeout
+	if not GlobalEvents.agarrao_rodando or GlobalEvents.agarrao_id != id:
+		return # a cena terminou direitinho (ou já é outra)
+
+	GlobalEvents.agarrao_rodando = false
+	push_warning("Agarrao nao terminou em %.0fs — destravando input e time_scale." % segundos)
+	GlobalEvents.in_cutscene = false
+	Engine.time_scale = 1.0
+	AudioServer.playback_speed_scale = 1.0
+	var jogador := get_tree().get_first_node_in_group("player")
+	if is_instance_valid(jogador):
+		if jogador.has_method("cutscene_set_camera_current"):
+			jogador.cutscene_set_camera_current(true)
+		if jogador.has_method("cutscene_set_hud_enabled"):
+			jogador.cutscene_set_hud_enabled(true)
+		# A trava vem ANTES de devolver a visibilidade: o `_physics_process` do
+		# player reescreve `modelo_visual.visible` todo quadro, e sem soltar a
+		# trava o corpo voltaria a sumir no quadro seguinte — o resgate deixaria o
+		# jogador invisível.
+		if jogador.has_method("cutscene_set_model_hidden"):
+			jogador.cutscene_set_model_hidden(false)
+		var modelo = jogador.get("modelo_visual")
+		if is_instance_valid(modelo):
+			modelo.visible = true
+
+
 # ---------------------------------------------------------------------------
 # OBJETIVOS / PISTAS — aviso discreto no canto superior esquerdo
 # ---------------------------------------------------------------------------

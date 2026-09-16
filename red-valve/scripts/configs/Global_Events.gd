@@ -85,6 +85,19 @@ var forced_battle_running: bool = false
 ## rua; quem consome (e zera) isto é o player_hud.gd. -1 = nasce cheio.
 var forced_battle_health: int = -1
 
+## --- Agarrão (inimigo encosta no jogador FORA da arena) ---
+## Ligado enquanto a cinemática de primeira pessoa do agarrão está rodando (ver
+## player_grab.gd). Todo inimigo consulta isto antes de tentar agarrar: sem a
+## trava, dois que encostam no mesmo quadro abrem duas cenas por cima uma da
+## outra. Ela também é o que o watchdog em GlobalUtils.watchdog_agarrao() usa
+## para perceber que a sequência morreu no meio e destravar o input.
+var agarrao_rodando: bool = false
+## Número de série do agarrão em curso. O watchdog guarda o número de quando
+## foi armado e desiste se ele já mudou — senão o watchdog de um agarrão que
+## terminou bem derruba o agarrão SEGUINTE, que a essa altura está no meio da
+## cinemática (o teto do watchdog é maior que a espera entre dois agarrões).
+var agarrao_id: int = 0
+
 func _ready() -> void:
 	# PROCESS_MODE_ALWAYS por causa do `_input` abaixo: com a árvore pausada
 	# (menu aberto) um autoload PAUSABLE não recebe entrada nenhuma, e a

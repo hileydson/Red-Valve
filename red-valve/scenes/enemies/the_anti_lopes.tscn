@@ -86,6 +86,7 @@ SPEED = 1.0
 distance_to_aproach = 50
 attack_damage = 40
 enemy_name = "THE COBALT HUSKER"
+tipo_agarrao = "arremesso"
 shoots_fireball = true
 max_health = 250
 

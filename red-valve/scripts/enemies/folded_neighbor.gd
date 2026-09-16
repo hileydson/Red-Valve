@@ -123,6 +123,15 @@ enum Act { NENHUMA, CORO, CEIFA, SEMEADURA, CASCA, MUDANDO, TOQUE }
 ## Vida ANTES do multiplicador da linhagem.
 @export var max_health: int = 170
 @export var iron_rusks_value: int = 5
+
+@export_group("Agarrao")
+## O que este inimigo faz quando agarra o jogador na rua: "mordida" (chega no
+## rosto, morde e solta) ou "arremesso" (levanta e joga longe). Quem monta a
+## cena e' o player_grab.gd; aqui so' se escolhe qual das duas.
+@export_enum("mordida", "arremesso") var tipo_agarrao: String = "mordida"
+## Desliga o agarrao neste inimigo. Ele volta ao encostao comum (dano direto),
+## igual ao de dentro da arena.
+@export var permite_agarrao: bool = true
 ## -1 = sorteia a linhagem (o normal). 0..3 forca uma — ver NFX.Linhagem.
 @export var linhagem_index: int = -1
 ## -1 = sorteia o morador. 0..N forca um modelo da lista do CityNpc.
@@ -861,7 +870,7 @@ func _monta_colisoes() -> void:
 	corpo.position = Vector3(0, h * 0.47, 0)
 	add_child(corpo)
 
-	# Toque: na cidade, encostar nele leva o jogador pra arena (mesma regra dos
+	# Toque: fora da arena, encostar nele faz ele agarrar o jogador (mesma regra dos
 	# outros inimigos). Na arena e' um golpe corpo a corpo comum.
 	var toque := Area3D.new()
 	toque.name = "toque"
@@ -2971,9 +2980,9 @@ func _no_toque(corpo: Node3D) -> void:
 		return
 	_ultimo_toque = agora
 
-	# Na cidade o toque nao e' uma pancada: leva metade do sangue do jogador e
-	# arrasta ele pra arena. Se isso valeu, acabou aqui.
-	if _tenta_batalha_forcada(corpo):
+	# Fora da arena o toque nao e' uma pancada: ele agarra o jogador e a
+	# cinematica cobra o dano. Se isso valeu, acabou aqui.
+	if _tenta_agarrao(corpo):
 		return
 
 	# Na arena e' corpo a corpo comum. E a unica coisa que a PRIMEIRA forma
@@ -2987,30 +2996,23 @@ func _no_toque(corpo: Node3D) -> void:
 		_grito.play()
 
 
-## Toque no Maycow normal enquanto ele anda pela cidade: em vez de dano, ele
-## perde metade do sangue e a batalha na arena comeca a forca. Quem cuida da
-## sequencia e' o `player_amulet.gd`. Vale SO na stage_1 e depois do prologo.
+## Encostao no Maycow FORA da arena: em vez do dano de sempre, o inimigo agarra
+## o jogador, a camera entra em primeira pessoa e a cinematica decide o que
+## acontece (morder e soltar, ou levantar e arremessar). O dano sai de la'.
+## Quem monta tudo e' o `player_grab.gd`.
+##
+## DENTRO da arena isto nao vale: la' o encostao continua sendo a pancada de
+## sempre. `is_maycow_normal` e' exatamente essa pergunta — a arena e' a unica
+## coisa no jogo que liga o Maycow de combate.
 ##
 ## true = o toque foi consumido; quem chamou nao aplica mais dano nenhum.
-func _tenta_batalha_forcada(corpo: Node3D) -> bool:
+func _tenta_agarrao(corpo: Node3D) -> bool:
+	if not permite_agarrao:
+		return false
 	if not GlobalEvents.is_maycow_normal:
 		return false
-	if not SaveManager.prolog_finished:
-		return false
-	if not corpo.has_method("force_battle_from_touch"):
+	if not corpo.has_method("grab_from_touch"):
 		return false
 	if not is_inside_tree() or get_tree() == null:
 		return false
-	var cena := get_tree().current_scene
-	if cena == null or not cena.scene_file_path.contains("stage_1"):
-		return false
-
-	# Sequencia ja em andamento (outro inimigo encostou primeiro). O toque segue
-	# CONSUMIDO: cair no dano normal seria tirar vida por cima da cinematica.
-	# Antes de descartar, oferece este inimigo a sequencia — se ela ainda nao
-	# viajou, ele embarca junto.
-	if GlobalEvents.forced_battle_running:
-		corpo.force_battle_from_touch(self)
-		return true
-
-	return corpo.force_battle_from_touch(self)
+	return corpo.grab_from_touch(self)

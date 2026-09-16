@@ -60,6 +60,15 @@ enum Act { NENHUMA, PEDREGULHO, ESPADA, PAREDE }
 ## Altura total, em metros. Ele e largo e pesado; a leitura e de bloco andando.
 @export var altura: float = 2.9
 
+@export_group("Agarrao")
+## O que este inimigo faz quando agarra o jogador na rua: "mordida" (chega no
+## rosto, morde e solta) ou "arremesso" (levanta e joga longe). Quem monta a
+## cena e' o player_grab.gd; aqui so' se escolhe qual das duas.
+@export_enum("mordida", "arremesso") var tipo_agarrao: String = "arremesso"
+## Desliga o agarrao neste inimigo. Ele volta ao encostao comum (dano direto),
+## igual ao de dentro da arena.
+@export var permite_agarrao: bool = true
+
 @export_group("Movimento")
 ## Passo de quando esta so vagando pela cidade. Pedra nao tem pressa.
 @export var walk_speed: float = 1.25
@@ -689,7 +698,7 @@ func _monta_colisoes() -> void:
 	add_child(heart)
 	_abafa_luz_do_heart(heart)
 
-	# Toque: na cidade, encostar nele leva o jogador pra arena.
+	# Toque: fora da arena, encostar nele faz ele agarrar o jogador.
 	var toque := Area3D.new()
 	toque.name = "toque"
 	toque.collision_layer = 0
@@ -2273,32 +2282,26 @@ func _no_toque(corpo: Node3D) -> void:
 	if agora - _ultimo_toque < 0.8:
 		return
 	_ultimo_toque = agora
-	_tenta_batalha_forcada(corpo)
+	_tenta_agarrao(corpo)
 
 
-## Toque no Maycow normal enquanto ele anda pela cidade: em vez de dano, a
-## batalha na arena comeca a forca. Quem cuida da sequencia e o
-## `player_amulet.gd`. Vale SO na stage_1 e depois do prologo.
+## Encostao no Maycow FORA da arena: em vez do dano de sempre, o inimigo agarra
+## o jogador, a camera entra em primeira pessoa e a cinematica decide o que
+## acontece (morder e soltar, ou levantar e arremessar). O dano sai de la'.
+## Quem monta tudo e' o `player_grab.gd`.
+##
+## DENTRO da arena isto nao vale: la' o encostao continua sendo a pancada de
+## sempre. `is_maycow_normal` e' exatamente essa pergunta — a arena e' a unica
+## coisa no jogo que liga o Maycow de combate.
 ##
 ## true = o toque foi consumido; quem chamou nao aplica mais dano nenhum.
-func _tenta_batalha_forcada(corpo: Node3D) -> bool:
+func _tenta_agarrao(corpo: Node3D) -> bool:
+	if not permite_agarrao:
+		return false
 	if not GlobalEvents.is_maycow_normal:
 		return false
-	if not SaveManager.prolog_finished:
-		return false
-	if not corpo.has_method("force_battle_from_touch"):
+	if not corpo.has_method("grab_from_touch"):
 		return false
 	if not is_inside_tree() or get_tree() == null:
 		return false
-	var cena := get_tree().current_scene
-	if cena == null or not cena.scene_file_path.contains("stage_1"):
-		return false
-
-	# Sequencia ja em andamento (outro inimigo encostou primeiro). O toque segue
-	# CONSUMIDO, mas antes de descartar oferece este inimigo a sequencia — se
-	# ela ainda nao viajou, ele embarca junto.
-	if GlobalEvents.forced_battle_running:
-		corpo.force_battle_from_touch(self)
-		return true
-
-	return corpo.force_battle_from_touch(self)
+	return corpo.grab_from_touch(self)

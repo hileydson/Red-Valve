@@ -40,6 +40,17 @@ const ACCEL = 4.0
 @export var attack_damage = 15
 @export var enemy_name: String = "ZOMBIE"
 
+# --- Agarrão (encostão FORA da arena) ---
+## O que este inimigo faz quando agarra o jogador na rua: "mordida" (chega no
+## rosto, morde e solta) ou "arremesso" (levanta e joga longe). Quem monta a
+## cena é o player_grab.gd; aqui só se escolhe qual das duas.
+@export_enum("mordida", "arremesso") var tipo_agarrao: String = "mordida"
+## Desliga o agarrão neste inimigo. Ele volta ao encostão comum (empurrão +
+## dano), igual ao de dentro da arena. Serve para encontros roteirizados onde
+## uma cinemática de 4 segundos atrapalharia.
+@export var permite_agarrao: bool = true
+# ----------------------------------------
+
 # --- Sistema de Ataque Ranged ---
 @export var is_ranged_attacker: bool = false
 @export var ranged_attack_cooldown: float = 10.0
@@ -449,7 +460,13 @@ func _acertar_player(body: Node3D) -> void:
 	if agora - _ultimo_hit_melee < 0.6:
 		return
 	_ultimo_hit_melee = agora
-	
+
+	# Fora da arena o encostão não é uma pancada: o inimigo AGARRA o jogador e
+	# a cinemática de primeira pessoa toma conta (ver player_grab.gd). Vem
+	# ANTES do empurrão de propósito — quem agarra não empurra.
+	if _tenta_agarrao(body):
+		return
+
 	# 1. Calcula a direção oposta ao impacto
 	var direcao = (body.global_position - global_position).normalized()
 	direcao.y = 0 # Mantém no chão
@@ -481,49 +498,31 @@ func _acertar_player(body: Node3D) -> void:
 	
 	# 4. Chama o tremor de tela
 	GlobalUtils.shake_camera(0.2, 0.2)
-	
-	# 5. Na cidade o toque não é uma pancada comum: leva metade do sangue e
-	# arrasta o jogador para a arena (ver _tenta_batalha_forcada).
-	if _tenta_batalha_forcada(body):
-		return
-	
+
 	# Lança dano no player
 	body.take_damage(attack_damage)
 
 
-## Toque no Maycow normal enquanto ele anda pela cidade: em vez do dano de
-## sempre, ele perde metade do sangue que ainda tem e a batalha na arena começa
-## à força, sem passar pela mira do amuleto. Quem cuida da sequência (dano em
-## câmera lenta e depois a viagem) é o player_amulet.gd.
+## Encostão no Maycow FORA da arena: em vez do empurrão e do dano de sempre, o
+## inimigo agarra o jogador, a câmera entra em primeira pessoa e a cinemática
+## decide o que acontece (morder e soltar, ou levantar e arremessar). O dano
+## sai de lá. Quem monta tudo é o `player_grab.gd`.
 ##
-## Vale SÓ na stage_1 e depois do prólogo: no prólogo e nos interiores o
-## encontro tem de continuar sendo um encostão comum, e o Maycow de combate
-## (dentro da própria arena) nunca entra aqui.
+## DENTRO da arena isto não vale: lá o encostão continua sendo a pancada de
+## sempre, que é o que o combate espera. `is_maycow_normal` é exatamente essa
+## pergunta — a arena é a única coisa no jogo que liga o Maycow de combate.
 ##
 ## true = o toque foi consumido; quem chamou não aplica mais dano nenhum.
-func _tenta_batalha_forcada(body: Node3D) -> bool:
+func _tenta_agarrao(body: Node3D) -> bool:
+	if not permite_agarrao:
+		return false
 	if not GlobalEvents.is_maycow_normal:
 		return false
-	if not SaveManager.prolog_finished:
+	if not body.has_method("grab_from_touch"):
 		return false
-	if not body.has_method("force_battle_from_touch"):
+	if not is_inside_tree() or get_tree() == null:
 		return false
-	var cena := get_tree().current_scene
-	if cena == null or not cena.scene_file_path.contains("stage_1"):
-		return false
-
-	# Sequência já em andamento (outro inimigo encostou primeiro, ou este mesmo
-	# no frame anterior). O toque continua CONSUMIDO de qualquer jeito: deixar
-	# cair no dano normal seria tirar vida por cima da cinemática, e poderia
-	# matar o jogador no meio dela.
-	#
-	# Mas antes de descartar, oferece este inimigo à sequência em curso — se ela
-	# ainda não viajou, ele embarca junto e os dois vão para a arena.
-	if GlobalEvents.forced_battle_running:
-		body.force_battle_from_touch(self)
-		return true
-
-	return body.force_battle_from_touch(self)
+	return body.grab_from_touch(self)
 
 func _exec_fireball_attack() -> void:
 	is_attacking = true

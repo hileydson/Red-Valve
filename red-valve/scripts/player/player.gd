@@ -420,6 +420,12 @@ var dash_cooldown_timer : float = 0.0
 var dash_direction : Vector3 = Vector3.ZERO
 @onready var trail_particles: GPUParticles3D = $trail_particles # Nó de fumaça
 var modelo_visual: MeshInstance3D # resolvido em _ready() conforme a variante ativa (normal/não-normal)
+## Trava de cutscene sobre o modelo de 3ª pessoa. O fim do `_physics_process`
+## reescreve `modelo_visual.visible` TODO quadro a partir da câmera de 1ª pessoa
+## do próprio player — então uma cutscene que apenas escondesse o modelo o via
+## reaparecer no quadro seguinte, e o Maycow ficava visível ao lado da câmera
+## durante o agarrão. Quem esconde por cutscene liga isto (`cutscene_set_model_hidden`).
+var _modelo_escondido_por_cena: bool = false
 
 
 # HAND ADJUSTMENTS
@@ -687,6 +693,11 @@ func _ready():
 	amulet_component.name = "PlayerAmulet"
 	add_child(amulet_component)
 	
+	# Instancia Componente do Agarrão (encostar num inimigo fora da arena)
+	var grab_component = load("res://scripts/player/player_grab.gd").new()
+	grab_component.name = "PlayerGrab"
+	add_child(grab_component)
+
 	# Instancia Componente do Assistente de Mira (aim assist)
 	var aim_assist_component = load("res://scripts/player/player_aim_assist.gd").new()
 	aim_assist_component.name = "PlayerAimAssist"
@@ -1414,7 +1425,7 @@ func _physics_process(delta: float) -> void:
 	# de 1ª pessoa está realmente ativa — em qualquer outra câmera (3ª pessoa,
 	# cutscenes, bullet time) ele continua visível normalmente.
 	if is_instance_valid(modelo_visual):
-		modelo_visual.visible = not camera.current
+		modelo_visual.visible = (not camera.current) and not _modelo_escondido_por_cena
 
 
 func dash():
@@ -1730,9 +1741,20 @@ func _on_amulet_magic_released() -> void:
 	var comp = get_node_or_null("PlayerAmulet")
 	if comp: comp._on_amulet_magic_released()
 
-## Chamado pelo inimigo que encostou no Maycow normal enquanto andava pela
-## cidade (ver enemy.gd). true = o toque virou batalha forçada e o inimigo não
-## deve aplicar o dano normal dele.
+## Chamado pelo inimigo que encostou no Maycow FORA da arena (ver enemy.gd e os
+## outros scripts de inimigo). O inimigo agarra o jogador e a cinemática de
+## primeira pessoa roda a partir daí. true = o toque foi consumido e o inimigo
+## não deve aplicar o dano normal dele.
+func grab_from_touch(enemy: Node3D) -> bool:
+	var comp = get_node_or_null("PlayerGrab")
+	if comp: return comp.grab_from_touch(enemy)
+	return false
+
+## Batalha forçada pelo toque: o comportamento ANTIGO do encostão na cidade,
+## que arrastava o jogador direto para a arena. Nenhum inimigo chama mais isto
+## — quem responde ao encostão agora é o `grab_from_touch` acima. Fica de pé,
+## inteiro, para o caso de esse encontro voltar a ser desejado em algum ponto
+## do jogo: é só chamar daqui.
 func force_battle_from_touch(enemy: Node3D) -> bool:
 	var comp = get_node_or_null("PlayerAmulet")
 	if comp: return comp.force_battle_from_touch(enemy)
@@ -1783,6 +1805,15 @@ func cutscene_set_camera_current(is_current: bool) -> void:
 	_cutscene_camera_disabled = not is_current
 	var comp = get_node_or_null("PlayerCutscene")
 	if comp: comp.cutscene_set_camera_current(is_current)
+
+## Some com o corpo de 3ª pessoa enquanto a cutscene roda (o agarrão troca a
+## câmera por uma de 1ª pessoa própria, e o Maycow ficaria de pé dentro dela).
+## Tem de ser aqui e não no chamador: `_physics_process` reescreve essa
+## visibilidade todo quadro.
+func cutscene_set_model_hidden(hidden: bool) -> void:
+	_modelo_escondido_por_cena = hidden
+	if is_instance_valid(modelo_visual) and hidden:
+		modelo_visual.visible = false
 
 
 # ============================================================

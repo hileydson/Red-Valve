@@ -1,0 +1,70 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/player/player_cutscene_fp.gd" id="1_fp"]
+[ext_resource type="PackedScene" uid="uid://33tuk2yjdpe3" path="res://assets/3d_model/player/hands/maos_fp/maos_fp.glb" id="2_maos"]
+[ext_resource type="Material" path="res://assets/3d_model/player/hands/maos_fp/maos_fp_pele.tres" id="3_pele"]
+
+[node name="PlayerCutsceneFP" type="Node3D"]
+script = ExtResource("1_fp")
+
+[node name="Tremor" type="Node3D" parent="."]
+
+[node name="Camera3D" type="Camera3D" parent="Tremor"]
+current = false
+fov = 75.0
+near = 0.02
+far = 900.0
+
+[node name="Maos" type="Node3D" parent="Tremor/Camera3D"]
+transform = Transform3D(0.17, 0, 0, 0, 0.17, 0, 0, 0, 0.17, 0, 0, 0)
+
+[node name="maos_fp" parent="Tremor/Camera3D/Maos" instance=ExtResource("2_maos")]
+
+[node name="mao_esq" parent="Tremor/Camera3D/Maos/maos_fp/Armature/Skeleton3D" index="0"]
+surface_material_override/0 = ExtResource("3_pele")
+
+[node name="mao_dir" parent="Tremor/Camera3D/Maos/maos_fp/Armature_dir/Skeleton3D" index="0"]
+surface_material_override/0 = ExtResource("3_pele")
+
+[node name="luz_maos" type="OmniLight3D" parent="Tremor/Camera3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, -0.15)
+light_color = Color(1, 0.94, 0.9, 1)
+light_energy = 0.45
+shadow_enabled = false
+omni_range = 1.4
+omni_attenuation = 2.0
+
+[node name="Tela" type="CanvasLayer" parent="."]
+layer = 90
+
+[node name="copia_tela" type="BackBufferCopy" parent="Tela"]
+copy_mode = 2
+
+[node name="borrao" type="ColorRect" parent="Tela"]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 1)
+
+[node name="sangue" type="ColorRect" parent="Tela"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 0)
+
+[node name="flash" type="ColorRect" parent="Tela"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 1)
+modulate = Color(1, 1, 1, 0)
