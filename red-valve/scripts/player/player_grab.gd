@@ -247,14 +247,20 @@ func _ramo_mordida(fp: Node3D, inimigo: Node3D, preso: Vector3, frente: Vector3)
 		return
 
 	# Solta e recua.
+	#
+	# A espera acompanha a animacao `mordida`, que dura 1,43 s: o ultimo terco
+	# dela e' a supinacao do antebraco voltando para a guarda baixa, e cortar no
+	# meio dessa volta deixa o giro parado na metade (era o que acontecia com
+	# 0,45 s aqui).
 	_mover_inimigo(inimigo, _ponto_na_frente(inimigo, 2.1), 0.35)
 	fp.mirar(_olho() - frente * 0.12 - Vector3.UP * 0.08, _cabeca(inimigo), 5.0, 5.0, -0.10)
-	await _esperar(0.45)
+	await _esperar(0.85)
 	if not _vale_continuar(fp):
 		return
 
-	# Se recompoe.
-	fp.tocar(&"idle")
+	# Se recompoe. A mistura e' longa de proposito: a `mordida` para na metade da
+	# volta para a guarda baixa e o resto do giro acontece aqui, em linha reta.
+	fp.tocar(&"idle", 1.0, 0.55)
 	fp.mirar(_olho(), _cabeca(inimigo), 4.0, 4.0, 0.0)
 	await _esperar(0.65)
 

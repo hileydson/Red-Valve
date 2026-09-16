@@ -777,7 +777,23 @@ def anim_agarrado(lado=0):
 
 
 def anim_mordida(lado=0):
-    """31 quadros, uma vez: a mordida chega, as maos sao jogadas para fora."""
+    """43 quadros, uma vez: a mordida chega, as maos sao jogadas para fora.
+
+    A VOLTA E' LONGA DE PROPOSITO. A palma de `DEFESA` aponta para a frente e a
+    de `RELAXADA` aponta para dentro: sao ~94 graus de diferenca, e o antebraco
+    acompanha a palma (ver `costas` em `aplicar_pose`). Na primeira versao essa
+    supinacao inteira cabia em 11 quadros no fim da animacao — 15 a 18 graus de
+    giro de antebraco POR QUADRO, com a mao quase parada no lugar. Na tela isso
+    nao le' como "se recompor": le' como parafuso, e era o "dedos se torcendo no
+    finalzinho".
+
+    Agora ela e' espalhada em 16 quadros com chaves intermediarias E a animacao
+    para na METADE do caminho para `RELAXADA`. A outra metade fica por conta da
+    mistura para `idle`, que o `_ramo_mordida` pede longa (0,55 s): mistura de
+    animacao no Godot interpola em linha reta, sem o ease-in/ease-out da curva
+    de Bezier que concentrava o giro no meio do trecho. Dividir assim derruba o
+    pico de ~17 para ~6 graus por quadro sem encurtar o movimento.
+    """
     sacode = _desloca(DEFESA, (-0.05, -0.07, -0.05), curl_mult=1.6)
     # Uma mao e' jogada para cima e para fora, a outra para baixo: as duas indo
     # para o mesmo lado ficaria com cara de animacao unica espelhada.
@@ -795,8 +811,10 @@ def anim_mordida(lado=0):
         (10 + atraso, aberta),
         (14 + atraso, _desloca(aberta, (0.02, 0.05, -0.03))),
         (20 + atraso, _mistura(aberta, DEFESA, 0.55)),
-        (26, _mistura(DEFESA, RELAXADA, 0.6)),
-        (31, RELAXADA),
+        (27, _mistura(aberta, DEFESA, 0.85)),
+        (33, _mistura(DEFESA, RELAXADA, 0.20)),
+        (38, _mistura(DEFESA, RELAXADA, 0.38)),
+        (43, _mistura(DEFESA, RELAXADA, 0.50)),
     ]
 
 

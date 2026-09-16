@@ -230,11 +230,16 @@ func _passo_do_tremor(delta: float) -> void:
 
 # ============================================================== maos
 
-func tocar(nome: StringName, velocidade: float = 1.0) -> void:
+## `mistura` e' o tempo do cruzamento com a animacao anterior. O padrao serve
+## para quase tudo; pedir mais serve quando a troca carrega MUITO giro (a volta
+## da `mordida` para a `idle` supina o antebraco quase 50 graus). A mistura do
+## Godot interpola em linha reta, sem o ease-in/ease-out da curva de Bezier —
+## entao esticar o cruzamento e' a maneira barata de diluir um giro grande.
+func tocar(nome: StringName, velocidade: float = 1.0, mistura: float = 0.18) -> void:
 	if animador == null or not animador.has_animation(nome):
 		return
 	_anim_atual = nome
-	animador.play(nome, 0.18, velocidade)
+	animador.play(nome, mistura, velocidade)
 	# `play` so' escreve a pose no proximo quadro processado. Um quadro parece
 	# pouco, mas e' o quadro em que a camera ACABOU de virar a atual: sem isto,
 	# a primeira imagem da cutscene e' a pose de descanso do esqueleto — duas

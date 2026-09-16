@@ -1,0 +1,136 @@
+{
+ "nota": "planta da escola, coberta por T_escolamap.png; gerado por tools/godot/escola/make_mapa_escola.py",
+ "nome": "MAP_NOME_ESCOLA",
+ "mundo_x0": -6.1,
+ "mundo_z0": -6.5,
+ "tamanho_m": 84.6,
+ "resolucao": 2048,
+ "pontos": [
+  {
+   "id": "sala_101",
+   "chave": "ESC_SALA_101",
+   "tipo": "sala",
+   "x": 7.67,
+   "z": 5.17
+  },
+  {
+   "id": "sala_102",
+   "chave": "ESC_SALA_102",
+   "tipo": "sala",
+   "x": 22.68,
+   "z": 5.17
+  },
+  {
+   "id": "sala_103",
+   "chave": "ESC_SALA_103",
+   "tipo": "sala",
+   "x": 37.67,
+   "z": 5.17
+  },
+  {
+   "id": "sala_104",
+   "chave": "ESC_SALA_104",
+   "tipo": "sala",
+   "x": 52.67,
+   "z": 5.17
+  },
+  {
+   "id": "secretaria",
+   "chave": "ESC_SALA_SECRETARIA",
+   "tipo": "sala",
+   "x": 68.0,
+   "z": 5.17
+  },
+  {
+   "id": "refeitorio",
+   "chave": "ESC_SALA_REFEITORIO",
+   "tipo": "sala",
+   "x": 58.33,
+   "z": 23.85
+  },
+  {
+   "id": "biblioteca",
+   "chave": "ESC_SALA_BIBLIOTECA",
+   "tipo": "sala",
+   "x": 52.17,
+   "z": 42.0
+  },
+  {
+   "id": "laboratorio",
+   "chave": "ESC_SALA_LABORATORIO",
+   "tipo": "sala",
+   "x": 64.33,
+   "z": 42.0
+  },
+  {
+   "id": "almoxarifado",
+   "chave": "ESC_SALA_ALMOXARIFADO",
+   "tipo": "sala",
+   "x": 6.17,
+   "z": 62.5
+  },
+  {
+   "id": "sala_105",
+   "chave": "ESC_SALA_105",
+   "tipo": "sala",
+   "x": 19.68,
+   "z": 62.5
+  },
+  {
+   "id": "sala_106",
+   "chave": "ESC_SALA_106",
+   "tipo": "sala",
+   "x": 34.67,
+   "z": 62.5
+  },
+  {
+   "id": "sala_107",
+   "chave": "ESC_SALA_107",
+   "tipo": "sala",
+   "x": 50.17,
+   "z": 62.5
+  },
+  {
+   "id": "deposito",
+   "chave": "ESC_SALA_DEPOSITO",
+   "tipo": "sala",
+   "x": 67.0,
+   "z": 62.5
+  },
+  {
+   "id": "patio",
+   "chave": "ESC_AREA_LAZER",
+   "tipo": "marco",
+   "x": 23.18,
+   "z": 33.67
+  },
+  {
+   "id": "buraco_entrada",
+   "chave": "MAP_POI_ESC_BURACO_E",
+   "tipo": "local",
+   "x": 67.0,
+   "z": 66.42
+  },
+  {
+   "id": "buraco_saida",
+   "chave": "MAP_POI_ESC_BURACO_S",
+   "tipo": "local",
+   "x": 1.57,
+   "z": 62.5
+  },
+  {
+   "id": "grade",
+   "chave": "MAP_POI_ESC_GRADE",
+   "tipo": "local",
+   "x": 58.17,
+   "z": 54.5
+  },
+  {
+   "id": "saida",
+   "chave": "MAP_POI_ESC_SAIDA",
+   "tipo": "marco",
+   "x": 1.78,
+   "z": 33.0
+  }
+ ]
+}

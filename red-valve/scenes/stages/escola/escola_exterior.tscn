@@ -1,0 +1,155 @@
+[gd_scene load_steps=14 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/3d_model/stages/escola/escola_exterior.gltf" id="e0"]
+
+[sub_resource type="BoxShape3D" id="f0"]
+size = Vector3(76.0000, 6.1000, 0.4500)
+
+[sub_resource type="BoxShape3D" id="f1"]
+size = Vector3(0.4500, 6.1000, 68.0000)
+
+[sub_resource type="BoxShape3D" id="f2"]
+size = Vector3(0.7500, 5.5000, 2.3000)
+
+[sub_resource type="BoxShape3D" id="f3"]
+size = Vector3(0.7500, 1.6000, 2.6000)
+
+[sub_resource type="BoxShape3D" id="f4"]
+size = Vector3(0.2000, 3.9000, 2.6000)
+
+[sub_resource type="BoxShape3D" id="f5"]
+size = Vector3(76.0000, 0.3500, 15.3500)
+
+[sub_resource type="BoxShape3D" id="f6"]
+size = Vector3(76.0000, 0.3500, 16.0000)
+
+[sub_resource type="BoxShape3D" id="f7"]
+size = Vector3(29.6500, 0.3500, 36.6500)
+
+[sub_resource type="BoxShape3D" id="f8"]
+size = Vector3(84.0000, 0.7000, 4.0000)
+
+[sub_resource type="BoxShape3D" id="f9"]
+size = Vector3(4.0000, 0.7000, 68.0000)
+
+[sub_resource type="BoxShape3D" id="f10"]
+size = Vector3(7.0000, 0.7000, 13.2000)
+
+[sub_resource type="BoxShape3D" id="f11"]
+size = Vector3(9.0000, 5.0000, 14.0000)
+
+[node name="escola_exterior" type="Node3D"]
+
+[node name="predio" type="Node3D" parent="."]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 2.00000, 0.60000, -33.00000)
+
+[node name="estrutura" parent="predio" instance=ExtResource("e0")]
+
+[node name="colisao" type="StaticBody3D" parent="predio"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="c0" type="CollisionShape3D" parent="predio/colisao"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 38.00000, 1.75000, 0.22500)
+shape = SubResource("f0")
+
+[node name="c1" type="CollisionShape3D" parent="predio/colisao"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 38.00000, 1.75000, 67.77500)
+shape = SubResource("f0")
+
+[node name="c2" type="CollisionShape3D" parent="predio/colisao"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.22500, 1.75000, 34.00000)
+shape = SubResource("f1")
+
+[node name="c3" type="CollisionShape3D" parent="predio/colisao"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 75.77500, 1.75000, 34.00000)
+shape = SubResource("f1")
+
+[node name="c4" type="CollisionShape3D" parent="predio/colisao"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.07500, 1.45000, 30.55000)
+shape = SubResource("f2")
+
+[node name="c5" type="CollisionShape3D" parent="predio/colisao"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.07500, 1.45000, 35.45000)
+shape = SubResource("f2")
+
+[node name="c6" type="CollisionShape3D" parent="predio/colisao"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.07500, 3.40000, 33.00000)
+shape = SubResource("f3")
+
+[node name="c7" type="CollisionShape3D" parent="predio/colisao"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.65000, 33.00000)
+shape = SubResource("f4")
+
+[node name="c8" type="CollisionShape3D" parent="predio/colisao"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 38.00000, 4.07500, 7.67500)
+shape = SubResource("f5")
+
+[node name="c9" type="CollisionShape3D" parent="predio/colisao"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 38.00000, 4.07500, 60.00000)
+shape = SubResource("f6")
+
+[node name="c10" type="CollisionShape3D" parent="predio/colisao"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 61.17500, 4.07500, 33.67500)
+shape = SubResource("f7")
+
+[node name="c11" type="CollisionShape3D" parent="predio/colisao"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 38.00000, -0.95000, -2.00000)
+shape = SubResource("f8")
+
+[node name="c12" type="CollisionShape3D" parent="predio/colisao"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 38.00000, -0.95000, 70.00000)
+shape = SubResource("f8")
+
+[node name="c13" type="CollisionShape3D" parent="predio/colisao"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -2.00000, -0.95000, 34.00000)
+shape = SubResource("f9")
+
+[node name="c14" type="CollisionShape3D" parent="predio/colisao"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 78.00000, -0.95000, 34.00000)
+shape = SubResource("f9")
+
+[node name="c15" type="CollisionShape3D" parent="predio/colisao"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -3.50000, -0.95000, 33.00000)
+shape = SubResource("f10")
+
+[node name="luzes" type="Node3D" parent="predio"]
+
+[node name="portao" type="OmniLight3D" parent="predio/luzes"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -2.60000, 3.60000, 33.00000)
+light_color = Color(0.6800, 0.7200, 0.6200, 1.0000)
+light_energy = 2.600
+light_specular = 0.15
+shadow_enabled = false
+omni_range = 10.000
+omni_attenuation = 1.35
+
+[node name="letreiro" type="OmniLight3D" parent="predio/luzes"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -1.60000, 5.47500, 33.00000)
+light_color = Color(0.5200, 0.7200, 0.5600, 1.0000)
+light_energy = 2.800
+light_specular = 0.15
+shadow_enabled = false
+omni_range = 12.000
+omni_attenuation = 1.35
+
+[node name="patio" type="OmniLight3D" parent="predio/luzes"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 24.00000, 6.00000, 30.00000)
+light_color = Color(0.5600, 0.6400, 0.7800, 1.0000)
+light_energy = 1.800
+light_specular = 0.15
+shadow_enabled = false
+omni_range = 18.000
+omni_attenuation = 1.35
+
+[node name="ponto_de_saida" type="Marker3D" parent="."]
+transform = Transform3D(0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, 0.00000, -2.50000, 0.15000, 0.00000)
+
+[node name="area_entrada" type="Area3D" parent="."]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -1.00000, 1.80000, 0.00000)
+collision_layer = 0
+collision_mask = 1
+monitorable = false
+
+[node name="forma" type="CollisionShape3D" parent="area_entrada"]
+shape = SubResource("f11")
