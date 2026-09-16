@@ -35,6 +35,18 @@ extends CanvasLayer
 ## Mostrar os pontos de interesse também no minimapa (sem rótulo).
 @export var pontos_no_minimapa: bool = true
 
+@export_group("Prédio de dois andares")
+## Planta do andar de cima. Vazio = esta cena tem um andar só, e nada disto
+## roda. Preenchido, o mapa TROCA sozinho quando o jogador muda de andar.
+##
+## São duas plantas e não uma porque os dois andares do hospital são andares
+## inteiros, 56 x 68 m um em cima do outro, com plantas diferentes —
+## sobrepostos com hachura (o truque das galerias da igreja) viram rabisco.
+@export_file("*.json") var dados_json_andar_2: String = ""
+@export var textura_mapa_andar_2: Texture2D = null
+## Altura de mundo a partir da qual o jogador está no andar de cima.
+@export var altura_andar_2: float = 2.10
+
 @export_group("Aba MAPA do menu")
 ## Altura da janela visível, em metros, nos extremos do zoom do painel grande.
 ## Ficam aqui, e não no painel, porque dependem do mapa: 80 m é zoom fechado
@@ -49,6 +61,7 @@ const COR_TIPO := {
 	"marco": Color(0.55, 0.86, 0.70),
 	"local": Color(0.95, 0.62, 0.30),
 	"casa": Color(0.62, 0.80, 0.96),
+	"sala": Color(0.80, 0.77, 0.64),
 }
 const COR_PADRAO := Color(0.85, 0.85, 0.85)
 ## Amarelo de interrogação: nenhum tipo de ponto usa esta cor, então "amarelo"
@@ -64,6 +77,13 @@ var _dados: MapaDados
 var _mat: ShaderMaterial
 var _player: Node3D = null
 var _giro: float = 0.0
+## Prancha em uso. Guardo a do térreo à parte porque `dados_json` e
+## `textura_mapa` são REESCRITOS ao trocar de andar: é por eles que a aba MAPA
+## do menu pergunta qual mapa esta cena está mostrando agora (ver
+## `MapaDados.caminho_da_cena`), então eles têm de apontar para o andar atual.
+var _json_terreo: String = ""
+var _textura_terreo: Texture2D = null
+var _no_andar_2: bool = false
 
 
 func _ready() -> void:
@@ -89,6 +109,8 @@ func _ready() -> void:
 	_mini.size = _raiz.size
 	_seta.position = _raiz.size * 0.5
 	_mat.set_shader_parameter("raio_uv", (alcance_m * 0.5) / _dados.tam)
+	_json_terreo = dados_json
+	_textura_terreo = textura_mapa
 	_criar_marcadores()
 	visible = false
 
@@ -157,6 +179,7 @@ func _process(delta: float) -> void:
 			return
 
 	var p := _player.global_position
+	_ver_andar(p.y)
 	var uv := _dados.uv(p.x, p.z)
 
 	# -rotation.y, e não +. Um nó com rotation.y = θ olha para
@@ -172,6 +195,44 @@ func _process(delta: float) -> void:
 	_mat.set_shader_parameter("giro", _giro)
 	_pos_marcas(uv)
 	visible = true
+
+
+## Em que andar o jogador está, e troca a prancha quando ele muda.
+##
+## Pela ALTURA e não por sinal do elevador: assim vale para qualquer forma de
+## mudar de andar que venha a existir depois (escada, buraco no piso, queda), e
+## um save carregado no andar de cima já abre com o mapa certo.
+func _ver_andar(y: float) -> void:
+	if dados_json_andar_2 == "":
+		return
+	var cima: bool = y >= altura_andar_2
+	if cima == _no_andar_2:
+		return
+	_no_andar_2 = cima
+	_trocar_prancha(
+		dados_json_andar_2 if cima else _json_terreo,
+		textura_mapa_andar_2 if cima else _textura_terreo)
+
+
+func _trocar_prancha(caminho: String, textura: Texture2D) -> void:
+	var novos := MapaDados.new(caminho)
+	if not novos.ok:
+		return
+	_dados = novos
+	# reescreve os exports: é por eles que a aba MAPA do menu descobre qual
+	# prancha mostrar, e ela lê isto quando o jogador abre o menu
+	dados_json = caminho
+	if textura:
+		textura_mapa = textura
+		_mat.set_shader_parameter("mapa", textura)
+	_mat.set_shader_parameter("raio_uv", (alcance_m * 0.5) / _dados.tam)
+	# remove_child ANTES do queue_free: o queue_free só apaga no fim do quadro,
+	# e até lá os marcadores do andar velho continuariam na lista que
+	# `_pos_marcas` percorre — o mapa de cima abriria com os pontos de baixo.
+	for velho in _marcas.get_children():
+		_marcas.remove_child(velho)
+		velho.queue_free()
+	_criar_marcadores()
 
 
 func _pos_marcas(centro: Vector2) -> void:

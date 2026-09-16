@@ -30,6 +30,18 @@ python3 "$RAIZ/tools/godot/hospital/gerar_cena_hospital.py"
 echo "== gerando o exterior =="
 python3 "$RAIZ/tools/godot/hospital/gerar_cena_exterior.py"
 
+# As duas plantas do interior (uma por andar), para o minimapa e a aba MAPA.
+# Saem da mesma planta.py que gera a geometria, entao mexer numa parede aqui
+# muda o mapa junto.
+echo "== desenhando as plantas do interior =="
+python3 "$RAIZ/tools/godot/hospital/make_mapa_hospital.py"
+
+# O mapa da cidade desenha a silhueta do hospital, e tira a posicao dela da
+# instancia na stage_1. Entao TODA mexida no predio — regerar aqui ou so'
+# arrastar/girar ele no editor — deixa o mapa do menu mentindo ate' isto rodar.
+echo "== redesenhando o mapa da cidade =="
+python3 "$RAIZ/tools/blender/citygen/textures/make_minimap.py"
+
 echo "== importando =="
 "$GODOT" --headless --path "$RAIZ/red-valve" --import 2>&1 \
 	| grep -viE "leaked at exit|ObjectDB instances|only available when using|RID allocation" \

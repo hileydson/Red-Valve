@@ -1,0 +1,157 @@
+{
+ "nota": "planta do 1o andar do hospital, coberta por T_hospitalmap_1.png; gerado por tools/godot/hospital/make_mapa_hospital.py",
+ "nome": "MAP_FLOOR_HOSP_1",
+ "mundo_x0": -5.5,
+ "mundo_z0": -2.5,
+ "tamanho_m": 73.0,
+ "resolucao": 2048,
+ "pontos": [
+  {
+   "id": "quarto_101",
+   "chave": "HOSP_SALA_101",
+   "tipo": "sala",
+   "x": 5.67,
+   "z": 5.17
+  },
+  {
+   "id": "quarto_102",
+   "chave": "HOSP_SALA_102",
+   "tipo": "sala",
+   "x": 16.68,
+   "z": 5.17
+  },
+  {
+   "id": "quarto_103",
+   "chave": "HOSP_SALA_103",
+   "tipo": "sala",
+   "x": 27.68,
+   "z": 5.17
+  },
+  {
+   "id": "radiologia",
+   "chave": "HOSP_SALA_RAIOX",
+   "tipo": "sala",
+   "x": 38.67,
+   "z": 5.17
+  },
+  {
+   "id": "laboratorio",
+   "chave": "HOSP_SALA_LAB",
+   "tipo": "sala",
+   "x": 50.0,
+   "z": 5.17
+  },
+  {
+   "id": "quarto_104",
+   "chave": "HOSP_SALA_104",
+   "tipo": "sala",
+   "x": 5.17,
+   "z": 20.52
+  },
+  {
+   "id": "quarto_105",
+   "chave": "HOSP_SALA_105",
+   "tipo": "sala",
+   "x": 15.18,
+   "z": 20.52
+  },
+  {
+   "id": "centro_cirurgico",
+   "chave": "HOSP_SALA_CIRURGIA",
+   "tipo": "sala",
+   "x": 30.18,
+   "z": 20.52
+  },
+  {
+   "id": "uti",
+   "chave": "HOSP_SALA_UTI",
+   "tipo": "sala",
+   "x": 42.83,
+   "z": 20.52
+  },
+  {
+   "id": "pronto_socorro",
+   "chave": "HOSP_SALA_PS",
+   "tipo": "sala",
+   "x": 40.33,
+   "z": 30.67
+  },
+  {
+   "id": "quarto_106",
+   "chave": "HOSP_SALA_106",
+   "tipo": "sala",
+   "x": 5.17,
+   "z": 47.83
+  },
+  {
+   "id": "quarto_107",
+   "chave": "HOSP_SALA_107",
+   "tipo": "sala",
+   "x": 15.18,
+   "z": 47.83
+  },
+  {
+   "id": "refeitorio",
+   "chave": "HOSP_SALA_REFEITORIO",
+   "tipo": "sala",
+   "x": 30.68,
+   "z": 47.83
+  },
+  {
+   "id": "necroterio",
+   "chave": "HOSP_SALA_NECROTERIO",
+   "tipo": "sala",
+   "x": 43.33,
+   "z": 47.83
+  },
+  {
+   "id": "quarto_108",
+   "chave": "HOSP_SALA_108",
+   "tipo": "sala",
+   "x": 5.67,
+   "z": 63.0
+  },
+  {
+   "id": "quarto_109",
+   "chave": "HOSP_SALA_109",
+   "tipo": "sala",
+   "x": 16.68,
+   "z": 63.0
+  },
+  {
+   "id": "farmacia",
+   "chave": "HOSP_SALA_FARMACIA",
+   "tipo": "sala",
+   "x": 27.68,
+   "z": 63.0
+  },
+  {
+   "id": "esterilizacao",
+   "chave": "HOSP_SALA_ESTERIL",
+   "tipo": "sala",
+   "x": 38.67,
+   "z": 63.0
+  },
+  {
+   "id": "casa_maquinas",
+   "chave": "HOSP_SALA_MAQUINAS",
+   "tipo": "sala",
+   "x": 50.0,
+   "z": 63.0
+  },
+  {
+   "id": "elevador",
+   "chave": "MAP_POI_HOSP_ELEVADOR",
+   "tipo": "local",
+   "x": 59.0,
+   "z": 31.6
+  },
+  {
+   "id": "saida",
+   "chave": "MAP_POI_HOSP_SAIDA",
+   "tipo": "marco",
+   "x": 1.2,
+   "z": 34.2
+  }
+ ]
+}

@@ -17,6 +17,7 @@ Regenerar SOBRESCREVE o .tscn — mexer no predio pelo editor se perde, igual ao
 interior. O que NAO se perde e' a posicao: ela mora na `stage_1`, nao aqui.
 """
 
+import json
 import math
 import os
 import sys
@@ -636,6 +637,61 @@ def escrever_cena(colisoes):
     return len(formas)
 
 
+# ==========================================================================
+# A SILHUETA PARA O MAPA DA CIDADE
+#
+# O predio nao sai do gerador da cidade: e' cena a parte, encaixada a mao na
+# `stage_1`. Entao o mapa do menu nao tem como saber que ele existe — a menos
+# que alguem conte. E' o que este arquivo faz.
+# ==========================================================================
+
+SAIDA_MAPA = os.path.join(DIR_MODELO, "hospital_mapa.json")
+
+
+def escrever_mapa():
+    """A planta baixa grosseira do predio, pro mapa da cidade desenhar.
+
+    Quem le' e' `tools/blender/citygen/textures/make_minimap.py`. Sai daqui, e
+    nao digitado la', porque a fachada e' GERADA: mudar a medida do predio tem
+    que mudar o retangulo do mapa junto, senao o mapa passa a mentir sem que
+    ninguem perceba.
+
+    Retangulos em coordenadas LOCAIS DA CENA — a origem e' o pe' da escada da
+    entrada —, no formato (x0, z0, x1, z1). Quem os leva pro mundo e' o
+    make_minimap, que tira posicao e giro da instancia direto da `stage_1`:
+    assim, girar o predio no editor gira a silhueta no mapa junto.
+    """
+    dx = -E.ORIGEM[0]
+    dz = -E.ORIGEM[2]
+
+    def r(x0, z0, x1, z1):
+        return [round(x0 + dx, 2), round(z0 + dz, 2),
+                round(x1 + dx, 2), round(z1 + dz, 2)]
+
+    dados = {
+        "nota": "silhueta do hospital para o mapa da cidade; gerado por "
+                "tools/godot/hospital/gerar_cena_exterior.py",
+        "porta": [0.0, 0.0],
+        "lote": [
+            r(E.X0 - E.CALCADA_L, -E.CALCADA_L,
+              E.X1 + E.CALCADA_L, E.Z1 + E.CALCADA_L),
+            r(E.PATIO[0], E.PATIO[2], E.PATIO[1], E.PATIO[3]),
+        ],
+        # O tablado da entrada sai a parte do predio de proposito: ele nao e'
+        # massa construida, e' laje descoberta com toldo em cima. Desenhado
+        # junto virava um bloco preso ao predio por uma linha preta.
+        "tablado": [r(E.PE_DA_ESCADA, E.TERRACO_Z0, E.TERRACO_X1,
+                      E.TERRACO_Z1)],
+        "predio": [
+            r(E.X0, 0.0, E.X1, E.Z1),
+            r(E.TORRE_X0, E.TORRE_Z0, E.TORRE_X1, E.TORRE_Z1),
+        ],
+    }
+    with open(SAIDA_MAPA, "w", encoding="utf-8") as f:
+        json.dump(dados, f, indent=1)
+    return dados
+
+
 def gerar():
     print("== fachada ==")
     cena, colisoes, contagem = montar()
@@ -650,6 +706,12 @@ def gerar():
     formas = escrever_cena(colisoes)
     print("  %d formas distintas" % formas)
     print("  gravado: %s" % SAIDA_CENA)
+    mapa = escrever_mapa()
+    print("  %d retangulos de silhueta pro mapa da cidade"
+          % sum(len(mapa[k]) for k in ("lote", "tablado", "predio")))
+    print("  gravado: %s" % SAIDA_MAPA)
+    print("  (o mapa da cidade so' muda depois de rodar"
+          " tools/blender/citygen/textures/make_minimap.py)")
 
 
 if __name__ == "__main__":

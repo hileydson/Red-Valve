@@ -40,6 +40,10 @@ const COR_TIPO := {
 	# mapa; magenta bem saturado destaca melhor a oficina do Jimmy.
 	"local": Color(0.95, 0.25, 0.80),
 	"casa": Color(0.62, 0.80, 0.96),
+	# planta de interior: são muitos de uma vez (o hospital tem vinte salas num
+	# andar só). Um tom apagado, para o nome ser legível sem que trinta
+	# losangos acesos briguem com o desenho que eles deviam explicar.
+	"sala": Color(0.80, 0.77, 0.64),
 }
 const COR_PADRAO := Color(0.85, 0.85, 0.85)
 ## Mesmo amarelo do minimapa: "tem coisa aqui e o jogo não vai dizer o quê".
@@ -285,9 +289,15 @@ func _atualizar() -> void:
 			_lado_do_rotulo(no, q, tam)
 
 	_legendas()
-	_escala.text = tr("MAP_SCALE").format({
+	var escala := tr("MAP_SCALE").format({
 		"h": int(round(_meia * 2.0 * _dados.tam)),
 		"z": "%.1f" % ((zoom_max_m * 0.5 / _dados.tam) / _meia)})
+	# Prédio de mais de um andar manda o nome da prancha junto. Sem isto as duas
+	# plantas do hospital são dois quadrados parecidos e o jogador não tem como
+	# saber qual delas está olhando.
+	if _dados.nome != "":
+		escala = "%s  ·  %s" % [tr(_dados.nome), escala]
+	_escala.text = escala
 
 
 ## Uma legenda ou a outra, nunca as duas: mostra a do dispositivo que o

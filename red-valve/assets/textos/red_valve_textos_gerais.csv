@@ -126,6 +126,11 @@ MAP_POI_OFICINA_JIMMY,Jimmy's Workshop,Oficina do Jimmy
 MAP_POI_CASA_JIMMY,Jimmy's House,Casa do Jimmy
 MAP_POI_CASA_NICE,Ms. Nice's House,Casa da Dona Nice
 MAP_POI_CASA_MAYCOW,Maycow's House,Casa do Maycow
+MAP_POI_HOSPITAL,Hospital,Hospital
+MAP_POI_HOSP_ELEVADOR,Elevator,Elevador
+MAP_POI_HOSP_SAIDA,Exit to the street,Saída para a rua
+MAP_FLOOR_HOSP_1,1st floor,1º andar
+MAP_FLOOR_HOSP_2,2nd floor,2º andar
 MAP_RECENTER,Recenter,Centralizar
 MAP_SCALE,{h} m across  ·  zoom {z}x,{h} m de altura  ·  zoom {z}x
 MAP_HELP_PAD,Left stick: move  |  Right stick: zoom,Analógico esquerdo: mover  |  Analógico direito: zoom

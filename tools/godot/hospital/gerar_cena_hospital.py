@@ -745,6 +745,8 @@ def escrever_cena(cena_gltf, setores, colisoes, props, portas, plano_luz,
     id_player = externo("PackedScene", "res://scenes/player/player.tscn")
     id_pause = externo("PackedScene", "res://scenes/configs/pause.tscn")
     id_fade = externo("PackedScene", "res://scenes/configs/fade.tscn")
+    id_minimapa = externo("PackedScene",
+                          "res://scenes/ui/minimap_hospital.tscn")
     id_script = externo("Script", "res://scripts/stages/hospital/hospital.gd")
     id_porta_gd = externo("Script", "res://scripts/stages/hospital/porta_hospital.gd")
     id_elev_gd = externo("Script", "res://scripts/stages/hospital/elevador_hospital.gd")
@@ -800,6 +802,11 @@ def escrever_cena(cena_gltf, setores, colisoes, props, portas, plano_luz,
        props_=[("environment", 'SubResource("ambiente")')])
     no("Pause", pai=".", instancia=id_pause)
     no("fade", pai=".", instancia=id_fade)
+    # O minimapa NAO e' so' o canto da tela: ele e' o no' que declara qual mapa
+    # esta cena usa (grupo "mapa_cidade"), e a aba MAPA do menu pergunta a ele.
+    # Sem isto aqui dentro, o menu diz "nenhum mapa disponivel". E' ele tambem
+    # que troca a planta do 1o pela do 2o andar conforme a altura do jogador.
+    no("minimapa", pai=".", instancia=id_minimapa)
 
     entrada = _ponto_de_entrada()
     no("Player", pai=".", instancia=id_player,

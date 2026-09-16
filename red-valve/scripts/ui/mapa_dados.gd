@@ -12,6 +12,10 @@ extends RefCounted
 const CAMINHO := "res://assets/3d_model/city/citymap.json"
 
 var ok: bool = false
+## Chave de tradução do nome deste mapa, ou "" quando ele não tem nome.
+## Só os mapas de prédio com mais de uma prancha usam: é o que diz ao jogador
+## QUAL andar ele está vendo, já que as duas plantas são do mesmo prédio.
+var nome: String = ""
 var x0: float = 0.0
 var z0: float = 0.0
 var tam: float = 1.0
@@ -27,6 +31,7 @@ func _init(caminho: String = CAMINHO) -> void:
 	if typeof(d) != TYPE_DICTIONARY:
 		push_error("MapaDados: %s inválido" % caminho)
 		return
+	nome = String(d.get("nome", ""))
 	x0 = float(d.get("mundo_x0", 0.0))
 	z0 = float(d.get("mundo_z0", 0.0))
 	tam = float(d.get("tamanho_m", 1.0))

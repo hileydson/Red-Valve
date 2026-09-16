@@ -55,6 +55,69 @@ A altura (Y) é o único ajuste que costuma sobrar: o terreno da cidade é o
 Terrain3D e o pátio de concreto é plano. Suba ou desça a instância até a calçada
 encostar no chão.
 
+### E o mapa do menu
+
+O prédio também é desenhado no mapa da cidade — a mancha dourada com o losango
+"Hospital" na porta. Isso **não** é automático em tempo de jogo: a figura está
+assada no `T_citymap.png`, que é gerado por
+`tools/blender/citygen/textures/make_minimap.py`.
+
+Ele monta a silhueta de duas fontes, de propósito:
+
+| O quê | De onde | Quem escreve |
+| :--- | :--- | :--- |
+| a **forma** (retângulos do corpo, torre e tablado) | `assets/3d_model/stages/hospital/hospital_mapa.json` | `gerar_cena_exterior.py` |
+| a **posição e o giro** | o nó `hospital_exterior` dentro do `stage_1.tscn` | o editor, quando você arrasta |
+
+Por isso **arrastar ou girar o prédio no editor exige rodar o
+`construir.sh` de novo** (ou só o `make_minimap.py`): senão o mapa continua
+mostrando o hospital no lugar antigo. O losango fica na porta, e não no meio do
+prédio como os outros pontos — com a planta inteira desenhada, o que falta
+dizer ao jogador não é onde ele fica, é por onde se entra.
+
+O nome sai do CSV, chave `MAP_POI_HOSPITAL`. O desenho sai 15 % menor que o
+prédio de verdade (`ESCALA_HOSPITAL` no `make_minimap.py`): em tamanho real
+ele ficava maior que a pracinha e a igreja juntas e dominava o mapa. A escala
+encolhe em torno da porta, então o losango continua em cima da entrada.
+
+## O mapa de dentro
+
+`make_mapa_hospital.py` desenha **uma prancha por andar** a partir da mesma
+`planta.py` — mexeu numa parede, o mapa mexe junto:
+
+| Saída | O que é |
+| :--- | :--- |
+| `textures/T_hospitalmap_1.png` + `hospitalmap_1.json` | térreo |
+| `textures/T_hospitalmap_2.png` + `hospitalmap_2.json` | segundo andar |
+
+Duas pranchas e não uma com hachura (o truque das galerias da igreja) porque
+aqui são dois andares INTEIROS, 56 x 68 m um em cima do outro, com plantas
+diferentes — sobrepostos viram rabisco.
+
+A planta é desenhada **pelo avesso**: preenche o andar todo de massa de parede
+e escava o vão interno de cada sala e de cada área. O que sobra sem escavar são
+exatamente as paredes. Por cima vão os vãos de `planta.muros()` — porta em
+laranja, janela em azul —, que é o que faz a planta virar caminho em vez de um
+monte de caixa fechada. Circulação sai um tom mais clara que sala.
+
+**Quem troca de andar é o `minimap.gd`**, pela ALTURA do jogador (acima de
+2,10 m é o andar de cima), e não por sinal do elevador: assim vale para
+qualquer forma de subir que venha a existir, e um save carregado em cima já
+abre com o mapa certo. Ao trocar, ele reescreve os próprios `dados_json` e
+`textura_mapa` — é por esses dois que a aba MAPA do menu pergunta qual mapa
+mostrar (`MapaDados.caminho_da_cena`), então eles têm de apontar para o andar
+atual. O painel do menu não precisou saber de andar nenhum.
+
+O perfil da cena é `scenes/ui/minimap_hospital.tscn`, instanciado dentro do
+`hospital.tscn` **pelo gerador**. Sem ele o menu diria "nenhum mapa disponível"
+lá dentro.
+
+Os rótulos são uma sala por ponto, e a chave de tradução sai da própria
+`planta.py` (`HOSP_SALA_*`, as mesmas que o prompt da porta usa) — renomear a
+sala no CSV renomeia no mapa. Mais o elevador e, no térreo, a saída para a rua.
+No minimapa eles ficam **desligados** (`pontos_no_minimapa = false`): trinta
+losangos em 190 px tapariam a planta que eles deviam explicar.
+
 ## Entrar e sair
 
 - **Entrar:** a área acende o prompt, e o `ui_accept` carrega `hospital.tscn`.
@@ -78,6 +141,8 @@ encostar no chão.
 | `gerar_cena_hospital.py` | monta o `.tscn` do interior |
 | `exterior.py` | medidas da fachada, estado das janelas, o letreiro |
 | `gerar_cena_exterior.py` | monta o `.tscn` da casca de fora |
+| `gerar_cena_exterior.py` → `hospital_mapa.json` | a silhueta que vai pro mapa da cidade |
+| `make_mapa_hospital.py` | as duas plantas do interior (minimapa e aba MAPA) |
 
 Comportamento (porta, elevador, lâmpada piscando) fica em
 `red-valve/scripts/stages/hospital/`.
@@ -104,3 +169,7 @@ descartar lâmpada em silêncio.
   cenário de rua, e o jogo acontece do outro lado da porta.
 - Não tem som próprio de porta nem de elevador (o projeto não tem esses
   arquivos); só a ambiência geral.
+- O lote onde ele está hoje **não está vazio**: 8 casas do gerador da cidade e
+  5 postes caem dentro dos 56 x 68 m do corpo. O prédio passa por cima delas.
+  É para resolver quando a posição final for escolhida — o mapa já mostra o
+  estrago, porque desenha as casas e o hospital da mesma origem.

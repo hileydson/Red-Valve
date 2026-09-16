@@ -46,6 +46,13 @@
    "tipo": "casa",
    "x": 647.37,
    "z": -150.45
+  },
+  {
+   "id": "hospital",
+   "chave": "MAP_POI_HOSPITAL",
+   "tipo": "marco",
+   "x": 723.67,
+   "z": -102.28
   }
  ]
 }

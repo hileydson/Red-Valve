@@ -1,0 +1,87 @@
+{
+ "nota": "planta do 2o andar do hospital, coberta por T_hospitalmap_2.png; gerado por tools/godot/hospital/make_mapa_hospital.py",
+ "nome": "MAP_FLOOR_HOSP_2",
+ "mundo_x0": -5.5,
+ "mundo_z0": -2.5,
+ "tamanho_m": 73.0,
+ "resolucao": 2048,
+ "pontos": [
+  {
+   "id": "arquivo_medico",
+   "chave": "HOSP_SALA_ARQUIVO",
+   "tipo": "sala",
+   "x": 8.18,
+   "z": 6.2
+  },
+  {
+   "id": "quarto_201",
+   "chave": "HOSP_SALA_201",
+   "tipo": "sala",
+   "x": 6.58,
+   "z": 23.18
+  },
+  {
+   "id": "quarto_202",
+   "chave": "HOSP_SALA_202",
+   "tipo": "sala",
+   "x": 19.38,
+   "z": 23.18
+  },
+  {
+   "id": "quarto_203",
+   "chave": "HOSP_SALA_203",
+   "tipo": "sala",
+   "x": 31.98,
+   "z": 23.18
+  },
+  {
+   "id": "psiquiatria",
+   "chave": "HOSP_SALA_PSIQ",
+   "tipo": "sala",
+   "x": 8.18,
+   "z": 38.78
+  },
+  {
+   "id": "terapia",
+   "chave": "HOSP_SALA_TERAPIA",
+   "tipo": "sala",
+   "x": 24.18,
+   "z": 38.78
+  },
+  {
+   "id": "quarto_204",
+   "chave": "HOSP_SALA_204",
+   "tipo": "sala",
+   "x": 5.67,
+   "z": 59.02
+  },
+  {
+   "id": "quarto_205",
+   "chave": "HOSP_SALA_205",
+   "tipo": "sala",
+   "x": 16.68,
+   "z": 59.02
+  },
+  {
+   "id": "centro_cirurgico_2",
+   "chave": "HOSP_SALA_CIRURGIA2",
+   "tipo": "sala",
+   "x": 27.68,
+   "z": 59.02
+  },
+  {
+   "id": "observacao",
+   "chave": "HOSP_SALA_OBSERVACAO",
+   "tipo": "sala",
+   "x": 38.67,
+   "z": 59.02
+  },
+  {
+   "id": "elevador",
+   "chave": "MAP_POI_HOSP_ELEVADOR",
+   "tipo": "local",
+   "x": 59.0,
+   "z": 31.6
+  }
+ ]
+}

@@ -14,6 +14,7 @@ X = origin_x + px  e  Z = origin_z - py  (ver layout.json/world).
 import json
 import math
 import os
+import re
 
 from PIL import Image, ImageDraw
 
@@ -23,6 +24,21 @@ _REPO = os.path.abspath(os.path.join(_CITYGEN, "..", "..", ".."))
 ASSETS = os.path.join(_REPO, "red-valve", "assets", "3d_model", "city")
 OUT_PNG = os.path.join(ASSETS, "textures", "T_citymap.png")
 OUT_JSON = os.path.join(ASSETS, "citymap.json")
+
+# O hospital nao sai deste gerador: e' cena a parte, de tools/godot/hospital,
+# encaixada a mao na stage_1. A FORMA dele vem do json que aquele gerador
+# escreve; a POSICAO vem da propria stage_1 (ver `_hospital`).
+HOSPITAL_JSON = os.path.join(_REPO, "red-valve", "assets", "3d_model",
+                             "stages", "hospital", "hospital_mapa.json")
+CENA_STAGE = os.path.join(_REPO, "red-valve", "scenes", "stages", "stage_1",
+                          "stage_1.tscn")
+NO_HOSPITAL = "hospital_exterior"
+# O predio tem 56 x 68 m de verdade, e desenhado no tamanho real ele dominava o
+# mapa inteiro — ficava maior que a pracinha e que a igreja juntas. Aqui ele e'
+# desenhado 15% menor, SO' NO PAPEL: o predio na cidade nao muda, e a escala
+# encolhe em torno da PORTA (a origem da instancia), entao o losango continua
+# em cima da entrada desenhada.
+ESCALA_HOSPITAL = 0.85
 
 RES = 2048          # pixels do lado
 SS = 2              # supersampling: desenha em 2x e reduz, para suavizar
@@ -40,6 +56,11 @@ C_VIA      = (156, 145, 126)
 C_TERRA    = (112, 91, 68)
 C_VIA_BRD  = (22, 19, 16)
 C_MARCO    = (198, 152, 86)
+# o hospital e' marco tambem, mas um tom abaixo: ele ocupa 56 x 68 m e, no
+# mesmo ouro da igreja, viraria a coisa mais clara do mapa inteiro
+C_HOSP     = (168, 128, 76)
+C_HOSP_TAB = (118, 96, 64)      # o tablado da entrada, laje descoberta
+C_HOSP_LOT = (66, 61, 53)
 
 # largura da linha por classe, em metros (a via real, sem o casing)
 LARGURA = {"avenida": 10.0, "principal": 8.0, "radial": 7.0,
@@ -171,6 +192,18 @@ def build():
                      ig["size"][0], ig["size"][1], ig["rotation"]),
                fill=C_MARCO)
 
+    # ---- o hospital, por ultimo: ele e' posterior a' cidade e passa por cima
+    # das casas que o lote dele engoliu — no mundo e' exatamente o que acontece
+    hosp = _hospital()
+    if hosp:
+        for rc in hosp["lote"]:
+            dr.polygon([P(*q) for q in _quad(hosp, rc)], fill=C_HOSP_LOT)
+        for rc in hosp["tablado"]:
+            dr.polygon([P(*q) for q in _quad(hosp, rc)], fill=C_HOSP_TAB)
+        for rc in hosp["predio"]:
+            dr.polygon([P(*q) for q in _quad(hosp, rc)], fill=C_HOSP,
+                       outline=C_CASA_BRD, width=max(1, int(0.7 * ppm)))
+
     img = img.resize((RES, RES), Image.LANCZOS)
     os.makedirs(os.path.dirname(OUT_PNG), exist_ok=True)
     img.save(OUT_PNG)
@@ -179,12 +212,12 @@ def build():
                     "gerado por tools/blender/citygen/textures/make_minimap.py",
             "mundo_x0": round(X0, 2), "mundo_z0": round(Z0, 2),
             "tamanho_m": round(TAM, 2), "resolucao": RES,
-            "pontos": _pontos(lay, casas, ox, oz)}
+            "pontos": _pontos(lay, casas, ox, oz, hosp)}
     json.dump(meta, open(OUT_JSON, "w", encoding="utf-8"), indent=1)
     return meta
 
 
-def _pontos(lay, casas, ox, oz):
+def _pontos(lay, casas, ox, oz, hosp=None):
     """Pontos de interesse, em coordenadas de MUNDO.
 
     Tudo derivado dos mesmos dados que desenham o mapa — nada digitado à mão
@@ -225,6 +258,14 @@ def _pontos(lay, casas, ox, oz):
         ("casa_nice", "MAP_POI_CASA_NICE", "casa", media("casa_nice")),
         ("casa_maycow", "MAP_POI_CASA_MAYCOW", "casa", media("casa_maycow")),
     ]
+    # O ponto do hospital fica na PORTA, e nao no meio do predio como os
+    # outros: o predio tem 56 x 68 m e ja' esta' desenhado inteiro no papel,
+    # entao o que falta dizer ao jogador nao e' "ele fica por aqui" — e' por
+    # onde se entra. A porta e' a propria origem da instancia, de graca.
+    if hosp:
+        pt = hosp["porta"]
+        bruto.append(("hospital", "MAP_POI_HOSPITAL", "marco",
+                      _quad(hosp, [pt[0], pt[1], pt[0], pt[1]])[0]))
     saida = []
     for pid, chave, tipo, pos in bruto:
         pos = POIS_MANUAIS.get(pid, pos)
@@ -233,6 +274,73 @@ def _pontos(lay, casas, ox, oz):
             continue
         saida.append({"id": pid, "chave": chave, "tipo": tipo,
                       "x": round(pos[0], 2), "z": round(pos[1], 2)})
+    return saida
+
+
+def _hospital():
+    """Silhueta do hospital no mundo, ou None se ele nao esta' na cidade.
+
+    Sao duas fontes, porque sao duas coisas diferentes: a FORMA vem de
+    `hospital_mapa.json`, escrito pelo gerador da fachada, e a POSICAO vem do
+    no instanciado na `stage_1`. Ler o .tscn e' o unico jeito de o mapa
+    acompanhar o predio quando ele for girado ou arrastado no editor — e ele
+    vai ser, porque foi instanciado a mao e o lugar dele ainda nao esta'
+    fechado.
+
+    O no e' filho de `locais_importantes`, que nao tem transform: a origem
+    dele ja' e' coordenada de mundo, sem soma nenhuma. Mesma situacao da
+    oficina e das casas em POIS_MANUAIS.
+    """
+    try:
+        forma = json.load(open(HOSPITAL_JSON, encoding="utf-8"))
+    except (OSError, ValueError):
+        print("  AVISO: sem %s — hospital fora do mapa" % HOSPITAL_JSON)
+        return None
+    m = _transform_do_no(CENA_STAGE, NO_HOSPITAL)
+    if m is None:
+        print("  AVISO: %s nao esta' na stage_1 — hospital fora do mapa"
+              % NO_HOSPITAL)
+        return None
+    # Os 12 numeros do .tscn sao as LINHAS da base e depois a origem. Guardo
+    # so' as quatro celulas do plano (X, Z): a altura nao interessa a um mapa
+    # visto de cima.
+    return {"base": (m[0], m[2], m[6], m[8]), "origem": (m[9], m[11]),
+            "porta": forma.get("porta", [0.0, 0.0]),
+            "lote": forma.get("lote", []), "tablado": forma.get("tablado", []),
+            "predio": forma.get("predio", [])}
+
+
+def _transform_do_no(caminho, nome):
+    """Os 12 numeros do `transform` de um no de .tscn, ou None."""
+    try:
+        txt = open(caminho, encoding="utf-8").read()
+    except OSError:
+        return None
+    bloco = re.search(r'^\[node name="%s"[^\]]*\](.*?)(?=^\[node |\Z)'
+                      % re.escape(nome), txt, re.M | re.S)
+    if bloco is None:
+        return None
+    t = re.search(r"^transform = Transform3D\(([^)]*)\)", bloco.group(1), re.M)
+    if t is None:
+        return None
+    v = [float(n) for n in t.group(1).split(",")]
+    return v if len(v) == 12 else None
+
+
+def _quad(hosp, rc):
+    """Retangulo local (x0, z0, x1, z1) -> quatro cantos em (X, Z) do mundo.
+
+    Mesma conta de `_casa`, so' que a rotacao vem pronta da base do no em vez
+    de um angulo: x = ox + bxx·lx + bxz·lz  e  z = oz + bzx·lx + bzz·lz.
+    """
+    x0, z0, x1, z1 = rc
+    bxx, bxz, bzx, bzz = hosp["base"]
+    ox, oz = hosp["origem"]
+    e = ESCALA_HOSPITAL
+    saida = []
+    for lx, lz in ((x0, z0), (x1, z0), (x1, z1), (x0, z1)):
+        lx, lz = lx * e, lz * e
+        saida.append((ox + bxx * lx + bxz * lz, oz + bzx * lx + bzz * lz))
     return saida
 
 
