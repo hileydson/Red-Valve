@@ -448,9 +448,17 @@ def aplicar_pose(arm, pose, comp_antebraco, espelhado=False):
     dir_antebraco = (pulso - ombro).normalized()
     cotovelo = pulso - dir_antebraco * comp_antebraco * estica
 
-    # As "costas" do antebraco acompanham as costas da mao, senao a pele do
-    # toco torce sozinha quando o punho gira.
-    costas = -palma
+    # A rolagem do antebraco tem de SEGUIR a da mao, nunca ser a oposta.
+    #
+    # `_matriz` recebe o eixo Z LOCAL do osso, e neste rig o Z do `antebraco` e
+    # o da `mao` estao ALINHADOS no descanso (a rolagem relativa entre os dois
+    # e' de -0,5 grau). Passar `-palma` aqui — que parece certo em portugues,
+    # "as costas do antebraco acompanham as costas da mao" — torcia o antebraco
+    # 180 graus em relacao a' mao. A pele do pulso, presa aos dois, colapsava
+    # num PONTO: o raio medio caia de 0,186 para 0,018, contra 0,152 com os
+    # dois alinhados. E' o "papel de bala" classico de skinning linear, e era
+    # ELE o pulso fino que aparecia no jogo — nao a malha.
+    costas = palma
     torcao = pose.get("torcao", 0.0)
     if torcao:
         costas = Matrix.Rotation(torcao * s, 4, dir_antebraco) @ costas
