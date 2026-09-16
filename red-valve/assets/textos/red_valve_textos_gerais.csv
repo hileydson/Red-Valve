@@ -168,3 +168,41 @@ NEIGHBOR_PALE,PALE STRAIN,LINHAGEM PÁLIDA
 NEIGHBOR_BILE,BILE STRAIN,LINHAGEM BILIAR
 NEIGHBOR_CRIMSON,CRIMSON STRAIN,LINHAGEM ESCARLATE
 NEIGHBOR_ASH,ASH STRAIN,LINHAGEM CINZENTA
+HOSP_SALA_101,Room 101,Quarto 101
+HOSP_SALA_102,Room 102,Quarto 102
+HOSP_SALA_103,Room 103,Quarto 103
+HOSP_SALA_104,Room 104,Quarto 104
+HOSP_SALA_105,Room 105,Quarto 105
+HOSP_SALA_106,Room 106,Quarto 106
+HOSP_SALA_107,Room 107,Quarto 107
+HOSP_SALA_108,Room 108,Quarto 108
+HOSP_SALA_109,Room 109,Quarto 109
+HOSP_SALA_201,Room 201,Quarto 201
+HOSP_SALA_202,Room 202,Quarto 202
+HOSP_SALA_203,Room 203,Quarto 203
+HOSP_SALA_204,Room 204,Quarto 204
+HOSP_SALA_205,Room 205,Quarto 205
+HOSP_SALA_RAIOX,Radiology,Radiologia
+HOSP_SALA_LAB,Laboratory,Laboratório
+HOSP_SALA_CIRURGIA,Operating Room,Centro Cirúrgico
+HOSP_SALA_CIRURGIA2,Operating Room 2,Centro Cirúrgico 2
+HOSP_SALA_UTI,Intensive Care,UTI
+HOSP_SALA_PS,Emergency Room,Pronto-Socorro
+HOSP_SALA_REFEITORIO,Cafeteria,Refeitório
+HOSP_SALA_NECROTERIO,Morgue,Necrotério
+HOSP_SALA_FARMACIA,Pharmacy,Farmácia
+HOSP_SALA_ESTERIL,Sterilization,Central de Esterilização
+HOSP_SALA_MAQUINAS,Machine Room,Casa de Máquinas
+HOSP_SALA_ARQUIVO,Medical Records,Arquivo Médico
+HOSP_SALA_PSIQ,Psychiatric Ward,Ala Psiquiátrica
+HOSP_SALA_TERAPIA,Therapy Room,Sala de Terapia
+HOSP_SALA_OBSERVACAO,Observation Room,Sala de Observação
+HOSP_SALA_GENERICA,Door,Porta
+PROMPT_HOSP_ABRIR,Open — {sala},Abrir — {sala}
+PROMPT_HOSP_FECHAR,Close the door,Fechar a porta
+PROMPT_HOSP_TRANCADA,Locked from the outside,Trancada por fora
+PROMPT_HOSP_ELEVADOR_CHAMAR,Call the elevator,Chamar o elevador
+PROMPT_HOSP_ELEVADOR_SUBIR,Go up to the 2nd floor,Subir para o 2º andar
+PROMPT_HOSP_ELEVADOR_DESCER,Go down to the 1st floor,Descer para o 1º andar
+PROMPT_HOSP_ELEVADOR_VINDO,The elevator is coming...,O elevador está vindo...
+OBJ_HOSP_EXPLORAR,Find a way up to the second floor,Encontre um jeito de subir para o segundo andar
