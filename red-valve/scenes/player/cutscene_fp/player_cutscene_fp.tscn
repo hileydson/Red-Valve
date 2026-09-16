@@ -29,7 +29,7 @@ surface_material_override/0 = ExtResource("3_pele")
 [node name="luz_maos" type="OmniLight3D" parent="Tremor/Camera3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, -0.15)
 light_color = Color(1, 0.94, 0.9, 1)
-light_energy = 0.45
+light_energy = 0.28
 shadow_enabled = false
 omni_range = 1.4
 omni_attenuation = 2.0

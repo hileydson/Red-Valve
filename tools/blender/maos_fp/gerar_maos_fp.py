@@ -75,6 +75,38 @@ OMBRO = Vector((-0.26, -0.20, -0.62))
 # (ver `preparar`); os dedos continuam herdando de `mao`, que nunca escala.
 ESTICA = 2.05
 
+# Quanto TODAS as maos recuam em relacao a' pose escrita (metros, no eixo de
+# profundidade da camera; positivo = mais perto do olho).
+#
+# O antebraco tem comprimento FIXO (`comp` x `ESTICA`, 0,318 m): o que muda com
+# a profundidade do pulso nao e' o tamanho do braco, e' o quanto dele aparece.
+# Com o pulso longe, a mao fica pequena e o antebraco atravessa a tela inteira
+# — le' como braco comprido demais. Recuar um tico aproxima a mao, encurta o
+# antebraco na tela e nao mexe em pose nenhuma.
+RECUO_DAS_MAOS = 0.075
+
+# Teto de profundidade do pulso (metros, mesmo eixo do recuo).
+#
+# `EMPURRA` punha o pulso a 0,50 m e o pico do arremesso a 0,55: o antebraco
+# vira uma VARA comprida atravessando a tela ate' uma mao pequena la' na
+# frente. Nao e' o braco que cresce (ele tem tamanho fixo) — e' o pulso indo
+# longe demais, o que espicha o antebraco na tela e encolhe a mao.
+#
+# O teto NAO e' corte seco: acima de `PROF_JOELHO` a profundidade continua
+# crescendo, cada vez menos, e nunca passa de `PROF_TETO`. Com clamp duro o
+# movimento travaria — o `agarrado`, por exemplo, vai e volta entre DEFESA e
+# EMPURRA, e a metade de ida ficaria congelada no teto.
+PROF_JOELHO = 0.20
+PROF_TETO = 0.32
+
+
+def _profundidade(y):
+    """Comprime a profundidade do pulso contra PROF_TETO, sem travar."""
+    if y <= PROF_JOELHO:
+        return y
+    faixa = PROF_TETO - PROF_JOELHO
+    return PROF_JOELHO + faixa * (1.0 - math.exp(-(y - PROF_JOELHO) / faixa))
+
 # --- perfil do antebraco (ver `engrossar_antebraco`) ---
 # `t` = posicao ao longo do osso `antebraco`: 0 no cotovelo, 1 no PULSO.
 T_MIN = -0.30      # onde a carne do toco comeca, atras da cabeca do osso
@@ -437,7 +469,11 @@ def aplicar_pose(arm, pose, comp_antebraco, espelhado=False):
     pedida. Ver o cabecalho.
     """
     s = -1.0 if espelhado else 1.0
-    pulso = _m(pose["pulso"]) * Vector((s, 1.0, 1.0))
+    # Recuo e teto entram ANTES de virar unidade do rig: a pose e' escrita em
+    # metros, e os dois sao em metros.
+    metros = Vector(pose["pulso"]) - Vector((0.0, RECUO_DAS_MAOS, 0.0))
+    metros.y = _profundidade(metros.y)
+    pulso = _m(metros) * Vector((s, 1.0, 1.0))
     dedos = Vector(pose["dedos"]) * Vector((s, 1.0, 1.0))
     palma = Vector(pose["palma"]) * Vector((s, 1.0, 1.0))
     dedos.normalize()

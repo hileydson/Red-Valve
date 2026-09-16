@@ -55,12 +55,17 @@ SEMENTE = 20260916
 BAKE_MIN, BAKE_MAX = 0.47, 0.90
 
 # Rampa de pele: (posicao, r, g, b) em sRGB 0..1
+# A primeira versao subia ate' 0,80 no topo e a mao saia CLARA demais na tela —
+# num jogo escuro, com a luz propria das maos por perto, o topo da rampa e' o
+# que o olho ve' quase o tempo todo. Esta rampa e' a mesma curva rebaixada ~25%
+# e com um pouco mais de cor: o vinco continua sendo vinco, mas a pele para de
+# brilhar como gesso.
 RAMPA = [
-    (0.00, 0.225, 0.132, 0.118),
-    (0.28, 0.420, 0.282, 0.248),
-    (0.55, 0.590, 0.448, 0.398),
-    (0.80, 0.705, 0.580, 0.525),
-    (1.00, 0.800, 0.692, 0.635),
+    (0.00, 0.150, 0.080, 0.068),
+    (0.28, 0.288, 0.180, 0.152),
+    (0.55, 0.420, 0.300, 0.256),
+    (0.80, 0.516, 0.396, 0.346),
+    (1.00, 0.596, 0.476, 0.422),
 ]
 
 ## Quanto o vinco escurece.
