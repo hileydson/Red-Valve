@@ -5909,10 +5909,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 723.6687, 3.492957, -102.2812
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 723.6687, 3.492957, -102.28127)
 
 [node name="escola_local" type="Marker3D" parent="locais_importantes"]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 418, 12.7, -272)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 889.93854, 8.08, -398.48987)
 
 [node name="escola_exterior" parent="locais_importantes" instance=ExtResource("9_esc01")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 418, 12.7, -272)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 889.93854, 8.08, -398.48987)
 
 [node name="Greens" type="Node3D" parent="." unique_id=2069415040]
 

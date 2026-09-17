@@ -58,8 +58,17 @@ Z0, Z1 = P.PREDIO_Z0, P.PREDIO_Z1        # 0 .. 68
 ESP = 0.45              # espessura da casca
 CHAO = -0.60            # cota do terreno em volta (o piso interno e' 0)
 
+# Quanto o embasamento e a calcada descem ABAIXO de CHAO.
+#
+# O lote tem 87 x 76 m e o terreno da cidade nao e' plano: onde a escola esta'
+# hoje ele cai 2,2 m de uma ponta do lote a' outra. O Y da instancia e' a cota
+# do PORTAO, que e' onde o jogador pisa — entao o canto mais baixo do lote fica
+# NO AR. Enterrar e' de graca (a casca e' fechada, ninguem ve por dentro dela);
+# flutuar nao e': da' pra ver por baixo da parede. Esta saia e' o que tapa.
+SAIA = 3.00
+
 # As faixas horizontais da fachada, de baixo pra cima.
-Y_BASE = (CHAO, 0.35)                    # embasamento
+Y_BASE = (CHAO - SAIA, 0.35)             # embasamento
 Y_CORPO = (0.35, P.PE)                   # o pano unico do terreo
 Y_COROA = (P.PE, P.PE + 0.40)            # a cinta de concreto
 Y_PLATIBANDA = (Y_COROA[1], P.PATIO_MURO_ALTO)
@@ -87,7 +96,7 @@ QUADRA = (10.0, 20.0, 36.0, 36.0)        # o mesmo retangulo de `mobilia.py`
 # o recuo do portao. Uma laje de 90 x 80 m plana ia brigar com o relevo do
 # Terrain3D da cidade em algum canto, e o canto errado vira degrau invisivel.
 CALCADA_L = 4.00
-CALCADA_Y = (CHAO - 0.70, CHAO)
+CALCADA_Y = (CHAO - SAIA, CHAO)
 RECUO_PORTAO = (-7.00, 0.0, PORTAO_Z0 - 3.0, PORTAO_Z1 + 3.0)
 
 # Origem da cena: 2 m adiante do portao, no eixo dele.

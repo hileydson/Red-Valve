@@ -125,6 +125,31 @@ def _kit_lod(col):
     return feitos
 
 
+# ------------------------------------------------------------ clareiras
+# Retangulos onde NAO se planta, em MUNDO LOCAL do Godot (x0, z0, x1, z1) — o
+# mesmo sistema das vagas de `houses.py`.
+#
+# Existem porque ha' predio encaixado a mao na stage_1 DEPOIS desta cidade. A
+# escola foi parar na faixa de mata a leste: sem isto nascem 25 arvores e 5
+# arbustos dentro do lote dela, atravessando o telhado e o patio.
+#
+# O corte e' feito no FIM de `scatter()`, e nao dentro do laco, de proposito:
+# assim o sorteio continua consumindo o `rng` na mesma ordem e abrir uma
+# clareira nao move uma arvore que seja no resto do mapa.
+CLAREIRAS = [
+    ("escola", 242.9, -157.5, 333.9, -77.5),
+]
+
+
+def _abrir_clareiras(pts):
+    def livre(p):
+        for _tag, x0, z0, x1, z1 in CLAREIRAS:
+            if x0 <= p[0] <= x1 and z0 <= p[2] <= z1:
+                return False
+        return True
+    return {k: [p for p in v if livre(p)] for k, v in pts.items()}
+
+
 # ------------------------------------------------------------ espalhamento
 def extensao_construida(data, folga=26.0):
     """Bounding box do que existe de fato — quadras e marcos — nao o retangulo
@@ -252,7 +277,7 @@ def scatter(hs, rng):
                                     round(-ly, 2), round(rng.uniform(0, 6.283), 3),
                                     round(rng.uniform(0.8, 1.3), 3)))
 
-    return pts
+    return _abrir_clareiras(pts)
 
 
 def build(parent, hs):

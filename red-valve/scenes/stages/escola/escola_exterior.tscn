@@ -3,19 +3,19 @@
 [ext_resource type="PackedScene" path="res://assets/3d_model/stages/escola/escola_exterior.gltf" id="e0"]
 
 [sub_resource type="BoxShape3D" id="f0"]
-size = Vector3(76.0000, 6.1000, 0.4500)
+size = Vector3(76.0000, 8.4000, 0.4500)
 
 [sub_resource type="BoxShape3D" id="f1"]
-size = Vector3(0.4500, 6.1000, 68.0000)
+size = Vector3(0.4500, 8.4000, 68.0000)
 
 [sub_resource type="BoxShape3D" id="f2"]
-size = Vector3(0.7500, 5.5000, 2.3000)
+size = Vector3(0.7500, 7.8000, 2.3000)
 
 [sub_resource type="BoxShape3D" id="f3"]
 size = Vector3(0.7500, 1.6000, 2.6000)
 
 [sub_resource type="BoxShape3D" id="f4"]
-size = Vector3(0.2000, 3.9000, 2.6000)
+size = Vector3(0.2000, 6.2000, 2.6000)
 
 [sub_resource type="BoxShape3D" id="f5"]
 size = Vector3(76.0000, 0.3500, 15.3500)
@@ -27,13 +27,13 @@ size = Vector3(76.0000, 0.3500, 16.0000)
 size = Vector3(29.6500, 0.3500, 36.6500)
 
 [sub_resource type="BoxShape3D" id="f8"]
-size = Vector3(84.0000, 0.7000, 4.0000)
+size = Vector3(84.0000, 3.0000, 4.0000)
 
 [sub_resource type="BoxShape3D" id="f9"]
-size = Vector3(4.0000, 0.7000, 68.0000)
+size = Vector3(4.0000, 3.0000, 68.0000)
 
 [sub_resource type="BoxShape3D" id="f10"]
-size = Vector3(7.0000, 0.7000, 13.2000)
+size = Vector3(7.0000, 3.0000, 13.2000)
 
 [sub_resource type="BoxShape3D" id="f11"]
 size = Vector3(9.0000, 5.0000, 14.0000)
@@ -50,27 +50,27 @@ collision_layer = 2
 collision_mask = 0
 
 [node name="c0" type="CollisionShape3D" parent="predio/colisao"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 38.00000, 1.75000, 0.22500)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 38.00000, 0.60000, 0.22500)
 shape = SubResource("f0")
 
 [node name="c1" type="CollisionShape3D" parent="predio/colisao"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 38.00000, 1.75000, 67.77500)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 38.00000, 0.60000, 67.77500)
 shape = SubResource("f0")
 
 [node name="c2" type="CollisionShape3D" parent="predio/colisao"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.22500, 1.75000, 34.00000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.22500, 0.60000, 34.00000)
 shape = SubResource("f1")
 
 [node name="c3" type="CollisionShape3D" parent="predio/colisao"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 75.77500, 1.75000, 34.00000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 75.77500, 0.60000, 34.00000)
 shape = SubResource("f1")
 
 [node name="c4" type="CollisionShape3D" parent="predio/colisao"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.07500, 1.45000, 30.55000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.07500, 0.30000, 30.55000)
 shape = SubResource("f2")
 
 [node name="c5" type="CollisionShape3D" parent="predio/colisao"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.07500, 1.45000, 35.45000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.07500, 0.30000, 35.45000)
 shape = SubResource("f2")
 
 [node name="c6" type="CollisionShape3D" parent="predio/colisao"]
@@ -78,7 +78,7 @@ transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0
 shape = SubResource("f3")
 
 [node name="c7" type="CollisionShape3D" parent="predio/colisao"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.65000, 33.00000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, -0.50000, 33.00000)
 shape = SubResource("f4")
 
 [node name="c8" type="CollisionShape3D" parent="predio/colisao"]
@@ -94,23 +94,23 @@ transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0
 shape = SubResource("f7")
 
 [node name="c11" type="CollisionShape3D" parent="predio/colisao"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 38.00000, -0.95000, -2.00000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 38.00000, -2.10000, -2.00000)
 shape = SubResource("f8")
 
 [node name="c12" type="CollisionShape3D" parent="predio/colisao"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 38.00000, -0.95000, 70.00000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 38.00000, -2.10000, 70.00000)
 shape = SubResource("f8")
 
 [node name="c13" type="CollisionShape3D" parent="predio/colisao"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -2.00000, -0.95000, 34.00000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -2.00000, -2.10000, 34.00000)
 shape = SubResource("f9")
 
 [node name="c14" type="CollisionShape3D" parent="predio/colisao"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 78.00000, -0.95000, 34.00000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 78.00000, -2.10000, 34.00000)
 shape = SubResource("f9")
 
 [node name="c15" type="CollisionShape3D" parent="predio/colisao"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -3.50000, -0.95000, 33.00000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -3.50000, -2.10000, 33.00000)
 shape = SubResource("f10")
 
 [node name="luzes" type="Node3D" parent="predio"]

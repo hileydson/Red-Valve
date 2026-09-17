@@ -1,8 +1,8 @@
 {
  "nota": "recorte do mundo coberto por T_citymap.png; gerado por tools/blender/citygen/textures/make_minimap.py",
  "mundo_x0": 260.0,
- "mundo_z0": -550.0,
- "tamanho_m": 680.0,
+ "mundo_z0": -584.79,
+ "tamanho_m": 739.64,
  "resolucao": 2048,
  "pontos": [
   {
@@ -58,8 +58,8 @@
    "id": "escola",
    "chave": "MAP_POI_ESCOLA",
    "tipo": "marco",
-   "x": 418.0,
-   "z": -272.0
+   "x": 889.94,
+   "z": -398.49
   }
  ]
 }

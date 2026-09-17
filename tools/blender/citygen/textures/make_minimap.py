@@ -119,13 +119,25 @@ def _carrega():
     return lay, casas
 
 
-def _recorte(lay):
+def _recorte(lay, soltos=()):
     """Quadrado do mundo que a imagem cobre. Quadrado para a escala ser a
-    mesma nos dois eixos — senão o minimapa gira deformado."""
+    mesma nos dois eixos — senão o minimapa gira deformado.
+
+    Os prédios instanciados à mão entram na conta, e não só os limites da
+    cidade: a escola foi parar na mata a leste, com parte do lote FORA desses
+    limites, e sem isto ela sai cortada na borda da imagem.
+    """
     ox, oz = lay["world"]["origin_x"], lay["world"]["origin_z"]
     (x0, y0), (x1, y1) = lay["bounds"]["min"], lay["bounds"]["max"]
     X = [ox + x0, ox + x1]
     Z = [oz - y1, oz - y0]
+    for predio in soltos:
+        if not predio:
+            continue
+        for rc in predio.get("lote", ()):
+            for qx, qz in _quad(predio, rc):
+                X = [min(X[0], qx), max(X[1], qx)]
+                Z = [min(Z[0], qz), max(Z[1], qz)]
     cx, cz = sum(X) / 2.0, sum(Z) / 2.0
     meio = max(X[1] - X[0], Z[1] - Z[0]) / 2.0 + MARGEM
     return cx - meio, cz - meio, meio * 2.0
@@ -134,7 +146,11 @@ def _recorte(lay):
 def build():
     lay, casas = _carrega()
     ox, oz = lay["world"]["origin_x"], lay["world"]["origin_z"]
-    X0, Z0, TAM = _recorte(lay)
+    # Os dois prédios soltos são lidos ANTES do recorte: o quadrado da imagem
+    # depende de onde eles estão.
+    hosp = _hospital()
+    esc = _escola()
+    X0, Z0, TAM = _recorte(lay, (hosp, esc))
     N = RES * SS
     ppm = N / TAM                      # pixels por metro
 
@@ -206,7 +222,6 @@ def build():
     # ---- hospital e escola, por ultimo: os dois sao posteriores a' cidade e
     # passam por cima das casas que o lote deles engoliu — no mundo e'
     # exatamente o que acontece
-    hosp = _hospital()
     if hosp:
         for rc in hosp["lote"]:
             dr.polygon([P(*q) for q in _quad(hosp, rc)], fill=C_HOSP_LOT)
@@ -218,7 +233,6 @@ def build():
 
     # A escola vai DEPOIS do corpo dela: o patio e' um vazio dentro do predio,
     # entao ele tem de ser pintado por cima da massa, e nao antes dela.
-    esc = _escola()
     if esc:
         for rc in esc["lote"]:
             dr.polygon([P(*q) for q in _quad(esc, rc)], fill=C_ESC_LOT)

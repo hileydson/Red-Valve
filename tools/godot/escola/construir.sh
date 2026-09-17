@@ -29,6 +29,12 @@ echo "== conferindo a planta e o tracado =="
 python3 "$ESC/navmesh.py"
 python3 "$ESC/porao.py"
 
+# A escola esta' na mata, e a clareira que segura as arvores fora do lote e' um
+# retangulo escrito a mao em citygen/lib/vegetation.py. Arrastar a escola no
+# editor deixa esse retangulo pra tras. Aviso, e nao erro: quem so' mexeu numa
+# parede nao tem nada a fazer aqui.
+python3 "$ESC/conferir_clareira.py" || true
+
 echo "== gerando o interior da escola =="
 python3 "$ESC/gerar_cena_escola.py"
 

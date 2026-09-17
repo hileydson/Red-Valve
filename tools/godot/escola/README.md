@@ -139,17 +139,52 @@ tem nenhuma coordenada da escola escrita no código:
 | `area_entrada` | acende o "Entrar na escola?" |
 | `ponto_de_saida` | onde o jogador reaparece ao sair |
 
-**O lugar de hoje foi escolhido contando casas**, e não no olho: o terreno em
-(418, −272), girado 90°, é o único perto da rua principal oeste em que os 84 x
-76 m de lote + calçada **não engolem nenhuma casa** do gerador da cidade (o
-hospital engole oito). O portão dá direto para a via principal.
+**Hoje ela está em (889,94, 8,08, −398,49), sem giro**, na ponta sudeste — o
+último quarteirão da cidade de um lado, a mata do outro, com o portão dando na
+via que fecha a malha a leste. Das quatro orientações possíveis nesse ponto, a
+sem giro é a única cujo portão encara uma rua (o asfalto começa 12 m adiante
+dele); nenhuma das quatro engole casa nenhuma do gerador da cidade.
 
-**O Y é o ajuste que costuma sobrar**, igual ao hospital. O terreno debaixo do
-lote vai de 12,16 a 14,08 m; a instância está em **12,70**, que é a cota exata
-do chão *no portão* — é ali que o jogador pisa. O canto alto do lote fica
-enterrado até 1,4 m (o terreno sobe contra a parede, que lê bem) e o canto baixo
-fica 0,5 m acima do chão, dentro da espessura de 0,70 m da calçada — ou seja,
-sem fresta para ver por baixo.
+**O Y é o ajuste que costuma sobrar**, igual ao hospital, e ele vale a mesma
+regra de sempre: é a cota do chão **no portão**, porque é ali que o jogador
+pisa. Enterrar é de graça — a casca de fora é fechada, ninguém enxerga por
+dentro dela — mas **flutuar não é**, dá para ver por baixo da parede.
+
+Aqui o terreno cai 2,2 m de uma ponta do lote à outra, três vezes o que a
+calçada de 0,70 m tapava. Por isso o embasamento e a calçada ganharam a
+`SAIA = 3.00` do `exterior.py`: as duas descem 3 m abaixo do chão de
+referência. Do lado alto some no barro; do lado baixo vira um embasamento de
+concreto, que é como um prédio de verdade se apoia em ladeira.
+
+### A mata não pode nascer dentro dela
+
+Esse canto do mapa é o anel de floresta, e o espalhamento da cidade não sabia
+da escola: 25 árvores e 5 arbustos nasciam **dentro** do lote, atravessando o
+telhado e o pátio. Quem segura isso é a lista `CLAREIRAS`, em
+`tools/blender/citygen/lib/vegetation.py` — retângulos onde não se planta, no
+mesmo espírito das vagas reservadas de `houses.py`.
+
+O corte é feito no **fim** de `scatter()`, e não dentro do laço, de propósito:
+o sorteio continua consumindo o `rng` na mesma ordem, então abrir uma clareira
+não move uma árvore que seja no resto do mapa.
+
+Mexeu na lista? São dois comandos, os dois sem Blender:
+
+```
+python3 tools/blender/citygen/refazer_scatter.py     # reescreve o scatter.json
+python3 tools/blender/citygen/podar_multimesh.py     # poda as MultiMesh assadas
+```
+
+O segundo existe porque o jogo **não lê o `scatter.json`**: lê as MultiMesh de
+`assets/3d_model/city/multimesh/`, assadas uma vez pelo nó `City/Vegetation`. O
+caminho oficial é apertar `construir` naquele nó — só que isso reassa a
+floresta inteira por causa de 30 plantas, e `ResourceSaver` dentro de um @tool
+já derrubou o editor neste projeto.
+
+**O retângulo é um número escrito à mão**, então arrastar a escola no editor o
+deixa para trás e as árvores voltam — sem erro nenhum, só aparece andando por
+lá. Por isso o `construir.sh` roda `conferir_clareira.py`, que compara os dois
+e escreve a linha certa para colar quando eles discordam.
 
 ### E o mapa do menu
 
@@ -169,6 +204,12 @@ Por isso **arrastar ou girar o prédio no editor exige rodar o `construir.sh` de
 novo** (ou só o `make_minimap.py`). O losango fica na PORTA, e não no meio do
 prédio: com a planta inteira desenhada, o que falta dizer ao jogador não é onde
 ele fica, é por onde se entra.
+
+O recorte quadrado da imagem também deixou de ser só os limites da cidade: como
+parte do lote da escola caiu **fora** deles, `_recorte()` passou a incluir os
+dois prédios soltos, senão a escola saía cortada na borda. Ela cresceu de 680
+para 740 m, e a cidade inteira perdeu 8 % de resolução no mapa — foi o preço de
+a escola caber.
 
 O nome sai do CSV, chave `MAP_POI_ESCOLA`. O desenho sai 15 % menor que o prédio
 real (`ESCALA_ESCOLA`), encolhendo em torno do portão — mesma conta do hospital.
