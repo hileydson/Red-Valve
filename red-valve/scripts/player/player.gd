@@ -317,6 +317,17 @@ const CAMINHO_MAO_PORTA := "maycow_lopes_normal/Armature/Skeleton3D/PlayerDoorRe
 ## andar, animação e velocidade, igual ao que já acontecia andando para trás.
 @export_range(0.0, 1.0) var CORRIDA_ALINHAMENTO_MIN: float = 0.45
 
+## --- ANDAR DE ARMA NA MAO (so' o Maycow normal) ---
+## Mirando com a arma e andando, a animacao usada e' sempre a de andar PARA
+## TRAS ("Walk_Backward_inplace"), em qualquer direcao. Ela e' a unica das
+## quatro em que o tronco fica quieto e recolhido, que e' como ele tem de
+## andar segurando a pistola — as de frente/corrida balancam o ombro e
+## torcem o modelo por cima da pose da arma.
+##
+## PARADO nada muda: continua o "idle" de sempre. So' vale com a MIRA DE ARMA
+## levantada; mirando com o amuleto o andar e' o normal.
+@export var ANIM_MIRA_ANDANDO: float = 0.7
+
 ## --- Lentidao vinda de fora (anel de magia do Shadow Seraph) ---
 ## Multiplica a velocidade de caminhada/corrida nas DUAS variantes do Maycow.
 ## 1.0 = normal, 0.4 = 60% mais lento. O dash de proposito NAO passa por aqui:
@@ -1653,8 +1664,14 @@ func _physics_process(delta: float) -> void:
 			# corrida em interior fica um tiquinho abaixo (`_fator_anim_corrida`).
 			_set_anim_time_scale(_fator_anim_corrida(is_running))
 			if is_on_floor():
+				# De arma na mao ele anda com a animacao de costas, mais
+				# lenta — ver `ANIM_MIRA_ANDANDO`. Vale para qualquer
+				# direcao, entao este ramo come todos os de baixo.
+				if is_aiming and mira_de_arma:
+					_set_anim_time_scale(ANIM_MIRA_ANDANDO)
+					playback.travel("walk_back")
 				# Calcula se a direção do movimento é paralela ou oposta à frente do personagem
-				if alinhamento < -0.2:
+				elif alinhamento < -0.2:
 					# Movimento para trás
 					playback.travel("walk_back")
 					if not is_aiming:
