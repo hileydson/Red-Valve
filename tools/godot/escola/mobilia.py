@@ -136,6 +136,17 @@ MODELOS = {
     "propane_tank": {"escala": 1.0, "giro_extra": 0.0},
 }
 
+# Moveis pequenos e soltos: em vez da caixa estatica de `bloqueia`, ganham
+# RigidBody3D e reagem a ser esbarrado ou chutado. NAO inclui nada do
+# ENTULHO_PORAO (wooden_crate_01/02, old_tyre) — esses caem no gerador do
+# porao, que ainda nao sabe ler o campo `fisico`.
+FISICOS = {
+    "SchoolChair_01", "plastic_monobloc_chair_01", "painted_wooden_chair_01",
+    "wooden_stool_01", "trashbag", "cardboard_box_01",
+    "plastic_crate_01", "plastic_crate_02", "plastic_crate_03",
+    "dirty_football",
+}
+
 _aabb_cache = {}
 
 
@@ -364,6 +375,17 @@ def _prop(tipo, sala, x, z, giro, **extra):
         lx, lz = d["bloqueia"]
         if abs(math.cos(giro)) < 0.5:
             d["bloqueia"] = (lz, lx)
+    # Item da lista FISICOS: a caixa de colisao sai direto do AABB do .gltf, ja'
+    # no tamanho e centro certos. Ganha corpo fisico PROPRIO, entao a caixa
+    # estatica de `bloqueia` fica sem sentido aqui (os dois no mesmo lugar so'
+    # travariam um no outro).
+    if d.get("modelo") in FISICOS:
+        mn, mx = aabb(d["modelo"])
+        esc = d.get("escala", 1.0)
+        d["fisico"] = True
+        d["fisico_caixa"] = tuple((mx[k] - mn[k]) * esc for k in range(3))
+        d["fisico_centro"] = tuple((mn[k] + mx[k]) * 0.5 * esc for k in range(3))
+        d["bloqueia"] = None
     return d
 
 

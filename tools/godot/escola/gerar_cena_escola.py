@@ -652,6 +652,26 @@ def escrever_cena(colisoes, props, portas, plano_luz, lista_luminarias, nav,
         y = p["y"] + p.get("dy", 0.0)
         id_peca = (c.peca(p["arquivo"]) if p["tipo"] == "caixas"
                    else c.externo("PackedScene", MOB.caminho(p["modelo"])))
+        if p.get("fisico"):
+            # RigidBody3D carrega posicao e giro; a malha e a colisao vivem
+            # DENTRO dele, com transform proprio, pra ele levar as duas junto
+            # quando rolar. Mesma layer/mask do chao: o player esbarra nele
+            # igual esbarraria numa parede.
+            c.no(nome, tipo="RigidBody3D", pai="mobilia",
+                 props=[("transform", C.transform_pos((p["x"], y, p["z"]),
+                                                      p["giro"])),
+                        ("collision_layer", "2"), ("collision_mask", "2"),
+                        ("mass", "%.2f" % p.get("massa", 5.0)),
+                        ("linear_damp", "2.0"), ("angular_damp", "3.0")])
+            c.no(nome + "_malha", pai="mobilia/" + nome, instancia=id_peca,
+                 props=[("transform", C.transform_pos((0.0, 0.0, 0.0), 0.0,
+                                                      p.get("escala", 1.0)))])
+            cx, cy, cz = p["fisico_centro"]
+            ident = c.forma(*p["fisico_caixa"])
+            c.no(nome + "_colisao", tipo="CollisionShape3D", pai="mobilia/" + nome,
+                 props=[("transform", C.transform_pos((cx, cy, cz))),
+                        ("shape", 'SubResource("%s")' % ident)])
+            continue
         c.no(nome, pai="mobilia", instancia=id_peca,
              props=[("transform", C.transform_pos((p["x"], y, p["z"]),
                                                   p["giro"],

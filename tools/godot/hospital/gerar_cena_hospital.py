@@ -840,6 +840,25 @@ def escrever_cena(cena_gltf, setores, colisoes, props, portas, plano_luz,
             id_peca = peca(p["arquivo"])
         else:
             id_peca = externo("PackedScene", MOB.caminho(p["modelo"]))
+        if p.get("fisico"):
+            # RigidBody3D carrega posicao e giro; a malha e a colisao vivem
+            # DENTRO dele, com transform proprio, pra ele levar as duas junto
+            # quando rolar. Mesma layer/mask do chao (LAYER_CHAO em hospital.gd):
+            # assim o player esbarra nele igual esbarraria numa parede.
+            no(nome, tipo="RigidBody3D", pai="mobilia",
+               props_=[("transform", transform_pos((p["x"], y, p["z"]), p["giro"])),
+                       ("collision_layer", "2"), ("collision_mask", "2"),
+                       ("mass", "%.2f" % p.get("massa", 5.0)),
+                       ("linear_damp", "2.0"), ("angular_damp", "3.0")])
+            no(nome + "_malha", pai="mobilia/" + nome, instancia=id_peca,
+               props_=[("transform", transform_pos((0.0, 0.0, 0.0), 0.0,
+                                                   p.get("escala", 1.0)))])
+            cx, cy, cz = p["fisico_centro"]
+            ident = forma(*p["fisico_caixa"])
+            no(nome + "_colisao", tipo="CollisionShape3D", pai="mobilia/" + nome,
+               props_=[("transform", transform_pos((cx, cy, cz))),
+                       ("shape", 'SubResource("%s")' % ident)])
+            continue
         no(nome, pai="mobilia", instancia=id_peca,
            props_=[("transform", transform_pos((p["x"], y, p["z"]), p["giro"],
                                                p.get("escala", 1.0)))])

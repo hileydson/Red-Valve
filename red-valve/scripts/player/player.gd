@@ -1147,10 +1147,11 @@ func _physics_process(delta: float) -> void:
 		if not is_on_floor():
 			velocity += get_gravity() * delta
 		move_and_slide()
-		
+		_empurrar_corpos_fisicos()
+
 		var combat_comp = get_node_or_null("PlayerCombat")
 		if combat_comp: combat_comp.process_combat(delta)
-		
+
 		return
 
 	var is_in_house = get_tree().current_scene.name == "the_house" if get_tree() and get_tree().current_scene else false
@@ -1858,6 +1859,7 @@ func _physics_process(delta: float) -> void:
 
 	# 9. FINALIZAÇÃO
 	move_and_slide()
+	_empurrar_corpos_fisicos()
 
 	if head_bob_ON:
 		head_bob(delta)
@@ -1871,6 +1873,25 @@ func _physics_process(delta: float) -> void:
 	# cutscenes, bullet time) ele continua visível normalmente.
 	if is_instance_valid(modelo_visual):
 		modelo_visual.visible = (not camera.current) and not _modelo_escondido_por_cena
+
+
+## `move_and_slide()` so' faz o player deslizar contra um RigidBody3D como se
+## fosse parede — CharacterBody3D nao empurra corpo fisico sozinho. Sem isto,
+## cadeira e caixa do cenario ficam duras mesmo tendo RigidBody3D de verdade.
+const FORCA_EMPURRAO := 7.0
+
+func _empurrar_corpos_fisicos() -> void:
+	var vel_horizontal := Vector2(velocity.x, velocity.z).length()
+	if vel_horizontal < 0.05:
+		return
+	for i in get_slide_collision_count():
+		var colisao := get_slide_collision(i)
+		var corpo := colisao.get_collider()
+		if corpo is RigidBody3D:
+			var direcao := -colisao.get_normal()
+			direcao.y = 0.0
+			if direcao.length() > 0.01:
+				corpo.apply_central_force(direcao.normalized() * FORCA_EMPURRAO * vel_horizontal)
 
 
 func dash():

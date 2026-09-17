@@ -2621,15 +2621,17 @@ transform = Transform3D(0.939373, 0, 0.342898, 0, 1, 0, -0.342898, 0, 0.939373, 
 [node name="livros_estar" parent="mobilia" instance=ExtResource("mb_tiny_living_botanical_bookends_5")]
 transform = Transform3D(0.877583, 0, -0.479426, 0, 1, 0, 0.479426, 0, 0.877583, 3.7, 0.5, 2.3)
 
-[node name="poltrona_estar" parent="mobilia" instance=ExtResource("mb_tiny_living_lovely_armchair_33")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 6.1, 0, 4.6)
-
-[node name="col_poltrona_estar" type="StaticBody3D" parent="colisoes_mobilia"]
+[node name="poltrona_estar" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 6.1, 0, 4.6)
 collision_layer = 2
-collision_mask = 0
+collision_mask = 2
+mass = 7.0
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="colisoes_mobilia/col_poltrona_estar"]
+[node name="poltrona_estar_malha" parent="mobilia/poltrona_estar" instance=ExtResource("mb_tiny_living_lovely_armchair_33")]
+
+[node name="poltrona_estar_colisao" type="CollisionShape3D" parent="mobilia/poltrona_estar"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.514, 0)
 shape = SubResource("bs_0p822_1p028_0p739")
 
@@ -2714,51 +2716,59 @@ collision_mask = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.505, 0)
 shape = SubResource("bs_1p4_1p01_1p4")
 
-[node name="cadeira_jantar_1" parent="mobilia" instance=ExtResource("ph_painted_wooden_chair_01")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.9, 0, 4.35)
-
-[node name="col_cadeira_jantar_1" type="StaticBody3D" parent="colisoes_mobilia"]
+[node name="cadeira_jantar_1" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.9, 0, 4.35)
 collision_layer = 2
-collision_mask = 0
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="colisoes_mobilia/col_cadeira_jantar_1"]
+[node name="cadeira_jantar_1_malha" parent="mobilia/cadeira_jantar_1" instance=ExtResource("ph_painted_wooden_chair_01")]
+
+[node name="cadeira_jantar_1_colisao" type="CollisionShape3D" parent="mobilia/cadeira_jantar_1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.48, 0)
 shape = SubResource("bs_0p43_0p96_0p54")
 
-[node name="cadeira_jantar_2" parent="mobilia" instance=ExtResource("ph_painted_wooden_chair_01")]
+[node name="cadeira_jantar_2" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 8.9, 0, 6.45)
-
-[node name="col_cadeira_jantar_2" type="StaticBody3D" parent="colisoes_mobilia"]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 8.9, 0, 6.45)
 collision_layer = 2
-collision_mask = 0
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="colisoes_mobilia/col_cadeira_jantar_2"]
+[node name="cadeira_jantar_2_malha" parent="mobilia/cadeira_jantar_2" instance=ExtResource("ph_painted_wooden_chair_01")]
+
+[node name="cadeira_jantar_2_colisao" type="CollisionShape3D" parent="mobilia/cadeira_jantar_2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.48, 0)
 shape = SubResource("bs_0p43_0p96_0p54")
 
-[node name="cadeira_jantar_3" parent="mobilia" instance=ExtResource("ph_painted_wooden_chair_01")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 8.02, 0, 5.4)
-
-[node name="col_cadeira_jantar_3" type="StaticBody3D" parent="colisoes_mobilia"]
+[node name="cadeira_jantar_3" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 8.02, 0, 5.4)
 collision_layer = 2
-collision_mask = 0
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="colisoes_mobilia/col_cadeira_jantar_3"]
+[node name="cadeira_jantar_3_malha" parent="mobilia/cadeira_jantar_3" instance=ExtResource("ph_painted_wooden_chair_01")]
+
+[node name="cadeira_jantar_3_colisao" type="CollisionShape3D" parent="mobilia/cadeira_jantar_3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.48, 0)
 shape = SubResource("bs_0p43_0p96_0p54")
 
-[node name="cadeira_jantar_4" parent="mobilia" instance=ExtResource("ph_painted_wooden_chair_01")]
-transform = Transform3D(0.992809, 0, 0.119712, 0, 1, 0, -0.119712, 0, 0.992809, 11.9, 0, 0.62)
-
-[node name="col_cadeira_jantar_4" type="StaticBody3D" parent="colisoes_mobilia"]
+[node name="cadeira_jantar_4" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(0.992809, 0, 0.119712, 0, 1, 0, -0.119712, 0, 0.992809, 11.9, 0, 0.62)
 collision_layer = 2
-collision_mask = 0
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="colisoes_mobilia/col_cadeira_jantar_4"]
+[node name="cadeira_jantar_4_malha" parent="mobilia/cadeira_jantar_4" instance=ExtResource("ph_painted_wooden_chair_01")]
+
+[node name="cadeira_jantar_4_colisao" type="CollisionShape3D" parent="mobilia/cadeira_jantar_4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.48, 0)
 shape = SubResource("bs_0p43_0p96_0p54")
 
@@ -2867,27 +2877,31 @@ collision_mask = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.48, 0)
 shape = SubResource("bs_2p41_0p96_1p14")
 
-[node name="banco_coz_1" parent="mobilia" instance=ExtResource("ph_wooden_stool_01")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 15.5, 0, 4.6)
-
-[node name="col_banco_coz_1" type="StaticBody3D" parent="colisoes_mobilia"]
+[node name="banco_coz_1" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 15.5, 0, 4.6)
 collision_layer = 2
-collision_mask = 0
+collision_mask = 2
+mass = 4.0
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="colisoes_mobilia/col_banco_coz_1"]
+[node name="banco_coz_1_malha" parent="mobilia/banco_coz_1" instance=ExtResource("ph_wooden_stool_01")]
+
+[node name="banco_coz_1_colisao" type="CollisionShape3D" parent="mobilia/banco_coz_1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.22, 0)
 shape = SubResource("bs_0p43_0p44_0p44")
 
-[node name="banco_coz_2" parent="mobilia" instance=ExtResource("ph_wooden_stool_01")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 17.3, 0, 4.6)
-
-[node name="col_banco_coz_2" type="StaticBody3D" parent="colisoes_mobilia"]
+[node name="banco_coz_2" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 17.3, 0, 4.6)
 collision_layer = 2
-collision_mask = 0
+collision_mask = 2
+mass = 4.0
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="colisoes_mobilia/col_banco_coz_2"]
+[node name="banco_coz_2_malha" parent="mobilia/banco_coz_2" instance=ExtResource("ph_wooden_stool_01")]
+
+[node name="banco_coz_2_colisao" type="CollisionShape3D" parent="mobilia/banco_coz_2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.22, 0)
 shape = SubResource("bs_0p43_0p44_0p44")
 
@@ -2903,15 +2917,17 @@ transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 13.35, 2.05, 2.2)
 [node name="cesto_cozinha" parent="mobilia" instance=ExtResource("ph_wicker_basket_01")]
 transform = Transform3D(0.955336, 0, -0.29552, 0, 1, 0, 0.29552, 0, 0.955336, 13.6, 0, 6.4)
 
-[node name="caixa_cozinha" parent="mobilia" instance=ExtResource("ph_cardboard_box_01")]
-transform = Transform3D(0.877583, 0, 0.479426, 0, 1, 0, -0.479426, 0, 0.877583, 19.2, 0, 6.5)
-
-[node name="col_caixa_cozinha" type="StaticBody3D" parent="colisoes_mobilia"]
+[node name="caixa_cozinha" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(0.877583, 0, 0.479426, 0, 1, 0, -0.479426, 0, 0.877583, 19.2, 0, 6.5)
 collision_layer = 2
-collision_mask = 0
+collision_mask = 2
+mass = 2.0
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="colisoes_mobilia/col_caixa_cozinha"]
+[node name="caixa_cozinha_malha" parent="mobilia/caixa_cozinha" instance=ExtResource("ph_cardboard_box_01")]
+
+[node name="caixa_cozinha_colisao" type="CollisionShape3D" parent="mobilia/caixa_cozinha"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.17, 0)
 shape = SubResource("bs_0p39_0p34_0p52")
 
@@ -2987,15 +3003,17 @@ collision_mask = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.285, 0)
 shape = SubResource("bs_1p61_0p57_0p24")
 
-[node name="caixa_corredor" parent="mobilia" instance=ExtResource("ph_cardboard_box_01")]
-transform = Transform3D(0.921061, 0, -0.389418, 0, 1, 0, 0.389418, 0, 0.921061, 0.7, 0, 9.7)
-
-[node name="col_caixa_corredor" type="StaticBody3D" parent="colisoes_mobilia"]
+[node name="caixa_corredor" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(0.921061, 0, -0.389418, 0, 1, 0, 0.389418, 0, 0.921061, 0.7, 0, 9.7)
 collision_layer = 2
-collision_mask = 0
+collision_mask = 2
+mass = 2.0
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="colisoes_mobilia/col_caixa_corredor"]
+[node name="caixa_corredor_malha" parent="mobilia/caixa_corredor" instance=ExtResource("ph_cardboard_box_01")]
+
+[node name="caixa_corredor_colisao" type="CollisionShape3D" parent="mobilia/caixa_corredor"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.17, 0)
 shape = SubResource("bs_0p39_0p34_0p52")
 
@@ -3113,15 +3131,17 @@ collision_mask = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 shape = SubResource("bs_0p846_1_0p812")
 
-[node name="cadeira_q2" parent="mobilia" instance=ExtResource("ph_painted_wooden_chair_01")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.7, 0, 13.45)
-
-[node name="col_cadeira_q2" type="StaticBody3D" parent="colisoes_mobilia"]
+[node name="cadeira_q2" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.7, 0, 13.45)
 collision_layer = 2
-collision_mask = 0
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="colisoes_mobilia/col_cadeira_q2"]
+[node name="cadeira_q2_malha" parent="mobilia/cadeira_q2" instance=ExtResource("ph_painted_wooden_chair_01")]
+
+[node name="cadeira_q2_colisao" type="CollisionShape3D" parent="mobilia/cadeira_q2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.48, 0)
 shape = SubResource("bs_0p43_0p96_0p54")
 
@@ -3188,15 +3208,17 @@ collision_mask = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.285, 0)
 shape = SubResource("bs_1p61_0p57_0p24")
 
-[node name="caixa_q3" parent="mobilia" instance=ExtResource("ph_cardboard_box_01")]
-transform = Transform3D(0.696707, 0, 0.717356, 0, 1, 0, -0.717356, 0, 0.696707, 12.85, 0, 11.55)
-
-[node name="col_caixa_q3" type="StaticBody3D" parent="colisoes_mobilia"]
+[node name="caixa_q3" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(0.696707, 0, 0.717356, 0, 1, 0, -0.717356, 0, 0.696707, 12.85, 0, 11.55)
 collision_layer = 2
-collision_mask = 0
+collision_mask = 2
+mass = 2.0
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="colisoes_mobilia/col_caixa_q3"]
+[node name="caixa_q3_malha" parent="mobilia/caixa_q3" instance=ExtResource("ph_cardboard_box_01")]
+
+[node name="caixa_q3_colisao" type="CollisionShape3D" parent="mobilia/caixa_q3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.17, 0)
 shape = SubResource("bs_0p39_0p34_0p52")
 
@@ -3281,8 +3303,19 @@ transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 17.5, 1.75, 11.4)
 [node name="cesto_banheiro" parent="mobilia" instance=ExtResource("ph_wicker_basket_01")]
 transform = Transform3D(0.980067, 0, 0.198669, 0, 1, 0, -0.198669, 0, 0.980067, 19.3, 0, 11.1)
 
-[node name="cadeira_caida_q3" parent="mobilia" instance=ExtResource("ph_painted_wooden_chair_01")]
+[node name="cadeira_caida_q3" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-0.092892, 0.61463, 0.783327, -0.988771, -0.149438, 0, 0.117059, -0.774531, 0.62161, 12.5, 0.33, 13.7)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="cadeira_caida_q3_malha" parent="mobilia/cadeira_caida_q3" instance=ExtResource("ph_painted_wooden_chair_01")]
+
+[node name="cadeira_caida_q3_colisao" type="CollisionShape3D" parent="mobilia/cadeira_caida_q3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.48, 0)
+shape = SubResource("bs_0p43_0p96_0p54")
 
 [node name="luminarias" type="Node3D" parent="."]
 

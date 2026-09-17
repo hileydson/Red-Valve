@@ -1,4 +1,4 @@
-[gd_scene load_steps=303 format=3]
+[gd_scene load_steps=309 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="e0"]
 [ext_resource type="PackedScene" path="res://scenes/configs/pause.tscn" id="e1"]
@@ -810,105 +810,123 @@ size = Vector3(1.0000, 1.6000, 2.2000)
 size = Vector3(2.2000, 1.6000, 0.4000)
 
 [sub_resource type="BoxShape3D" id="f151"]
-size = Vector3(0.9000, 1.6000, 1.2000)
+size = Vector3(0.6420, 0.8800, 0.6280)
 
 [sub_resource type="BoxShape3D" id="f152"]
-size = Vector3(0.5000, 1.6000, 0.5000)
+size = Vector3(0.9000, 1.6000, 1.2000)
 
 [sub_resource type="BoxShape3D" id="f153"]
-size = Vector3(5.2000, 1.6000, 0.9000)
+size = Vector3(0.5000, 1.6000, 0.5000)
 
 [sub_resource type="BoxShape3D" id="f154"]
-size = Vector3(2.1000, 1.6000, 0.8000)
+size = Vector3(5.2000, 1.6000, 0.9000)
 
 [sub_resource type="BoxShape3D" id="f155"]
-size = Vector3(2.0000, 1.6000, 1.0000)
+size = Vector3(2.1000, 1.6000, 0.8000)
 
 [sub_resource type="BoxShape3D" id="f156"]
-size = Vector3(1.4000, 1.6000, 0.7000)
+size = Vector3(2.0000, 1.6000, 1.0000)
 
 [sub_resource type="BoxShape3D" id="f157"]
-size = Vector3(4.3000, 1.6000, 2.0000)
+size = Vector3(0.5660, 1.0060, 0.6750)
 
 [sub_resource type="BoxShape3D" id="f158"]
-size = Vector3(1.1000, 1.6000, 2.4000)
+size = Vector3(1.4000, 1.6000, 0.7000)
 
 [sub_resource type="BoxShape3D" id="f159"]
-size = Vector3(1.5000, 1.6000, 0.5000)
+size = Vector3(4.3000, 1.6000, 2.0000)
 
 [sub_resource type="BoxShape3D" id="f160"]
-size = Vector3(2.2000, 1.6000, 1.0000)
+size = Vector3(1.1000, 1.6000, 2.4000)
 
 [sub_resource type="BoxShape3D" id="f161"]
-size = Vector3(1.9000, 1.6000, 0.6000)
+size = Vector3(1.5000, 1.6000, 0.5000)
 
 [sub_resource type="BoxShape3D" id="f162"]
-size = Vector3(0.7000, 1.6000, 0.6000)
+size = Vector3(2.2000, 1.6000, 1.0000)
 
 [sub_resource type="BoxShape3D" id="f163"]
-size = Vector3(1.1000, 1.6000, 1.1000)
+size = Vector3(1.9000, 1.6000, 0.6000)
 
 [sub_resource type="BoxShape3D" id="f164"]
-size = Vector3(0.7000, 1.6000, 1.0000)
+size = Vector3(0.7000, 1.6000, 0.6000)
 
 [sub_resource type="BoxShape3D" id="f165"]
-size = Vector3(1.0000, 1.6000, 0.8000)
+size = Vector3(0.2980, 0.2640, 0.4080)
 
 [sub_resource type="BoxShape3D" id="f166"]
-size = Vector3(0.9000, 1.6000, 1.3000)
+size = Vector3(0.5060, 0.2540, 0.4060)
 
 [sub_resource type="BoxShape3D" id="f167"]
-size = Vector3(0.7000, 1.6000, 1.9000)
+size = Vector3(1.1000, 1.6000, 1.1000)
 
 [sub_resource type="BoxShape3D" id="f168"]
-size = Vector3(2.1000, 1.6000, 1.0000)
+size = Vector3(0.7000, 1.6000, 1.0000)
 
 [sub_resource type="BoxShape3D" id="f169"]
-size = Vector3(1.7000, 1.6000, 0.5000)
+size = Vector3(1.0000, 1.6000, 0.8000)
 
 [sub_resource type="BoxShape3D" id="f170"]
-size = Vector3(1.7000, 1.6000, 0.8000)
+size = Vector3(0.9000, 1.6000, 1.3000)
 
 [sub_resource type="BoxShape3D" id="f171"]
-size = Vector3(1.2000, 1.6000, 1.7000)
+size = Vector3(0.5280, 0.5750, 0.4630)
 
 [sub_resource type="BoxShape3D" id="f172"]
-size = Vector3(7.4000, 1.6000, 7.4000)
+size = Vector3(0.7000, 1.6000, 1.9000)
 
 [sub_resource type="BoxShape3D" id="f173"]
-size = Vector3(3.8000, 1.6000, 0.9000)
+size = Vector3(2.1000, 1.6000, 1.0000)
 
 [sub_resource type="BoxShape3D" id="f174"]
-size = Vector3(1.4000, 2.5500, 0.0800)
+size = Vector3(0.3870, 0.3410, 0.5160)
 
 [sub_resource type="BoxShape3D" id="f175"]
-size = Vector3(3.4000, 2.6000, 2.4000)
+size = Vector3(1.7000, 1.6000, 0.5000)
 
 [sub_resource type="BoxShape3D" id="f176"]
-size = Vector3(2.2000, 2.5500, 0.0800)
+size = Vector3(1.7000, 1.6000, 0.8000)
 
 [sub_resource type="BoxShape3D" id="f177"]
-size = Vector3(2.8000, 2.6000, 2.4000)
+size = Vector3(1.2000, 1.6000, 1.7000)
 
 [sub_resource type="BoxShape3D" id="f178"]
-size = Vector3(5.1000, 0.2000, 5.1000)
+size = Vector3(7.4000, 1.6000, 7.4000)
 
 [sub_resource type="BoxShape3D" id="f179"]
-size = Vector3(5.1000, 2.9000, 0.1400)
+size = Vector3(3.8000, 1.6000, 0.9000)
 
 [sub_resource type="BoxShape3D" id="f180"]
-size = Vector3(0.1400, 2.9000, 5.1000)
+size = Vector3(1.4000, 2.5500, 0.0800)
 
 [sub_resource type="BoxShape3D" id="f181"]
-size = Vector3(4.5000, 2.4000, 4.5000)
+size = Vector3(3.4000, 2.6000, 2.4000)
 
 [sub_resource type="BoxShape3D" id="f182"]
-size = Vector3(0.1200, 2.6000, 1.1000)
+size = Vector3(2.2000, 2.5500, 0.0800)
 
 [sub_resource type="BoxShape3D" id="f183"]
-size = Vector3(2.6000, 2.6000, 3.6000)
+size = Vector3(2.8000, 2.6000, 2.4000)
 
 [sub_resource type="BoxShape3D" id="f184"]
+size = Vector3(5.1000, 0.2000, 5.1000)
+
+[sub_resource type="BoxShape3D" id="f185"]
+size = Vector3(5.1000, 2.9000, 0.1400)
+
+[sub_resource type="BoxShape3D" id="f186"]
+size = Vector3(0.1400, 2.9000, 5.1000)
+
+[sub_resource type="BoxShape3D" id="f187"]
+size = Vector3(4.5000, 2.4000, 4.5000)
+
+[sub_resource type="BoxShape3D" id="f188"]
+size = Vector3(0.1200, 2.6000, 1.1000)
+
+[sub_resource type="BoxShape3D" id="f189"]
+size = Vector3(2.6000, 2.6000, 3.6000)
+
+[sub_resource type="BoxShape3D" id="f190"]
 size = Vector3(3.2000, 2.6000, 3.2000)
 
 [node name="hospital" type="Node3D"]
@@ -3216,28 +3234,64 @@ transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 48.80375, 0.80000, 27.25000)
 shape = SubResource("f150")
 
-[node name="pronto_socorro_cadeira_0" parent="mobilia" instance=ExtResource("e37")]
+[node name="pronto_socorro_cadeira_0" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 33.54200, 0.00000, 34.95000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="pronto_socorro_cadeira_1" parent="mobilia" instance=ExtResource("e37")]
+[node name="pronto_socorro_cadeira_0_malha" parent="mobilia/pronto_socorro_cadeira_0" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="pronto_socorro_cadeira_0_colisao" type="CollisionShape3D" parent="mobilia/pronto_socorro_cadeira_0"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="pronto_socorro_cadeira_1" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 35.03825, 0.00000, 34.95000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="pronto_socorro_cadeira_2" parent="mobilia" instance=ExtResource("e37")]
+[node name="pronto_socorro_cadeira_1_malha" parent="mobilia/pronto_socorro_cadeira_1" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="pronto_socorro_cadeira_1_colisao" type="CollisionShape3D" parent="mobilia/pronto_socorro_cadeira_1"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="pronto_socorro_cadeira_2" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 36.53450, 0.00000, 34.95000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="pronto_socorro_cadeira_2_malha" parent="mobilia/pronto_socorro_cadeira_2" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="pronto_socorro_cadeira_2_colisao" type="CollisionShape3D" parent="mobilia/pronto_socorro_cadeira_2"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
 
 [node name="pronto_socorro_cadeira_rodas" parent="mobilia" instance=ExtResource("e15")]
 transform = Transform3D(1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 44.71400, 0.00000, 34.80000)
 
 [node name="cm86" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 44.71400, 0.80000, 34.80000)
-shape = SubResource("f151")
+shape = SubResource("f152")
 
 [node name="pronto_socorro_bebedouro" parent="mobilia" instance=ExtResource("e38")]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 47.10800, 0.00000, 35.30000)
 
 [node name="cm87" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 47.10800, 0.80000, 35.30000)
-shape = SubResource("f152")
+shape = SubResource("f153")
 
 [node name="quarto_106_cama_n_0" parent="mobilia" instance=ExtResource("e16")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 2.76250, 0.00000, 44.20000)
@@ -3394,119 +3448,203 @@ transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0
 
 [node name="cm106" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 29.82300, 0.80000, 43.60000)
-shape = SubResource("f153")
+shape = SubResource("f154")
 
 [node name="refeitorio_pia" parent="mobilia" instance=ExtResource("e40")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 33.87000, 0.00000, 43.42000)
 
 [node name="cm107" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 33.87000, 0.80000, 43.42000)
-shape = SubResource("f154")
+shape = SubResource("f155")
 
 [node name="refeitorio_mesa_0_-1" parent="mobilia" instance=ExtResource("e41")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 27.67500, 0.00000, 45.92500)
 
 [node name="cm108" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 27.67500, 0.80000, 45.92500)
-shape = SubResource("f155")
+shape = SubResource("f156")
 
-[node name="refeitorio_cadeira_0_-1_-1" parent="mobilia" instance=ExtResource("e42")]
+[node name="refeitorio_cadeira_0_-1_-1" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 27.12500, 0.00000, 45.07500)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="refeitorio_cadeira_0_-1_1" parent="mobilia" instance=ExtResource("e42")]
+[node name="refeitorio_cadeira_0_-1_-1_malha" parent="mobilia/refeitorio_cadeira_0_-1_-1" instance=ExtResource("e42")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="refeitorio_cadeira_0_-1_-1_colisao" type="CollisionShape3D" parent="mobilia/refeitorio_cadeira_0_-1_-1"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00000, 0.50131, 0.00000)
+shape = SubResource("f157")
+
+[node name="refeitorio_cadeira_0_-1_1" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 28.22500, 0.00000, 45.07500)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="refeitorio_cadeira_0_-1_1_malha" parent="mobilia/refeitorio_cadeira_0_-1_1" instance=ExtResource("e42")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="refeitorio_cadeira_0_-1_1_colisao" type="CollisionShape3D" parent="mobilia/refeitorio_cadeira_0_-1_1"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00000, 0.50131, 0.00000)
+shape = SubResource("f157")
 
 [node name="refeitorio_mesa_0_1" parent="mobilia" instance=ExtResource("e41")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 27.67500, 0.00000, 49.72500)
 
 [node name="cm109" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 27.67500, 0.80000, 49.72500)
-shape = SubResource("f155")
+shape = SubResource("f156")
 
 [node name="refeitorio_mesa_1_-1" parent="mobilia" instance=ExtResource("e41")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 30.67500, 0.00000, 45.92500)
 
 [node name="cm110" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 30.67500, 0.80000, 45.92500)
-shape = SubResource("f155")
+shape = SubResource("f156")
 
-[node name="refeitorio_cadeira_1_-1_-1" parent="mobilia" instance=ExtResource("e42")]
+[node name="refeitorio_cadeira_1_-1_-1" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 30.12500, 0.00000, 45.07500)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="refeitorio_cadeira_1_-1_1" parent="mobilia" instance=ExtResource("e42")]
+[node name="refeitorio_cadeira_1_-1_-1_malha" parent="mobilia/refeitorio_cadeira_1_-1_-1" instance=ExtResource("e42")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="refeitorio_cadeira_1_-1_-1_colisao" type="CollisionShape3D" parent="mobilia/refeitorio_cadeira_1_-1_-1"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00000, 0.50131, 0.00000)
+shape = SubResource("f157")
+
+[node name="refeitorio_cadeira_1_-1_1" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 31.22500, 0.00000, 45.07500)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="refeitorio_cadeira_1_-1_1_malha" parent="mobilia/refeitorio_cadeira_1_-1_1" instance=ExtResource("e42")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="refeitorio_cadeira_1_-1_1_colisao" type="CollisionShape3D" parent="mobilia/refeitorio_cadeira_1_-1_1"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00000, 0.50131, 0.00000)
+shape = SubResource("f157")
 
 [node name="refeitorio_mesa_1_1" parent="mobilia" instance=ExtResource("e41")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 30.67500, 0.00000, 49.72500)
 
 [node name="cm111" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 30.67500, 0.80000, 49.72500)
-shape = SubResource("f155")
+shape = SubResource("f156")
 
 [node name="refeitorio_mesa_2_-1" parent="mobilia" instance=ExtResource("e41")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 33.67500, 0.00000, 45.92500)
 
 [node name="cm112" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 33.67500, 0.80000, 45.92500)
-shape = SubResource("f155")
+shape = SubResource("f156")
 
-[node name="refeitorio_cadeira_2_-1_-1" parent="mobilia" instance=ExtResource("e42")]
+[node name="refeitorio_cadeira_2_-1_-1" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 33.12500, 0.00000, 45.07500)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="refeitorio_cadeira_2_-1_1" parent="mobilia" instance=ExtResource("e42")]
+[node name="refeitorio_cadeira_2_-1_-1_malha" parent="mobilia/refeitorio_cadeira_2_-1_-1" instance=ExtResource("e42")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="refeitorio_cadeira_2_-1_-1_colisao" type="CollisionShape3D" parent="mobilia/refeitorio_cadeira_2_-1_-1"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00000, 0.50131, 0.00000)
+shape = SubResource("f157")
+
+[node name="refeitorio_cadeira_2_-1_1" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 34.22500, 0.00000, 45.07500)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="refeitorio_cadeira_2_-1_1_malha" parent="mobilia/refeitorio_cadeira_2_-1_1" instance=ExtResource("e42")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="refeitorio_cadeira_2_-1_1_colisao" type="CollisionShape3D" parent="mobilia/refeitorio_cadeira_2_-1_1"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00000, 0.50131, 0.00000)
+shape = SubResource("f157")
 
 [node name="refeitorio_mesa_2_1" parent="mobilia" instance=ExtResource("e41")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 33.67500, 0.00000, 49.72500)
 
 [node name="cm113" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 33.67500, 0.80000, 49.72500)
-shape = SubResource("f155")
+shape = SubResource("f156")
 
-[node name="refeitorio_cadeira_2_1_1" parent="mobilia" instance=ExtResource("e42")]
+[node name="refeitorio_cadeira_2_1_1" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 34.22500, 0.00000, 50.57500)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="refeitorio_cadeira_2_1_1_malha" parent="mobilia/refeitorio_cadeira_2_1_1" instance=ExtResource("e42")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="refeitorio_cadeira_2_1_1_colisao" type="CollisionShape3D" parent="mobilia/refeitorio_cadeira_2_1_1"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00000, 0.50131, 0.00000)
+shape = SubResource("f157")
 
 [node name="refeitorio_lixo" parent="mobilia" instance=ExtResource("e43")]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 34.50900, 0.00000, 52.05000)
 
 [node name="cm114" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 34.50900, 0.80000, 52.05000)
-shape = SubResource("f156")
+shape = SubResource("f158")
 
 [node name="necroterio_gavetas" parent="mobilia" instance=ExtResource("e44")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 42.20900, 0.00000, 44.90000)
 
 [node name="cm115" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 42.20900, 0.80000, 44.90000)
-shape = SubResource("f157")
+shape = SubResource("f159")
 
 [node name="necroterio_mesa_autopsia_-1" parent="mobilia" instance=ExtResource("e45")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 41.12500, 0.00000, 49.22500)
 
 [node name="cm116" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 41.12500, 0.80000, 49.22500)
-shape = SubResource("f158")
+shape = SubResource("f160")
 
 [node name="necroterio_mesa_autopsia_1" parent="mobilia" instance=ExtResource("e45")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 45.52500, 0.00000, 49.22500)
 
 [node name="cm117" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 45.52500, 0.80000, 49.22500)
-shape = SubResource("f158")
+shape = SubResource("f160")
 
 [node name="necroterio_pia" parent="mobilia" instance=ExtResource("e40")]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 39.41900, 0.00000, 52.23000)
 
 [node name="cm118" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 39.41900, 0.80000, 52.23000)
-shape = SubResource("f154")
+shape = SubResource("f155")
 
 [node name="necroterio_prateleira" parent="mobilia" instance=ExtResource("e46")]
 transform = Transform3D(0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 50.00000, 0.00000, 45.89500)
 
 [node name="cm119" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 50.00000, 0.80000, 45.89500)
-shape = SubResource("f159")
+shape = SubResource("f161")
 
 [node name="necroterio_carro" parent="mobilia" instance=ExtResource("e31")]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 37.30000, 0.00000, 45.89500)
@@ -3520,7 +3658,7 @@ transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1
 
 [node name="cm121" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 37.45000, 0.80000, 49.75500)
-shape = SubResource("f160")
+shape = SubResource("f162")
 
 [node name="quarto_108_criado_n_2" parent="mobilia" instance=ExtResource("e10")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 9.66875, 0.00000, 58.80000)
@@ -3697,83 +3835,107 @@ transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -
 
 [node name="cm142" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 24.48000, 0.80000, 67.33000)
-shape = SubResource("f161")
+shape = SubResource("f163")
 
 [node name="farmacia_prateleira_s_1" parent="mobilia" instance=ExtResource("e47")]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 26.61000, 0.00000, 67.33000)
 
 [node name="cm143" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 26.61000, 0.80000, 67.33000)
-shape = SubResource("f161")
+shape = SubResource("f163")
 
 [node name="farmacia_prateleira_s_2" parent="mobilia" instance=ExtResource("e47")]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 28.74000, 0.00000, 67.33000)
 
 [node name="cm144" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 28.74000, 0.80000, 67.33000)
-shape = SubResource("f161")
+shape = SubResource("f163")
 
 [node name="farmacia_prateleira_s_3" parent="mobilia" instance=ExtResource("e47")]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 30.87000, 0.00000, 67.33000)
 
 [node name="cm145" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 30.87000, 0.80000, 67.33000)
-shape = SubResource("f161")
+shape = SubResource("f163")
 
 [node name="farmacia_estante_0" parent="mobilia" instance=ExtResource("e48")]
 transform = Transform3D(0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 32.64000, 0.00000, 61.14000)
 
 [node name="cm146" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 32.64000, 0.80000, 61.14000)
-shape = SubResource("f162")
+shape = SubResource("f164")
 
 [node name="farmacia_estante_1" parent="mobilia" instance=ExtResource("e48")]
 transform = Transform3D(0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 32.64000, 0.00000, 64.11600)
 
 [node name="cm147" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 32.64000, 0.80000, 64.11600)
-shape = SubResource("f162")
+shape = SubResource("f164")
 
-[node name="farmacia_caixa_1" parent="mobilia" instance=ExtResource("e49")]
+[node name="farmacia_caixa_1" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 22.80000, 0.00000, 61.14000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="farmacia_caixa_2" parent="mobilia" instance=ExtResource("e50")]
+[node name="farmacia_caixa_1_malha" parent="mobilia/farmacia_caixa_1" instance=ExtResource("e49")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="farmacia_caixa_1_colisao" type="CollisionShape3D" parent="mobilia/farmacia_caixa_1"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.13208, 0.00000)
+shape = SubResource("f165")
+
+[node name="farmacia_caixa_2" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 22.80000, 0.00000, 62.25600)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="farmacia_caixa_2_malha" parent="mobilia/farmacia_caixa_2" instance=ExtResource("e50")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="farmacia_caixa_2_colisao" type="CollisionShape3D" parent="mobilia/farmacia_caixa_2"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.12703, 0.00000)
+shape = SubResource("f166")
 
 [node name="esterilizacao_autoclave_0" parent="mobilia" instance=ExtResource("e51")]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 35.90600, 0.00000, 67.10000)
 
 [node name="cm148" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 35.90600, 0.80000, 67.10000)
-shape = SubResource("f163")
+shape = SubResource("f167")
 
 [node name="esterilizacao_autoclave_1" parent="mobilia" instance=ExtResource("e51")]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 38.03600, 0.00000, 67.10000)
 
 [node name="cm149" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 38.03600, 0.80000, 67.10000)
-shape = SubResource("f163")
+shape = SubResource("f167")
 
 [node name="esterilizacao_autoclave_2" parent="mobilia" instance=ExtResource("e51")]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 40.16600, 0.00000, 67.10000)
 
 [node name="cm150" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 40.16600, 0.80000, 67.10000)
-shape = SubResource("f163")
+shape = SubResource("f167")
 
 [node name="esterilizacao_carrinho_0" parent="mobilia" instance=ExtResource("e52")]
 transform = Transform3D(0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 43.58000, 0.00000, 61.14000)
 
 [node name="cm151" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 43.58000, 0.80000, 61.14000)
-shape = SubResource("f164")
+shape = SubResource("f168")
 
 [node name="esterilizacao_carrinho_1" parent="mobilia" instance=ExtResource("e52")]
 transform = Transform3D(0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 43.58000, 0.00000, 64.48800)
 
 [node name="cm152" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 43.58000, 0.80000, 64.48800)
-shape = SubResource("f164")
+shape = SubResource("f168")
 
 [node name="esterilizacao_container" parent="mobilia" instance=ExtResource("e53")]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 33.85000, 0.00000, 61.32600)
@@ -3783,7 +3945,7 @@ transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -
 
 [node name="cm153" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 47.51400, 0.80000, 66.80000)
-shape = SubResource("f165")
+shape = SubResource("f169")
 
 [node name="casa_maquinas_canos" parent="mobilia" instance=ExtResource("e55")]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 51.35600, 0.00000, 67.25000)
@@ -3796,7 +3958,7 @@ transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1
 
 [node name="cm154" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 45.10000, 0.80000, 61.51200)
-shape = SubResource("f166")
+shape = SubResource("f170")
 
 [node name="casa_maquinas_caixa_ferramenta" parent="mobilia" instance=ExtResource("e58")]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 44.75000, 0.00000, 64.11600)
@@ -3808,141 +3970,153 @@ transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 44.67000, 0.80000, 65.79000)
 shape = SubResource("f138")
 
-[node name="casa_maquinas_saco" parent="mobilia" instance=ExtResource("e60")]
+[node name="casa_maquinas_saco" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 54.06800, 0.00000, 67.10000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="casa_maquinas_saco_malha" parent="mobilia/casa_maquinas_saco" instance=ExtResource("e60")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="casa_maquinas_saco_colisao" type="CollisionShape3D" parent="mobilia/casa_maquinas_saco"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00356, 0.28605, -0.00837)
+shape = SubResource("f171")
 
 [node name="arquivo_medico_estante_0_0" parent="mobilia" instance=ExtResource("e61")]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 2.75000, 4.20000, 2.95000)
 
 [node name="cm156" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 2.75000, 5.00000, 2.95000)
-shape = SubResource("f167")
+shape = SubResource("f172")
 
 [node name="arquivo_medico_estante_0_1" parent="mobilia" instance=ExtResource("e61")]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 4.65000, 4.20000, 2.95000)
 
 [node name="cm157" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 4.65000, 5.00000, 2.95000)
-shape = SubResource("f167")
+shape = SubResource("f172")
 
 [node name="arquivo_medico_estante_0_2" parent="mobilia" instance=ExtResource("e61")]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 6.55000, 4.20000, 2.95000)
 
 [node name="cm158" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 6.55000, 5.00000, 2.95000)
-shape = SubResource("f167")
+shape = SubResource("f172")
 
 [node name="arquivo_medico_estante_0_3" parent="mobilia" instance=ExtResource("e61")]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 8.45000, 4.20000, 2.95000)
 
 [node name="cm159" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 8.45000, 5.00000, 2.95000)
-shape = SubResource("f167")
+shape = SubResource("f172")
 
 [node name="arquivo_medico_estante_0_4" parent="mobilia" instance=ExtResource("e61")]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 10.35000, 4.20000, 2.95000)
 
 [node name="cm160" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 10.35000, 5.00000, 2.95000)
-shape = SubResource("f167")
+shape = SubResource("f172")
 
 [node name="arquivo_medico_estante_0_5" parent="mobilia" instance=ExtResource("e61")]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 12.25000, 4.20000, 2.95000)
 
 [node name="cm161" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 12.25000, 5.00000, 2.95000)
-shape = SubResource("f167")
+shape = SubResource("f172")
 
 [node name="arquivo_medico_estante_1_0" parent="mobilia" instance=ExtResource("e61")]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 2.75000, 4.20000, 5.85000)
 
 [node name="cm162" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 2.75000, 5.00000, 5.85000)
-shape = SubResource("f167")
+shape = SubResource("f172")
 
 [node name="arquivo_medico_estante_1_1" parent="mobilia" instance=ExtResource("e61")]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 4.65000, 4.20000, 5.85000)
 
 [node name="cm163" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 4.65000, 5.00000, 5.85000)
-shape = SubResource("f167")
+shape = SubResource("f172")
 
 [node name="arquivo_medico_estante_1_2" parent="mobilia" instance=ExtResource("e61")]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 6.55000, 4.20000, 5.85000)
 
 [node name="cm164" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 6.55000, 5.00000, 5.85000)
-shape = SubResource("f167")
+shape = SubResource("f172")
 
 [node name="arquivo_medico_estante_1_3" parent="mobilia" instance=ExtResource("e61")]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 8.45000, 4.20000, 5.85000)
 
 [node name="cm165" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 8.45000, 5.00000, 5.85000)
-shape = SubResource("f167")
+shape = SubResource("f172")
 
 [node name="arquivo_medico_estante_1_4" parent="mobilia" instance=ExtResource("e61")]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 10.35000, 4.20000, 5.85000)
 
 [node name="cm166" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 10.35000, 5.00000, 5.85000)
-shape = SubResource("f167")
+shape = SubResource("f172")
 
 [node name="arquivo_medico_estante_1_5" parent="mobilia" instance=ExtResource("e61")]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 12.25000, 4.20000, 5.85000)
 
 [node name="cm167" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 12.25000, 5.00000, 5.85000)
-shape = SubResource("f167")
+shape = SubResource("f172")
 
 [node name="arquivo_medico_estante_2_0" parent="mobilia" instance=ExtResource("e61")]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 2.75000, 4.20000, 8.75000)
 
 [node name="cm168" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 2.75000, 5.00000, 8.75000)
-shape = SubResource("f167")
+shape = SubResource("f172")
 
 [node name="arquivo_medico_estante_2_1" parent="mobilia" instance=ExtResource("e61")]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 4.65000, 4.20000, 8.75000)
 
 [node name="cm169" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 4.65000, 5.00000, 8.75000)
-shape = SubResource("f167")
+shape = SubResource("f172")
 
 [node name="arquivo_medico_estante_2_2" parent="mobilia" instance=ExtResource("e61")]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 6.55000, 4.20000, 8.75000)
 
 [node name="cm170" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 6.55000, 5.00000, 8.75000)
-shape = SubResource("f167")
+shape = SubResource("f172")
 
 [node name="arquivo_medico_estante_2_3" parent="mobilia" instance=ExtResource("e61")]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 8.45000, 4.20000, 8.75000)
 
 [node name="cm171" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 8.45000, 5.00000, 8.75000)
-shape = SubResource("f167")
+shape = SubResource("f172")
 
 [node name="arquivo_medico_estante_2_4" parent="mobilia" instance=ExtResource("e61")]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 10.35000, 4.20000, 8.75000)
 
 [node name="cm172" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 10.35000, 5.00000, 8.75000)
-shape = SubResource("f167")
+shape = SubResource("f172")
 
 [node name="arquivo_medico_estante_2_5" parent="mobilia" instance=ExtResource("e61")]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 12.25000, 4.20000, 8.75000)
 
 [node name="cm173" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 12.25000, 5.00000, 8.75000)
-shape = SubResource("f167")
+shape = SubResource("f172")
 
 [node name="arquivo_medico_mesa" parent="mobilia" instance=ExtResource("e62")]
 transform = Transform3D(1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 12.24400, 4.20000, 11.30000)
 
 [node name="cm174" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 12.24400, 5.00000, 11.30000)
-shape = SubResource("f168")
+shape = SubResource("f173")
 
 [node name="arquivo_medico_banqueta" parent="mobilia" instance=ExtResource("e19")]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 12.24400, 4.20000, 10.35000)
@@ -3950,8 +4124,20 @@ transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -
 [node name="arquivo_medico_pasta" parent="mobilia" instance=ExtResource("e63")]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 11.61800, 4.99000, 11.30000)
 
-[node name="arquivo_medico_caixa" parent="mobilia" instance=ExtResource("e64")]
+[node name="arquivo_medico_caixa" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 0.80000, 4.20000, 3.86000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="arquivo_medico_caixa_malha" parent="mobilia/arquivo_medico_caixa" instance=ExtResource("e64")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="arquivo_medico_caixa_colisao" type="CollisionShape3D" parent="mobilia/arquivo_medico_caixa"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00098, -0.01234, 0.03285)
+shape = SubResource("f174")
 
 [node name="quarto_201_cama_n_0" parent="mobilia" instance=ExtResource("e16")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 3.46250, 4.20000, 19.55000)
@@ -4234,8 +4420,20 @@ transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 4.41900, 5.00000, 43.30000)
 shape = SubResource("f141")
 
-[node name="psiquiatria_cadeira" parent="mobilia" instance=ExtResource("e42")]
+[node name="psiquiatria_cadeira" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 8.95750, 4.20000, 42.75000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="psiquiatria_cadeira_malha" parent="mobilia/psiquiatria_cadeira" instance=ExtResource("e42")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="psiquiatria_cadeira_colisao" type="CollisionShape3D" parent="mobilia/psiquiatria_cadeira"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00000, 0.50131, 0.00000)
+shape = SubResource("f157")
 
 [node name="psiquiatria_banqueta" parent="mobilia" instance=ExtResource("e19")]
 transform = Transform3D(0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 15.20000, 4.20000, 37.81000)
@@ -4247,40 +4445,124 @@ transform = Transform3D(-0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 1.25000, 5.00000, 40.89800)
 shape = SubResource("f133")
 
-[node name="terapia_cadeira_0" parent="mobilia" instance=ExtResource("e42")]
+[node name="terapia_cadeira_0" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 24.17500, 4.20000, 41.07500)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="terapia_cadeira_1" parent="mobilia" instance=ExtResource("e42")]
+[node name="terapia_cadeira_0_malha" parent="mobilia/terapia_cadeira_0" instance=ExtResource("e42")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="terapia_cadeira_0_colisao" type="CollisionShape3D" parent="mobilia/terapia_cadeira_0"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00000, 0.50131, 0.00000)
+shape = SubResource("f157")
+
+[node name="terapia_cadeira_1" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-0.62349, 0.00000, -0.78183, 0.00000, 1.00000, 0.00000, 0.78183, 0.00000, -0.62349, 25.97321, 4.20000, 40.20903)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="terapia_cadeira_2" parent="mobilia" instance=ExtResource("e42")]
+[node name="terapia_cadeira_1_malha" parent="mobilia/terapia_cadeira_1" instance=ExtResource("e42")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="terapia_cadeira_1_colisao" type="CollisionShape3D" parent="mobilia/terapia_cadeira_1"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00000, 0.50131, 0.00000)
+shape = SubResource("f157")
+
+[node name="terapia_cadeira_2" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(0.22252, 0.00000, -0.97493, 0.00000, 1.00000, 0.00000, 0.97493, 0.00000, 0.22252, 26.41733, 4.20000, 38.26320)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="terapia_cadeira_3" parent="mobilia" instance=ExtResource("e42")]
+[node name="terapia_cadeira_2_malha" parent="mobilia/terapia_cadeira_2" instance=ExtResource("e42")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="terapia_cadeira_2_colisao" type="CollisionShape3D" parent="mobilia/terapia_cadeira_2"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00000, 0.50131, 0.00000)
+shape = SubResource("f157")
+
+[node name="terapia_cadeira_3" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(0.90097, 0.00000, -0.43388, 0.00000, 1.00000, 0.00000, 0.43388, 0.00000, 0.90097, 25.17293, 4.20000, 36.70277)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="terapia_cadeira_4" parent="mobilia" instance=ExtResource("e42")]
+[node name="terapia_cadeira_3_malha" parent="mobilia/terapia_cadeira_3" instance=ExtResource("e42")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="terapia_cadeira_3_colisao" type="CollisionShape3D" parent="mobilia/terapia_cadeira_3"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00000, 0.50131, 0.00000)
+shape = SubResource("f157")
+
+[node name="terapia_cadeira_4" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(0.90097, 0.00000, 0.43388, 0.00000, 1.00000, 0.00000, -0.43388, 0.00000, 0.90097, 23.17707, 4.20000, 36.70277)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="terapia_cadeira_5" parent="mobilia" instance=ExtResource("e42")]
+[node name="terapia_cadeira_4_malha" parent="mobilia/terapia_cadeira_4" instance=ExtResource("e42")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="terapia_cadeira_4_colisao" type="CollisionShape3D" parent="mobilia/terapia_cadeira_4"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00000, 0.50131, 0.00000)
+shape = SubResource("f157")
+
+[node name="terapia_cadeira_5" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(0.22252, 0.00000, 0.97493, 0.00000, 1.00000, 0.00000, -0.97493, 0.00000, 0.22252, 21.93267, 4.20000, 38.26320)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="terapia_cadeira_6" parent="mobilia" instance=ExtResource("e42")]
+[node name="terapia_cadeira_5_malha" parent="mobilia/terapia_cadeira_5" instance=ExtResource("e42")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="terapia_cadeira_5_colisao" type="CollisionShape3D" parent="mobilia/terapia_cadeira_5"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00000, 0.50131, 0.00000)
+shape = SubResource("f157")
+
+[node name="terapia_cadeira_6" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-0.62349, 0.00000, 0.78183, 0.00000, 1.00000, 0.00000, -0.78183, 0.00000, -0.62349, 22.37679, 4.20000, 40.20903)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="terapia_cadeira_6_malha" parent="mobilia/terapia_cadeira_6" instance=ExtResource("e42")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="terapia_cadeira_6_colisao" type="CollisionShape3D" parent="mobilia/terapia_cadeira_6"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00000, 0.50131, 0.00000)
+shape = SubResource("f157")
 
 [node name="terapia_mesa" parent="mobilia" instance=ExtResource("e62")]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 27.93100, 4.20000, 34.70000)
 
 [node name="cm211" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 27.93100, 5.00000, 34.70000)
-shape = SubResource("f168")
+shape = SubResource("f173")
 
 [node name="terapia_prateleira" parent="mobilia" instance=ExtResource("e65")]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 16.65000, 4.20000, 37.23100)
 
 [node name="cm212" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 16.65000, 5.00000, 37.23100)
-shape = SubResource("f169")
+shape = SubResource("f175")
 
 [node name="terapia_tv" parent="mobilia" instance=ExtResource("e66")]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 21.04500, 5.10000, 43.15000)
@@ -4290,7 +4572,7 @@ transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -
 
 [node name="cm213" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 21.04500, 5.00000, 43.18000)
-shape = SubResource("f170")
+shape = SubResource("f176")
 
 [node name="quarto_204_soro_n_0" parent="mobilia" instance=ExtResource("e17")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 1.89425, 4.20000, 54.70000)
@@ -4576,7 +4858,7 @@ transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -
 
 [node name="cm244" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 37.82350, 0.80000, 14.40000)
-shape = SubResource("f171")
+shape = SubResource("f177")
 
 [node name="corredor_norte_camera_95" parent="mobilia" instance=ExtResource("e70")]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 48.13500, 3.05000, 15.05000)
@@ -4593,8 +4875,20 @@ transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0
 [node name="corredor_sul_extintor_1" parent="mobilia" instance=ExtResource("e69")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 22.23050, 0.00000, 53.34000)
 
-[node name="corredor_sul_saco_1" parent="mobilia" instance=ExtResource("e60")]
+[node name="corredor_sul_saco_1" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 19.21250, 0.00000, 53.55000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="corredor_sul_saco_1_malha" parent="mobilia/corredor_sul_saco_1" instance=ExtResource("e60")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="corredor_sul_saco_1_colisao" type="CollisionShape3D" parent="mobilia/corredor_sul_saco_1"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00356, 0.28605, -0.00837)
+shape = SubResource("f171")
 
 [node name="corredor_sul_sup_extintor_2" parent="mobilia" instance=ExtResource("e68")]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 34.80550, 1.30000, 57.84000)
@@ -4626,7 +4920,7 @@ transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -
 
 [node name="cm246" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 51.27000, 0.80000, 16.30625)
-shape = SubResource("f160")
+shape = SubResource("f162")
 
 [node name="corredor_leste_sup_extintor_0" parent="mobilia" instance=ExtResource("e68")]
 transform = Transform3D(0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 55.49000, 1.30000, 19.16525)
@@ -4642,7 +4936,7 @@ transform = Transform3D(0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 1
 
 [node name="cm247" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 55.30000, 0.80000, 12.73250)
-shape = SubResource("f152")
+shape = SubResource("f153")
 
 [node name="corredor_leste_alarme_1" parent="mobilia" instance=ExtResource("e71")]
 transform = Transform3D(0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 55.49000, 1.75000, 25.83625)
@@ -4659,7 +4953,7 @@ transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -
 
 [node name="cm249" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 51.27000, 0.80000, 40.13125)
-shape = SubResource("f160")
+shape = SubResource("f162")
 
 [node name="corredor_leste_sup_extintor_2" parent="mobilia" instance=ExtResource("e68")]
 transform = Transform3D(0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 55.49000, 1.30000, 42.99025)
@@ -4682,7 +4976,7 @@ transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0
 
 [node name="cm251" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 55.03000, 0.80000, 52.04375)
-shape = SubResource("f160")
+shape = SubResource("f162")
 
 [node name="corredor_leste_sup_extintor_3" parent="mobilia" instance=ExtResource("e68")]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 50.81000, 1.30000, 54.90275)
@@ -4716,7 +5010,7 @@ transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -
 
 [node name="cm252" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 38.06400, 0.80000, 42.30000)
-shape = SubResource("f152")
+shape = SubResource("f153")
 
 [node name="corredor_central_placa_88" parent="mobilia" instance=ExtResource("e73")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 48.21400, 3.60000, 39.32500)
@@ -4732,7 +5026,7 @@ transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -
 
 [node name="cm253" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 20.97000, 0.80000, 20.52500)
-shape = SubResource("f160")
+shape = SubResource("f162")
 
 [node name="passagem_norte_sup_extintor_0" parent="mobilia" instance=ExtResource("e68")]
 transform = Transform3D(0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 24.84000, 1.30000, 21.10400)
@@ -4748,14 +5042,14 @@ transform = Transform3D(0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 1
 
 [node name="cm254" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 24.65000, 0.80000, 19.36700)
-shape = SubResource("f152")
+shape = SubResource("f153")
 
 [node name="passagem_sul_maca_0" parent="mobilia" instance=ExtResource("e35")]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 20.97000, 0.00000, 47.82500)
 
 [node name="cm255" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 20.97000, 0.80000, 47.82500)
-shape = SubResource("f160")
+shape = SubResource("f162")
 
 [node name="passagem_sul_sup_extintor_0" parent="mobilia" instance=ExtResource("e68")]
 transform = Transform3D(0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 24.84000, 1.30000, 48.40400)
@@ -4771,7 +5065,7 @@ transform = Transform3D(0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 1
 
 [node name="cm256" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 24.65000, 0.80000, 46.66700)
-shape = SubResource("f152")
+shape = SubResource("f153")
 
 [node name="passagem_sul_placa_88" parent="mobilia" instance=ExtResource("e73")]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 22.67500, 3.60000, 51.49200)
@@ -4784,70 +5078,322 @@ transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0
 
 [node name="cm257" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 15.17500, 0.80000, 34.17500)
-shape = SubResource("f172")
+shape = SubResource("f178")
 
-[node name="hall_principal_espera_n_0" parent="mobilia" instance=ExtResource("e37")]
+[node name="hall_principal_espera_n_0" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 3.31500, 0.00000, 26.45000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="hall_principal_espera_s_0" parent="mobilia" instance=ExtResource("e37")]
+[node name="hall_principal_espera_n_0_malha" parent="mobilia/hall_principal_espera_n_0" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="hall_principal_espera_n_0_colisao" type="CollisionShape3D" parent="mobilia/hall_principal_espera_n_0"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="hall_principal_espera_s_0" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 3.31500, 0.00000, 41.90000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="hall_principal_espera_n_1" parent="mobilia" instance=ExtResource("e37")]
+[node name="hall_principal_espera_s_0_malha" parent="mobilia/hall_principal_espera_s_0" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="hall_principal_espera_s_0_colisao" type="CollisionShape3D" parent="mobilia/hall_principal_espera_s_0"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="hall_principal_espera_n_1" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 4.79750, 0.00000, 26.45000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="hall_principal_espera_s_1" parent="mobilia" instance=ExtResource("e37")]
+[node name="hall_principal_espera_n_1_malha" parent="mobilia/hall_principal_espera_n_1" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="hall_principal_espera_n_1_colisao" type="CollisionShape3D" parent="mobilia/hall_principal_espera_n_1"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="hall_principal_espera_s_1" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 4.79750, 0.00000, 41.90000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="hall_principal_espera_n_2" parent="mobilia" instance=ExtResource("e37")]
+[node name="hall_principal_espera_s_1_malha" parent="mobilia/hall_principal_espera_s_1" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="hall_principal_espera_s_1_colisao" type="CollisionShape3D" parent="mobilia/hall_principal_espera_s_1"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="hall_principal_espera_n_2" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 6.28000, 0.00000, 26.45000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="hall_principal_espera_s_2" parent="mobilia" instance=ExtResource("e37")]
+[node name="hall_principal_espera_n_2_malha" parent="mobilia/hall_principal_espera_n_2" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="hall_principal_espera_n_2_colisao" type="CollisionShape3D" parent="mobilia/hall_principal_espera_n_2"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="hall_principal_espera_s_2" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 6.28000, 0.00000, 41.90000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="hall_principal_espera_n_3" parent="mobilia" instance=ExtResource("e37")]
+[node name="hall_principal_espera_s_2_malha" parent="mobilia/hall_principal_espera_s_2" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="hall_principal_espera_s_2_colisao" type="CollisionShape3D" parent="mobilia/hall_principal_espera_s_2"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="hall_principal_espera_n_3" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 7.76250, 0.00000, 26.45000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="hall_principal_espera_s_3" parent="mobilia" instance=ExtResource("e37")]
+[node name="hall_principal_espera_n_3_malha" parent="mobilia/hall_principal_espera_n_3" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="hall_principal_espera_n_3_colisao" type="CollisionShape3D" parent="mobilia/hall_principal_espera_n_3"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="hall_principal_espera_s_3" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 7.76250, 0.00000, 41.90000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="hall_principal_espera_n_4" parent="mobilia" instance=ExtResource("e37")]
+[node name="hall_principal_espera_s_3_malha" parent="mobilia/hall_principal_espera_s_3" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="hall_principal_espera_s_3_colisao" type="CollisionShape3D" parent="mobilia/hall_principal_espera_s_3"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="hall_principal_espera_n_4" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 9.24500, 0.00000, 26.45000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="hall_principal_espera_s_4" parent="mobilia" instance=ExtResource("e37")]
+[node name="hall_principal_espera_n_4_malha" parent="mobilia/hall_principal_espera_n_4" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="hall_principal_espera_n_4_colisao" type="CollisionShape3D" parent="mobilia/hall_principal_espera_n_4"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="hall_principal_espera_s_4" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 9.24500, 0.00000, 41.90000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="hall_principal_espera_n_5" parent="mobilia" instance=ExtResource("e37")]
+[node name="hall_principal_espera_s_4_malha" parent="mobilia/hall_principal_espera_s_4" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="hall_principal_espera_s_4_colisao" type="CollisionShape3D" parent="mobilia/hall_principal_espera_s_4"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="hall_principal_espera_n_5" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 10.72750, 0.00000, 26.45000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="hall_principal_espera_s_5" parent="mobilia" instance=ExtResource("e37")]
+[node name="hall_principal_espera_n_5_malha" parent="mobilia/hall_principal_espera_n_5" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="hall_principal_espera_n_5_colisao" type="CollisionShape3D" parent="mobilia/hall_principal_espera_n_5"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="hall_principal_espera_s_5" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 10.72750, 0.00000, 41.90000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="hall_principal_espera_n_6" parent="mobilia" instance=ExtResource("e37")]
+[node name="hall_principal_espera_s_5_malha" parent="mobilia/hall_principal_espera_s_5" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="hall_principal_espera_s_5_colisao" type="CollisionShape3D" parent="mobilia/hall_principal_espera_s_5"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="hall_principal_espera_n_6" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 12.21000, 0.00000, 26.45000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="hall_principal_espera_s_6" parent="mobilia" instance=ExtResource("e37")]
+[node name="hall_principal_espera_n_6_malha" parent="mobilia/hall_principal_espera_n_6" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="hall_principal_espera_n_6_colisao" type="CollisionShape3D" parent="mobilia/hall_principal_espera_n_6"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="hall_principal_espera_s_6" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 12.21000, 0.00000, 41.90000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="hall_principal_espera_n_7" parent="mobilia" instance=ExtResource("e37")]
+[node name="hall_principal_espera_s_6_malha" parent="mobilia/hall_principal_espera_s_6" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="hall_principal_espera_s_6_colisao" type="CollisionShape3D" parent="mobilia/hall_principal_espera_s_6"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="hall_principal_espera_n_7" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 13.69250, 0.00000, 26.45000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="hall_principal_espera_s_7" parent="mobilia" instance=ExtResource("e37")]
+[node name="hall_principal_espera_n_7_malha" parent="mobilia/hall_principal_espera_n_7" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="hall_principal_espera_n_7_colisao" type="CollisionShape3D" parent="mobilia/hall_principal_espera_n_7"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="hall_principal_espera_s_7" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 13.69250, 0.00000, 41.90000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="hall_principal_espera_n_8" parent="mobilia" instance=ExtResource("e37")]
+[node name="hall_principal_espera_s_7_malha" parent="mobilia/hall_principal_espera_s_7" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="hall_principal_espera_s_7_colisao" type="CollisionShape3D" parent="mobilia/hall_principal_espera_s_7"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="hall_principal_espera_n_8" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 15.17500, 0.00000, 26.45000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="hall_principal_espera_s_8" parent="mobilia" instance=ExtResource("e37")]
+[node name="hall_principal_espera_n_8_malha" parent="mobilia/hall_principal_espera_n_8" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="hall_principal_espera_n_8_colisao" type="CollisionShape3D" parent="mobilia/hall_principal_espera_n_8"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="hall_principal_espera_s_8" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 15.17500, 0.00000, 41.90000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="hall_principal_espera_o_0" parent="mobilia" instance=ExtResource("e37")]
+[node name="hall_principal_espera_s_8_malha" parent="mobilia/hall_principal_espera_s_8" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="hall_principal_espera_s_8_colisao" type="CollisionShape3D" parent="mobilia/hall_principal_espera_s_8"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="hall_principal_espera_o_0" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 1.10000, 0.00000, 28.75100)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="hall_principal_espera_o_1" parent="mobilia" instance=ExtResource("e37")]
+[node name="hall_principal_espera_o_0_malha" parent="mobilia/hall_principal_espera_o_0" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="hall_principal_espera_o_0_colisao" type="CollisionShape3D" parent="mobilia/hall_principal_espera_o_0"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="hall_principal_espera_o_1" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 1.10000, 0.00000, 29.76800)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="hall_principal_espera_o_2" parent="mobilia" instance=ExtResource("e37")]
+[node name="hall_principal_espera_o_1_malha" parent="mobilia/hall_principal_espera_o_1" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="hall_principal_espera_o_1_colisao" type="CollisionShape3D" parent="mobilia/hall_principal_espera_o_1"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="hall_principal_espera_o_2" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 1.10000, 0.00000, 30.78500)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="hall_principal_espera_o_2_malha" parent="mobilia/hall_principal_espera_o_2" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="hall_principal_espera_o_2_colisao" type="CollisionShape3D" parent="mobilia/hall_principal_espera_o_2"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
 
 [node name="hall_principal_tv" parent="mobilia" instance=ExtResource("e66")]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 10.43100, 2.10000, 42.35000)
@@ -4865,68 +5411,236 @@ shape = SubResource("f145")
 [node name="hall_principal_placa_3" parent="mobilia" instance=ExtResource("e76")]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 27.40000, 3.60000, 30.78500)
 
-[node name="saguao_norte_espera_n_0" parent="mobilia" instance=ExtResource("e37")]
+[node name="saguao_norte_espera_n_0" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 21.85200, 4.20000, 1.10000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="saguao_norte_espera_n_1" parent="mobilia" instance=ExtResource("e37")]
+[node name="saguao_norte_espera_n_0_malha" parent="mobilia/saguao_norte_espera_n_0" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="saguao_norte_espera_n_0_colisao" type="CollisionShape3D" parent="mobilia/saguao_norte_espera_n_0"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="saguao_norte_espera_n_1" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 24.21000, 4.20000, 1.10000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="saguao_norte_espera_n_2" parent="mobilia" instance=ExtResource("e37")]
+[node name="saguao_norte_espera_n_1_malha" parent="mobilia/saguao_norte_espera_n_1" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="saguao_norte_espera_n_1_colisao" type="CollisionShape3D" parent="mobilia/saguao_norte_espera_n_1"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="saguao_norte_espera_n_2" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 26.56800, 4.20000, 1.10000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="saguao_norte_espera_n_3" parent="mobilia" instance=ExtResource("e37")]
+[node name="saguao_norte_espera_n_2_malha" parent="mobilia/saguao_norte_espera_n_2" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="saguao_norte_espera_n_2_colisao" type="CollisionShape3D" parent="mobilia/saguao_norte_espera_n_2"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="saguao_norte_espera_n_3" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 28.92600, 4.20000, 1.10000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="saguao_norte_espera_n_4" parent="mobilia" instance=ExtResource("e37")]
+[node name="saguao_norte_espera_n_3_malha" parent="mobilia/saguao_norte_espera_n_3" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="saguao_norte_espera_n_3_colisao" type="CollisionShape3D" parent="mobilia/saguao_norte_espera_n_3"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="saguao_norte_espera_n_4" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 31.28400, 4.20000, 1.10000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="saguao_norte_espera_n_5" parent="mobilia" instance=ExtResource("e37")]
+[node name="saguao_norte_espera_n_4_malha" parent="mobilia/saguao_norte_espera_n_4" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="saguao_norte_espera_n_4_colisao" type="CollisionShape3D" parent="mobilia/saguao_norte_espera_n_4"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="saguao_norte_espera_n_5" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 33.64200, 4.20000, 1.10000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="saguao_norte_espera_n_6" parent="mobilia" instance=ExtResource("e37")]
+[node name="saguao_norte_espera_n_5_malha" parent="mobilia/saguao_norte_espera_n_5" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="saguao_norte_espera_n_5_colisao" type="CollisionShape3D" parent="mobilia/saguao_norte_espera_n_5"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="saguao_norte_espera_n_6" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 36.00000, 4.20000, 1.10000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="saguao_norte_espera_s_0" parent="mobilia" instance=ExtResource("e37")]
+[node name="saguao_norte_espera_n_6_malha" parent="mobilia/saguao_norte_espera_n_6" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="saguao_norte_espera_n_6_colisao" type="CollisionShape3D" parent="mobilia/saguao_norte_espera_n_6"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="saguao_norte_espera_s_0" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 21.85200, 4.20000, 11.65000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="saguao_norte_espera_s_1" parent="mobilia" instance=ExtResource("e37")]
+[node name="saguao_norte_espera_s_0_malha" parent="mobilia/saguao_norte_espera_s_0" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="saguao_norte_espera_s_0_colisao" type="CollisionShape3D" parent="mobilia/saguao_norte_espera_s_0"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="saguao_norte_espera_s_1" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 24.21000, 4.20000, 11.65000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="saguao_norte_espera_s_2" parent="mobilia" instance=ExtResource("e37")]
+[node name="saguao_norte_espera_s_1_malha" parent="mobilia/saguao_norte_espera_s_1" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="saguao_norte_espera_s_1_colisao" type="CollisionShape3D" parent="mobilia/saguao_norte_espera_s_1"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="saguao_norte_espera_s_2" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 26.56800, 4.20000, 11.65000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="saguao_norte_espera_s_3" parent="mobilia" instance=ExtResource("e37")]
+[node name="saguao_norte_espera_s_2_malha" parent="mobilia/saguao_norte_espera_s_2" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="saguao_norte_espera_s_2_colisao" type="CollisionShape3D" parent="mobilia/saguao_norte_espera_s_2"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="saguao_norte_espera_s_3" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 28.92600, 4.20000, 11.65000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="saguao_norte_espera_s_4" parent="mobilia" instance=ExtResource("e37")]
+[node name="saguao_norte_espera_s_3_malha" parent="mobilia/saguao_norte_espera_s_3" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="saguao_norte_espera_s_3_colisao" type="CollisionShape3D" parent="mobilia/saguao_norte_espera_s_3"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="saguao_norte_espera_s_4" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 31.28400, 4.20000, 11.65000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="saguao_norte_espera_s_5" parent="mobilia" instance=ExtResource("e37")]
+[node name="saguao_norte_espera_s_4_malha" parent="mobilia/saguao_norte_espera_s_4" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="saguao_norte_espera_s_4_colisao" type="CollisionShape3D" parent="mobilia/saguao_norte_espera_s_4"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="saguao_norte_espera_s_5" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 33.64200, 4.20000, 11.65000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="saguao_norte_espera_s_6" parent="mobilia" instance=ExtResource("e37")]
+[node name="saguao_norte_espera_s_5_malha" parent="mobilia/saguao_norte_espera_s_5" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="saguao_norte_espera_s_5_colisao" type="CollisionShape3D" parent="mobilia/saguao_norte_espera_s_5"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="saguao_norte_espera_s_6" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 36.00000, 4.20000, 11.65000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="saguao_norte_espera_s_6_malha" parent="mobilia/saguao_norte_espera_s_6" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="saguao_norte_espera_s_6_colisao" type="CollisionShape3D" parent="mobilia/saguao_norte_espera_s_6"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
 
 [node name="saguao_norte_bebedouro" parent="mobilia" instance=ExtResource("e38")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 44.64600, 4.20000, 0.70000)
 
 [node name="cm259" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 44.64600, 5.00000, 0.70000)
-shape = SubResource("f152")
+shape = SubResource("f153")
 
 [node name="saguao_norte_lixo" parent="mobilia" instance=ExtResource("e43")]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 47.79000, 4.20000, 11.70000)
 
 [node name="cm260" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 47.79000, 5.00000, 11.70000)
-shape = SubResource("f156")
+shape = SubResource("f158")
 
 [node name="saguao_norte_posto" parent="mobilia" instance=ExtResource("e77")]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 28.14000, 4.20000, 11.80000)
 
 [node name="cm261" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 28.14000, 5.00000, 11.80000)
-shape = SubResource("f173")
+shape = SubResource("f179")
 
 [node name="saguao_norte_banqueta" parent="mobilia" instance=ExtResource("e19")]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 28.14000, 4.20000, 11.00000)
@@ -4952,7 +5666,7 @@ transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -
 
 [node name="cm263" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 3.11500, 5.00000, 17.65000)
-shape = SubResource("f152")
+shape = SubResource("f153")
 
 [node name="corredor2_norte_maca_1" parent="mobilia" instance=ExtResource("e35")]
 transform = Transform3D(-0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -0.00000, 16.94000, 4.20000, 17.38000)
@@ -4975,10 +5689,22 @@ transform = Transform3D(1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0
 
 [node name="cm265" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 24.68200, 5.00000, 17.15000)
-shape = SubResource("f151")
+shape = SubResource("f152")
 
-[node name="corredor2_norte_saco_1" parent="mobilia" instance=ExtResource("e60")]
+[node name="corredor2_norte_saco_1" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 16.94000, 4.20000, 12.95000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="corredor2_norte_saco_1_malha" parent="mobilia/corredor2_norte_saco_1" instance=ExtResource("e60")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="corredor2_norte_saco_1_colisao" type="CollisionShape3D" parent="mobilia/corredor2_norte_saco_1"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00356, 0.28605, -0.00837)
+shape = SubResource("f171")
 
 [node name="corredor2_norte_maca_2" parent="mobilia" instance=ExtResource("e35")]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 28.00000, 4.20000, 13.02000)
@@ -5001,14 +5727,14 @@ transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -
 
 [node name="cm267" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 21.36400, 5.00000, 17.65000)
-shape = SubResource("f152")
+shape = SubResource("f153")
 
 [node name="corredor2_norte_carro_2" parent="mobilia" instance=ExtResource("e31")]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 34.63600, 4.20000, 17.05000)
 
 [node name="cm268" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 34.63600, 5.00000, 17.05000)
-shape = SubResource("f171")
+shape = SubResource("f177")
 
 [node name="corredor2_norte_maca_3" parent="mobilia" instance=ExtResource("e35")]
 transform = Transform3D(-0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -0.00000, 39.06000, 4.20000, 17.38000)
@@ -5050,14 +5776,14 @@ transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -
 
 [node name="cm271" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 43.48400, 5.00000, 17.65000)
-shape = SubResource("f152")
+shape = SubResource("f153")
 
 [node name="corredor2_norte_cadeira_rodas_4" parent="mobilia" instance=ExtResource("e15")]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 52.88500, 4.20000, 13.25000)
 
 [node name="cm272" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 52.88500, 5.00000, 13.25000)
-shape = SubResource("f151")
+shape = SubResource("f152")
 
 [node name="corredor2_norte_placa_12" parent="mobilia" instance=ExtResource("e73")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 6.98600, 7.80000, 15.20000)
@@ -5079,7 +5805,7 @@ transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -
 
 [node name="cm273" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 3.11500, 5.00000, 33.25000)
-shape = SubResource("f152")
+shape = SubResource("f153")
 
 [node name="corredor2_central_maca_1" parent="mobilia" instance=ExtResource("e35")]
 transform = Transform3D(-0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -0.00000, 16.94000, 4.20000, 32.98000)
@@ -5112,7 +5838,7 @@ transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -
 
 [node name="cm276" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 34.63600, 5.00000, 32.65000)
-shape = SubResource("f171")
+shape = SubResource("f177")
 
 [node name="corredor2_central_maca_3" parent="mobilia" instance=ExtResource("e35")]
 transform = Transform3D(-0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -0.00000, 39.06000, 4.20000, 32.98000)
@@ -5154,7 +5880,7 @@ transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -
 
 [node name="cm279" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 43.48400, 5.00000, 33.25000)
-shape = SubResource("f152")
+shape = SubResource("f153")
 
 [node name="corredor2_central_placa_88" parent="mobilia" instance=ExtResource("e73")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 49.01400, 7.80000, 30.97500)
@@ -5162,224 +5888,836 @@ transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0
 [node name="corredor2_central_camera_5" parent="mobilia" instance=ExtResource("e70")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 3.11500, 7.25000, 28.65000)
 
-[node name="saguao_sul_espera_n_0" parent="mobilia" instance=ExtResource("e37")]
+[node name="saguao_sul_espera_n_0" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 8.09200, 4.20000, 44.70000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="saguao_sul_espera_n_1" parent="mobilia" instance=ExtResource("e37")]
+[node name="saguao_sul_espera_n_0_malha" parent="mobilia/saguao_sul_espera_n_0" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="saguao_sul_espera_n_0_colisao" type="CollisionShape3D" parent="mobilia/saguao_sul_espera_n_0"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="saguao_sul_espera_n_1" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 11.41000, 4.20000, 44.70000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="saguao_sul_espera_n_2" parent="mobilia" instance=ExtResource("e37")]
+[node name="saguao_sul_espera_n_1_malha" parent="mobilia/saguao_sul_espera_n_1" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="saguao_sul_espera_n_1_colisao" type="CollisionShape3D" parent="mobilia/saguao_sul_espera_n_1"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="saguao_sul_espera_n_2" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 14.72800, 4.20000, 44.70000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="saguao_sul_espera_n_3" parent="mobilia" instance=ExtResource("e37")]
+[node name="saguao_sul_espera_n_2_malha" parent="mobilia/saguao_sul_espera_n_2" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="saguao_sul_espera_n_2_colisao" type="CollisionShape3D" parent="mobilia/saguao_sul_espera_n_2"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="saguao_sul_espera_n_3" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 18.04600, 4.20000, 44.70000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="saguao_sul_espera_n_4" parent="mobilia" instance=ExtResource("e37")]
+[node name="saguao_sul_espera_n_3_malha" parent="mobilia/saguao_sul_espera_n_3" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="saguao_sul_espera_n_3_colisao" type="CollisionShape3D" parent="mobilia/saguao_sul_espera_n_3"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="saguao_sul_espera_n_4" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 21.36400, 4.20000, 44.70000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="saguao_sul_espera_n_5" parent="mobilia" instance=ExtResource("e37")]
+[node name="saguao_sul_espera_n_4_malha" parent="mobilia/saguao_sul_espera_n_4" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="saguao_sul_espera_n_4_colisao" type="CollisionShape3D" parent="mobilia/saguao_sul_espera_n_4"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="saguao_sul_espera_n_5" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 24.68200, 4.20000, 44.70000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="saguao_sul_espera_n_6" parent="mobilia" instance=ExtResource("e37")]
+[node name="saguao_sul_espera_n_5_malha" parent="mobilia/saguao_sul_espera_n_5" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="saguao_sul_espera_n_5_colisao" type="CollisionShape3D" parent="mobilia/saguao_sul_espera_n_5"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="saguao_sul_espera_n_6" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 28.00000, 4.20000, 44.70000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="saguao_sul_espera_s_1" parent="mobilia" instance=ExtResource("e37")]
+[node name="saguao_sul_espera_n_6_malha" parent="mobilia/saguao_sul_espera_n_6" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="saguao_sul_espera_n_6_colisao" type="CollisionShape3D" parent="mobilia/saguao_sul_espera_n_6"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="saguao_sul_espera_s_1" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 11.41000, 4.20000, 52.90000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="saguao_sul_espera_s_4" parent="mobilia" instance=ExtResource("e37")]
+[node name="saguao_sul_espera_s_1_malha" parent="mobilia/saguao_sul_espera_s_1" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="saguao_sul_espera_s_1_colisao" type="CollisionShape3D" parent="mobilia/saguao_sul_espera_s_1"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="saguao_sul_espera_s_4" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 21.36400, 4.20000, 52.90000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="saguao_sul_espera_s_4_malha" parent="mobilia/saguao_sul_espera_s_4" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="saguao_sul_espera_s_4_colisao" type="CollisionShape3D" parent="mobilia/saguao_sul_espera_s_4"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
 
 [node name="saguao_sul_bebedouro" parent="mobilia" instance=ExtResource("e38")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 40.16600, 4.20000, 44.30000)
 
 [node name="cm280" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 40.16600, 5.00000, 44.30000)
-shape = SubResource("f152")
+shape = SubResource("f153")
 
 [node name="saguao_sul_lixo" parent="mobilia" instance=ExtResource("e43")]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 44.59000, 4.20000, 52.95000)
 
 [node name="cm281" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 44.59000, 5.00000, 52.95000)
-shape = SubResource("f156")
+shape = SubResource("f158")
 
-[node name="galeria_m1_espera_n_0" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_m1_espera_n_0" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 40.77200, 4.20000, 18.75000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="galeria_m1_espera_n_1" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_m1_espera_n_0_malha" parent="mobilia/galeria_m1_espera_n_0" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_m1_espera_n_0_colisao" type="CollisionShape3D" parent="mobilia/galeria_m1_espera_n_0"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="galeria_m1_espera_n_1" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 41.81000, 4.20000, 18.75000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="galeria_m1_espera_n_2" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_m1_espera_n_1_malha" parent="mobilia/galeria_m1_espera_n_1" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_m1_espera_n_1_colisao" type="CollisionShape3D" parent="mobilia/galeria_m1_espera_n_1"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="galeria_m1_espera_n_2" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 42.84800, 4.20000, 18.75000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="galeria_m1_espera_n_3" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_m1_espera_n_2_malha" parent="mobilia/galeria_m1_espera_n_2" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_m1_espera_n_2_colisao" type="CollisionShape3D" parent="mobilia/galeria_m1_espera_n_2"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="galeria_m1_espera_n_3" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 43.88600, 4.20000, 18.75000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="galeria_m1_espera_n_4" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_m1_espera_n_3_malha" parent="mobilia/galeria_m1_espera_n_3" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_m1_espera_n_3_colisao" type="CollisionShape3D" parent="mobilia/galeria_m1_espera_n_3"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="galeria_m1_espera_n_4" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 44.92400, 4.20000, 18.75000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="galeria_m1_espera_n_5" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_m1_espera_n_4_malha" parent="mobilia/galeria_m1_espera_n_4" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_m1_espera_n_4_colisao" type="CollisionShape3D" parent="mobilia/galeria_m1_espera_n_4"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="galeria_m1_espera_n_5" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 45.96200, 4.20000, 18.75000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="galeria_m1_espera_n_6" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_m1_espera_n_5_malha" parent="mobilia/galeria_m1_espera_n_5" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_m1_espera_n_5_colisao" type="CollisionShape3D" parent="mobilia/galeria_m1_espera_n_5"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="galeria_m1_espera_n_6" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 47.00000, 4.20000, 18.75000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="galeria_m1_espera_s_0" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_m1_espera_n_6_malha" parent="mobilia/galeria_m1_espera_n_6" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_m1_espera_n_6_colisao" type="CollisionShape3D" parent="mobilia/galeria_m1_espera_n_6"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="galeria_m1_espera_s_0" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 40.77200, 4.20000, 27.60000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="galeria_m1_espera_s_1" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_m1_espera_s_0_malha" parent="mobilia/galeria_m1_espera_s_0" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_m1_espera_s_0_colisao" type="CollisionShape3D" parent="mobilia/galeria_m1_espera_s_0"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="galeria_m1_espera_s_1" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 41.81000, 4.20000, 27.60000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="galeria_m1_espera_s_2" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_m1_espera_s_1_malha" parent="mobilia/galeria_m1_espera_s_1" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_m1_espera_s_1_colisao" type="CollisionShape3D" parent="mobilia/galeria_m1_espera_s_1"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="galeria_m1_espera_s_2" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 42.84800, 4.20000, 27.60000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="galeria_m1_espera_s_3" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_m1_espera_s_2_malha" parent="mobilia/galeria_m1_espera_s_2" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_m1_espera_s_2_colisao" type="CollisionShape3D" parent="mobilia/galeria_m1_espera_s_2"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="galeria_m1_espera_s_3" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 43.88600, 4.20000, 27.60000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="galeria_m1_espera_s_4" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_m1_espera_s_3_malha" parent="mobilia/galeria_m1_espera_s_3" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_m1_espera_s_3_colisao" type="CollisionShape3D" parent="mobilia/galeria_m1_espera_s_3"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="galeria_m1_espera_s_4" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 44.92400, 4.20000, 27.60000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="galeria_m1_espera_s_5" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_m1_espera_s_4_malha" parent="mobilia/galeria_m1_espera_s_4" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_m1_espera_s_4_colisao" type="CollisionShape3D" parent="mobilia/galeria_m1_espera_s_4"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="galeria_m1_espera_s_5" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 45.96200, 4.20000, 27.60000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="galeria_m1_espera_s_6" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_m1_espera_s_5_malha" parent="mobilia/galeria_m1_espera_s_5" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_m1_espera_s_5_colisao" type="CollisionShape3D" parent="mobilia/galeria_m1_espera_s_5"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="galeria_m1_espera_s_6" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 47.00000, 4.20000, 27.60000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="galeria_m1_espera_s_6_malha" parent="mobilia/galeria_m1_espera_s_6" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_m1_espera_s_6_colisao" type="CollisionShape3D" parent="mobilia/galeria_m1_espera_s_6"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
 
 [node name="galeria_m1_bebedouro" parent="mobilia" instance=ExtResource("e38")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 50.80600, 4.20000, 18.35000)
 
 [node name="cm282" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 50.80600, 5.00000, 18.35000)
-shape = SubResource("f152")
+shape = SubResource("f153")
 
 [node name="galeria_m1_lixo" parent="mobilia" instance=ExtResource("e43")]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 52.19000, 4.20000, 27.65000)
 
 [node name="cm283" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 52.19000, 5.00000, 27.65000)
-shape = SubResource("f156")
+shape = SubResource("f158")
 
-[node name="galeria_m2_espera_n_0" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_m2_espera_n_0" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 35.61200, 4.20000, 34.35000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="galeria_m2_espera_n_1" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_m2_espera_n_0_malha" parent="mobilia/galeria_m2_espera_n_0" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_m2_espera_n_0_colisao" type="CollisionShape3D" parent="mobilia/galeria_m2_espera_n_0"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="galeria_m2_espera_n_1" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 37.01000, 4.20000, 34.35000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="galeria_m2_espera_n_2" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_m2_espera_n_1_malha" parent="mobilia/galeria_m2_espera_n_1" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_m2_espera_n_1_colisao" type="CollisionShape3D" parent="mobilia/galeria_m2_espera_n_1"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="galeria_m2_espera_n_2" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 38.40800, 4.20000, 34.35000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="galeria_m2_espera_n_3" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_m2_espera_n_2_malha" parent="mobilia/galeria_m2_espera_n_2" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_m2_espera_n_2_colisao" type="CollisionShape3D" parent="mobilia/galeria_m2_espera_n_2"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="galeria_m2_espera_n_3" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 39.80600, 4.20000, 34.35000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="galeria_m2_espera_n_4" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_m2_espera_n_3_malha" parent="mobilia/galeria_m2_espera_n_3" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_m2_espera_n_3_colisao" type="CollisionShape3D" parent="mobilia/galeria_m2_espera_n_3"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="galeria_m2_espera_n_4" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 41.20400, 4.20000, 34.35000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="galeria_m2_espera_n_5" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_m2_espera_n_4_malha" parent="mobilia/galeria_m2_espera_n_4" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_m2_espera_n_4_colisao" type="CollisionShape3D" parent="mobilia/galeria_m2_espera_n_4"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="galeria_m2_espera_n_5" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 42.60200, 4.20000, 34.35000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="galeria_m2_espera_n_6" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_m2_espera_n_5_malha" parent="mobilia/galeria_m2_espera_n_5" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_m2_espera_n_5_colisao" type="CollisionShape3D" parent="mobilia/galeria_m2_espera_n_5"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="galeria_m2_espera_n_6" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 44.00000, 4.20000, 34.35000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="galeria_m2_espera_s_0" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_m2_espera_n_6_malha" parent="mobilia/galeria_m2_espera_n_6" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_m2_espera_n_6_colisao" type="CollisionShape3D" parent="mobilia/galeria_m2_espera_n_6"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="galeria_m2_espera_s_0" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 35.61200, 4.20000, 43.20000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="galeria_m2_espera_s_1" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_m2_espera_s_0_malha" parent="mobilia/galeria_m2_espera_s_0" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_m2_espera_s_0_colisao" type="CollisionShape3D" parent="mobilia/galeria_m2_espera_s_0"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="galeria_m2_espera_s_1" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 37.01000, 4.20000, 43.20000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="galeria_m2_espera_s_2" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_m2_espera_s_1_malha" parent="mobilia/galeria_m2_espera_s_1" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_m2_espera_s_1_colisao" type="CollisionShape3D" parent="mobilia/galeria_m2_espera_s_1"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="galeria_m2_espera_s_2" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 38.40800, 4.20000, 43.20000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="galeria_m2_espera_s_3" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_m2_espera_s_2_malha" parent="mobilia/galeria_m2_espera_s_2" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_m2_espera_s_2_colisao" type="CollisionShape3D" parent="mobilia/galeria_m2_espera_s_2"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="galeria_m2_espera_s_3" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 39.80600, 4.20000, 43.20000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="galeria_m2_espera_s_4" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_m2_espera_s_3_malha" parent="mobilia/galeria_m2_espera_s_3" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_m2_espera_s_3_colisao" type="CollisionShape3D" parent="mobilia/galeria_m2_espera_s_3"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="galeria_m2_espera_s_4" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 41.20400, 4.20000, 43.20000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="galeria_m2_espera_s_5" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_m2_espera_s_4_malha" parent="mobilia/galeria_m2_espera_s_4" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_m2_espera_s_4_colisao" type="CollisionShape3D" parent="mobilia/galeria_m2_espera_s_4"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="galeria_m2_espera_s_5" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 42.60200, 4.20000, 43.20000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="galeria_m2_espera_s_6" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_m2_espera_s_5_malha" parent="mobilia/galeria_m2_espera_s_5" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_m2_espera_s_5_colisao" type="CollisionShape3D" parent="mobilia/galeria_m2_espera_s_5"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="galeria_m2_espera_s_6" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 44.00000, 4.20000, 43.20000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="galeria_m2_espera_s_6_malha" parent="mobilia/galeria_m2_espera_s_6" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_m2_espera_s_6_colisao" type="CollisionShape3D" parent="mobilia/galeria_m2_espera_s_6"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
 
 [node name="galeria_m2_bebedouro" parent="mobilia" instance=ExtResource("e38")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 49.12600, 4.20000, 33.95000)
 
 [node name="cm284" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 49.12600, 5.00000, 33.95000)
-shape = SubResource("f152")
+shape = SubResource("f153")
 
 [node name="galeria_m2_lixo" parent="mobilia" instance=ExtResource("e43")]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 50.99000, 4.20000, 43.25000)
 
 [node name="cm285" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 50.99000, 5.00000, 43.25000)
-shape = SubResource("f156")
+shape = SubResource("f158")
 
 [node name="galeria_m2_posto" parent="mobilia" instance=ExtResource("e77")]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 39.34000, 4.20000, 43.35000)
 
 [node name="cm286" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 39.34000, 5.00000, 43.35000)
-shape = SubResource("f173")
+shape = SubResource("f179")
 
 [node name="galeria_m2_banqueta" parent="mobilia" instance=ExtResource("e19")]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 39.34000, 4.20000, 42.55000)
 
-[node name="galeria_sul_espera_n_0" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_sul_espera_n_0" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 45.93200, 4.20000, 54.40000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="galeria_sul_espera_n_1" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_sul_espera_n_0_malha" parent="mobilia/galeria_sul_espera_n_0" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_sul_espera_n_0_colisao" type="CollisionShape3D" parent="mobilia/galeria_sul_espera_n_0"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="galeria_sul_espera_n_1" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 46.61000, 4.20000, 54.40000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="galeria_sul_espera_n_2" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_sul_espera_n_1_malha" parent="mobilia/galeria_sul_espera_n_1" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_sul_espera_n_1_colisao" type="CollisionShape3D" parent="mobilia/galeria_sul_espera_n_1"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="galeria_sul_espera_n_2" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 47.28800, 4.20000, 54.40000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="galeria_sul_espera_n_3" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_sul_espera_n_2_malha" parent="mobilia/galeria_sul_espera_n_2" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_sul_espera_n_2_colisao" type="CollisionShape3D" parent="mobilia/galeria_sul_espera_n_2"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="galeria_sul_espera_n_3" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 47.96600, 4.20000, 54.40000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="galeria_sul_espera_n_4" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_sul_espera_n_3_malha" parent="mobilia/galeria_sul_espera_n_3" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_sul_espera_n_3_colisao" type="CollisionShape3D" parent="mobilia/galeria_sul_espera_n_3"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="galeria_sul_espera_n_4" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 48.64400, 4.20000, 54.40000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="galeria_sul_espera_n_5" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_sul_espera_n_4_malha" parent="mobilia/galeria_sul_espera_n_4" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_sul_espera_n_4_colisao" type="CollisionShape3D" parent="mobilia/galeria_sul_espera_n_4"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="galeria_sul_espera_n_5" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 49.32200, 4.20000, 54.40000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="galeria_sul_espera_n_6" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_sul_espera_n_5_malha" parent="mobilia/galeria_sul_espera_n_5" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_sul_espera_n_5_colisao" type="CollisionShape3D" parent="mobilia/galeria_sul_espera_n_5"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="galeria_sul_espera_n_6" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 50.00000, 4.20000, 54.40000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="galeria_sul_espera_s_0" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_sul_espera_n_6_malha" parent="mobilia/galeria_sul_espera_n_6" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_sul_espera_n_6_colisao" type="CollisionShape3D" parent="mobilia/galeria_sul_espera_n_6"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="galeria_sul_espera_s_0" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 45.93200, 4.20000, 63.30000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="galeria_sul_espera_s_1" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_sul_espera_s_0_malha" parent="mobilia/galeria_sul_espera_s_0" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_sul_espera_s_0_colisao" type="CollisionShape3D" parent="mobilia/galeria_sul_espera_s_0"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="galeria_sul_espera_s_1" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 46.61000, 4.20000, 63.30000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="galeria_sul_espera_s_2" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_sul_espera_s_1_malha" parent="mobilia/galeria_sul_espera_s_1" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_sul_espera_s_1_colisao" type="CollisionShape3D" parent="mobilia/galeria_sul_espera_s_1"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="galeria_sul_espera_s_2" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 47.28800, 4.20000, 63.30000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="galeria_sul_espera_s_3" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_sul_espera_s_2_malha" parent="mobilia/galeria_sul_espera_s_2" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_sul_espera_s_2_colisao" type="CollisionShape3D" parent="mobilia/galeria_sul_espera_s_2"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="galeria_sul_espera_s_3" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 47.96600, 4.20000, 63.30000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="galeria_sul_espera_s_4" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_sul_espera_s_3_malha" parent="mobilia/galeria_sul_espera_s_3" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_sul_espera_s_3_colisao" type="CollisionShape3D" parent="mobilia/galeria_sul_espera_s_3"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="galeria_sul_espera_s_4" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 48.64400, 4.20000, 63.30000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="galeria_sul_espera_s_5" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_sul_espera_s_4_malha" parent="mobilia/galeria_sul_espera_s_4" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_sul_espera_s_4_colisao" type="CollisionShape3D" parent="mobilia/galeria_sul_espera_s_4"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="galeria_sul_espera_s_5" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 49.32200, 4.20000, 63.30000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="galeria_sul_espera_s_6" parent="mobilia" instance=ExtResource("e37")]
+[node name="galeria_sul_espera_s_5_malha" parent="mobilia/galeria_sul_espera_s_5" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_sul_espera_s_5_colisao" type="CollisionShape3D" parent="mobilia/galeria_sul_espera_s_5"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
+
+[node name="galeria_sul_espera_s_6" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 50.00000, 4.20000, 63.30000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.00
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="galeria_sul_espera_s_6_malha" parent="mobilia/galeria_sul_espera_s_6" instance=ExtResource("e37")]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
+
+[node name="galeria_sul_espera_s_6_colisao" type="CollisionShape3D" parent="mobilia/galeria_sul_espera_s_6"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43990, -0.02215)
+shape = SubResource("f151")
 
 [node name="galeria_sul_bebedouro" parent="mobilia" instance=ExtResource("e38")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 52.48600, 4.20000, 54.00000)
 
 [node name="cm287" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 52.48600, 5.00000, 54.00000)
-shape = SubResource("f152")
+shape = SubResource("f153")
 
 [node name="galeria_sul_lixo" parent="mobilia" instance=ExtResource("e43")]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 53.39000, 4.20000, 63.35000)
 
 [node name="cm288" type="CollisionShape3D" parent="colisao_mobilia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 53.39000, 5.00000, 63.35000)
-shape = SubResource("f156")
+shape = SubResource("f158")
 
 [node name="luminarias" type="Node3D" parent="."]
 
@@ -8487,7 +9825,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/entrada_principal/pivo/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.70000, 1.27500, 0.00000)
-shape = SubResource("f174")
+shape = SubResource("f180")
 
 [node name="pivo_b" type="Node3D" parent="portas/entrada_principal"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 1.40000, 0.00000, 0.00000)
@@ -8501,7 +9839,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/entrada_principal/pivo_b/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.70000, 1.27500, 0.00000)
-shape = SubResource("f174")
+shape = SubResource("f180")
 
 [node name="area" type="Area3D" parent="portas/entrada_principal"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.30000, 0.00000)
@@ -8509,7 +9847,7 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/entrada_principal/area"]
-shape = SubResource("f175")
+shape = SubResource("f181")
 
 [node name="p_101" type="Node3D" parent="portas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 5.60000, 0.00000, 10.17500)
@@ -8532,7 +9870,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_101/pivo/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 1.10000, 1.27500, 0.00000)
-shape = SubResource("f176")
+shape = SubResource("f182")
 
 [node name="area" type="Area3D" parent="portas/p_101"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.30000, 0.00000)
@@ -8540,7 +9878,7 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_101/area"]
-shape = SubResource("f177")
+shape = SubResource("f183")
 
 [node name="p_102" type="Node3D" parent="portas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 16.60000, 0.00000, 10.17500)
@@ -8563,7 +9901,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_102/pivo/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 1.10000, 1.27500, 0.00000)
-shape = SubResource("f176")
+shape = SubResource("f182")
 
 [node name="area" type="Area3D" parent="portas/p_102"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.30000, 0.00000)
@@ -8571,7 +9909,7 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_102/area"]
-shape = SubResource("f177")
+shape = SubResource("f183")
 
 [node name="p_103" type="Node3D" parent="portas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 27.60000, 0.00000, 10.17500)
@@ -8594,7 +9932,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_103/pivo/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 1.10000, 1.27500, 0.00000)
-shape = SubResource("f176")
+shape = SubResource("f182")
 
 [node name="area" type="Area3D" parent="portas/p_103"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.30000, 0.00000)
@@ -8602,7 +9940,7 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_103/area"]
-shape = SubResource("f177")
+shape = SubResource("f183")
 
 [node name="p_raiox" type="Node3D" parent="portas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 38.60000, 0.00000, 10.17500)
@@ -8625,7 +9963,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_raiox/pivo/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 1.10000, 1.27500, 0.00000)
-shape = SubResource("f176")
+shape = SubResource("f182")
 
 [node name="area" type="Area3D" parent="portas/p_raiox"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.30000, 0.00000)
@@ -8633,7 +9971,7 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_raiox/area"]
-shape = SubResource("f177")
+shape = SubResource("f183")
 
 [node name="p_lab" type="Node3D" parent="portas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 50.00000, 0.00000, 10.17500)
@@ -8656,7 +9994,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_lab/pivo/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 1.10000, 1.27500, 0.00000)
-shape = SubResource("f176")
+shape = SubResource("f182")
 
 [node name="area" type="Area3D" parent="portas/p_lab"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.30000, 0.00000)
@@ -8664,7 +10002,7 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_lab/area"]
-shape = SubResource("f177")
+shape = SubResource("f183")
 
 [node name="p_104" type="Node3D" parent="portas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 5.20000, 0.00000, 15.52500)
@@ -8687,7 +10025,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_104/pivo/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 1.10000, 1.27500, 0.00000)
-shape = SubResource("f176")
+shape = SubResource("f182")
 
 [node name="area" type="Area3D" parent="portas/p_104"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.30000, 0.00000)
@@ -8695,7 +10033,7 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_104/area"]
-shape = SubResource("f177")
+shape = SubResource("f183")
 
 [node name="p_105" type="Node3D" parent="portas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 15.20000, 0.00000, 15.52500)
@@ -8718,7 +10056,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_105/pivo/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 1.10000, 1.27500, 0.00000)
-shape = SubResource("f176")
+shape = SubResource("f182")
 
 [node name="area" type="Area3D" parent="portas/p_105"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.30000, 0.00000)
@@ -8726,7 +10064,7 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_105/area"]
-shape = SubResource("f177")
+shape = SubResource("f183")
 
 [node name="p_cirurgia" type="Node3D" parent="portas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 30.20000, 0.00000, 15.52500)
@@ -8749,7 +10087,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_cirurgia/pivo/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.70000, 1.27500, 0.00000)
-shape = SubResource("f174")
+shape = SubResource("f180")
 
 [node name="pivo_b" type="Node3D" parent="portas/p_cirurgia"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 1.40000, 0.00000, 0.00000)
@@ -8763,7 +10101,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_cirurgia/pivo_b/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.70000, 1.27500, 0.00000)
-shape = SubResource("f174")
+shape = SubResource("f180")
 
 [node name="area" type="Area3D" parent="portas/p_cirurgia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.30000, 0.00000)
@@ -8771,7 +10109,7 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_cirurgia/area"]
-shape = SubResource("f175")
+shape = SubResource("f181")
 
 [node name="p_uti" type="Node3D" parent="portas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 42.80000, 0.00000, 15.52500)
@@ -8794,7 +10132,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_uti/pivo/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.70000, 1.27500, 0.00000)
-shape = SubResource("f174")
+shape = SubResource("f180")
 
 [node name="pivo_b" type="Node3D" parent="portas/p_uti"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 1.40000, 0.00000, 0.00000)
@@ -8808,7 +10146,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_uti/pivo_b/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.70000, 1.27500, 0.00000)
-shape = SubResource("f174")
+shape = SubResource("f180")
 
 [node name="area" type="Area3D" parent="portas/p_uti"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.30000, 0.00000)
@@ -8816,7 +10154,7 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_uti/area"]
-shape = SubResource("f175")
+shape = SubResource("f181")
 
 [node name="p_ps" type="Node3D" parent="portas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 40.30000, 0.00000, 35.82500)
@@ -8839,7 +10177,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_ps/pivo/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.70000, 1.27500, 0.00000)
-shape = SubResource("f174")
+shape = SubResource("f180")
 
 [node name="pivo_b" type="Node3D" parent="portas/p_ps"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 1.40000, 0.00000, 0.00000)
@@ -8853,7 +10191,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_ps/pivo_b/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.70000, 1.27500, 0.00000)
-shape = SubResource("f174")
+shape = SubResource("f180")
 
 [node name="area" type="Area3D" parent="portas/p_ps"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.30000, 0.00000)
@@ -8861,7 +10199,7 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_ps/area"]
-shape = SubResource("f175")
+shape = SubResource("f181")
 
 [node name="p_ps_leste" type="Node3D" parent="portas"]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 50.47500, 0.00000, 30.60000)
@@ -8884,7 +10222,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_ps_leste/pivo/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 1.10000, 1.27500, 0.00000)
-shape = SubResource("f176")
+shape = SubResource("f182")
 
 [node name="area" type="Area3D" parent="portas/p_ps_leste"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.30000, 0.00000)
@@ -8892,7 +10230,7 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_ps_leste/area"]
-shape = SubResource("f177")
+shape = SubResource("f183")
 
 [node name="p_106" type="Node3D" parent="portas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 5.20000, 0.00000, 52.82500)
@@ -8915,7 +10253,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_106/pivo/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 1.10000, 1.27500, 0.00000)
-shape = SubResource("f176")
+shape = SubResource("f182")
 
 [node name="area" type="Area3D" parent="portas/p_106"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.30000, 0.00000)
@@ -8923,7 +10261,7 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_106/area"]
-shape = SubResource("f177")
+shape = SubResource("f183")
 
 [node name="p_107" type="Node3D" parent="portas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 15.20000, 0.00000, 52.82500)
@@ -8946,7 +10284,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_107/pivo/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 1.10000, 1.27500, 0.00000)
-shape = SubResource("f176")
+shape = SubResource("f182")
 
 [node name="area" type="Area3D" parent="portas/p_107"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.30000, 0.00000)
@@ -8954,7 +10292,7 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_107/area"]
-shape = SubResource("f177")
+shape = SubResource("f183")
 
 [node name="p_refeitorio" type="Node3D" parent="portas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 30.60000, 0.00000, 52.82500)
@@ -8977,7 +10315,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_refeitorio/pivo/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.70000, 1.27500, 0.00000)
-shape = SubResource("f174")
+shape = SubResource("f180")
 
 [node name="pivo_b" type="Node3D" parent="portas/p_refeitorio"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 1.40000, 0.00000, 0.00000)
@@ -8991,7 +10329,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_refeitorio/pivo_b/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.70000, 1.27500, 0.00000)
-shape = SubResource("f174")
+shape = SubResource("f180")
 
 [node name="area" type="Area3D" parent="portas/p_refeitorio"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.30000, 0.00000)
@@ -8999,7 +10337,7 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_refeitorio/area"]
-shape = SubResource("f175")
+shape = SubResource("f181")
 
 [node name="p_necroterio" type="Node3D" parent="portas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 43.30000, 0.00000, 52.82500)
@@ -9022,7 +10360,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_necroterio/pivo/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.70000, 1.27500, 0.00000)
-shape = SubResource("f174")
+shape = SubResource("f180")
 
 [node name="pivo_b" type="Node3D" parent="portas/p_necroterio"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 1.40000, 0.00000, 0.00000)
@@ -9036,7 +10374,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_necroterio/pivo_b/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.70000, 1.27500, 0.00000)
-shape = SubResource("f174")
+shape = SubResource("f180")
 
 [node name="area" type="Area3D" parent="portas/p_necroterio"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.30000, 0.00000)
@@ -9044,7 +10382,7 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_necroterio/area"]
-shape = SubResource("f175")
+shape = SubResource("f181")
 
 [node name="p_108" type="Node3D" parent="portas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 5.60000, 0.00000, 58.17500)
@@ -9067,7 +10405,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_108/pivo/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 1.10000, 1.27500, 0.00000)
-shape = SubResource("f176")
+shape = SubResource("f182")
 
 [node name="area" type="Area3D" parent="portas/p_108"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.30000, 0.00000)
@@ -9075,7 +10413,7 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_108/area"]
-shape = SubResource("f177")
+shape = SubResource("f183")
 
 [node name="p_109" type="Node3D" parent="portas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 16.60000, 0.00000, 58.17500)
@@ -9098,7 +10436,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_109/pivo/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 1.10000, 1.27500, 0.00000)
-shape = SubResource("f176")
+shape = SubResource("f182")
 
 [node name="area" type="Area3D" parent="portas/p_109"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.30000, 0.00000)
@@ -9106,7 +10444,7 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_109/area"]
-shape = SubResource("f177")
+shape = SubResource("f183")
 
 [node name="p_farmacia" type="Node3D" parent="portas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 27.60000, 0.00000, 58.17500)
@@ -9129,7 +10467,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_farmacia/pivo/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 1.10000, 1.27500, 0.00000)
-shape = SubResource("f176")
+shape = SubResource("f182")
 
 [node name="area" type="Area3D" parent="portas/p_farmacia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.30000, 0.00000)
@@ -9137,7 +10475,7 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_farmacia/area"]
-shape = SubResource("f177")
+shape = SubResource("f183")
 
 [node name="p_esteril" type="Node3D" parent="portas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 38.60000, 0.00000, 58.17500)
@@ -9160,7 +10498,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_esteril/pivo/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 1.10000, 1.27500, 0.00000)
-shape = SubResource("f176")
+shape = SubResource("f182")
 
 [node name="area" type="Area3D" parent="portas/p_esteril"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.30000, 0.00000)
@@ -9168,7 +10506,7 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_esteril/area"]
-shape = SubResource("f177")
+shape = SubResource("f183")
 
 [node name="p_maquinas" type="Node3D" parent="portas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 50.00000, 0.00000, 58.17500)
@@ -9191,7 +10529,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_maquinas/pivo/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 1.10000, 1.27500, 0.00000)
-shape = SubResource("f176")
+shape = SubResource("f182")
 
 [node name="area" type="Area3D" parent="portas/p_maquinas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.30000, 0.00000)
@@ -9199,7 +10537,7 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_maquinas/area"]
-shape = SubResource("f177")
+shape = SubResource("f183")
 
 [node name="p_arquivo" type="Node3D" parent="portas"]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 16.17500, 4.20000, 6.20000)
@@ -9222,7 +10560,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_arquivo/pivo/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 1.10000, 1.27500, 0.00000)
-shape = SubResource("f176")
+shape = SubResource("f182")
 
 [node name="area" type="Area3D" parent="portas/p_arquivo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.30000, 0.00000)
@@ -9230,7 +10568,7 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_arquivo/area"]
-shape = SubResource("f177")
+shape = SubResource("f183")
 
 [node name="p_201" type="Node3D" parent="portas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 6.50000, 4.20000, 28.17500)
@@ -9253,7 +10591,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_201/pivo/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 1.10000, 1.27500, 0.00000)
-shape = SubResource("f176")
+shape = SubResource("f182")
 
 [node name="area" type="Area3D" parent="portas/p_201"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.30000, 0.00000)
@@ -9261,7 +10599,7 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_201/area"]
-shape = SubResource("f177")
+shape = SubResource("f183")
 
 [node name="p_202" type="Node3D" parent="portas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 19.30000, 4.20000, 28.17500)
@@ -9284,7 +10622,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_202/pivo/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 1.10000, 1.27500, 0.00000)
-shape = SubResource("f176")
+shape = SubResource("f182")
 
 [node name="area" type="Area3D" parent="portas/p_202"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.30000, 0.00000)
@@ -9292,7 +10630,7 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_202/area"]
-shape = SubResource("f177")
+shape = SubResource("f183")
 
 [node name="p_203" type="Node3D" parent="portas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 31.90000, 4.20000, 28.17500)
@@ -9315,7 +10653,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_203/pivo/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 1.10000, 1.27500, 0.00000)
-shape = SubResource("f176")
+shape = SubResource("f182")
 
 [node name="area" type="Area3D" parent="portas/p_203"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.30000, 0.00000)
@@ -9323,7 +10661,7 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_203/area"]
-shape = SubResource("f177")
+shape = SubResource("f183")
 
 [node name="p_psiq" type="Node3D" parent="portas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 8.20000, 4.20000, 33.77500)
@@ -9346,7 +10684,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_psiq/pivo/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.70000, 1.27500, 0.00000)
-shape = SubResource("f174")
+shape = SubResource("f180")
 
 [node name="pivo_b" type="Node3D" parent="portas/p_psiq"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 1.40000, 0.00000, 0.00000)
@@ -9360,7 +10698,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_psiq/pivo_b/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.70000, 1.27500, 0.00000)
-shape = SubResource("f174")
+shape = SubResource("f180")
 
 [node name="area" type="Area3D" parent="portas/p_psiq"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.30000, 0.00000)
@@ -9368,7 +10706,7 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_psiq/area"]
-shape = SubResource("f175")
+shape = SubResource("f181")
 
 [node name="p_terapia" type="Node3D" parent="portas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 24.20000, 4.20000, 33.77500)
@@ -9391,7 +10729,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_terapia/pivo/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 1.10000, 1.27500, 0.00000)
-shape = SubResource("f176")
+shape = SubResource("f182")
 
 [node name="area" type="Area3D" parent="portas/p_terapia"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.30000, 0.00000)
@@ -9399,7 +10737,7 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_terapia/area"]
-shape = SubResource("f177")
+shape = SubResource("f183")
 
 [node name="p_204" type="Node3D" parent="portas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 5.60000, 4.20000, 53.82500)
@@ -9422,7 +10760,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_204/pivo/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 1.10000, 1.27500, 0.00000)
-shape = SubResource("f176")
+shape = SubResource("f182")
 
 [node name="area" type="Area3D" parent="portas/p_204"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.30000, 0.00000)
@@ -9430,7 +10768,7 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_204/area"]
-shape = SubResource("f177")
+shape = SubResource("f183")
 
 [node name="p_205" type="Node3D" parent="portas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 16.60000, 4.20000, 53.82500)
@@ -9453,7 +10791,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_205/pivo/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 1.10000, 1.27500, 0.00000)
-shape = SubResource("f176")
+shape = SubResource("f182")
 
 [node name="area" type="Area3D" parent="portas/p_205"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.30000, 0.00000)
@@ -9461,7 +10799,7 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_205/area"]
-shape = SubResource("f177")
+shape = SubResource("f183")
 
 [node name="p_cirurgia2" type="Node3D" parent="portas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 27.60000, 4.20000, 53.82500)
@@ -9484,7 +10822,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_cirurgia2/pivo/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.70000, 1.27500, 0.00000)
-shape = SubResource("f174")
+shape = SubResource("f180")
 
 [node name="pivo_b" type="Node3D" parent="portas/p_cirurgia2"]
 transform = Transform3D(-1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, -1.00000, 1.40000, 0.00000, 0.00000)
@@ -9498,7 +10836,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_cirurgia2/pivo_b/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.70000, 1.27500, 0.00000)
-shape = SubResource("f174")
+shape = SubResource("f180")
 
 [node name="area" type="Area3D" parent="portas/p_cirurgia2"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.30000, 0.00000)
@@ -9506,7 +10844,7 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_cirurgia2/area"]
-shape = SubResource("f175")
+shape = SubResource("f181")
 
 [node name="p_observacao" type="Node3D" parent="portas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 38.60000, 4.20000, 53.82500)
@@ -9529,7 +10867,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_observacao/pivo/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 1.10000, 1.27500, 0.00000)
-shape = SubResource("f176")
+shape = SubResource("f182")
 
 [node name="area" type="Area3D" parent="portas/p_observacao"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.30000, 0.00000)
@@ -9537,7 +10875,7 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="portas/p_observacao/area"]
-shape = SubResource("f177")
+shape = SubResource("f183")
 
 [node name="elevador" type="Node3D" parent="."]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 59.00000, 0.00000, 31.60000)
@@ -9557,19 +10895,19 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="elevador/cabine/chao"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, -0.10000, 0.00000)
-shape = SubResource("f178")
+shape = SubResource("f184")
 
 [node name="lat_n" type="CollisionShape3D" parent="elevador/cabine/chao"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.45000, -2.55000)
-shape = SubResource("f179")
+shape = SubResource("f185")
 
 [node name="lat_s" type="CollisionShape3D" parent="elevador/cabine/chao"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.45000, 2.55000)
-shape = SubResource("f179")
+shape = SubResource("f185")
 
 [node name="fundo" type="CollisionShape3D" parent="elevador/cabine/chao"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 2.55000, 1.45000, 0.00000)
-shape = SubResource("f180")
+shape = SubResource("f186")
 
 [node name="painel" parent="elevador/cabine" instance=ExtResource("e89")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -2.33000, 0.00000, 1.65000)
@@ -9589,7 +10927,7 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="elevador/cabine/area_dentro"]
-shape = SubResource("f181")
+shape = SubResource("f187")
 
 [node name="portas_cabine" type="Node3D" parent="elevador/cabine"]
 
@@ -9605,7 +10943,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="elevador/cabine/portas_cabine/folha_n/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.30000, 0.00000)
-shape = SubResource("f182")
+shape = SubResource("f188")
 
 [node name="folha_s" type="Node3D" parent="elevador/cabine/portas_cabine"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -2.49000, 0.00000, 0.55000)
@@ -9619,7 +10957,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="elevador/cabine/portas_cabine/folha_s/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.30000, 0.00000)
-shape = SubResource("f182")
+shape = SubResource("f188")
 
 [node name="pavimento_1" type="Node3D" parent="elevador"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000)
@@ -9636,7 +10974,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="elevador/pavimento_1/folha_n/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.30000, 0.00000)
-shape = SubResource("f182")
+shape = SubResource("f188")
 
 [node name="folha_s" type="Node3D" parent="elevador/pavimento_1"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -2.82500, 0.00000, 0.55000)
@@ -9650,7 +10988,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="elevador/pavimento_1/folha_s/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.30000, 0.00000)
-shape = SubResource("f182")
+shape = SubResource("f188")
 
 [node name="area_chamar" type="Area3D" parent="elevador/pavimento_1"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -4.15000, 1.30000, 0.00000)
@@ -9658,7 +10996,7 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="elevador/pavimento_1/area_chamar"]
-shape = SubResource("f183")
+shape = SubResource("f189")
 
 [node name="pavimento_2" type="Node3D" parent="elevador"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 4.20000, 0.00000)
@@ -9675,7 +11013,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="elevador/pavimento_2/folha_n/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.30000, 0.00000)
-shape = SubResource("f182")
+shape = SubResource("f188")
 
 [node name="folha_s" type="Node3D" parent="elevador/pavimento_2"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -2.82500, 0.00000, 0.55000)
@@ -9689,7 +11027,7 @@ sync_to_physics = false
 
 [node name="forma" type="CollisionShape3D" parent="elevador/pavimento_2/folha_s/corpo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.30000, 0.00000)
-shape = SubResource("f182")
+shape = SubResource("f188")
 
 [node name="area_chamar" type="Area3D" parent="elevador/pavimento_2"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -4.15000, 1.30000, 0.00000)
@@ -9697,7 +11035,7 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="elevador/pavimento_2/area_chamar"]
-shape = SubResource("f183")
+shape = SubResource("f189")
 
 [node name="pistola_no_balcao" type="Node3D" parent="."]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 11.97500, 1.12000, 34.17500)
@@ -9718,7 +11056,7 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="pistola_no_balcao/area"]
-shape = SubResource("f184")
+shape = SubResource("f190")
 
 [node name="municao_no_balcao" type="Node3D" parent="."]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 18.37500, 1.12000, 34.17500)
@@ -9739,7 +11077,7 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="municao_no_balcao/area"]
-shape = SubResource("f184")
+shape = SubResource("f190")
 
 [node name="municao_no_balcao_2" type="Node3D" parent="."]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 15.17500, 1.12000, 30.97500)
@@ -9760,7 +11098,7 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="municao_no_balcao_2/area"]
-shape = SubResource("f184")
+shape = SubResource("f190")
 
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
 navigation_mesh = SubResource("navmesh")

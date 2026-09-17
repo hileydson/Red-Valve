@@ -50,8 +50,8 @@ const ABERTURA := PI * 0.5
 ## lento em cima de quem corre vira uma folha fechando na cara do jogador (ele
 ## percorre os 1,2 m da area em 0,34 s correndo), e o rapido em cima de quem
 ## anda vira a porta antiga, que abria como se fosse de papel.
-const TEMPO_ABRIR_LENTO := 1.60
-const TEMPO_ABRIR_RAPIDO := 0.55
+const TEMPO_ABRIR_LENTO := 2.20
+const TEMPO_ABRIR_RAPIDO := 0.80
 ## As duas pontas da regua de velocidade. A de cima e' a corrida DE INTERIOR
 ## (player.gd: RUN_SPEED_INTERIOR), que e' a unica corrida que existe aqui.
 const VEL_ANDANDO := 1.0
@@ -79,7 +79,7 @@ const DISTANCIA_PARADA := 0.72
 const ANTECEDENCIA := 0.30
 ## A folha so' comeca a girar depois que a mao saiu — este e' o teto dessa
 ## espera, em segundos.
-const ATRASO_DA_FOLHA := 0.38
+const ATRASO_DA_FOLHA := 0.45
 ## E quanto da caminhada ate' a folha ela deixa passar antes de comecar. Quase
 ## toda: a mao (que sobe em 0,14 s) ja' esta' ha' tempo na madeira quando a
 ## folha cede. Subir mais que isto so' faz a folha ceder DEPOIS do encosto, e
@@ -88,7 +88,7 @@ const ATRASO_DA_FOLHA := 0.38
 ## Preso a' FRACAO, e nao a um tempo fixo, o corredor continua servido: como a
 ## ANTECEDENCIA ja' multiplica pela velocidade, o tempo ate' o encosto e' o
 ## mesmo andando ou correndo — o que muda e' so' a distancia.
-const FRACAO_DA_APROXIMACAO := 0.85
+const FRACAO_DA_APROXIMACAO := 0.92
 ## Altura e duracao do gesto da mao.
 const ALTURA_MAO := 1.05
 const TEMPO_MAO := 0.60

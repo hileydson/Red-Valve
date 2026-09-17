@@ -104,6 +104,16 @@ MODELOS = {
     "metal_trash_can": {"escala": 1.0, "giro_extra": 0.0},
 }
 
+# Moveis pequenos e soltos: em vez da caixa estatica de `bloqueia`, ganham
+# RigidBody3D e reagem a ser esbarrado ou chutado. Fora daqui fica tudo que e'
+# grande, fixo na parede ou pesado demais pra fazer sentido rolando pelo
+# corredor (maca, prancheta, extintor, contentor industrial).
+FISICOS = {
+    "plastic_monobloc_chair_01", "SchoolChair_01",
+    "plastic_crate_01", "plastic_crate_02",
+    "trashbag", "cardboard_box_01",
+}
+
 _aabb_cache = {}
 
 
@@ -418,6 +428,17 @@ def _prop(tipo, sala, x, z, giro, **extra):
         lx, lz = d["bloqueia"]
         if abs(math.cos(giro)) < 0.5:
             d["bloqueia"] = (lz, lx)
+    # Item da lista FISICOS: a caixa de colisao sai direto do AABB do .gltf, ja'
+    # no tamanho e centro certos — sem precisar chutar medida a mao pra cada
+    # cadeira. Ganha corpo fisico PROPRIO, entao a caixa estatica de `bloqueia`
+    # fica sem sentido aqui (os dois no mesmo lugar so' travariam um no outro).
+    if d.get("modelo") in FISICOS:
+        mn, mx = aabb(d["modelo"])
+        esc = d.get("escala", 1.0)
+        d["fisico"] = True
+        d["fisico_caixa"] = tuple((mx[k] - mn[k]) * esc for k in range(3))
+        d["fisico_centro"] = tuple((mn[k] + mx[k]) * 0.5 * esc for k in range(3))
+        d["bloqueia"] = None
     return d
 
 
