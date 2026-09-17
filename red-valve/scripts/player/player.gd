@@ -333,29 +333,38 @@ var fall_cam: Camera3D = null
 
 var last_rotation_y: float = 0.0
 var last_camera_rot_x: float = 0.0
-## Girando a câmera parado (só o Maycow normal usa). Guarda apenas o giro do
-## CORPO: olhar para cima/baixo não vira o Maycow, então animar passos por causa
-## do pitch ficaria estranho.
-var _girando_no_lugar: bool = false
-## Velocidade do giro do corpo AGORA, em radianos por segundo. Em rad/s e não
-## por quadro: assim o comportamento não muda se a taxa de física mudar.
-var _giro_velocidade: float = 0.0
-## Giro mínimo (rad/s) para contar como "girando". Acima de zero de propósito:
-## com qualquer tremidinha de analógico ou mouse ele ficaria piscando entre
-## andar e parar. (0.25 rad/s ≈ os 0.004 rad/quadro de antes, a 60 Hz.)
-@export var GIRO_VEL_MINIMA: float = 0.25
-## A partir desta velocidade de giro (rad/s) a animação já roda na velocidade
-## cheia. Entre GIRO_VEL_MINIMA e este valor ela é interpolada — girar devagar
-## mantém a animação lenta, girar rápido leva ela ao normal.
-@export var GIRO_VEL_ANIM_CHEIA: float = 2.5
-## Velocidade da animação no giro mais lento aceito. Só vale para o Maycow
-## normal — é a árvore dele que tem o nó TimeScale.
-@export var GIRO_ANIM_VEL_INICIAL: float = 0.3
-## Suavização (por segundo) entre a velocidade atual e a que o giro pede. O
-## mouse chega em solavancos; sem isto a animação tremeria de velocidade a cada
-## quadro.
-@export var GIRO_ANIM_SUAVIZACAO: float = 8.0
-var _giro_anim_atual: float = 0.3
+## O CORPO NÃO ACOMPANHA A CÂMERA NA HORA.
+##
+## Parado, girar a câmera não vira o Maycow: ele fica plantado, de costas, e a
+## câmera é que corre em volta dele. Só quando ela passa de `GIRO_LIMITE` ele
+## PIVOTA — dá os passinhos e se realinha, sempre para o lado a que a câmera
+## foi, parando quando chega a `GIRO_SOLTA` do alvo. Se a câmera continuar
+## girando enquanto ele pivota, ele persegue.
+##
+## É isto que impede a câmera de ficar de frente para ele.
+##
+## O que havia antes era o contrário: o corpo virava junto com a câmera e os
+## passinhos existiam só para ele não girar deslizando feito um pião.
+@export var GIRO_LIMITE: float = 38.0
+## Onde o pivô termina. Maior que zero de propósito: parar exatamente no alvo
+## faria ele reacender o pivô a cada tremidinha de mouse.
+@export var GIRO_SOLTA: float = 12.0
+## Quão rápido ele pivota (rad/s).
+@export var GIRO_VEL_CORPO: float = 5.0
+## Velocidade da animação de passinho durante o pivô.
+@export var GIRO_ANIM_ESCALA: float = 1.0
+
+## Yaw do CORPO, em coordenadas de MUNDO. É ele que manda no modelo; o
+## `rotation.y` do jogador continua sendo o da câmera e o do movimento.
+var _yaw_corpo: float = 0.0
+var _yaw_corpo_pronto: bool = false
+var _pivotando: bool = false
+## O quanto o corpo está atrasado em relação à câmera por causa do pivô. Zero
+## em movimento. É ele que gira o deslocamento do modelo (ver seção 8).
+var _atraso_pivo: float = 0.0
+## Deslocamento do modelo no espaço do CORPO (ver seção 8).
+var _off_corpo_x: float = 0.0
+var _off_corpo_z: float = 0.3995
 
 var is_toggle_aim_active: bool = false
 
@@ -430,24 +439,6 @@ func esticar_mao_para(ponto: Vector3, tempo: float) -> void:
 	var mao = get_node_or_null(CAMINHO_MAO_PORTA)
 	if mao and mao.has_method("estica"):
 		mao.estica(ponto, tempo)
-
-
-## Velocidade que a animação deve ter agora, ACOMPANHANDO o quão rápido a câmera
-## está girando: giro lento mantém a animação lenta, giro rápido leva ela até a
-## velocidade normal. `girando` false volta tudo ao normal na hora.
-func _velocidade_anim_giro(girando: bool, delta: float) -> float:
-	if not girando:
-		# Rearma no valor lento: o próximo giro tem de começar devagar de novo,
-		# e não herdar a velocidade do giro anterior.
-		_giro_anim_atual = GIRO_ANIM_VEL_INICIAL
-		return 1.0
-
-	var t := clampf(inverse_lerp(GIRO_VEL_MINIMA, GIRO_VEL_ANIM_CHEIA, _giro_velocidade), 0.0, 1.0)
-	var alvo := lerpf(GIRO_ANIM_VEL_INICIAL, 1.0, t)
-	# Persegue o alvo em vez de saltar pra ele: é o que mantém a sensação
-	# progressiva mesmo com a leitura do mouse aos trancos.
-	_giro_anim_atual = lerpf(_giro_anim_atual, alvo, clampf(delta * GIRO_ANIM_SUAVIZACAO, 0.0, 1.0))
-	return _giro_anim_atual
 
 
 ## Limites (baixo, cima) em graus para a câmera que estiver ativa.
@@ -890,9 +881,7 @@ func _physics_process(delta: float) -> void:
 	var camera_atual_check = get_viewport().get_camera_3d()
 	var current_camera_rot_x = camera_atual_check.rotation.x if camera_atual_check else 0.0
 	var giro_do_corpo = abs(rotation.y - last_rotation_y)
-	_giro_velocidade = giro_do_corpo / delta if delta > 0.0 else 0.0
 	var is_turning_camera = giro_do_corpo > 0.001 or abs(current_camera_rot_x - last_camera_rot_x) > 0.001
-	_girando_no_lugar = _giro_velocidade > GIRO_VEL_MINIMA
 	last_rotation_y = rotation.y
 	last_camera_rot_x = current_camera_rot_x
 	
@@ -1362,10 +1351,9 @@ func _physics_process(delta: float) -> void:
 				target_fov = 40.0 # Zoom IN pesado na terceira pessoa (alvo)
 
 		if direction:
-			# Andando de verdade: a rampa do giro não tem vez, e a animação volta
-			# à velocidade cheia na hora — só a corrida em interior fica um
-			# tiquinho abaixo dela (ver `_fator_anim_corrida`).
-			_set_anim_time_scale(_velocidade_anim_giro(false, delta) * _fator_anim_corrida(is_running))
+			# Andando de verdade a animação roda na velocidade dela — só a
+			# corrida em interior fica um tiquinho abaixo (`_fator_anim_corrida`).
+			_set_anim_time_scale(_fator_anim_corrida(is_running))
 			if is_on_floor():
 				# Calcula se a direção do movimento é paralela ou oposta à frente do personagem
 				if alinhamento < -0.2:
@@ -1403,12 +1391,11 @@ func _physics_process(delta: float) -> void:
 		else:
 			# IDLE / PARADA
 			if is_on_floor():
-				# Girando a câmera parado, o corpo do Maycow roda junto — e com o
-				# "idle" ele girava de pé, deslizando feito um pião. A animação
-				# de andar dá os passinhos do giro, entrando devagar e acelerando
-				# até a velocidade normal (ver _velocidade_anim_giro).
-				_set_anim_time_scale(_velocidade_anim_giro(_girando_no_lugar, delta))
-				if _girando_no_lugar:
+				# Parado, ele só dá passos quando está PIVOTANDO (seção 8).
+				# Girar a câmera dentro do limite não mexe com ele: fica de
+				# costas, plantado, e é a câmera que anda em volta.
+				_set_anim_time_scale(GIRO_ANIM_ESCALA if _pivotando else 1.0)
+				if _pivotando:
 					playback.travel("walk")
 				else:
 					playback.travel("idle")
@@ -1446,7 +1433,34 @@ func _physics_process(delta: float) -> void:
 				elif input_dir.x < -0.1: 
 					alvo_y = (limite_rotacao_lateral * 1.8) 
 					speed_y = 0.6
-			modelo.rotation.y = lerp_angle(modelo.rotation.y, alvo_y, delta * velocidade_giro * speed_y)
+			# ANDANDO, CORRENDO, MIRANDO OU EM CUTSCENE: exatamente como
+			# sempre foi. O corpo é o do jogador, com o desvio lateral do
+			# strafe, e vira junto com a câmera no mesmo quadro. O pivô não
+			# tem vez aqui — foi o que deixou a câmera estranha em movimento.
+			if direction or is_aiming or are_cutscene_inputs_blocked():
+				_pivotando = false
+				modelo.rotation.y = lerp_angle(modelo.rotation.y, alvo_y, delta * velocidade_giro * speed_y)
+				_yaw_corpo = rotation.y + modelo.rotation.y
+				_yaw_corpo_pronto = true
+				# O deslocamento volta ao normal no mesmo ritmo em que o corpo
+				# se realinha — assim sair do pivô andando não dá tranco.
+				_atraso_pivo = lerp_angle(_atraso_pivo, 0.0, delta * velocidade_giro * speed_y)
+			else:
+				# PARADO: o corpo fica plantado até a câmera passar do limite.
+				if not _yaw_corpo_pronto:
+					_yaw_corpo = rotation.y
+					_yaw_corpo_pronto = true
+				var falta := wrapf(rotation.y - _yaw_corpo, -PI, PI)
+				if not _pivotando and absf(falta) >= deg_to_rad(GIRO_LIMITE):
+					_pivotando = true
+				if _pivotando:
+					# O `minf` é o que impede ele de passar do alvo e ficar
+					# indo e voltando em cima dele.
+					_yaw_corpo += signf(falta) * minf(GIRO_VEL_CORPO * delta, absf(falta))
+					if absf(wrapf(rotation.y - _yaw_corpo, -PI, PI)) <= deg_to_rad(GIRO_SOLTA):
+						_pivotando = false
+				_atraso_pivo = wrapf(_yaw_corpo - rotation.y, -PI, PI)
+				modelo.rotation.y = _atraso_pivo
 			
 			var is_walking_back = direction and direction.dot(-global_transform.basis.z) < -0.2
 			var target_pos_x = 0.0
@@ -1464,8 +1478,18 @@ func _physics_process(delta: float) -> void:
 				if not is_running:
 					target_pos_x -= 0.15
 
-			modelo.position.x = lerp(modelo.position.x, target_pos_x, speed_x * delta)
-			modelo.position.z = lerp(modelo.position.z, target_pos_z, 2.0 * delta)
+			_off_corpo_x = lerp(_off_corpo_x, target_pos_x, speed_x * delta)
+			_off_corpo_z = lerp(_off_corpo_z, target_pos_z, 2.0 * delta)
+			# O DESLOCAMENTO TEM DE GIRAR JUNTO COM O ATRASO DO PIVÔ.
+			#
+			# Os ~40 cm de enquadramento vivem no espaço do JOGADOR, que gira
+			# com a câmera. Parado, o corpo não gira mais junto — então, sem
+			# esta conta, o Maycow desliza num círculo de 40 cm enquanto a
+			# câmera orbita, em vez de ficar plantado com a câmera correndo em
+			# volta dele.
+			#
+			# Em movimento `_atraso_pivo` é zero e isto vira a conta de antes.
+			modelo.position = Basis(Vector3.UP, _atraso_pivo) * Vector3(_off_corpo_x, modelo.position.y, _off_corpo_z)
 
 		# Inclinação e Encolhimento da arma 2D ao correr (bloqueado ao mirar)
 		if is_instance_valid(pistola) and typeof(pistol_2d_pos_original) == TYPE_VECTOR2:
