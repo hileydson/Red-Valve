@@ -28,6 +28,30 @@ DE ONDE VEM CADA NUMERO
 Nada e' digitado duas vezes: mover o pilar no Blender move o pilar aqui.
 
 ==============================================================================
+AS ZONAS DE DESCOBERTA
+
+O mapa nasce APAGADO e vai acendendo conforme o jogador anda (ver
+`scripts/ui/mapa_nevoa.gd`). A lista `zonas` que este script escreve no JSON
+diz o que acende de uma vez e o que acende aos poucos.
+
+Aqui dentro nao existe "sala": a igreja e' UM salao de 33 m, com duas naves
+laterais e o coro no fundo. Entao quase tudo e' "gradual" — acende so' em
+volta do jogador, recortado na nave em que ele esta'. Sao as tres naves que
+recortam o disco, e e' isso que faz a nave lateral nao aparecer de brinde
+quando o jogador anda pelo meio.
+
+A EXCECAO E' O CORO, e ela e' a razao de existir o campo `gatilho`: o piso do
+coro e' elevado e o jogador nunca poe o pe' la'. O altar acende quando ele
+chega a' ultima baia da nave, no pe' da escada — de onde da' pra ver tudo o
+que ha' pra ver. Zona que o jogador nao pisa precisa de um gatilho num lugar
+que ele pisa, senao ela nunca acende.
+
+As GALERIAS nao tem zona propria: elas ficam exatamente em cima das naves
+laterais, e a mascara e' de chao (X, Z). Andar na galeria acende a faixa de
+baixo, que e' onde a hachura esta' desenhada — que e' o certo, porque e' a
+mesma prancha.
+
+==============================================================================
 O QUE E' O 2o ANDAR NUM MAPA DE UM ANDAR SO'
 
 A igreja tem duas galerias em cima das naves laterais, e o item secreto esta'
@@ -79,6 +103,23 @@ C_ENTULHO   = (74, 67, 57)
 C_ROMBO     = (176, 158, 116)  # a coluna de luz que desce pelo buraco
 C_HACHURA   = (188, 176, 150)  # galerias (2o andar)
 C_PORTAL    = (150, 112, 62)
+
+# --------------------------------------------------------------------------
+# NEVOA (o mapa que acende andando)
+#
+# `raio_m` e' o raio de quem esta' FORA de qualquer zona — a soleira do
+# portal, o alto da escada. `margem_m` e' o transbordo do carimbo, pra a
+# PAREDE acender junto com o espaco; aqui a pedra e' grossa (1,4 m), entao
+# 0,8 acende a face de dentro e deixa o resto da massa no escuro.
+# --------------------------------------------------------------------------
+NEVOA_RES = 256
+NEVOA_RAIO_SOLTO = 6.0
+NEVOA_MARGEM = 0.80
+NEVOA_RAIO_NAVE = 12.0
+NEVOA_RAIO_LATERAL = 10.0
+# Fundo da nave a partir do qual o altar acende: a ultima baia, 7 m antes do
+# arco triunfal. E' o pe' da escada do coro.
+GATILHO_CORO = 7.0
 
 
 def _planta():
@@ -195,6 +236,9 @@ def build():
                 "gerado por tools/godot/igreja/make_mapa_igreja.py",
         "mundo_x0": round(X0, 2), "mundo_z0": round(Z0, 2),
         "tamanho_m": round(TAM, 2), "resolucao": RES,
+        "nevoa": {"resolucao": NEVOA_RES, "raio_m": NEVOA_RAIO_SOLTO,
+                  "margem_m": NEVOA_MARGEM},
+        "zonas": _zonas(p),
         "pontos": _pontos(p),
     }
     json.dump(meta, open(OUT_JSON, "w", encoding="utf-8"), indent=1)
@@ -318,6 +362,46 @@ def _passarela(dr, cx, ppm, p):
     dr.rectangle(cx(-p["nave_x"], jz0, p["nave_x"], jz1), fill=C_PILAR)
     # o meio do jube desabou e foi remendado com tabua
     dr.rectangle(cx(-2.4, jz0 + 0.25, 2.4, jz1 - 0.25), fill=C_MADEIRA)
+
+
+# --------------------------------------------------------------------------
+# zonas de descoberta
+
+
+def _caixa(ident, tipo, x0, z0, x1, z1, **extra):
+    d = {"id": ident, "tipo": tipo,
+         "x0": round(min(x0, x1), 2), "z0": round(min(z0, z1), 2),
+         "x1": round(max(x0, x1), 2), "z1": round(max(z0, z1), 2)}
+    d.update(extra)
+    return d
+
+
+def _zonas(p):
+    """As tres naves, o portal e o coro.
+
+    Os numeros sao os MESMOS que desenham a planta ali em cima — `lat_x`
+    separa a nave central das laterais no desenho e separa as zonas aqui.
+    Zona que nao bate com o desenho deixa faixa acesa onde nao ha' piso.
+    """
+    lat, par = p["lat_x"], p["parede_x"]
+    z_por, z_cruz, z_coro = p["z_portal"], p["z_cruz"], p["z_coro"]
+    return [
+        # o alpendre do portal: e' onde o jogador nasce, e fica fora da nave
+        _caixa("portal", "gradual", -2.2, p["z_portal_ext"], 2.2, z_por + 1.5,
+               raio_m=6.0),
+        _caixa("nave", "gradual", -lat, z_por, lat, z_cruz,
+               raio_m=NEVOA_RAIO_NAVE),
+        _caixa("nave_norte", "gradual", -par, z_por, -lat, z_cruz,
+               raio_m=NEVOA_RAIO_LATERAL),
+        _caixa("nave_sul", "gradual", lat, z_por, par, z_cruz,
+               raio_m=NEVOA_RAIO_LATERAL),
+        # O coro e a abside, num pedaco so'. `gatilho` na ultima baia da nave:
+        # o jogador nao sobe no altar, mas de la' ele ja' viu o altar.
+        _caixa("coro", "sala", -par, z_cruz, par, z_coro + p["abside_r"],
+               gatilho={"x0": round(-lat, 2),
+                        "z0": round(z_cruz - GATILHO_CORO, 2),
+                        "x1": round(lat, 2), "z1": round(z_cruz, 2)}),
+    ]
 
 
 # --------------------------------------------------------------------------

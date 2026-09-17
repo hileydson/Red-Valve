@@ -4,6 +4,63 @@
  "mundo_z0": -4.2,
  "tamanho_m": 57.5,
  "resolucao": 2048,
+ "nevoa": {
+  "resolucao": 256,
+  "raio_m": 6.0,
+  "margem_m": 0.8
+ },
+ "zonas": [
+  {
+   "id": "portal",
+   "tipo": "gradual",
+   "x0": -2.2,
+   "z0": -1.7,
+   "x1": 2.2,
+   "z1": 1.5,
+   "raio_m": 6.0
+  },
+  {
+   "id": "nave",
+   "tipo": "gradual",
+   "x0": -7.45,
+   "z0": 0.0,
+   "x1": 7.45,
+   "z1": 33.0,
+   "raio_m": 12.0
+  },
+  {
+   "id": "nave_norte",
+   "tipo": "gradual",
+   "x0": -12.6,
+   "z0": 0.0,
+   "x1": -7.45,
+   "z1": 33.0,
+   "raio_m": 10.0
+  },
+  {
+   "id": "nave_sul",
+   "tipo": "gradual",
+   "x0": 7.45,
+   "z0": 0.0,
+   "x1": 12.6,
+   "z1": 33.0,
+   "raio_m": 10.0
+  },
+  {
+   "id": "coro",
+   "tipo": "sala",
+   "x0": -12.6,
+   "z0": 33.0,
+   "x1": 12.6,
+   "z1": 49.4,
+   "gatilho": {
+    "x0": -7.45,
+    "z0": 26.0,
+    "x1": 7.45,
+    "z1": 33.0
+   }
+  }
+ ],
  "pontos": [
   {
    "id": "lanterna",

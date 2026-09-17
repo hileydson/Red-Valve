@@ -40,6 +40,22 @@ de "por onde eu ando" — mesma ideia da rua clara contra a quadra escura no
 mapa da cidade.
 
 ==============================================================================
+AS ZONAS DE DESCOBERTA
+
+O mapa nasce APAGADO e vai acendendo conforme o jogador anda (ver
+`scripts/ui/mapa_nevoa.gd`). A lista `zonas`, que este script escreve no JSON
+de cada andar, e' quem diz o que acende de uma vez e o que acende aos poucos:
+
+  - "sala": acende INTEIRA quando o jogador entra. Entrou no quarto, viu o
+    quarto — nao ha' nada num quarto de 11 x 10 que valha descobrir em fatias;
+  - "gradual": acende so' em volta do jogador, recortado na propria zona. E'
+    o caso dos corredores, do hall e dos dois saguoes. Corredor que aparece
+    inteiro de uma vez nao foi descoberto, foi entregue.
+
+Cada andar leva so' as SUAS zonas, e cada prancha tem a sua propria mascara de
+descoberta: descobrir o terreo nao acende o segundo andar.
+
+==============================================================================
 DE ONDE VEM CADA NUMERO
 
 Tudo de `planta.py` — o mesmo modulo que gera a geometria, a colisao e o
@@ -102,6 +118,26 @@ BORDA = 0.14
 # Salas com nome proprio no mapa. Fora desta lista nada vira rotulo: area de
 # circulacao nao tem `chave`, e rotular corredor e' rotular o obvio.
 TIPO_SALA = "sala"
+
+# --------------------------------------------------------------------------
+# NEVOA (o mapa que acende andando)
+#
+# `raio_m` e' o raio de quem esta' FORA de qualquer zona — porta, soleira, a
+# cabine do elevador. Pequeno de proposito: ali o disco nao tem parede que o
+# recorte, e um raio grande acenderia sala que o jogador nao entrou.
+#
+# `margem_m` e' o quanto cada carimbo transborda, pra a PAREDE acender junto
+# com o comodo. Parede tem 0,35: 0,45 acende ela inteira e sobra 0,10 pro
+# comodo vizinho — menos de um pixel da mascara.
+#
+# Nos corredores e saguoes o raio e' generoso porque o recorte na zona segura
+# o vazamento: num corredor, um disco de 12 m so' acende corredor.
+# --------------------------------------------------------------------------
+NEVOA_RES = 256
+NEVOA_RAIO_SOLTO = 5.0
+NEVOA_MARGEM = 0.45
+NEVOA_RAIO = {"corredor": 12.0, "hall": 15.0, "saguao": 15.0}
+NEVOA_RAIO_PADRAO = 11.0
 
 
 def _recorte():
@@ -187,6 +223,9 @@ def build(andar):
         "nome": "MAP_FLOOR_HOSP_%d" % andar,
         "mundo_x0": round(X0, 2), "mundo_z0": round(Z0, 2),
         "tamanho_m": round(TAM, 2), "resolucao": RES,
+        "nevoa": {"resolucao": NEVOA_RES, "raio_m": NEVOA_RAIO_SOLTO,
+                  "margem_m": NEVOA_MARGEM},
+        "zonas": _zonas(andar),
         "pontos": _pontos(andar),
     }
     caminho = os.path.join(ASSETS, "hospitalmap_%d.json" % andar)
@@ -223,6 +262,34 @@ def _elevador(dr, cx, ppm):
     dr.rectangle(cx(P.CABINE_X0, P.CABINE_Z0, P.CABINE_X1, P.CABINE_Z1),
                  fill=C_ELEV, outline=C_ELEV_BRD,
                  width=max(1, int(0.16 * ppm)))
+
+
+# --------------------------------------------------------------------------
+# zonas de descoberta
+# --------------------------------------------------------------------------
+
+def _zonas(andar):
+    """O que acende de uma vez e o que acende aos poucos, neste andar.
+
+    A divisao ja' existe na `planta.py` (`_sala` x `_area`), entao nao ha'
+    lista digitada aqui: sala nova na planta ja' nasce com zona.
+
+    O POCO DO ELEVADOR fica de fora de proposito. Ele e' o unico lugar do
+    predio em que o jogador chega sem ter andado ate' la', e a cabine e' uma
+    caixa de 2 m: ali vale a nevoa solta, que acende a cabine e um naco do
+    corredor em que ela abre — que e' exatamente o que se enxerga ao sair.
+    """
+    zonas = []
+    for s in P.salas(andar):
+        zonas.append({"id": s["ident"], "tipo": "sala",
+                      "x0": s["x0"], "z0": s["z0"],
+                      "x1": s["x1"], "z1": s["z1"]})
+    for a in P.areas(andar):
+        zonas.append({"id": a["ident"], "tipo": "gradual",
+                      "raio_m": NEVOA_RAIO.get(a["tipo"], NEVOA_RAIO_PADRAO),
+                      "x0": a["x0"], "z0": a["z0"],
+                      "x1": a["x1"], "z1": a["z1"]})
+    return zonas
 
 
 # --------------------------------------------------------------------------

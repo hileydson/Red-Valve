@@ -19,6 +19,19 @@ uniform vec4 cor_fora : source_color = vec4(0.06, 0.07, 0.06, 1.0);
 uniform float espessura : hint_range(0.0, 0.2) = 0.035;
 uniform float opacidade : hint_range(0.0, 1.0) = 0.92;
 
+// --- nevoa: o que o jogador ja descobriu ---------------------------------
+// Mascara R8 pequena (256 px) esticada por cima da planta de 2048. Vermelho
+// em 1 = descoberto, 0 = nunca visto. Quem a escreve e o mapa_nevoa.gd.
+//
+// Interpolada de proposito: e a interpolacao que faz a borda do que foi
+// descoberto CLAREAR em vez de aparecer aos quadrados.
+uniform sampler2D nevoa : filter_linear, repeat_disable;
+uniform bool nevoa_ligada = false;
+// O nao-descoberto nao e preto: e um cinza de papel queimado, um degrau
+// acima do lado de fora do mapa. Preto chapado leria como "aqui nao tem
+// predio", e o que se quer dizer e "aqui tem predio e voce nao viu".
+uniform vec4 cor_nevoa : source_color = vec4(0.085, 0.080, 0.074, 1.0);
+
 void fragment() {
 	vec2 p = (UV - 0.5) * 2.0;
 	float d = length(p);
@@ -33,6 +46,10 @@ void fragment() {
 	vec3 cor = cor_fora.rgb;
 	if (uv.x >= 0.0 && uv.x <= 1.0 && uv.y >= 0.0 && uv.y <= 1.0) {
 		cor = texture(mapa, uv).rgb;
+		if (nevoa_ligada) {
+			float visto = smoothstep(0.0, 1.0, texture(nevoa, uv).r);
+			cor = mix(cor_nevoa.rgb, cor, visto);
+		}
 	}
 
 	float disco = 1.0 - smoothstep(1.0 - aa, 1.0, d);

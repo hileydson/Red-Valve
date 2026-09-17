@@ -259,6 +259,46 @@ que lado fica a saída é a única orientação que o jogador tem.
 Os rótulos da escola saem da própria `planta.py` (`ESC_SALA_*`, as mesmas chaves
 que o prompt da porta usa) — renomear a sala no CSV renomeia no mapa.
 
+### O mapa começa apagado
+
+A prancha nasce toda escura e vai acendendo conforme o jogador anda. Quem
+guarda o que já foi descoberto é `scripts/ui/mapa_nevoa.gd` (uma máscara de
+256 x 256, uns 30 cm por pixel), quem a alimenta é o minimapa do HUD — ele já
+tem a posição do jogador a cada quadro — e quem a guarda entre uma visita e
+outra é o `SaveManager`, comprimida dentro do save.
+
+O que acende de uma vez e o que acende aos poucos sai da lista `zonas` que este
+script escreve no JSON, e a divisão já existe na `planta.py`:
+
+| na planta | zona | o que faz |
+| :--- | :--- | :--- |
+| `_sala(...)` | `"sala"` | entrou, acende **inteira** |
+| `_area(...)` | `"gradual"` | acende um disco em volta do jogador, **recortado na própria zona** |
+
+O recorte é o que segura a coisa de pé: sem ele um disco de 12 m no corredor
+acenderia meia sala dos dois lados através da parede. É por isso que o raio nos
+corredores pode ser generoso e o raio de quem está **fora** de qualquer zona
+(porta, soleira) é pequeno — ali não há parede que recorte nada.
+
+Zona em que o jogador nunca pisa leva um `gatilho`: um retângulo onde ele pisa
+e que acende a zona. É o mesmo mecanismo do altar da igreja.
+
+Os pontos do mapa (os losangos com o nome da sala) só aparecem depois que o
+lugar deles foi descoberto — nome de sala em cima de planta apagada entregaria
+justo o que a névoa existe para esconder.
+
+Sala nova na planta já nasce com zona. **O que não é automático são os raios**:
+eles moram no topo do script (`NEVOA_*`).
+
+No porão só a **câmara** é zona (e das que acendem inteiras): o resto é túnel de
+2 m, e túnel não tem "entrou, viu" — tem curva. Lá a névoa anda solta, num raio
+de 6,5 m, que mostra a curva que vem e não alcança o ramo vizinho (o mais perto
+deles passa a 10 m).
+
+Os dois **nichos** dos buracos são zona `"sala"` com gatilho na sala de dentro:
+eles ficam fora do prédio e ninguém pisa neles, mas são a saída da fase —
+entrar no depósito tem de mostrar onde está o rombo.
+
 ## Pichação
 
 Reaproveita o atlas da cidade (`assets/images/textures/pichacao/`, gerado por

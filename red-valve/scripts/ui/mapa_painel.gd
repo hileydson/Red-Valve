@@ -68,6 +68,10 @@ var _arrastando: bool = false
 var _ativo: bool = false
 ## Fonte em uso, para não remontar marcador a cada vez que a aba abre.
 var _fonte: String = ""
+## A descoberta desta planta, ou null quando o mapa nasce todo aceso.
+## É a MESMA máscara que o minimapa do HUD alimenta: o menu abre por cima do
+## jogo e mostra o que o jogador acabou de descobrir andando.
+var _nevoa: MapaNevoa = null
 
 
 func _ready() -> void:
@@ -125,6 +129,10 @@ func _carregar_fonte() -> void:
 	_dados = novos
 	if perfil and perfil.get("textura_mapa") != null:
 		_mat.set_shader_parameter("mapa", perfil.get("textura_mapa"))
+	_nevoa = MapaNevoa.para(_dados, caminho)
+	_mat.set_shader_parameter("nevoa_ligada", _nevoa != null)
+	if _nevoa != null:
+		_mat.set_shader_parameter("nevoa", _nevoa.tex)
 	var grade: float = _do_perfil(perfil, "grade_m", 100.0) if perfil else 100.0
 	_mat.set_shader_parameter("grade_uv", maxf(grade, 1.0) / _dados.tam)
 	# remove_child ANTES do queue_free: queue_free só apaga no fim do quadro, e
@@ -277,8 +285,9 @@ func _atualizar() -> void:
 
 	for no in _marcas.get_children():
 		# a cada quadro: a interrogação da lanterna some no instante em que ela
-		# é pega, mesmo com o menu aberto por cima
-		if not MapaDados.ponto_visivel(no.get_meta("ponto", {})):
+		# é pega, mesmo com o menu aberto por cima. Com névoa entra a segunda
+		# pergunta: o nome da sala não pode aparecer antes da sala.
+		if not _ponto_visivel(no.get_meta("ponto", {})):
 			no.visible = false
 			continue
 		var m: Vector2 = no.get_meta("mundo")
@@ -298,6 +307,12 @@ func _atualizar() -> void:
 	if _dados.nome != "":
 		escala = "%s  ·  %s" % [tr(_dados.nome), escala]
 	_escala.text = escala
+
+
+func _ponto_visivel(ponto: Dictionary) -> bool:
+	if _nevoa != null:
+		return _nevoa.ponto_visivel(ponto)
+	return MapaDados.ponto_visivel(ponto)
 
 
 ## Uma legenda ou a outra, nunca as duas: mostra a do dispositivo que o

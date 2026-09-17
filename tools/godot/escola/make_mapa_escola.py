@@ -42,6 +42,22 @@ Tres coisas so' existem neste mapa, e as tres sao a regra de jogo desta fase:
     voltas atras de um caminho que o mapa promete e o jogo nao tem.
 
 ==============================================================================
+AS ZONAS DE DESCOBERTA
+
+O mapa nasce APAGADO e vai acendendo conforme o jogador anda (ver
+`scripts/ui/mapa_nevoa.gd`). Quem diz o que acende de uma vez e o que acende
+aos poucos e' a lista `zonas` que este script escreve no JSON:
+
+  - "sala": acende INTEIRA quando o jogador entra. Entrou na sala, viu a sala;
+  - "gradual": acende so' em volta do jogador, recortado na propria zona. E' o
+    caso dos tres corredores e do patio — corredor que aparece inteiro de uma
+    vez nao e' corredor descoberto, e' corredor entregue.
+
+Os dois NICHOS dos buracos sao zona "sala" com `gatilho` na sala de dentro:
+eles ficam FORA do predio e o jogador nunca pisa neles, mas sao a saida da
+fase — entrar no deposito tem de mostrar onde e' o rombo.
+
+==============================================================================
 COMO A PLANTA DO PORAO E' DESENHADA
 
 Direto da grade de celulas de `porao.py` — a MESMA que vira geometria. Uma
@@ -106,6 +122,25 @@ C_BOCA      = (196, 132, 62)
 # exata da parede sumia no contorno. Ela transborda 15 cm pra cada lado.
 FOLGA_JANELA = 0.15
 BORDA = 0.14           # espessura, em metros, da linha de contorno do volume
+
+# --------------------------------------------------------------------------
+# NEVOA (o mapa que acende andando)
+#
+# `raio_m` aqui e' o raio de quem esta' FORA de qualquer zona — porta, soleira,
+# o nicho do buraco. Pequeno de proposito: ali o disco nao tem parede que o
+# recorte, e um raio grande vazaria pra dentro de sala que o jogador nao viu.
+#
+# `margem_m` e' o quanto cada carimbo transborda pra fora da zona, pra a PAREDE
+# acender junto com o comodo. Parede tem 0,35: com 0,45 ela acende inteira e
+# sobra 0,10 pro comodo vizinho — menos de um pixel da mascara.
+# --------------------------------------------------------------------------
+NEVOA_RES = 256
+NEVOA_RAIO_SOLTO = 5.0
+NEVOA_MARGEM = 0.45
+# Corredor: generoso de proposito. O recorte na zona segura o vazamento, entao
+# um raio grande num corredor so' acende corredor — pra frente e pra tras.
+NEVOA_RAIO_CORREDOR = 11.0
+NEVOA_RAIO_PATIO = 16.0
 
 
 # ==========================================================================
@@ -202,6 +237,9 @@ def build_escola():
         "nome": "MAP_NOME_ESCOLA",
         "mundo_x0": round(X0, 2), "mundo_z0": round(Z0, 2),
         "tamanho_m": round(TAM, 2), "resolucao": RES,
+        "nevoa": {"resolucao": NEVOA_RES, "raio_m": NEVOA_RAIO_SOLTO,
+                  "margem_m": NEVOA_MARGEM},
+        "zonas": _zonas_escola(),
         "pontos": _pontos_escola(),
     }
     caminho = os.path.join(ASSETS, "escolamap.json")
@@ -234,6 +272,57 @@ def _buraco(dr, cx, ppm, b):
         caixa = (b["x"], b["z"] - meia, b["x"] + dx * fundo, b["z"] + meia)
     dr.rectangle(cx(*caixa), fill=C_BURACO, outline=C_BURACO_BRD,
                  width=max(1, int(0.18 * ppm)))
+
+
+def _zonas_escola():
+    """O que acende de uma vez e o que acende aos poucos.
+
+    Sala e' "sala" e area de circulacao e' "gradual" — a divisao ja' existe na
+    `planta.py` (`_sala` x `_area`), entao nao ha' lista digitada aqui: sala
+    nova na planta ja' nasce com zona.
+    """
+    zonas = []
+    for s in P.salas():
+        zonas.append({"id": s["ident"], "tipo": "sala",
+                      "x0": s["x0"], "z0": s["z0"],
+                      "x1": s["x1"], "z1": s["z1"]})
+    for a in P.areas():
+        raio = NEVOA_RAIO_PATIO if a["tipo"] == "patio" else NEVOA_RAIO_CORREDOR
+        zonas.append({"id": a["ident"], "tipo": "gradual", "raio_m": raio,
+                      "x0": a["x0"], "z0": a["z0"],
+                      "x1": a["x1"], "z1": a["z1"]})
+
+    # Os dois nichos: ficam FORA do predio, o jogador nunca pisa neles, e sao a
+    # unica saida da fase. Zona "sala" com gatilho na sala de dentro — mesmo
+    # raciocinio do altar da igreja: nao da' pra andar ate' la', mas chegar
+    # perto ja' e' ter visto.
+    for b in (P.BURACO_ENTRADA, P.BURACO_SAIDA):
+        sala = P.por_ident(b["sala"])
+        if sala is None:
+            continue
+        ax, az, bx, bz = _nicho(b)
+        zonas.append({"id": "nicho_" + b["ident"], "tipo": "sala",
+                      "x0": round(min(ax, bx), 2), "z0": round(min(az, bz), 2),
+                      "x1": round(max(ax, bx), 2), "z1": round(max(az, bz), 2),
+                      "gatilho": {"x0": sala["x0"], "z0": sala["z0"],
+                                  "x1": sala["x1"], "z1": sala["z1"]}})
+    return zonas
+
+
+def _nicho(b):
+    """(x0, z0, x1, z1) do nicho de terra atras de um buraco.
+
+    As mesmas contas do `_buraco`, que e' quem o DESENHA — e por isso elas
+    moram aqui uma vez so': nicho desenhado num lugar e aceso noutro seria um
+    retangulo claro em cima de terra preta.
+    """
+    dx, dz = {"n": (0.0, -1.0), "s": (0.0, 1.0),
+              "o": (-1.0, 0.0), "l": (1.0, 0.0)}[b["lado"]]
+    meia = P.BURACO_L * 0.5 + 0.55
+    fundo = 3.40
+    if dz:
+        return (b["x"] - meia, b["z"], b["x"] + meia, b["z"] + dz * fundo)
+    return (b["x"], b["z"] - meia, b["x"] + dx * fundo, b["z"] + meia)
 
 
 def _pontos_escola():
@@ -341,11 +430,34 @@ def build_porao():
         "nome": "MAP_NOME_PORAO",
         "mundo_x0": round(X0, 2), "mundo_z0": round(Z0, 2),
         "tamanho_m": round(TAM, 2), "resolucao": RES,
+        # No tunel a nevoa anda quase sempre SOLTA (so' a camara e' zona), e e'
+        # por isso que o raio de fora de zona aqui e' maior que o da escola:
+        # ele e' a regra, nao a excecao. 6,5 m mostra a curva que vem e nao
+        # alcanca o ramo vizinho — o mais perto deles passa a 10 m.
+        "nevoa": {"resolucao": NEVOA_RES, "raio_m": 6.5, "margem_m": 1.0},
+        "zonas": _zonas_porao(),
         "pontos": _pontos_porao(),
     }
     caminho = os.path.join(ASSETS, "poraomap.json")
     json.dump(meta, open(caminho, "w", encoding="utf-8"), indent=1)
     return meta, png, caminho
+
+
+def _zonas_porao():
+    """Uma zona so': a camara.
+
+    O resto do porao e' tunel de 2 m de largura, e tunel nao tem "entrou,
+    viu" — tem curva. La' a nevoa anda solta, no raio do bloco `nevoa`.
+
+    A camara e' o unico espaco em que o jogador PARA e olha em volta, e e' a
+    referencia dele pra saber se ja' passou da metade: acende inteira. O
+    retangulo e' o cheio da camara (os cantos dela sao comidos em diagonal),
+    o que acende um naco de terra nas quinas — de graca, e' terra igual a'
+    de fora.
+    """
+    x0, z0, x1, z1 = PO.CAMARA
+    return [{"id": "camara", "tipo": "sala",
+             "x0": x0, "z0": z0, "x1": x1, "z1": z1}]
 
 
 def _pontos_porao():

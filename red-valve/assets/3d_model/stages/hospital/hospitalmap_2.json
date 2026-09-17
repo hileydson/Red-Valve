@@ -5,6 +5,156 @@
  "mundo_z0": -2.5,
  "tamanho_m": 73.0,
  "resolucao": 2048,
+ "nevoa": {
+  "resolucao": 256,
+  "raio_m": 5.0,
+  "margem_m": 0.45
+ },
+ "zonas": [
+  {
+   "id": "arquivo_medico",
+   "tipo": "sala",
+   "x0": 0.35,
+   "z0": 0.35,
+   "x1": 16.0,
+   "z1": 12.05
+  },
+  {
+   "id": "quarto_201",
+   "tipo": "sala",
+   "x0": 0.35,
+   "z0": 18.35,
+   "x1": 12.8,
+   "z1": 28.0
+  },
+  {
+   "id": "quarto_202",
+   "tipo": "sala",
+   "x0": 13.15,
+   "z0": 18.35,
+   "x1": 25.6,
+   "z1": 28.0
+  },
+  {
+   "id": "quarto_203",
+   "tipo": "sala",
+   "x0": 25.95,
+   "z0": 18.35,
+   "x1": 38.0,
+   "z1": 28.0
+  },
+  {
+   "id": "psiquiatria",
+   "tipo": "sala",
+   "x0": 0.35,
+   "z0": 33.95,
+   "x1": 16.0,
+   "z1": 43.6
+  },
+  {
+   "id": "terapia",
+   "tipo": "sala",
+   "x0": 16.35,
+   "z0": 33.95,
+   "x1": 32.0,
+   "z1": 43.6
+  },
+  {
+   "id": "quarto_204",
+   "tipo": "sala",
+   "x0": 0.35,
+   "z0": 54.0,
+   "x1": 11.0,
+   "z1": 64.05
+  },
+  {
+   "id": "quarto_205",
+   "tipo": "sala",
+   "x0": 11.35,
+   "z0": 54.0,
+   "x1": 22.0,
+   "z1": 64.05
+  },
+  {
+   "id": "centro_cirurgico_2",
+   "tipo": "sala",
+   "x0": 22.35,
+   "z0": 54.0,
+   "x1": 33.0,
+   "z1": 64.05
+  },
+  {
+   "id": "observacao",
+   "tipo": "sala",
+   "x0": 33.35,
+   "z0": 54.0,
+   "x1": 44.0,
+   "z1": 64.05
+  },
+  {
+   "id": "saguao_norte",
+   "tipo": "gradual",
+   "raio_m": 15.0,
+   "x0": 16.35,
+   "z0": 0.35,
+   "x1": 55.65,
+   "z1": 12.4
+  },
+  {
+   "id": "corredor2_norte",
+   "tipo": "gradual",
+   "raio_m": 12.0,
+   "x0": 0.35,
+   "z0": 12.4,
+   "x1": 55.65,
+   "z1": 18.0
+  },
+  {
+   "id": "corredor2_central",
+   "tipo": "gradual",
+   "raio_m": 12.0,
+   "x0": 0.35,
+   "z0": 28.35,
+   "x1": 55.65,
+   "z1": 33.6
+  },
+  {
+   "id": "saguao_sul",
+   "tipo": "gradual",
+   "raio_m": 15.0,
+   "x0": 0.35,
+   "z0": 43.95,
+   "x1": 55.65,
+   "z1": 53.65
+  },
+  {
+   "id": "galeria_m1",
+   "tipo": "gradual",
+   "raio_m": 15.0,
+   "x0": 38.35,
+   "z0": 18.0,
+   "x1": 55.65,
+   "z1": 28.35
+  },
+  {
+   "id": "galeria_m2",
+   "tipo": "gradual",
+   "raio_m": 15.0,
+   "x0": 32.35,
+   "z0": 33.6,
+   "x1": 55.65,
+   "z1": 43.95
+  },
+  {
+   "id": "galeria_sul",
+   "tipo": "gradual",
+   "raio_m": 15.0,
+   "x0": 44.35,
+   "z0": 53.65,
+   "x1": 55.65,
+   "z1": 64.05
+  }
+ ],
  "pontos": [
   {
    "id": "arquivo_medico",

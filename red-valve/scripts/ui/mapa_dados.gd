@@ -20,6 +20,13 @@ var x0: float = 0.0
 var z0: float = 0.0
 var tam: float = 1.0
 var pontos: Array = []
+## Retangulos que dizem o que acende de uma vez e o que acende aos poucos
+## quando o jogador anda. Vazio = este mapa nasce todo aceso (a cidade).
+## Quem os usa e o MapaNevoa; aqui eles so passam.
+var zonas: Array = []
+## Ajustes da nevoa desta planta: resolucao da mascara, raio fora de zona e
+## quanto cada carimbo transborda. Vazio = planta sem nevoa.
+var nevoa: Dictionary = {}
 
 
 func _init(caminho: String = CAMINHO) -> void:
@@ -36,7 +43,14 @@ func _init(caminho: String = CAMINHO) -> void:
 	z0 = float(d.get("mundo_z0", 0.0))
 	tam = float(d.get("tamanho_m", 1.0))
 	pontos = d.get("pontos", [])
+	zonas = d.get("zonas", [])
+	nevoa = d.get("nevoa", {})
 	ok = tam > 0.0
+
+
+## Esta planta comeca apagada e vai sendo descoberta?
+func tem_nevoa() -> bool:
+	return not nevoa.is_empty()
 
 
 ## Mundo (X, Z) -> UV da textura.

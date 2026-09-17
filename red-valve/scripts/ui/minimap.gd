@@ -12,6 +12,11 @@ extends CanvasLayer
 ## custa dois segundos. No caso da igreja tem um motivo a mais: é um interior
 ## com teto, e uma câmera de cima só veria a abóbada.
 ##
+## Nos INTERIORES a prancha começa apagada e vai acendendo conforme o jogador
+## anda: quem guarda o que já foi descoberto é o `MapaNevoa`, e este nó é quem
+## o alimenta — ele já tem a posição do player a cada quadro. Planta sem bloco
+## `nevoa` no JSON (o mapa da cidade) nasce toda acesa, como sempre foi.
+##
 ## O grupo "mapa_cidade" é como o menu descobre que esta fase tem mapa — e,
 ## desde o mapa do interior da igreja, também QUAL mapa. Este nó é o perfil de
 ## mapa da cena: o JSON, a textura e as faixas de zoom saem daqui, e a aba MAPA
@@ -84,6 +89,8 @@ var _giro: float = 0.0
 var _json_terreo: String = ""
 var _textura_terreo: Texture2D = null
 var _no_andar_2: bool = false
+## A descoberta desta prancha, ou null quando a planta não tem névoa.
+var _nevoa: MapaNevoa = null
 
 
 func _ready() -> void:
@@ -111,8 +118,30 @@ func _ready() -> void:
 	_mat.set_shader_parameter("raio_uv", (alcance_m * 0.5) / _dados.tam)
 	_json_terreo = dados_json
 	_textura_terreo = textura_mapa
+	_ligar_nevoa()
 	_criar_marcadores()
 	visible = false
+
+
+## Sair da fase grava o que foi descoberto.
+##
+## Aqui, e não na porta de cada prédio: é o mesmo caminho para a igreja, para
+## a escola, para o porão e para os dois andares do hospital, e vale também
+## para quem sai por onde ninguém planejou. `gravar_mapas` não mexe no
+## checkpoint — ele só carimba o mapa no arquivo que já existe.
+func _exit_tree() -> void:
+	if _nevoa != null and MapaNevoa.ha_novidade():
+		SaveManager.gravar_mapas()
+
+
+## Liga o shader na máscara desta prancha. Chamado no _ready e a cada troca
+## de andar: cada prancha tem a SUA máscara, senão descobrir o térreo
+## acenderia o segundo andar do hospital de brinde.
+func _ligar_nevoa() -> void:
+	_nevoa = MapaNevoa.para(_dados, dados_json)
+	_mat.set_shader_parameter("nevoa_ligada", _nevoa != null)
+	if _nevoa != null:
+		_mat.set_shader_parameter("nevoa", _nevoa.tex)
 
 
 ## Losango sem rótulo: nome escrito não cabe em 190 px. A exceção é a
@@ -180,6 +209,8 @@ func _process(delta: float) -> void:
 
 	var p := _player.global_position
 	_ver_andar(p.y)
+	if _nevoa != null:
+		_nevoa.visitar(p.x, p.z)
 	var uv := _dados.uv(p.x, p.z)
 
 	# -rotation.y, e não +. Um nó com rotation.y = θ olha para
@@ -226,6 +257,7 @@ func _trocar_prancha(caminho: String, textura: Texture2D) -> void:
 		textura_mapa = textura
 		_mat.set_shader_parameter("mapa", textura)
 	_mat.set_shader_parameter("raio_uv", (alcance_m * 0.5) / _dados.tam)
+	_ligar_nevoa()
 	# remove_child ANTES do queue_free: o queue_free só apaga no fim do quadro,
 	# e até lá os marcadores do andar velho continuariam na lista que
 	# `_pos_marcas` percorre — o mapa de cima abriria com os pontos de baixo.
@@ -245,8 +277,10 @@ func _pos_marcas(centro: Vector2) -> void:
 	var c := cos(-_giro)
 	for no in _marcas.get_children():
 		# a cada quadro, e não uma vez só: a interrogação da lanterna some no
-		# mesmo instante em que ela é pega, sem sair e voltar para a cena
-		if not MapaDados.ponto_visivel(no.get_meta("ponto", {})):
+		# mesmo instante em que ela é pega, sem sair e voltar para a cena.
+		# Com névoa, a pergunta passa por ela: ponto em cima de planta
+		# apagada entregaria justo o que ainda não foi descoberto.
+		if not _ponto_visivel(no.get_meta("ponto", {})):
 			no.visible = false
 			continue
 		var m: Vector2 = no.get_meta("mundo")
@@ -257,3 +291,9 @@ func _pos_marcas(centro: Vector2) -> void:
 			continue
 		no.visible = true
 		no.position = meio + q * meio
+
+
+func _ponto_visivel(ponto: Dictionary) -> bool:
+	if _nevoa != null:
+		return _nevoa.ponto_visivel(ponto)
+	return MapaDados.ponto_visivel(ponto)

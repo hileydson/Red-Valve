@@ -31,6 +31,12 @@ var tutorial_amuleto_visto: bool = false
 ## Ids dos arquivos de texto (aba ARQUIVOS do menu) que o jogador ja encontrou.
 ## O conteudo mora em ArquivosDados; aqui so fica o que ja foi liberado.
 var arquivos_desbloqueados: Array = []
+## Que parte do mapa de cada interior ja foi descoberta, por caminho do JSON
+## da planta: {"res://...escolamap.json": {"n": 256, "m": "<base64>", ...}}.
+##
+## A mascara em si e do MapaNevoa; aqui ela so fica guardada entre uma visita
+## e outra. Ver scripts/ui/mapa_nevoa.gd.
+var mapas_descobertos: Dictionary = {}
 var iron_rusks_pending: int = 0 # Ganho na luta atual, ainda não somado visualmente no HUD
 var iron_rusks_display: int = 0 # Valor mostrado no canto da tela, só sobe com a animação de tally
 
@@ -292,6 +298,10 @@ func save_game(scene_path: String = ""):
 	if temp_stage != "":
 		current_stage = temp_stage
 		
+	# A mascara viva vence a guardada: o jogador pode ter descoberto meio
+	# predio desde o ultimo save, e quem tem isso na mao e o MapaNevoa.
+	MapaNevoa.recolher(mapas_descobertos)
+
 	var save_data = {
 		"current_stage": current_stage,
 		"prolog_finished": prolog_finished,
@@ -305,7 +315,8 @@ func save_game(scene_path: String = ""):
 		"iron_rusks": iron_rusks,
 		"arquivos_desbloqueados": arquivos_desbloqueados,
 		"tutorial_amuleto_visto": tutorial_amuleto_visto,
-		"stage_1_saved_position": stage_1_saved_position
+		"stage_1_saved_position": stage_1_saved_position,
+		"mapas_descobertos": mapas_descobertos
 	}
 	
 	save_config() # Sempre salvar config junto
@@ -360,6 +371,10 @@ func load_game(slot_id: int = -1) -> bool:
 				arquivos_desbloqueados = data.get("arquivos_desbloqueados", [])
 				tutorial_amuleto_visto = data.get("tutorial_amuleto_visto", false)
 				stage_1_saved_position = data.get("stage_1_saved_position", {})
+				mapas_descobertos = data.get("mapas_descobertos", {})
+				# As mascaras vivas sao do save ANTERIOR: sem isto, a escola
+				# descoberta no slot 1 apareceria descoberta no slot 2.
+				MapaNevoa.esquecer_tudo()
 
 				# Conserto de save gravado dentro da arena. Ate a trava do
 				# `_pode_virar_checkpoint` existir, entrar na arena carimbava o
@@ -401,6 +416,23 @@ func reset_progress() -> void:
 	tutorial_amuleto_visto = false
 	stage_1_saved_position = {}
 	spawn_from_saved_position = false
+	mapas_descobertos = {}
+	MapaNevoa.esquecer_tudo()
+
+
+## Grava o que ja foi descoberto dos mapas SEM mexer no checkpoint.
+##
+## Passar `current_stage` de volta e o que faz isso: `save_game` so troca a
+## cena gravada quando recebe outra ou quando decide pela cena atual. Quem
+## chama e o minimapa, ao sair do predio — descobrir mapa e progresso, e sair
+## da escola nao pode marcar a escola como o lugar pra onde o "Carregar" leva.
+func gravar_mapas() -> void:
+	# Sem checkpoint nao ha arquivo pra carimbar, e gravar um com
+	# "current_stage" vazio deixaria no slot um save que existe e nao carrega.
+	# A mascara nao se perde: ela fica viva na sessao e entra no proximo save.
+	if current_stage == "":
+		return
+	save_game(current_stage)
 
 
 

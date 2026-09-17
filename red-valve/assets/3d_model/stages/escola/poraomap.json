@@ -5,6 +5,21 @@
  "mundo_z0": -3.5,
  "tamanho_m": 89.0,
  "resolucao": 2048,
+ "nevoa": {
+  "resolucao": 256,
+  "raio_m": 6.5,
+  "margem_m": 1.0
+ },
+ "zonas": [
+  {
+   "id": "camara",
+   "tipo": "sala",
+   "x0": 24.0,
+   "z0": 36.0,
+   "x1": 48.0,
+   "z1": 54.0
+  }
+ ],
  "pontos": [
   {
    "id": "boca_entrada",
