@@ -58,8 +58,8 @@ const ABERTURA := PI * 0.5
 ## lento em cima de quem corre vira uma folha fechando na cara do jogador (ele
 ## percorre os 1,2 m da área em 0,34 s correndo), e o rápido em cima de quem
 ## anda vira a porta antiga, que abria como se fosse de papel.
-const TEMPO_ABRIR_LENTO := 1.10
-const TEMPO_ABRIR_RAPIDO := 0.45
+const TEMPO_ABRIR_LENTO := 1.60
+const TEMPO_ABRIR_RAPIDO := 0.55
 ## As duas pontas da régua de velocidade. A de cima é a corrida DE INTERIOR
 ## (player.gd: RUN_SPEED_INTERIOR), que é a única corrida que existe aqui.
 const VEL_ANDANDO := 1.0
@@ -79,17 +79,27 @@ const NA_SOLEIRA := 0.25
 ## girando. O empurrão espera ele CHEGAR.
 ##
 ## `DISTANCIA_PARADA` é onde o corpo dele trava: raio da cápsula do jogador
-## (0,674) mais a meia espessura da folha. `ANTECEDENCIA` são os poucos
-## centésimos antes disso — e vão multiplicados pela velocidade, senão quem
-## corre bate na folha fechada e quem anda vê a porta abrir cedo demais.
+## (0,674) mais a meia espessura da folha. `ANTECEDENCIA` é o pedaço de
+## caminhada ANTES disso em que o empurrão já vale — e vai multiplicada pela
+## velocidade, senão quem corre bate na folha fechada. Ela não antecipa a
+## FOLHA, só a MÃO: quem atrasa a folha é a `FRACAO_DA_APROXIMACAO`.
 const DISTANCIA_PARADA := 0.72
-const ANTECEDENCIA := 0.10
-## A folha só começa a girar depois que a mão saiu. Nunca mais do que o tempo
-## que falta pro jogador chegar — atrasar além disso é bater na porta.
-const ATRASO_DA_FOLHA := 0.12
+const ANTECEDENCIA := 0.30
+## A folha só começa a girar depois que a mão saiu — este é o teto dessa
+## espera, em segundos.
+const ATRASO_DA_FOLHA := 0.38
+## E quanto da caminhada até a folha ela deixa passar antes de começar. Quase
+## toda: a mão (que sobe em 0,14 s) já está há tempo na madeira quando a
+## folha cede. Subir mais que isto só faz a folha ceder DEPOIS do encosto, e aí
+## ele para na porta em vez de empurrá-la.
+##
+## Preso à FRAÇÃO, e não a um tempo fixo, o corredor continua servido: como a
+## ANTECEDENCIA já multiplica pela velocidade, o tempo até o encosto é o mesmo
+## andando ou correndo — o que muda é só a distância.
+const FRACAO_DA_APROXIMACAO := 0.85
 ## Altura e duração do gesto da mão.
 const ALTURA_MAO := 1.05
-const TEMPO_MAO := 0.45
+const TEMPO_MAO := 0.60
 ## Quanto tempo a porta fica aberta antes de se fechar sozinha.
 const ESPERA_FECHAR := 5.0
 ## Se o jogador estiver mais perto que isto da dobradiça na hora de fechar, a
@@ -183,7 +193,7 @@ func _atraso_da_folha() -> float:
 		return 0.0
 	var v := maxf(_velocidade_do_player().length(), 0.1)
 	var falta := maxf(absf(to_local(_player.global_position).z) - DISTANCIA_PARADA, 0.0)
-	return minf(ATRASO_DA_FOLHA, falta / v)
+	return minf(ATRASO_DA_FOLHA, falta / v * FRACAO_DA_APROXIMACAO)
 
 
 ## Manda o Maycow esticar o braço até a folha, na altura da maçaneta e no
