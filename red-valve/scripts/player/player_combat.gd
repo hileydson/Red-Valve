@@ -278,6 +278,175 @@ func shoot(input: Variant) -> void:
 		await get_tree().create_timer(0.56).timeout
 		player.can_shoot_again = true
 
+# =========================================================================
+# TIRO EM TERCEIRA PESSOA (MAYCOW NORMAL)
+# =========================================================================
+# O `shoot()` acima é da primeira pessoa e depende dela inteira: a mão 3D na
+# câmera, o sprite 2D da pistola, o `ray_cast_3d` filho da `Camera3D` e o bullet
+# time do tiro no coração. Nada disso existe no Maycow normal, que segura a arma
+# na mão de verdade (ver `player_gun_hold.gd`) e mira por cima do ombro.
+#
+# Então é um caminho próprio, e curto: gasta bala, clarão na boca do cano, som,
+# tranco na câmera, cápsula no chão, raio no centro da tela.
+
+## Cadência. Um pouco mais lenta que a da primeira pessoa: aqui ele está de pé
+## no meio da rua, sem o embalo do combate da arena.
+const TEMPO_ENTRE_TIROS := 0.62
+
+## Quanto tempo o clarão da boca do cano fica aceso.
+const TEMPO_CLARAO := 0.06
+
+## Recarga em terceira pessoa. O gesto é do `player_gun_hold.gd` (a arma recolhe
+## pro peito, a mão esquerda desce ao cinto, busca o pente e encaixa), e este é
+## o tempo que ele tem pra acontecer.
+const TEMPO_RECARGA_3P := 1.5
+## Em que ponto do gesto o pente entra — é onde o som de encaixe toca.
+const RECARGA_MOMENTO_ENCAIXE := 0.72
+
+## Até onde a bala vai, em metros. É irmão do `ALCANCE_MIRA_ARMA` do player.gd,
+## mas não é o mesmo número por acaso: lá é a distância em que o BRAÇO aponta,
+## aqui é o alcance do tiro. Um pode mudar sem o outro.
+const ALCANCE_TIRO_3P := 90.0
+
+var _clarao: OmniLight3D = null
+var _recarregando_3p: bool = false
+
+
+func atirar_terceira_pessoa() -> void:
+	if not SaveManager.is_equipped("pistol"): return
+	if not player.can_shoot_again or player.is_reloading: return
+	if player.clip_pistol_ammo <= 0:
+		# Pente vazio: quem avisa é o próprio silêncio mais o contador zerado no
+		# canto da tela. Recarregar é do jogador.
+		return
+
+	var gun_hold = player._gun_hold()
+
+	player.clip_pistol_ammo -= 1
+	player.update_ammo_ui()
+	player.can_shoot_again = false
+
+	player.gun_shot.play()
+	GlobalUtils.shake_camera(0.05, 0.08)
+	GlobalUtils.vibrate_controller(Input, 0.5, 0.0, 0.1)
+
+	if gun_hold and gun_hold.tem_arma_na_mao():
+		_piscar_clarao(gun_hold.boca_do_cano())
+		_soltar_capsula(gun_hold.boca_do_cano())
+
+	_raio_do_tiro_3p()
+
+	await get_tree().create_timer(TEMPO_ENTRE_TIROS).timeout
+	player.can_shoot_again = true
+
+
+## Recarga do Maycow normal.
+##
+## A `reload()` acima exige `is_first_person` e toca a animação da mão em frente
+## à câmera — coisas que aqui não existem. O efeito no inventário é o mesmo: o
+## que falta no pente sai da caixa de balas, e a caixa é a mesma dos dois Maycows
+## (SaveManager.ITENS_COMPARTILHADOS).
+func recarregar_terceira_pessoa() -> void:
+	if _recarregando_3p or player.is_reloading: return
+	if not SaveManager.is_equipped("pistol"): return
+
+	var total = SaveManager.get_item_amount("pistol_ammo")
+	if total <= 0 or player.clip_pistol_ammo >= player.max_clip_pistol:
+		return
+
+	_recarregando_3p = true
+	player.is_reloading = true
+
+	# O gesto. Roda mesmo sem estar mirando: quem recarrega levanta a arma pra
+	# fazer isso, de mira aberta ou não.
+	var gun_hold = player._gun_hold()
+	if gun_hold:
+		gun_hold.recarregar(TEMPO_RECARGA_3P)
+
+	player.load_gun.play()   # o pente saindo
+	await get_tree().create_timer(TEMPO_RECARGA_3P * RECARGA_MOMENTO_ENCAIXE).timeout
+	player.gun_load.play()   # o pente entrando, no quadro em que a mão encaixa
+	await get_tree().create_timer(
+		TEMPO_RECARGA_3P * (1.0 - RECARGA_MOMENTO_ENCAIXE)).timeout
+
+	# O pente só enche no FIM: interromper a cena no meio (morte, cutscene) não
+	# pode devolver balas que a animação ainda não tinha terminado de pôr.
+	var faltam = player.max_clip_pistol - player.clip_pistol_ammo
+	var tiradas = mini(faltam, SaveManager.get_item_amount("pistol_ammo"))
+	if tiradas > 0:
+		SaveManager.remove_item_amount("pistol_ammo", tiradas)
+		player.clip_pistol_ammo += tiradas
+		player.update_ammo_ui()
+
+	player.is_reloading = false
+	_recarregando_3p = false
+
+
+## O raio sai da CÂMERA, não do cano: é o centro da tela que o jogador usou para
+## mirar. O cano aponta para o mesmo ponto (o braço inteiro aponta para ele), só
+## que de um palmo ao lado — usar o cano como origem faria o tiro passar raspando
+## em quinas que na tela estavam livres.
+func _raio_do_tiro_3p() -> void:
+	var cam = player.get_viewport().get_camera_3d()
+	if cam == null: return
+
+	var origem: Vector3 = cam.global_position
+	var frente: Vector3 = -cam.global_transform.basis.z
+	var consulta := PhysicsRayQueryParameters3D.create(origem,
+		origem + frente * ALCANCE_TIRO_3P)
+	consulta.collision_mask = 12
+	consulta.collide_with_areas = true
+	consulta.exclude = [player.get_rid()]
+
+	var toque := player.get_world_3d().direct_space_state.intersect_ray(consulta)
+	if toque.is_empty(): return
+
+	var alvo = toque.get("collider")
+	if alvo == null or not alvo.has_method("take_damage"): return
+
+	alvo.take_damage(player.damage_pistol)
+	if alvo.is_in_group("enemies"):
+		spawn_blood_raycast(toque["position"], toque["normal"])
+
+
+## Clarão curto na boca do cano. É uma luz só, com alcance pequeno e vida de
+## três quadros: o renderer do projeto é o mobile, que tem teto de 8 luzes por
+## malha, e uma luz grande aqui apagaria outra do cenário sem avisar.
+func _piscar_clarao(ponto: Vector3) -> void:
+	if not is_instance_valid(_clarao):
+		_clarao = OmniLight3D.new()
+		_clarao.light_color = Color(1.0, 0.82, 0.45)
+		_clarao.light_energy = 6.0
+		_clarao.omni_range = 4.0
+		_clarao.shadow_enabled = false
+		_clarao.visible = false
+		_clarao.top_level = true
+		player.add_child(_clarao)
+
+	_clarao.global_position = ponto
+	_clarao.visible = true
+	await get_tree().create_timer(TEMPO_CLARAO).timeout
+	if is_instance_valid(_clarao):
+		_clarao.visible = false
+
+
+func _soltar_capsula(ponto: Vector3) -> void:
+	if not player.capsula_scene or not is_inside_tree(): return
+	var cam = player.get_viewport().get_camera_3d()
+	if cam == null: return
+
+	var capsula = player.capsula_scene.instantiate()
+	get_tree().current_scene.add_child(capsula)
+	capsula.add_collision_exception_with(player)
+	capsula.global_position = ponto
+	capsula.global_rotation = cam.global_rotation
+	# Sai para a direita e para cima, como em toda pistola de ferrolho.
+	var direcao = cam.global_transform.basis * Vector3(1.0, 1.0, 0.0)
+	capsula.apply_central_impulse(direcao * randf_range(1.5, 2.2))
+	capsula.apply_torque(Vector3(randf_range(-5, 5), randf_range(-5, 5),
+		randf_range(-5, 5)))
+
+
 func raycast_process_shoot() -> void:
 	if player.ray_cast_3d.is_colliding():
 		var target = player.ray_cast_3d.get_collider()
@@ -781,6 +950,10 @@ func update_equipment_visuals() -> void:
 			player.hand_with_pistol.visible = SaveManager.is_equipped("pistol")
 		else:
 			player.hand_with_pistol.visible = false
+	# A arma na mão do Maycow normal não precisa de nada aqui: o
+	# `player_gun_hold.gd` lê o equipamento todo quadro. O contador de balas,
+	# sim — ele é HUD, e só é reescrito quando alguém pede.
+	player.update_ammo_ui()
 
 func _on_area_3d_body_entered(body: Node3D) -> void:
 	if player.is_magic_attacking:

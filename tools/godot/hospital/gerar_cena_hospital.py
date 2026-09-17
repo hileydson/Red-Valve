@@ -906,6 +906,9 @@ def escrever_cena(cena_gltf, setores, colisoes, props, portas, plano_luz,
     # ---- elevador
     _emitir_elevador(no, peca, forma, elevador, id_elev_gd)
 
+    # ---- o que esta' largado em cima do balcao da recepcao
+    _emitir_itens_do_balcao(no, forma, externo)
+
     # ---- navegacao
     no("NavigationRegion3D", tipo="NavigationRegion3D", pai=".",
        props_=[("navigation_mesh", 'SubResource("navmesh")'),
@@ -1015,6 +1018,140 @@ def _emitir_porta(no, peca, forma, d, id_script):
                ("collision_layer", "0"), ("monitorable", "false")])
     no("forma", tipo="CollisionShape3D", pai=caminho + "/area",
        props_=[("shape", 'SubResource("%s")' % ident)])
+
+
+# ==========================================================================
+# O QUE ESTA' EM CIMA DO BALCAO DA RECEPCAO
+# ==========================================================================
+# A pistola (The Negotiator) e a caixa de municao dela ficam no tampo do balcao
+# redondo do hall, uma de cada lado: a arma na face OESTE, que e' a que o
+# jogador encara ao entrar pela porta da rua, e a municao na face LESTE, do
+# outro lado — de proposito, pra ele ter de contornar o balcao.
+#
+# Os dois nascem aqui, e nao a mao no .tscn, porque esta cena e' regerada por
+# script: o que for arrastado no editor some na proxima geracao.
+#
+# A colisao do balcao e' uma caixa de 7,4 x 7,4 (maior que o circulo), entao o
+# jogador nunca encosta no tampo — ele para a pouco mais de um metro e pega o
+# item por cima do balcao, que e' exatamente como se pega algo num balcao.
+
+## Onde cada item pousa, em angulo no circulo do balcao (0 = norte, 90 = leste).
+## Oeste e' 270 e leste e' 90; com 16 segmentos os dois caem no MEIO de um
+## segmento do tampo, e nao na juncao entre dois.
+ITENS_BALCAO = [
+    {
+        "nome": "pistola_no_balcao",
+        "item": "pistol",
+        "quantidade": 1,
+        "prompt": "PROMPT_TAKE_PISTOL",
+        "texto": "PICKUP_PISTOL",
+        "repetido": "",
+        "modelo": "res://assets/3d_model/player/the_negotiator_V1/"
+                  "the_negotiator_v1.glb",
+        "angulo": 270.0,
+        # O .glb vem com 1,92 unidade de cano: 0,115 devolve os 22 cm de uma
+        # pistola de verdade.
+        "escala": 0.115,
+        # Deitada de lado no tampo, cano acompanhando a curva do balcao — assim
+        # o jogador que chega pela porta ve' a silhueta inteira dela, e nao a
+        # boca do cano.
+        "deitada": True,
+        "giro": -18.0,
+        # Meia espessura do modelo ja' escalado: e' o que tira a arma de dentro
+        # do tampo.
+        "apoio": 0.021,
+    },
+    {
+        "nome": "municao_no_balcao",
+        "item": "pistol_ammo",
+        "quantidade": 25,
+        "prompt": "PROMPT_TAKE_AMMO",
+        "texto": "PICKUP_AMMO",
+        "repetido": "PICKUP_AMMO_AGAIN",
+        "modelo": "res://assets/3d_model/player/the_negotiator_V1/"
+                  "cartridge/scene.gltf",
+        "angulo": 90.0,
+        # A caixa de municao ja' chega no tamanho certo (9,5 x 6,4 x 22,5 cm):
+        # as duas matrizes do Sketchfab dentro do .gltf fazem a conversao.
+        "escala": 1.0,
+        "deitada": False,
+        "giro": 14.0,
+        "apoio": 0.036,
+    },
+    # Segunda caixa, na face NORTE (angulo 180 = o lado de Z menor, o topo do
+    # mapa). Bala e' item que se pega a vida inteira, e uma
+    # so' nao deixa o jogador ver que a quantidade SOMA — com duas ele pega 25,
+    # olha o menu, pega mais 25 e ve' 50.
+    {
+        "nome": "municao_no_balcao_2",
+        "item": "pistol_ammo",
+        "quantidade": 25,
+        "prompt": "PROMPT_TAKE_AMMO",
+        "texto": "PICKUP_AMMO",
+        "repetido": "PICKUP_AMMO_AGAIN",
+        "modelo": "res://assets/3d_model/player/the_negotiator_V1/"
+                  "cartridge/scene.gltf",
+        "angulo": 180.0,
+        "escala": 1.0,
+        "deitada": False,
+        "giro": -26.0,
+        "apoio": 0.036,
+    },
+]
+
+
+def _emitir_itens_do_balcao(no, forma, externo):
+    id_script = externo("Script",
+                        "res://scripts/stages/hospital/item_de_balcao.gd")
+    hall = P.por_ident("hall_principal")
+    cx, cz = P.centro(hall)
+    topo = P.cota(hall["andar"]) + MOB.RECEPCAO_TOPO
+
+    for it in ITENS_BALCAO:
+        ang = math.radians(it["angulo"])
+        px = cx + math.sin(ang) * MOB.RECEPCAO_RAIO
+        pz = cz + math.cos(ang) * MOB.RECEPCAO_RAIO
+        no(it["nome"], tipo="Node3D", pai=".",
+           props_=[("transform", transform_pos((px, topo, pz))),
+                   ("script", 'ExtResource("%s")' % id_script)],
+           metas=[("id", '"hospital_%s"' % it["nome"]),
+                  ("item", '"%s"' % it["item"]),
+                  ("quantidade", "%d" % it["quantidade"]),
+                  ("prompt", '"%s"' % it["prompt"]),
+                  ("texto", '"%s"' % it["texto"]),
+                  ("repetido", '"%s"' % it["repetido"])])
+
+        giro = math.radians(it["giro"])
+        if it["deitada"]:
+            corpo = _deitado(giro, it["escala"], (0.0, it["apoio"], 0.0))
+        else:
+            corpo = transform_pos((0.0, it["apoio"], 0.0), giro, it["escala"])
+        no("modelo", pai=it["nome"],
+           instancia=externo("PackedScene", it["modelo"]),
+           props_=[("transform", corpo)])
+
+        # A area olha pra FORA do balcao (o jogador so' chega por fora), e nasce
+        # na altura do peito dele.
+        fx = math.sin(ang) * 0.9
+        fz = math.cos(ang) * 0.9
+        ident = forma(3.2, 2.6, 3.2)
+        no("area", tipo="Area3D", pai=it["nome"],
+           props_=[("transform", transform_pos((fx, 0.25, fz))),
+                   ("collision_layer", "0"), ("monitorable", "false")])
+        no("forma", tipo="CollisionShape3D", pai=it["nome"] + "/area",
+           props_=[("shape", 'SubResource("%s")' % ident)])
+
+
+def _deitado(giro_y, escala, pos):
+    """Objeto de pe' no .glb, deitado de lado no movel.
+
+    O modelo da pistola e' modelado em pe': X e' o cano (boca no -X), Y e' o
+    alto da corredica e Z e' a espessura. Deitar e' mandar a ESPESSURA pra cima:
+    o Z do modelo vira o Y do mundo, e o resto acompanha pra base continuar
+    direita (determinante 1, nada de peca espelhada).
+    """
+    c, s = math.cos(giro_y) * escala, math.sin(giro_y) * escala
+    return _matriz((s, 0.0, c), (c, 0.0, -s), (0.0, escala, 0.0), pos)
 
 
 def _emitir_elevador(no, peca, forma, arquivos, id_script):

@@ -164,6 +164,42 @@ a névoa solta, que acende a cabine e um naco do corredor em que ela abre.
   consome a flag no spawn e devolve o jogador ao tablado, de costas para a
   porta.
 
+## O que está em cima do balcão
+
+O balcão redondo da recepção (o círculo do mapa, no meio do hall) carrega os
+dois itens que o jogador **pega aqui e em nenhum outro lugar**:
+
+| Onde | Item | Prompt |
+| :--- | :--- | :--- |
+| face **oeste** (a que encara a porta da rua) | a pistola *The Negotiator* | `PROMPT_TAKE_PISTOL` |
+| face **leste** (do outro lado) | uma caixa de 25 balas | `PROMPT_TAKE_AMMO` |
+| face **norte** | outra caixa de 25 balas | `PROMPT_TAKE_AMMO` |
+
+Estão em lados diferentes de propósito: quem entra vê a arma de cara e precisa
+contornar o balcão para achar a munição. E são **duas** caixas de bala porque uma
+só não deixa o jogador perceber que a quantidade soma — com duas ele pega 25,
+olha o menu, pega mais 25 e vê 50.
+
+Os dois nascem em `gerar_cena_hospital.py` → `ITENS_BALCAO`, e o comportamento
+(prompt, `ui_accept`, tela de item obtido) é de `item_de_balcao.gd`, um script de
+nó — igual ao da porta e ao do elevador. Mexer no raio ou na altura do balcão
+não os deixa flutuando: as duas medidas moram em `mobilia.RECEPCAO_*` e são as
+mesmas que o móvel usa.
+
+A colisão do balcão é uma caixa de 7,4 x 7,4 m, maior que o círculo: o jogador
+para a pouco mais de um metro do tampo e pega o item **por cima** do balcão —
+que é como se pega algo num balcão.
+
+Cada objeto tem `id` próprio e o `SaveManager` guarda quais já foram recolhidos
+(`pickups_pegos`) — "já tenho bala" não responde se a **segunda** caixa ainda
+está lá. A checagem por inventário vale só para item único: é ela que faz um save
+antigo, que já tenha a arma, chegar aqui com aquele canto do balcão vazio.
+
+A tela de item obtido (modelo 3D girando, jogo parado) só aparece na **primeira**
+vez que aquele item entra no inventário. Da segunda em diante é um aviso curto no
+meio da tela (`PICKUP_AMMO_AGAIN`): parar o jogo para apresentar a mesma caixa de
+bala pela quinta vez seria castigo.
+
 ## Onde mexer em cada coisa
 
 | Arquivo | Assunto |
@@ -175,6 +211,7 @@ a névoa solta, que acende a cabine e um naco do corredor em que ela abre.
 | `navmesh.py` | malha de navegação + conferidor da planta |
 | `gltf.py` | escritor de glTF (funde caixas numa malha só) |
 | `gerar_cena_hospital.py` | monta o `.tscn` do interior |
+| `gerar_cena_hospital.py` → `ITENS_BALCAO` | a pistola e a munição em cima da recepção |
 | `exterior.py` | medidas da fachada, estado das janelas, o letreiro |
 | `gerar_cena_exterior.py` | monta o `.tscn` da casca de fora |
 | `gerar_cena_exterior.py` → `hospital_mapa.json` | a silhueta que vai pro mapa da cidade |

@@ -143,6 +143,15 @@ func _garantir_amuleto_no_inventario() -> void:
 		return   # ainda é o prólogo: o amuleto ainda não é dele
 	if not SaveManager.tem_item("amuleto"):
 		SaveManager.add_item("amuleto", 1)
+	# Chegou na cidade por um caminho que NÃO é a volta da arena (save carregado,
+	# saída de uma casa): se ficou equipamento de arena pendurado, desfaz aqui.
+	# A volta pela arena não passa por este `_ready` — aquela cena fica escondida
+	# na árvore e é `play_return_from_arena_effect` quem desfaz.
+	SaveManager.sair_da_arena()
+	# Mesma rede, um degrau adiante: ter o amuleto nao basta mais, ele precisa
+	# estar EQUIPADO pra mira funcionar. So' equipa se nao houver nada equipado —
+	# quem trocou pela pistola de proposito continua com a pistola.
+	SaveManager.garantir_equipamento_do_normal()
 
 
 func setup_player_spawn() -> void:

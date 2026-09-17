@@ -25,6 +25,10 @@ func _ready() -> void:
 	_play_entry_blur()
 	_spawn_arena_hurricane()
 	_spawn_fire_gargoyles()
+	# A arena devolve a ARMA. Pra chegar aqui o jogador teve de trocar pro
+	# amuleto (e' ele que leva os inimigos pra ca'), entao ele chegava
+	# desarmado justo onde a arma serve. A volta desfaz isto sozinha.
+	SaveManager.entrar_na_arena()
 	SaveManager.save_game()
 	SaveManager.iron_rusks_pending = 0
 	GlobalEvents.set_high_nevoa()

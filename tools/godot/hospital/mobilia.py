@@ -349,6 +349,17 @@ def mesa_refeitorio(largura=1.80):
             (0, 0.03, 0, largura - 0.50, 0.06, 0.60, "mat_metal_escuro")]
 
 
+# O balcao de recepcao do hall, em numeros. Mora aqui fora porque o gerador da
+# cena precisa dos MESMOS valores pra pousar a pistola e a municao em cima do
+# tampo (ver `_emitir_itens_do_balcao`): chutar 3,20 la' tambem significaria que
+# mexer no raio daqui largaria os dois itens flutuando no ar.
+RECEPCAO_RAIO = 3.20
+RECEPCAO_ALTURA = 1.10
+## Altura da FACE DE CIMA do tampo, medido do piso. O tampo e' uma caixa de 8 cm
+## centrada em `altura - 0.02`, entao o topo dela fica 2 cm acima da altura.
+RECEPCAO_TOPO = RECEPCAO_ALTURA + 0.02
+
+
 def balcao_redondo(raio=3.20, segmentos=16, altura=1.10):
     """O circulo do HALL PRINCIPAL — e' ele que esta' desenhado no mapa.
 
@@ -822,8 +833,8 @@ def _hall(s, d):
     """O hall principal. O CIRCULO do mapa e' o balcao de recepcao."""
     cx, cz = P.centro(s)
     itens = [_prop("caixas_livres", s, cx, cz, 0.0,
-                   pecas=balcao_redondo(3.20, 16, 1.10), nome="recepcao",
-                   bloqueia=(7.4, 7.4))]
+                   pecas=balcao_redondo(RECEPCAO_RAIO, 16, RECEPCAO_ALTURA),
+                   nome="recepcao", bloqueia=(7.4, 7.4))]
     # fileiras de cadeira de espera, todas encostadas — meio do hall livre
     for i in range(9):
         itens.append(modelo_na_parede(s, "plastic_monobloc_chair_01", "n",

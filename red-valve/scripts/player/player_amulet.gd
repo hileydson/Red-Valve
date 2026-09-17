@@ -49,6 +49,18 @@ func _process_amulet_magic(delta: float) -> void:
 		_hide_amulet_magic()
 		return
 
+	# O amuleto virou item EQUIPADO (ele divide o botao de mira com a pistola,
+	# ver SaveManager.EQUIPAMENTO_EXCLUSIVO). A guarda mora aqui, na ponta, e nao
+	# so' em quem chama: e' este o lugar por onde TODO uso do poder passa, e uma
+	# checagem so' no player.gd deixaria o poder ligado pra quem tirou o amuleto
+	# e nao pos nada no lugar.
+	#
+	# Save antigo nao fica sem poder: `SaveManager.garantir_equipamento_do_normal()`
+	# equipa o amuleto sozinho ao carregar e ao entrar no mapa da cidade.
+	if not SaveManager.is_equipped("amuleto"):
+		_hide_amulet_magic()
+		return
+
 	if SaveManager.current_mp > 0:
 		if not player.amulet_magic_active:
 			player.amulet_magic_active = true
@@ -1047,6 +1059,14 @@ func play_return_from_arena_effect() -> void:
 	# usado pelo poder do amuleto. Sem isso, o jogador podia voltar da arena sem mana
 	# e o amuleto (mão, giro, mira) simplesmente não aparecia mais no mundo normal.
 	SaveManager.current_mp = SaveManager.max_mp
+
+	# Devolve o que ele estava com a mão antes de partir (normalmente o amuleto).
+	# A arena trocou pela arma sozinha na chegada; sem esta metade ele voltaria
+	# pra cidade armado e sem poder — e o próximo inimigo da rua não teria como
+	# ser levado pra lugar nenhum.
+	SaveManager.sair_da_arena()
+	if is_instance_valid(player):
+		player.update_ammo_ui()
 
 	player.is_playing_return_effect = true
 	_carencia_apos_voltar()

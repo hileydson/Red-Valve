@@ -266,6 +266,9 @@ var mp_bar: ProgressBar
 var hud_layer: CanvasLayer
 var amulet_counter_label: Label
 var amulet_crosshair: Panel
+## Mira da PISTOLA (Maycow normal, terceira pessoa). É outra da mira do amuleto
+## de propósito: aquela é um círculo roxo de magia, esta é a cruz de um tiro.
+var gun_crosshair: Control
 var iron_rusks_value_label: Label
 
 var is_teleporting_enemies: bool = false
@@ -345,14 +348,30 @@ var last_camera_rot_x: float = 0.0
 ##
 ## O que havia antes era o contrário: o corpo virava junto com a câmera e os
 ## passinhos existiam só para ele não girar deslizando feito um pião.
-@export var GIRO_LIMITE: float = 38.0
+@export var GIRO_LIMITE: float = 24.0
 ## Onde o pivô termina. Maior que zero de propósito: parar exatamente no alvo
 ## faria ele reacender o pivô a cada tremidinha de mouse.
-@export var GIRO_SOLTA: float = 12.0
-## Quão rápido ele pivota (rad/s).
-@export var GIRO_VEL_CORPO: float = 5.0
-## Velocidade da animação de passinho durante o pivô.
-@export var GIRO_ANIM_ESCALA: float = 1.0
+@export var GIRO_SOLTA: float = 8.0
+## Quão rápido ele pivota (rad/s). Baixo de propósito: o pivô é um passo
+## deliberado, e a qualquer coisa acima disso ele vira num estalo.
+@export var GIRO_VEL_CORPO: float = 1.3
+## O QUE IMPEDE O PASSO LENTO DE DEIXAR ELE PRA TRÁS.
+##
+## Com velocidade fixa e baixa, uma girada rápida de câmera deixa o corpo de
+## lado pelo giro inteiro — ele nunca alcança. Então o que passa do limite
+## entra como pressa extra (rad/s por radiano de atraso): correção pequena sai
+## no passo lento, atraso grande ele apressa para alcançar.
+@export var GIRO_ALCANCE: float = 8.0
+## Velocidade da animação de passinho durante o pivô. Abaixo de 1 de propósito:
+## o pivô é um ajuste de pé, não uma caminhada.
+@export var GIRO_ANIM_ESCALA: float = 0.85
+## Tempo MÍNIMO que a animação de passinho fica no ar depois que um pivô começa.
+##
+## Com o gatilho curto, o corpo alcança a câmera em três ou quatro quadros num
+## giro lento — e a animação piscava por 0,07 s, o que lê como tique nervoso e
+## não como passo. Este mínimo dá tempo do pé pousar. Vale só para a animação:
+## o corpo continua parando de girar assim que alcança a câmera.
+@export var GIRO_ANIM_MINIMO: float = 0.30
 
 ## Yaw do CORPO, em coordenadas de MUNDO. É ele que manda no modelo; o
 ## `rotation.y` do jogador continua sendo o da câmera e o do movimento.
@@ -362,6 +381,8 @@ var _pivotando: bool = false
 ## O quanto o corpo está atrasado em relação à câmera por causa do pivô. Zero
 ## em movimento. É ele que gira o deslocamento do modelo (ver seção 8).
 var _atraso_pivo: float = 0.0
+## Quanto ainda falta do tempo mínimo da animação de passinho (ver GIRO_ANIM_MINIMO).
+var _pivo_anim: float = 0.0
 ## Deslocamento do modelo no espaço do CORPO (ver seção 8).
 var _off_corpo_x: float = 0.0
 var _off_corpo_z: float = 0.3995
@@ -645,6 +666,116 @@ func _atualizar_mira_lanterna() -> void:
 		cam.rotation.x - LANTERNA_INCLINACAO, 0.25)
 
 
+# ==============================================================================
+# MIRA COM A ARMA (MAYCOW NORMAL, TERCEIRA PESSOA)
+# ==============================================================================
+## A outra metade do botão de mira. Com o AMULETO equipado, segurar a mira abre
+## o poder que leva inimigos para a arena (player_amulet.gd); com a PISTOLA
+## equipada, ela faz o que qualquer jogo de tiro em terceira pessoa faz: as duas
+## mãos sobem para a arma, uma mira aparece no meio da tela e o gatilho atira.
+##
+## Os dois nunca convivem: `SaveManager.EQUIPAMENTO_EXCLUSIVO` garante que
+## equipar um desequipa o outro, porque são usos diferentes do MESMO botão.
+##
+## A pose das mãos não é animação: é o `player_gun_hold.gd`, um
+## SkeletonModifier3D que roda depois da AnimationTree e reescreve só os braços
+## (o rig do Maycow normal não tem clipe de mira, e não há .blend fonte).
+
+## FOV da câmera de terceira pessoa enquanto mira com a arma.
+const FOV_MIRA_ARMA := 55.0
+
+## Alcance do raio que procura o que está no centro da tela, em metros.
+const ALCANCE_MIRA_ARMA := 90.0
+
+## O braço nunca aponta para um alvo mais perto que isto. Inimigo colado no
+## Maycow puxaria o braço para baixo e para trás, e a arma sairia da tela.
+const DISTANCIA_MINIMA_ALVO := 6.0
+
+
+func _processar_mira_de_arma() -> void:
+	if point: point.visible = false
+	if is_instance_valid(amulet_crosshair): amulet_crosshair.visible = false
+	# O poder do amuleto fica desligado o tempo todo aqui: sem isto, um resto de
+	# estado dele (câmera em 1ª pessoa, mão mágica visível) sobreviveria à troca
+	# de item feita no meio de uma mirada.
+	_hide_amulet_magic()
+	_clear_amulet_hover()
+
+	var gun_hold := _gun_hold()
+	if is_instance_valid(gun_crosshair):
+		gun_crosshair.visible = is_aiming
+	if gun_hold:
+		gun_hold.mirar(is_aiming, _ponto_de_mira_da_arma() if is_aiming else Vector3.ZERO)
+
+	if is_aiming and Input.is_action_just_pressed("ui_shoot"):
+		atirar_terceira_pessoa()
+
+	# Recarregar NÃO exige estar mirando: ele guarda a arma, põe o pente e
+	# levanta de novo. Exigir mira aqui seria só uma regra a mais para decorar.
+	if Input.is_action_just_pressed("ui_reload"):
+		recarregar_terceira_pessoa()
+
+
+## Desliga tudo o que a mira de arma acende. Chamado quando a mira não pode
+## existir (cutscene, prólogo) — e não só quando o jogador solta o botão.
+func _encerrar_mira_de_arma() -> void:
+	if is_instance_valid(gun_crosshair):
+		gun_crosshair.visible = false
+	var gun_hold := _gun_hold()
+	if gun_hold:
+		gun_hold.mirar(false)
+
+
+## O componente que segura a arma. Só existe no Maycow normal — no parasita o
+## `maycow_lopes_normal` inteiro é liberado no `_ready`.
+func _gun_hold() -> Node:
+	return get_node_or_null("maycow_lopes_normal/Armature/Skeleton3D/PlayerGunHold")
+
+
+## Para onde o braço aponta: o que estiver no centro da tela.
+##
+## Sai da câmera, e não da arma, de propósito — é o centro da tela que o jogador
+## está usando para mirar. A arma fica um pouco à direita e abaixo disso, e é
+## essa diferença que dá o jeito "por cima do ombro" da coisa.
+func _ponto_de_mira_da_arma() -> Vector3:
+	var cam := get_viewport().get_camera_3d()
+	if cam == null:
+		return global_position - global_transform.basis.z * ALCANCE_MIRA_ARMA
+
+	var origem := cam.global_position
+	var frente := -cam.global_transform.basis.z
+	var consulta := PhysicsRayQueryParameters3D.create(origem,
+		origem + frente * ALCANCE_MIRA_ARMA)
+	# Mesma máscara do raycast da primeira pessoa (layers 3 e 4: inimigos e
+	# cenário atirável) mais as áreas, que é onde vivem os hitboxes.
+	consulta.collision_mask = 12
+	consulta.collide_with_areas = true
+	consulta.exclude = [get_rid()]
+
+	var espaco := get_world_3d().direct_space_state
+	var toque := espaco.intersect_ray(consulta)
+	if toque.is_empty():
+		return origem + frente * ALCANCE_MIRA_ARMA
+
+	var alvo: Vector3 = toque["position"]
+	var distancia := origem.distance_to(alvo)
+	if distancia < DISTANCIA_MINIMA_ALVO:
+		return origem + frente * DISTANCIA_MINIMA_ALVO
+	return alvo
+
+
+## Tiro do Maycow normal, em terceira pessoa. Mora no componente de combate,
+## junto com o tiro da primeira pessoa.
+func atirar_terceira_pessoa() -> void:
+	var combat = get_node_or_null("PlayerCombat")
+	if combat: combat.atirar_terceira_pessoa()
+
+
+func recarregar_terceira_pessoa() -> void:
+	var combat = get_node_or_null("PlayerCombat")
+	if combat: combat.recarregar_terceira_pessoa()
+
+
 func _ready():
 	_sincroniza_flags_de_teste()
 	_configurar_lanterna()
@@ -714,6 +845,12 @@ func _ready():
 		var mao_porta = load("res://scripts/player/player_door_reach.gd").new()
 		mao_porta.name = "PlayerDoorReach"
 		esqueleto.add_child(mao_porta)
+		# A arma na mao direita e a pose de mira com ela. Mesmo lugar e mesmo
+		# motivo do braco da porta: SkeletonModifier3D so' roda como filho
+		# direto do esqueleto.
+		var arma_na_mao = load("res://scripts/player/player_gun_hold.gd").new()
+		arma_na_mao.name = "PlayerGunHold"
+		esqueleto.add_child(arma_na_mao)
 	else:
 		$maycow_lopes_normal.queue_free()
 		modelo_visual = $maycow_lopes/Armature/Skeleton3D/char1
@@ -763,6 +900,12 @@ func _ready():
 	var cogblade_menu_component = load("res://scripts/player/player_cogblade_menu.gd").new()
 	cogblade_menu_component.name = "PlayerCogbladeMenu"
 	add_child(cogblade_menu_component)
+
+	# Instancia Componente dos Atalhos do direcional (trocar o item equipado
+	# sem abrir o menu)
+	var atalhos_component = load("res://scripts/player/player_atalhos.gd").new()
+	atalhos_component.name = "PlayerAtalhos"
+	add_child(atalhos_component)
 
 func update_ammo_ui() -> void:
 	var hud = get_node_or_null("PlayerHUD")
@@ -1242,7 +1385,21 @@ func _physics_process(delta: float) -> void:
 			if camera_third_person and not camera_third_person.current:
 				camera_third_person.make_current()
 
-		if normal_can_aim:
+		# O MESMO botao de mira, duas mecanicas. Quem escolhe e' o item equipado:
+		# com o AMULETO a mira marca inimigos e os leva pra arena; com a PISTOLA
+		# ela levanta a arma em terceira pessoa e o gatilho vira tiro. Os dois
+		# nunca estao equipados juntos (SaveManager.EQUIPAMENTO_EXCLUSIVO), entao
+		# a escolha feita no menu chega aqui como um `if`.
+		var mira_de_arma: bool = SaveManager.is_equipped("pistol")
+
+		if normal_can_aim and mira_de_arma:
+			_processar_mira_de_arma()
+		elif normal_can_aim:
+			# Trocar de item NO MEIO de uma mirada cai aqui: sem isto, a mira da
+			# arma ficaria acesa na tela enquanto o poder do amuleto abre por
+			# baixo dela.
+			_encerrar_mira_de_arma()
+
 			if Input.is_action_just_released("ui_hold_first_person_view"):
 				if amulet_selected_enemies.size() == 0:
 					AudioServer.playback_speed_scale = 1.0
@@ -1251,16 +1408,16 @@ func _physics_process(delta: float) -> void:
 			if is_aiming:
 				if Input.is_action_just_pressed("ui_hold_first_person_view"):
 					AudioServer.playback_speed_scale = 0.5
-					
+
 				if is_instance_valid(amulet_crosshair): amulet_crosshair.visible = true
 				if point: point.visible = false
-				
+
 				if is_instance_valid(hud_layer):
 					var motion_blur = hud_layer.get_node_or_null("MotionBlurOverlay")
 					if motion_blur:
 						motion_blur.visible = true
 						motion_blur.material.set_shader_parameter("blur_strength", 0.08)
-						
+
 				_process_amulet_magic(delta)
 			else:
 				if is_instance_valid(amulet_crosshair): amulet_crosshair.visible = false
@@ -1279,6 +1436,7 @@ func _physics_process(delta: float) -> void:
 			# O ataque da cogblade é exclusivo do Maycow parasita.
 		else:
 			if is_instance_valid(amulet_crosshair): amulet_crosshair.visible = false
+			_encerrar_mira_de_arma()
 			if is_instance_valid(hud_layer) and not is_playing_return_effect and not is_dashing and damage_blur_timer <= 0.0:
 				var motion_blur = hud_layer.get_node_or_null("MotionBlurOverlay")
 				if motion_blur:
@@ -1347,6 +1505,13 @@ func _physics_process(delta: float) -> void:
 		if is_aiming:
 			if is_first_person:
 				target_fov = 75.0 # Primeira pessoa fica com FOV normal
+			elif mira_de_arma:
+				# A mira de ARMA fecha menos. O 40 abaixo é do amuleto, e é
+				# fechado de propósito: lá a câmera acaba entrando em 1ª pessoa,
+				# então o zoom é o começo dessa viagem. Aqui ela FICA em 3ª
+				# pessoa — o jogador precisa continuar vendo o Maycow levantar a
+				# arma e o que está em volta dele.
+				target_fov = FOV_MIRA_ARMA
 			else:
 				target_fov = 40.0 # Zoom IN pesado na terceira pessoa (alvo)
 
@@ -1394,8 +1559,11 @@ func _physics_process(delta: float) -> void:
 				# Parado, ele só dá passos quando está PIVOTANDO (seção 8).
 				# Girar a câmera dentro do limite não mexe com ele: fica de
 				# costas, plantado, e é a câmera que anda em volta.
-				_set_anim_time_scale(GIRO_ANIM_ESCALA if _pivotando else 1.0)
-				if _pivotando:
+				if _pivo_anim > 0.0:
+					_pivo_anim = maxf(_pivo_anim - delta, 0.0)
+				var dando_passo := _pivotando or _pivo_anim > 0.0
+				_set_anim_time_scale(GIRO_ANIM_ESCALA if dando_passo else 1.0)
+				if dando_passo:
 					playback.travel("walk")
 				else:
 					playback.travel("idle")
@@ -1439,6 +1607,7 @@ func _physics_process(delta: float) -> void:
 			# tem vez aqui — foi o que deixou a câmera estranha em movimento.
 			if direction or is_aiming or are_cutscene_inputs_blocked():
 				_pivotando = false
+				_pivo_anim = 0.0
 				modelo.rotation.y = lerp_angle(modelo.rotation.y, alvo_y, delta * velocidade_giro * speed_y)
 				_yaw_corpo = rotation.y + modelo.rotation.y
 				_yaw_corpo_pronto = true
@@ -1453,10 +1622,15 @@ func _physics_process(delta: float) -> void:
 				var falta := wrapf(rotation.y - _yaw_corpo, -PI, PI)
 				if not _pivotando and absf(falta) >= deg_to_rad(GIRO_LIMITE):
 					_pivotando = true
+					_pivo_anim = maxf(_pivo_anim, GIRO_ANIM_MINIMO)
 				if _pivotando:
+					var vel := GIRO_VEL_CORPO
+					var excesso := absf(falta) - deg_to_rad(GIRO_LIMITE)
+					if excesso > 0.0:
+						vel += excesso * GIRO_ALCANCE
 					# O `minf` é o que impede ele de passar do alvo e ficar
 					# indo e voltando em cima dele.
-					_yaw_corpo += signf(falta) * minf(GIRO_VEL_CORPO * delta, absf(falta))
+					_yaw_corpo += signf(falta) * minf(vel * delta, absf(falta))
 					if absf(wrapf(rotation.y - _yaw_corpo, -PI, PI)) <= deg_to_rad(GIRO_SOLTA):
 						_pivotando = false
 				_atraso_pivo = wrapf(_yaw_corpo - rotation.y, -PI, PI)

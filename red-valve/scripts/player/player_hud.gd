@@ -290,6 +290,8 @@ void fragment() {
 	player.amulet_crosshair.add_theme_stylebox_override("panel", style)
 	player.amulet_crosshair.visible = false
 	player.hud_layer.add_child(player.amulet_crosshair)
+
+	_setup_gun_crosshair()
 	
 	# Amulet Counter Label
 	player.amulet_counter_label = Label.new()
@@ -316,6 +318,47 @@ void fragment() {
 	counter_tween.tween_property(player.amulet_counter_label, "theme_override_colors/font_color", Color(0.5, 0.0, 0.0, 1.0), 0.4)
 	
 	_start_heartbeat_pulse()
+
+## A mira da PISTOLA: quatro riscos em cruz, com um buraco no meio.
+##
+## Não é a mira do amuleto com outra cor: aquela é um círculo grande e roxo, que
+## diz "este inimigo inteiro está marcado"; esta precisa dizer "a bala sai
+## exatamente daqui", e por isso o miolo fica vazio e os riscos são finos.
+##
+## Nasce escondida — quem a acende é `player._processar_mira_de_arma()`, só
+## enquanto o botão de mira está segurado.
+func _setup_gun_crosshair() -> void:
+	var raiz = Control.new()
+	raiz.name = "GunCrosshair"
+	raiz.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+	raiz.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	raiz.visible = false
+
+	# (deslocamento do centro, tamanho) de cada risco
+	var riscos = [
+		[Vector2(-14, -1), Vector2(9, 2)],
+		[Vector2(5, -1), Vector2(9, 2)],
+		[Vector2(-1, -14), Vector2(2, 9)],
+		[Vector2(-1, 5), Vector2(2, 9)],
+	]
+	for r in riscos:
+		var risco = ColorRect.new()
+		risco.color = Color(1, 1, 1, 0.85)
+		risco.position = r[0]
+		risco.size = r[1]
+		risco.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		raiz.add_child(risco)
+
+	# Ponto central, bem pequeno: é ele que o jogador realmente usa de perto.
+	var ponto = ColorRect.new()
+	ponto.color = Color(1, 0.35, 0.3, 0.9)
+	ponto.position = Vector2(-1, -1)
+	ponto.size = Vector2(2, 2)
+	ponto.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	raiz.add_child(ponto)
+
+	player.hud_layer.add_child(raiz)
+	player.gun_crosshair = raiz
 
 func _setup_iron_rusks_hud() -> void:
 	var iron_rusks_layer = CanvasLayer.new()
@@ -376,12 +419,19 @@ func _setup_iron_rusks_hud() -> void:
 	player.add_child(iron_rusks_layer)
 	player.iron_rusks_value_label = value_label
 
+## O contador de balas segue a ARMA, não a forma do Maycow.
+##
+## Antes ele era escondido sempre que `is_maycow_normal` — o normal não tinha
+## arma nenhuma, e um "8 / 25" no canto da tela dele não queria dizer nada.
+## Agora a pistola é pega no hospital e vale para os dois: o mesmo pente, a
+## mesma caixa de balas (SaveManager.ITENS_COMPARTILHADOS). Quem decide se o
+## contador aparece é só uma coisa: a pistola estar equipada.
 func update_ammo_ui() -> void:
 	if not is_instance_valid(player.ammo_label): return
-	
+
 	var is_pistol_equipped = SaveManager.is_equipped("pistol")
-	
-	if GlobalEvents.is_maycow_normal or not is_pistol_equipped:
+
+	if not is_pistol_equipped:
 		player.ammo_label.visible = false
 		if is_instance_valid(player.ammo_icon): player.ammo_icon.visible = false
 	else:

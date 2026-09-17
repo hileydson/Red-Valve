@@ -74,7 +74,7 @@ WITH_POWER_7_8,In his hand was the Cogblade.,Em sua mão estava a Cogblade.
 WITH_POWER_7_9,It bleeds...,Ela sangra...
 UI_HOLD,HOLD,SEGURE
 ITEM_PISTOL_NAME,Pistol,Pistola
-ITEM_PISTOL_DESC,A standard firearm.,Uma arma de fogo padrão.
+ITEM_PISTOL_DESC,"The Negotiator — heavy pistol left behind on the hospital reception desk. Eight in the magazine.","A Negotiator — pistola pesada largada no balcão da recepção do hospital. Oito no pente."
 ITEM_COGBLADE_NAME,Crescent Cogblade,Crescent Cogblade
 ITEM_COGBLADE_DESC,A gear-powered blade.,Uma lâmina de engrenagem.
 ITEM_AMMO_NAME,Pistol Ammo,Balas de Pistola
@@ -255,3 +255,17 @@ MAP_POI_ESC_SAIDA,Exit to the street,Saída para a rua
 MAP_POI_POR_ENTRADA,Way back to the storeroom,Volta para o depósito
 MAP_POI_POR_CAMARA,Large chamber,Câmara grande
 MAP_POI_POR_SAIDA,Way up to the supply room,Subida para o almoxarifado
+PROMPT_TAKE_PISTOL,Take the pistol?,Pegar a pistola?
+PROMPT_TAKE_AMMO,Take the ammunition?,Pegar a munição?
+PICKUP_PISTOL,"You picked up The Negotiator. Equip it in the menu to carry it in your hand.","Você pegou a The Negotiator. Equipe ela no menu para levá-la na mão."
+PICKUP_AMMO,"Pistol ammunition. Reload with the reload button when the magazine runs dry.","Munição de pistola. Recarregue com o botão de recarga quando o pente acabar."
+ACTION_SHORTCUT,Shortcut,Atalho
+SHORTCUT_TITLE,Assign to a direction,Atribuir a um direcional
+SHORTCUT_HINT,D-pad on the controller / numeric keypad,Direcional do controle / teclado numérico
+SHORTCUT_CLEAR,Remove shortcut,Remover atalho
+SHORTCUT_LEFT,Left,Esquerda
+SHORTCUT_UP,Up,Cima
+SHORTCUT_RIGHT,Right,Direita
+SHORTCUT_DOWN,Down,Baixo
+SHORTCUT_EQUIPPED,Equipped: %s,Equipado: %s
+PICKUP_AMMO_AGAIN,+%d %s,+%d %s

@@ -1,4 +1,4 @@
-[gd_scene load_steps=299 format=3]
+[gd_scene load_steps=303 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="e0"]
 [ext_resource type="PackedScene" path="res://scenes/configs/pause.tscn" id="e1"]
@@ -91,6 +91,9 @@
 [ext_resource type="PackedScene" path="res://assets/3d_model/stages/hospital/pecas/cabine_d8752fc83a.gltf" id="e88"]
 [ext_resource type="PackedScene" path="res://assets/3d_model/stages/hospital/pecas/painel_b0a2af5949.gltf" id="e89"]
 [ext_resource type="PackedScene" path="res://assets/3d_model/stages/hospital/pecas/corredica_e781f6da79.gltf" id="e90"]
+[ext_resource type="Script" path="res://scripts/stages/hospital/item_de_balcao.gd" id="e91"]
+[ext_resource type="PackedScene" path="res://assets/3d_model/player/the_negotiator_V1/the_negotiator_v1.glb" id="e92"]
+[ext_resource type="PackedScene" path="res://assets/3d_model/player/the_negotiator_V1/cartridge/scene.gltf" id="e93"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ceu_mat"]
 sky_top_color = Color(0.035, 0.04, 0.06, 1)
@@ -904,6 +907,9 @@ size = Vector3(0.1200, 2.6000, 1.1000)
 
 [sub_resource type="BoxShape3D" id="f183"]
 size = Vector3(2.6000, 2.6000, 3.6000)
+
+[sub_resource type="BoxShape3D" id="f184"]
+size = Vector3(3.2000, 2.6000, 3.2000)
 
 [node name="hospital" type="Node3D"]
 script = ExtResource("e4")
@@ -9692,6 +9698,69 @@ monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="elevador/pavimento_2/area_chamar"]
 shape = SubResource("f183")
+
+[node name="pistola_no_balcao" type="Node3D" parent="."]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 11.97500, 1.12000, 34.17500)
+script = ExtResource("e91")
+metadata/id = "hospital_pistola_no_balcao"
+metadata/item = "pistol"
+metadata/quantidade = 1
+metadata/prompt = "PROMPT_TAKE_PISTOL"
+metadata/texto = "PICKUP_PISTOL"
+metadata/repetido = ""
+
+[node name="modelo" parent="pistola_no_balcao" instance=ExtResource("e92")]
+transform = Transform3D(-0.03554, 0.10937, 0.00000, 0.00000, 0.00000, 0.11500, 0.10937, 0.03554, 0.00000, 0.00000, 0.02100, 0.00000)
+
+[node name="area" type="Area3D" parent="pistola_no_balcao"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.90000, 0.25000, -0.00000)
+collision_layer = 0
+monitorable = false
+
+[node name="forma" type="CollisionShape3D" parent="pistola_no_balcao/area"]
+shape = SubResource("f184")
+
+[node name="municao_no_balcao" type="Node3D" parent="."]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 18.37500, 1.12000, 34.17500)
+script = ExtResource("e91")
+metadata/id = "hospital_municao_no_balcao"
+metadata/item = "pistol_ammo"
+metadata/quantidade = 25
+metadata/prompt = "PROMPT_TAKE_AMMO"
+metadata/texto = "PICKUP_AMMO"
+metadata/repetido = "PICKUP_AMMO_AGAIN"
+
+[node name="modelo" parent="municao_no_balcao" instance=ExtResource("e93")]
+transform = Transform3D(0.97030, 0.00000, 0.24192, 0.00000, 1.00000, 0.00000, -0.24192, 0.00000, 0.97030, 0.00000, 0.03600, 0.00000)
+
+[node name="area" type="Area3D" parent="municao_no_balcao"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.90000, 0.25000, 0.00000)
+collision_layer = 0
+monitorable = false
+
+[node name="forma" type="CollisionShape3D" parent="municao_no_balcao/area"]
+shape = SubResource("f184")
+
+[node name="municao_no_balcao_2" type="Node3D" parent="."]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 15.17500, 1.12000, 30.97500)
+script = ExtResource("e91")
+metadata/id = "hospital_municao_no_balcao_2"
+metadata/item = "pistol_ammo"
+metadata/quantidade = 25
+metadata/prompt = "PROMPT_TAKE_AMMO"
+metadata/texto = "PICKUP_AMMO"
+metadata/repetido = "PICKUP_AMMO_AGAIN"
+
+[node name="modelo" parent="municao_no_balcao_2" instance=ExtResource("e93")]
+transform = Transform3D(0.89879, 0.00000, -0.43837, 0.00000, 1.00000, 0.00000, 0.43837, 0.00000, 0.89879, 0.00000, 0.03600, 0.00000)
+
+[node name="area" type="Area3D" parent="municao_no_balcao_2"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.25000, -0.90000)
+collision_layer = 0
+monitorable = false
+
+[node name="forma" type="CollisionShape3D" parent="municao_no_balcao_2/area"]
+shape = SubResource("f184")
 
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
 navigation_mesh = SubResource("navmesh")

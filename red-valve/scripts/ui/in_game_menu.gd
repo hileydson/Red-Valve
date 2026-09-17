@@ -26,6 +26,32 @@ var action_menu_open = false
 var action_menu_index = 0
 var current_item_selected = null
 
+# ==============================================================================
+# ATALHOS DO DIRECIONAL
+# ==============================================================================
+# Só um item equipável fica equipado por vez (SaveManager.EQUIPAMENTO_EXCLUSIVO),
+# então trocar de item é uma coisa que o jogo vai pedir no meio da ação. A ação
+# "Atalho" amarra o item a uma direção do D-pad; fora do menu, quem lê é o
+# `player_atalhos.gd`.
+#
+# O submenu é uma lista de 5: as quatro direções mais "remover". Cada direção
+# mostra o que já está amarrada nela, porque escolher às cegas e descobrir
+# depois que se sobrescreveu o outro item é o erro óbvio aqui.
+const DIRECOES_ATALHO := ["esquerda", "cima", "direita", "baixo"]
+const SETAS := {"esquerda": "←", "cima": "↑", "direita": "→", "baixo": "↓"}
+const ROTULOS_ATALHO := {
+	"esquerda": "SHORTCUT_LEFT",
+	"cima": "SHORTCUT_UP",
+	"direita": "SHORTCUT_RIGHT",
+	"baixo": "SHORTCUT_DOWN",
+}
+
+var atalho_panel: PanelContainer
+var atalho_vbox: VBoxContainer
+var atalho_options = []
+var atalho_open = false
+var atalho_index = 0
+
 # Aba MAPA (índice 1 em `tabs`). O painel se vira sozinho: lê o citymap.json,
 # acha o player pelo grupo e decide se há mapa nesta fase.
 const TAB_MAPA := 1
@@ -177,6 +203,22 @@ func _ready() -> void:
 		equip.visible = false
 		equip.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		slot.add_child(equip)
+
+		# Indicador de atalho: a seta do direcional em que o item está amarrado.
+		# Fica no canto de CIMA, longe do "E" de equipado e da quantidade — são
+		# três informações diferentes no mesmo quadradinho de 100 px.
+		var atalho = Label.new()
+		atalho.name = "Atalho"
+		atalho.set_anchors_preset(Control.PRESET_TOP_LEFT)
+		atalho.offset_left = 6
+		atalho.offset_top = 2
+		atalho.add_theme_font_size_override("font_size", 20)
+		atalho.add_theme_color_override("font_color", Color(1.0, 0.85, 0.3))
+		atalho.add_theme_color_override("font_outline_color", Color(0, 0, 0))
+		atalho.add_theme_constant_override("outline_size", 4)
+		atalho.visible = false
+		atalho.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		slot.add_child(atalho)
 		
 		var slot_idx = i
 		slot.gui_input.connect(func(event: InputEvent):
@@ -218,6 +260,7 @@ func _ready() -> void:
 	add_child(arquivos_painel)
 
 	_create_action_menu()
+	_create_atalho_menu()
 	update_ui()
 
 func _create_action_menu() -> void:
@@ -237,7 +280,7 @@ func _create_action_menu() -> void:
 	action_menu_panel.add_child(action_menu_vbox)
 	add_child(action_menu_panel)
 	
-	var options = [tr("ACTION_USE"), tr("ACTION_EQUIP"), tr("ACTION_INSPECT")]
+	var options = [tr("ACTION_USE"), tr("ACTION_EQUIP"), tr("ACTION_INSPECT"), tr("ACTION_SHORTCUT")]
 	for i in range(options.size()):
 		var opt_idx = i
 		var btn = Button.new()
@@ -261,6 +304,63 @@ func _create_action_menu() -> void:
 		
 		action_menu_vbox.add_child(btn)
 		action_options.append(btn)
+
+## O submenu do atalho: título, as quatro direções e "remover".
+##
+## Nasce escondido e vive por cima do menu de ação (z_index maior), no mesmo
+## canto do slot — assim o jogador não perde de vista de que item se trata.
+func _create_atalho_menu() -> void:
+	atalho_panel = PanelContainer.new()
+	var style = StyleBoxFlat.new()
+	style.bg_color = Color(0.12, 0.12, 0.14, 0.97)
+	style.border_width_bottom = 2
+	style.border_width_top = 2
+	style.border_width_left = 2
+	style.border_width_right = 2
+	style.border_color = Color(1.0, 0.85, 0.3, 1)
+	atalho_panel.add_theme_stylebox_override("panel", style)
+	atalho_panel.visible = false
+	atalho_panel.z_index = 30
+
+	atalho_vbox = VBoxContainer.new()
+	atalho_panel.add_child(atalho_vbox)
+	add_child(atalho_panel)
+
+	var titulo = Label.new()
+	titulo.name = "Titulo"
+	titulo.text = tr("SHORTCUT_TITLE")
+	titulo.add_theme_font_size_override("font_size", 18)
+	titulo.add_theme_color_override("font_color", Color(1.0, 0.85, 0.3))
+	atalho_vbox.add_child(titulo)
+
+	var dica = Label.new()
+	dica.text = tr("SHORTCUT_HINT")
+	dica.add_theme_font_size_override("font_size", 13)
+	dica.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7))
+	atalho_vbox.add_child(dica)
+
+	for i in range(DIRECOES_ATALHO.size() + 1):
+		var opt_idx = i
+		var btn = Button.new()
+		btn.flat = true
+		btn.mouse_filter = Control.MOUSE_FILTER_STOP
+		btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+		btn.add_theme_font_size_override("font_size", 20)
+		btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		btn.set_custom_minimum_size(Vector2(260, 34))
+		btn.mouse_entered.connect(func():
+			if atalho_index != opt_idx:
+				GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/mudar_selecao.mp3")
+			atalho_index = opt_idx
+			_render_atalho_menu()
+		)
+		btn.pressed.connect(func():
+			atalho_index = opt_idx
+			_executar_atalho()
+		)
+		atalho_vbox.add_child(btn)
+		atalho_options.append(btn)
+
 
 func update_ui() -> void:
 	GlobalEvents.menu_ultima_aba = current_tab
@@ -314,6 +414,8 @@ func update_ui() -> void:
 		
 	if action_menu_open:
 		_render_action_menu()
+	if atalho_open:
+		_render_atalho_menu()
 
 func _render_inventory() -> void:
 	# Limpa slots
@@ -322,6 +424,7 @@ func _render_inventory() -> void:
 		slot.get_node("Icon").texture = null
 		slot.get_node("Qtd").text = ""
 		slot.get_node("Equip").visible = false
+		slot.get_node("Atalho").visible = false
 		var style = slot.get_theme_stylebox("panel") as StyleBoxFlat
 		if i == current_slot and not action_menu_open:
 			style.border_color = Color(1.0, 1.0, 1.0, 1.0)
@@ -348,7 +451,13 @@ func _render_inventory() -> void:
 				
 			if SaveManager.is_equipped(item_data["id"]):
 				slot.get_node("Equip").visible = true
-				
+
+			var direcao_atalho: String = SaveManager.atalho_do_item(item_data["id"])
+			if direcao_atalho != "":
+				var rotulo_atalho = slot.get_node("Atalho") as Label
+				rotulo_atalho.text = String(SETAS.get(direcao_atalho, ""))
+				rotulo_atalho.visible = true
+
 			if i == current_slot:
 				item_to_show = db_info
 				current_item_selected = item_data
@@ -376,22 +485,32 @@ func _render_action_menu() -> void:
 	var slot = slot_panels[current_slot]
 	action_menu_panel.global_position = slot.global_position + Vector2(slot.size.x / 2, slot.size.y / 2)
 	
-	# Usar [0], Equipar [1], Inspecionar [2]
+	# Usar [0], Equipar [1], Inspecionar [2], Atalho [3]
 	var type = db_info.get("type", "")
-	
-	var opts = [tr("ACTION_USE"), tr("ACTION_EQUIP"), tr("ACTION_INSPECT")]
-	if SaveManager.is_equipped(current_item_selected["id"]):
+	var item_id = current_item_selected["id"]
+	var equipavel: bool = SaveManager.pode_equipar(item_id)
+
+	var opts = [tr("ACTION_USE"), tr("ACTION_EQUIP"), tr("ACTION_INSPECT"), tr("ACTION_SHORTCUT")]
+	if SaveManager.is_equipped(item_id):
 		opts[1] = tr("ACTION_UNEQUIP")
-	for i in range(3):
+	# O atalho já amarrado aparece no próprio nome da opção: sem isso o jogador
+	# tinha de entrar no submenu só para descobrir onde tinha posto o item.
+	var atalho_atual: String = SaveManager.atalho_do_item(item_id)
+	if atalho_atual != "":
+		opts[3] = "%s  %s" % [tr("ACTION_SHORTCUT"), SETAS.get(atalho_atual, "")]
+	for i in range(action_options.size()):
 		var btn = action_options[i] as Button
 		var enabled = false
-		
+
 		if i == 0 and type == "usable": enabled = true
-		if i == 1 and type == "equippable": enabled = true
+		if i == 1 and equipavel: enabled = true
 		if i == 2 and type == "inspectable": enabled = true
-		
-		if i == 1 and current_item_selected["id"] == "cogblade": enabled = false # Cogblade nao desequipa
-		
+		# Atalho só faz sentido para o que se equipa: ele existe para TROCAR o
+		# item equipado sem abrir o menu.
+		if i == 3 and equipavel: enabled = true
+
+		if i == 1 and item_id == "cogblade": enabled = false # Cogblade nao desequipa
+
 		btn.disabled = not enabled
 		
 		var style = StyleBoxFlat.new()
@@ -414,26 +533,144 @@ func _render_action_menu() -> void:
 		btn.add_theme_stylebox_override("focus", style)
 		btn.add_theme_stylebox_override("disabled", style)
 
+
+func _render_atalho_menu() -> void:
+	if not current_item_selected:
+		close_atalho_menu()
+		return
+
+	var item_id = current_item_selected["id"]
+	atalho_panel.visible = true
+	atalho_panel.move_to_front()
+	# O menu de ação sai da frente: os dois nascem no mesmo canto do slot, e um
+	# por cima do outro vira uma sopa de palavras meio transparentes.
+	action_menu_panel.visible = false
+	var slot = slot_panels[current_slot]
+	atalho_panel.global_position = slot.global_position + Vector2(slot.size.x / 2, slot.size.y / 2)
+
+	for i in range(atalho_options.size()):
+		var btn = atalho_options[i] as Button
+		var texto := ""
+		if i < DIRECOES_ATALHO.size():
+			var direcao: String = DIRECOES_ATALHO[i]
+			texto = "%s  %s" % [SETAS[direcao], tr(ROTULOS_ATALHO[direcao])]
+			# Quem já mora nesta direção aparece ao lado: escolher às cegas e só
+			# depois descobrir que sobrescreveu o outro item é o erro fácil aqui.
+			var ocupante: String = SaveManager.item_do_atalho(direcao)
+			if ocupante != "":
+				var nome_chave: String = SaveManager.item_db.get(ocupante, {}).get("name_key", "")
+				texto += "   [%s]" % tr(nome_chave)
+		else:
+			texto = tr("SHORTCUT_CLEAR")
+			btn.disabled = SaveManager.atalho_do_item(item_id) == ""
+
+		var style = StyleBoxFlat.new()
+		if i == atalho_index:
+			btn.text = "> " + texto
+			btn.add_theme_color_override("font_color", Color(1.0, 0.9, 0.3))
+			btn.add_theme_color_override("font_hover_color", Color(1.0, 0.9, 0.3))
+			style.bg_color = Color(1, 1, 1, 0.15)
+		else:
+			btn.text = "  " + texto
+			btn.add_theme_color_override("font_color", Color(0.85, 0.85, 0.85))
+			btn.add_theme_color_override("font_hover_color", Color(1.0, 1.0, 0.85))
+			style.bg_color = Color(0, 0, 0, 0)
+		btn.add_theme_stylebox_override("normal", style)
+		btn.add_theme_stylebox_override("hover", style)
+		btn.add_theme_stylebox_override("focus", style)
+		btn.add_theme_stylebox_override("disabled", style)
+
+
+func open_atalho_menu() -> void:
+	GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/selecionar_item.mp3")
+	atalho_open = true
+	# Abre já em cima da direção em que o item está, se estiver em alguma.
+	var atual: String = SaveManager.atalho_do_item(current_item_selected["id"])
+	atalho_index = DIRECOES_ATALHO.find(atual) if atual != "" else 0
+	if atalho_index < 0:
+		atalho_index = 0
+	_render_atalho_menu()
+
+
+func close_atalho_menu() -> void:
+	if not atalho_open:
+		return
+	atalho_open = false
+	if is_instance_valid(atalho_panel):
+		atalho_panel.visible = false
+	# Devolve o menu de ação, se ele ainda for pra estar aberto (quem fechou os
+	# dois de uma vez já apagou `action_menu_open` antes de chegar aqui).
+	if action_menu_open and is_instance_valid(action_menu_panel):
+		action_menu_panel.visible = true
+
+
+func _executar_atalho() -> void:
+	if not current_item_selected:
+		close_atalho_menu()
+		return
+
+	var item_id = current_item_selected["id"]
+	if atalho_index >= DIRECOES_ATALHO.size():
+		if SaveManager.atalho_do_item(item_id) == "":
+			GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/negacao.mp3")
+			return
+		SaveManager.limpar_atalho(SaveManager.atalho_do_item(item_id))
+	else:
+		SaveManager.definir_atalho(DIRECOES_ATALHO[atalho_index], item_id)
+
+	GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/selecionar_item.mp3")
+	close_atalho_menu()
+	close_action_menu()
+
+
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_menu_game") or event.is_action_pressed("ui_pause"):
 		get_viewport().set_input_as_handled()
 		close_menu()
 		return
 		
+	# O submenu do atalho vem ANTES do menu de ação: ele abre por cima dele, e
+	# quem está por cima é quem lê a entrada.
+	if atalho_open:
+		var total_atalho: int = atalho_options.size()
+		if event.is_action_pressed("ui_cancel") or event.is_action_pressed("ui_dash"):
+			get_viewport().set_input_as_handled()
+			GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/selecionar_item_voltar.mp3")
+			close_atalho_menu()
+			return
+		elif event.is_action_pressed("ui_down"):
+			get_viewport().set_input_as_handled()
+			atalho_index = (atalho_index + 1) % total_atalho
+			GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/mudar_selecao.mp3")
+			_render_atalho_menu()
+			return
+		elif event.is_action_pressed("ui_up"):
+			get_viewport().set_input_as_handled()
+			atalho_index = (atalho_index - 1 + total_atalho) % total_atalho
+			GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/mudar_selecao.mp3")
+			_render_atalho_menu()
+			return
+		elif event.is_action_pressed("ui_accept"):
+			get_viewport().set_input_as_handled()
+			_executar_atalho()
+			return
+		return
+
 	if action_menu_open:
+		var total_acoes: int = action_options.size()
 		if event.is_action_pressed("ui_cancel") or event.is_action_pressed("ui_dash"):
 			get_viewport().set_input_as_handled()
 			close_action_menu()
 			return
 		elif event.is_action_pressed("ui_down"):
 			get_viewport().set_input_as_handled()
-			action_menu_index = (action_menu_index + 1) % 3
+			action_menu_index = (action_menu_index + 1) % total_acoes
 			GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/mudar_selecao.mp3")
 			update_ui()
 			return
 		elif event.is_action_pressed("ui_up"):
 			get_viewport().set_input_as_handled()
-			action_menu_index = (action_menu_index - 1 + 3) % 3
+			action_menu_index = (action_menu_index - 1 + total_acoes) % total_acoes
 			GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/mudar_selecao.mp3")
 			update_ui()
 			return
@@ -494,6 +731,9 @@ func open_action_menu() -> void:
 
 func close_action_menu() -> void:
 	GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/selecionar_item_voltar.mp3")
+	# O submenu do atalho vive por cima deste: fechar o de baixo e deixar o de
+	# cima aberto deixaria uma lista flutuando sozinha na tela.
+	close_atalho_menu()
 	action_menu_open = false
 	action_menu_panel.visible = false
 	update_ui()
@@ -518,14 +758,19 @@ func execute_action() -> void:
 		close_action_menu()
 		
 	# Equipar [1]
-	elif action_menu_index == 1 and type == "equippable":
+	elif action_menu_index == 1 and SaveManager.pode_equipar(item_id):
 		if item_id == "cogblade":
 			pass # Não pode desequipar
 		else:
 			if SaveManager.is_equipped(item_id):
 				SaveManager.unequip_item(item_id)
 			else:
+				# `equip_item` desequipa sozinho o outro item do grupo exclusivo
+				# (amuleto x pistola): os dois disputam o botão de mira.
 				SaveManager.equip_item(item_id)
+			# Equipar é progresso: quem equipa a arma e fecha o jogo tem de
+			# reencontrá-la na mão.
+			SaveManager.save_game()
 			# Atualiza o UI do player imediatamente
 			get_tree().call_group("player", "update_ammo_ui")
 		close_action_menu()
@@ -545,8 +790,12 @@ func execute_action() -> void:
 					visible = true
 					Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 				)
-				
+
 		close_action_menu()
+
+	# Atalho [3] — abre o submenu das direções por cima deste menu
+	elif action_menu_index == 3 and SaveManager.pode_equipar(item_id):
+		open_atalho_menu()
 
 func close_menu() -> void:
 	GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/sair_menu.mp3")

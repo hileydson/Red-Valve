@@ -12,6 +12,29 @@ var current_stage: String = ""
 var inventory_normal: Array = []
 var inventory_combat: Array = []
 var equipped_items: Array = ["cogblade"] # Cogblade sempre equipada
+## A ultima ARMA que o jogador equipou de propria vontade.
+##
+## Existe por causa de um vaivem: pra ir pra arena ele PRECISA trocar pro
+## amuleto (e' o amuleto que leva os inimigos pra la'), e ate' aqui ele chegava
+## na batalha desarmado. Agora a arena devolve esta arma sozinha, e a volta
+## devolve o que ele estava usando na cidade (`equipado_na_cidade`).
+var ultima_arma_equipada: String = ""
+## O que o Maycow NORMAL estava com a mao na ida pra arena. Vazio fora dela.
+var equipado_na_cidade: String = ""
+
+## Ids dos itens de cenario que ja' foram recolhidos ("hospital_municao_1"...).
+##
+## E' o que permite haver DUAS caixas de bala no mesmo balcao: "ja' peguei este
+## item" nao serve de resposta pra item empilhavel — quem tem 25 balas ainda
+## pode pegar mais 25. A pergunta certa e' "ja' peguei ESTE objeto ali".
+var pickups_pegos: Array = []
+
+## Atalhos do direcional: "esquerda"/"cima"/"direita"/"baixo" -> id do item.
+##
+## Existe porque so' UM item equipavel cabe por vez (ver EQUIPAMENTO_EXCLUSIVO):
+## sem um jeito de trocar sem abrir o menu, mudar de amuleto pra pistola custaria
+## tres telas no meio da rua. Quem le' isto fora do menu e' `player_atalhos.gd`.
+var atalhos: Dictionary = {}
 var max_mp: float = 30.0
 var current_mp: float = 30.0
 var prolog_finished: bool = false
@@ -89,6 +112,10 @@ var item_db = {
 		"icon_path": "res://assets/images/menu/itens/amuleto_2d.png",
 		"model_path": "res://assets/3d_model/player/Maycow Lopes/amuleto_power.glb",
 		"stackable": false,
+		# Continua "inspectable" (o modelo dele e' bonito e o jogador gira ele no
+		# menu), mas passou a valer como equipavel tambem: e' ele que decide o que
+		# a mira do Maycow normal faz. Ver `pode_equipar()`.
+		"equipavel": true,
 		"type": "inspectable"
 	},
 	"lanterna": {
@@ -103,6 +130,7 @@ var item_db = {
 		"name_key": "ITEM_PISTOL_NAME",
 		"desc_key": "ITEM_PISTOL_DESC",
 		"icon_path": "res://assets/images/menu/itens/red_valve/pistola.png",
+		"model_path": "res://assets/3d_model/player/the_negotiator_V1/the_negotiator_v1.glb",
 		"stackable": false,
 		"type": "equippable"
 	},
@@ -117,10 +145,34 @@ var item_db = {
 		"name_key": "ITEM_AMMO_NAME",
 		"desc_key": "ITEM_AMMO_DESC",
 		"icon_path": "res://assets/images/menu/itens/red_valve/pistola_bala.png",
+		"model_path": "res://assets/3d_model/player/the_negotiator_V1/cartridge/scene.gltf",
 		"stackable": true,
 		"type": "inspectable"
 	}
 }
+
+## Itens que sao do MAYCOW, e nao da forma dele.
+##
+## A pistola e a municao sao pegas uma vez so', no hospital, e a partir dali
+## existem nos DOIS inventarios ao mesmo tempo: quem atira e' a mesma pessoa, com
+## a mesma arma e a mesma caixa de balas, esteja ela andando na cidade ou lutando
+## na arena. Por isso `add_item` e `remove_item_amount` mexem nas duas listas
+## quando o item e' um destes — senao o pente esvaziado na arena voltaria cheio
+## do outro lado, e a arma pega no hospital so' apareceria no menu de um deles.
+const ITENS_COMPARTILHADOS := ["pistol", "pistol_ammo"]
+
+## So' UM destes fica equipado por vez.
+##
+## E' o que decide o que a mira do Maycow normal faz: com o amuleto ela marca
+## inimigos e leva pra arena, com a pistola ela e' mira de tiro. Sao usos
+## diferentes do MESMO botao, entao equipar um tem de desequipar o outro.
+##
+## A cogblade fica de fora: ela e' do Maycow parasita, nunca sai da mao dele e
+## nao disputa o gatilho com nada.
+const EQUIPAMENTO_EXCLUSIVO := ["amuleto", "pistol"]
+
+## Quais dos exclusivos sao ARMA (e nao poder). E' o que a arena devolve.
+const ARMAS_DE_FOGO := ["pistol"]
 
 func _ready():
 	self.process_mode = Node.PROCESS_MODE_ALWAYS
@@ -137,11 +189,12 @@ func _ready():
 	
 	if inventory_normal.is_empty():
 		inventory_normal.append({"id": "maycow_watch", "amount": 1})
+	# A pistola e a municao NAO nascem mais aqui: elas ficam no balcao da
+	# recepcao do hospital e entram nos dois inventarios quando o jogador pega
+	# (ver `scripts/stages/hospital/item_de_balcao.gd`).
 	if inventory_combat.is_empty():
-		inventory_combat.append({"id": "pistol", "amount": 1})
 		inventory_combat.append({"id": "cogblade", "amount": 1})
-		inventory_combat.append({"id": "pistol_ammo", "amount": 25})
-		
+
 	# Lê apenas as configurações globais
 	if FileAccess.file_exists(CONFIG_PATH):
 		var file = FileAccess.open(CONFIG_PATH, FileAccess.READ)
@@ -310,6 +363,10 @@ func save_game(scene_path: String = ""):
 		"inventory_normal": inventory_normal,
 		"inventory_combat": inventory_combat,
 		"equipped_items": equipped_items,
+		"atalhos": atalhos,
+		"ultima_arma_equipada": ultima_arma_equipada,
+		"equipado_na_cidade": equipado_na_cidade,
+		"pickups_pegos": pickups_pegos,
 		"max_mp": max_mp,
 		"current_mp": current_mp,
 		"iron_rusks": iron_rusks,
@@ -358,12 +415,14 @@ func load_game(slot_id: int = -1) -> bool:
 				battlefield_1_intro_played = data.get("battlefield_1_intro_played", false)
 				stage_1_intro_played = data.get("stage_1_intro_played", false)
 				inventory_normal = data.get("inventory_normal", [{"id": "maycow_watch", "amount": 1}])
-				inventory_combat = data.get("inventory_combat", [
-					{"id": "pistol", "amount": 1},
-					{"id": "cogblade", "amount": 1},
-					{"id": "pistol_ammo", "amount": 25}
-				])
+				inventory_combat = data.get("inventory_combat", [{"id": "cogblade", "amount": 1}])
 				equipped_items = data.get("equipped_items", ["cogblade"])
+				atalhos = data.get("atalhos", {})
+				ultima_arma_equipada = data.get("ultima_arma_equipada", "")
+				equipado_na_cidade = data.get("equipado_na_cidade", "")
+				pickups_pegos = data.get("pickups_pegos", [])
+				_sincronizar_itens_compartilhados()
+				garantir_equipamento_do_normal()
 				max_mp = data.get("max_mp", 30.0)
 				current_mp = data.get("current_mp", 30.0)
 				iron_rusks = data.get("iron_rusks", 0)
@@ -406,8 +465,12 @@ func reset_progress() -> void:
 	battlefield_1_intro_played = false
 	stage_1_intro_played = false
 	inventory_normal = [{"id": "maycow_watch", "amount": 1}]
-	inventory_combat = [{"id": "pistol", "amount": 1}, {"id": "cogblade", "amount": 1}, {"id": "pistol_ammo", "amount": 25}]
+	inventory_combat = [{"id": "cogblade", "amount": 1}]
 	equipped_items = ["cogblade"]
+	atalhos = {}
+	ultima_arma_equipada = ""
+	equipado_na_cidade = ""
+	pickups_pegos = []
 	max_mp = 30.0
 	current_mp = 30.0
 	iron_rusks = 0
@@ -496,26 +559,56 @@ func add_iron_rusks(amount: int) -> void:
 	iron_rusks += amount
 	iron_rusks_pending += amount
 
+## As listas em que este item mora.
+##
+## Quase todo item vive so' no inventario da forma atual (`inventory`); os de
+## ITENS_COMPARTILHADOS vivem nos dois ao mesmo tempo.
+func _listas_do_item(item_id: String) -> Array:
+	if item_id in ITENS_COMPARTILHADOS:
+		return [inventory_normal, inventory_combat]
+	return [inventory]
+
+
 func add_item(item_id: String, amount: int = 1):
 	if not item_db.has(item_id): return
-	
-	if item_db[item_id]["stackable"]:
-		var found = false
-		for item in inventory:
-			if item["id"] == item_id:
+	for lista in _listas_do_item(item_id):
+		_add_item_na_lista(lista, item_id, amount)
+
+
+## Iguala os itens compartilhados nos dois inventarios.
+##
+## Rede pra save antigo e pra qualquer dessincronia: a pistola nasceu, por
+## muito tempo, so' no inventario de combate — carregar um desses deixava o
+## Maycow normal sem a arma que ele "tem". A quantidade que vale e' a MAIOR:
+## ninguem perde bala por causa de um conserto.
+func _sincronizar_itens_compartilhados() -> void:
+	for id in ITENS_COMPARTILHADOS:
+		var maior := 0
+		for lista in [inventory_normal, inventory_combat]:
+			for item in lista:
+				if item.get("id", "") == id:
+					maior = maxi(maior, int(item.get("amount", 0)))
+		if maior <= 0:
+			continue
+		for lista in [inventory_normal, inventory_combat]:
+			var achou := false
+			for item in lista:
+				if item.get("id", "") == id:
+					item["amount"] = maior
+					achou = true
+					break
+			if not achou:
+				lista.append({"id": id, "amount": maior})
+
+
+func _add_item_na_lista(lista: Array, item_id: String, amount: int) -> void:
+	var empilhavel: bool = item_db[item_id]["stackable"]
+	for item in lista:
+		if item["id"] == item_id:
+			if empilhavel:
 				item["amount"] += amount
-				found = true
-				break
-		if not found:
-			inventory.append({"id": item_id, "amount": amount})
-	else:
-		var found = false
-		for item in inventory:
-			if item["id"] == item_id:
-				found = true
-				break
-		if not found:
-			inventory.append({"id": item_id, "amount": 1})
+			return
+	lista.append({"id": item_id, "amount": amount if empilhavel else 1})
 
 ## O jogador TEM este item, esteja ele no inventário do Maycow normal ou no do
 ## de combate?
@@ -539,18 +632,39 @@ func get_item_amount(item_id: String) -> int:
 	return 0
 
 func remove_item_amount(item_id: String, amount: int) -> void:
-	for i in range(inventory.size()):
-		if inventory[i]["id"] == item_id:
-			inventory[i]["amount"] -= amount
-			if inventory[i]["amount"] < 0:
-				inventory[i]["amount"] = 0
-			return
+	for lista in _listas_do_item(item_id):
+		for i in range(lista.size()):
+			if lista[i]["id"] == item_id:
+				lista[i]["amount"] = maxi(0, int(lista[i]["amount"]) - amount)
+				break
 
 
+## Equipado E' TER: um save antigo carrega com "pistol" na lista de equipados, e
+## a pistola agora so' existe depois do hospital. Sem esta segunda metade o jogo
+## desenhava a mao com a arma de quem nunca a pegou.
 func is_equipped(item_id: String) -> bool:
-	return item_id in equipped_items
+	return item_id in equipped_items and tem_item(item_id)
+
+
+## Este item aceita ser equipado?
+##
+## O `type` do item_db so' guarda UM papel, e o amuleto tem dois (equipavel e
+## inspecionavel). Por isso a chave extra `equipavel` vence quando existe.
+func pode_equipar(item_id: String) -> bool:
+	var info: Dictionary = item_db.get(item_id, {})
+	return bool(info.get("equipavel", info.get("type", "") == "equippable"))
+
 
 func equip_item(item_id: String) -> void:
+	# Um item do grupo exclusivo derruba o outro: e' o mesmo botao de mira que
+	# muda de funcao, entao os dois juntos nao querem dizer nada.
+	if item_id in EQUIPAMENTO_EXCLUSIVO:
+		for outro in EQUIPAMENTO_EXCLUSIVO:
+			if outro != item_id:
+				equipped_items.erase(outro)
+	# Arma fica lembrada: e' a que a arena devolve (ver `entrar_na_arena`).
+	if item_id in ARMAS_DE_FOGO:
+		ultima_arma_equipada = item_id
 	if not item_id in equipped_items:
 		equipped_items.append(item_id)
 
@@ -558,6 +672,101 @@ func unequip_item(item_id: String) -> void:
 	if item_id == "cogblade": return # Cogblade nao desequipa
 	if item_id in equipped_items:
 		equipped_items.erase(item_id)
+
+
+## O Maycow normal nunca fica de maos vazias por acidente.
+##
+## Ate' aqui o poder do amuleto valia sempre que ele o tivesse no inventario;
+## agora ele e' um item EQUIPADO. Todo save gravado antes disso chegaria com a
+## mira morta — e o jogador nao teria como adivinhar que precisa abrir o menu e
+## equipar algo que sempre funcionou sozinho.
+func garantir_equipamento_do_normal() -> void:
+	for id in EQUIPAMENTO_EXCLUSIVO:
+		if is_equipped(id):
+			return
+	if tem_item("amuleto"):
+		equip_item("amuleto")
+
+
+# ==============================================================================
+# A IDA E A VOLTA DA ARENA
+# ==============================================================================
+## Chegou na arena: guarda o que o Maycow normal tinha na mao e devolve a ARMA.
+##
+## O vaivem que isto conserta: pra ir pra arena o jogador PRECISA estar com o
+## amuleto (e' ele que leva os inimigos pra la'), entao ele desequipa a arma na
+## cidade e chegava desarmado na batalha — justo onde a arma serve pra alguma
+## coisa. Agora a troca e' automatica nos dois sentidos.
+func entrar_na_arena() -> void:
+	equipado_na_cidade = ""
+	for id in EQUIPAMENTO_EXCLUSIVO:
+		if is_equipped(id):
+			equipado_na_cidade = id
+			break
+	if ultima_arma_equipada != "" and tem_item(ultima_arma_equipada):
+		equip_item(ultima_arma_equipada)
+
+
+## Voltou pra cidade: devolve o que ele estava usando antes de partir.
+##
+## Sem isto o jogador volta da arena com a pistola na mao e sem amuleto, e o
+## proximo inimigo da rua nao teria como ser levado pra lugar nenhum.
+func sair_da_arena() -> void:
+	if equipado_na_cidade == "":
+		return
+	if tem_item(equipado_na_cidade):
+		equip_item(equipado_na_cidade)
+	equipado_na_cidade = ""
+
+
+# ==============================================================================
+# ITENS DE CENARIO JA' RECOLHIDOS
+# ==============================================================================
+## Este objeto do cenario ja' foi pego?
+##
+## Pergunta por OBJETO e nao por item: duas caixas de bala no mesmo balcao sao
+## dois objetos, e "ja' tenho bala" nao responde se a segunda ainda esta' la'.
+func pickup_ja_pego(id: String) -> bool:
+	return id != "" and pickups_pegos.has(id)
+
+
+func marcar_pickup(id: String) -> void:
+	if id == "" or pickups_pegos.has(id):
+		return
+	pickups_pegos.append(id)
+
+
+# ==============================================================================
+# ATALHOS DO DIRECIONAL
+# ==============================================================================
+## Liga um item a um direcional. Um item mora num direcional so': repetir o
+## mesmo item noutra direcao MUDA ele de lugar, em vez de aparecer nos dois.
+func definir_atalho(direcao: String, item_id: String) -> void:
+	for d in atalhos.keys():
+		if atalhos[d] == item_id:
+			atalhos.erase(d)
+	atalhos[direcao] = item_id
+	save_game()
+
+
+func limpar_atalho(direcao: String) -> void:
+	if not atalhos.has(direcao):
+		return
+	atalhos.erase(direcao)
+	save_game()
+
+
+## Em que direcional este item esta', ou "" se nao esta' em nenhum.
+func atalho_do_item(item_id: String) -> String:
+	for d in atalhos.keys():
+		if atalhos[d] == item_id:
+			return String(d)
+	return ""
+
+
+## Que item esta' neste direcional, ou "" se nenhum.
+func item_do_atalho(direcao: String) -> String:
+	return String(atalhos.get(direcao, ""))
 
 var menu_instance = null
 func _unhandled_input(event: InputEvent) -> void:

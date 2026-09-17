@@ -301,6 +301,9 @@ func _entregar_amuleto() -> void:
 		return
 
 	SaveManager.add_item(ITEM_AMULETO, 1)
+	# Ja' equipado: o amuleto e' o unico equipavel que ele tem nesta altura, e a
+	# mira dele e' a mecanica que o Capitulo 1 acabou de ensinar.
+	SaveManager.equip_item(ITEM_AMULETO)
 	SaveManager.save_game()
 
 	var tela: CanvasLayer = load(CENA_ITEM_OBTIDO).instantiate()

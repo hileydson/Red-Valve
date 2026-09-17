@@ -75,6 +75,9 @@ func _ready() -> void:
 	GlobalEvents.in_cutscene = false
 	# Arena = Maycow de batalha, igual à battlefield_1.
 	GlobalEvents.is_maycow_normal = false
+	# E, igual a ela, a arena devolve a arma que o jogador teve de guardar
+	# pra poder vir pra ca' com o amuleto.
+	SaveManager.entrar_na_arena()
 	# Névoa cheia: são 80 m de praça aberta, e é a névoa que dá profundidade
 	# entre o jogador e a ruína do outro lado.
 	GlobalEvents.set_high_nevoa()
