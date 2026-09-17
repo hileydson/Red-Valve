@@ -283,6 +283,28 @@ const SENSITIVITY = 0.003 # Sensibilidade do mouse
 @export var WALK_SPEED: float = 3.0
 @export var WALK_SPEED_NORMAL: float = 2.8
 @export var RUN_SPEED: float = 4.8 # Velocidade maior para a corrida
+## DENTRO DE CASA NINGUEM ANDA IGUAL NA RUA.
+##
+## Corredor de hospital, de escola, nave de igreja, sala da casa do Jimmy: o
+## espaco e' curto, a camera de 3a pessoa fica colada na parede e a corrida da
+## cidade atravessa um comodo inteiro antes do jogador enxergar o que tem nele.
+## Nos interiores andar e correr continuam existindo — so' que mais curtos.
+##
+@export var WALK_SPEED_INTERIOR: float = 2.2
+@export var RUN_SPEED_INTERIOR: float = 3.5
+## A animacao da CORRIDA (so' ela) roda um tiquinho mais devagar nos interiores.
+## Isto e' tempero, nao correcao de patinacao: descer ate' a razao das
+## velocidades (3.5/4.8 = 0.73) deixava o passo arrastado.
+@export var ANIM_CORRIDA_INTERIOR: float = 0.9
+## Os interiores, pelo nome do no' raiz da cena. A cidade e a stage_1 ficam de
+## fora de proposito: la' a corrida e' a de sempre.
+const CENAS_INTERIOR: PackedStringArray = [
+	"hospital", "escola", "porao", "igreja_interior",
+	"casa_jimmy_interior", "oficina_jimmy", "the_house",
+]
+## Onde mora o componente do braco que empurra porta. Ele PRECISA ser filho do
+## Skeleton3D — SkeletonModifier3D so' funciona ali.
+const CAMINHO_MAO_PORTA := "maycow_lopes_normal/Armature/Skeleton3D/PlayerDoorReach"
 ## Quanto o movimento precisa estar alinhado com a frente do corpo para a
 ## corrida valer (produto escalar: 1 = direto para frente, 0 = totalmente de
 ## lado, -1 = de costas).
@@ -372,6 +394,42 @@ var ammo_icon: TextureRect
 func _set_anim_time_scale(valor: float) -> void:
 	if is_instance_valid(animation_tree_normal):
 		animation_tree_normal.set("parameters/TimeScale/scale", valor)
+
+
+## Estamos dentro de um dos interiores? Ver `CENAS_INTERIOR`.
+func em_interior() -> bool:
+	var arvore := get_tree()
+	if arvore == null or arvore.current_scene == null:
+		return false
+	return CENAS_INTERIOR.has(String(arvore.current_scene.name))
+
+
+## Velocidade AGORA: a de sempre na rua, a curta nos interiores.
+func _velocidade_corrida() -> float:
+	return RUN_SPEED_INTERIOR if em_interior() else RUN_SPEED
+
+
+func _velocidade_caminhada() -> float:
+	return WALK_SPEED_INTERIOR if em_interior() else WALK_SPEED_NORMAL
+
+
+## Tempero na velocidade da animacao. Vale so' pra corrida e so' em interior —
+## andando, ou na rua, devolve 1.0 e nada muda.
+func _fator_anim_corrida(correndo: bool) -> float:
+	if not correndo or not em_interior():
+		return 1.0
+	return ANIM_CORRIDA_INTERIOR
+
+
+## A MAO QUE EMPURRA A PORTA. Quem chama sao as portas do hospital e da escola
+## (`porta_hospital.gd` / `porta_escola.gd`), passando um ponto na folha.
+##
+## Sem o componente (Maycow com poderes, que tem outro rig) isto simplesmente
+## nao faz nada — a porta abre do mesmo jeito, so' sem o gesto.
+func esticar_mao_para(ponto: Vector3, tempo: float) -> void:
+	var mao = get_node_or_null(CAMINHO_MAO_PORTA)
+	if mao and mao.has_method("estica"):
+		mao.estica(ponto, tempo)
 
 
 ## Velocidade que a animação deve ter agora, ACOMPANHANDO o quão rápido a câmera
@@ -658,6 +716,13 @@ func _ready():
 		playback = GlobalUtils.achar_playback(animation_tree_normal)
 		$maycow_lopes.queue_free()
 		modelo_visual = $maycow_lopes_normal/Armature/Skeleton3D/char1
+		# O braco que empurra porta. Vai embaixo do Skeleton3D (e nao ao lado
+		# dos outros componentes) porque um SkeletonModifier3D so' roda como
+		# filho direto do esqueleto.
+		var esqueleto := $maycow_lopes_normal/Armature/Skeleton3D
+		var mao_porta = load("res://scripts/player/player_door_reach.gd").new()
+		mao_porta.name = "PlayerDoorReach"
+		esqueleto.add_child(mao_porta)
 	else:
 		$maycow_lopes_normal.queue_free()
 		modelo_visual = $maycow_lopes/Armature/Skeleton3D/char1
@@ -1284,7 +1349,7 @@ func _physics_process(delta: float) -> void:
 		if alinhamento < CORRIDA_ALINHAMENTO_MIN:
 			is_running = false
 
-		var velocidade_atual = RUN_SPEED if is_running else WALK_SPEED_NORMAL
+		var velocidade_atual = _velocidade_corrida() if is_running else _velocidade_caminhada()
 		if input_dir.y > 0.1:
 			velocidade_atual *= 0.65
 		velocidade_atual *= speed_multiplier
@@ -1298,8 +1363,9 @@ func _physics_process(delta: float) -> void:
 
 		if direction:
 			# Andando de verdade: a rampa do giro não tem vez, e a animação volta
-			# à velocidade cheia na hora.
-			_set_anim_time_scale(_velocidade_anim_giro(false, delta))
+			# à velocidade cheia na hora — só a corrida em interior fica um
+			# tiquinho abaixo dela (ver `_fator_anim_corrida`).
+			_set_anim_time_scale(_velocidade_anim_giro(false, delta) * _fator_anim_corrida(is_running))
 			if is_on_floor():
 				# Calcula se a direção do movimento é paralela ou oposta à frente do personagem
 				if alinhamento < -0.2:
