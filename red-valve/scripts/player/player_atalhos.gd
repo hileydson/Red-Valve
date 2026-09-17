@@ -14,14 +14,19 @@ extends Node
 ## ==========================================================================
 ## POR QUE AÇÕES NOVAS, E NÃO `ui_left`/`ui_right`
 ##
-## As ações de direção deste projeto são de MOVIMENTO: `ui_left` junta o D-pad,
-## o analógico esquerdo, o A e a seta do teclado. Usar elas aqui faria o Maycow
-## trocar de item toda vez que andasse de lado.
+## `ui_left` e companhia são as ações de INTERFACE: é o que navega nos menus, e
+## nelas está tudo junto — D-pad, analógico esquerdo, A e seta do teclado. Usar
+## elas aqui faria o Maycow trocar de item toda vez que andasse de lado.
 ##
 ## Por isso `ui_atalho_*` são ações próprias, e propositalmente estreitas:
-##   - no controle, SÓ o D-pad (o analógico continua sendo andar);
+##   - no controle, SÓ o D-pad;
 ##   - no teclado, SÓ o teclado numérico 4/8/6/2, que é o único direcional que
 ##     não está em uso (as setas também andam).
+##
+## E o caminho de volta: ANDAR não lê mais `ui_left`. O `player.gd` e o
+## `player_dash.gd` leem `ui_mover_*`, que é a mesma coisa SEM o D-pad —
+## analógico esquerdo, WASD e setas. Assim o D-pad é só atalho fora do menu, e
+## continua navegando dentro dele.
 
 const DIRECOES := {
 	"ui_atalho_esquerda": "esquerda",

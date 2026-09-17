@@ -46,7 +46,9 @@ func dash() -> void:
 	
 	player.dash_effect_particles.emitting = true
 
-	var input_dir = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+	# Mesma leitura de movimento do player.gd: sem o D-pad, que agora é dos
+	# atalhos de equipamento.
+	var input_dir = Input.get_vector("ui_mover_esquerda", "ui_mover_direita", "ui_mover_cima", "ui_mover_baixo")
 	var direction = (player.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 	
 	if direction == Vector3.ZERO:

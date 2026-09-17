@@ -269,7 +269,7 @@ func apply_configs() -> void:
 				var win_size = DisplayServer.window_get_size()
 				DisplayServer.window_set_position((screen_size - win_size) / 2)
 		
-	var actions = ["ui_left", "ui_right", "ui_up", "ui_down", "ui_look_left", "ui_look_right", "ui_look_up", "ui_look_down"]
+	var actions = ["ui_left", "ui_right", "ui_up", "ui_down", "ui_mover_esquerda", "ui_mover_direita", "ui_mover_cima", "ui_mover_baixo", "ui_look_left", "ui_look_right", "ui_look_up", "ui_look_down"]
 	for action in actions:
 		if InputMap.has_action(action):
 			InputMap.action_set_deadzone(action, config["deadzone"])

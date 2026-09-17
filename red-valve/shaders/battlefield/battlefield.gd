@@ -721,7 +721,7 @@ func _update_rise_camera(delta: float) -> void:
 		_rise_cam.look_at(_rise_look_at, Vector3.UP)
 
 
-func _spawn_ground_burst(pos: Vector3) -> void:
+func _spawn_ground_burst(pos: Vector3, quantidade: int = -1) -> void:
 	# Poeira/terra saindo do ponto onde alguém furou o chão
 	var dust := CPUParticles3D.new()
 	add_child(dust)
@@ -756,7 +756,9 @@ func _spawn_ground_burst(pos: Vector3) -> void:
 	)
 
 	# Pedaços de pedra subindo junto e quicando na arena
-	var n := int(round(float(ROCK_COUNT) / max(1.0, float(enemies.size() + 1))))
+	var n := quantidade
+	if n < 0:
+		n = int(round(float(ROCK_COUNT) / max(1.0, float(enemies.size() + 1))))
 	for i in range(max(10, n)):
 		_spawn_rock_chunk(pos)
 
@@ -888,3 +890,86 @@ func _play_entry_blur() -> void:
 	tw.tween_property(mat, "shader_parameter/intensity", 0.0, 1.2).set_delay(0.3).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 	tw.set_parallel(false)
 	tw.tween_callback(layer.queue_free)
+
+
+# ============================================================
+#  RESGATE DA GÁRGULA: cair da arena não mata mais
+# ============================================================
+## Fora da arena, sair do mapa é morte (`player._trigger_fall_death`). Aqui não:
+## a arena está no ar e a borda é curta demais para a queda ser uma punição de
+## verdade. Quem despenca é PEGO no ar por uma gárgula, levado de volta e
+## largado num ponto sorteado do chão.
+##
+## A sequência inteira mora em `resgate_gargula.gd`, pelo mesmo motivo do
+## agarrão: ela é uma cinematica de câmera e mãos em 1ª pessoa, e não tem nada
+## a ver com o resto desta cena.
+const RESGATE_SCRIPT := "res://scripts/stages/battlefield/resgate_gargula.gd"
+
+## Nó que carrega o chão jogável da arena. É dele que sai o ponto de largada.
+const CHAO_DA_ARENA := "Ambient/Ground"
+
+var _resgate: Node
+
+
+## Chamado pelo `player` no lugar da morte por queda. true = a arena assumiu o
+## jogador e ninguém mais deve matá-lo.
+func resgatar_do_abismo(jogador: Node3D) -> bool:
+	if not is_instance_valid(jogador):
+		return false
+	# Já resgatando: o `_physics_process` do jogador continua perguntando todo
+	# quadro enquanto ele estiver abaixo da linha, e responder `false` aqui
+	# mandaria a morte por queda por cima da cinematica.
+	if is_instance_valid(_resgate):
+		return true
+	if not is_instance_valid(player) or jogador != player:
+		return false
+
+	_resgate = load(RESGATE_SCRIPT).new()
+	_resgate.name = "ResgateGargula"
+	add_child(_resgate)
+	_resgate.resgatar(jogador)
+	return true
+
+
+## Um ponto qualquer do chão da arena, com folga para a borda e longe dos
+## inimigos — é onde a gárgula larga o jogador.
+func ponto_aleatorio_na_arena(margem: float = 3.5) -> Vector3:
+	var centro := Vector3.ZERO
+	var meio := Vector2(6.5, 6.5)
+	var chao := get_node_or_null(NodePath(CHAO_DA_ARENA)) as MeshInstance3D
+	if chao != null and chao.mesh != null:
+		var caixa: AABB = chao.global_transform * chao.mesh.get_aabb()
+		centro = caixa.get_center()
+		meio = Vector2(maxf(caixa.size.x * 0.5 - margem, 1.0),
+				maxf(caixa.size.z * 0.5 - margem, 1.0))
+
+	# Dez tentativas de cair longe de todo mundo; na pior das hipóteses vale a
+	# última mesmo assim — melhor esbarrar num inimigo do que não largar nunca.
+	var escolhido := centro
+	for tentativa in range(10):
+		escolhido = Vector3(centro.x + randf_range(-meio.x, meio.x), centro.y,
+				centro.z + randf_range(-meio.y, meio.y))
+		var perto := false
+		for e in enemies:
+			if is_instance_valid(e) and e.global_position.distance_to(escolhido) < 3.0:
+				perto = true
+				break
+		if not perto:
+			break
+
+	# O AABB da malha não conhece o relevo: o piso de verdade vem do raio.
+	var mundo := get_viewport().find_world_3d() if get_viewport() != null else null
+	if mundo != null:
+		var consulta := PhysicsRayQueryParameters3D.create(
+				escolhido + Vector3.UP * 8.0, escolhido - Vector3.UP * 12.0, 2)
+		var piso := mundo.direct_space_state.intersect_ray(consulta)
+		if piso:
+			escolhido.y = piso.position.y
+	return escolhido
+
+
+## Pedras e poeira estourando em volta de um ponto do chão — exatamente as
+## mesmas da chegada na arena (`_play_rise_from_ground_intro`). É o que o
+## resgate dispara quando o jogador bate no chão.
+func estourar_chao(pos: Vector3, quantidade: int = 34) -> void:
+	_spawn_ground_burst(pos, quantidade)

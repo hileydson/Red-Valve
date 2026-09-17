@@ -383,9 +383,29 @@ var _pivotando: bool = false
 var _atraso_pivo: float = 0.0
 ## Quanto ainda falta do tempo mínimo da animação de passinho (ver GIRO_ANIM_MINIMO).
 var _pivo_anim: float = 0.0
+## RITMO DO ENQUADRAMENTO — O DESLOCAMENTO NÃO PODE DAR TRANCO.
+##
+## Parar de correr troca o alvo do deslocamento de 85 cm para 40 cm de uma vez
+## só. Perseguir isso com um `lerp` simples põe a maior parte desses 45 cm nos
+## primeiros quadros — a velocidade é MÁXIMA no instante da parada — e o Maycow
+## é jogado para o meio da tela num puxão.
+##
+## Por isso a perseguição é em DOIS passos. Este é o primeiro: ele suaviza o
+## próprio ALVO, e é o que faz o deslocamento começar parado em vez de sair
+## correndo no primeiro quadro.
+const ENQUADRAMENTO_ALVO := 3.0
+## Segundo passo, em Z: o corpo perseguindo o alvo já suavizado. Mais lento que
+## os 2.0 de antes de propósito — junto com o primeiro passo, o pico de
+## velocidade cai para menos da metade e a volta ao enquadramento de parado
+## vira um deslize de pouco mais de um segundo.
+const ENQUADRAMENTO_CORPO := 2.4
+
 ## Deslocamento do modelo no espaço do CORPO (ver seção 8).
 var _off_corpo_x: float = 0.0
 var _off_corpo_z: float = 0.3995
+## O alvo JÁ SUAVIZADO desse deslocamento (ver ENQUADRAMENTO_ALVO).
+var _alvo_corpo_x: float = 0.0
+var _alvo_corpo_z: float = 0.3995
 
 var is_toggle_aim_active: bool = false
 
@@ -586,9 +606,35 @@ const LANTERNA_SOM_PITCH := 0.62
 ## apontada exatamente para o centro da tela ilumina o horizonte e deixa o chão
 ## à frente dos pés no escuro, que é justamente onde se anda.
 const LANTERNA_INCLINACAO := 0.16
+## Posição de repouso do facho (à frente e um palmo à direita do peito).
+const LANTERNA_POS := Vector3(0.16, -0.05, -0.75)
+## Inércia: quanto do giro da câmera a mão "não acompanha". A luz fica para
+## trás da virada e chega depois — é o que tira o ar de lanterna parafusada na
+## testa. Em radianos por radiano girado.
+const LANTERNA_INERCIA := 3.2
+## Passada: o facho sobe/desce e vai/volta junto com o andar, proporcional à
+## velocidade. Parado, some.
+const LANTERNA_BOB := 0.0075
+## Mola que traz o facho de volta ao centro, e o atrito que a segura. Mola alta
+## demais devolve rápido e vira tremida; atrito baixo demais deixa balançando.
+const LANTERNA_MOLA := 34.0
+const LANTERNA_AMORT := 7.0
+## Teto do desvio, em radianos (~5°). Sem isto uma virada brusca joga o facho
+## para fora da tela.
+const LANTERNA_SWAY_MAX := 0.09
 
 var lanterna_ligada: bool = false
 var _lanterna_som: AudioStreamPlayer = null
+## Halo: o segundo facho, largo e fraco, que envolve o miolo. Uma lanterna real
+## não projeta um disco de luz e escuro absoluto em volta — tem o círculo forte
+## no meio e um derrame suave bem maior ao redor. Com um SpotLight3D só, o que
+## dava para fazer era a bola de luz.
+var _lanterna_halo: SpotLight3D = null
+var _lant_sway := Vector2.ZERO      # desvio atual (x = guinada, y = passo)
+var _lant_sway_vel := Vector2.ZERO
+var _lant_yaw_ant := 0.0
+var _lant_pitch_ant := 0.0
+var _lant_t := 0.0
 
 
 func _configurar_lanterna() -> void:
@@ -599,26 +645,47 @@ func _configurar_lanterna() -> void:
 	# chegava ao chão era um resto. Puxada 75 cm para a frente (e um palmo
 	# para a direita, como quem segura a lanterna), o corpo fica atrás da
 	# fonte e a sombra dele passa a cair para trás, que é o certo.
-	lanterna.position = Vector3(0.16, -0.05, -0.75)
+	lanterna.position = LANTERNA_POS
 	lanterna.shadow_blur = 1.4
 	lanterna.shadow_transmittance_bias = 0.05
 	lanterna.light_color = Color(1.0, 0.96, 0.88)
-	# Números altos de propósito. A igreja roda com luz ambiente forte
-	# (`ambient_light_energy` 1,7) e tonemap filmic, que lavam qualquer facho
-	# discreto: com 5 de energia a lanterna existia no papel e sumia na tela.
-	lanterna.light_energy = 14.0
-	lanterna.light_indirect_energy = 1.0
-	lanterna.light_volumetric_fog_energy = 2.6
-	lanterna.spot_range = 45.0
-	lanterna.spot_angle = 28.0
-	lanterna.spot_angle_attenuation = 0.6    # miolo forte, borda que some
-	lanterna.spot_attenuation = 0.7          # cai devagar: é um facho longo
+	# MIOLO. Antes eram 14 de energia e 45 m de alcance: acendia o corredor
+	# inteiro e estourava tudo que estivesse perto. Uma lanterna de mão alcança
+	# um punhado de metros; o que vem depois disso ela só insinua.
+	lanterna.light_energy = 4.6
+	lanterna.light_indirect_energy = 0.55
+	lanterna.light_volumetric_fog_energy = 1.1
+	lanterna.spot_range = 14.0
+	lanterna.spot_angle = 18.0
+	lanterna.spot_angle_attenuation = 1.15   # miolo forte com borda que derrete
+	lanterna.spot_attenuation = 1.5          # morre antes do fim do alcance
 	lanterna.shadow_enabled = true
 	lanterna.shadow_bias = 0.04
 	lanterna.shadow_normal_bias = 1.4
 	lanterna.distance_fade_enabled = false
 	lanterna.visible = false
 	lanterna_ligada = false
+
+	# HALO. Filho do miolo de propósito: herda de graça a inclinação e todo o
+	# balanço da mão, então os dois nunca se descolam. Sem sombra — sombra de
+	# duas fontes quase juntas dá contorno duplo, e é luz fraca demais para
+	# valer o custo num renderer mobile.
+	if not is_instance_valid(_lanterna_halo):
+		_lanterna_halo = SpotLight3D.new()
+		_lanterna_halo.name = "lanterna_halo"
+		lanterna.add_child(_lanterna_halo)
+	_lanterna_halo.position = Vector3.ZERO
+	_lanterna_halo.rotation = Vector3.ZERO
+	_lanterna_halo.light_color = Color(0.92, 0.94, 1.0)
+	_lanterna_halo.light_energy = 1.15
+	_lanterna_halo.light_indirect_energy = 0.35
+	_lanterna_halo.light_volumetric_fog_energy = 0.6
+	_lanterna_halo.spot_range = 8.5
+	_lanterna_halo.spot_angle = 44.0
+	_lanterna_halo.spot_angle_attenuation = 0.35
+	_lanterna_halo.spot_attenuation = 1.2
+	_lanterna_halo.shadow_enabled = false
+	_lanterna_halo.distance_fade_enabled = false
 
 	_lanterna_som = AudioStreamPlayer.new()
 	_lanterna_som.name = "lanterna_som"
@@ -656,14 +723,53 @@ func acender_lanterna_agora() -> void:
 ## O facho segue o pitch da câmera que estiver valendo. Em terceira pessoa quem
 ## sobe e desce é a `camera_third_person`; a `Camera3D` (1ª pessoa, mãe da luz)
 ## fica parada, e sem isto a lanterna apontaria sempre para o horizonte.
-func _atualizar_mira_lanterna() -> void:
+func _atualizar_mira_lanterna(delta: float) -> void:
 	if not lanterna_ligada or not is_instance_valid(lanterna):
 		return
 	var cam := get_viewport().get_camera_3d()
-	if cam == null or cam == camera:
+	if cam == null:
 		return
+
+	# --- BALANÇO DA MÃO -------------------------------------------------
+	# Duas forças empurram o facho para fora do centro e uma mola o traz de
+	# volta: a INÉRCIA da virada (a mão chega depois da câmera) e a PASSADA
+	# (o braço sobe e desce com o andar). Parado e sem girar, os dois zeram e
+	# a mola devolve o facho ao lugar sozinha.
+	var yaw: float = cam.global_rotation.y
+	var pitch: float = cam.global_rotation.x
+	var d_yaw: float = wrapf(yaw - _lant_yaw_ant, -PI, PI)
+	var d_pitch: float = wrapf(pitch - _lant_pitch_ant, -PI, PI)
+	_lant_yaw_ant = yaw
+	_lant_pitch_ant = pitch
+	_lant_sway_vel += Vector2(-d_yaw, -d_pitch) * LANTERNA_INERCIA
+
+	var vel_plana: float = minf(Vector2(velocity.x, velocity.z).length(), 7.0)
+	_lant_t += delta * (1.6 + vel_plana * 1.15)
+	# Vertical no dobro da frequência da horizontal: é o oito deitado que o
+	# braço faz andando. Mesma frequência nos dois eixos daria um círculo.
+	var passo := Vector2(sin(_lant_t), sin(_lant_t * 2.0) * 0.6) \
+		* vel_plana * LANTERNA_BOB
+
+	_lant_sway_vel += (passo - _lant_sway) * LANTERNA_MOLA * delta
+	_lant_sway_vel *= exp(-LANTERNA_AMORT * delta)
+	_lant_sway += _lant_sway_vel * delta
+	_lant_sway = _lant_sway.limit_length(LANTERNA_SWAY_MAX)
+
+	# --- MIRA -----------------------------------------------------------
+	# Em terceira pessoa quem sobe e desce é a `camera_third_person`; a
+	# `Camera3D` (1ª pessoa, mãe da luz) fica parada, e sem isto a lanterna
+	# apontaria sempre para o horizonte.
+	var alvo_x: float = -LANTERNA_INCLINACAO
+	if cam != camera:
+		alvo_x = cam.rotation.x - LANTERNA_INCLINACAO
 	lanterna.rotation.x = lerp_angle(lanterna.rotation.x,
-		cam.rotation.x - LANTERNA_INCLINACAO, 0.25)
+		alvo_x + _lant_sway.y, 0.25)
+	lanterna.rotation.y = lerp_angle(lanterna.rotation.y, _lant_sway.x, 0.25)
+	# Um tiquinho de deslocamento junto do giro: só girar a fonte move o disco
+	# de luz mas deixa a origem congelada, e o olho percebe isso.
+	lanterna.position = lanterna.position.lerp(
+		LANTERNA_POS + Vector3(_lant_sway.x * 0.35, _lant_sway.y * 0.35, 0.0),
+		0.25)
 
 
 # ==============================================================================
@@ -977,7 +1083,7 @@ func _sincroniza_flags_de_teste() -> void:
 func _physics_process(delta: float) -> void:
 	if not is_inside_tree() or get_tree() == null: return
 
-	_atualizar_mira_lanterna()
+	_atualizar_mira_lanterna(delta)
 	
 	if damage_blur_timer > 0.0:
 		damage_blur_timer -= delta
@@ -1088,7 +1194,12 @@ func _physics_process(delta: float) -> void:
 		fall_cam.look_at(global_position, Vector3.UP)
 		
 	if global_position.y < -10.0 and current_health > 0 and not is_falling_dead:
-		_trigger_fall_death()
+		# Na ARENA cair nao mata mais: uma gargula pega o jogador no ar e o
+		# devolve num ponto sorteado do chao (ver
+		# scripts/stages/battlefield/resgate_gargula.gd). Em todo o resto do
+		# jogo sair do mapa continua sendo morte por queda.
+		if not _pedir_resgate_da_arena():
+			_trigger_fall_death()
 
 	if are_cutscene_inputs_blocked():
 		if is_instance_valid(hand_with_pistol) and hand_with_pistol.visible:
@@ -1240,7 +1351,16 @@ func _physics_process(delta: float) -> void:
 			
 
 		# 7. MOVIMENTAÇÃO (DASH VS CAMINHADA)
-		var input_dir := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+		# ANDAR NÃO LÊ `ui_left`/`ui_right` — LÊ `ui_mover_*`.
+		#
+		# O direcional do controle (D-pad) continua em `ui_left` e companhia,
+		# porque é ele que navega nos menus. O que ele não faz mais é ANDAR: o
+		# D-pad agora é dos atalhos de equipamento (`player_atalhos.gd`), e
+		# trocar de item não pode dar um passo para o lado junto.
+		#
+		# `ui_mover_*` é a mesma coisa sem o D-pad: analógico esquerdo, WASD e
+		# as setas do teclado.
+		var input_dir := Input.get_vector("ui_mover_esquerda", "ui_mover_direita", "ui_mover_cima", "ui_mover_baixo")
 		
 		# --- CUTSCENE INPUT OVERRIDES ---
 		if are_cutscene_inputs_blocked():
@@ -1469,7 +1589,9 @@ func _physics_process(delta: float) -> void:
 			
 
 		# 7. MOVIMENTAÇÃO (DASH VS CAMINHADA)
-		var input_dir := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+		# Mesma leitura de movimento do Maycow parasita, acima: `ui_mover_*` é
+		# `ui_left` e companhia SEM o D-pad, que agora só troca de equipamento.
+		var input_dir := Input.get_vector("ui_mover_esquerda", "ui_mover_direita", "ui_mover_cima", "ui_mover_baixo")
 		
 		# --- CUTSCENE INPUT OVERRIDES ---
 		if are_cutscene_inputs_blocked():
@@ -1652,8 +1774,13 @@ func _physics_process(delta: float) -> void:
 				if not is_running:
 					target_pos_x -= 0.15
 
-			_off_corpo_x = lerp(_off_corpo_x, target_pos_x, speed_x * delta)
-			_off_corpo_z = lerp(_off_corpo_z, target_pos_z, 2.0 * delta)
+			# O alvo é perseguido em dois passos (ver ENQUADRAMENTO_ALVO): o de
+			# cima suaviza o alvo, o de baixo persegue o alvo já suavizado. É o
+			# que tira o tranco de quando a corrida acaba.
+			_alvo_corpo_x = lerp(_alvo_corpo_x, target_pos_x, ENQUADRAMENTO_ALVO * delta)
+			_alvo_corpo_z = lerp(_alvo_corpo_z, target_pos_z, ENQUADRAMENTO_ALVO * delta)
+			_off_corpo_x = lerp(_off_corpo_x, _alvo_corpo_x, speed_x * delta)
+			_off_corpo_z = lerp(_off_corpo_z, _alvo_corpo_z, ENQUADRAMENTO_CORPO * delta)
 			# O DESLOCAMENTO TEM DE GIRAR JUNTO COM O ATRASO DO PIVÔ.
 			#
 			# Os ~40 cm de enquadramento vivem no espaço do JOGADOR, que gira
@@ -1874,6 +2001,20 @@ func take_damage(number:int):
 	print("Damage taken by the player: "+str(number) + " | HP: " + str(current_health))
 	
 	_start_heartbeat_pulse()
+
+## Pergunta a cena atual se ELA assume o jogador que caiu do mapa. true = a
+## cena tomou conta e ninguem mais deve mata-lo.
+##
+## Hoje so' a arena responde (`battlefield.resgatar_do_abismo`); qualquer outra
+## cena nem tem o metodo, devolve false e a morte por queda segue igual.
+func _pedir_resgate_da_arena() -> bool:
+	if get_tree() == null:
+		return false
+	var cena := get_tree().current_scene
+	if cena != null and cena.has_method("resgatar_do_abismo"):
+		return cena.resgatar_do_abismo(self)
+	return false
+
 
 func _trigger_fall_death() -> void:
 	if is_falling_dead: return

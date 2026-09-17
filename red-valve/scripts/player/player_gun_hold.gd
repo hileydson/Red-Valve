@@ -84,11 +84,50 @@ const CABO_NO_MODELO := Vector3(0.61, -0.33, 0.0)
 
 ## Retoque fino por cima do cabo, no espaco da arma: X ao longo do cano,
 ## Y altura, Z lateral.
-const OFFSET_NA_MAO := Vector3(0.0, 0.0, 0.0)
+const OFFSET_NA_MAO := Vector3(0.504, 0.296, 0.000)
 
 ## Quebra do punho, em graus, com a arma BAIXADA (mirando vale zero — la' quem
 ## manda e' o alvo).
-const INCLINACAO_PUNHO := 12.0
+const INCLINACAO_PUNHO := -8.0
+
+# ---- o punho por cima do alinhamento com a arma -------------------------------
+# Zero em tudo = a mao exatamente como o cano manda: dedos pra onde a arma
+# aponta, palma virada pro cabo. Estes quatro sao o retoque humano por cima
+# disso — e os tres giros valem nos eixos da ARMA, entao o que se ve na tela e'
+# o que o nome diz, com a arma apontada pra onde for, nas duas maos igual.
+
+## Torce a mao em torno do cano (o giro que decide se a palma cai por dentro ou
+## por fora). Graus.
+const PUNHO_ROLAGEM := 55.0
+## Sobe ou desce a mao, como quem dobra o punho. Graus.
+const PUNHO_INCLINACAO := -3.0
+## Abre a mao pro lado (desvio do punho). Graus.
+const PUNHO_DESVIO := -30.0
+## Corre a mao ao longo do cano, em CENTIMETROS. E' o unico que nao mexe na
+## arma: serve pra encaixar o punho no cabo sem desmanchar o ajuste dela.
+const PUNHO_DESLIZE := -1.2
+
+## EM VOLTA DE QUE PONTO A MAO GIRA.
+##
+## Pelo osso, nao: o osso da mao fica no PULSO, e a mao fechada fecha 10 cm
+## adiante dele. Girar pelo pulso nao gira a mao — joga ela pra fora da arma,
+## num arco de 10 cm de raio. Entao os tres giros acontecem em volta do meio do
+## punho fechado, que e' por onde o cabo passa: a mao gira NO LUGAR, em cima da
+## arma, e a arma nao se mexe.
+##
+## Medido no punho fechado do proprio modelo: (3,1 / 9,8 / 1,0) cm na direita e
+## o espelho disso na esquerda. Em centimetros, no espaco do osso da mao.
+const PUNHO_PIVO_PALMA := 3.0
+const PUNHO_PIVO_DEDOS := 9.7
+
+# ---- a mao em volta do cabo ---------------------------------------------------
+## Nome dos morph targets de mao fechada (ver `tools/modelos/gerar_punho_maycow.py`).
+const MORFO_PUNHO_D := "punho_d"
+const MORFO_PUNHO_E := "punho_e"
+## Quanto tempo a mao leva pra fechar e pra abrir (segundos).
+const FECHA_MAO := 0.18
+## Quanto a mao esquerda fica fechada segurando o PENTE, no meio da recarga.
+const PUNHO_NO_PENTE := 0.45
 
 # ---- onde as maos param quando ele mira ---------------------------------------
 ## Distancia das maos a' frente do meio dos ombros. O braco tem ~49 cm do ombro
@@ -168,10 +207,21 @@ var _pose_arma := Transform3D.IDENTITY
 var _ancora_suave := Vector3.ZERO
 var _tem_ancora := false
 
+## Indice dos morph targets na malha (-1 = este modelo nao tem).
+var _morfo_d := -1
+var _morfo_e := -1
+## Quanto cada mao esta' fechada agora (0 a 1).
+var _fechada_d := 0.0
+var _fechada_e := 0.0
+
 ## Valores em uso. Nascem das constantes e so' mudam no modo de ajuste.
 var _cabo := CABO_NO_MODELO
 var _offset := OFFSET_NA_MAO
 var _inclinacao := INCLINACAO_PUNHO
+var _rolagem := PUNHO_ROLAGEM
+var _incl_punho := PUNHO_INCLINACAO
+var _desvio := PUNHO_DESVIO
+var _deslize := PUNHO_DESLIZE
 
 
 # ==============================================================================
@@ -246,6 +296,7 @@ func _process_modification_with_delta(delta: float) -> void:
 	if not equipada:
 		_peso = 0.0
 		_recarregando = false
+		_fechar_maos(0.0, 0.0, delta)
 		return
 
 	if _recarregando:
@@ -278,6 +329,14 @@ func _process_modification_with_delta(delta: float) -> void:
 
 	_pousar_arma(sk, ctx, peso)
 
+	# A mao so' pode fechar DEPOIS que a arma tem pose: e' a pose dela que diz
+	# pra onde o punho tem de olhar.
+	var solta: float = ctx["solta"]
+	var apoio := peso * (1.0 - solta)
+	_alinhar_punho(sk, _i_mao_d, -1.0, 1.0)
+	_alinhar_punho(sk, _i_mao_e, 1.0, apoio)
+	_fechar_maos(1.0, maxf(apoio, PUNHO_NO_PENTE * solta), delta)
+
 
 ## Onde tudo e' medido neste quadro: a ancora no tronco, os eixos da mira e o
 ## destino de cada mao. Tudo no espaco dos OSSOS (centimetros).
@@ -306,12 +365,13 @@ func _montar_contexto(sk: Skeleton3D, alvo: Vector3, peso: float,
 
 	var rolagem := 0.0
 	var levanta := 0.0
+	var solta := 0.0
 	if _recarregando:
 		var r := _recarga
 		# Quanto a arma esta' recolhida (sobe no comeco, desce no fim).
 		var recolhe := smoothstep(0.0, 0.18, r) - smoothstep(0.80, 1.0, r)
 		# A mao esquerda larga a arma, desce ao cinto e volta com o pente.
-		var solta := smoothstep(0.04, 0.28, r) - smoothstep(0.44, 0.68, r)
+		solta = smoothstep(0.04, 0.28, r) - smoothstep(0.44, 0.68, r)
 		# Empurrao curto do pente pra dentro.
 		var encaixa := smoothstep(0.66, 0.74, r) - smoothstep(0.78, 0.90, r)
 
@@ -328,7 +388,7 @@ func _montar_contexto(sk: Skeleton3D, alvo: Vector3, peso: float,
 		"mao_d": mao_d, "mao_e": mao_e,
 		"polo_d": mao_d - Vector3.UP * COTOVELO_BAIXO + direita * COTOVELO_FORA,
 		"polo_e": mao_e - Vector3.UP * COTOVELO_BAIXO - direita * COTOVELO_FORA,
-		"rolagem": rolagem, "levanta": levanta, "alvo": mira,
+		"rolagem": rolagem, "levanta": levanta, "alvo": mira, "solta": solta,
 	}
 
 
@@ -494,6 +554,76 @@ func _pousar_arma(sk: Skeleton3D, ctx: Dictionary, peso: float) -> void:
 		pose.origin)
 
 
+# ==============================================================================
+# A MAO EM VOLTA DO CABO
+# ==============================================================================
+## Vira o punho pra mao ficar EM VOLTA do cabo, e nao ao lado dele.
+##
+## Este rig nao tem dedo, mas tem o osso da MAO — girar o punho e' de graca, e e'
+## metade do que faz a arma parecer segurada. Antes o punho era preso no
+## descanso de proposito (pra arma nao tremer com a passada), entao a arma
+## ficava na orientacao da mira e a mao na orientacao da animacao: duas coisas
+## encostadas, nao uma segurando a outra.
+##
+## No espaco do osso da mao, medido nos proprios vertices pela matriz de bind,
+## +Y aponta pras pontas dos dedos e X e' a normal da palma (+X na direita, -X
+## na esquerda, que e' espelhada). Entao a conta e' curta: os dedos apontam pra
+## onde o CANO aponta, e a palma olha pro cabo, que pende por baixo da arma.
+func _alinhar_punho(sk: Skeleton3D, i_mao: int, palma: float, peso: float) -> void:
+	if i_mao < 0 or peso <= 0.001:
+		return
+	# A base da arma: X dela e' o cano ao contrario, Y e' o alto dela.
+	var dedos := -_pose_arma.basis.x
+	var normal := _pose_arma.basis.y * palma
+	if dedos.length_squared() < 0.0001:
+		return
+	var alvo := Basis(normal, dedos, normal.cross(dedos)).orthonormalized()
+	var g := sk.get_bone_global_pose(i_mao)
+	# O ponto em volta do qual a mao gira: o meio do punho fechado, que e' por
+	# onde o cabo passa (ver PUNHO_PIVO_DEDOS). O X do osso e' a palma — na
+	# esquerda ela cai do outro lado, dai' o sinal.
+	var pivo := Vector3(PUNHO_PIVO_PALMA * -palma, PUNHO_PIVO_DEDOS, 0.0)
+	var no_cabo := g.origin + alvo * pivo
+
+	# O retoque humano (modo de ajuste, no fim do arquivo). Os eixos sao os da
+	# ARMA de proposito: nos eixos da mao, a esquerda — que chega no cabo pelo
+	# lado oposto — giraria espelhada da direita a cada tecla.
+	alvo = alvo.rotated(dedos, deg_to_rad(_rolagem))
+	alvo = alvo.rotated(_pose_arma.basis.z, deg_to_rad(_incl_punho))
+	alvo = alvo.rotated(_pose_arma.basis.y, deg_to_rad(_desvio))
+
+	# A mao gira em volta do cabo e o PULSO e' que se mexe pra isso acontecer —
+	# o contrario de girar pelo pulso, que tira a mao da arma. O deslize entra
+	# aqui tambem: ele corre so' a mao, a arma ja' foi posta e nao anda junto.
+	var origem := no_cabo - alvo * pivo + dedos * _deslize
+	sk.set_bone_global_pose(i_mao, Transform3D(g.basis.slerp(alvo, peso),
+		g.origin.lerp(origem, peso)))
+
+
+## Fecha a mao pelo morph target (ver `tools/modelos/gerar_punho_maycow.py`).
+##
+## Osso de dedo nao existe neste rig e nao da' pra criar no motor: peso de pele
+## e' dado de MALHA. O que da' pra criar e' morph target — a malha com os dedos
+## ja' dobrados, enxertada no .glb por script — e ai' fechar a mao vira um
+## numero de 0 a 1.
+func _fechar_maos(alvo_d: float, alvo_e: float, delta: float) -> void:
+	if _morfo_d == -2 or not is_instance_valid(_malha):
+		return
+	if _morfo_d < 0:
+		_morfo_d = _malha.find_blend_shape_by_name(MORFO_PUNHO_D)
+		_morfo_e = _malha.find_blend_shape_by_name(MORFO_PUNHO_E)
+		if _morfo_d < 0 or _morfo_e < 0:
+			push_warning("player_gun_hold: o modelo nao tem os morphs de mao "
+				+ "fechada — rode tools/modelos/gerar_punho_maycow.py")
+			_morfo_d = -2
+			return
+	var passo := delta / FECHA_MAO
+	_fechada_d = move_toward(_fechada_d, alvo_d, passo)
+	_fechada_e = move_toward(_fechada_e, alvo_e, passo)
+	_malha.set_blend_shape_value(_morfo_d, _fechada_d)
+	_malha.set_blend_shape_value(_morfo_e, _fechada_e)
+
+
 ## Monta (uma vez) ou esconde o modelo da arma.
 ##
 ## Ela e' filha da MALHA e nao deste no': este no' e' filho do Skeleton3D, e o
@@ -539,23 +669,36 @@ func _procurar_ossos(sk: Skeleton3D) -> bool:
 
 
 # ==============================================================================
-# MODO DE AJUSTE — acertar a arma na mao sem recompilar
+# MODO DE AJUSTE — acertar a MAO e a ARMA sem recompilar
 # ==============================================================================
-## So' em build de debug (rodando pelo editor). Aperte F9 dentro do jogo:
+## So' em build de debug (rodando pelo editor). F9 liga, F9 desliga, e G troca
+## entre os dois alvos — as mesmas oito teclas servem aos dois, porque em
+## ajuste fino a mao nao larga o teclado.
 ##
-##     I / K   arma pra frente / pra tras (ao longo do cano)
+##     G       troca entre MAO e ARMA (o P mostra qual esta' ligado)
+##
+##   com a MAO ligada (gira em volta do cabo, a arma nao se mexe):
+##     U / O   torce a mao em torno do cano (rolagem)
+##     I / K   rola a mao pra cima / pra baixo (inclinacao)
+##     J / L   gira a mao pra um lado e pro outro (desvio)
+##     N / M   corre a mao ao longo do cano — so' a mao
+##
+##   com a ARMA ligada (a mao acompanha, porque ela segue a arma):
+##     I / K   arma pra frente / pra tras, ao longo do cano
 ##     U / O   sobe / desce na mao
 ##     J / L   pra dentro / pra fora (lateral)
-##     N / M   inclina o punho (so' com a arma baixada)
-##     P       imprime os valores prontos pra colar nas constantes
+##     N / M   quebra do punho da ARMA (so' aparece com ela baixada)
+##
+##     P       imprime as DUAS linhas prontas pra colar
 ##     F9      sai do modo
 ##
-## Segurar a tecla repete. Um toque = 2 mm. Mire e solte a mira enquanto ajusta:
-## a inclinacao do punho so' aparece com a arma baixada.
+## Segurar a tecla repete. Um toque = 1 grau, ou 2 mm no que e' distancia.
 const AJUSTE_PASSO := 0.2       # centimetros por toque
 const AJUSTE_PASSO_ANG := 1.0   # graus por toque
 
 var _ajustando := false
+## Qual dos dois as teclas mexem agora.
+var _ajustando_arma := false
 
 
 func _input(event: InputEvent) -> void:
@@ -568,35 +711,61 @@ func _input(event: InputEvent) -> void:
 	if tecla.keycode == KEY_F9 and not tecla.echo:
 		_ajustando = not _ajustando
 		if _ajustando:
-			print("[arma] ajuste LIGADO — I/K frente-tras, U/O cima-baixo, "
-				+ "J/L lateral, N/M punho, P imprime")
+			print("ajuste LIGADO — G troca mao/arma, P imprime, F9 sai")
 			_imprimir_ajuste()
 		else:
-			print("[arma] ajuste desligado")
+			print("ajuste desligado")
 		return
 
 	if not _ajustando:
 		return
 
-	# O passo entra no OFFSET, que e' o retoque por cima do cabo medido.
-	var passo := AJUSTE_PASSO / ESCALA_ARMA
-	match tecla.keycode:
-		KEY_I: _offset.x -= passo
-		KEY_K: _offset.x += passo
-		KEY_U: _offset.y -= passo
-		KEY_O: _offset.y += passo
-		KEY_J: _offset.z += passo
-		KEY_L: _offset.z -= passo
-		KEY_N: _inclinacao -= AJUSTE_PASSO_ANG
-		KEY_M: _inclinacao += AJUSTE_PASSO_ANG
-		KEY_P: _imprimir_ajuste()
-		_: return
+	if tecla.keycode == KEY_G and not tecla.echo:
+		_ajustando_arma = not _ajustando_arma
+		get_viewport().set_input_as_handled()
+		_imprimir_ajuste()
+		return
+
+	if _ajustando_arma:
+		# O passo entra no OFFSET, que e' o retoque por cima do cabo medido.
+		var passo := AJUSTE_PASSO / ESCALA_ARMA
+		match tecla.keycode:
+			KEY_I: _offset.x -= passo
+			KEY_K: _offset.x += passo
+			KEY_U: _offset.y -= passo
+			KEY_O: _offset.y += passo
+			KEY_J: _offset.z += passo
+			KEY_L: _offset.z -= passo
+			KEY_N: _inclinacao -= AJUSTE_PASSO_ANG
+			KEY_M: _inclinacao += AJUSTE_PASSO_ANG
+			KEY_P: _imprimir_ajuste()
+			_: return
+	else:
+		match tecla.keycode:
+			KEY_U: _rolagem -= AJUSTE_PASSO_ANG
+			KEY_O: _rolagem += AJUSTE_PASSO_ANG
+			KEY_I: _incl_punho -= AJUSTE_PASSO_ANG
+			KEY_K: _incl_punho += AJUSTE_PASSO_ANG
+			KEY_J: _desvio -= AJUSTE_PASSO_ANG
+			KEY_L: _desvio += AJUSTE_PASSO_ANG
+			KEY_N: _deslize -= AJUSTE_PASSO
+			KEY_M: _deslize += AJUSTE_PASSO
+			KEY_P: _imprimir_ajuste()
+			_: return
 	get_viewport().set_input_as_handled()
 	if tecla.keycode != KEY_P:
 		_imprimir_ajuste()
 
 
+## Imprime os dois conjuntos, com uma seta no que as teclas estao mexendo.
 func _imprimir_ajuste() -> void:
-	print("const OFFSET_NA_MAO := Vector3(%.3f, %.3f, %.3f)   |   "
-		% [_offset.x, _offset.y, _offset.z]
+	var seta_arma := ">" if _ajustando_arma else " "
+	var seta_mao := " " if _ajustando_arma else ">"
+	print("%s [arma]  const OFFSET_NA_MAO := Vector3(%.3f, %.3f, %.3f)   |   "
+		% [seta_arma, _offset.x, _offset.y, _offset.z]
 		+ "const INCLINACAO_PUNHO := %.1f" % _inclinacao)
+	print("%s [mao]   const PUNHO_ROLAGEM := %.1f   |   "
+		% [seta_mao, _rolagem]
+		+ "const PUNHO_INCLINACAO := %.1f   |   const PUNHO_DESVIO := %.1f"
+		% [_incl_punho, _desvio]
+		+ "   |   const PUNHO_DESLIZE := %.1f" % _deslize)

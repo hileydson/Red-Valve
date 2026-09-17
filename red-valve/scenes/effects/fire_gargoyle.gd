@@ -19,7 +19,7 @@ const FLIGHT_LEAN := -1.0
 ## Empinada da frenagem no instante do pouso.
 const LANDING_FLARE := 0.4
 
-enum State { PERCHED, FLYING }
+enum State { PERCHED, FLYING, DIRIGIDO }
 
 ## Pontos de pouso. Aceita qualquer Node3D (Marker3D, o próprio canto, etc).
 @export var perch_paths: Array[NodePath] = []
@@ -73,6 +73,9 @@ var _arena_center: Vector3 = Vector3.ZERO
 
 var _yaw: float = 0.0
 var _pitch: float = 0.0
+## Alvos da guinada e da arfagem no voo teleguiado (ver a seção no fim).
+var _yaw_alvo: float = 0.0
+var _pitch_alvo: float = 0.0
 var _roll: float = 0.0
 var _prev_yaw: float = 0.0
 
@@ -563,7 +566,12 @@ func _build_wing_mesh(mirror: bool) -> ArrayMesh:
 	return mesh
 
 
-func _fire_particle_mesh(radius: float) -> SphereMesh:
+## `manter_escala` liga o `billboard_keep_scale`. SEM ele o billboard descarta a
+## escala da partícula e `scale_amount_min/max` não valem nada — a brasa sai
+## sempre do tamanho do raio da malha. Fica desligado por padrão só porque é o
+## que as brasas antigas sempre fizeram; quem precisa de brasa GRANDE (o manto
+## do modo de perto) tem de pedir.
+func _fire_particle_mesh(radius: float, manter_escala: bool = false) -> SphereMesh:
 	var mat := StandardMaterial3D.new()
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	mat.albedo_color = Color(1, 1, 1, 1)
@@ -574,6 +582,7 @@ func _fire_particle_mesh(radius: float) -> SphereMesh:
 	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
 	mat.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+	mat.billboard_keep_scale = manter_escala
 
 	var mesh := SphereMesh.new()
 	mesh.radius = radius
@@ -709,6 +718,15 @@ func _make_trail() -> CPUParticles3D:
 # =============================================================
 
 func _process(delta: float) -> void:
+	# O voo teleguiado vem ANTES da guarda dos poleiros: a gárgula do resgate
+	# não tem poleiro nenhum, e sem isto ela sairia do `_process` sem nunca
+	# bater asa.
+	if _state == State.DIRIGIDO:
+		_time += delta
+		_passo_dirigido(delta)
+		_animate(delta)
+		return
+
 	if _perches.is_empty() and not roam_enabled:
 		return
 	_time += delta
@@ -975,3 +993,293 @@ func _update_wing_beat(delta: float) -> void:
 	_beat_flash = 0.9
 	for puff in _beat_puffs:
 		puff.restart()
+
+
+# =============================================================
+# Voo teleguiado (cutscene)
+# =============================================================
+## A gárgula do RESGATE não tem poleiro nenhum: quem manda nela é o script da
+## cutscene, que escreve a posição quadro a quadro (ver
+## scripts/stages/battlefield/resgate_gargula.gd). O que sobra aqui é o CORPO —
+## asa, cauda, cauda ondulando, guinada, arfagem e inclinação continuam saindo
+## de `_animate`, iguais aos do voo entre poleiros.
+##
+## A posição é escrita direto em vez de ser mais um alvo perseguido: a
+## cinematica precisa que a gárgula esteja num ponto EXATO em cada instante (é
+## dela que a câmera pendura o jogador), e um alvo amortecido chegaria atrasado.
+## O que é amortecido é só a ATITUDE do corpo, tirada da direção do movimento.
+func voo_dirigido_iniciar(pos: Vector3, olhar: Vector3) -> void:
+	_state = State.DIRIGIDO
+	_perches.clear()
+	global_position = pos
+
+	var dir := olhar - pos
+	dir.y = 0.0
+	if dir.length_squared() > 0.0001:
+		_yaw = atan2(-dir.x, -dir.z)
+	_prev_yaw = _yaw
+	_yaw_alvo = _yaw
+	_pitch_alvo = 0.0
+
+	# A asa nasce ABERTA e o corpo já deitado: ela entra em quadro voando, e
+	# uma asa se abrindo no primeiro segundo leria como se ela tivesse acabado
+	# de largar um poleiro fora da tela.
+	_wing_open = 1.0
+	_wing_open_target = 1.0
+	_lean = FLIGHT_LEAN
+	_lean_target = FLIGHT_LEAN
+	_flap_rate = 8.0
+	_flap_amp = 1.0
+	if _trail:
+		_trail.emitting = true
+	set_process(true)
+
+
+## Um passo do voo teleguiado. `esforco` 0 = planando, 1 = remada forte.
+func voo_dirigido_ir(pos: Vector3, esforco: float = 1.0) -> void:
+	if _state != State.DIRIGIDO:
+		return
+	var dir := pos - global_position
+	global_position = pos
+	if dir.length_squared() > 0.000001:
+		var reta := dir.normalized()
+		_last_dir = reta
+		var plano := Vector3(dir.x, 0.0, dir.z)
+		# Quase na vertical (a subida com o jogador, o mergulho) o atan2 do
+		# plano vira ruído e a gárgula gira em torno do próprio eixo. Abaixo
+		# deste limite a guinada simplesmente fica onde está.
+		if plano.length() > dir.length() * 0.25:
+			_yaw_alvo = atan2(-plano.x, -plano.z)
+		_pitch_alvo = clampf(asin(clampf(reta.y, -1.0, 1.0)) * 0.8, -0.6, 0.6)
+	var e := clampf(esforco, 0.0, 1.0)
+	_flap_rate = lerpf(4.5, 9.5, e)
+	_flap_amp = lerpf(0.55, 1.05, e)
+	_lean_target = FLIGHT_LEAN
+
+
+## Empina e freia: o instante em que ela para no ar para pegar o jogador.
+func voo_dirigido_frear() -> void:
+	_lean_target = LANDING_FLARE
+	_flap_rate = 9.5
+	_flap_amp = 1.05
+
+
+func _passo_dirigido(delta: float) -> void:
+	_prev_yaw = _yaw
+	_yaw = lerp_angle(_yaw, _yaw_alvo, clampf(delta * turn_rate * 1.6, 0.0, 1.0))
+	_pitch = lerpf(_pitch, _pitch_alvo, clampf(delta * 3.0, 0.0, 1.0))
+	# Mesma inclinação de curva do voo normal: o giro por segundo vira rolagem.
+	var turn := wrapf(_yaw - _prev_yaw, -PI, PI)
+	var roll_want: float = clampf(-turn / maxf(delta, 0.0001) * 0.18, -0.8, 0.8)
+	_roll = lerpf(_roll, roll_want, clampf(delta * 2.0, 0.0, 1.0))
+
+
+## Larga o jogador e vai embora, subindo e se afastando ate' sumir — e se apaga
+## sozinha no fim.
+##
+## A fuga roda AQUI, e nao no script da cutscene, de proposito: a cinematica
+## acaba (e o no' dela se apaga) enquanto a gargula ainda esta' cruzando o ceu,
+## e uma corrotina do no' morto e' um erro de "instancia sumiu" no meio do voo.
+func voo_dirigido_fugir(meio: Vector3, longe: Vector3, duracao: float) -> void:
+	var de := global_position
+	var t := 0.0
+	while t < duracao:
+		await get_tree().process_frame
+		t += get_process_delta_time()
+		var k: float = Tween.interpolate_value(0.0, 1.0, minf(t, duracao), duracao,
+				Tween.TRANS_QUAD, Tween.EASE_IN)
+		var u := 1.0 - k
+		voo_dirigido_ir(de * (u * u * u) + (de + (meio - de) * 0.15) * (3.0 * u * u * k)
+				+ meio * (3.0 * u * k * k) + longe * (k * k * k), 1.0)
+	queue_free()
+
+
+# =============================================================
+# Modo de perto: o corpo some dentro do próprio fogo
+# =============================================================
+## De LONGE — as gárgulas pousadas nos cantos da arena — o corpo montado com
+## primitivas lê como uma silhueta de brasa, e está ótimo assim. De PERTO não: o
+## resgate põe a câmera a dois metros dela, e aí a cápsula do tronco e a esfera
+## do peito ficam evidentes, dá para contar os anéis da malha.
+##
+## O conserto tem duas metades, e a segunda é a que resolve:
+##
+## 1. O shader do corpo ondula MUITO mais e abre mais buraco (`turbulence`,
+##    `dissolve`, `noise_scale`): o contorno liso da primitiva vira uma borda
+##    rasgada que mexe.
+## 2. Um MANTO de brasas grandes envolve o corpo inteiro. É ele que de fato
+##    esconde a geometria — o shader sozinho continuaria desenhando a forma da
+##    cápsula, só que com a borda tremendo.
+##
+## As ASAS ficam de fora da primeira metade de propósito: são folhas finas, não
+## volumes, e a mesma ondulação que quebra a cápsula só rasgaria a membrana.
+##
+## Só a gárgula do resgate chama isto. Nas dos cantos seria partícula gasta à
+## toa, e de longe o manto vira uma bola laranja sem forma nenhuma.
+func modo_fogo_de_perto() -> void:
+	for mi in _pecas_de_fogo():
+		var mat := mi.material_override as ShaderMaterial
+		mat.set_shader_parameter("turbulence", 0.10)
+		mat.set_shader_parameter("noise_scale", 4.2)
+		mat.set_shader_parameter("dissolve", 0.34)
+		mat.set_shader_parameter("scroll_speed", randf_range(1.2, 1.6))
+		_vestir_casca(mi)
+
+	# As ASAS levam um tratamento MAIS FRACO, e nenhuma casca.
+	#
+	# A membrana é uma folha fina: uma casca por fora dela seria só uma segunda
+	# folha flutuando ao lado, e a ondulação forte do corpo a rasga em tiras. O
+	# que ela precisa é só perder o corte limpo da borda, senão a asa fica
+	# nítida do lado de um corpo todo borrado — e é justamente o contraste que
+	# denuncia que ali tem geometria.
+	for mat in _wing_mats:
+		mat.set_shader_parameter("turbulence", 0.075)
+		mat.set_shader_parameter("dissolve", 0.31)
+		mat.set_shader_parameter("noise_scale", 4.0)
+
+	var corpo := _lean_pivot.get_node_or_null("body") if _lean_pivot != null else null
+	if corpo == null:
+		return
+	corpo.add_child(_manto_de_fogo())
+
+	# As brasas de sempre também engrossam um pouco: elas cobrem o que sobe do
+	# corpo, e de perto a nuvem rala de antes deixava buraco.
+	var brasas := corpo.get_node_or_null("embers") as CPUParticles3D
+	if brasas != null:
+		brasas.emission_box_extents = Vector3(0.38, 0.7, 0.46)
+		brasas.amount = 70
+	if _trail != null:
+		_trail.amount = 120
+
+	# Luz mais forte e mais curta: de perto ela é a fonte de luz da cena, e o
+	# alcance grande do poleiro só lavava o chão lá embaixo.
+	light_energy *= 1.15
+	light_range = 9.0
+	if _light != null:
+		_light.omni_range = light_range
+
+
+## Põe uma CASCA de fogo por fora de uma peça do corpo.
+##
+## É a metade que realmente resolve o problema, e é por isto que ela existe em
+## vez de simplesmente afogar tudo em partícula: a casca é a MESMA malha, um
+## pouco maior, com o mesmo shader no talo da ondulação e da dissolução e com
+## alfa baixo. O contorno que o jogador vê passa a ser o dela — rasgado, cheio
+## de buraco e mexendo —, enquanto a peça de verdade continua desenhando o
+## VOLUME por dentro.
+##
+## Afogar em partícula apaga o bicho junto: a cabeça some e sobra uma bola
+## branca. A casca borra a forma sem tirar a leitura de "é uma gárgula".
+func _vestir_casca(mi: MeshInstance3D) -> void:
+	var casca := MeshInstance3D.new()
+	casca.name = "casca_" + mi.name
+	casca.mesh = mi.mesh
+	casca.transform = mi.transform
+	casca.scale = mi.scale * 1.22
+	casca.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	casca.gi_mode = GeometryInstance3D.GI_MODE_DISABLED
+
+	var base := mi.material_override as ShaderMaterial
+	var mat := ShaderMaterial.new()
+	mat.shader = FIRE_SHADER
+	mat.set_shader_parameter("noise_tex", base.get_shader_parameter("noise_tex"))
+	mat.set_shader_parameter("energy", fire_energy * 0.65)
+	mat.set_shader_parameter("seed", randf() * 100.0)
+	mat.set_shader_parameter("part_offset_y", base.get_shader_parameter("part_offset_y"))
+	mat.set_shader_parameter("body_height", 1.6)
+	# Ondulação grande e corte alto: é o que faz a borda ficar rasgada em vez de
+	# ser uma cápsula um número maior por cima da outra.
+	mat.set_shader_parameter("noise_scale", 2.6)
+	mat.set_shader_parameter("turbulence", 0.26)
+	mat.set_shader_parameter("dissolve", 0.44)
+	# Menos contorno e mais superfície que a peça de dentro: a casca tem de
+	# preencher o vão entre as duas, não desenhar mais um anel.
+	mat.set_shader_parameter("rim_mix", 0.35)
+	mat.set_shader_parameter("alpha_gain", 0.38)
+	mat.set_shader_parameter("scroll_speed", randf_range(1.5, 2.0))
+	casca.material_override = mat
+
+	mi.get_parent().add_child(casca)
+
+
+## Toda peça de fogo do CORPO — as asas ficam de fora (ver modo_fogo_de_perto).
+func _pecas_de_fogo() -> Array[MeshInstance3D]:
+	var achadas: Array[MeshInstance3D] = []
+	if _model == null:
+		return achadas
+	var pilha: Array[Node] = [_model]
+	while not pilha.is_empty():
+		var no: Node = pilha.pop_back()
+		for c in no.get_children():
+			pilha.append(c)
+		var mi := no as MeshInstance3D
+		if mi == null or not (mi.material_override is ShaderMaterial):
+			continue
+		if _wing_mats.has(mi.material_override):
+			continue
+		if mi.name.begins_with("casca_"):
+			continue
+		achadas.append(mi)
+	return achadas
+
+
+## O manto: uma crosta de brasas MIÚDAS e densas colada no corpo.
+##
+## Miúdas e muitas, e não poucas e grandes: com brasa grande o blend aditivo
+## empilha e a gárgula vira uma bola branca sem forma nenhuma — de perto E de
+## longe. O que se quer é o contrário, quebrar a SUPERFÍCIE sem apagar a
+## silhueta: ela tem de continuar lendo como um bicho voando.
+func _manto_de_fogo() -> CPUParticles3D:
+	var p := CPUParticles3D.new()
+	p.name = "manto"
+	p.amount = 55
+	p.lifetime = 0.7
+	# COORDENADAS LOCAIS, ao contrário das outras brasas desta gárgula. Em
+	# espaço de mundo cada brasa nasce e FICA PARA TRÁS: voando a 12 m/s o corpo
+	# sai de dentro do próprio fogo em menos de um quadro e a geometria volta a
+	# aparecer limpa. O manto tem de viajar junto.
+	p.local_coords = true
+	p.emission_shape = CPUParticles3D.EMISSION_SHAPE_BOX
+	# Caixa cobrindo o CORPO INTEIRO, e não só o peito: concentrada no tronco, a
+	# nuvem apagava a cabeça e deixava asa e cauda limpas — o pior dos dois.
+	p.emission_box_extents = Vector3(0.34, 0.78, 0.44)
+	p.position = Vector3(0, 0.78, -0.04)
+	p.direction = Vector3.UP
+	# Espalhamento largo e velocidade baixa: é uma nuvem que lambe o corpo, não
+	# um jato. O que sobe em coluna já são as `embers`.
+	p.spread = 85.0
+	p.gravity = Vector3(0, 0.7, 0)
+	p.initial_velocity_min = 0.05
+	p.initial_velocity_max = 0.6
+	p.damping_min = 1.5
+	p.damping_max = 3.0
+
+	var curve := Curve.new()
+	curve.add_point(Vector2(0.0, 0.25))
+	curve.add_point(Vector2(0.3, 1.0))
+	curve.add_point(Vector2(1.0, 0.0))
+	# SEM multiplicar por `body_scale`: em coordenadas locais a partícula já
+	# herda a escala do `_model`. As brasas de mundo (embers/trail) precisam do
+	# fator na mão justamente porque não herdam.
+	p.scale_amount_min = 0.7
+	p.scale_amount_max = 1.5
+	p.scale_amount_curve = curve
+
+	p.color_initial_ramp = _fire_ramps()[0]
+	# Rampa de alfa PRÓPRIA, mais fraca que a das outras brasas: são 150 quadros
+	# aditivos empilhados sobre o mesmo corpo, e no alfa cheio a soma estoura em
+	# branco no meio do peito.
+	var alfa := Gradient.new()
+	alfa.offsets = [0.0, 0.2, 0.65, 1.0]
+	alfa.colors = [
+		Color(1, 1, 1, 0.0),
+		Color(1, 1, 1, 0.17),
+		Color(1, 1, 1, 0.10),
+		Color(1, 1, 1, 0.0),
+	]
+	p.color_ramp = alfa
+
+	var malha := _fire_particle_mesh(0.09, true)
+	(malha.material as StandardMaterial3D).emission_energy_multiplier = 0.22
+	p.mesh = malha
+	return p
