@@ -15,6 +15,7 @@
 [ext_resource type="Texture2D" uid="uid://djpfuyxkryegn" path="res://addons/sky_3d/assets/textures/noise.jpg" id="6_71jj4"]
 [ext_resource type="Texture2D" uid="uid://bm7dot7t7u1q4" path="res://addons/sky_3d/assets/thirdparty/textures/milkyway/StarField.jpg" id="7_2ux1o"]
 [ext_resource type="PackedScene" path="res://scenes/stages/hospital/hospital_exterior.tscn" id="8_2mh7w"]
+[ext_resource type="PackedScene" path="res://scenes/stages/escola/escola_exterior.tscn" id="9_esc01"]
 [ext_resource type="Texture2D" uid="uid://c1vwcdcdvb74a" path="res://addons/sky_3d/assets/thirdparty/textures/milkyway/Milkyway.jpg" id="8_3oxtr"]
 [ext_resource type="Script" uid="uid://deo0gxkmk2ahd" path="res://addons/sky_3d/src/Sky3D.gd" id="9_7dqdw"]
 [ext_resource type="Script" uid="uid://b4tkplvh7fq40" path="res://addons/sky_3d/src/SkyDome.gd" id="10_vmqnh"]
@@ -5906,6 +5907,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 723.6687, 3.492957, -102.2812
 
 [node name="hospital_exterior" parent="locais_importantes" unique_id=1701932513 instance=ExtResource("8_2mh7w")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 723.6687, 3.492957, -102.28127)
+
+[node name="escola_local" type="Marker3D" parent="locais_importantes"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 418, 12.7, -272)
+
+[node name="escola_exterior" parent="locais_importantes" instance=ExtResource("9_esc01")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 418, 12.7, -272)
 
 [node name="Greens" type="Node3D" parent="." unique_id=2069415040]
 

@@ -92,12 +92,16 @@ RECUO_DAS_MAOS = 0.075
 # frente. Nao e' o braco que cresce (ele tem tamanho fixo) — e' o pulso indo
 # longe demais, o que espicha o antebraco na tela e encolhe a mao.
 #
+# Com teto 0,32 os extremos ainda paravam em ~0,30 e ESSES momentos curtos
+# continuavam esticando; 0,28 leva os dois para ~0,277 sem mexer nas poses de
+# perto (a `DEFESA` nao se move nem um milimetro).
+#
 # O teto NAO e' corte seco: acima de `PROF_JOELHO` a profundidade continua
 # crescendo, cada vez menos, e nunca passa de `PROF_TETO`. Com clamp duro o
 # movimento travaria — o `agarrado`, por exemplo, vai e volta entre DEFESA e
 # EMPURRA, e a metade de ida ficaria congelada no teto.
 PROF_JOELHO = 0.20
-PROF_TETO = 0.32
+PROF_TETO = 0.28
 
 
 def _profundidade(y):

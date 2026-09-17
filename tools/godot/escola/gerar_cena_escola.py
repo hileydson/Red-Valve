@@ -545,6 +545,11 @@ def gerar():
           % (len(vivos), tris, len(colisoes)))
 
     print("== moveis ==")
+    # Antes de qualquer coisa: modelo grande demais pra caber onde a receita o
+    # poe. Um .gltf modular do Poly Haven ja' atravessou tres comodos aqui sem
+    # dar erro nenhum — melhor descobrir contando.
+    for erro in MOB.conferir_modelos():
+        print("  !! " + erro)
     props = MOB.mobiliar()
     pecas = C.Pecas()
     for p in props:
@@ -715,11 +720,17 @@ def escrever_cena(colisoes, props, portas, plano_luz, lista_luminarias, nav,
     # tao escuro quanto o corredor, e a diferenca entre "dentro" e "fora" — que
     # e' a leitura do lugar inteiro — sumiria. O predio tem forro em cima de
     # todos os outros comodos, entao ela nao vaza pra lugar nenhum.
+    #
+    # 1,5 de energia, e nao os 0,55 da primeira versao. Medido no jogo: com
+    # 0,55 o patio ficava mais escuro que o corredor coberto, o que inverte a
+    # leitura do mapa inteiro — o unico lugar aberto tem de ser o lugar em que
+    # se enxerga. O piso de cimento tem albedo 0,40 e come quase tudo o que
+    # recebe; e' preciso jogar luz de verdade nele.
     c.no("lua", tipo="DirectionalLight3D", pai=".",
          props=[("transform", C.transform_olhando((24.0, 22.0, 30.0),
                                                   (0.35, -1.0, 0.55))),
                 ("light_color", C.cor(L.LUAR)),
-                ("light_energy", "0.55"),
+                ("light_energy", "1.50"),
                 ("light_specular", "0.25"),
                 ("shadow_enabled", "true"),
                 ("shadow_bias", "0.06"),
@@ -876,10 +887,15 @@ def _emitir_grade(c, arquivo, id_script):
          props=[("transform", C.transform_pos((P.GRADE_X, P.cota(), cz))),
                 ("script", 'ExtResource("%s")' % id_script)])
     c.no("malha", pai="grade", instancia=c.peca(arquivo))
-    C.emitir_colisoes(c, [(P.GRADE_X - P.GRADE_ESP * 0.5,
-                           P.GRADE_X + P.GRADE_ESP * 0.5,
-                           P.cota(), P.cota() + P.PE,
-                           P.GRADE_Z0 - 0.2, P.GRADE_Z1 + 0.2)],
+    # A caixa de colisao vai em coordenadas LOCAIS (centrada em zero), e nao
+    # nas de mundo: ela e' filha do no' `grade`, que JA' esta' deslocado ate' o
+    # corredor. Com as coordenadas de mundo a colisao somava duas vezes e ia
+    # parar a cinquenta metros fora do predio — e a grade continuava desenhada
+    # no lugar certo, entao o defeito so' aparecia andando: o jogador
+    # atravessava a barra e o porao deixava de ter motivo pra existir.
+    meia_z = (P.GRADE_Z1 - P.GRADE_Z0) * 0.5 + 0.2
+    C.emitir_colisoes(c, [(-P.GRADE_ESP * 0.5, P.GRADE_ESP * 0.5,
+                           0.0, P.PE, -meia_z, meia_z)],
                       nome="colisao", pai="grade")
     ident = c.forma(4.0, P.PE, P.GRADE_Z1 - P.GRADE_Z0 + 1.0)
     c.no("area", tipo="Area3D", pai="grade",

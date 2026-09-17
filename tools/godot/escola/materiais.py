@@ -126,8 +126,19 @@ ESTRUTURA = [
 # ==========================================================================
 
 MOVEIS = [
-    Material("mat_metal_claro", (0.56, 0.58, 0.55), 0.35, 0.55),
-    Material("mat_metal_escuro", (0.19, 0.20, 0.22), 0.50, 0.60),
+    # METAL PINTADO, e nao metal nu: `metal` baixo e rugosidade alta.
+    #
+    # A primeira versao copiou o 0,35 / 0,55 do hospital (onde e' inox de
+    # verdade) e o armario de aco do corredor virou um borrao laranja de dez
+    # metros: semi-metalico e liso, visto de raspao, devolve o reflexo da
+    # fluorescente numa faixa continua e chapada, sem textura nenhuma pra
+    # quebrar. De frente nao aparecia — so' andando rente a' parede.
+    #
+    # Armario de escola e' chapa PINTADA. Com 0,05 / 0,80 ele volta a ser um
+    # armario, e o corredor para de ter uma mancha que ninguem sabia de onde
+    # vinha.
+    Material("mat_metal_claro", (0.56, 0.58, 0.55), 0.05, 0.80),
+    Material("mat_metal_escuro", (0.19, 0.20, 0.22), 0.10, 0.78),
     Material("mat_inox", (0.68, 0.70, 0.72), 0.88, 0.34),
     Material("mat_madeira", (0.44, 0.33, 0.21), 0.0, 0.74),
     Material("mat_madeira_clara", (0.60, 0.48, 0.32), 0.0, 0.72),

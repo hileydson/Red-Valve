@@ -82,7 +82,10 @@ MODELOS = {
     "industrial_microscope": {"escala": 1.0, "giro_extra": 0.0},
     "chemistry_set": {"escala": 1.0, "giro_extra": 0.0},
     "bunsen_burner": {"escala": 1.0, "giro_extra": 0.0},
-    "steel_frame_shelves_01": {"escala": 1.0, "giro_extra": 0.0},
+    # steel_frame_shelves_01 NAO entra: o .gltf dele e' um arquivo MODULAR, com
+    # varias variantes da estante lado a lado no mesmo arquivo. A caixa dele
+    # tem 11 x 21 x 5 m, e instanciado uma vez ele atravessa tres comodos.
+    # Quem confere isso e' `conferir_modelos()`, aqui embaixo.
     "steel_frame_shelves_02": {"escala": 1.0, "giro_extra": 0.0},
     "worn_metal_rack": {"escala": 1.0, "giro_extra": 0.0},
     # corredor e servico
@@ -370,15 +373,32 @@ def caixas_na_parede(s, pecas, parede, t, recuo, nome, bloqueia=None, dy=0.0):
                  nome=nome, bloqueia=bloqueia, dy=dy)
 
 
+def apoio(nome_modelo, escala=1.0):
+    """Quanto levantar o modelo pra a BASE dele ficar em y = 0.
+
+    Nem todo .gltf do Poly Haven vem com a origem no chao: o contentor de lixo
+    tem a origem 1,05 m acima da base e a escada 1,10 m. Posto em y = 0 do
+    jeito que vem, metade da peca fica enterrada no piso. Como isto e' uma
+    propriedade do ARQUIVO, e nao da receita, ele sai lido do proprio .gltf em
+    vez de digitado peca a peca.
+
+    So' LEVANTA, nunca abaixa: modelo com a base acima da origem esta' assim de
+    proposito (a luminaria de teto, por exemplo).
+    """
+    mn, _mx = aabb(nome_modelo)
+    return max(0.0, -mn[1]) * escala
+
+
 def modelo_na_parede(s, nome_modelo, parede, t, recuo, nome, bloqueia=None,
                      dy=0.0, escala=None, giro_extra=None):
     x, z = _lugar_na_parede(s, parede, t, recuo)
     info = MODELOS[nome_modelo]
     giro = GIRO_PAREDE[parede] + (info["giro_extra"] if giro_extra is None
                                   else giro_extra)
+    esc = info["escala"] if escala is None else escala
     return _prop("modelo", s, x, z, giro, modelo=nome_modelo, nome=nome,
-                 bloqueia=bloqueia, dy=dy,
-                 escala=info["escala"] if escala is None else escala)
+                 bloqueia=bloqueia, dy=dy + apoio(nome_modelo, esc),
+                 escala=esc)
 
 
 def caixas_solto(s, pecas, x, z, giro, nome, bloqueia=None, dy=0.0):
@@ -389,9 +409,10 @@ def caixas_solto(s, pecas, x, z, giro, nome, bloqueia=None, dy=0.0):
 def modelo_solto(s, nome_modelo, x, z, giro, nome, bloqueia=None, dy=0.0,
                  escala=None):
     info = MODELOS[nome_modelo]
+    esc = info["escala"] if escala is None else escala
     return _prop("modelo", s, x, z, giro + info["giro_extra"],
-                 modelo=nome_modelo, nome=nome, bloqueia=bloqueia, dy=dy,
-                 escala=info["escala"] if escala is None else escala)
+                 modelo=nome_modelo, nome=nome, bloqueia=bloqueia,
+                 dy=dy + apoio(nome_modelo, esc), escala=esc)
 
 
 def _dado(s):
@@ -582,7 +603,7 @@ def _laboratorio(s, d):
         caixas_na_parede(s, lousa(3.0, 1.1), "n", 0.5, 0.10, "lousa", dy=1.55),
         modelo_na_parede(s, "steel_frame_shelves_02", "s", 0.30, 0.45,
                          "prateleira_1"),
-        modelo_na_parede(s, "steel_frame_shelves_01", "s", 0.70, 0.45,
+        modelo_na_parede(s, "worn_metal_rack", "s", 0.70, 0.45,
                          "prateleira_2"),
         modelo_na_parede(s, "industrial_microscope", "o", 0.66, 0.60,
                          "microscopio", dy=0.90),
@@ -785,6 +806,37 @@ RECEITUARIO = {
 }
 
 
+# Maior dimensao aceitavel para um modelo do catalogo, em metros. Acima disso
+# quase sempre e' arquivo MODULAR (varias variantes da mesma peca lado a lado
+# no mesmo .gltf), e instanciar um desses poe uma peca de dez metros dentro de
+# um comodo de quatro — atravessando parede, sem erro nenhum em log.
+#
+# 4,20 deixa passar o tronco caido do patio (4,05 m), que e' de proposito.
+LIMITE_MODELO = 4.20
+
+
+def conferir_modelos():
+    """Modelos grandes demais pra caber onde a receita os poe.
+
+    Custou uma tarde: o `steel_frame_shelves_01` tem 11 x 21 x 5 m no arquivo e
+    aparecia como uma laje clara de dez metros atravessando o corredor sul,
+    vinda de dentro do laboratorio. De frente nao dava pra ver — so' andando
+    rente a' parede.
+    """
+    problemas = []
+    for nome in sorted(MODELOS):
+        try:
+            mn, mx = aabb(nome)
+        except Exception as erro:
+            problemas.append("%s: nao consegui ler o .gltf (%s)" % (nome, erro))
+            continue
+        tam = [mx[k] - mn[k] for k in range(3)]
+        if max(tam) > LIMITE_MODELO:
+            problemas.append("%s tem %.1f x %.1f x %.1f m — arquivo modular?"
+                             % (nome, tam[0], tam[1], tam[2]))
+    return problemas
+
+
 def mobiliar():
     tudo = []
     for e in P.espacos():
@@ -851,6 +903,8 @@ def mobiliar_porao():
 
 
 if __name__ == "__main__":
+    for erro in conferir_modelos():
+        print("  !! " + erro)
     props = mobiliar()
     print("escola: %d moveis" % len(props))
     por_tipo = {}

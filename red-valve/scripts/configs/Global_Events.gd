@@ -58,6 +58,32 @@ var voltando_da_igreja: bool = false
 ## stage_1 consome (e zera) isto no spawn para devolvê-lo ao tablado da
 ## entrada, e não ao ponto de entrada padrão do mapa.
 var voltando_do_hospital: bool = false
+## Mesma coisa para a escola: ligado quando ele sai pelo portão da rua, e
+## consumido pelo stage_1 para devolvê-lo à calçada diante do portão.
+var voltando_da_escola: bool = false
+
+# --- escola <-> porão ---------------------------------------------------------
+# A escola e o porão são duas cenas, e o jogador vai e volta entre elas pelos
+# dois buracos. Estas duas variáveis dizem POR ONDE ele chegou, e cada cena
+# consome (e zera) a sua no `_ready`. Vazio = entrou pelo caminho normal: na
+# escola isso é o portão da rua, no porão é a boca de cima.
+#
+# São String e não bool porque há mais de uma porta de cada lado — o túnel é de
+# mão dupla de propósito, para quem descer sem lanterna poder voltar.
+var escola_chegada: String = ""      # "" | "deposito" | "almoxarifado"
+var porao_chegada: String = ""       # "" | "entrada"  | "saida"
+
+## O portão do pátio da escola já foi destrancado?
+##
+## Ele só abre pelo lado do corredor sul, que é o lado a que o jogador só chega
+## depois de atravessar o porão — é esse portão que fecha o atalho de volta
+## para a área de lazer.
+##
+## Mora aqui, e não no nó da porta, porque o jogador troca de cena entre um
+## momento e outro (escola -> porão -> escola) e o nó morre junto. Mora aqui, e
+## não no SaveManager, porque isto é estado de sessão: carregar um save volta
+## com o portão trancado, e ele se destranca de novo por dentro em dois passos.
+var escola_portao_destrancado: bool = false
 var game_weapon_events = {taken_pistol=false, taken_smg=false, taken_cogblade=false, taken_magic_hand_1=false}
 
 # --- estado de UI, só em memória (de propósito fora do save) ---

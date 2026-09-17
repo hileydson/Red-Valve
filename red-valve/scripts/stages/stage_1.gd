@@ -51,6 +51,16 @@ const CENA_IGREJA := "res://scenes/stages/igreja/igreja_interior.tscn"
 const NO_HOSPITAL := "locais_importantes/hospital_exterior"
 const CENA_HOSPITAL := "res://scenes/stages/hospital/hospital.tscn"
 
+# --- Escola ------------------------------------------------------------------
+# Mesmíssimo arranjo do hospital, e pelo mesmo motivo: a escola é uma instância
+# só (`escola_exterior.tscn`) pendurada no Marker3D `escola_local`, e ela leva
+# junto os dois nós de que este script precisa — `area_entrada` (o prompt) e
+# `ponto_de_saida` (para onde o jogador volta). Girar ou arrastar o prédio no
+# editor leva os dois de graça; coordenada escrita aqui ficaria mentindo no
+# primeiro ajuste.
+const NO_ESCOLA := "locais_importantes/escola_exterior"
+const CENA_ESCOLA := "res://scenes/stages/escola/escola.tscn"
+
 @onready var navigation_region_3d: NavigationRegion3D = $NavigationRegion3D
 @onready var real_time_label: Label = $real_time_label
 @onready var sky_3d: Sky3D = $WorldEnvironment/Sky3D
@@ -60,6 +70,7 @@ var player_na_casa_jimmy: bool = false
 var player_na_casa_maycow: bool = false
 var player_na_igreja: bool = false
 var player_no_hospital: bool = false
+var player_na_escola: bool = false
 ## Engole UMA entrada na área da igreja, pelo mesmo motivo da casa do Maycow:
 ## quem volta de dentro reaparece no adro, já dentro da área, e sem isto o
 ## prompt de "entrar" pipocaria no instante em que ele acabou de sair.
@@ -67,6 +78,9 @@ var _ignorar_prompt_igreja: bool = false
 ## Mesma coisa para o hospital: quem volta de dentro reaparece no tablado da
 ## entrada, que é exatamente onde a área do prompt está.
 var _ignorar_prompt_hospital: bool = false
+## Mesma coisa para a escola: quem volta de dentro reaparece na calçada diante
+## do portão, que é exatamente onde a área do prompt está.
+var _ignorar_prompt_escola: bool = false
 ## Engole UMA entrada na área da casa do Maycow. Ligado quando o jogador volta
 ## de dentro da casa: ele reaparece na soleira, já dentro da área, e sem isto o
 ## prompt de "entrar" pipocaria no mesmo instante em que ele acabou de sair.
@@ -159,6 +173,9 @@ func setup_player_spawn() -> void:
 	elif GlobalEvents.voltando_do_hospital:
 		GlobalEvents.voltando_do_hospital = false
 		_devolver_a_porta_do_hospital()
+	elif GlobalEvents.voltando_da_escola:
+		GlobalEvents.voltando_da_escola = false
+		_devolver_ao_portao_da_escola()
 	elif GlobalEvents.voltando_da_casa_maycow:
 		GlobalEvents.voltando_da_casa_maycow = false
 		# Ele reaparece dentro da própria área de entrada: segura o prompt até
@@ -279,6 +296,12 @@ func _process(delta: float) -> void:
 		$fade.fade_out()
 		await get_tree().create_timer(2.0).timeout
 		LoadingScreen.load_scene(CENA_HOSPITAL)
+	elif player_na_escola:
+		player_na_escola = false
+		_esconder_prompt()
+		$fade.fade_out()
+		await get_tree().create_timer(2.0).timeout
+		LoadingScreen.load_scene(CENA_ESCOLA)
 
 
 func _mostrar_prompt(texto: String) -> void:
@@ -304,7 +327,8 @@ func _esconder_prompt(forcado: bool = false) -> void:
 	if not is_instance_valid(prompt_label):
 		return
 	if not forcado and (player_na_oficina or player_na_casa_jimmy
-			or player_na_casa_maycow or player_na_igreja or player_no_hospital):
+			or player_na_casa_maycow or player_na_igreja or player_no_hospital
+			or player_na_escola):
 		return
 	if prompt_label.has_meta("container"):
 		prompt_label.get_meta("container").visible = false
@@ -343,6 +367,7 @@ func _setup_areas_casas() -> void:
 
 	_criar_area_igreja()
 	_ligar_area_hospital()
+	_ligar_area_escola()
 
 	if get_node_or_null("area_entrada_casa_maycow") == null:
 		var area_maycow = Area3D.new()
@@ -495,6 +520,82 @@ func _devolver_a_porta_do_hospital() -> void:
 	if saida == null:
 		return
 	_ignorar_prompt_hospital = true
+	jogador.global_position = saida.global_position
+	jogador.global_rotation.y = saida.global_rotation.y
+	_pousar_no_chao.call_deferred(jogador, saida.global_position)
+
+
+# ==============================================================================
+# ESCOLA
+#
+# Cópia do arranjo do hospital, de propósito: o prédio inteiro é uma instância
+# só, posta em cima do Marker3D `escola_local`, e ela já traz consigo as duas
+# coisas de que este script precisa.
+#
+#   area_entrada    — cobre o recuo do portão e a calçada diante dele
+#   ponto_de_saida  — na calçada, de costas para o portão
+#
+# Girar ou arrastar a escola no editor leva as duas junto.
+# ==============================================================================
+
+func _no_da_escola() -> Node3D:
+	var no := get_node_or_null(NO_ESCOLA)
+	if no == null:
+		no = find_child("escola_exterior", true, false)
+	return no as Node3D
+
+
+func _ligar_area_escola() -> void:
+	var escola := _no_da_escola()
+	if escola == null:
+		return
+	var area := escola.get_node_or_null("area_entrada") as Area3D
+	if area == null:
+		return
+	if not area.body_entered.is_connected(_ao_entrar_area_escola):
+		area.body_entered.connect(_ao_entrar_area_escola)
+	if not area.body_exited.is_connected(_ao_sair_area_escola):
+		area.body_exited.connect(_ao_sair_area_escola)
+
+
+func _ao_entrar_area_escola(body: Node3D) -> void:
+	if not _eh_o_player(body):
+		return
+	player_na_escola = true
+	if _ignorar_prompt_escola:
+		_ignorar_prompt_escola = false
+		_esconder_prompt(true)
+		return
+	_mostrar_prompt(tr("PROMPT_ENTER_SCHOOL"))
+
+
+func _ao_sair_area_escola(body: Node3D) -> void:
+	if not _eh_o_player(body):
+		return
+	player_na_escola = false
+	_ignorar_prompt_escola = false
+	_esconder_prompt()
+
+
+## Devolve o jogador à calçada depois de sair de dentro da escola.
+##
+## A cota vem de raycast, e não do Y do marcador, pelo mesmo motivo da igreja e
+## do hospital: o chão ali é o terreno do Terrain3D e a escola ainda vai ser
+## reposicionada à mão. Com número fixo, o jogador nasce enterrado ou despenca
+## meio metro toda vez que alguém encostar o prédio um pouco mais no morro.
+func _devolver_ao_portao_da_escola() -> void:
+	var jogador = get_node_or_null("Player")
+	if not jogador:
+		jogador = find_child("Player", true, false)
+	if not jogador:
+		jogador = find_child("player", true, false)
+	var escola := _no_da_escola()
+	if not jogador or escola == null:
+		return
+	var saida := escola.get_node_or_null("ponto_de_saida") as Node3D
+	if saida == null:
+		return
+	_ignorar_prompt_escola = true
 	jogador.global_position = saida.global_position
 	jogador.global_rotation.y = saida.global_rotation.y
 	_pousar_no_chao.call_deferred(jogador, saida.global_position)

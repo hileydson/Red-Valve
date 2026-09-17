@@ -53,6 +53,13 @@
    "tipo": "marco",
    "x": 723.67,
    "z": -102.28
+  },
+  {
+   "id": "escola",
+   "chave": "MAP_POI_ESCOLA",
+   "tipo": "marco",
+   "x": 418.0,
+   "z": -272.0
   }
  ]
 }

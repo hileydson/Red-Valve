@@ -213,3 +213,45 @@ PROMPT_HOSP_ELEVADOR_VINDO,The elevator is coming...,O elevador está vindo...
 OBJ_HOSP_EXPLORAR,Find a way up to the second floor,Encontre um jeito de subir para o segundo andar
 PROMPT_ENTER_HOSPITAL,Enter the hospital?,Entrar no hospital?
 PROMPT_HOSP_SAIR,Leave the hospital,Sair do hospital
+ESC_SALA_101,Classroom 101,Sala 101
+ESC_SALA_102,Classroom 102,Sala 102
+ESC_SALA_103,Classroom 103,Sala 103
+ESC_SALA_104,Classroom 104,Sala 104
+ESC_SALA_105,Classroom 105,Sala 105
+ESC_SALA_106,Classroom 106,Sala 106
+ESC_SALA_107,Classroom 107,Sala 107
+ESC_SALA_SECRETARIA,Front Office,Secretaria
+ESC_SALA_REFEITORIO,Cafeteria,Refeitório
+ESC_SALA_BIBLIOTECA,Library,Biblioteca
+ESC_SALA_LABORATORIO,Science Lab,Laboratório
+ESC_SALA_ALMOXARIFADO,Supply Room,Almoxarifado
+ESC_SALA_DEPOSITO,Storeroom,Depósito
+ESC_SALA_GENERICA,Door,Porta
+ESC_AREA_LAZER,Recreation Yard,Área de Lazer
+PROMPT_ENTER_SCHOOL,Enter the school?,Entrar na escola?
+PROMPT_ESC_ABRIR,Open — {sala},Abrir — {sala}
+PROMPT_ESC_FECHAR,Close the door,Fechar a porta
+PROMPT_ESC_TRANCADA,Locked,Trancada
+PROMPT_ESC_SAIR,Leave the school,Sair da escola
+PROMPT_ESC_PORTAO_TRANCADO,The gate is bolted from the other side,O portão está trancado pelo outro lado
+PROMPT_ESC_PORTAO_ABRIR,Unbolt the gate,Destrancar o portão
+PROMPT_ESC_PORTAO_DESTRANCADO,The gate is open now,O portão está aberto agora
+PROMPT_ESC_GRADE,A welded gate blocks the hallway,Uma grade soldada fecha o corredor
+PROMPT_ESC_GRADE_TENTAR,It won't budge. There has to be another way around,Não cede. Tem de haver outro caminho
+PROMPT_ESC_BURACO_ENTRAR,Crawl into the hole,Entrar no buraco
+PROMPT_ESC_BURACO_VOLTAR,Go back down into the hole,Descer de volta pelo buraco
+PROMPT_POR_SUBIR_DEPOSITO,Climb back into the storeroom,Voltar para o depósito
+PROMPT_POR_SUBIR_ALMOX,Climb up into the supply room,Subir para o almoxarifado
+OBJ_ESC_EXPLORAR,Find a way past the blocked hallway,Encontre um jeito de passar do corredor bloqueado
+OBJ_POR_ATRAVESSAR,Cross the tunnel to the other side of the school,Atravesse o túnel até o outro lado da escola
+AVISO_POR_SEM_LANTERNA,It's too dark down here. You need a flashlight,Está escuro demais aqui embaixo. Você precisa de uma lanterna
+MAP_POI_ESCOLA,School,Escola
+MAP_NOME_ESCOLA,School,Escola
+MAP_NOME_PORAO,Basement tunnel,Túnel do porão
+MAP_POI_ESC_BURACO_E,Hole in the wall,Buraco na parede
+MAP_POI_ESC_BURACO_S,Hole in the wall,Buraco na parede
+MAP_POI_ESC_GRADE,Blocked hallway,Corredor bloqueado
+MAP_POI_ESC_SAIDA,Exit to the street,Saída para a rua
+MAP_POI_POR_ENTRADA,Way back to the storeroom,Volta para o depósito
+MAP_POI_POR_CAMARA,Large chamber,Câmara grande
+MAP_POI_POR_SAIDA,Way up to the supply room,Subida para o almoxarifado
