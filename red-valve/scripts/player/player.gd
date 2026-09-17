@@ -1067,6 +1067,16 @@ var hold_timer: float = 0.0
 var hold_threshold: float = 0.15 # 200 milisegundos para confirmar o "segurar"
 var limite_rotacao_lateral = deg_to_rad(15) # O máximo que ele pode "virar" (ex: 35 graus)
 var velocidade_giro = 4.0
+## O TRONCO QUASE NÃO ACOMPANHA O STRAFE ENQUANTO ELE MIRA COM A ARMA.
+##
+## Andando de lado o corpo vira até 27° para acompanhar o passo. Mirando isso é
+## demais: os braços estão presos a um alvo no MUNDO (IK), então o tronco gira
+## por baixo deles, o ombro fica torcido contra o braço e a malha entorta.
+##
+## Sobra este tanto do desvio — o bastante para ele não andar de pedra — e sai
+## na metade do ritmo, que é o que tira o "rebolado" do movimento.
+var giro_strafe_mirando = 0.22
+var ritmo_strafe_mirando = 0.5
 ## Antes esta funcao espalhava as flags nos DOIS sentidos, e o sentido
 ## "estatica -> instancia" era um caminho sem volta: bastava a sessao estar
 ## ligada uma vez pra `infinite_health_test` ficar `true` PARA SEMPRE naquela
@@ -1724,6 +1734,12 @@ func _physics_process(delta: float) -> void:
 				elif input_dir.x < -0.1: 
 					alvo_y = (limite_rotacao_lateral * 1.8) 
 					speed_y = 0.6
+			# Mirando com a arma, o tronco quase não acompanha (ver
+			# `giro_strafe_mirando`). Só com a arma: na mira do amuleto não há
+			# braço preso a alvo nenhum pra brigar com o tronco.
+			if is_aiming and mira_de_arma:
+				alvo_y *= giro_strafe_mirando
+				speed_y *= ritmo_strafe_mirando
 			# ANDANDO, CORRENDO, MIRANDO OU EM CUTSCENE: exatamente como
 			# sempre foi. O corpo é o do jogador, com o desvio lateral do
 			# strafe, e vira junto com a câmera no mesmo quadro. O pivô não
