@@ -208,7 +208,26 @@ void fragment() {
 	player.ammo_icon.offset_right = -30
 	player.ammo_icon.offset_bottom = -45
 	player.hud_layer.add_child(player.ammo_icon)
-	
+
+	# Símbolo 2D do amuleto: mesmo canto do HUD da arma, já que os dois nunca
+	# ficam equipados juntos (EQUIPAMENTO_EXCLUSIVO em SaveManager.gd).
+	player.amulet_hud_icon = TextureRect.new()
+	player.amulet_hud_icon.texture = load("res://assets/images/menu/itens/amuleto_2d.png")
+	player.amulet_hud_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	player.amulet_hud_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	player.amulet_hud_icon.modulate = Color(1, 1, 1, 0.5)
+	player.amulet_hud_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	player.amulet_hud_icon.anchor_left = 1.0
+	player.amulet_hud_icon.anchor_top = 1.0
+	player.amulet_hud_icon.anchor_right = 1.0
+	player.amulet_hud_icon.anchor_bottom = 1.0
+	player.amulet_hud_icon.offset_left = -130
+	player.amulet_hud_icon.offset_top = -145
+	player.amulet_hud_icon.offset_right = -30
+	player.amulet_hud_icon.offset_bottom = -45
+	player.amulet_hud_icon.visible = false
+	player.hud_layer.add_child(player.amulet_hud_icon)
+
 	update_ammo_ui()
 
 	# MP Bar
@@ -439,6 +458,9 @@ func update_ammo_ui() -> void:
 		if is_instance_valid(player.ammo_icon): player.ammo_icon.visible = true
 		var total = SaveManager.get_item_amount("pistol_ammo")
 		player.ammo_label.text = str(player.clip_pistol_ammo) + " / " + str(total)
+
+	if is_instance_valid(player.amulet_hud_icon):
+		player.amulet_hud_icon.visible = not is_pistol_equipped and SaveManager.is_equipped("amuleto")
 
 func _start_heartbeat_pulse() -> void:
 	if player.current_health <= 0:

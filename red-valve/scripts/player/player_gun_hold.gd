@@ -90,6 +90,17 @@ const OFFSET_NA_MAO := Vector3(0.504, 0.296, 0.000)
 ## manda e' o alvo).
 const INCLINACAO_PUNHO := -8.0
 
+## O CONJUNTO BRACO + MAO + ARMA GIRADO PRA DIREITA, MIRANDO.
+##
+## Graus. Nao e' o corpo que gira (isso deixaria o braco no mesmo lugar, so' com
+## o tronco torto): quem gira e' a MIRA. Girando o ponto visado em volta do meio
+## dos ombros, os dois destinos de mao e o cano vao junto, que e' o conjunto
+## inteiro virando um pouco.
+##
+## O tiro NAO muda: ele sai de um raio da camera pelo meio da tela
+## (`player_combat._raio_do_tiro_3p`), nao da boca do cano. Isto aqui e' pose.
+const MIRA_GIRO_DIREITA := 8.0
+
 # ---- o punho por cima do alinhamento com a arma -------------------------------
 # Zero em tudo = a mao exatamente como o cano manda: dedos pra onde a arma
 # aponta, palma virada pro cabo. Estes quatro sao o retoque humano por cima
@@ -106,6 +117,19 @@ const PUNHO_DESVIO := -30.0
 ## Corre a mao ao longo do cano, em CENTIMETROS. E' o unico que nao mexe na
 ## arma: serve pra encaixar o punho no cabo sem desmanchar o ajuste dela.
 const PUNHO_DESLIZE := -1.2
+
+## QUANTO DA TORCAO DO PUNHO VAI PRO ANTEBRACO (0 a 1).
+##
+## A mao e' virada pra arma, mas o antebraco nao sabe disso: o IK so' APONTA ele
+## pra mao, sem dizer nada sobre rolagem. Toda a diferenca entre os dois sobra
+## no pulso — e a pele de la', presa aos dois ossos, colapsa num ponto. E' o
+## "pulso fino", e ele aparece mais na mao ESQUERDA, que chega no cabo pelo lado
+## contrario e por isso torce mais.
+##
+## Com 0,5 o antebraco faz metade do giro, como um antebraco de verdade faz
+## (a pronacao mora no antebraco inteiro, nao na junta). Rolar o osso em volta
+## do proprio eixo nao mexe a mao de lugar: ela esta' em cima do eixo.
+const TORCAO_NO_ANTEBRACO := 0.5
 
 ## EM VOLTA DE QUE PONTO A MAO GIRA.
 ##
@@ -136,7 +160,8 @@ const MAOS_FRENTE := 40.0
 ## Desvio lateral das maos (+ = pro lado da arma, a direita dele).
 const MAOS_LADO := 4.0
 ## Altura das maos em relacao a' linha dos ombros (- = na altura do peito).
-const MAOS_ALTURA := -5.0
+## Sobe as duas maos E a arma junto, sem mexer no aperto que ja' esta' acertado.
+const MAOS_ALTURA := -2.0
 ## Onde a mao ESQUERDA fica em relacao a' direita: por baixo e um pouco pro lado
 ## dela, que e' como a mao de apoio fecha por cima da mao de tiro.
 const APOIO_LADO := 5.0
@@ -218,6 +243,8 @@ var _fechada_e := 0.0
 var _cabo := CABO_NO_MODELO
 var _offset := OFFSET_NA_MAO
 var _inclinacao := INCLINACAO_PUNHO
+var _giro_mira := MIRA_GIRO_DIREITA
+var _torcao := TORCAO_NO_ANTEBRACO
 var _rolagem := PUNHO_ROLAGEM
 var _incl_punho := PUNHO_INCLINACAO
 var _desvio := PUNHO_DESVIO
@@ -351,6 +378,10 @@ func _montar_contexto(sk: Skeleton3D, alvo: Vector3, peso: float,
 	# Eixos da mira. No espaco dos ossos o corpo olha pro +Z e o Y e' cima; o
 	# `cross` com o Y da' o lado DIREITO dele.
 	var mira := alvo if _tem_alvo else ancora + Vector3(0, 0, 500.0)
+	# Tudo o que vem depois sai daqui — os destinos das duas maos, os polos do
+	# cotovelo e o cano. Entao girar a MIRA um pouco pra direita gira o conjunto
+	# braco + mao + arma de uma vez, sem torcer o tronco.
+	mira = _para_a_direita(ancora, mira, _giro_mira)
 	var dir := (mira - ancora)
 	dir = dir.normalized() if dir.length_squared() > 0.0001 else Vector3(0, 0, 1)
 	var direita := dir.cross(Vector3.UP)
@@ -413,6 +444,26 @@ func _raiz_estavel(sk: Skeleton3D, i_braco: int) -> Transform3D:
 ##
 ## Lei dos cossenos pro angulo do ombro, e o `polo` decide de que lado o cotovelo
 ## sai. A raiz nao se move — quem absorve o bamboleio do corpo e' a dobra.
+## Gira um ponto em volta da ancora, no eixo de pe', pro lado DIREITO dele.
+##
+## O `cross` com o Y e' o mesmo que da' o `direita` do contexto, entao o sinal
+## aqui e' o mesmo que o do resto do arquivo: positivo = pra direita dele.
+func _para_a_direita(ancora: Vector3, ponto: Vector3, graus: float) -> Vector3:
+	if absf(graus) < 0.01:
+		return ponto
+	var fora := ponto - ancora
+	var dist := fora.length()
+	if dist < 0.001:
+		return ponto
+	var frente := fora / dist
+	var lado := frente.cross(Vector3.UP)
+	if lado.length_squared() < 0.0001:
+		return ponto
+	lado = lado.normalized()
+	var a := deg_to_rad(graus)
+	return ancora + (frente * cos(a) + lado * sin(a)) * dist
+
+
 func _ik_braco(sk: Skeleton3D, i_braco: int, i_ante: int, i_mao: int,
 		alvo_mao: Vector3, polo: Vector3, peso: float) -> void:
 	var g_raiz := _raiz_estavel(sk, i_braco)
@@ -596,8 +647,42 @@ func _alinhar_punho(sk: Skeleton3D, i_mao: int, palma: float, peso: float) -> vo
 	# o contrario de girar pelo pulso, que tira a mao da arma. O deslize entra
 	# aqui tambem: ele corre so' a mao, a arma ja' foi posta e nao anda junto.
 	var origem := no_cabo - alvo * pivo + dedos * _deslize
-	sk.set_bone_global_pose(i_mao, Transform3D(g.basis.slerp(alvo, peso),
+	var final_basis := g.basis.slerp(alvo, peso)
+	# O antebraco acompanha parte do giro, senao toda a torcao fica no pulso.
+	_dividir_torcao(sk, i_mao, final_basis)
+	sk.set_bone_global_pose(i_mao, Transform3D(final_basis,
 		g.origin.lerp(origem, peso)))
+
+
+## Passa pro antebraco parte da torcao que a mao ganhou (ver TORCAO_NO_ANTEBRACO).
+##
+## A conta e' "quanto a mao girou em volta do proprio antebraco, em relacao ao
+## DESCANSO" — o descanso entra porque mao e antebraco nao nascem alinhados, e
+## sem ele o osso rolaria sozinho com a arma na bainha.
+func _dividir_torcao(sk: Skeleton3D, i_mao: int, mao_basis: Basis) -> void:
+	if _torcao <= 0.001:
+		return
+	var i_ante := sk.get_bone_parent(i_mao)
+	if i_ante < 0:
+		return
+	var g_ante := sk.get_bone_global_pose(i_ante)
+	var g_mao := sk.get_bone_global_pose(i_mao)
+	var eixo := g_mao.origin - g_ante.origin
+	if eixo.length_squared() < 0.0001:
+		return
+	eixo = eixo.normalized()
+
+	# Onde a palma apontaria se a mao tivesse ficado no descanso, e onde ela
+	# aponta agora. O angulo entre as duas, em volta do osso, e' a torcao.
+	var descanso := (g_ante.basis * sk.get_bone_rest(i_mao).basis) * Vector3.RIGHT
+	var agora := mao_basis * Vector3.RIGHT
+	descanso = descanso - eixo * descanso.dot(eixo)
+	agora = agora - eixo * agora.dot(eixo)
+	if descanso.length_squared() < 0.0001 or agora.length_squared() < 0.0001:
+		return
+	var torcao := descanso.normalized().signed_angle_to(agora.normalized(), eixo)
+	sk.set_bone_global_pose(i_ante, Transform3D(
+		Basis(eixo, torcao * _torcao) * g_ante.basis, g_ante.origin))
 
 
 ## Fecha a mao pelo morph target (ver `tools/modelos/gerar_punho_maycow.py`).
@@ -688,6 +773,7 @@ func _procurar_ossos(sk: Skeleton3D) -> bool:
 ##     U / O   sobe / desce na mao
 ##     J / L   pra dentro / pra fora (lateral)
 ##     N / M   quebra do punho da ARMA (so' aparece com ela baixada)
+##     V / B   gira braco + mao + arma pra esquerda / pra direita (so' mirando)
 ##
 ##     P       imprime as DUAS linhas prontas pra colar
 ##     F9      sai do modo
@@ -738,6 +824,8 @@ func _input(event: InputEvent) -> void:
 			KEY_L: _offset.z -= passo
 			KEY_N: _inclinacao -= AJUSTE_PASSO_ANG
 			KEY_M: _inclinacao += AJUSTE_PASSO_ANG
+			KEY_V: _giro_mira -= AJUSTE_PASSO_ANG
+			KEY_B: _giro_mira += AJUSTE_PASSO_ANG
 			KEY_P: _imprimir_ajuste()
 			_: return
 	else:
@@ -763,7 +851,8 @@ func _imprimir_ajuste() -> void:
 	var seta_mao := " " if _ajustando_arma else ">"
 	print("%s [arma]  const OFFSET_NA_MAO := Vector3(%.3f, %.3f, %.3f)   |   "
 		% [seta_arma, _offset.x, _offset.y, _offset.z]
-		+ "const INCLINACAO_PUNHO := %.1f" % _inclinacao)
+		+ "const INCLINACAO_PUNHO := %.1f" % _inclinacao
+		+ "   |   const MIRA_GIRO_DIREITA := %.1f" % _giro_mira)
 	print("%s [mao]   const PUNHO_ROLAGEM := %.1f   |   "
 		% [seta_mao, _rolagem]
 		+ "const PUNHO_INCLINACAO := %.1f   |   const PUNHO_DESVIO := %.1f"

@@ -421,6 +421,7 @@ var clip_pistol_ammo: int = 8
 var max_clip_pistol: int = 8
 var ammo_label: Label
 var ammo_icon: TextureRect
+var amulet_hud_icon: TextureRect
 
 # CONFIGURACAO DO CONTROLE
 @export var JOY_SENSITIVITY: float = 0.04 # Sensibilidade para o analógico
