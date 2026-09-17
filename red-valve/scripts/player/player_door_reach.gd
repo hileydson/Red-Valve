@@ -3,7 +3,7 @@ extends SkeletonModifier3D
 ## A MAO QUE EMPURRA A PORTA.
 ##
 ## As portas do hospital e da escola nao tem mais prompt: o Maycow passa e
-## EMPURRA. Este componente e' a metade visual disso — o braco direito se
+## EMPURRA. Este componente e' a metade visual disso — o braco esquerdo se
 ## estica na direcao da folha enquanto ela gira.
 ##
 ## ==========================================================================
@@ -16,7 +16,7 @@ extends SkeletonModifier3D
 ##
 ## Um SkeletonModifier3D roda DEPOIS da AnimationTree, no mesmo quadro: as
 ## pernas continuam andando/correndo pela StateMachine normal e so' o braco
-## direito e' reescrito por cima. E' o mesmo efeito de um blend de meio corpo,
+## esquerdo e' reescrito por cima. E' o mesmo efeito de um blend de meio corpo,
 ## sem mexer na arvore de animacao nem no .glb.
 ##
 ## ==========================================================================
@@ -51,9 +51,12 @@ extends SkeletonModifier3D
 ## Skeleton3D esta' em CENTIMETROS: o Hips nasce em y ~94), o giro de 180 e o
 ## desloca junto, tudo numa conta so'.
 
-const OSSO_BRACO := "RightArm"
-const OSSO_ANTEBRACO := "RightForeArm"
-const OSSO_MAO := "RightHand"
+## O BRACO E' O ESQUERDO DE PROPOSITO. A pistola fica na MAO DIREITA (ver
+## `player_gun_hold.gd`), entao empurrar a porta com a direita era empurrar
+## com a arma. A mao livre e' a esquerda.
+const OSSO_BRACO := "LeftArm"
+const OSSO_ANTEBRACO := "LeftForeArm"
+const OSSO_MAO := "LeftHand"
 
 ## Tempo pro braco sair da animacao e chegar esticado, e pra voltar. A volta e'
 ## mais lenta que a ida: a mao sai da porta empurrando, nao dando um tapa.
@@ -74,7 +77,7 @@ var _i_mao := -1
 var _malha: MeshInstance3D = null
 
 
-## Estica o braco direito na direcao de `ponto` (coordenadas de MUNDO) e
+## Estica o braco esquerdo na direcao de `ponto` (coordenadas de MUNDO) e
 ## segura ali por `tempo` segundos. Chamar de novo enquanto ainda esta' esticado
 ## so' renova o alvo e o tempo.
 func estica(ponto: Vector3, tempo: float) -> void:

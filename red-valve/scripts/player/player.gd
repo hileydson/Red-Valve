@@ -392,6 +392,17 @@ var _pivotando: bool = false
 ## O quanto o corpo está atrasado em relação à câmera por causa do pivô. Zero
 ## em movimento. É ele que gira o deslocamento do modelo (ver seção 8).
 var _atraso_pivo: float = 0.0
+## A INCLINACAO DO STRAFE, SEPARADA DO PIVO.
+##
+## Andando de lado o corpo se vira um pouco pra dentro do movimento. Isso e'
+## SO' VISUAL e mora aqui, fora do `_yaw_corpo`: e' somado ao `_atraso_pivo` na
+## hora de girar o modelo, mas NAO entra na conta que gira o deslocamento de
+## enquadramento (ver seção 8).
+##
+## Ficar junto era um bug: ao soltar o controle correndo de lado, o
+## `_atraso_pivo` saltava de zero pra inclinacao inteira num quadro, e os 40 cm
+## de enquadramento giravam junto — o Maycow pulava ~18 cm pro lado, do nada.
+var _inclinacao_strafe: float = 0.0
 ## Quanto ainda falta do tempo mínimo da animação de passinho (ver GIRO_ANIM_MINIMO).
 var _pivo_anim: float = 0.0
 ## RITMO DO ENQUADRAMENTO — O DESLOCAMENTO NÃO PODE DAR TRANCO.
@@ -1761,11 +1772,17 @@ func _physics_process(delta: float) -> void:
 			# sempre foi. O corpo é o do jogador, com o desvio lateral do
 			# strafe, e vira junto com a câmera no mesmo quadro. O pivô não
 			# tem vez aqui — foi o que deixou a câmera estranha em movimento.
+			# A inclinacao do strafe e' perseguida FORA do if/else: parado o
+			# `alvo_y` ja' e' zero, entao ela se desfaz sozinha, no mesmo
+			# ritmo, em vez de sumir de um quadro pro outro.
+			_inclinacao_strafe = lerp_angle(_inclinacao_strafe, alvo_y, delta * velocidade_giro * speed_y)
 			if direction or is_aiming or are_cutscene_inputs_blocked():
 				_pivotando = false
 				_pivo_anim = 0.0
-				modelo.rotation.y = lerp_angle(modelo.rotation.y, alvo_y, delta * velocidade_giro * speed_y)
-				_yaw_corpo = rotation.y + modelo.rotation.y
+				# O corpo acompanha a camera: o que ele guarda aqui e' o yaw do
+				# JOGADOR, sem a inclinacao do strafe. Com ela dentro, soltar o
+				# controle fazia o pivo comecar ja' torto.
+				_yaw_corpo = rotation.y
 				_yaw_corpo_pronto = true
 				# O deslocamento volta ao normal no mesmo ritmo em que o corpo
 				# se realinha — assim sair do pivô andando não dá tranco.
@@ -1790,7 +1807,10 @@ func _physics_process(delta: float) -> void:
 					if absf(wrapf(rotation.y - _yaw_corpo, -PI, PI)) <= deg_to_rad(GIRO_SOLTA):
 						_pivotando = false
 				_atraso_pivo = wrapf(_yaw_corpo - rotation.y, -PI, PI)
-				modelo.rotation.y = _atraso_pivo
+
+			# O que se ve' e' o pivo MAIS a inclinacao do strafe; o que gira o
+			# deslocamento, la' embaixo, e' so' o pivo.
+			modelo.rotation.y = _atraso_pivo + _inclinacao_strafe
 			
 			var is_walking_back = direction and direction.dot(-global_transform.basis.z) < -0.2
 			var target_pos_x = 0.0
