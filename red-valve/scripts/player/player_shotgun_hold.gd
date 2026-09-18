@@ -181,6 +181,18 @@ const PORTE_LADO := 6.0
 const PORTE_ABAIXA := 26.0
 ## Quanto a arma atravessa pra esquerda dele no porte, em graus.
 const PORTE_ATRAVESSA := 16.0
+## E quanto ela atravessa A MAIS quando ele esta' CORRENDO.
+##
+## Correndo, a boca do cano fica apontada pra longe do corpo e a arma parece
+## solta na frente dele. Recolher um pouco a ponta pro lado da mao esquerda le'
+## como agarrar a arma pra correr — e' o que qualquer um faz.
+##
+## So' vale no porte: mirando, o `apontando` ja' apaga o PORTE_ATRAVESSA
+## inteiro, e este vai junto.
+const CORRIDA_ATRAVESSA := 8.0
+## Em quanto tempo ele entra e sai, em segundos. Sem isto a arma daria um
+## tranco no quadro em que a corrida comeca.
+const CORRIDA_ENTRA := 0.25
 
 ## Inclinacao da arma em volta do proprio cano (+ = tomba o topo pra direita).
 const INCLINACAO_ARMA := 4.0
@@ -369,6 +381,9 @@ var _fechada_e := 0.0
 var _cabo := CABO_NO_MODELO
 var _offset := OFFSET_NA_MAO
 var _apoio := APOIO_NO_MODELO
+## Quem manda aqui e' o `player.gd` (veja `correr`), igual ao `mirar`.
+var _correndo := false
+var _corrida := 0.0
 var _escala := ESCALA_ARMA
 var _frente := MAOS_FRENTE
 var _lado := MAOS_LADO
@@ -399,6 +414,12 @@ func mirar(ativo: bool, ponto: Vector3 = Vector3.ZERO) -> void:
 			_tem_alvo = true
 	else:
 		_tem_alvo = false
+
+
+## Diz se ele esta' CORRENDO. Chamado pelo `player.gd` todo quadro, igual ao
+## `mirar` — o componente nao le' o jogador, quem sabe do jogador conta.
+func correr(sim: bool) -> void:
+	_correndo = sim
 
 
 ## Toca a recarga.
@@ -492,6 +513,9 @@ func _process_modification_with_delta(delta: float) -> void:
 
 	# Recarregar levanta a arma como mirar levanta: e' a mesma pose alta, com
 	# desvios por cima.
+	var quer_corrida := 1.0 if (_correndo and not _recarregando) else 0.0
+	_corrida = move_toward(_corrida, quer_corrida, delta / CORRIDA_ENTRA)
+
 	var quer_apontar := 1.0 if (_mirando or _recarregando) else 0.0
 	var passo := delta / (LEVANTA if quer_apontar > _apontando else ABAIXA)
 	_apontando = move_toward(_apontando, quer_apontar, passo)
@@ -617,7 +641,9 @@ func _base_da_arma(ctx: Dictionary) -> Basis:
 	var aponta_pra := dir
 	if apontando < 0.999:
 		var abaixado := dir.rotated(direita, -deg_to_rad(PORTE_ABAIXA))
-		abaixado = abaixado.rotated(cima, deg_to_rad(PORTE_ATRAVESSA))
+		var atravessa := PORTE_ATRAVESSA \
+			+ CORRIDA_ATRAVESSA * smoothstep(0.0, 1.0, _corrida)
+		abaixado = abaixado.rotated(cima, deg_to_rad(atravessa))
 		aponta_pra = abaixado.slerp(dir, apontando).normalized()
 
 	var eixo_x := -aponta_pra

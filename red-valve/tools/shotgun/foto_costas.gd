@@ -242,6 +242,9 @@ func _situacao(nome: String, anim: String, com_arma: bool) -> void:
 			_player.playback.travel(anim)
 		if com_arma:
 			_hold.mirar(false, alvo)
+			# O harness congela a fisica do jogador, entao o `player.gd` nunca
+			# avisa que ele esta' correndo — aqui a gente avisa.
+			_hold.correr(anim == "run")
 		_enquadrar()
 		# A medida sai DEPOIS do desenho, e nao depois do `process_frame`: o
 		# SkeletonModifier3D escreve os ossos no fim do quadro, e ler antes
@@ -251,8 +254,14 @@ func _situacao(nome: String, anim: String, com_arma: bool) -> void:
 		# So' depois de assentar: os primeiros quadros ainda sao a pose subindo.
 		_espiao.ligado = i >= QUADROS_PRA_ASSENTAR
 
-	print("  -- %s --   braco E esticado %.1f a %.1f cm  (o braco da' %.1f)"
-		% [nome, _espiao.estica_min, _espiao.estica_max, _espiao.alcance])
+	# A boca do cano no espaco do JOGADOR: X negativo e' pra esquerda dele, que
+	# e' o lado pra onde a ponta recolhe na corrida.
+	var boca := Vector3.ZERO
+	if com_arma:
+		boca = _player.global_transform.affine_inverse() * _hold.boca_do_cano()
+	print("  -- %s --   braco E esticado %.1f a %.1f cm  (o braco da' %.1f)   boca do cano x=%.2f z=%.2f"
+		% [nome, _espiao.estica_min, _espiao.estica_max, _espiao.alcance,
+			boca.x, boca.z])
 	for osso in OSSOS_DE_OLHO:
 		var lo: float = _espiao.menor.get(osso, 0.0)
 		var hi: float = _espiao.maior.get(osso, 0.0)

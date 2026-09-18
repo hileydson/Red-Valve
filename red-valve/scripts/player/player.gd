@@ -1790,6 +1790,13 @@ func _physics_process(delta: float) -> void:
 		if alinhamento < CORRIDA_ALINHAMENTO_MIN:
 			is_running = false
 
+		# A caçadeira recolhe a ponta do cano quando ele corre. Quem sabe que
+		# ele está correndo é aqui, então é daqui que o componente fica sabendo
+		# — mesmo caminho do `mirar`, que também é empurrado, não lido.
+		var correndo_hold := _shotgun_hold()
+		if correndo_hold:
+			correndo_hold.correr(is_running)
+
 		var velocidade_atual = _velocidade_corrida() if is_running else _velocidade_caminhada()
 		if input_dir.y > 0.1:
 			velocidade_atual *= 0.65
