@@ -105,12 +105,40 @@ lados, e não há como um descobrir o outro.
 # a hierarquia, as peças, o item no balcão, os textos, e o ciclo tiro/recarga
 /home/dev/Applications/Godot_v4.6.1-stable_linux.x86_64 --headless \
     --path red-valve res://tools/shotgun/conferir_shotgun.tscn
-
-# a pose nas mãos do Maycow, em 6 quadros (precisa de tela — sem --headless)
-/home/dev/Applications/Godot_v4.6.1-stable_linux.x86_64 \
-    --path red-valve res://tools/shotgun/foto_pose.tscn
 ```
+
+E três harnesses de foto, que precisam de tela (**sem** `--headless`):
+
+| Cena | O que responde |
+| :--- | :--- |
+| `tools/shotgun/foto_pose.tscn` | a pose parado: porte, mira e a recarga em 6 quadros |
+| `tools/shotgun/foto_costas.tscn` | o Maycow **andando e correndo**, visto de trás |
+| `tools/shotgun/foto_tiro.tscn` | o clarão, as fagulhas e a fumaça, quadro a quadro |
 
 O primeiro imprime `aberta 0%` / `100%` em cada quadro da recarga: 16° de dobra
 numa arma vista meio de lado são dois pixels, e olhar a foto não distingue
 "abriu pouco" de "não abriu".
+
+### Por que existe um harness só pras costas
+
+O `foto_pose` fotografa o Maycow **parado**, e há um defeito que só aparece em
+movimento: a omoplata esquerda deformava enquanto ele andava ou corria. A causa
+é medida, não achada — o `foto_costas` imprime o ângulo de cada junta:
+
+| | braço E fora do descanso |
+| :--- | :--- |
+| sem arma, correndo | 12° a 42° |
+| com arma, parado | 81° |
+| com arma, correndo | **94° a 111°** |
+| com arma, correndo, depois do conserto | 59° a 86° |
+
+Cem graus entre dois ossos é mais do que skinning linear aguenta. O conserto é
+`arma_ik.aliviar_ombro()`: a clavícula toma metade do giro (teto de 30°) e o
+braço fica com o resto, que é o que uma omoplata de verdade faz quando o braço
+atravessa o corpo.
+
+Detalhe do harness que vale saber: o ângulo **não dá para ler de fora**. O
+`Skeleton3D` guarda as poses antes de rodar os modificadores e as devolve
+depois de desenhar, então `get_bone_pose()` chamado de outro nó entrega a pose
+crua da AnimationTree — o mesmo número com arma e sem arma. Por isso o
+`foto_costas` pendura um `SkeletonModifier3D` espião no fim da pilha.

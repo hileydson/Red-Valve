@@ -420,6 +420,12 @@ const MOMENTO_FECHA := 0.90
 ## Quantos chumbos saem por tiro, e quanto a carga se abre (graus de meio-ângulo
 ## do cone). 2,5 graus dá ~9 cm de espalhamento a 2 m e ~90 cm a 20 m: mata de
 ## perto e só arranha de longe, que é o contrato de uma caçadeira.
+## O clarão da caçadeira dura o dobro do da pistola. Ainda é quase nada — dois
+## quadros — mas a diferença aparece, e é ela que separa os dois tiros.
+const TEMPO_CLARAO_SHOTGUN := 0.12
+## O fogo, as fagulhas e a fumaça. Montados em `fogo_shotgun.gd`.
+const FOGO_SHOTGUN := preload("res://scenes/effects/fogo_shotgun.tscn")
+
 const PELOTAS_SHOTGUN := 7
 const ESPALHAMENTO_SHOTGUN := 2.5
 
@@ -448,7 +454,10 @@ func atirar_shotgun() -> void:
 	GlobalUtils.vibrate_controller(Input, 0.9, 0.35, 0.18)
 
 	if gun_hold and gun_hold.tem_arma_na_mao():
-		_piscar_clarao(gun_hold.boca_do_cano())
+		# Mais forte e mais longo que o da pistola: são 12 gramas de chumbo
+		# saindo de uma vez, e o tiro da caçadeira tem de PESAR na tela.
+		_piscar_clarao(gun_hold.boca_do_cano(), 11.0, 6.0, TEMPO_CLARAO_SHOTGUN)
+		_fumaca_do_cano(gun_hold)
 
 	_raio_do_tiro_shotgun()
 
@@ -621,22 +630,41 @@ func _raio_do_tiro_3p() -> void:
 ## Clarão curto na boca do cano. É uma luz só, com alcance pequeno e vida de
 ## três quadros: o renderer do projeto é o mobile, que tem teto de 8 luzes por
 ## malha, e uma luz grande aqui apagaria outra do cenário sem avisar.
-func _piscar_clarao(ponto: Vector3) -> void:
+##
+## Os parâmetros existem pela caçadeira, que acende mais e por mais tempo que a
+## pistola. Os valores padrão são os da pistola, que assim não mudou em nada.
+func _piscar_clarao(ponto: Vector3, energia: float = 6.0, alcance: float = 4.0,
+		duracao: float = TEMPO_CLARAO) -> void:
 	if not is_instance_valid(_clarao):
 		_clarao = OmniLight3D.new()
 		_clarao.light_color = Color(1.0, 0.82, 0.45)
-		_clarao.light_energy = 6.0
-		_clarao.omni_range = 4.0
 		_clarao.shadow_enabled = false
 		_clarao.visible = false
 		_clarao.top_level = true
 		player.add_child(_clarao)
 
+	_clarao.light_energy = energia
+	_clarao.omni_range = alcance
 	_clarao.global_position = ponto
 	_clarao.visible = true
-	await get_tree().create_timer(TEMPO_CLARAO).timeout
+	await get_tree().create_timer(duracao).timeout
 	if is_instance_valid(_clarao):
 		_clarao.visible = false
+
+
+## Solta o clarão/fumaça na boca do cano da caçadeira.
+##
+## O efeito NÃO é filho da arma: ele nasce na cena e a acompanha só enquanto o
+## cano ainda cospe (ver o cabeçalho do `fogo_shotgun.gd`). Pendurar na arma
+## faria a nuvem inteira girar junto com a câmera.
+func _fumaca_do_cano(gun_hold) -> void:
+	if not is_inside_tree(): return
+	var onde := get_tree().current_scene
+	if onde == null: return
+	var fx = FOGO_SHOTGUN.instantiate()
+	fx.arma = gun_hold
+	onde.add_child(fx)
+	fx.global_position = gun_hold.boca_do_cano()
 
 
 func _soltar_capsula(ponto: Vector3) -> void:

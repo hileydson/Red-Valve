@@ -852,6 +852,17 @@ func _atualizar_mira_lanterna(delta: float) -> void:
 ## FOV da câmera de terceira pessoa enquanto mira com a arma.
 const FOV_MIRA_ARMA := 55.0
 
+## Quanto a câmera FECHA na corrida quando ele está com a caçadeira.
+##
+## Correr abre o FOV (88 em terceira pessoa) e isso é o que dá a sensação de
+## velocidade. Com uma arma longa nas duas mãos o mesmo enquadramento fica
+## solto: a arma é o que o jogador está olhando, e ela é grande. Fechar um
+## pouco traz o Maycow e a arma de volta pro quadro sem matar a corrida.
+##
+## Só vale com a CAÇADEIRA equipada — a pistola continua com a corrida de
+## sempre.
+const FOV_CORRIDA_SHOTGUN := 12.0
+
 ## Alcance do raio que procura o que está no centro da tela, em metros.
 const ALCANCE_MIRA_ARMA := 90.0
 
@@ -1809,6 +1820,8 @@ func _physics_process(delta: float) -> void:
 						playback.travel("run")
 						if not is_aiming:
 							target_fov = 80.0 if is_first_person else 88.0
+							if SaveManager.is_equipped("shotgun"):
+								target_fov -= FOV_CORRIDA_SHOTGUN
 					else:
 						playback.travel("walk")
 			

@@ -207,6 +207,18 @@ const PUNHO_DESLIZE := -1.0
 ## Quanto da torcao do punho vai pro antebraco (ver `arma_ik.dividir_torcao`).
 const TORCAO_NO_ANTEBRACO := 0.5
 
+## Quanto do giro do braco e' passado pra CLAVICULA (ver `arma_ik.aliviar_ombro`).
+##
+## Nao e' enfeite: sem isto a omoplata esquerda deforma enquanto ele anda ou
+## corre. A mao esquerda atravessa o corpo ate' o cano e deixa o braco a cem
+## graus do descanso; a pele presa aos dois ossos enrola. Parado o angulo cai e
+## o defeito some sozinho — foi por isso que ele demorou a aparecer.
+##
+## O teto existe pra clavicula nao virar um encolher de ombros: ela e' um osso
+## curto e passar de uns 30 graus levanta o ombro na silhueta.
+const ALIVIO_OMBRO := 0.5
+const LIMITE_OMBRO := 30.0
+
 ## Em volta de que ponto a mao gira: o meio do punho FECHADO, que e' por onde a
 ## arma passa. Pelo osso nao da': ele fica no pulso, 10 cm atras.
 const PUNHO_PIVO_PALMA := 3.0
@@ -493,6 +505,11 @@ func _process_modification_with_delta(delta: float) -> void:
 	# 1 e 2. A mao direita, e o braco ate' ela.
 	IK.braco(sk, _i_braco_d, _i_ante_d, _i_mao_d,
 		ctx["mao_d"], ctx["polo_d"], peso)
+	# 2b. A clavicula toma parte do giro, e o braco refaz a conta a partir do
+	#     ombro novo — senao a mao sai do lugar (`arma_ik.aliviar_ombro`).
+	IK.aliviar_ombro(sk, _i_braco_d, ALIVIO_OMBRO * peso, LIMITE_OMBRO)
+	IK.braco(sk, _i_braco_d, _i_ante_d, _i_mao_d,
+		ctx["mao_d"], ctx["polo_d"], peso)
 
 	# 3. A arma pousa NO OSSO da mao direita — e' este passo que a poe na mao
 	#    em vez de no ar (item 1 do cabecalho).
@@ -502,6 +519,8 @@ func _process_modification_with_delta(delta: float) -> void:
 	var mao_e := _destino_da_esquerda(ctx)
 	var polo_e: Vector3 = mao_e - Vector3.UP * COTOVELO_BAIXO_E \
 		- (ctx["direita"] as Vector3) * COTOVELO_FORA_E
+	IK.braco(sk, _i_braco_e, _i_ante_e, _i_mao_e, mao_e, polo_e, peso)
+	IK.aliviar_ombro(sk, _i_braco_e, ALIVIO_OMBRO * peso, LIMITE_OMBRO)
 	IK.braco(sk, _i_braco_e, _i_ante_e, _i_mao_e, mao_e, polo_e, peso)
 
 	# Os punhos por ultimo: e' a pose da arma que diz pra onde eles olham.
