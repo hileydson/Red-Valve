@@ -368,7 +368,8 @@ var last_camera_rot_x: float = 0.0
 ## O CORPO NÃO ACOMPANHA A CÂMERA NA HORA.
 ##
 ## Parado, girar a câmera não vira o Maycow: ele fica plantado, de costas, e a
-## câmera é que corre em volta dele. Só quando ela passa de `GIRO_LIMITE` ele
+## câmera é que corre em volta dele. Só quando ela passa do limite (que é
+## diferente de cada lado — ver `GIRO_LIMITE_DIREITA`) ele
 ## PIVOTA — dá os passinhos e se realinha, sempre para o lado a que a câmera
 ## foi, parando quando chega a `GIRO_SOLTA` do alvo. Se a câmera continuar
 ## girando enquanto ele pivota, ele persegue.
@@ -378,9 +379,29 @@ var last_camera_rot_x: float = 0.0
 ## O que havia antes era o contrário: o corpo virava junto com a câmera e os
 ## passinhos existiam só para ele não girar deslizando feito um pião.
 @export var GIRO_LIMITE: float = 24.0
+## O MESMO LIMITE, MAS QUANDO A CÂMERA FOI PRA DIREITA.
+##
+## Menor que o da esquerda de propósito: com os 24 dos dois lados, girar pra
+## direita fica exagerado — ele demora demais parado antes de começar a voltar.
+## Pra esquerda o tempo está bom, então só este lado encolheu.
+##
+## Qual lado é qual sai do SINAL: a câmera gira por `rotate_y(-relative.x)`,
+## então mouse pra direita DIMINUI o `rotation.y` e deixa o `falta` negativo.
+##
+## A folga contra o `GIRO_SOLTA` tem de existir, senão o pivô reacende no quadro
+## seguinte ao que termina. Como este lado desceu abaixo dos 8 do
+## `GIRO_SOLTA`, ele traz o próprio: ver `GIRO_SOLTA_DIREITA`.
+@export var GIRO_LIMITE_DIREITA: float = 6.0
 ## Onde o pivô termina. Maior que zero de propósito: parar exatamente no alvo
 ## faria ele reacender o pivô a cada tremidinha de mouse.
 @export var GIRO_SOLTA: float = 8.0
+## Onde o pivô PRA DIREITA termina. Anda junto com `GIRO_LIMITE_DIREITA`, e
+## tem de ficar abaixo dele: a diferença entre os dois é a folga.
+##
+## Sem este, o gatilho de 6 cairia dentro da zona de soltura de 8 e o pivô
+## nasceria já terminado — ele andaria um quadro e pararia, todo quadro. O que
+## se vê na tela até seria parecido, mas por acidente.
+@export var GIRO_SOLTA_DIREITA: float = 3.0
 ## Quão rápido ele pivota (rad/s). Baixo de propósito: o pivô é um passo
 ## deliberado, e a qualquer coisa acima disso ele vira num estalo.
 @export var GIRO_VEL_CORPO: float = 1.3
@@ -1925,18 +1946,24 @@ func _physics_process(delta: float) -> void:
 					_yaw_corpo = rotation.y
 					_yaw_corpo_pronto = true
 				var falta := wrapf(rotation.y - _yaw_corpo, -PI, PI)
-				if not _pivotando and absf(falta) >= deg_to_rad(GIRO_LIMITE):
+				# `falta` negativo = a câmera foi pra DIREITA dele, e esse lado
+				# tem gatilho mais curto (ver GIRO_LIMITE_DIREITA).
+				var limite := deg_to_rad(GIRO_LIMITE_DIREITA if falta < 0.0 \
+					else GIRO_LIMITE)
+				var soltura := deg_to_rad(GIRO_SOLTA_DIREITA if falta < 0.0 \
+					else GIRO_SOLTA)
+				if not _pivotando and absf(falta) >= limite:
 					_pivotando = true
 					_pivo_anim = maxf(_pivo_anim, GIRO_ANIM_MINIMO)
 				if _pivotando:
 					var vel := GIRO_VEL_CORPO
-					var excesso := absf(falta) - deg_to_rad(GIRO_LIMITE)
+					var excesso := absf(falta) - limite
 					if excesso > 0.0:
 						vel += excesso * GIRO_ALCANCE
 					# O `minf` é o que impede ele de passar do alvo e ficar
 					# indo e voltando em cima dele.
 					_yaw_corpo += signf(falta) * minf(vel * delta, absf(falta))
-					if absf(wrapf(rotation.y - _yaw_corpo, -PI, PI)) <= deg_to_rad(GIRO_SOLTA):
+					if absf(wrapf(rotation.y - _yaw_corpo, -PI, PI)) <= soltura:
 						_pivotando = false
 				_atraso_pivo = wrapf(_yaw_corpo - rotation.y, -PI, PI)
 
