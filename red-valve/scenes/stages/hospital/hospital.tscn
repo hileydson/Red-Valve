@@ -10831,7 +10831,7 @@ monitorable = false
 shape = SubResource("f190")
 
 [node name="municao_no_balcao" type="Node3D" parent="."]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 18.37500, 1.12000, 34.17500)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 12.00238, 1.12000, 33.75732)
 script = ExtResource("e91")
 metadata/id = "hospital_municao_no_balcao"
 metadata/item = "pistol_ammo"
@@ -10844,7 +10844,7 @@ metadata/repetido = "PICKUP_AMMO_AGAIN"
 transform = Transform3D(0.97030, 0.00000, 0.24192, 0.00000, 1.00000, 0.00000, -0.24192, 0.00000, 0.97030, 0.00000, 0.03600, 0.00000)
 
 [node name="area" type="Area3D" parent="municao_no_balcao"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.90000, 0.25000, 0.00000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.89230, 0.25000, -0.11747)
 collision_layer = 0
 monitorable = false
 
@@ -10852,7 +10852,7 @@ monitorable = false
 shape = SubResource("f190")
 
 [node name="municao_no_balcao_2" type="Node3D" parent="."]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 15.17500, 1.12000, 30.97500)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 12.00238, 1.12000, 34.59268)
 script = ExtResource("e91")
 metadata/id = "hospital_municao_no_balcao_2"
 metadata/item = "pistol_ammo"
@@ -10865,7 +10865,7 @@ metadata/repetido = "PICKUP_AMMO_AGAIN"
 transform = Transform3D(0.89879, 0.00000, -0.43837, 0.00000, 1.00000, 0.00000, 0.43837, 0.00000, 0.89879, 0.00000, 0.03600, 0.00000)
 
 [node name="area" type="Area3D" parent="municao_no_balcao_2"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.25000, -0.90000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.89230, 0.25000, 0.11747)
 collision_layer = 0
 monitorable = false
 

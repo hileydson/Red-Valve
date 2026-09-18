@@ -1042,12 +1042,14 @@ def _emitir_porta(no, peca, forma, d, id_script):
 # ==========================================================================
 # O QUE ESTA' EM CIMA DO BALCAO DA RECEPCAO
 # ==========================================================================
-# A pistola (The Negotiator) e a caixa de municao dela ficam no tampo do balcao
-# redondo do hall, uma de cada lado: a arma na face OESTE, que e' a que o
-# jogador encara ao entrar pela porta da rua, e a municao na face LESTE, do
-# outro lado — de proposito, pra ele ter de contornar o balcao.
+# A pistola (The Negotiator) e as duas caixas de municao dela ficam no tampo do
+# balcao redondo do hall, TODAS NA MESMA FACE: a oeste, que e' a que o jogador
+# encara ao entrar pela porta da rua. Ficam a meio palmo uma da outra, e e' de
+# proposito: e' o caso que o seletor de item existe pra resolver (ver
+# `scripts/stages/hospital/item_de_balcao.gd`) — chegando ali, o jogador escolhe
+# com o OLHAR qual dos tres vai pegar.
 #
-# Os dois nascem aqui, e nao a mao no .tscn, porque esta cena e' regerada por
+# Os tres nascem aqui, e nao a mao no .tscn, porque esta cena e' regerada por
 # script: o que for arrastado no editor some na proxima geracao.
 #
 # A colisao do balcao e' uma caixa de 7,4 x 7,4 (maior que o circulo), entao o
@@ -1055,8 +1057,13 @@ def _emitir_porta(no, peca, forma, d, id_script):
 # item por cima do balcao, que e' exatamente como se pega algo num balcao.
 
 ## Onde cada item pousa, em angulo no circulo do balcao (0 = norte, 90 = leste).
-## Oeste e' 270 e leste e' 90; com 16 segmentos os dois caem no MEIO de um
-## segmento do tampo, e nao na juncao entre dois.
+## Oeste e' 270 — o meio de um dos 16 segmentos do tampo.
+##
+## Os vizinhos ficam a 7,5 graus dele, e nao mais que isso: o tampo nao e' um
+## disco, sao 16 CAIXAS em leque de 1,33 m de largura cada. Passando de uns 9
+## graus do centro da caixa, o item sai da tabua e fica pendurado no ar entre
+## duas. 7,5 graus da' 42 cm de afastamento — perto o bastante pra uma area
+## alcancar a outra, que e' o que poe o seletor pra trabalhar.
 ITENS_BALCAO = [
     {
         "nome": "pistola_no_balcao",
@@ -1089,7 +1096,7 @@ ITENS_BALCAO = [
         "repetido": "PICKUP_AMMO_AGAIN",
         "modelo": "res://assets/3d_model/player/the_negotiator_V1/"
                   "cartridge/scene.gltf",
-        "angulo": 90.0,
+        "angulo": 262.5,
         # A caixa de municao ja' chega no tamanho certo (9,5 x 6,4 x 22,5 cm):
         # as duas matrizes do Sketchfab dentro do .gltf fazem a conversao.
         "escala": 1.0,
@@ -1097,10 +1104,9 @@ ITENS_BALCAO = [
         "giro": 14.0,
         "apoio": 0.036,
     },
-    # Segunda caixa, na face NORTE (angulo 180 = o lado de Z menor, o topo do
-    # mapa). Bala e' item que se pega a vida inteira, e uma
-    # so' nao deixa o jogador ver que a quantidade SOMA — com duas ele pega 25,
-    # olha o menu, pega mais 25 e ve' 50.
+    # Segunda caixa, do outro lado da pistola. Bala e' item que se pega a vida
+    # inteira, e uma so' nao deixa o jogador ver que a quantidade SOMA — com
+    # duas ele pega 25, olha o menu, pega mais 25 e ve' 50.
     {
         "nome": "municao_no_balcao_2",
         "item": "pistol_ammo",
@@ -1110,7 +1116,7 @@ ITENS_BALCAO = [
         "repetido": "PICKUP_AMMO_AGAIN",
         "modelo": "res://assets/3d_model/player/the_negotiator_V1/"
                   "cartridge/scene.gltf",
-        "angulo": 180.0,
+        "angulo": 277.5,
         "escala": 1.0,
         "deitada": False,
         "giro": -26.0,
@@ -1150,7 +1156,9 @@ def _emitir_itens_do_balcao(no, forma, externo):
            props_=[("transform", corpo)])
 
         # A area olha pra FORA do balcao (o jogador so' chega por fora), e nasce
-        # na altura do peito dele.
+        # na altura do peito dele. Com os itens lado a lado ela alcanca os
+        # vizinhos de sobra — nao ha' problema: quem separa um do outro daqui em
+        # diante e' a mira, nao a area.
         fx = math.sin(ang) * 0.9
         fz = math.cos(ang) * 0.9
         ident = forma(3.2, 2.6, 3.2)
