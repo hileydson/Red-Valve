@@ -1,13 +1,14 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene format=3 uid="uid://bbaf3oui2vnkx"]
 
 [ext_resource type="Script" uid="uid://byqlaykhy5nq" path="res://scripts/player/hand_with_pistol.gd" id="1_sway"]
 [ext_resource type="PackedScene" uid="uid://33tuk2yjdpe3" path="res://assets/3d_model/player/hands/maos_fp/maos_fp.glb" id="2_rig"]
-[ext_resource type="Script" path="res://scripts/player/maos_fp_armas.gd" id="3_armas"]
+[ext_resource type="Script" uid="uid://b7folb2e5abeg" path="res://scripts/player/maos_fp_armas.gd" id="3_armas"]
 [ext_resource type="Material" path="res://assets/3d_model/player/hands/maos_fp/maos_fp_pele.tres" id="4_pele"]
 [ext_resource type="Material" path="res://assets/3d_model/player/hands/maos_fp/maos_fp_pele_magica.tres" id="5_pele_e"]
-[ext_resource type="AnimationLibrary" path="res://assets/3d_model/player/hands/maos_fp/maos_fp_clipes.tres" id="6_clipes"]
+[ext_resource type="AnimationLibrary" uid="uid://ekjtpg6f4x47" path="res://assets/3d_model/player/hands/maos_fp/maos_fp_clipes.tres" id="6_clipes"]
 [ext_resource type="SpriteFrames" uid="uid://cawar0ym41nu6" path="res://scripts/player/sprite_fire.tres" id="7_fogo"]
-[ext_resource type="PackedScene" path="res://assets/3d_model/player/the_negotiator_V3/the_negotiator_V3_dobravel.glb" id="8_previa"]
+[ext_resource type="PackedScene" uid="uid://cmjyydu7kf1eu" path="res://assets/3d_model/player/the_negotiator_V3/the_negotiator_V3_dobravel.glb" id="8_previa"]
+[ext_resource type="Script" uid="uid://dfo761n03kf2r" path="res://scripts/player/previa_da_tela.gd" id="9_olho"]
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_faisca"]
 direction = Vector3(1, 0, -1)
@@ -26,44 +27,89 @@ albedo_color = Color(1, 1, 0.8235294, 1)
 material = SubResource("StandardMaterial3D_faisca")
 size = Vector3(0.009, 0.01, 0.01)
 
-[node name="MaoArmada" type="Node3D"]
+[node name="MaoArmada" type="Node3D" unique_id=566495227]
 script = ExtResource("1_sway")
 
-[node name="rig" parent="." instance=ExtResource("2_rig")]
+[node name="rig" parent="." unique_id=1875835465 instance=ExtResource("2_rig")]
 transform = Transform3D(0.17, 0, 0, 0, 0.17, 0, 0, 0, 0.17, 0, 0, 0)
 script = ExtResource("3_armas")
 
-[node name="mao_esq" parent="rig/Armature/Skeleton3D" index="0"]
+[node name="Armature" parent="rig" index="0" unique_id=1517908256]
+transform = Transform3D(-0.59601283, -0.2704891, 0.7560455, -0.14786376, -0.88848287, -0.43443632, 0.7892436, -0.37072125, 0.4895513, 2.1689358, -0.7792399, 0.40663165)
+
+[node name="Skeleton3D" parent="rig/Armature" index="0" unique_id=176226078]
+transform = Transform3D(-0.12741925, -0.93090534, 0.34230906, -0.3816855, 0.3645653, 0.8493548, -0.9154645, -0.022429436, -0.401766, 0.5260446, 2.0989642, -3.771908)
+bones/0/position = Vector3(-0.39308435, -1.843185, -0.833526)
+bones/0/rotation = Quaternion(-0.0876874, 0.7437215, -0.43352553, 0.50124335)
+bones/1/rotation = Quaternion(-0.136362, 0.401392, 0.159386, 0.868524)
+bones/2/rotation = Quaternion(0.22301, -0.246576, -0.209271, 0.816648)
+bones/3/position = Vector3(0.055, 0.177, 0)
+bones/3/rotation = Quaternion(0.658309, 0.213649, 0.01144, 0.731624)
+bones/4/rotation = Quaternion(0.39085934, 0.01692742, 0.029960644, 0.91980696)
+bones/5/rotation = Quaternion(0.003927, -0.011825, 0.004543, 0.900859)
+bones/6/rotation = Quaternion(0.6029051, -0.03174931, -0.04192199, 0.7960779)
+bones/7/rotation = Quaternion(0.447601, -0.63657, -0.034768, 0.895785)
+bones/8/rotation = Quaternion(-0.109825, -0.32615, 0.05135, 0.850145)
+bones/9/rotation = Quaternion(0.647055, -0.00099, -0.595875, 0.761126)
+bones/10/rotation = Quaternion(0.429338, 0.145712, 0.001013, 0.903143)
+bones/11/rotation = Quaternion(0.217564, -0.094442, -0.122412, 0.819005)
+bones/12/rotation = Quaternion(0.5867051, 0.064551055, 0.088280514, 0.80238205)
+bones/13/rotation = Quaternion(0.4038695, 0.014188785, 0.03367581, 0.91408646)
+bones/14/rotation = Quaternion(0.20307621, 0.07964792, 0.29885593, 0.9290325)
+bones/15/rotation = Quaternion(0.20431069, -0.031539194, -0.1492661, 0.9669447)
+bones/16/rotation = Quaternion(0.24855432, 0.026523352, 0.09623249, 0.9634608)
+bones/17/position = Vector3(0.5133029, -0.59813726, -2.209)
+bones/17/rotation = Quaternion(-0.48522243, -0.27560657, -0.38621843, 0.7344628)
+
+[node name="mao_esq" parent="rig/Armature/Skeleton3D" index="0" unique_id=854327732]
 cast_shadow = 0
 surface_material_override/0 = ExtResource("5_pele_e")
 
-[node name="mao_dir" parent="rig/Armature_dir/Skeleton3D" index="0"]
-cast_shadow = 0
-surface_material_override/0 = ExtResource("4_pele")
-
-; A CACADEIRA SO' PRA VER NO EDITOR.
-;
-; Em jogo a arma e' instanciada por codigo (o `maos_fp_armas.gd` pendura as
-; duas no osso `arma` e mostra a que esta' na mao), entao no editor o
-; AnimationPlayer mostraria as maos apertando o ar — e recarga de caçadeira
-; nao se anima sem ver a caçadeira. Este no' existe so' pra isso: o
-; `_ready` do componente o apaga assim que o jogo comeca.
-;
-; A base e' a mesma conta do script: os eixos do modelo (topo +Z no Blender,
-; +Y aqui) e a escala 0,300 dividida pelo 0,17 do rig = 1,7647.
-[node name="PreviaNoEditor" type="BoneAttachment3D" parent="rig/Armature_dir/Skeleton3D" index="1"]
+[node name="PreviaNoEditor" type="BoneAttachment3D" parent="rig" unique_id=1580329696]
+transform = Transform3D(0.34290066, -0.93789184, 0.052709416, -0.15357138, -0.11132675, -0.9818465, 0.9267337, 0.32858118, -0.18220735, 0.35468584, 0.63596576, -0.047924414)
 bone_name = "arma"
 bone_idx = 17
 
-[node name="cacadeira" parent="rig/Armature_dir/Skeleton3D/PreviaNoEditor" instance=ExtResource("8_previa")]
+[node name="cacadeira" parent="rig/PreviaNoEditor" unique_id=2002644381 instance=ExtResource("8_previa")]
 transform = Transform3D(1.7647059, 0, 0, 0, 0, 1.7647059, 0, -1.7647059, 0, 0, 0, 0)
 
-[node name="AnimationPlayer" parent="rig" index="2"]
-libraries = {
-&"": ExtResource("6_clipes")
-}
+[node name="Armature_dir" parent="rig" index="2" unique_id=2083814527]
+transform = Transform3D(0.7084166, -0.35488003, 0.61008716, 0.3601677, 0.9251468, 0.119929396, -0.60698074, 0.13477369, 0.78320545, 0.28586492, 1.0298294, 2.3215978)
 
-[node name="faisca" type="GPUParticles3D" parent="."]
+[node name="Skeleton3D" parent="rig/Armature_dir" index="0" unique_id=988876978]
+bones/0/position = Vector3(1.5116993, -2.115851, 0.02887094)
+bones/0/rotation = Quaternion(-0.2750688, -0.5676395, 0.26368883, 0.7297881)
+bones/1/rotation = Quaternion(-0.2876, 0.038433, 0.299425, 1.119936)
+bones/2/rotation = Quaternion(0.46657616, 0.26814184, 0.25753498, 0.8025476)
+bones/3/rotation = Quaternion(0.60330856, -0.19364892, -0.23644015, 0.736624)
+bones/4/rotation = Quaternion(0.39085943, -0.016927397, -0.029960565, 0.9198069)
+bones/5/rotation = Quaternion(0.3197729, -0.029636608, -0.10455591, 0.9412412)
+bones/6/rotation = Quaternion(0.44170892, 0.023260552, 0.047163706, 0.8956159)
+bones/7/rotation = Quaternion(0.24614266, 0.013848366, 0.038500696, 0.9683696)
+bones/8/rotation = Quaternion(0.39941394, 0.32177383, -0.0561772, 0.85660636)
+bones/9/rotation = Quaternion(0.6470553, -0.02901049, -0.03412479, 0.76112634)
+bones/10/rotation = Quaternion(0.42028534, -0.0007020117, -0.0010197648, 0.90739113)
+bones/11/rotation = Quaternion(0.5324517, 0.14656974, 0.23837787, 0.798867)
+bones/12/rotation = Quaternion(0.58670515, -0.064551, -0.0882804, 0.802382)
+bones/13/rotation = Quaternion(0.4038695, -0.014188831, -0.03367586, 0.9140864)
+bones/14/rotation = Quaternion(0.21340132, -0.15460315, -0.52954096, 0.8063151)
+bones/15/rotation = Quaternion(0.29039145, 0.04482734, 0.14582717, 0.9446681)
+bones/16/rotation = Quaternion(0.32475388, -0.0341289, -0.093805, 0.94051623)
+bones/17/position = Vector3(0.5133029, -0.59813726, -2.209)
+bones/17/rotation = Quaternion(-0.48522243, -0.27560657, -0.38621843, 0.7344628)
+
+[node name="mao_dir" parent="rig/Armature_dir/Skeleton3D" index="0" unique_id=1101556511]
+cast_shadow = 0
+surface_material_override/0 = ExtResource("4_pele")
+
+[node name="AnimationPlayer" parent="rig" index="3" unique_id=2020378931]
+libraries/ = ExtResource("6_clipes")
+
+[node name="PreviaDaTela" type="Camera3D" parent="." unique_id=1072376976]
+transform = Transform3D(0.94135106, -0.10351121, 0.32115972, 0.14218374, 0.9848433, -0.09933532, -0.30600968, 0.1391731, 0.94180095, -0.039066955, 0.26928446, 0.2812454)
+script = ExtResource("9_olho")
+
+[node name="faisca" type="GPUParticles3D" parent="." unique_id=1172568911]
 emitting = false
 amount = 15
 lifetime = 0.25
@@ -73,7 +119,7 @@ speed_scale = 0.0
 process_material = SubResource("ParticleProcessMaterial_faisca")
 draw_pass_1 = SubResource("BoxMesh_faisca")
 
-[node name="fire" type="AnimatedSprite3D" parent="."]
+[node name="fire" type="AnimatedSprite3D" parent="." unique_id=1385343179]
 pixel_size = 0.0025
 billboard = 1
 sprite_frames = ExtResource("7_fogo")

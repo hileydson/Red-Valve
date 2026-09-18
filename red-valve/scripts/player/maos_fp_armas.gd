@@ -319,6 +319,12 @@ func _ready() -> void:
 	if previa != null:
 		previa.queue_free()
 
+	# E a camera irma', que existe pelo mesmo motivo: no editor ela mostra o
+	# enquadramento do jogo. Em jogo ela roubaria a cena do jogador.
+	var olho_previa := get_parent().get_node_or_null("PreviaDaTela")
+	if olho_previa != null:
+		olho_previa.queue_free()
+
 	_mostrar_arma("")
 	_pronto = true
 
