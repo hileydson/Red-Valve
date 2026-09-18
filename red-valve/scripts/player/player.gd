@@ -2576,7 +2576,9 @@ func _acender_mao_esquerda(caminho: String) -> void:
 	fogo.fade_in = 1.2
 	fogo.mask_skeleton = malha.get_parent() as Skeleton3D
 	fogo.mask_bone_from = "antebraco"
-	fogo.mask_bone_to = "mao"
+	# Ate' a ponta do dedo medio: parando no osso "mao" o fogo morria no pulso
+	# e a mao inteira ficava de fora.
+	fogo.mask_bone_to = "medio_3"
 	# Em metros, e fixo: o automático é 18% do membro, e estas mãos aparecem
 	# a 206% do tamanho — daria uma bola de fogo do tamanho da tela.
 	fogo.mask_radius = 0.10
