@@ -8199,7 +8199,7 @@ stream = ExtResource("26_sgshot")
 volume_db = -3.2
 
 [node name="ShotgunBreak" type="AudioStreamPlayer" parent="sounds"]
-stream = ExtResource("27_sgbreak")
+stream = ExtResource("29_sgclose")
 volume_db = -5.0
 
 [node name="ShotgunLoadShell" type="AudioStreamPlayer" parent="sounds"]
@@ -8208,7 +8208,7 @@ volume_db = -4.5
 max_polyphony = 2
 
 [node name="ShotgunClose" type="AudioStreamPlayer" parent="sounds"]
-stream = ExtResource("29_sgclose")
+stream = ExtResource("27_sgbreak")
 volume_db = -4.5
 
 [node name="maycow_lopes_normal" parent="." unique_id=1097582912 instance=ExtResource("4_6cv16")]

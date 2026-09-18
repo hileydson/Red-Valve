@@ -488,6 +488,13 @@ func recarregar_shotgun() -> void:
 	# momento não empurra todos os seguintes junto.
 	var decorrido := 0.0
 
+	# ATENÇÃO AO NOME DOS ARQUIVOS: o `ShotgunBreak` toca o
+	# `shotgun_final_reload_sound.mp3` e o `ShotgunClose` toca o
+	# `shotgun_reload.mp3` — trocados em relação ao que o nome do arquivo
+	# sugere, e de propósito: ouvindo em jogo é esse o par que encaixa (o que
+	# "abre" tem o estalo da trava, o que "fecha" tem o baque). Se alguém
+	# reimportar os áudios e "consertar" os nomes, o reload volta a soar ao
+	# contrário.
 	decorrido = await _esperar_ate(MOMENTO_ABRE, decorrido)
 	player.shotgun_break.play()
 

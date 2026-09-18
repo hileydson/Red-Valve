@@ -207,17 +207,22 @@ const PUNHO_DESLIZE := -1.0
 ## Quanto da torcao do punho vai pro antebraco (ver `arma_ik.dividir_torcao`).
 const TORCAO_NO_ANTEBRACO := 0.5
 
-## Quanto do giro do braco e' passado pra CLAVICULA (ver `arma_ik.aliviar_ombro`).
+# ---- o punho esquerdo durante a recarga ---------------------------------------
+## Quanto o punho ESQUERDO roda a cada cartucho, em graus, no sentido HORARIO
+## visto de tras do Maycow (que e' de onde o jogador olha).
 ##
-## Nao e' enfeite: sem isto a omoplata esquerda deforma enquanto ele anda ou
-## corre. A mao esquerda atravessa o corpo ate' o cano e deixa o braco a cem
-## graus do descanso; a pele presa aos dois ossos enrola. Parado o angulo cai e
-## o defeito some sozinho — foi por isso que ele demorou a aparecer.
+## Sem isto a mao esquerda faz a viagem inteira — cinto, camara, cinto, camara —
+## com a mesma orientacao do comeco ao fim, como se o cartucho entrasse sozinho.
+## Ninguem enfia cartucho sem virar o pulso.
+const RECARGA_GIRO_PUNHO := 60.0
+## E o quanto ela ja' roda so' por ter largado o cano e estar carregando.
+const RECARGA_GIRO_BASE := 22.0
+## O punho esquerdo continua CONDUZIDO enquanto a mao esta' fora da arma.
 ##
-## O teto existe pra clavicula nao virar um encolher de ombros: ela e' um osso
-## curto e passar de uns 30 graus levanta o ombro na silhueta.
-const ALIVIO_OMBRO := 0.5
-const LIMITE_OMBRO := 30.0
+## Antes ele era largado (peso zero) e voltava pra pose da animacao de andar:
+## mao aberta, virada pra tras, parada. E' esse o "esquisito" — o gesto some
+## justamente no quadro em que a mao e' o assunto.
+const RECARGA_PUNHO_FIRME := 0.8
 
 ## Em volta de que ponto a mao gira: o meio do punho FECHADO, que e' por onde a
 ## arma passa. Pelo osso nao da': ele fica no pulso, 10 cm atras.
@@ -505,11 +510,6 @@ func _process_modification_with_delta(delta: float) -> void:
 	# 1 e 2. A mao direita, e o braco ate' ela.
 	IK.braco(sk, _i_braco_d, _i_ante_d, _i_mao_d,
 		ctx["mao_d"], ctx["polo_d"], peso)
-	# 2b. A clavicula toma parte do giro, e o braco refaz a conta a partir do
-	#     ombro novo — senao a mao sai do lugar (`arma_ik.aliviar_ombro`).
-	IK.aliviar_ombro(sk, _i_braco_d, ALIVIO_OMBRO * peso, LIMITE_OMBRO)
-	IK.braco(sk, _i_braco_d, _i_ante_d, _i_mao_d,
-		ctx["mao_d"], ctx["polo_d"], peso)
 
 	# 3. A arma pousa NO OSSO da mao direita — e' este passo que a poe na mao
 	#    em vez de no ar (item 1 do cabecalho).
@@ -520,14 +520,16 @@ func _process_modification_with_delta(delta: float) -> void:
 	var polo_e: Vector3 = mao_e - Vector3.UP * COTOVELO_BAIXO_E \
 		- (ctx["direita"] as Vector3) * COTOVELO_FORA_E
 	IK.braco(sk, _i_braco_e, _i_ante_e, _i_mao_e, mao_e, polo_e, peso)
-	IK.aliviar_ombro(sk, _i_braco_e, ALIVIO_OMBRO * peso, LIMITE_OMBRO)
-	IK.braco(sk, _i_braco_e, _i_ante_e, _i_mao_e, mao_e, polo_e, peso)
 
 	# Os punhos por ultimo: e' a pose da arma que diz pra onde eles olham.
 	var solta: float = ctx["solta"]
 	var na_arma := peso * (1.0 - solta)
+	# O punho esquerdo NAO e' largado na recarga: fica conduzido (com um pouco
+	# menos de forca) e ganha o giro por cima — ver `_giro_do_punho`.
+	var punho_e := maxf(na_arma, peso * RECARGA_PUNHO_FIRME * solta)
 	_alinhar_punho(sk, _i_mao_d, -1.0, peso, _rolagem_d, _desvio_d)
-	_alinhar_punho(sk, _i_mao_e, 1.0, na_arma, _rolagem_e, _desvio_e)
+	_alinhar_punho(sk, _i_mao_e, 1.0, punho_e,
+		_rolagem_e + _giro_do_punho(float(ctx["r"]), solta), _desvio_e)
 	_fechar_maos(peso, maxf(na_arma, PUNHO_NO_CARTUCHO * solta * peso), delta)
 
 
@@ -778,6 +780,37 @@ func _alinhar_punho(sk: Skeleton3D, i_mao: int, palma: float, peso: float,
 	IK.dividir_torcao(sk, i_mao, final_basis, TORCAO_NO_ANTEBRACO)
 	sk.set_bone_global_pose(i_mao, Transform3D(final_basis,
 		g.origin.lerp(origem, peso)))
+
+
+## O GIRO DO PUNHO ESQUERDO NA RECARGA, em graus.
+##
+## Positivo e' horario visto de tras do Maycow: o eixo do giro e' o dedo
+## apontado pra boca do cano, ou seja, apontado PRA LONGE da camera, e giro
+## positivo em volta de um eixo que se afasta aparece horario.
+##
+## Duas coisas somadas:
+##
+##     base    entra junto com o largar do cano e sai junto com o pegar de volta
+##     pulso   um por cartucho: sobe indo pra camara e desce voltando
+##
+## O pulso e' zero nos dois extremos de proposito — e' o "gira e volta". Se ele
+## ficasse em pe' entre um cartucho e outro, o segundo nao teria giro nenhum
+## pra fazer e a mao chegaria na camara ja' torcida.
+func _giro_do_punho(r: float, solta: float) -> float:
+	if not _recarregando:
+		return 0.0
+	var pulso := _pulso(r, M_BALA1_PEGA, M_BALA1_ENTRA, M_BALA2_PEGA) \
+		+ _pulso(r, M_BALA2_PEGA, M_BALA2_ENTRA, M_VOLTA)
+	return RECARGA_GIRO_BASE * solta + RECARGA_GIRO_PUNHO * pulso
+
+
+## Sobe de `ini` ate' `pico` e volta a zero em `fim`. Fora disso, zero.
+static func _pulso(r: float, ini: float, pico: float, fim: float) -> float:
+	if r <= ini or r >= fim:
+		return 0.0
+	if r < pico:
+		return smoothstep(ini, pico, r)
+	return 1.0 - smoothstep(pico, fim, r)
 
 
 ## Fecha a mao pelo morph target (ver `tools/modelos/gerar_punho_maycow.py`).

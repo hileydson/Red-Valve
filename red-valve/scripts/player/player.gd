@@ -583,6 +583,7 @@ var _modelo_escondido_por_cena: bool = false
 @export var normal_walkback_offset_x: float = -0.05
 @export var normal_walkback_offset_z: float = 0.5
 
+
 #ORIGINAL POSITION FOR THE LEFT HAND
 var magic_hand_pos_original
 var hand_magic_3d_pos_original: Vector3
@@ -852,16 +853,6 @@ func _atualizar_mira_lanterna(delta: float) -> void:
 ## FOV da câmera de terceira pessoa enquanto mira com a arma.
 const FOV_MIRA_ARMA := 55.0
 
-## Quanto a câmera FECHA na corrida quando ele está com a caçadeira.
-##
-## Correr abre o FOV (88 em terceira pessoa) e isso é o que dá a sensação de
-## velocidade. Com uma arma longa nas duas mãos o mesmo enquadramento fica
-## solto: a arma é o que o jogador está olhando, e ela é grande. Fechar um
-## pouco traz o Maycow e a arma de volta pro quadro sem matar a corrida.
-##
-## Só vale com a CAÇADEIRA equipada — a pistola continua com a corrida de
-## sempre.
-const FOV_CORRIDA_SHOTGUN := 12.0
 
 ## Alcance do raio que procura o que está no centro da tela, em metros.
 const ALCANCE_MIRA_ARMA := 90.0
@@ -1820,8 +1811,6 @@ func _physics_process(delta: float) -> void:
 						playback.travel("run")
 						if not is_aiming:
 							target_fov = 80.0 if is_first_person else 88.0
-							if SaveManager.is_equipped("shotgun"):
-								target_fov -= FOV_CORRIDA_SHOTGUN
 					else:
 						playback.travel("walk")
 			
@@ -1891,6 +1880,20 @@ func _physics_process(delta: float) -> void:
 				elif input_dir.x < -0.1: 
 					alvo_y = (limite_rotacao_lateral * 1.8) 
 					speed_y = 0.6
+			# COM A CAÇADEIRA, O TRONCO NÃO VIRA PRA ESQUERDA.
+			#
+			# `alvo_y` positivo gira o modelo pro lado esquerdo DELE, e é esse
+			# giro que traz a omoplata esquerda pra frente da câmera — que é
+			# justamente onde a malha deforma (ver o README da caçadeira: o
+			# braço esquerdo fica travado no limite de alcance e não há conserto
+			# de ombro que não mexa na pose afinada à mão).
+			#
+			# Só o lado esquerdo é cortado. O `minf` deixa o giro pra direita
+			# (negativo) intacto, e o pivô do corpo parado também: aquele não é
+			# o modelo girando, é o modelo ficando PLANTADO enquanto a câmera
+			# orbita — quem revela as costas lá é a câmera, não isto.
+			if SaveManager.is_equipped("shotgun"):
+				alvo_y = minf(alvo_y, 0.0)
 			# Mirando com a arma, o tronco quase não acompanha (ver
 			# `giro_strafe_mirando`). Só com a arma: na mira do amuleto não há
 			# braço preso a alvo nenhum pra brigar com o tronco.

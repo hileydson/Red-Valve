@@ -51,11 +51,21 @@ class Espiao extends SkeletonModifier3D:
 	var ossos: PackedStringArray = []
 	var maior := {}
 	var menor := {}
+	var giro := {}
+	var rola := {}
+	## O quanto o braco esquerdo esta' esticado, em cm, e o quanto ele DA'.
+	var estica_min := 999.0
+	var estica_max := 0.0
+	var alcance := 0.0
 	var ligado := false
 
 	func zerar() -> void:
 		maior.clear()
 		menor.clear()
+		giro.clear()
+		rola.clear()
+		estica_min = 999.0
+		estica_max = 0.0
 
 	func _process_modification_with_delta(_delta: float) -> void:
 		if not ligado:
@@ -63,6 +73,20 @@ class Espiao extends SkeletonModifier3D:
 		var sk := get_skeleton()
 		if sk == null:
 			return
+		# Braco esticado: se isto encostar no alcance, o IK PAROU de resolver e
+		# passou a apontar o braco reto pro alvo. Braco travado reto atravessando
+		# o peito e' o pior caso possivel pra malha, e nenhum ajuste de ombro
+		# conserta — o que conserta e' aproximar a mao.
+		var i_b := sk.find_bone("LeftArm")
+		var i_m := sk.find_bone("LeftHand")
+		if i_b >= 0 and i_m >= 0:
+			var d := sk.get_bone_global_pose(i_b).origin.distance_to(
+				sk.get_bone_global_pose(i_m).origin)
+			estica_min = minf(estica_min, d)
+			estica_max = maxf(estica_max, d)
+			alcance = sk.get_bone_rest(sk.find_bone("LeftForeArm")).origin.length() \
+				+ sk.get_bone_rest(i_m).origin.length()
+
 		for nome in ossos:
 			var i := sk.find_bone(nome)
 			if i < 0:
@@ -72,6 +96,35 @@ class Espiao extends SkeletonModifier3D:
 			var ang := rad_to_deg(descanso.angle_to(agora))
 			maior[nome] = maxf(maior.get(nome, 0.0), ang)
 			menor[nome] = minf(menor.get(nome, 999.0), ang)
+			# O giro do osso separado em DIRECAO e ROLAGEM. Os dois deformam de
+			# jeitos diferentes: direcao demais e' braco dentro do tronco;
+			# rolagem demais e' o ombro virando pirulito torcido. Sem separar,
+			# um numero so' nao diz qual dos dois consertar.
+			var delta := (agora * descanso.inverse()).normalized()
+			if delta.w < 0.0:
+				delta = -delta
+			# O eixo tem de estar no MESMO quadro que o delta. O delta esta' no
+			# quadro do PAI (multiplicacao pela esquerda) e o eixo sai do
+			# descanso do filho, que e' o quadro do proprio osso: sem girar ele
+			# pelo descanso, a conta decompoe em volta de uma linha que nao e' o
+			# osso, e a "rolagem" que sai nao quer dizer nada.
+			var eixo := (descanso * _eixo_do_osso(sk, i)).normalized()
+			var proj := delta.x * eixo.x + delta.y * eixo.y + delta.z * eixo.z
+			var rolagem := Quaternion(eixo.x * proj, eixo.y * proj,
+				eixo.z * proj, delta.w).normalized()
+			var direcao := delta * rolagem.inverse()
+			giro[nome] = maxf(giro.get(nome, 0.0),
+				rad_to_deg(2.0 * acos(clampf(absf(direcao.w), -1.0, 1.0))))
+			rola[nome] = maxf(rola.get(nome, 0.0),
+				rad_to_deg(2.0 * acos(clampf(absf(rolagem.w), -1.0, 1.0))))
+
+	## O eixo do proprio osso: a direcao em que o filho dele sai.
+	func _eixo_do_osso(sk: Skeleton3D, i: int) -> Vector3:
+		for f in sk.get_bone_children(i):
+			var v: Vector3 = sk.get_bone_rest(f).origin
+			if v.length_squared() > 0.0001:
+				return v.normalized()
+		return Vector3.RIGHT
 
 
 const OSSOS_DE_OLHO := ["LeftShoulder", "LeftArm", "LeftForeArm",
@@ -126,6 +179,11 @@ func _ready() -> void:
 	add_child(_camera)
 	_camera.make_current()
 
+	if OS.get_cmdline_user_args().has("--varrer"):
+		await _varrer()
+		get_tree().quit()
+		return
+
 	await _situacao("parado", "idle", true)
 	await _situacao("correndo", "run", true)
 	await _situacao("andando", "walk", true)
@@ -134,6 +192,42 @@ func _ready() -> void:
 
 	print("== fotos em %s ==" % ProjectSettings.globalize_path(PASTA))
 	get_tree().quit()
+
+
+## VARREDURA: onde a mao esquerda ainda ALCANCA o cano.
+##
+## O `APOIO_NO_MODELO.x` decide em que ponto do cano a mao esquerda fecha, e e'
+## a unica coisa que muda o vao entre as maos sem mexer na arma — a arma esta'
+## presa na mao direita, entao a pose que o jogador afinou nao se move nem um
+## milimetro com isto.
+##
+## Imprime, pra cada valor, o quanto o braco precisa esticar. Passou do alcance,
+## o IK desiste e deixa o braco reto: e' isso que deforma a omoplata.
+func _varrer() -> void:
+	var alvo: Vector3 = _player.global_position + Vector3(0, 1.4, -40.0)
+	print("  apoio.x   vao(cm)   estica parado   estica correndo   (braco da' 49)")
+	for passo in 9:
+		var x := -0.40 + passo * 0.05
+		for anim in ["idle", "run"]:
+			_hold._apoio.x = x
+			_espiao.zerar()
+			_espiao.ligado = false
+			for i in 60:
+				if _player.playback:
+					_player.playback.travel(anim)
+				_hold._apoio.x = x
+				_hold.mirar(false, alvo)
+				await RenderingServer.frame_post_draw
+				_espiao.ligado = i >= 30
+			if anim == "idle":
+				var vao: float = (_hold._cabo.x - x) * _hold._escala
+				printf_linha(x, vao, _espiao.estica_max)
+			else:
+				print("      %.1f" % _espiao.estica_max)
+
+
+func printf_linha(x: float, vao: float, estica: float) -> void:
+	printraw("  %6.3f    %5.1f      %5.1f" % [x, vao, estica])
 
 
 ## Uma animacao rodando: mede o angulo do ombro por um ciclo e tira dois
@@ -157,12 +251,14 @@ func _situacao(nome: String, anim: String, com_arma: bool) -> void:
 		# So' depois de assentar: os primeiros quadros ainda sao a pose subindo.
 		_espiao.ligado = i >= QUADROS_PRA_ASSENTAR
 
-	print("  -- %s --" % nome)
+	print("  -- %s --   braco E esticado %.1f a %.1f cm  (o braco da' %.1f)"
+		% [nome, _espiao.estica_min, _espiao.estica_max, _espiao.alcance])
 	for osso in OSSOS_DE_OLHO:
 		var lo: float = _espiao.menor.get(osso, 0.0)
 		var hi: float = _espiao.maior.get(osso, 0.0)
-		print("     %-14s %5.1f a %5.1f graus do descanso   (balanco %5.1f)"
-			% [osso, lo, hi, hi - lo])
+		print("     %-14s %5.1f a %5.1f do descanso   (balanco %5.1f)   direcao %5.1f  rolagem %5.1f"
+			% [osso, lo, hi, hi - lo, _espiao.giro.get(osso, 0.0),
+				_espiao.rola.get(osso, 0.0)])
 
 	for vista in ["costas_e", "tres_quartos"]:
 		_de = CAMERAS[vista]

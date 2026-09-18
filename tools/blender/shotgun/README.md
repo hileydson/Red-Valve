@@ -122,23 +122,57 @@ numa arma vista meio de lado são dois pixels, e olhar a foto não distingue
 ### Por que existe um harness só pras costas
 
 O `foto_pose` fotografa o Maycow **parado**, e há um defeito que só aparece em
-movimento: a omoplata esquerda deformava enquanto ele andava ou corria. A causa
-é medida, não achada — o `foto_costas` imprime o ângulo de cada junta:
+movimento: a omoplata esquerda deforma enquanto ele anda ou corre. O
+`foto_costas` mede, por junta, o quanto cada osso está fora do descanso.
 
-| | braço E fora do descanso |
+| | direção do braço E, fora do descanso |
 | :--- | :--- |
-| sem arma, correndo | 12° a 42° |
-| com arma, parado | 81° |
-| com arma, correndo | **94° a 111°** |
-| com arma, correndo, depois do conserto | 59° a 86° |
+| sem arma, correndo | 24° |
+| com arma, **parado** (a pose aprovada) | 55° |
+| com arma, **correndo** | **111°** |
 
-Cem graus entre dois ossos é mais do que skinning linear aguenta. O conserto é
-`arma_ik.aliviar_ombro()`: a clavícula toma metade do giro (teto de 30°) e o
-braço fica com o resto, que é o que uma omoplata de verdade faz quando o braço
-atravessa o corpo.
+Cem graus entre dois ossos é mais do que skinning linear aguenta.
 
-Detalhe do harness que vale saber: o ângulo **não dá para ler de fora**. O
-`Skeleton3D` guarda as poses antes de rodar os modificadores e as devolve
-depois de desenhar, então `get_bone_pose()` chamado de outro nó entrega a pose
-crua da AnimationTree — o mesmo número com arma e sem arma. Por isso o
+**Quatro tentativas de conserto, todas revertidas.** Vale registrar para ninguém
+repetir:
+
+| tentativa | mediu | resultado |
+| :--- | :--- | :--- |
+| clavícula toma parte do giro | 111° → 86° | deformou igual |
+| tirar o amortecimento do tronco | 49,2 cm de estica com e sem | nada |
+| trazer a mão esquerda pra trás no cano | parado 49,4 → 45,4; correndo igual | nada na corrida |
+| a arma acompanhar o giro do peito no porte | 111° → 54° | **funcionou, e moveu a pose** |
+
+A última resolvia de verdade, mas mexia na posição da arma e da mão direita —
+que estavam afinadas à mão pelo jogador, no F9 — e por isso foi revertida junto
+com as outras.
+
+**Por que qualquer mexida no ombro move a arma:** o braço esquerdo está
+*travado no limite de alcance* (49,2 cm num braço de 49,0; ver o `braço
+esticado` no relatório). Com o IK no limite ele não resolve mais, só aponta o
+braço reto — e aí mudar a posição do ombro muda **onde a mão para**, o que
+reposiciona tudo. Enquanto esse número encostar no alcance, não existe conserto
+de ombro que seja neutro.
+
+**O que ficou no lugar:** não deixar a câmera ver a omoplata. Com a caçadeira
+equipada, o tronco não faz mais a inclinação de strafe pra ESQUERDA (o `alvo_y`
+positivo, na seção 8 do `player.gd`) — é esse giro que trazia o lado esquerdo
+das costas pra frente da câmera. A inclinação pra direita continua, e o pivô do
+corpo parado também: aquele não é o modelo girando, é o modelo ficando plantado
+enquanto a câmera orbita.
+
+Duas outras tentativas de enquadramento entraram e saíram: um zoom extra na
+corrida e um deslocamento do corpo pra esquerda (`shotgun_offset_x`). As duas
+mexiam demais em como o jogo já estava.
+
+### Ler ângulo de osso depois de um SkeletonModifier3D
+
+Não dá de fora: o `Skeleton3D` guarda as poses antes de rodar a pilha e as
+devolve depois de desenhar, então `get_bone_pose()` chamado de outro nó entrega
+a pose crua da AnimationTree — o mesmo número com arma e sem arma. O
 `foto_costas` pendura um `SkeletonModifier3D` espião no fim da pilha.
+
+E ao decompor o giro em direção/rolagem, o eixo tem de estar no quadro do
+**pai** (girado pelo descanso). No quadro errado a conta acusou 72° de rolagem
+onde havia 10.
+
