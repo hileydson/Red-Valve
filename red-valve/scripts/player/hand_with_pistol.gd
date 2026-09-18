@@ -62,8 +62,13 @@ func _process(delta):
 	var is_aiming = player.is_aiming if player and "is_aiming" in player else false
 	var is_running = player._run_toggle_active if player and "_run_toggle_active" in player else Input.is_action_pressed("ui_run")
 	if player and is_running and speed > 0.1 and not is_aiming:
-		run_offset_rot.x = deg_to_rad(50.0) # Pitch pra baixo
-		run_offset_pos = Vector3(0.0, -0.2, 0.15) # Abaixa e traz pra trás
+		# Girar +X em volta do eixo da câmera JOGA A PONTA PRA CIMA (o -Z vira
+		# (0, senθ, -cosθ)). O sinal estava trocado: correndo, a arma subia na
+		# frente do rosto em vez de apontar pro chão.
+		# Só um pouquinho: a 206% de tamanho, 50° tiravam a arma inteira do
+		# quadro. O suficiente para ler como "correndo", e não como "guardei".
+		run_offset_rot.x = deg_to_rad(-12.0) # Aponta a arma um pouco pro chão
+		run_offset_pos = Vector3(0.0, -0.06, 0.05) # Abaixa e traz pra trás
 		
 	# --- 4. APLICAÇÃO FINAL ---
 	var target_pos = initial_position + sway_pos + bob_offset + run_offset_pos

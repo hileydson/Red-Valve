@@ -947,9 +947,25 @@ func _gun_hold() -> Node:
 	return get_node_or_null("maycow_lopes_normal/Armature/Skeleton3D/PlayerGunHold")
 
 
-## O componente que segura a caçadeira. Mesmas regras do `_gun_hold()`.
+## O componente que segura a caçadeira. Mesmas regras do `_gun_hold()` — mais
+## uma: no PARASITA ele cai no rig de primeira pessoa.
+##
+## Lá o `maycow_lopes_normal` inteiro é liberado no `_ready`, então não existe
+## `PlayerShotgunHold` nenhum. Quem segura a arma é o `maos_fp_armas.gd`, que
+## tem de propósito a mesma API deste (`tem_arma_na_mao`, `boca_do_cano`,
+## `direcao_do_cano`, `bocas_das_camaras`, `recarregar`, `mirar`) — é isso que
+## deixa o `player_combat.gd` atirar e recarregar a caçadeira sem saber de que
+## pessoa é a câmera.
 func _shotgun_hold() -> Node:
-	return get_node_or_null("maycow_lopes_normal/Armature/Skeleton3D/PlayerShotgunHold")
+	var na_terceira := get_node_or_null("maycow_lopes_normal/Armature/Skeleton3D/PlayerShotgunHold")
+	if na_terceira != null:
+		return na_terceira
+	return _maos_fp()
+
+
+## O rig de primeira pessoa (as duas mãos com arma do parasita).
+func _maos_fp() -> Node:
+	return get_node_or_null("Camera3D/hand_with_pistol/rig")
 
 
 ## O componente da arma que está equipada AGORA, ou null se for nenhuma.
@@ -1392,7 +1408,7 @@ func _physics_process(delta: float) -> void:
 			if camera_third_person:
 				camera_third_person.current = false
 			control_weapons.visible = true
-			hand_with_pistol.visible = SaveManager.is_equipped("pistol")
+			hand_with_pistol.visible = SaveManager.arma_de_fogo_equipada()
 			if hand_with_magic: hand_with_magic.visible = true
 			control_magic.visible = true
 			
@@ -1427,7 +1443,7 @@ func _physics_process(delta: float) -> void:
 			# Acabou de sair de cutscene: restaura mãos e controles para o gameplay
 			if not transition_camera and not camera_bullet_time_ON and not is_using_ultimate:
 				control_weapons.visible = true
-				hand_with_pistol.visible = SaveManager.is_equipped("pistol") and not is_reloading
+				hand_with_pistol.visible = SaveManager.arma_de_fogo_equipada() and not is_reloading
 				if hand_with_magic: hand_with_magic.visible = true
 				control_magic.visible = true
 
@@ -2132,7 +2148,7 @@ func transicao_camera(origem: Camera3D, camera_destino: Camera3D, destino: Marke
 	if camera_destino == camera_third_person:
 		control_magic.visible = show_ui
 		control_weapons.visible = show_ui
-		hand_with_pistol.visible = show_ui and SaveManager.is_equipped("pistol")
+		hand_with_pistol.visible = show_ui and SaveManager.arma_de_fogo_equipada()
 		if hand_with_magic: hand_with_magic.visible = show_ui
 		await get_tree().create_timer(0.1).timeout
 		GlobalUtils.remover_camera_lenta()
@@ -2160,7 +2176,7 @@ func transicao_camera(origem: Camera3D, camera_destino: Camera3D, destino: Marke
 		# Mostra/Esconde a UI com delay pra nao ficar estranho
 		control_magic.visible = show_ui
 		control_weapons.visible = show_ui
-		hand_with_pistol.visible = show_ui and SaveManager.is_equipped("pistol")
+		hand_with_pistol.visible = show_ui and SaveManager.arma_de_fogo_equipada()
 		if hand_with_magic: hand_with_magic.visible = show_ui
 		)
 	
@@ -2529,13 +2545,40 @@ func _acender_fogo_parasita() -> void:
 		modelo_visual.add_child(fogo_braco)
 		fogo_braco.ignite(modelo_visual)
 
-	# 2) Mão ESQUERDA de 1ª pessoa. "hand_with_magic" é a esquerda;
-	#    "hand_with_pistol" é a direita e fica de fora de propósito.
-	if fogo_na_mao_primeira_pessoa and is_instance_valid(hand_with_magic):
-		var fogo_mao = PARASITE_FIRE_SCENE.instantiate()
-		fogo_mao.name = "fogo_mao_esquerda"
-		fogo_mao.flame_scale = fogo_tamanho_chama
-		fogo_mao.flame_opacity = fogo_opacidade_chama
-		fogo_mao.fade_in = 1.2
-		hand_with_magic.add_child(fogo_mao)
-		fogo_mao.ignite(hand_with_magic)
+	# 2) Mão ESQUERDA de 1ª pessoa. São DUAS: a cópia mágica (que é a que
+	#    aparece de mãos vazias e com a pistola) e a esquerda da cópia armada
+	#    (que é a que segura o fore-end da caçadeira). As duas são a mesma mão
+	#    do parasita, então as duas pegam fogo. A direita fica de fora de
+	#    propósito.
+	if fogo_na_mao_primeira_pessoa:
+		_acender_mao_esquerda("Camera3D/hand_with_magic/hand_magic/Armature/Skeleton3D/mao_esq")
+		_acender_mao_esquerda("Camera3D/hand_with_pistol/rig/Armature/Skeleton3D/mao_esq")
+
+
+## Põe fogo em UMA malha de mão esquerda.
+##
+## O efeito entra como filho da PRÓPRIA MALHA, e não do nó da mão: a malha
+## esquerda da cópia armada só aparece com a caçadeira, e visibilidade desce
+## pros filhos — assim o fogo some junto com ela sem ninguém ter de lembrar.
+##
+## E a chama é presa aos OSSOS do antebraço, com a máscara que o efeito já
+## tinha para o braço de 3ª pessoa. Sem isso ela se posiciona pela caixa da
+## malha, que numa malha com pele é a do DESCANSO — o fogo ficava parado num
+## canto da tela enquanto a mão estava em outro lugar.
+func _acender_mao_esquerda(caminho: String) -> void:
+	var malha := get_node_or_null(caminho) as MeshInstance3D
+	if malha == null:
+		return
+	var fogo = PARASITE_FIRE_SCENE.instantiate()
+	fogo.name = "fogo_mao_esquerda"
+	fogo.flame_scale = fogo_tamanho_chama
+	fogo.flame_opacity = fogo_opacidade_chama
+	fogo.fade_in = 1.2
+	fogo.mask_skeleton = malha.get_parent() as Skeleton3D
+	fogo.mask_bone_from = "antebraco"
+	fogo.mask_bone_to = "mao"
+	# Em metros, e fixo: o automático é 18% do membro, e estas mãos aparecem
+	# a 206% do tamanho — daria uma bola de fogo do tamanho da tela.
+	fogo.mask_radius = 0.10
+	malha.add_child(fogo)
+	fogo.ignite(malha)

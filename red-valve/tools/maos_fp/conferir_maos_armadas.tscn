@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tools/maos_fp/conferir_maos_armadas.gd" id="1_maos"]
+
+[node name="ConferirMaosArmadas" type="Node"]
+script = ExtResource("1_maos")

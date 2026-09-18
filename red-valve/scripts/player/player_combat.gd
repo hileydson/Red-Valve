@@ -41,6 +41,14 @@ func process_combat(delta: float) -> void:
 			tween_hand.tween_property(player.hand_magic_3d, "position", player.hand_magic_3d_pos_hidden, 1.5).set_trans(Tween.TRANS_SINE)
 
 func reload() -> void:
+	# A CAÇADEIRA É OUTRO CAMINHO, EM QUALQUER PESSOA.
+	#
+	# Ela não tem pente: abre, despeja as duas cápsulas e recebe um cartucho
+	# por vez. O gesto, os sons e a contagem são os mesmos do Maycow normal —
+	# muda só quem segura a arma, e disso cuida o `player._shotgun_hold()`.
+	if SaveManager.is_equipped("shotgun"):
+		recarregar_shotgun()
+		return
 	if player.is_first_person and not player.is_reloading and not player.is_magic_attacking:
 		var total = SaveManager.get_item_amount("pistol_ammo")
 		if total <= 0 or player.clip_pistol_ammo >= player.max_clip_pistol:
@@ -223,6 +231,11 @@ func cast_spell() -> void:
 	player.blade_light.visible = false
 
 func shoot(input: Variant) -> void:
+	# Mesma bifurcação da `reload()`: com a caçadeira equipada o tiro é
+	# chumbo, e o caminho dele já existe (é o do Maycow normal).
+	if SaveManager.is_equipped("shotgun"):
+		atirar_shotgun()
+		return
 	if not SaveManager.is_equipped("pistol"): return
 	if player.is_reloading: return
 	if player.is_using_ultimate or player.cogblade_melee_active: return
@@ -238,6 +251,11 @@ func shoot(input: Variant) -> void:
 
 		player.current_weapon = player.hand_with_pistol
 		var rotation_default = player.current_weapon.rotation
+		# O coice nos dedos e na arma. O resto deste bloco continua sendo o
+		# tranco do NÓ inteiro, que é o que sacode a tela.
+		var maos_fp = player._maos_fp()
+		if maos_fp and maos_fp.has_method("atirar"):
+			maos_fp.atirar()
 
 		var tween = create_tween()
 		player.fire.play("shoot")
@@ -458,6 +476,11 @@ func atirar_shotgun() -> void:
 		# saindo de uma vez, e o tiro da caçadeira tem de PESAR na tela.
 		_piscar_clarao(gun_hold.boca_do_cano(), 11.0, 6.0, TEMPO_CLARAO_SHOTGUN)
 		_fumaca_do_cano(gun_hold)
+		# O coice na MÃO só existe em primeira pessoa: lá a arma é um clipe de
+		# animação e tem quadro de recuo. Em terceira pessoa o coice é o tranco
+		# da câmera, e o componente nem tem esse método.
+		if gun_hold.has_method("atirar"):
+			gun_hold.atirar()
 
 	_raio_do_tiro_shotgun()
 
@@ -756,7 +779,7 @@ func bullet_time_back() -> void:
 	if player.is_first_person:
 		player.camera.make_current()
 		player.control_weapons.visible = true
-		player.hand_with_pistol.visible = SaveManager.is_equipped("pistol")
+		player.hand_with_pistol.visible = SaveManager.arma_de_fogo_equipada()
 		if player.hand_with_magic: player.hand_with_magic.visible = true
 		player.control_magic.visible = true
 	else:
@@ -1191,7 +1214,7 @@ func _start_cogblade_pulse() -> void:
 func update_equipment_visuals() -> void:
 	if player.is_first_person and not player.is_reloading and player.control_weapons.visible:
 		if not player.are_cutscene_inputs_blocked():
-			player.hand_with_pistol.visible = SaveManager.is_equipped("pistol")
+			player.hand_with_pistol.visible = SaveManager.arma_de_fogo_equipada()
 		else:
 			player.hand_with_pistol.visible = false
 	# A arma na mão do Maycow normal não precisa de nada aqui: o

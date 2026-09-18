@@ -2,6 +2,19 @@
 """Anima a mao de `maos_e_armas/mao_rig_new.blend` para as cenas de primeira
 pessoa do jogo e exporta o .glb que o Godot consome.
 
+ATENCAO: OS CLIPES DAQUI NAO SAO MAIS O QUE O JOGO TOCA
+-------------------------------------------------------
+As animacoes foram copiadas pra `maos_fp_clipes.tres` (um arquivo de verdade,
+que o AnimationPlayer do editor deixa editar) e e' de la' que as cenas leem.
+Rodar este gerador troca a MALHA, o ESQUELETO e o osso `arma` — e nao troca a
+animacao que o jogador ve'. Pra isso, depois de gerar:
+
+    Godot_v4.6.1 --headless --path red-valve \
+        res://tools/maos_fp/extrair_clipes.tscn
+
+que reescreve o .tres a partir do .glb, apagando o que tiver sido mexido a mao
+no editor. Ver `tools/blender/maos_fp/README.md`.
+
 CONVENCAO DE ESPACO
 -------------------
 As poses sao escritas no espaco da CAMERA, em METROS, com o olho na origem:
@@ -71,9 +84,25 @@ OMBRO = Vector((-0.26, -0.20, -0.62))
 # bola de carne pendurada no meio da tela. Esticado ~2x ele sai pela borda de
 # baixo, que e' o que todo jogo em primeira pessoa faz.
 #
-# Para o estica nao inflar a mao junto, `mao` fica com inherit_scale='NONE'
-# (ver `preparar`); os dedos continuam herdando de `mao`, que nunca escala.
 ESTICA = 2.05
+
+# O ESTICA E' ASSADO NO DESCANSO, E NAO APLICADO NA POSE. A diferenca importa.
+#
+# A primeira versao esticava por ESCALA DE OSSO (`pb_ante.scale.y`). No Blender
+# isso funciona: o `mao` tem `inherit_scale='NONE'` e o depsgraph resolve. Mas
+# o glTF NAO TEM esse conceito. O exportador amostra a matriz de mundo, calcula
+# a local como `pai^-1 @ filho` — que fica CISALHADA, porque a escala do pai
+# esta' num eixo e o filho esta' girado em relacao a ele — e decompoe isso em
+# posicao/rotacao/escala, jogando o cisalhamento fora.
+#
+# Medido: no Blender a mao vai do pulso a' base da falange do meio em 0,097 m;
+# no Godot, 0,192. A MAO INTEIRA CHEGAVA ~1,8 VEZES MAIOR NO JOGO, e com escala
+# diferente a cada pose. O antebraco chegava exato (0,4648 nos dois), o que faz
+# o erro passar despercebido: quem olha o braco nao ve' nada errado.
+#
+# Assando no descanso (`assar_estica_no_descanso`) nao ha' escala em osso
+# nenhum: a pose so' gira e translada, o glTF guarda isso sem perda, e a mao
+# chega do tamanho em que foi desenhada.
 
 # Quanto TODAS as maos recuam em relacao a' pose escrita (metros, no eixo de
 # profundidade da camera; positivo = mais perto do olho).
@@ -315,6 +344,68 @@ def engrossar_antebraco(mesh_obj, arm_obj):
     return mexidos
 
 
+def assar_estica_no_descanso(mesh_obj, arm_obj):
+    """Estica o antebraco NO DESCANSO: osso e carne, sem escala de pose.
+
+    O antebraco do rig e' um toco de 15 cm — com ele o cotovelo fica sempre
+    dentro do quadro e vira uma bola de carne pendurada no meio da tela. Ele
+    precisa de uns 32 cm pra sair por baixo, como em todo jogo de primeira
+    pessoa.
+
+    A conta e' a mesma que a escala de osso fazia, so' que gravada na malha e
+    no osso: cada vertice anda ao longo do eixo do osso por
+    `comp * (ESTICA - 1) * (t - 1)`, onde `t` e' 0 na cabeca e 1 na CAUDA. O
+    deslocamento e' zero na cauda e cresce pra tras — ou seja, o pulso nao sai
+    do lugar e o cotovelo e' que se afasta. O raio nao muda em lugar nenhum:
+    o braco fica mais comprido, nao mais grosso.
+
+    Vertices depois da cauda (a mao) ficam parados na marra: `t` entra
+    limitado a 1.
+
+    Roda DEPOIS de `engrossar_antebraco`, que mede o perfil no osso original.
+    """
+    osso = arm_obj.data.bones["antebraco"]
+    cabeca = Vector(osso.head_local)
+    cauda = Vector(osso.tail_local)
+    eixo = (cauda - cabeca).normalized()
+    comp = osso.length
+    estica = comp * (ESTICA - 1.0)
+
+    grupo = mesh_obj.vertex_groups.get("antebraco")
+    if grupo is None:
+        return 0
+    idx_grupo = grupo.index
+
+    mexidos = 0
+    for v in mesh_obj.data.vertices:
+        peso = 0.0
+        for g in v.groups:
+            if g.group == idx_grupo:
+                peso = g.weight
+        if peso <= 0.001:
+            continue
+        t = min((Vector(v.co) - cabeca).dot(eixo) / comp, 1.0)
+        # PESADO PELO PESO DO VERTICE, e nao aplicado inteiro. E' o que a
+        # escala de osso fazia: o skinning linear mistura
+        # `w * (osso esticado) + (1-w) * (resto)`, entao o deslocamento e'
+        # `w * estica`. Aplicando inteiro, a carne com peso parcial na fronteira
+        # (o pulso) se separa da vizinha e a malha RASGA — apareceu na previa
+        # como uma borda serrilhada no fim do antebraco.
+        v.co = Vector(v.co) + eixo * (estica * (t - 1.0) * peso)
+        mexidos += 1
+    mesh_obj.data.update()
+
+    # E o OSSO: a cauda fica onde esta' (e' o pulso, e o `mao` esta' preso
+    # nela); quem anda pra tras e' a cabeca.
+    bpy.context.view_layer.objects.active = arm_obj
+    bpy.ops.object.mode_set(mode='OBJECT')
+    bpy.ops.object.mode_set(mode='EDIT')
+    eb = arm_obj.data.edit_bones["antebraco"]
+    eb.head = cauda - eixo * comp * ESTICA
+    bpy.ops.object.mode_set(mode='OBJECT')
+    return mexidos
+
+
 def limpar_temporarios():
     """Tira da cena as copias de export da rodada anterior.
 
@@ -351,6 +442,10 @@ def criar_mao_esquerda(arm, mesh):
         if mod.type == 'ARMATURE':
             mod.object = arm
     engrossar_antebraco(copia, arm)
+    # Nesta ordem: o `engrossar` mede o perfil no osso ORIGINAL, e o `assar`
+    # muda o osso. Invertido, o perfil sairia medido num braco que ja' e' o
+    # dobro do comprimento e a correcao de raio cairia no lugar errado.
+    assar_estica_no_descanso(copia, arm)
     return copia
 
 
@@ -438,6 +533,52 @@ def criar_mao_direita(arm, mesh_esq):
     return arm_dir, mesh_dir
 
 
+## Nome do osso SOLTO que carrega a arma. Ver `criar_osso_da_arma`.
+NOME_OSSO_ARMA = "arma"
+
+
+def criar_osso_da_arma(arm):
+    """Um osso sem PAI, so' pra pendurar a arma nele.
+
+    POR QUE NAO PENDURAR NO OSSO `mao`, QUE E' ONDE A ARMA ESTA'
+    ------------------------------------------------------------
+    Porque o `antebraco` e' ESTICADO por escala de osso (`ESTICA`), e escala
+    nao-uniforme num pai ENVENENA todos os filhos.
+
+    No Blender isso nao aparece: o `mao` tem `inherit_scale='NONE'` e o
+    depsgraph resolve certo. Mas o glTF nao tem esse conceito. O exportador
+    amostra a matriz de mundo, calcula a local como
+    `pai_mundo^-1 @ filho_mundo` — que fica CISALHADA, porque a escala do pai
+    esta' num eixo e o filho esta' girado em relacao a ele — e entao decompoe
+    isso em posicao/rotacao/escala, jogando o cisalhamento fora.
+
+    O estrago e' invisivel na malha (a pele acompanha o erro) e fatal pra
+    qualquer coisa PENDURADA no osso: medido no Godot, a pose global do `mao`
+    chegava com escala (1,30 / 1,93 / 1,37) em vez de (1/1/1), e pior, com
+    numeros DIFERENTES a cada pose. Uma arma presa ali nao fica rigida: ela
+    escorrega da mao conforme o punho gira. Foi exatamente o que aconteceu — o
+    cabo ficava a 21 cm do punho no meio da troca de arma.
+
+    Um osso de raiz nao tem pai, nao tem escala e nao tem esse problema: a
+    pose dele E' o quadro da arma, e chega no Godot intacta.
+    """
+    bpy.context.view_layer.objects.active = arm
+    if NOME_OSSO_ARMA in arm.data.bones:
+        return
+    bpy.ops.object.mode_set(mode='OBJECT')
+    bpy.ops.object.mode_set(mode='EDIT')
+    eb = arm.data.edit_bones.new(NOME_OSSO_ARMA)
+    eb.head = (0.0, 0.0, 0.0)
+    eb.tail = (0.0, 1.0, 0.0)
+    eb.roll = 0.0
+    eb.parent = None
+    # `use_deform` porque o export vai com "Deform Bones Only" (e' o que deixa
+    # os cinco `ik_*` de fora). Osso de deformacao sem peso nenhum nao deforma
+    # nada — so' viaja junto.
+    eb.use_deform = True
+    bpy.ops.object.mode_set(mode='OBJECT')
+
+
 def _matriz(origem, eixo_y, eixo_z):
     """Matriz de osso a partir de (cabeca, longitudinal, "costas" do osso).
 
@@ -475,18 +616,29 @@ def aplicar_pose(arm, pose, comp_antebraco, espelhado=False):
     s = -1.0 if espelhado else 1.0
     # Recuo e teto entram ANTES de virar unidade do rig: a pose e' escrita em
     # metros, e os dois sao em metros.
-    metros = Vector(pose["pulso"]) - Vector((0.0, RECUO_DAS_MAOS, 0.0))
-    metros.y = _profundidade(metros.y)
+    #
+    # `cru` PULA os dois. Quem segura uma arma de duas maos nao pode passar por
+    # aqui: o punho esquerdo vai no fore-end, que esta' a meio metro do olho, e
+    # o teto de 0,28 arrancaria a mao do cano. O teto existe para as poses de
+    # mao VAZIA, onde a profundidade e' enquadramento; com arma ela e'
+    # geometria, e quem manda e' a arma.
+    if pose.get("cru", False):
+        metros = Vector(pose["pulso"])
+    else:
+        metros = Vector(pose["pulso"]) - Vector((0.0, RECUO_DAS_MAOS, 0.0))
+        metros.y = _profundidade(metros.y)
     pulso = _m(metros) * Vector((s, 1.0, 1.0))
     dedos = Vector(pose["dedos"]) * Vector((s, 1.0, 1.0))
     palma = Vector(pose["palma"]) * Vector((s, 1.0, 1.0))
     dedos.normalize()
     palma.normalize()
 
-    estica = pose.get("estica", ESTICA)
-    ombro = _m(OMBRO) * Vector((s, 1.0, 1.0))
+    ombro = _m(pose.get("ombro", OMBRO)) * Vector((s, 1.0, 1.0))
     dir_antebraco = (pulso - ombro).normalized()
-    cotovelo = pulso - dir_antebraco * comp_antebraco * estica
+    # `comp_antebraco` JA' VEM ESTICADO: o esticao mora no descanso (ver
+    # `assar_estica_no_descanso`). Nao ha' escala de osso em lugar nenhum
+    # deste arquivo, e e' de proposito.
+    cotovelo = pulso - dir_antebraco * comp_antebraco
 
     # A rolagem do antebraco tem de SEGUIR a da mao, nunca ser a oposta.
     #
@@ -505,13 +657,20 @@ def aplicar_pose(arm, pose, comp_antebraco, espelhado=False):
 
     pb_ante = arm.pose.bones["antebraco"]
     pb_ante.matrix = _matriz(cotovelo, dir_antebraco, costas)
-    # Depois da matriz, nunca antes: o setter de `matrix` reescreve a escala.
-    pb_ante.scale = (1.0, estica, 1.0)
     bpy.context.view_layer.update()
 
     pb_mao = arm.pose.bones["mao"]
     pb_mao.matrix = _matriz(pulso, dedos, palma)
     bpy.context.view_layer.update()
+
+    # O osso solto da arma, se esta pose tiver arma. Fora das poses de arma
+    # ele volta pro descanso — e' um osso sem uso nos clipes de mao vazia.
+    pb_arma = arm.pose.bones.get(NOME_OSSO_ARMA)
+    if pb_arma is not None:
+        quadro = pose.get("arma_quadro")
+        pb_arma.matrix = Matrix.Identity(4) if quadro is None \
+            else quadro_do_osso(quadro)
+        bpy.context.view_layer.update()
 
     curl = pose.get("curl", {})
     abrir = pose.get("abrir", {})
@@ -553,8 +712,6 @@ def gravar(arm, quadro):
         if not pb.bone.use_connect:
             pb.keyframe_insert("location", frame=quadro)
         pb.keyframe_insert("rotation_euler", frame=quadro)
-        if pb.name == "antebraco":
-            pb.keyframe_insert("scale", frame=quadro)
 
 
 def zerar_ik_na_acao(arm, quadro):
@@ -591,7 +748,11 @@ def _mistura(a, b, t):
         va, vb = Vector(a[chave]), Vector(b[chave])
         out[chave] = tuple(va.lerp(vb, t))
     out["torcao"] = a.get("torcao", 0.0) * (1.0 - t) + b.get("torcao", 0.0) * t
-    out["estica"] = a.get("estica", ESTICA) * (1.0 - t) + b.get("estica", ESTICA) * t
+    # Duas poses de arma sempre sao as duas `cru`; misturar uma crua com uma
+    # normal nao acontece, e se acontecer vale a de origem.
+    out["cru"] = a.get("cru", False) or b.get("cru", False)
+    if "ombro" in a or "ombro" in b:
+        out["ombro"] = a.get("ombro", b.get("ombro"))
     for chave in ("curl", "abrir"):
         da, db = a.get(chave, {}), b.get(chave, {})
         junto = {}
@@ -697,6 +858,276 @@ GUARDADA = {
              "polegar": (0.30, 0.34, 0.24)},
     "abrir": {},
 }
+
+
+# ----------------------------------------------------------------------------
+# AS ARMAS NA MAO
+# ----------------------------------------------------------------------------
+#
+# AQUI A ARMA VEM PRIMEIRO. E' o contrario da terceira pessoa.
+#
+# No Maycow normal (`player_shotgun_hold.gd`) a mao tem lugar e a arma e'
+# pousada nela: o que importa la' e' o corpo, e uma arma fora da mao denuncia
+# na hora. Em primeira pessoa nao ha' corpo nenhum — o que o jogador ve' e' a
+# ARMA, e o enquadramento dela na tela e' o assunto. Entao aqui se diz onde a
+# arma esta' e pra onde ela aponta, e as duas maos sao DERIVADAS dela.
+#
+# A consequencia pratica e' boa: como as duas maos saem da mesma matriz da
+# arma, elas nunca se soltam dela, em nenhum quadro de nenhuma animacao. E o
+# Godot nem precisa saber desses numeros: la' a arma e' pendurada no osso
+# `mao` da direita por um BoneAttachment3D, e o deslocamento constante que faz
+# ela cair na mao e' MEDIDO aqui e impresso no fim (ver `offset_no_osso`).
+#
+# ESPACO DO MODELO
+# ----------------
+# Como o .glb chega ao Blender (que desfaz o Y-up do gltf):
+#
+#     -X = pra onde o cano aponta      +Z = o topo da arma      +-Y = os lados
+#
+# No Godot esse mesmo modelo tem topo +Y e lados +-Z. Os numeros da cacadeira
+# sao os MESMOS de `player_shotgun_hold.gd` com Y e Z trocados — mexeu la',
+# muda aqui.
+
+ARMAS = {
+    "pistola": {
+        # 1,92 unidade de ponta a ponta; 0,115 devolve 22 cm de pistola.
+        "escala": 0.145,
+        # Onde o punho fecha: o meio do cabo, logo abaixo do ferrolho.
+        "cabo": Vector((0.60, 0.0, -0.28)),
+        # O furo do cano. Fica ALTO no modelo (z 0,50), nao na linha do cabo.
+        "boca": Vector((-0.95, 0.0, 0.50)),
+        # Pra onde os dedos da mao que segura apontam. Quem fecha a mao num
+        # cabo de pistola poe os nos dos dedos na FRENTE do cabo, entao o
+        # caminho pulso -> nos corre quase paralelo ao cano, caindo um pouco.
+        "eixo_cabo": Vector((-0.92, 0.0, -0.39)),
+        # Pistola e' de uma mao so'.
+        "apoio": None,
+    },
+    "shotgun": {
+        # 1,913 unidade; 0,335 devolve os mesmos 64 cm da terceira pessoa.
+        "escala": 0.300,
+        "cabo": Vector((0.50, 0.0, -0.03)),
+        "boca": Vector((-0.93, 0.0, -0.01)),
+        "eixo_cabo": Vector((-0.88, 0.0, -0.47)),
+        # Onde a mao ESQUERDA fecha: em cima do bloco dos canos.
+        #
+        # Bem mais PERTO da culatra que o ponto da terceira pessoa (-0,35).
+        # Em primeira pessoa o cano corre quase na direcao do olho, entao os
+        # 17 cm de cano que sobravam na frente da mao viravam um toco de 90
+        # pixels na tela — a arma nao lia como cacadeira. Recuando a mao, o
+        # cano aparece, e de quebra o braco esquerdo estica menos.
+        "apoio": Vector((-0.12, 0.0, 0.15)),
+        # O pino da dobradica e a culatra, pra recarga.
+        "charneira": Vector((-0.030, 0.0, 0.057)),
+        "camara": Vector((-0.030, 0.0, 0.127)),
+    },
+}
+
+
+def quadro_arma(arma, cabo, frente, rolagem=0.0):
+    """Matriz MODELO -> CAMERA (metros) de uma arma posta na tela.
+
+    `cabo` e' onde o punho da arma fica, em metros no espaco da camera;
+    `frente` e' pra onde o cano aponta; `rolagem` tomba a arma em volta do
+    proprio cano (positivo = o topo cai pra direita).
+    """
+    d = Vector(frente).normalized()
+    cima = Vector((0.0, 0.0, 1.0))
+    lado = d.cross(cima)
+    if lado.length < 1e-4:
+        lado = Vector((1.0, 0.0, 0.0))
+    lado.normalize()
+    cima = lado.cross(d).normalized()
+    if rolagem:
+        giro = Matrix.Rotation(rolagem, 4, d)
+        cima = (giro @ cima).normalized()
+    # O modelo tem o cano no -X e o topo no +Z; o +Y sai do produto vetorial
+    # pra base ficar destra, que e' o que o Blender espera.
+    ex = -d
+    ez = cima
+    ey = ez.cross(ex).normalized()
+    e = ARMAS[arma]["escala"]
+    base = Matrix((
+        (ex.x * e, ey.x * e, ez.x * e),
+        (ex.y * e, ey.y * e, ez.y * e),
+        (ex.z * e, ey.z * e, ez.z * e),
+    )).to_4x4()
+    base.translation = Vector(cabo) - (base.to_3x3() @ ARMAS[arma]["cabo"])
+    return base
+
+
+def quadro_do_osso(quadro):
+    """Quadro da arma (modelo -> camera, em metros) -> matriz do osso `arma`.
+
+    Duas mudancas: o osso vive nas unidades do rig (metros x UNI) e NAO leva
+    escala nenhuma. A escala do modelo fica pro Godot — um osso com escala
+    devolveria o mesmo problema que este osso existe pra evitar.
+    """
+    base = quadro.to_3x3()
+    escala = base.col[0].length
+    m = (base * (1.0 / escala)).to_4x4()
+    m.translation = _m(quadro.translation)
+    return m
+
+
+def ponto_arma(quadro, p):
+    """Ponto do modelo -> ponto em metros no espaco da camera."""
+    return quadro @ Vector(p)
+
+
+def direcao_arma(quadro, v):
+    """Direcao do modelo -> direcao (unitaria) no espaco da camera."""
+    return (quadro.to_3x3() @ Vector(v)).normalized()
+
+
+# Quanto o PULSO fica atras dos nos dos dedos, em metros. A mao tem 0,19 m do
+# pulso a' ponta do indicador; o ponto onde ela fecha em volta de um cabo cai
+# mais ou menos no meio da palma.
+RECUO_DO_PUNHO = 0.072
+
+# Punho fechado em volta de um cabo. O indicador fica MENOS fechado que os
+# outros: ele esta' no gatilho, nao no cabo.
+GARRA = {
+    "indicador": (0.72, 0.82, 0.38),
+    "medio": (0.98, 1.24, 0.82),
+    "anelar": (1.00, 1.26, 0.84),
+    "mindinho": (1.02, 1.28, 0.82),
+    "polegar": (0.52, 0.58, 0.46),
+}
+GARRA_ABRE = {"indicador": -0.12, "medio": -0.02, "anelar": 0.05,
+              "mindinho": 0.12, "polegar": -0.30}
+
+# Mao de apoio em volta de um cano: fecha inteira, inclusive o indicador.
+ABRACO = {
+    "indicador": (0.96, 1.20, 0.80),
+    "medio": (1.00, 1.24, 0.84),
+    "anelar": (1.02, 1.26, 0.84),
+    "mindinho": (1.04, 1.28, 0.82),
+    "polegar": (0.44, 0.40, 0.30),
+}
+ABRACO_ABRE = {"indicador": -0.10, "medio": 0.0, "anelar": 0.06,
+               "mindinho": 0.14, "polegar": -0.24}
+
+
+# ----------------------------------------------------------------------------
+# ONDE CADA ARMA FICA NA TELA
+# ----------------------------------------------------------------------------
+#
+# Estes sao os numeros de ENQUADRAMENTO, e sao eles que se mexe quando a arma
+# "esta' feia na tela". Tudo o mais (as duas maos, os dedos, o antebraco) sai
+# daqui por conta propria.
+#
+# A camera do jogo tem 75 graus na VERTICAL e a tela e' 16:9, entao a meia-tela
+# a um metro de distancia mede 0,767 de altura e 1,364 de largura. E' com isso
+# que se le' uma posicao: (x / y) / 1,364 e' a fracao da meia-tela na
+# horizontal, (z / y) / 0,767 na vertical.
+#
+# A coronha e' o que aperta. Ela sai 15 cm ATRAS do punho, e com a arma
+# apontada reto pra frente isso poe a madeira a 15 cm do olho, ocupando meia
+# tela. Por isso as duas armas apontam pra ESQUERDA dele: assim a coronha sai
+# de quadro pelo canto de baixo, que e' o que todo jogo de tiro faz.
+
+CABO_PISTOLA = Vector((0.165, 0.265, -0.140))
+FRENTE_PISTOLA = Vector((-0.42, 0.870, 0.26))
+ROLAGEM_PISTOLA = math.radians(-8.0)
+
+CABO_SHOTGUN = Vector((0.170, 0.262, -0.155))
+FRENTE_SHOTGUN = Vector((-0.55, 0.780, 0.30))
+ROLAGEM_SHOTGUN = math.radians(-14.0)
+
+
+def pegada_base(arma):
+    """Onde a arma fica parada: (cabo, frente, rolagem).
+
+    E' a pose de referencia da pegada — a que o `offset_no_osso` usa pra medir
+    onde a arma cai em relacao ao osso da mao.
+    """
+    if arma == "pistola":
+        return CABO_PISTOLA, FRENTE_PISTOLA, ROLAGEM_PISTOLA
+    return CABO_SHOTGUN, FRENTE_SHOTGUN, ROLAGEM_SHOTGUN
+
+
+def _espelhar(v, espelhado):
+    """A pose da mao direita e' escrita com o X negado.
+
+    `aplicar_pose(espelhado=True)` nega o X de tudo. Como aqui os pontos saem
+    de uma matriz no espaco REAL da camera, eles tem de ser pre-negados pra
+    chegar de volta onde foram calculados.
+    """
+    return (-v.x, v.y, v.z) if espelhado else (v.x, v.y, v.z)
+
+
+## A ANCORA do braco desce e recua nas poses de arma.
+##
+## O `OMBRO` normal fica 20 cm atras do olho e 62 abaixo. Com a arma na mao o
+## pulso sobe pro meio da tela, e a reta ombro -> pulso passa RASPANDO a
+## camera: o cotovelo caia a 7 milimetros da lente, e o que aparecia era a
+## ponta oca do antebraco ocupando um quarto da tela — um tubo branco
+## atravessado no quadro, que nem parecia braco.
+##
+## Baixar e recuar a ancora nao muda a mao de lugar (quem manda nela e' a
+## arma): muda so' por ONDE o antebraco entra no quadro. Com esta, o cotovelo
+## sai por baixo ou fica atras do olho, que e' o certo.
+OMBRO_ARMA = Vector((-0.30, -0.42, -0.78))
+
+## Quanto o osso do pulso fica pro LADO do que a mao segura.
+##
+## E' o numero que faltava na primeira versao e que fazia a arma parecer
+## enfiada DENTRO da mao: o cabo nao corre pelo eixo do osso, ele encosta na
+## PALMA, meia mao pro lado. Sem este desvio a arma atravessava os dedos.
+DESVIO_DA_PALMA = 0.036
+
+
+def mao_na_arma(quadro, ponto, eixo, palma_modelo, espelhado,
+                curl=None, abrir=None, recuo=RECUO_DO_PUNHO, torcao=0.0,
+                desvio=DESVIO_DA_PALMA):
+    """Pose de uma mao fechada num ponto da arma.
+
+    `ponto` e `eixo` sao do MODELO: onde a mao fecha e pra onde os dedos
+    apontam a partir do pulso. `palma_modelo` e' pra onde a palma olha, e o
+    pulso recua tambem pelo AVESSO dela — e' o que poe o cabo na palma em vez
+    de dentro do osso.
+    """
+    p = ponto_arma(quadro, ponto)
+    dedos = direcao_arma(quadro, eixo)
+    palma = direcao_arma(quadro, palma_modelo)
+    pulso = p - dedos * recuo - palma * desvio
+    return {
+        "arma_quadro": quadro,
+        "pulso": _espelhar(pulso, espelhado),
+        "dedos": _espelhar(dedos, espelhado),
+        "palma": _espelhar(palma, espelhado),
+        "curl": dict(curl if curl is not None else GARRA),
+        "abrir": dict(abrir if abrir is not None else GARRA_ABRE),
+        "torcao": torcao,
+        "ombro": OMBRO_ARMA,
+        # Arma na mao nao passa pelo teto de profundidade: ver `aplicar_pose`.
+        "cru": True,
+    }
+
+
+def pose_de_arma(arma, lado, cabo, frente, rolagem=0.0, solta=None):
+    """A pose das DUAS maos para uma arma posta na tela.
+
+    `lado` 0 = esquerda, 1 = direita. `solta` substitui a pose da mao esquerda
+    quando ela nao esta' na arma (recarga, troca) — recebe o quadro da arma e
+    devolve uma pose.
+    """
+    quadro = quadro_arma(arma, cabo, frente, rolagem)
+    espelhado = (lado == 1)
+    if lado == 1:
+        # A direita e' a que segura. Palma virada pro lado de dentro da arma.
+        return mao_na_arma(quadro, ARMAS[arma]["cabo"], ARMAS[arma]["eixo_cabo"],
+                           (0.0, -1.0, 0.0), espelhado)
+    if solta is not None:
+        return solta(quadro)
+    apoio = ARMAS[arma]["apoio"]
+    if apoio is None:
+        # Arma de uma mao: a esquerda fica solta, fora do caminho.
+        return _desloca(RELAXADA, (0.10, -0.02, -0.06))
+    # Mao de apoio: vem por baixo do cano, dedos subindo e passando por cima.
+    return mao_na_arma(quadro, apoio, (-0.15, 0.25, 0.96), (0.0, 0.96, -0.25),
+                       espelhado, ABRACO, ABRACO_ABRE)
 
 
 # ----------------------------------------------------------------------------
@@ -924,6 +1355,393 @@ def anim_sacar(lado=0):
     ]
 
 
+# ----------------------------------------------------------------------------
+# as animacoes DE ARMA
+# ----------------------------------------------------------------------------
+#
+# Todas saem do mesmo lugar: uma lista de (quadro, cabo, frente, rolagem) diz
+# onde a ARMA esta' em cada chave, e as duas maos caem nela sozinhas. Nao ha'
+# uma unica pose de mao escrita a mao neste bloco — se a arma se mexe, as maos
+# se mexem junto, e nao ha' como uma descolar da outra.
+#
+# A mao ESQUERDA e' a excecao, e so' na recarga: la' ela larga a arma, e por
+# isso ganha poses proprias (`_cinto`, `_no_cartucho`).
+
+
+def _girar(frente, cima_graus, lado_graus=0.0):
+    """Aponta o cano `cima_graus` pra cima e `lado_graus` pra esquerda dele."""
+    d = Vector(frente).normalized()
+    lado = d.cross(Vector((0.0, 0.0, 1.0)))
+    if lado.length < 1e-4:
+        lado = Vector((1.0, 0.0, 0.0))
+    lado.normalize()
+    d = (Matrix.Rotation(math.radians(cima_graus), 4, lado) @ d)
+    d = (Matrix.Rotation(math.radians(lado_graus), 4, Vector((0.0, 0.0, 1.0))) @ d)
+    return d.normalized()
+
+
+def _arma_em(arma, lado, chaves):
+    """[(quadro, cabo, frente, rolagem)] -> [(quadro, pose)] da mao do `lado`."""
+    return [(q, pose_de_arma(arma, lado, cabo, frente, rolagem))
+            for q, cabo, frente, rolagem in chaves]
+
+
+def _respirar(cabo, frente, fase, forca=1.0):
+    """Sobe-e-desce de quem esta' parado com a arma na mao.
+
+    Os tres eixos usam SENO, e nao seno e cosseno: com fase 0 o desvio tem de
+    dar zero. O quadro 1 do `<arma>_idle` e' a pose CANONICA da pegada, e e'
+    dela que o Godot mede onde a arma cai em relacao ao osso da mao
+    (`maos_fp_armas.gd`). Um cosseno aqui punha 3 mm de respiracao nessa
+    medida, e a arma ficava 3 mm fora da mao pra sempre.
+    """
+    d = Vector((
+        math.sin(fase) * 0.004,
+        math.sin(fase * 0.8) * 0.003,
+        math.sin(fase * 2.0) * 0.006,
+    )) * forca
+    return Vector(cabo) + d, _girar(frente, math.sin(fase * 1.3) * 0.7 * forca)
+
+
+## A esquerda some de quadro nas animacoes de pistola: quem cuida dela ali e'
+## a OUTRA copia do rig (a "mao magica"), que tem vida propria. Ver o
+## cabecalho do maos_fp_armas.gd no Godot.
+def _esquerda_fora(lado, quadros):
+    return [(q, GUARDADA) for q in quadros]
+
+
+def anim_pistola_idle(lado=0):
+    """61 quadros em laco: pistola na mao, so' a respiracao."""
+    if lado == 0:
+        return _esquerda_fora(lado, (1, 31, 61))
+    chaves = []
+    for i in range(0, 7):
+        q = 1 + i * 10
+        fase = (i % 6) / 6.0 * math.tau
+        cabo, frente = _respirar(CABO_PISTOLA, FRENTE_PISTOLA, fase)
+        chaves.append((q, cabo, frente, ROLAGEM_PISTOLA))
+    return _arma_em("pistola", lado, chaves)
+
+
+def anim_pistola_tiro(lado=0):
+    """15 quadros, uma vez: o coice.
+
+    Sobe rapido e volta devagar — coice que sobe e desce no mesmo tempo nao
+    le' como coice, le' como tremor.
+    """
+    if lado == 0:
+        return _esquerda_fora(lado, (1, 15))
+    recuo = -Vector(FRENTE_PISTOLA).normalized() * 0.022
+    chaves = [
+        (1, CABO_PISTOLA, FRENTE_PISTOLA, ROLAGEM_PISTOLA),
+        (3, Vector(CABO_PISTOLA) + recuo, _girar(FRENTE_PISTOLA, 11.0),
+         ROLAGEM_PISTOLA - math.radians(4.0)),
+        (6, Vector(CABO_PISTOLA) + recuo * 0.5, _girar(FRENTE_PISTOLA, 6.0),
+         ROLAGEM_PISTOLA - math.radians(2.0)),
+        (10, Vector(CABO_PISTOLA) + recuo * 0.15, _girar(FRENTE_PISTOLA, 2.0),
+         ROLAGEM_PISTOLA),
+        (15, CABO_PISTOLA, FRENTE_PISTOLA, ROLAGEM_PISTOLA),
+    ]
+    return _arma_em("pistola", lado, chaves)
+
+
+def anim_shotgun_idle(lado=0):
+    """61 quadros em laco: cacadeira nas duas maos, parada."""
+    chaves = []
+    for i in range(0, 7):
+        q = 1 + i * 10
+        fase = (i % 6) / 6.0 * math.tau
+        cabo, frente = _respirar(CABO_SHOTGUN, FRENTE_SHOTGUN, fase, 1.2)
+        chaves.append((q, cabo, frente, ROLAGEM_SHOTGUN))
+    return _arma_em("shotgun", lado, chaves)
+
+
+def anim_shotgun_tiro(lado=0):
+    """21 quadros, uma vez: o coice de doze."""
+    recuo = -Vector(FRENTE_SHOTGUN).normalized() * 0.045
+    chaves = [
+        (1, CABO_SHOTGUN, FRENTE_SHOTGUN, ROLAGEM_SHOTGUN),
+        (4, Vector(CABO_SHOTGUN) + recuo, _girar(FRENTE_SHOTGUN, 17.0, -3.0),
+         ROLAGEM_SHOTGUN - math.radians(7.0)),
+        (8, Vector(CABO_SHOTGUN) + recuo * 0.55, _girar(FRENTE_SHOTGUN, 10.0),
+         ROLAGEM_SHOTGUN - math.radians(3.0)),
+        (14, Vector(CABO_SHOTGUN) + recuo * 0.18, _girar(FRENTE_SHOTGUN, 3.0),
+         ROLAGEM_SHOTGUN),
+        (21, CABO_SHOTGUN, FRENTE_SHOTGUN, ROLAGEM_SHOTGUN),
+    ]
+    return _arma_em("shotgun", lado, chaves)
+
+
+# ---------------------------------------------------------------- a recarga
+#
+# A LINHA DO TEMPO E' A MESMA DA TERCEIRA PESSOA. Os numeros abaixo sao copia
+# dos M_* de `player_shotgun_hold.gd` e dos MOMENTO_* de `player_combat.gd`:
+# o gesto e' o mesmo e os sons sao os mesmos, entao os tres arquivos tem de
+# concordar. Mexeu num, mexe nos tres.
+#
+# 3,6 s a 30 quadros = 108 quadros. O clipe e' autorado com esse tamanho e o
+# Godot toca ele na velocidade 1.
+
+QUADROS_RECARGA = 108
+
+R_ABRE_INICIO = 0.08
+R_ABRE_FIM = 0.20
+R_VIRA_INICIO = 0.22
+R_VIRA_FIM = 0.30
+R_DESVIRA_INICIO = 0.34
+R_DESVIRA_FIM = 0.42
+R_LARGA = 0.42
+R_BALA1_PEGA = 0.48
+R_BALA1_ENTRA = 0.60
+R_BALA2_PEGA = 0.72
+R_BALA2_ENTRA = 0.84
+R_VOLTA = 0.90
+R_FECHA_INICIO = 0.90
+R_FECHA_FIM = 0.97
+
+## Quanto a arma abre, em graus. O mesmo `ABERTURA` de
+## `player_shotgun_hold.gd`: abaixo de 25 o cartucho nao passa pela culatra.
+ABERTURA_SHOTGUN = 32.0
+
+
+def abertura_da_recarga(quadro):
+    """Quanto a dobra esta' aberta no quadro `quadro` do clipe de recarga.
+
+    A dobra NAO vai no .glb: ela e' um no' da arma, e a arma nao faz parte do
+    rig das maos. Quem abre e' o `maos_fp_armas.gd` no Godot, com esta MESMA
+    conta — aqui ela existe pra previa mostrar a verdade.
+    """
+    r = float(quadro) / QUADROS_RECARGA
+    if r <= R_ABRE_INICIO or r >= R_FECHA_FIM:
+        return 0.0
+    if r < R_ABRE_FIM:
+        t = (r - R_ABRE_INICIO) / (R_ABRE_FIM - R_ABRE_INICIO)
+        return ABERTURA_SHOTGUN * (t * t * (3.0 - 2.0 * t))
+    if r <= R_FECHA_INICIO:
+        return ABERTURA_SHOTGUN
+    t = (r - R_FECHA_INICIO) / (R_FECHA_FIM - R_FECHA_INICIO)
+    return ABERTURA_SHOTGUN * (1.0 - t * t * (3.0 - 2.0 * t))
+
+
+def _q(fracao):
+    """Fracao do gesto -> quadro do clipe."""
+    return max(1, int(round(fracao * QUADROS_RECARGA)))
+
+
+## Pra onde a arma vai enquanto e' recarregada: mais pro meio da tela, com a
+## culatra virada pro olho. Em terceira pessoa ela vai PRA FRENTE pelo mesmo
+## motivo que aqui ela vem pro meio — a culatra tem de estar onde os olhos
+## alcancam.
+CABO_RECARGA = Vector((0.080, 0.360, -0.090))
+FRENTE_RECARGA = Vector((-0.62, 0.62, -0.48))
+ROLAGEM_RECARGA = math.radians(-52.0)
+## E o quanto ela tomba a MAIS pra despejar as capsulas.
+ROLAGEM_EJETA = math.radians(-118.0)
+
+
+## Onde a mao esquerda fica quando esta' no cinto, buscando cartucho: fora de
+## quadro pelo canto de baixo, do lado dela.
+CINTO = {
+    "pulso": (-0.195, 0.235, -0.330),
+    "dedos": (0.18, 0.80, -0.57),
+    "palma": (0.88, -0.02, 0.47),
+    "curl": {"indicador": (0.70, 0.95, 0.72), "medio": (0.74, 1.00, 0.76),
+             "anelar": (0.72, 0.98, 0.74), "mindinho": (0.70, 0.96, 0.70),
+             "polegar": (0.48, 0.52, 0.40)},
+    "abrir": {"indicador": -0.08, "medio": 0.0, "anelar": 0.06,
+              "mindinho": 0.14, "polegar": -0.18},
+    "cru": True,
+    "ombro": OMBRO_ARMA,
+}
+
+
+def _mao_na_camara(quadro, recuo_extra=0.0):
+    """A esquerda encostando o cartucho na boca da camara."""
+    camara = Vector(ARMAS["shotgun"]["camara"])
+    # O cartucho entra pela culatra, entao a mao vem de TRAS dela, ao longo do
+    # cano, e nao de cima.
+    fora = direcao_arma(quadro, (1.0, 0.0, 0.0))
+    ponto = ponto_arma(quadro, camara) + fora * (0.030 + recuo_extra)
+    dedos = direcao_arma(quadro, (-0.92, 0.0, -0.39))
+    palma = direcao_arma(quadro, (0.0, 1.0, 0.0))
+    pulso = ponto - dedos * 0.070 - palma * 0.030
+    return {
+        "arma_quadro": quadro,
+        "pulso": tuple(pulso), "dedos": tuple(dedos), "palma": tuple(palma),
+        # Dedos quase fechados: ela esta' segurando um cartucho entre o polegar
+        # e o indicador, nao agarrando a arma.
+        "curl": {"indicador": (0.62, 0.72, 0.58), "medio": (0.86, 1.10, 0.74),
+                 "anelar": (0.92, 1.14, 0.78), "mindinho": (0.96, 1.18, 0.76),
+                 "polegar": (0.40, 0.56, 0.52)},
+        "abrir": {"indicador": -0.14, "medio": -0.02, "anelar": 0.06,
+                  "mindinho": 0.14, "polegar": -0.26},
+        "cru": True,
+        "ombro": OMBRO_ARMA,
+    }
+
+
+def anim_shotgun_recarga(lado=0):
+    """108 quadros (3,6 s), uma vez: abre, despeja, dois cartuchos, fecha."""
+    # --- onde a ARMA esta' em cada chave -------------------------------------
+    base = (CABO_SHOTGUN, FRENTE_SHOTGUN, ROLAGEM_SHOTGUN)
+    posto = (CABO_RECARGA, FRENTE_RECARGA, ROLAGEM_RECARGA)
+    virado = (CABO_RECARGA, FRENTE_RECARGA, ROLAGEM_EJETA)
+    chaves = [
+        (1,) + base,
+        (_q(R_ABRE_INICIO),) + posto,
+        (_q(R_VIRA_INICIO),) + posto,
+        (_q(R_VIRA_FIM),) + virado,
+        (_q(R_DESVIRA_INICIO),) + virado,
+        (_q(R_DESVIRA_FIM),) + posto,
+        (_q(R_BALA1_ENTRA),) + posto,
+        (_q(R_BALA2_ENTRA),) + posto,
+        (_q(R_VOLTA),) + posto,
+        (QUADROS_RECARGA,) + base,
+    ]
+
+    if lado == 1:
+        return _arma_em("shotgun", lado, chaves)
+
+    # --- a mao ESQUERDA, que larga a arma no meio ----------------------------
+    #
+    # Ate' `R_LARGA` ela esta' no fore-end e acompanha a arma; dai em diante
+    # ela e' escrita a parte, e volta pro cano no fim.
+    esq = []
+    for q, cabo, frente, rolagem in chaves:
+        if q <= _q(R_LARGA):
+            esq.append((q, pose_de_arma("shotgun", 0, cabo, frente, rolagem)))
+    quadro_posto = quadro_arma("shotgun", *posto)
+    esq += [
+        (_q(R_BALA1_PEGA), CINTO),
+        (_q(R_BALA1_ENTRA), _mao_na_camara(quadro_posto)),
+        (_q(R_BALA1_ENTRA) + 4, _mao_na_camara(quadro_posto, 0.020)),
+        (_q(R_BALA2_PEGA), CINTO),
+        (_q(R_BALA2_ENTRA), _mao_na_camara(quadro_posto)),
+        (_q(R_BALA2_ENTRA) + 4, _mao_na_camara(quadro_posto, 0.020)),
+        (_q(R_VOLTA), pose_de_arma("shotgun", 0, *posto)),
+        (QUADROS_RECARGA, pose_de_arma("shotgun", 0, *base)),
+    ]
+    esq.sort(key=lambda par: par[0])
+    # Duas chaves no mesmo quadro fazem o exportador engasgar; a ultima vence.
+    limpo = []
+    for par in esq:
+        if limpo and limpo[-1][0] == par[0]:
+            limpo[-1] = par
+        else:
+            limpo.append(par)
+    return limpo
+
+
+## Onde a arma fica quando ele a ABAIXA pra trocar de arma: fora de quadro
+## pelo canto de baixo, cano pro chao.
+CABO_ABAIXADA = Vector((0.230, 0.235, -0.400))
+FRENTE_ABAIXADA = Vector((-0.30, 0.42, -0.86))
+
+
+def _troca(arma, lado, guardando):
+    """A arma descendo pra fora de quadro, ou subindo de la'."""
+    cabo = CABO_PISTOLA if arma == "pistola" else CABO_SHOTGUN
+    frente = FRENTE_PISTOLA if arma == "pistola" else FRENTE_SHOTGUN
+    rolagem = ROLAGEM_PISTOLA if arma == "pistola" else ROLAGEM_SHOTGUN
+    alto = (cabo, frente, rolagem)
+    baixo = (CABO_ABAIXADA, FRENTE_ABAIXADA, rolagem - math.radians(18.0))
+    if guardando:
+        chaves = [(1,) + alto, (5,) + alto, (14,) + baixo, (16,) + baixo]
+    else:
+        chaves = [(1,) + baixo, (10,) + alto, (14,) + alto]
+    return _arma_em(arma, lado, chaves)
+
+
+def anim_shotgun_guardar(lado=0):
+    """16 quadros: a arma desce e sai de quadro. Primeira metade da troca."""
+    return _troca("shotgun", lado, True)
+
+
+def anim_shotgun_sacar(lado=0):
+    """14 quadros: a arma sobe pro lugar. Segunda metade da troca."""
+    return _troca("shotgun", lado, False)
+
+
+def anim_pistola_guardar(lado=0):
+    if lado == 0:
+        return _esquerda_fora(lado, (1, 16))
+    return _troca("pistola", lado, True)
+
+
+def anim_pistola_sacar(lado=0):
+    if lado == 0:
+        return _esquerda_fora(lado, (1, 14))
+    return _troca("pistola", lado, False)
+
+
+# ---------------------------------------------------------------- a mao magica
+#
+# Estes quatro nomes NAO sao escolha: sao os estados que a AnimationTree da mao
+# esquerda ja' tinha no player.tscn, e que `player_combat.gd` procura por nome
+# (`safe_travel(hand_magic_tree, "magic_reload")`). A mao mudou de modelo; o
+# vocabulario de quem chama, nao.
+#
+# Eles so' valem pra copia ESQUERDA do rig — a direita nunca toca estes
+# clipes, e por isso a pose dela aqui e' a de fora de quadro.
+
+
+def _so_esquerda(lado, quadros_poses):
+    if lado == 1:
+        return [(q, GUARDADA) for q, _p in quadros_poses]
+    return quadros_poses
+
+
+def anim_magic_holding_gun(lado=0):
+    """41 quadros em laco: mao esquerda solta, ao lado da arma."""
+    base = _desloca(RELAXADA, (0.075, -0.01, -0.035))
+    quadros = []
+    for i in range(0, 5):
+        q = 1 + i * 10
+        fase = (i % 4) / 4.0 * math.tau
+        quadros.append((q, _desloca(base, (
+            math.sin(fase) * 0.005,
+            math.cos(fase) * 0.003,
+            math.sin(fase * 2.0) * 0.009,
+        ))))
+    return _so_esquerda(lado, quadros)
+
+
+def anim_magic_holding_shoot(lado=0):
+    """11 quadros: a esquerda se fecha no tranco do tiro."""
+    base = _desloca(RELAXADA, (0.075, -0.01, -0.035))
+    quadros = [
+        (1, base),
+        (3, _desloca(base, (0.005, -0.02, -0.022), curl_mult=1.35)),
+        (7, _desloca(base, (0.002, -0.01, -0.008), curl_mult=1.12)),
+        (11, base),
+    ]
+    return _so_esquerda(lado, quadros)
+
+
+def anim_magic_reload(lado=0):
+    """31 quadros: desce ao cinto, pega o pente e sobe."""
+    base = _desloca(RELAXADA, (0.075, -0.01, -0.035))
+    quadros = [
+        (1, base),
+        (8, CINTO),
+        (13, CINTO),
+        (22, _desloca(base, (-0.03, 0.03, 0.03), curl_mult=1.25)),
+        (31, base),
+    ]
+    return _so_esquerda(lado, quadros)
+
+
+def anim_magic_thrown(lado=0):
+    """21 quadros: o soco/empurrao da mao esquerda."""
+    quadros = [
+        (1, _desloca(RELAXADA, (0.075, -0.01, -0.035))),
+        (7, EMPURRA),
+        (12, EMPURRA),
+        (21, _desloca(RELAXADA, (0.075, -0.01, -0.035))),
+    ]
+    return _so_esquerda(lado, quadros)
+
+
 ANIMACOES = (
     ("idle", anim_idle),
     ("defesa", anim_defesa),
@@ -935,6 +1753,21 @@ ANIMACOES = (
     ("levantar", anim_levantar),
     ("guardar", anim_guardar),
     ("sacar", anim_sacar),
+    # --- de arma (primeira pessoa) ---
+    ("pistola_idle", anim_pistola_idle),
+    ("pistola_tiro", anim_pistola_tiro),
+    ("pistola_guardar", anim_pistola_guardar),
+    ("pistola_sacar", anim_pistola_sacar),
+    ("shotgun_idle", anim_shotgun_idle),
+    ("shotgun_tiro", anim_shotgun_tiro),
+    ("shotgun_recarga", anim_shotgun_recarga),
+    ("shotgun_guardar", anim_shotgun_guardar),
+    ("shotgun_sacar", anim_shotgun_sacar),
+    # --- a mao esquerda sozinha (nomes que a AnimationTree ja' procurava) ---
+    ("magic_holding_gun", anim_magic_holding_gun),
+    ("magic_holding_shoot", anim_magic_holding_shoot),
+    ("magic_reload", anim_magic_reload),
+    ("magic_thrown", anim_magic_thrown),
 )
 
 
@@ -1018,10 +1851,17 @@ def main():
     mesh = bpy.data.objects["Mesh0"]
     bpy.context.scene.render.fps = FPS
 
-    comp = preparar(arm)
+    preparar(arm)
     limpar_temporarios()
     mesh_esq = criar_mao_esquerda(arm, mesh)
     arm_dir, mesh_dir = criar_mao_direita(arm, mesh_esq)
+    # DEPOIS de espelhar: o osso da arma nao tem lado, e passar ele pelo
+    # espelhamento so' inventaria um descanso torto.
+    criar_osso_da_arma(arm)
+    criar_osso_da_arma(arm_dir)
+    # O comprimento so' pode ser lido AGORA: o `criar_mao_esquerda` esticou o
+    # osso, e e' o valor esticado que poe o cotovelo no lugar.
+    comp = preparar(arm)
     preparar(arm_dir)
 
     lados = ((arm, "esq", 0, False), (arm_dir, "dir", 1, True))

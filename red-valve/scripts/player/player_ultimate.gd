@@ -431,7 +431,7 @@ func _hide_combat_hud() -> void:
 func _show_combat_hud() -> void:
 	player.control_magic.visible = true
 	player.control_weapons.visible = true
-	player.hand_with_pistol.visible = SaveManager.is_equipped("pistol")
+	player.hand_with_pistol.visible = SaveManager.arma_de_fogo_equipada()
 	if player.hand_with_magic: player.hand_with_magic.visible = true
 	if player.point: player.point.visible = true # Restaura o ponto no meio da tela
 	

@@ -200,6 +200,18 @@ const EQUIPAMENTO_EXCLUSIVO := ["amuleto", "pistol", "shotgun"]
 ## Quais dos exclusivos sao ARMA (e nao poder). E' o que a arena devolve.
 const ARMAS_DE_FOGO := ["pistol", "shotgun"]
 
+
+## Tem ALGUMA arma de fogo na mao?
+##
+## Quase todo lugar que perguntava `is_equipped("pistol")` na verdade queria
+## isto — "a mao da arma aparece?". Com a cacadeira tambem na primeira pessoa,
+## perguntar so' pela pistola escondia a mao com a cacadeira equipada.
+func arma_de_fogo_equipada() -> bool:
+	for arma in ARMAS_DE_FOGO:
+		if is_equipped(arma):
+			return true
+	return false
+
 func _ready():
 	self.process_mode = Node.PROCESS_MODE_ALWAYS
 	iron_rusks_display = iron_rusks
