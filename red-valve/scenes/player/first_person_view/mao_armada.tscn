@@ -65,15 +65,7 @@ bones/17/rotation = Quaternion(-0.48522243, -0.27560657, -0.38621843, 0.7344628)
 cast_shadow = 0
 surface_material_override/0 = ExtResource("5_pele_e")
 
-[node name="PreviaNoEditor" type="BoneAttachment3D" parent="rig" unique_id=1580329696]
-transform = Transform3D(0.34290066, -0.93789184, 0.052709416, -0.15357138, -0.11132675, -0.9818465, 0.9267337, 0.32858118, -0.18220735, 0.35468584, 0.63596576, -0.047924414)
-bone_name = "arma"
-bone_idx = 17
-
-[node name="cacadeira" parent="rig/PreviaNoEditor" unique_id=2002644381 instance=ExtResource("8_previa")]
-transform = Transform3D(1.7647059, 0, 0, 0, 0, 1.7647059, 0, -1.7647059, 0, 0, 0, 0)
-
-[node name="Armature_dir" parent="rig" index="2" unique_id=2083814527]
+[node name="Armature_dir" parent="rig" index="1" unique_id=2083814527]
 transform = Transform3D(0.7084166, -0.35488003, 0.61008716, 0.3601677, 0.9251468, 0.119929396, -0.60698074, 0.13477369, 0.78320545, 0.28586492, 1.0298294, 2.3215978)
 
 [node name="Skeleton3D" parent="rig/Armature_dir" index="0" unique_id=988876978]
@@ -102,7 +94,15 @@ bones/17/rotation = Quaternion(-0.48522243, -0.27560657, -0.38621843, 0.7344628)
 cast_shadow = 0
 surface_material_override/0 = ExtResource("4_pele")
 
-[node name="AnimationPlayer" parent="rig" index="3" unique_id=2020378931]
+[node name="PreviaNoEditor" type="BoneAttachment3D" parent="rig/Armature_dir" index="1" unique_id=1580329696]
+transform = Transform3D(-0.37490422, -0.90395665, -0.20569268, -0.13886532, 0.2741296, -0.9516141, 0.9166043, -0.32820055, -0.22830065, 1.3451506, -0.70815384, -1.8610713)
+bone_name = "arma"
+bone_idx = 17
+
+[node name="cacadeira" parent="rig/Armature_dir/PreviaNoEditor" unique_id=2002644381 instance=ExtResource("8_previa")]
+transform = Transform3D(1.7647059, 0, 0, 0, 0, 1.7647059, 0, -1.7647059, 0, 0, 0, 0)
+
+[node name="AnimationPlayer" parent="rig" index="2" unique_id=2020378931]
 libraries/ = ExtResource("6_clipes")
 
 [node name="PreviaDaTela" type="Camera3D" parent="." unique_id=1072376976]
