@@ -892,16 +892,30 @@ def _saguao(s, d):
     itens = []
     largo = s["x1"] - s["x0"] > s["z1"] - s["z0"]
     lados = ("n", "s") if largo else ("o", "l")
+    comprimento_parede = (s["x1"] - s["x0"]) if largo else (s["z1"] - s["z0"])
+    tem_posto = (s["x1"] - s["x0"]) * (s["z1"] - s["z0"]) > 200.0
+    # O posto nasce em t=0.30 com 3,8 m de largura, na parede `lados[1]` — bem
+    # em cima de duas ou tres cadeiras da fileira. Nao fazia diferenca enquanto
+    # cadeira era so' enfeite sem colisao; virou RigidBody3D de verdade, e sem
+    # este furo na fileira ela nasce PRESA dentro da caixa estatica do balcao —
+    # o player esbarra numa parede invisivel bem antes de chegar perto.
+    reservado = None
+    if tem_posto:
+        meio_t = (3.8 / comprimento_parede) * 0.5 + 0.05
+        reservado = (0.30 - meio_t, 0.30 + meio_t)
     for lado in lados:
         for i in range(7):
+            t = 0.14 + i * 0.06
+            if lado == lados[1] and reservado and reservado[0] <= t <= reservado[1]:
+                continue
             itens.append(modelo_na_parede(s, "plastic_monobloc_chair_01", lado,
-                                          0.14 + i * 0.06, 0.75,
+                                          t, 0.75,
                                           "espera_%s_%d" % (lado, i)))
     itens.append(caixas_na_parede(s, bebedouro(), lados[0], 0.72, 0.35,
                                   "bebedouro", bloqueia=(0.5, 0.5)))
     itens.append(modelo_na_parede(s, "metal_trash_can", lados[1], 0.80, 0.70,
                                   "lixo", bloqueia=(1.4, 0.7)))
-    if (s["x1"] - s["x0"]) * (s["z1"] - s["z0"]) > 200.0:
+    if tem_posto:
         itens.append(caixas_na_parede(s, balcao(3.6), lados[1], 0.30, 0.60,
                                       "posto", bloqueia=(3.8, 0.9)))
         itens.append(modelo_na_parede(s, "metal_stool_01", lados[1], 0.30, 1.40,

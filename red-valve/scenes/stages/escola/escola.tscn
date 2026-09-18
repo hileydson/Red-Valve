@@ -5717,7 +5717,7 @@ transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0
 [node name="lum_7" parent="luminarias" instance=ExtResource("e67")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 66.25625, 3.34000, 12.85000)
 
-[node name="lum_8" parent="luminarias" instance=ExtResource("e67")]
+[node name="lum_8" parent="luminarias" instance=ExtResource("e68")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 4.74375, 3.34000, 54.50000)
 
 [node name="lum_9" parent="luminarias" instance=ExtResource("e68")]
@@ -5738,7 +5738,7 @@ transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0
 [node name="lum_14" parent="luminarias" instance=ExtResource("e67")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 57.46875, 3.34000, 54.50000)
 
-[node name="lum_15" parent="luminarias" instance=ExtResource("e67")]
+[node name="lum_15" parent="luminarias" instance=ExtResource("e68")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 66.25625, 3.34000, 54.50000)
 
 [node name="lum_16" parent="luminarias" instance=ExtResource("e69")]
@@ -5890,11 +5890,6 @@ transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0
 mesh = SubResource("cone_malha_0")
 cast_shadow = 0
 
-[node name="cone_fluor_corredor_sul_0" type="MeshInstance3D" parent="cones"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 4.74375, 1.58000, 54.50000)
-mesh = SubResource("cone_malha_0")
-cast_shadow = 0
-
 [node name="cone_fluor_corredor_sul_2" type="MeshInstance3D" parent="cones"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 22.31875, 1.58000, 54.50000)
 mesh = SubResource("cone_malha_0")
@@ -5912,11 +5907,6 @@ cast_shadow = 0
 
 [node name="cone_fluor_corredor_sul_6" type="MeshInstance3D" parent="cones"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 57.46875, 1.58000, 54.50000)
-mesh = SubResource("cone_malha_0")
-cast_shadow = 0
-
-[node name="cone_fluor_corredor_sul_7" type="MeshInstance3D" parent="cones"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 66.25625, 1.58000, 54.50000)
 mesh = SubResource("cone_malha_0")
 cast_shadow = 0
 
@@ -6030,9 +6020,9 @@ cast_shadow = 0
 [node name="fluor_corredor_norte_0" type="SpotLight3D" parent="luzes"]
 transform = Transform3D(-1.00000, 0.00000, -0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 1.00000, -0.00000, 4.74375, 3.18000, 12.85000)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 3.200
+light_energy = 1.700
 light_volumetric_fog_energy = 1.10
-shadow_enabled = true
+shadow_enabled = false
 distance_fade_enabled = true
 distance_fade_begin = 26.0
 distance_fade_shadow = 16.0
@@ -6043,11 +6033,12 @@ spot_angle_attenuation = 0.9
 spot_attenuation = 0.45
 shadow_bias = 0.05
 shadow_normal_bias = 1.4
+metadata/piscar = "nervoso"
 
 [node name="fluor_corredor_norte_2" type="SpotLight3D" parent="luzes"]
 transform = Transform3D(-1.00000, 0.00000, -0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 1.00000, -0.00000, 22.31875, 3.18000, 12.85000)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 2.800
+light_energy = 1.700
 light_volumetric_fog_energy = 1.10
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6065,7 +6056,7 @@ metadata/piscar = "nervoso"
 [node name="fluor_corredor_norte_3" type="SpotLight3D" parent="luzes"]
 transform = Transform3D(-1.00000, 0.00000, -0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 1.00000, -0.00000, 31.10625, 3.18000, 12.85000)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 3.200
+light_energy = 2.100
 light_volumetric_fog_energy = 1.10
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6082,7 +6073,7 @@ shadow_normal_bias = 1.4
 [node name="fluor_corredor_norte_4" type="SpotLight3D" parent="luzes"]
 transform = Transform3D(-1.00000, 0.00000, -0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 1.00000, -0.00000, 39.89375, 3.18000, 12.85000)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 3.200
+light_energy = 2.600
 light_volumetric_fog_energy = 1.10
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6095,11 +6086,12 @@ spot_angle_attenuation = 0.9
 spot_attenuation = 0.45
 shadow_bias = 0.05
 shadow_normal_bias = 1.4
+metadata/piscar = "quebrado"
 
 [node name="fluor_corredor_norte_6" type="SpotLight3D" parent="luzes"]
 transform = Transform3D(-1.00000, 0.00000, -0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 1.00000, -0.00000, 57.46875, 3.18000, 12.85000)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 4.000
+light_energy = 2.600
 light_volumetric_fog_energy = 1.10
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6117,24 +6109,7 @@ metadata/piscar = "quebrado"
 [node name="fluor_corredor_norte_7" type="SpotLight3D" parent="luzes"]
 transform = Transform3D(-1.00000, 0.00000, -0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 1.00000, -0.00000, 66.25625, 3.18000, 12.85000)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 3.200
-light_volumetric_fog_energy = 1.10
-shadow_enabled = false
-distance_fade_enabled = true
-distance_fade_begin = 26.0
-distance_fade_shadow = 16.0
-distance_fade_length = 8.0
-spot_range = 4.70
-spot_angle = 32.0
-spot_angle_attenuation = 0.9
-spot_attenuation = 0.45
-shadow_bias = 0.05
-shadow_normal_bias = 1.4
-
-[node name="fluor_corredor_sul_0" type="SpotLight3D" parent="luzes"]
-transform = Transform3D(-1.00000, 0.00000, -0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 1.00000, -0.00000, 4.74375, 3.18000, 54.50000)
-light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 2.800
+light_energy = 1.700
 light_volumetric_fog_energy = 1.10
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6152,7 +6127,7 @@ metadata/piscar = "nervoso"
 [node name="fluor_corredor_sul_2" type="SpotLight3D" parent="luzes"]
 transform = Transform3D(-1.00000, 0.00000, -0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 1.00000, -0.00000, 22.31875, 3.18000, 54.50000)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 3.200
+light_energy = 2.100
 light_volumetric_fog_energy = 1.10
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6169,7 +6144,7 @@ shadow_normal_bias = 1.4
 [node name="fluor_corredor_sul_3" type="SpotLight3D" parent="luzes"]
 transform = Transform3D(-1.00000, 0.00000, -0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 1.00000, -0.00000, 31.10625, 3.18000, 54.50000)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 3.200
+light_energy = 1.700
 light_volumetric_fog_energy = 1.10
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6182,11 +6157,12 @@ spot_angle_attenuation = 0.9
 spot_attenuation = 0.45
 shadow_bias = 0.05
 shadow_normal_bias = 1.4
+metadata/piscar = "nervoso"
 
 [node name="fluor_corredor_sul_5" type="SpotLight3D" parent="luzes"]
 transform = Transform3D(-1.00000, 0.00000, -0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 1.00000, -0.00000, 48.68125, 3.18000, 54.50000)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 2.800
+light_energy = 1.700
 light_volumetric_fog_energy = 1.10
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6204,24 +6180,7 @@ metadata/piscar = "nervoso"
 [node name="fluor_corredor_sul_6" type="SpotLight3D" parent="luzes"]
 transform = Transform3D(-1.00000, 0.00000, -0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 1.00000, -0.00000, 57.46875, 3.18000, 54.50000)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 3.200
-light_volumetric_fog_energy = 1.10
-shadow_enabled = true
-distance_fade_enabled = true
-distance_fade_begin = 26.0
-distance_fade_shadow = 16.0
-distance_fade_length = 8.0
-spot_range = 4.70
-spot_angle = 32.0
-spot_angle_attenuation = 0.9
-spot_attenuation = 0.45
-shadow_bias = 0.05
-shadow_normal_bias = 1.4
-
-[node name="fluor_corredor_sul_7" type="SpotLight3D" parent="luzes"]
-transform = Transform3D(-1.00000, 0.00000, -0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 1.00000, -0.00000, 66.25625, 3.18000, 54.50000)
-light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 4.000
+light_energy = 2.600
 light_volumetric_fog_energy = 1.10
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6239,7 +6198,7 @@ metadata/piscar = "quebrado"
 [node name="fluor_corredor_leste_0" type="SpotLight3D" parent="luzes"]
 transform = Transform3D(-1.00000, 0.00000, -0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 1.00000, -0.00000, 73.15000, 3.18000, 15.01500)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 3.200
+light_energy = 2.100
 light_volumetric_fog_energy = 1.10
 shadow_enabled = true
 distance_fade_enabled = true
@@ -6256,7 +6215,7 @@ shadow_normal_bias = 1.4
 [node name="fluor_corredor_leste_2" type="SpotLight3D" parent="luzes"]
 transform = Transform3D(-1.00000, 0.00000, -0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 1.00000, -0.00000, 73.15000, 3.18000, 33.67500)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 3.200
+light_energy = 1.700
 light_volumetric_fog_energy = 1.10
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6269,11 +6228,12 @@ spot_angle_attenuation = 0.9
 spot_attenuation = 0.45
 shadow_bias = 0.05
 shadow_normal_bias = 1.4
+metadata/piscar = "nervoso"
 
 [node name="fluor_corredor_leste_4" type="SpotLight3D" parent="luzes"]
 transform = Transform3D(-1.00000, 0.00000, -0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 1.00000, -0.00000, 73.15000, 3.18000, 52.33500)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 2.800
+light_energy = 1.700
 light_volumetric_fog_energy = 1.10
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6291,7 +6251,7 @@ metadata/piscar = "nervoso"
 [node name="refletor_0" type="SpotLight3D" parent="luzes"]
 transform = Transform3D(-0.29442, 0.27653, -0.91479, 0.00000, 0.95722, 0.28936, 0.95568, 0.08519, -0.28182, 8.00000, 6.15000, 29.00000)
 light_color = Color(0.8000, 0.8800, 1.0000, 1.0000)
-light_energy = 4.600
+light_energy = 3.200
 light_volumetric_fog_energy = 1.60
 shadow_enabled = true
 distance_fade_enabled = true
@@ -6309,7 +6269,7 @@ metadata/piscar = "nervoso"
 [node name="luz_sala_102_0" type="SpotLight3D" parent="luzes"]
 transform = Transform3D(-1.00000, 0.00000, -0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 1.00000, -0.00000, 20.23333, 3.18000, 5.17500)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 2.200
+light_energy = 1.500
 light_volumetric_fog_energy = 1.00
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6322,11 +6282,12 @@ spot_angle_attenuation = 0.9
 spot_attenuation = 0.45
 shadow_bias = 0.05
 shadow_normal_bias = 1.4
+metadata/piscar = "nervoso"
 
 [node name="luz_sala_102_1" type="SpotLight3D" parent="luzes"]
 transform = Transform3D(-1.00000, 0.00000, -0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 1.00000, -0.00000, 25.11667, 3.18000, 5.17500)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 2.200
+light_energy = 1.500
 light_volumetric_fog_energy = 1.00
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6339,11 +6300,12 @@ spot_angle_attenuation = 0.9
 spot_attenuation = 0.45
 shadow_bias = 0.05
 shadow_normal_bias = 1.4
+metadata/piscar = "nervoso"
 
 [node name="luz_sala_104_0" type="SpotLight3D" parent="luzes"]
 transform = Transform3D(-1.00000, 0.00000, -0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 1.00000, -0.00000, 50.23333, 3.18000, 5.17500)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 1.900
+light_energy = 1.300
 light_volumetric_fog_energy = 1.00
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6361,7 +6323,7 @@ metadata/piscar = "quebrado"
 [node name="luz_sala_104_1" type="SpotLight3D" parent="luzes"]
 transform = Transform3D(-1.00000, 0.00000, -0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 1.00000, -0.00000, 55.11667, 3.18000, 5.17500)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 1.900
+light_energy = 1.300
 light_volumetric_fog_energy = 1.00
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6379,7 +6341,7 @@ metadata/piscar = "quebrado"
 [node name="luz_secretaria_0" type="SpotLight3D" parent="luzes"]
 transform = Transform3D(-1.00000, 0.00000, -0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 1.00000, -0.00000, 65.45000, 3.18000, 5.17500)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 2.400
+light_energy = 1.600
 light_volumetric_fog_energy = 1.20
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6392,12 +6354,12 @@ spot_angle_attenuation = 0.9
 spot_attenuation = 0.45
 shadow_bias = 0.05
 shadow_normal_bias = 1.4
-metadata/piscar = "nervoso"
+metadata/piscar = "quebrado"
 
 [node name="luz_secretaria_1" type="SpotLight3D" parent="luzes"]
 transform = Transform3D(-1.00000, 0.00000, -0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 1.00000, -0.00000, 70.55000, 3.18000, 5.17500)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 2.400
+light_energy = 1.600
 light_volumetric_fog_energy = 1.20
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6410,12 +6372,12 @@ spot_angle_attenuation = 0.9
 spot_attenuation = 0.45
 shadow_bias = 0.05
 shadow_normal_bias = 1.4
-metadata/piscar = "nervoso"
+metadata/piscar = "quebrado"
 
 [node name="luz_refeitorio_0" type="SpotLight3D" parent="luzes"]
 transform = Transform3D(-1.00000, 0.00000, -0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 1.00000, -0.00000, 52.33750, 3.18000, 23.85000)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 2.200
+light_energy = 1.500
 light_volumetric_fog_energy = 1.20
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6433,7 +6395,7 @@ metadata/piscar = "nervoso"
 [node name="luz_refeitorio_1" type="SpotLight3D" parent="luzes"]
 transform = Transform3D(-1.00000, 0.00000, -0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 1.00000, -0.00000, 58.32500, 3.18000, 23.85000)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 2.200
+light_energy = 1.500
 light_volumetric_fog_energy = 1.20
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6451,7 +6413,7 @@ metadata/piscar = "nervoso"
 [node name="luz_refeitorio_2" type="SpotLight3D" parent="luzes"]
 transform = Transform3D(-1.00000, 0.00000, -0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 1.00000, -0.00000, 64.31250, 3.18000, 23.85000)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 2.200
+light_energy = 1.500
 light_volumetric_fog_energy = 1.20
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6469,7 +6431,7 @@ metadata/piscar = "nervoso"
 [node name="luz_biblioteca_0" type="SpotLight3D" parent="luzes"]
 transform = Transform3D(-1.00000, 0.00000, -0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 1.00000, -0.00000, 52.17500, 3.18000, 38.78333)
 light_color = Color(1.0000, 0.6200, 0.2800, 1.0000)
-light_energy = 1.800
+light_energy = 1.200
 light_volumetric_fog_energy = 1.40
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6487,7 +6449,7 @@ metadata/piscar = "quebrado"
 [node name="luz_biblioteca_1" type="SpotLight3D" parent="luzes"]
 transform = Transform3D(-1.00000, 0.00000, -0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 1.00000, -0.00000, 52.17500, 3.18000, 45.21667)
 light_color = Color(1.0000, 0.6200, 0.2800, 1.0000)
-light_energy = 1.800
+light_energy = 1.200
 light_volumetric_fog_energy = 1.40
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6505,7 +6467,7 @@ metadata/piscar = "quebrado"
 [node name="luz_laboratorio_0" type="SpotLight3D" parent="luzes"]
 transform = Transform3D(-1.00000, 0.00000, -0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 1.00000, -0.00000, 64.32500, 3.18000, 38.78333)
 light_color = Color(0.4400, 0.7800, 0.5600, 1.0000)
-light_energy = 2.500
+light_energy = 1.700
 light_volumetric_fog_energy = 1.50
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6523,7 +6485,7 @@ metadata/piscar = "nervoso"
 [node name="luz_laboratorio_1" type="SpotLight3D" parent="luzes"]
 transform = Transform3D(-1.00000, 0.00000, -0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 1.00000, -0.00000, 64.32500, 3.18000, 45.21667)
 light_color = Color(0.4400, 0.7800, 0.5600, 1.0000)
-light_energy = 2.500
+light_energy = 1.700
 light_volumetric_fog_energy = 1.50
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6541,7 +6503,7 @@ metadata/piscar = "nervoso"
 [node name="luz_almoxarifado_0" type="SpotLight3D" parent="luzes"]
 transform = Transform3D(-1.00000, 0.00000, -0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 1.00000, -0.00000, 6.17500, 3.18000, 62.50000)
 light_color = Color(1.0000, 0.6200, 0.2800, 1.0000)
-light_energy = 1.600
+light_energy = 1.100
 light_volumetric_fog_energy = 1.40
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6559,7 +6521,7 @@ metadata/piscar = "quebrado"
 [node name="luz_sala_106_0" type="SpotLight3D" parent="luzes"]
 transform = Transform3D(-1.00000, 0.00000, -0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 1.00000, -0.00000, 32.23333, 3.18000, 62.50000)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 2.400
+light_energy = 1.600
 light_volumetric_fog_energy = 1.00
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6577,7 +6539,7 @@ metadata/piscar = "nervoso"
 [node name="luz_sala_106_1" type="SpotLight3D" parent="luzes"]
 transform = Transform3D(-1.00000, 0.00000, -0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 1.00000, -0.00000, 37.11667, 3.18000, 62.50000)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 2.400
+light_energy = 1.600
 light_volumetric_fog_energy = 1.00
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6595,7 +6557,7 @@ metadata/piscar = "nervoso"
 [node name="luz_deposito_0" type="SpotLight3D" parent="luzes"]
 transform = Transform3D(-1.00000, 0.00000, -0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 1.00000, -0.00000, 67.00000, 3.18000, 62.50000)
 light_color = Color(1.0000, 0.6200, 0.2800, 1.0000)
-light_energy = 1.800
+light_energy = 1.200
 light_volumetric_fog_energy = 1.50
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6762,7 +6724,7 @@ metadata/piscar = "nervoso"
 [node name="fluor_corredor_norte_0_ambiente" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 4.74375, 1.60000, 12.85000)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 1.760
+light_energy = 0.935
 light_volumetric_fog_energy = 0.44
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6771,11 +6733,12 @@ distance_fade_shadow = 16.0
 distance_fade_length = 8.0
 omni_range = 3.00
 omni_attenuation = 1.35
+metadata/piscar = "nervoso"
 
 [node name="fluor_corredor_norte_2_ambiente" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 22.31875, 1.60000, 12.85000)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 1.540
+light_energy = 0.935
 light_volumetric_fog_energy = 0.44
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6789,7 +6752,7 @@ metadata/piscar = "nervoso"
 [node name="fluor_corredor_norte_3_ambiente" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 31.10625, 1.60000, 12.85000)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 1.760
+light_energy = 1.155
 light_volumetric_fog_energy = 0.44
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6802,7 +6765,7 @@ omni_attenuation = 1.35
 [node name="fluor_corredor_norte_4_ambiente" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 39.89375, 1.60000, 12.85000)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 1.760
+light_energy = 1.430
 light_volumetric_fog_energy = 0.44
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6811,11 +6774,12 @@ distance_fade_shadow = 16.0
 distance_fade_length = 8.0
 omni_range = 3.00
 omni_attenuation = 1.35
+metadata/piscar = "quebrado"
 
 [node name="fluor_corredor_norte_6_ambiente" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 57.46875, 1.60000, 12.85000)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 2.200
+light_energy = 1.430
 light_volumetric_fog_energy = 0.44
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6829,20 +6793,7 @@ metadata/piscar = "quebrado"
 [node name="fluor_corredor_norte_7_ambiente" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 66.25625, 1.60000, 12.85000)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 1.760
-light_volumetric_fog_energy = 0.44
-shadow_enabled = false
-distance_fade_enabled = true
-distance_fade_begin = 26.0
-distance_fade_shadow = 16.0
-distance_fade_length = 8.0
-omni_range = 3.00
-omni_attenuation = 1.35
-
-[node name="fluor_corredor_sul_0_ambiente" type="OmniLight3D" parent="luzes"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 4.74375, 1.60000, 54.50000)
-light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 1.540
+light_energy = 0.935
 light_volumetric_fog_energy = 0.44
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6856,7 +6807,7 @@ metadata/piscar = "nervoso"
 [node name="fluor_corredor_sul_2_ambiente" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 22.31875, 1.60000, 54.50000)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 1.760
+light_energy = 1.155
 light_volumetric_fog_energy = 0.44
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6869,7 +6820,7 @@ omni_attenuation = 1.35
 [node name="fluor_corredor_sul_3_ambiente" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 31.10625, 1.60000, 54.50000)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 1.760
+light_energy = 0.935
 light_volumetric_fog_energy = 0.44
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6878,11 +6829,12 @@ distance_fade_shadow = 16.0
 distance_fade_length = 8.0
 omni_range = 3.00
 omni_attenuation = 1.35
+metadata/piscar = "nervoso"
 
 [node name="fluor_corredor_sul_5_ambiente" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 48.68125, 1.60000, 54.50000)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 1.540
+light_energy = 0.935
 light_volumetric_fog_energy = 0.44
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6896,20 +6848,7 @@ metadata/piscar = "nervoso"
 [node name="fluor_corredor_sul_6_ambiente" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 57.46875, 1.60000, 54.50000)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 1.760
-light_volumetric_fog_energy = 0.44
-shadow_enabled = false
-distance_fade_enabled = true
-distance_fade_begin = 26.0
-distance_fade_shadow = 16.0
-distance_fade_length = 8.0
-omni_range = 3.00
-omni_attenuation = 1.35
-
-[node name="fluor_corredor_sul_7_ambiente" type="OmniLight3D" parent="luzes"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 66.25625, 1.60000, 54.50000)
-light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 2.200
+light_energy = 1.430
 light_volumetric_fog_energy = 0.44
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6923,7 +6862,7 @@ metadata/piscar = "quebrado"
 [node name="fluor_corredor_leste_0_ambiente" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 73.15000, 1.60000, 15.01500)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 1.760
+light_energy = 1.155
 light_volumetric_fog_energy = 0.44
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6936,7 +6875,7 @@ omni_attenuation = 1.35
 [node name="fluor_corredor_leste_2_ambiente" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 73.15000, 1.60000, 33.67500)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 1.760
+light_energy = 0.935
 light_volumetric_fog_energy = 0.44
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6945,11 +6884,12 @@ distance_fade_shadow = 16.0
 distance_fade_length = 8.0
 omni_range = 3.00
 omni_attenuation = 1.35
+metadata/piscar = "nervoso"
 
 [node name="fluor_corredor_leste_4_ambiente" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 73.15000, 1.60000, 52.33500)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 1.540
+light_energy = 0.935
 light_volumetric_fog_energy = 0.44
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6963,7 +6903,7 @@ metadata/piscar = "nervoso"
 [node name="refletor_0_ambiente" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 8.00000, 4.57000, 29.00000)
 light_color = Color(0.8000, 0.8800, 1.0000, 1.0000)
-light_energy = 2.530
+light_energy = 1.760
 light_volumetric_fog_energy = 0.64
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6977,7 +6917,7 @@ metadata/piscar = "nervoso"
 [node name="luz_sala_102_0_ambiente" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 20.23333, 1.60000, 5.17500)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 1.210
+light_energy = 0.825
 light_volumetric_fog_energy = 0.40
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6986,11 +6926,12 @@ distance_fade_shadow = 16.0
 distance_fade_length = 8.0
 omni_range = 3.00
 omni_attenuation = 1.35
+metadata/piscar = "nervoso"
 
 [node name="luz_sala_102_1_ambiente" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 25.11667, 1.60000, 5.17500)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 1.210
+light_energy = 0.825
 light_volumetric_fog_energy = 0.40
 shadow_enabled = false
 distance_fade_enabled = true
@@ -6999,11 +6940,12 @@ distance_fade_shadow = 16.0
 distance_fade_length = 8.0
 omni_range = 3.00
 omni_attenuation = 1.35
+metadata/piscar = "nervoso"
 
 [node name="luz_sala_104_0_ambiente" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 50.23333, 1.60000, 5.17500)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 1.045
+light_energy = 0.715
 light_volumetric_fog_energy = 0.40
 shadow_enabled = false
 distance_fade_enabled = true
@@ -7017,7 +6959,7 @@ metadata/piscar = "quebrado"
 [node name="luz_sala_104_1_ambiente" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 55.11667, 1.60000, 5.17500)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 1.045
+light_energy = 0.715
 light_volumetric_fog_energy = 0.40
 shadow_enabled = false
 distance_fade_enabled = true
@@ -7031,7 +6973,7 @@ metadata/piscar = "quebrado"
 [node name="luz_secretaria_0_ambiente" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 65.45000, 1.60000, 5.17500)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 1.320
+light_energy = 0.880
 light_volumetric_fog_energy = 0.48
 shadow_enabled = false
 distance_fade_enabled = true
@@ -7040,12 +6982,12 @@ distance_fade_shadow = 16.0
 distance_fade_length = 8.0
 omni_range = 3.00
 omni_attenuation = 1.35
-metadata/piscar = "nervoso"
+metadata/piscar = "quebrado"
 
 [node name="luz_secretaria_1_ambiente" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 70.55000, 1.60000, 5.17500)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 1.320
+light_energy = 0.880
 light_volumetric_fog_energy = 0.48
 shadow_enabled = false
 distance_fade_enabled = true
@@ -7054,12 +6996,12 @@ distance_fade_shadow = 16.0
 distance_fade_length = 8.0
 omni_range = 3.00
 omni_attenuation = 1.35
-metadata/piscar = "nervoso"
+metadata/piscar = "quebrado"
 
 [node name="luz_refeitorio_0_ambiente" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 52.33750, 1.60000, 23.85000)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 1.210
+light_energy = 0.825
 light_volumetric_fog_energy = 0.48
 shadow_enabled = false
 distance_fade_enabled = true
@@ -7073,7 +7015,7 @@ metadata/piscar = "nervoso"
 [node name="luz_refeitorio_1_ambiente" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 58.32500, 1.60000, 23.85000)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 1.210
+light_energy = 0.825
 light_volumetric_fog_energy = 0.48
 shadow_enabled = false
 distance_fade_enabled = true
@@ -7087,7 +7029,7 @@ metadata/piscar = "nervoso"
 [node name="luz_refeitorio_2_ambiente" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 64.31250, 1.60000, 23.85000)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 1.210
+light_energy = 0.825
 light_volumetric_fog_energy = 0.48
 shadow_enabled = false
 distance_fade_enabled = true
@@ -7101,7 +7043,7 @@ metadata/piscar = "nervoso"
 [node name="luz_biblioteca_0_ambiente" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 52.17500, 1.60000, 38.78333)
 light_color = Color(1.0000, 0.6200, 0.2800, 1.0000)
-light_energy = 0.990
+light_energy = 0.660
 light_volumetric_fog_energy = 0.56
 shadow_enabled = false
 distance_fade_enabled = true
@@ -7115,7 +7057,7 @@ metadata/piscar = "quebrado"
 [node name="luz_biblioteca_1_ambiente" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 52.17500, 1.60000, 45.21667)
 light_color = Color(1.0000, 0.6200, 0.2800, 1.0000)
-light_energy = 0.990
+light_energy = 0.660
 light_volumetric_fog_energy = 0.56
 shadow_enabled = false
 distance_fade_enabled = true
@@ -7129,7 +7071,7 @@ metadata/piscar = "quebrado"
 [node name="luz_laboratorio_0_ambiente" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 64.32500, 1.60000, 38.78333)
 light_color = Color(0.4400, 0.7800, 0.5600, 1.0000)
-light_energy = 1.375
+light_energy = 0.935
 light_volumetric_fog_energy = 0.60
 shadow_enabled = false
 distance_fade_enabled = true
@@ -7143,7 +7085,7 @@ metadata/piscar = "nervoso"
 [node name="luz_laboratorio_1_ambiente" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 64.32500, 1.60000, 45.21667)
 light_color = Color(0.4400, 0.7800, 0.5600, 1.0000)
-light_energy = 1.375
+light_energy = 0.935
 light_volumetric_fog_energy = 0.60
 shadow_enabled = false
 distance_fade_enabled = true
@@ -7157,7 +7099,7 @@ metadata/piscar = "nervoso"
 [node name="luz_almoxarifado_0_ambiente" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 6.17500, 1.60000, 62.50000)
 light_color = Color(1.0000, 0.6200, 0.2800, 1.0000)
-light_energy = 0.880
+light_energy = 0.605
 light_volumetric_fog_energy = 0.56
 shadow_enabled = false
 distance_fade_enabled = true
@@ -7171,7 +7113,7 @@ metadata/piscar = "quebrado"
 [node name="luz_sala_106_0_ambiente" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 32.23333, 1.60000, 62.50000)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 1.320
+light_energy = 0.880
 light_volumetric_fog_energy = 0.40
 shadow_enabled = false
 distance_fade_enabled = true
@@ -7185,7 +7127,7 @@ metadata/piscar = "nervoso"
 [node name="luz_sala_106_1_ambiente" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 37.11667, 1.60000, 62.50000)
 light_color = Color(0.7400, 0.8600, 0.7800, 1.0000)
-light_energy = 1.320
+light_energy = 0.880
 light_volumetric_fog_energy = 0.40
 shadow_enabled = false
 distance_fade_enabled = true
@@ -7199,7 +7141,7 @@ metadata/piscar = "nervoso"
 [node name="luz_deposito_0_ambiente" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 67.00000, 1.60000, 62.50000)
 light_color = Color(1.0000, 0.6200, 0.2800, 1.0000)
-light_energy = 0.990
+light_energy = 0.660
 light_volumetric_fog_energy = 0.60
 shadow_enabled = false
 distance_fade_enabled = true

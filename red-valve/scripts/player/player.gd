@@ -308,6 +308,7 @@ const CENAS_INTERIOR: PackedStringArray = [
 ## Onde mora o componente do braco que empurra porta. Ele PRECISA ser filho do
 ## Skeleton3D — SkeletonModifier3D so' funciona ali.
 const CAMINHO_MAO_PORTA := "maycow_lopes_normal/Armature/Skeleton3D/PlayerDoorReach"
+const CAMINHO_LANTERNA_CINTO := "maycow_lopes_normal/Armature/Skeleton3D/PlayerFlashlightHold"
 ## Quanto o movimento precisa estar alinhado com a frente do corpo para a
 ## corrida valer (produto escalar: 1 = direto para frente, 0 = totalmente de
 ## lado, -1 = de costas).
@@ -788,8 +789,20 @@ func _atualizar_mira_lanterna(delta: float) -> void:
 	lanterna.rotation.x = lerp_angle(lanterna.rotation.x,
 		alvo_x + _lant_sway.y, 0.25)
 	lanterna.rotation.y = lerp_angle(lanterna.rotation.y, _lant_sway.x, 0.25)
-	# Um tiquinho de deslocamento junto do giro: só girar a fonte move o disco
-	# de luz mas deixa a origem congelada, e o olho percebe isso.
+
+	# --- DE ONDE A LUZ SAI ----------------------------------------------
+	# Em terceira pessoa o Maycow normal carrega a lanterna no cinto, e é de lá
+	# que o facho tem de nascer: luz saindo do nada à frente do peito não tem
+	# objeto na tela que a explique. A MIRA continua vindo da câmera (é com ela
+	# que o jogador aponta) — só a ORIGEM muda de lugar.
+	var cinto := _flashlight_hold()
+	if cinto and cinto.tem_lanterna_na_cintura():
+		lanterna.global_position = cinto.saida_da_luz()
+		return
+
+	# Sem lanterna no cinto (primeira pessoa, parasita): a fonte fica à frente
+	# do peito, e um tiquinho de deslocamento junto do giro — só girar a fonte
+	# move o disco de luz mas deixa a origem congelada, e o olho percebe isso.
 	lanterna.position = lanterna.position.lerp(
 		LANTERNA_POS + Vector3(_lant_sway.x * 0.35, _lant_sway.y * 0.35, 0.0),
 		0.25)
@@ -859,6 +872,12 @@ func _encerrar_mira_de_arma() -> void:
 ## `maycow_lopes_normal` inteiro é liberado no `_ready`.
 func _gun_hold() -> Node:
 	return get_node_or_null("maycow_lopes_normal/Armature/Skeleton3D/PlayerGunHold")
+
+
+## A lanterna presa no cinto. So' existe no Maycow normal, e so' depois que ele
+## pega o item na igreja.
+func _flashlight_hold() -> Node:
+	return get_node_or_null(CAMINHO_LANTERNA_CINTO)
 
 
 ## Para onde o braço aponta: o que estiver no centro da tela.
@@ -980,6 +999,11 @@ func _ready():
 		var arma_na_mao = load("res://scripts/player/player_gun_hold.gd").new()
 		arma_na_mao.name = "PlayerGunHold"
 		esqueleto.add_child(arma_na_mao)
+		# A lanterna pendurada no cinto. Mesmo lugar e mesmo motivo dos dois de
+		# cima — e e' dela que o facho passa a sair em terceira pessoa.
+		var lanterna_cinto = load("res://scripts/player/player_flashlight_hold.gd").new()
+		lanterna_cinto.name = "PlayerFlashlightHold"
+		esqueleto.add_child(lanterna_cinto)
 	else:
 		$maycow_lopes_normal.queue_free()
 		modelo_visual = $maycow_lopes/Armature/Skeleton3D/char1

@@ -108,7 +108,7 @@ def _pontos_do_corredor(e):
 # trecho preto que muda de lugar entre uma passada e outra tira dele a unica
 # coisa que tinha pra se orientar aqui dentro.
 #   0 = queimada de vez   1 = viva   2 = viva mas tremendo   3 = estourando
-ESTADO_CORREDOR = [1, 0, 2, 1, 1, 0, 3, 1, 2, 0, 1, 1, 0, 2, 1, 3, 1, 0]
+ESTADO_CORREDOR = [2, 0, 2, 1, 3, 0, 3, 2, 0, 0, 1, 2, 0, 2, 3, 0, 1, 0]
 
 
 def luzes_de_corredor(e, contador):
@@ -126,7 +126,7 @@ def luzes_de_corredor(e, contador):
             saida.append({"so_luminaria": luminaria})
             continue
         piscar = {1: None, 2: "nervoso", 3: "quebrado"}[estado]
-        energia = {1: 3.2, 2: 2.8, 3: 4.0}[estado]
+        energia = {1: 2.1, 2: 1.7, 3: 2.6}[estado]
         saida.append(_luz("fluor_%s_%d" % (e["ident"], len(saida)),
                           "SpotLight3D", (x, y - 0.10, z), FLUOR,
                           energia, ALCANCE_CORREDOR, piscar=piscar, fog=1.1,
@@ -140,18 +140,19 @@ def luzes_de_corredor(e, contador):
 # que e' o caso da maioria das salas de aula, de proposito.
 RECEITA = {
     "sala_aula": (0.0, FLUOR, ALCANCE_SALA, None, 2, 1.0),
-    "secretaria": (2.4, FLUOR, ALCANCE_SALA, "nervoso", 2, 1.2),
-    "refeitorio": (2.2, FLUOR, 5.0, "nervoso", 3, 1.2),
-    "biblioteca": (1.8, QUENTE, ALCANCE_SALA, "quebrado", 2, 1.4),
-    "laboratorio": (2.5, VERDE_DOENTE, ALCANCE_SALA, "nervoso", 2, 1.5),
-    "almoxarifado": (1.6, QUENTE, 4.2, "quebrado", 1, 1.4),
-    "deposito": (1.8, QUENTE, 4.4, "quebrado", 1, 1.5),
+    "secretaria": (1.6, FLUOR, ALCANCE_SALA, "quebrado", 2, 1.2),
+    "refeitorio": (1.5, FLUOR, 5.0, "nervoso", 3, 1.2),
+    "biblioteca": (1.2, QUENTE, ALCANCE_SALA, "quebrado", 2, 1.4),
+    "laboratorio": (1.7, VERDE_DOENTE, ALCANCE_SALA, "nervoso", 2, 1.5),
+    "almoxarifado": (1.1, QUENTE, 4.2, "quebrado", 1, 1.4),
+    "deposito": (1.2, QUENTE, 4.4, "quebrado", 1, 1.5),
 }
 
 # As poucas salas de aula acesas. Sao as que ficam de frente pro corredor mais
 # usado: servem de referencia visual pra quem esta' se perdendo.
-SALAS_ACESAS = {"sala_102": 2.2, "sala_104": 1.9, "sala_106": 2.4}
-SALAS_PISCANDO = {"sala_104": "quebrado", "sala_106": "nervoso"}
+SALAS_ACESAS = {"sala_102": 1.5, "sala_104": 1.3, "sala_106": 1.6}
+SALAS_PISCANDO = {"sala_102": "nervoso", "sala_104": "quebrado",
+                  "sala_106": "nervoso"}
 
 
 def luzes_de_sala(s):
@@ -221,7 +222,7 @@ def luzes_do_patio():
         # Alcance longo e cone largo: e' refletor, nao luminaria de forro. Ele
         # e' a unica luz artificial de um espaco de 45 x 36 m.
         saida.append(_luz("refletor_%d" % i, "SpotLight3D",
-                          (x, REFLETOR_H - 0.25, z), FLUOR_FRIA, 4.6, 26.0,
+                          (x, REFLETOR_H - 0.25, z), FLUOR_FRIA, 3.2, 26.0,
                           mira=(cx - x, -REFLETOR_H * 0.75, cz - z),
                           angulo=40.0, sombra=True, fog=1.6,
                           piscar="nervoso", luminaria=luminaria))
@@ -406,7 +407,7 @@ def montar_porao():
         # Energia baixa de proposito. 1,6 numa omni de alcance 5 acende um
         # circulo de uns 4 m e para ali: o resto do tunel continua sendo
         # trabalho da lanterna, que foi o pedido.
-        energia = {1: 1.6, 2: 1.3, 3: 2.1}[estado]
+        energia = {1: 1.1, 2: 0.9, 3: 1.5}[estado]
         todas.append(_luz("bulbo_%d" % i, "OmniLight3D", (x, y, z), BULBO,
                           energia, ALCANCE_BULBO, piscar=piscar, fog=1.8,
                           sombra=False, luminaria=luminaria))

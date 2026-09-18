@@ -135,7 +135,7 @@ def _pontos_do_corredor(e):
 # nele: um trecho preto que muda de lugar entre uma passada e outra tira do
 # jogador a unica coisa que ele tinha pra se orientar aqui dentro.
 #   0 = queimada de vez   1 = viva   2 = viva mas tremendo   3 = estourando
-ESTADO_CORREDOR = [1, 2, 0, 1, 3, 1, 0, 2, 1, 0, 1, 2, 1, 0, 3, 1]
+ESTADO_CORREDOR = [2, 2, 0, 1, 3, 0, 0, 2, 1, 0, 3, 2, 0, 0, 3, 1]
 
 
 def luzes_de_corredor(e, andar, contador):
@@ -154,7 +154,7 @@ def luzes_de_corredor(e, andar, contador):
             saida.append({"so_luminaria": luminaria})
             continue
         piscar = {1: None, 2: "nervoso", 3: "quebrado"}[estado]
-        energia = {1: 3.4, 2: 3.0, 3: 4.2}[estado]
+        energia = {1: 2.2, 2: 1.9, 3: 2.7}[estado]
         saida.append(_luz(nome, "SpotLight3D", (x, y - 0.10, z), FLUOR,
                           energia, ALCANCE_CORREDOR, piscar=piscar, fog=1.1,
                           mira=(0.0, -1.0, 0.0), angulo=ANGULO_TETO,
@@ -172,30 +172,31 @@ def luzes_de_corredor(e, andar, contador):
 
 RECEITA = {
     "quarto": (0.0, FLUOR, ALCANCE_SALA, None, 1, 1.0),
-    "exame": (3.0, FLUOR_FRIA, ALCANCE_SALA, "nervoso", 1, 1.2),
-    "laboratorio": (2.7, VERDE_DOENTE, ALCANCE_SALA, "nervoso", 2, 1.4),
-    "cirurgia": (6.7, CIRURGICA, 5.4, None, 1, 1.6),
-    "uti": (2.6, FLUOR_FRIA, ALCANCE_SALA, "quebrado", 2, 1.3),
-    "emergencia": (3.4, FLUOR, 5.2, None, 2, 1.2),
-    "refeitorio": (2.2, QUENTE, ALCANCE_SALA, "nervoso", 2, 1.1),
-    "necroterio": (2.7, VERDE_DOENTE, ALCANCE_SALA, "quebrado", 2, 1.5),
-    "farmacia": (2.4, FLUOR, ALCANCE_SALA, None, 1, 1.0),
-    "esterilizacao": (2.2, FLUOR_FRIA, ALCANCE_SALA, "nervoso", 1, 1.2),
-    "maquinas": (2.9, QUENTE, ALCANCE_SALA, "quebrado", 2, 1.6),
-    "arquivo": (1.6, QUENTE, 4.6, "quebrado", 1, 1.3),
-    "psiquiatria": (1.8, FLUOR, ALCANCE_SALA, "quebrado", 2, 1.5),
-    "terapia": (2.1, FLUOR, ALCANCE_SALA, "nervoso", 1, 1.2),
-    "observacao": (2.2, FLUOR_FRIA, ALCANCE_SALA, "nervoso", 1, 1.2),
-    "hall": (3.0, FLUOR, 5.4, None, 4, 1.2),
-    "saguao": (2.6, FLUOR, 5.2, "nervoso", 3, 1.2),
+    "exame": (1.9, FLUOR_FRIA, ALCANCE_SALA, "nervoso", 1, 1.2),
+    "laboratorio": (1.8, VERDE_DOENTE, ALCANCE_SALA, "nervoso", 2, 1.4),
+    "cirurgia": (4.4, CIRURGICA, 5.4, "nervoso", 1, 1.6),
+    "uti": (1.7, FLUOR_FRIA, ALCANCE_SALA, "quebrado", 2, 1.3),
+    "emergencia": (2.2, FLUOR, 5.2, "nervoso", 2, 1.2),
+    "refeitorio": (1.5, QUENTE, ALCANCE_SALA, "nervoso", 2, 1.1),
+    "necroterio": (1.8, VERDE_DOENTE, ALCANCE_SALA, "quebrado", 2, 1.5),
+    "farmacia": (1.6, FLUOR, ALCANCE_SALA, "quebrado", 1, 1.0),
+    "esterilizacao": (1.5, FLUOR_FRIA, ALCANCE_SALA, "nervoso", 1, 1.2),
+    "maquinas": (1.9, QUENTE, ALCANCE_SALA, "quebrado", 2, 1.6),
+    "arquivo": (1.1, QUENTE, 4.6, "quebrado", 1, 1.3),
+    "psiquiatria": (1.2, FLUOR, ALCANCE_SALA, "quebrado", 2, 1.5),
+    "terapia": (1.4, FLUOR, ALCANCE_SALA, "nervoso", 1, 1.2),
+    "observacao": (1.5, FLUOR_FRIA, ALCANCE_SALA, "nervoso", 1, 1.2),
+    "hall": (1.9, FLUOR, 5.4, "nervoso", 4, 1.2),
+    "saguao": (1.7, FLUOR, 5.2, "nervoso", 3, 1.2),
 }
 
 # Os poucos quartos que ficam acesos. Sao os que ficam de frente pro corredor
 # mais usado — servem de referencia visual pra quem esta' se perdendo.
-QUARTOS_ACESOS = {"quarto_102": 2.4, "quarto_105": 2.0, "quarto_107": 2.5,
-                  "quarto_202": 2.2, "quarto_204": 1.7}
-QUARTOS_PISCANDO = {"quarto_105": "quebrado", "quarto_204": "nervoso",
-                    "quarto_107": "nervoso"}
+QUARTOS_ACESOS = {"quarto_102": 1.5, "quarto_105": 1.3, "quarto_107": 1.6,
+                  "quarto_202": 1.4, "quarto_204": 1.1}
+QUARTOS_PISCANDO = {"quarto_102": "nervoso", "quarto_105": "quebrado",
+                    "quarto_204": "nervoso", "quarto_107": "nervoso",
+                    "quarto_202": "quebrado"}
 
 
 def luzes_de_sala(s):
@@ -308,7 +309,7 @@ def luzes_de_emergencia():
 
 def luz_da_cabine():
     return _luz("luz_cabine", "OmniLight3D", (0.0, P.PE - 0.45, 0.0),
-                FLUOR, 3.0, 5.0, piscar="nervoso", fog=1.4)
+                FLUOR, 2.0, 5.0, piscar="nervoso", fog=1.4)
 
 
 # --------------------------------------------------------------------------
