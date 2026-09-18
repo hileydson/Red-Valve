@@ -169,16 +169,27 @@ a névoa solta, que acende a cabine e um naco do corredor em que ela abre.
 O balcão redondo da recepção (o círculo do mapa, no meio do hall) carrega os
 dois itens que o jogador **pega aqui e em nenhum outro lugar**:
 
-| Onde | Item | Prompt |
+| Ângulo | Item | Prompt |
 | :--- | :--- | :--- |
-| face **oeste** (a que encara a porta da rua) | a pistola *The Negotiator* | `PROMPT_TAKE_PISTOL` |
-| face **leste** (do outro lado) | uma caixa de 25 balas | `PROMPT_TAKE_AMMO` |
-| face **norte** | outra caixa de 25 balas | `PROMPT_TAKE_AMMO` |
+| 270° (a face que encara a porta da rua) | a pistola *The Negotiator* | `PROMPT_TAKE_PISTOL` |
+| 262,5° | uma caixa de 25 balas | `PROMPT_TAKE_AMMO` |
+| 277,5° | outra caixa de 25 balas | `PROMPT_TAKE_AMMO` |
+| 90° (a face oposta, de costas para a porta) | a caçadeira *The Negotiator Mk. III* | `PROMPT_TAKE_SHOTGUN` |
+| 82,5° | dois cartuchos | `PROMPT_TAKE_SHOTGUN_AMMO` |
+| 97,5° | outros dois cartuchos | `PROMPT_TAKE_SHOTGUN_AMMO` |
 
-Estão em lados diferentes de propósito: quem entra vê a arma de cara e precisa
-contornar o balcão para achar a munição. E são **duas** caixas de bala porque uma
-só não deixa o jogador perceber que a quantidade soma — com duas ele pega 25,
-olha o menu, pega mais 25 e vê 50.
+Estão em lados diferentes de propósito: quem entra vê a pistola de cara e precisa
+contornar o balcão para achar a munição — e, do outro lado inteiro do círculo, a
+caçadeira. E são **duas** caixas de bala porque uma só não deixa o jogador
+perceber que a quantidade soma — com duas ele pega 25, olha o menu, pega mais 25
+e vê 50. Os cartuchos seguem a mesma regra, e vêm de **dois em dois** porque dois
+é o que a caçadeira leva: um pacote é uma recarga inteira, e nunca sobra meia
+carga no inventário.
+
+A caçadeira largada no tampo é a V3 **inteira**
+(`the_negotiator_V3.glb`). Quem dobra é a versão cortada em duas peças
+(`the_negotiator_V3_dobravel.glb`, de `tools/blender/shotgun/`), e ela só existe
+na mão do Maycow, onde a recarga precisa abrir a arma.
 
 Os dois nascem em `gerar_cena_hospital.py` → `ITENS_BALCAO`, e o comportamento
 (prompt, `ui_accept`, tela de item obtido) é de `item_de_balcao.gd`, um script de

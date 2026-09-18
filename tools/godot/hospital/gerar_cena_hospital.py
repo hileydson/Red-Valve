@@ -1122,6 +1122,75 @@ ITENS_BALCAO = [
         "giro": -26.0,
         "apoio": 0.036,
     },
+    # ----------------------------------------------------------------------
+    # A CACADEIRA, NO LADO OPOSTO DO CIRCULO
+    #
+    # 90 graus e' a face de tras do balcao, diametralmente oposta a' pistola
+    # (270). E' de proposito: quem entra pela porta ve' a pistola de cara, e a
+    # arma grande so' aparece pra quem CONTORNA o balcao — a mesma ideia que ja'
+    # punha a municao do outro lado, um passo adiante.
+    #
+    # O modelo mostrado aqui e' a V3 INTEIRA. A versao dobravel
+    # (`the_negotiator_V3_dobravel.glb`) so' entra na mao do Maycow, onde a
+    # recarga precisa abrir a arma; largada no tampo ela esta' fechada, e usar
+    # a peca cortada aqui so' arriscaria mostrar a costura de graca.
+    {
+        "nome": "shotgun_no_balcao",
+        "item": "shotgun",
+        "quantidade": 1,
+        "prompt": "PROMPT_TAKE_SHOTGUN",
+        "texto": "PICKUP_SHOTGUN",
+        "repetido": "",
+        "modelo": "res://assets/3d_model/player/the_negotiator_V3/"
+                  "the_negotiator_V3.glb",
+        "angulo": 90.0,
+        # O .glb tem 1,913 unidade de ponta a ponta. Uma cacadeira de dois
+        # canos tem ~1,00 m — dai' 0,523, contra os 0,115 da pistola.
+        "escala": 0.523,
+        # Deitada de lado, como a pistola: e' uma arma comprida em cima de um
+        # balcao redondo, e de pe' ela nao para.
+        "deitada": True,
+        "giro": 8.0,
+        # Meia espessura do modelo ja' escalado (0,239 x 0,523 / 2).
+        "apoio": 0.063,
+    },
+    # Os cartuchos. Vem de DOIS em dois porque dois e' o que a arma leva: uma
+    # recarga inteira por pacote, e nunca sobra meia carga no inventario. Sao
+    # dois pacotes pelo mesmo motivo das duas caixas de bala da pistola — com
+    # um so' o jogador nao ve' que a quantidade SOMA.
+    {
+        "nome": "shotgun_municao_no_balcao",
+        "item": "shotgun_ammo",
+        "quantidade": 2,
+        "prompt": "PROMPT_TAKE_SHOTGUN_AMMO",
+        "texto": "PICKUP_SHOTGUN_AMMO",
+        "repetido": "PICKUP_SHOTGUN_AMMO_AGAIN",
+        "modelo": "res://assets/3d_model/player/the_negotiator_V3/"
+                  "cartridge/the_negotiator_V3_bullet_x2.glb",
+        "angulo": 82.5,
+        # O par ja' sai do Blender no tamanho de verdade (7 cm de cartucho) e
+        # deitado: nao precisa de escala nem de `deitada`.
+        "escala": 1.0,
+        "deitada": False,
+        "giro": 22.0,
+        # Meia espessura de um cartucho de 2,2 cm.
+        "apoio": 0.011,
+    },
+    {
+        "nome": "shotgun_municao_no_balcao_2",
+        "item": "shotgun_ammo",
+        "quantidade": 2,
+        "prompt": "PROMPT_TAKE_SHOTGUN_AMMO",
+        "texto": "PICKUP_SHOTGUN_AMMO",
+        "repetido": "PICKUP_SHOTGUN_AMMO_AGAIN",
+        "modelo": "res://assets/3d_model/player/the_negotiator_V3/"
+                  "cartridge/the_negotiator_V3_bullet_x2.glb",
+        "angulo": 97.5,
+        "escala": 1.0,
+        "deitada": False,
+        "giro": -14.0,
+        "apoio": 0.011,
+    },
 ]
 
 

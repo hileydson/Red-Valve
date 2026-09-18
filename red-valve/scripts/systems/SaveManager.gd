@@ -148,6 +148,28 @@ var item_db = {
 		"model_path": "res://assets/3d_model/player/the_negotiator_V1/cartridge/scene.gltf",
 		"stackable": true,
 		"type": "inspectable"
+	},
+	# A caçadeira e a munição dela. Vêm do MESMO balcão da pistola, do outro
+	# lado do círculo — ver `tools/godot/hospital/gerar_cena_hospital.py`.
+	#
+	# O `model_path` da arma é a V3 INTEIRA, e não a versão dobrável: aquela é
+	# cortada em duas peças para a recarga, e o menu não tem por que mostrar a
+	# costura de uma arma que o jogador ainda nem viu abrir.
+	"shotgun": {
+		"name_key": "ITEM_SHOTGUN_NAME",
+		"desc_key": "ITEM_SHOTGUN_DESC",
+		"icon_path": "res://assets/images/menu/itens/red_valve/shotgun.png",
+		"model_path": "res://assets/3d_model/player/the_negotiator_V3/the_negotiator_V3.glb",
+		"stackable": false,
+		"type": "equippable"
+	},
+	"shotgun_ammo": {
+		"name_key": "ITEM_SHOTGUN_AMMO_NAME",
+		"desc_key": "ITEM_SHOTGUN_AMMO_DESC",
+		"icon_path": "res://assets/images/menu/itens/red_valve/shotgun_bala.png",
+		"model_path": "res://assets/3d_model/player/the_negotiator_V3/cartridge/the_negotiator_V3_bullet_x2.glb",
+		"stackable": true,
+		"type": "inspectable"
 	}
 }
 
@@ -159,7 +181,7 @@ var item_db = {
 ## na arena. Por isso `add_item` e `remove_item_amount` mexem nas duas listas
 ## quando o item e' um destes — senao o pente esvaziado na arena voltaria cheio
 ## do outro lado, e a arma pega no hospital so' apareceria no menu de um deles.
-const ITENS_COMPARTILHADOS := ["pistol", "pistol_ammo"]
+const ITENS_COMPARTILHADOS := ["pistol", "pistol_ammo", "shotgun", "shotgun_ammo"]
 
 ## So' UM destes fica equipado por vez.
 ##
@@ -169,10 +191,14 @@ const ITENS_COMPARTILHADOS := ["pistol", "pistol_ammo"]
 ##
 ## A cogblade fica de fora: ela e' do Maycow parasita, nunca sai da mao dele e
 ## nao disputa o gatilho com nada.
-const EQUIPAMENTO_EXCLUSIVO := ["amuleto", "pistol"]
+##
+## A CACADEIRA entra pela mesma porta da pistola: as duas sao arma de fogo do
+## Maycow normal, usam o mesmo botao de mira e so' uma cabe na mao. Trocar de
+## uma pra outra e' equipar a outra — no menu ou pelo atalho do direcional.
+const EQUIPAMENTO_EXCLUSIVO := ["amuleto", "pistol", "shotgun"]
 
 ## Quais dos exclusivos sao ARMA (e nao poder). E' o que a arena devolve.
-const ARMAS_DE_FOGO := ["pistol"]
+const ARMAS_DE_FOGO := ["pistol", "shotgun"]
 
 func _ready():
 	self.process_mode = Node.PROCESS_MODE_ALWAYS

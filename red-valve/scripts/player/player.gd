@@ -8,6 +8,14 @@ extends CharacterBody3D
 @onready var gun_load: AudioStreamPlayer = $sounds/GunLoad
 @onready var load_gun: AudioStreamPlayer = $sounds/LoadGun
 @onready var gun_shot: AudioStreamPlayer = $sounds/GunShot
+# Os quatro da cacadeira. Ela nao reaproveita os da pistola porque nenhum dos
+# quatro momentos dela e' o mesmo: o tiro e' de cano duplo, o "reload" aqui e' o
+# estalo da arma DOBRANDO, o "load" e' um cartucho entrando por vez, e o
+# "close" e' ela batendo fechada no fim.
+@onready var shotgun_shot: AudioStreamPlayer = $sounds/ShotgunShot
+@onready var shotgun_break: AudioStreamPlayer = $sounds/ShotgunBreak
+@onready var shotgun_load_shell: AudioStreamPlayer = $sounds/ShotgunLoadShell
+@onready var shotgun_close: AudioStreamPlayer = $sounds/ShotgunClose
 @onready var passos: AudioStreamPlayer3D = $sounds_3d/Passos
 var _passo_pe_alternado: bool = false # alterna a cada passo p/ dar sensação de pé esq/dir
 @onready var pistola: AnimatedSprite2D = $Camera3D/CanvasLayer/control_weapons/pistola
@@ -47,6 +55,7 @@ var _passo_pe_alternado: bool = false # alterna a cada passo p/ dar sensação d
 
 var blood_effect = preload("res://scenes/enemies/blood.tscn")
 var capsula_scene = preload("res://scenes/effects/capsula.tscn")
+var capsula_shotgun_scene = preload("res://scenes/effects/capsula_shotgun.tscn")
 
 # --- PLAYER HEALTH & HUD ---
 @export var max_health: int = 100
@@ -269,6 +278,10 @@ var amulet_crosshair: Panel
 ## Mira da PISTOLA (Maycow normal, terceira pessoa). É outra da mira do amuleto
 ## de propósito: aquela é um círculo roxo de magia, esta é a cruz de um tiro.
 var gun_crosshair: Control
+## Mira da CACADEIRA. Também é outra, e pelo mesmo motivo que a da pistola é
+## outra da do amuleto: a pistola acerta um ponto, e a cruz fina diz isso; a
+## caçadeira cobre uma área, e o que diz isso é um círculo aberto.
+var shotgun_crosshair: Control
 var iron_rusks_value_label: Label
 
 var is_teleporting_enemies: bool = false
@@ -339,6 +352,10 @@ var _slow_timer: float = 0.0
 #CHANGE LATER - DYNAMICLY
 @export var damage_crescent_cogblade:int = 5
 @export var damage_pistol:int = 10 #3 
+## Dano de UM chumbo da caçadeira. O tiro solta `PELOTAS_SHOTGUN` deles de uma
+## vez (ver player_combat), então colado no inimigo o estrago é a soma e de
+## longe a carga se abre e só uma parte acerta — que é o que uma caçadeira faz.
+@export var damage_shotgun_pelota:int = 9
 @export var damage_headshoot:int = 100
 var current_weapon #: AnimatedSprite2D
 var can_shoot_again:bool = true
@@ -442,6 +459,15 @@ var is_toggle_aim_active: bool = false
 ## mais conseguiria repor.
 var clip_pistol_ammo: int = 8
 var max_clip_pistol: int = 8
+
+## A caçadeira leva DOIS, e é por isso que ela existe como arma diferente e não
+## como outro número na pistola: dois tiros mudam o jeito de jogar.
+##
+## Vale aqui a mesma regra do pente da pistola — `clip_shotgun_ammo` é com
+## quantos ela nasce, e nascer cheia é o que faz a arma pega no balcão já vir
+## com dois tiros, sem ninguém precisar carregá-la antes do primeiro uso.
+var clip_shotgun_ammo: int = 2
+var max_clip_shotgun: int = 2
 var ammo_label: Label
 var ammo_icon: TextureRect
 var amulet_hud_icon: TextureRect
@@ -843,19 +869,35 @@ func _processar_mira_de_arma() -> void:
 	_hide_amulet_magic()
 	_clear_amulet_hover()
 
-	var gun_hold := _gun_hold()
+	# Duas armas passam por aqui, e a escolha é uma só: qual está equipada.
+	# Tudo o que muda entre elas está nestas três linhas — a mira que acende, o
+	# componente que levanta a arma, e o par atirar/recarregar.
+	var com_shotgun: bool = SaveManager.is_equipped("shotgun")
+	var arma_hold := _shotgun_hold() if com_shotgun else _gun_hold()
+	var mira: Control = shotgun_crosshair if com_shotgun else gun_crosshair
+
 	if is_instance_valid(gun_crosshair):
-		gun_crosshair.visible = is_aiming
-	if gun_hold:
-		gun_hold.mirar(is_aiming, _ponto_de_mira_da_arma() if is_aiming else Vector3.ZERO)
+		gun_crosshair.visible = is_aiming and not com_shotgun
+	if is_instance_valid(shotgun_crosshair):
+		shotgun_crosshair.visible = is_aiming and com_shotgun
+	if is_instance_valid(mira):
+		mira.visible = is_aiming
+	if arma_hold:
+		arma_hold.mirar(is_aiming, _ponto_de_mira_da_arma() if is_aiming else Vector3.ZERO)
 
 	if is_aiming and Input.is_action_just_pressed("ui_shoot"):
-		atirar_terceira_pessoa()
+		if com_shotgun:
+			atirar_shotgun()
+		else:
+			atirar_terceira_pessoa()
 
 	# Recarregar NÃO exige estar mirando: ele guarda a arma, põe o pente e
 	# levanta de novo. Exigir mira aqui seria só uma regra a mais para decorar.
 	if Input.is_action_just_pressed("ui_reload"):
-		recarregar_terceira_pessoa()
+		if com_shotgun:
+			recarregar_shotgun()
+		else:
+			recarregar_terceira_pessoa()
 
 
 ## Desliga tudo o que a mira de arma acende. Chamado quando a mira não pode
@@ -863,15 +905,42 @@ func _processar_mira_de_arma() -> void:
 func _encerrar_mira_de_arma() -> void:
 	if is_instance_valid(gun_crosshair):
 		gun_crosshair.visible = false
+	if is_instance_valid(shotgun_crosshair):
+		shotgun_crosshair.visible = false
+	# As DUAS são avisadas, e não só a equipada: quem cai aqui muitas vezes caiu
+	# porque o item MUDOU no meio de uma mirada, e nesse quadro a que precisa
+	# baixar a arma é justamente a que não está mais equipada.
 	var gun_hold := _gun_hold()
 	if gun_hold:
 		gun_hold.mirar(false)
+	var shotgun_hold := _shotgun_hold()
+	if shotgun_hold:
+		shotgun_hold.mirar(false)
 
 
 ## O componente que segura a arma. Só existe no Maycow normal — no parasita o
 ## `maycow_lopes_normal` inteiro é liberado no `_ready`.
 func _gun_hold() -> Node:
 	return get_node_or_null("maycow_lopes_normal/Armature/Skeleton3D/PlayerGunHold")
+
+
+## O componente que segura a caçadeira. Mesmas regras do `_gun_hold()`.
+func _shotgun_hold() -> Node:
+	return get_node_or_null("maycow_lopes_normal/Armature/Skeleton3D/PlayerShotgunHold")
+
+
+## O componente da arma que está equipada AGORA, ou null se for nenhuma.
+##
+## Existe porque quase todo mundo que pergunta pelo `_gun_hold()` na verdade
+## quer "quem está segurando a arma" — a pose de mira, o gesto de recarga, de
+## onde sai o clarão. Sem isto, cada um desses lugares precisaria de um `if`
+## repetindo a mesma escolha.
+func _arma_na_mao() -> Node:
+	if SaveManager.is_equipped("shotgun"):
+		return _shotgun_hold()
+	if SaveManager.is_equipped("pistol"):
+		return _gun_hold()
+	return null
 
 
 ## A lanterna presa no cinto. So' existe no Maycow normal, e so' depois que ele
@@ -917,6 +986,16 @@ func _ponto_de_mira_da_arma() -> Vector3:
 func atirar_terceira_pessoa() -> void:
 	var combat = get_node_or_null("PlayerCombat")
 	if combat: combat.atirar_terceira_pessoa()
+
+
+func atirar_shotgun() -> void:
+	var combat = get_node_or_null("PlayerCombat")
+	if combat: combat.atirar_shotgun()
+
+
+func recarregar_shotgun() -> void:
+	var combat = get_node_or_null("PlayerCombat")
+	if combat: combat.recarregar_shotgun()
 
 
 func recarregar_terceira_pessoa() -> void:
@@ -999,6 +1078,16 @@ func _ready():
 		var arma_na_mao = load("res://scripts/player/player_gun_hold.gd").new()
 		arma_na_mao.name = "PlayerGunHold"
 		esqueleto.add_child(arma_na_mao)
+		# A cacadeira, no mesmo lugar e pelo mesmo motivo. Vai DEPOIS da
+		# pistola de proposito: os dois mexem nos morphs de mao fechada, e um
+		# SkeletonModifier3D roda na ordem da arvore — o ultimo e' quem fica
+		# com a palavra final. Como so' uma das duas armas pode estar equipada
+		# (SaveManager.EQUIPAMENTO_EXCLUSIVO), a que esta' guardada nao escreve
+		# pose nenhuma; o que nao pode e' a guardada ABRIR a mao depois que a
+		# outra ja' fechou, e a ordem resolve isso.
+		var cacadeira_na_mao = load("res://scripts/player/player_shotgun_hold.gd").new()
+		cacadeira_na_mao.name = "PlayerShotgunHold"
+		esqueleto.add_child(cacadeira_na_mao)
 		# A lanterna pendurada no cinto. Mesmo lugar e mesmo motivo dos dois de
 		# cima — e e' dela que o facho passa a sair em terceira pessoa.
 		var lanterna_cinto = load("res://scripts/player/player_flashlight_hold.gd").new()
@@ -1569,7 +1658,8 @@ func _physics_process(delta: float) -> void:
 		# ela levanta a arma em terceira pessoa e o gatilho vira tiro. Os dois
 		# nunca estao equipados juntos (SaveManager.EQUIPAMENTO_EXCLUSIVO), entao
 		# a escolha feita no menu chega aqui como um `if`.
-		var mira_de_arma: bool = SaveManager.is_equipped("pistol")
+		var mira_de_arma: bool = SaveManager.is_equipped("pistol") \
+			or SaveManager.is_equipped("shotgun")
 
 		if normal_can_aim and mira_de_arma:
 			_processar_mira_de_arma()

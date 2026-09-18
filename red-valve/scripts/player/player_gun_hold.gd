@@ -790,6 +790,12 @@ var _ajustando_arma := false
 func _input(event: InputEvent) -> void:
 	if not OS.is_debug_build() or not (event is InputEventKey):
 		return
+	# A cacadeira (`player_shotgun_hold.gd`) tem o MESMO modo de ajuste, nas
+	# mesmas teclas, e os dois modificadores vivem no mesmo esqueleto ouvindo o
+	# mesmo teclado. Sem esta linha, um F9 liga os dois e cada tecla imprime
+	# dois blocos — o da arma que esta' na mao e o da que esta' guardada.
+	if not SaveManager.is_equipped(ITEM_PISTOLA):
+		return
 	var tecla := event as InputEventKey
 	if not tecla.pressed:
 		return

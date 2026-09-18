@@ -311,6 +311,7 @@ void fragment() {
 	player.hud_layer.add_child(player.amulet_crosshair)
 
 	_setup_gun_crosshair()
+	_setup_shotgun_crosshair()
 	
 	# Amulet Counter Label
 	player.amulet_counter_label = Label.new()
@@ -378,6 +379,53 @@ func _setup_gun_crosshair() -> void:
 
 	player.hud_layer.add_child(raiz)
 	player.gun_crosshair = raiz
+
+## A mira da CAÇADEIRA: um círculo aberto, sem cruz e sem ponto no meio.
+##
+## A diferença com a da pistola não é enfeite. A pistola põe uma bala num ponto,
+## e a cruz fina com o miolo vazio diz exatamente isso — "sai daqui". A
+## caçadeira solta um punhado de chumbo que se abre com a distância, e não
+## existe "daqui": existe uma área. Um anel é a única forma que promete a coisa
+## certa; uma cruz aqui estaria mentindo sobre a precisão da arma.
+##
+## Nasce escondida — quem a acende é `player._processar_mira_de_arma()`.
+func _setup_shotgun_crosshair() -> void:
+	var raiz = Control.new()
+	raiz.name = "ShotgunCrosshair"
+	raiz.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+	raiz.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	raiz.visible = false
+
+	# Diâmetro do anel, em pixels. Não é o tamanho real do espalhamento (esse
+	# muda com a distância e o HUD não sabe dela) — é grande o bastante para ler
+	# como "área" e pequeno o bastante para ainda se mirar com ele.
+	var diametro := 40
+
+	var anel = Panel.new()
+	anel.custom_minimum_size = Vector2(diametro, diametro)
+	anel.position = Vector2(-diametro * 0.5, -diametro * 0.5)
+	anel.size = Vector2(diametro, diametro)
+	anel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	var estilo = StyleBoxFlat.new()
+	estilo.bg_color = Color(0, 0, 0, 0)
+	estilo.border_width_left = 2
+	estilo.border_width_right = 2
+	estilo.border_width_top = 2
+	estilo.border_width_bottom = 2
+	estilo.border_color = Color(1, 1, 1, 0.85)
+	# Raio igual a meio lado é o que transforma o quadrado em círculo.
+	var raio := diametro / 2
+	estilo.corner_radius_top_left = raio
+	estilo.corner_radius_top_right = raio
+	estilo.corner_radius_bottom_left = raio
+	estilo.corner_radius_bottom_right = raio
+	estilo.anti_aliasing = true
+	anel.add_theme_stylebox_override("panel", estilo)
+	raiz.add_child(anel)
+
+	player.hud_layer.add_child(raiz)
+	player.shotgun_crosshair = raiz
 
 func _setup_iron_rusks_hud() -> void:
 	var iron_rusks_layer = CanvasLayer.new()
@@ -449,18 +497,25 @@ func update_ammo_ui() -> void:
 	if not is_instance_valid(player.ammo_label): return
 
 	var is_pistol_equipped = SaveManager.is_equipped("pistol")
+	var is_shotgun_equipped = SaveManager.is_equipped("shotgun")
+	# O contador é o MESMO para as duas armas: elas nunca estão equipadas juntas
+	# (SaveManager.EQUIPAMENTO_EXCLUSIVO), então o que muda é só de qual pente e
+	# de qual caixa os dois números saem.
+	var tem_arma = is_pistol_equipped or is_shotgun_equipped
 
-	if not is_pistol_equipped:
+	if not tem_arma:
 		player.ammo_label.visible = false
 		if is_instance_valid(player.ammo_icon): player.ammo_icon.visible = false
 	else:
 		player.ammo_label.visible = true
 		if is_instance_valid(player.ammo_icon): player.ammo_icon.visible = true
-		var total = SaveManager.get_item_amount("pistol_ammo")
-		player.ammo_label.text = str(player.clip_pistol_ammo) + " / " + str(total)
+		var no_pente = player.clip_shotgun_ammo if is_shotgun_equipped else player.clip_pistol_ammo
+		var id_municao = "shotgun_ammo" if is_shotgun_equipped else "pistol_ammo"
+		var total = SaveManager.get_item_amount(id_municao)
+		player.ammo_label.text = str(no_pente) + " / " + str(total)
 
 	if is_instance_valid(player.amulet_hud_icon):
-		player.amulet_hud_icon.visible = not is_pistol_equipped and SaveManager.is_equipped("amuleto")
+		player.amulet_hud_icon.visible = not tem_arma and SaveManager.is_equipped("amuleto")
 
 func _start_heartbeat_pulse() -> void:
 	if player.current_health <= 0:

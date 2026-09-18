@@ -28,6 +28,10 @@
 [ext_resource type="AudioStream" uid="uid://dgp7u4s1k2qu1" path="res://assets/sounds/player/load_gun.mp3" id="19_lgqa7"]
 [ext_resource type="AudioStream" uid="uid://ofvx4vx6qal" path="res://assets/sounds/player/dash_effect.mp3" id="23_ioxgp"]
 [ext_resource type="Texture2D" uid="uid://d30m420s5p205" path="res://assets/images/vfx/smoke.png" id="25_007i1"]
+[ext_resource type="AudioStream" uid="uid://b5sjk7kfvyt2g" path="res://assets/sounds/player/guns/shotgun/shotgun_sound.mp3" id="26_sgshot"]
+[ext_resource type="AudioStream" uid="uid://c82igkydwe130" path="res://assets/sounds/player/guns/shotgun/shotgun_reload.mp3" id="27_sgbreak"]
+[ext_resource type="AudioStream" uid="uid://b7odbsh75diai" path="res://assets/sounds/player/guns/shotgun/shotgun_load_bullet.mp3" id="28_sgload"]
+[ext_resource type="AudioStream" uid="uid://dte380ugseafi" path="res://assets/sounds/player/guns/shotgun/shotgun_final_reload_sound.mp3" id="29_sgclose"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_28m0y"]
 albedo_texture = ExtResource("5_j4nxn")
@@ -8189,6 +8193,23 @@ volume_db = -4.809
 stream = ExtResource("23_ioxgp")
 volume_db = -3.006
 pitch_scale = 0.84
+
+[node name="ShotgunShot" type="AudioStreamPlayer" parent="sounds"]
+stream = ExtResource("26_sgshot")
+volume_db = -3.2
+
+[node name="ShotgunBreak" type="AudioStreamPlayer" parent="sounds"]
+stream = ExtResource("27_sgbreak")
+volume_db = -5.0
+
+[node name="ShotgunLoadShell" type="AudioStreamPlayer" parent="sounds"]
+stream = ExtResource("28_sgload")
+volume_db = -4.5
+max_polyphony = 2
+
+[node name="ShotgunClose" type="AudioStreamPlayer" parent="sounds"]
+stream = ExtResource("29_sgclose")
+volume_db = -4.5
 
 [node name="maycow_lopes_normal" parent="." unique_id=1097582912 instance=ExtResource("4_6cv16")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.39953053)

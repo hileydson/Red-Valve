@@ -79,6 +79,10 @@ ITEM_COGBLADE_NAME,Crescent Cogblade,Crescent Cogblade
 ITEM_COGBLADE_DESC,A gear-powered blade.,Uma lâmina de engrenagem.
 ITEM_AMMO_NAME,Pistol Ammo,Balas de Pistola
 ITEM_AMMO_DESC,Ammunition for your gun.,Munição para a sua arma.
+ITEM_SHOTGUN_NAME,Shotgun,Espingarda
+ITEM_SHOTGUN_DESC,"The Negotiator Mk. III — a break-action double barrel left on the hospital desk. Two shots, then it folds open to be fed by hand.","A Negotiator Mk. III — caçadeira de dois canos largada no balcão do hospital. Dois tiros, e então ela dobra para ser alimentada na mão."
+ITEM_SHOTGUN_AMMO_NAME,Shotgun Shells,Cartuchos de Espingarda
+ITEM_SHOTGUN_AMMO_DESC,"Twelve-gauge shells. They come in pairs, which is exactly what the gun holds.","Cartuchos calibre 12. Vêm aos pares, que é exatamente o que a arma comporta."
 MENU_CONFIG,Configuration,Configurações
 CONFIG_AIM_MODE,Aim Mode,Modo de Mira
 CONFIG_AIM_HOLD,Hold,Segurar
@@ -259,6 +263,10 @@ PROMPT_TAKE_PISTOL,Take the pistol?,Pegar a pistola?
 PROMPT_TAKE_AMMO,Take the ammunition?,Pegar a munição?
 PICKUP_PISTOL,"You picked up The Negotiator. Equip it in the menu to carry it in your hand.","Você pegou a The Negotiator. Equipe ela no menu para levá-la na mão."
 PICKUP_AMMO,"Pistol ammunition. Reload with the reload button when the magazine runs dry.","Munição de pistola. Recarregue com o botão de recarga quando o pente acabar."
+PROMPT_TAKE_SHOTGUN,Take the shotgun?,Pegar a espingarda?
+PROMPT_TAKE_SHOTGUN_AMMO,Take the shells?,Pegar os cartuchos?
+PICKUP_SHOTGUN,"You picked up The Negotiator Mk. III. Two shots loaded. Equip it in the menu to carry it in your hand.","Você pegou a The Negotiator Mk. III. Dois tiros carregados. Equipe ela no menu para levá-la na mão."
+PICKUP_SHOTGUN_AMMO,"Two shells. The gun only reloads when both barrels are empty.","Dois cartuchos. A arma só recarrega quando os dois canos estão vazios."
 ACTION_SHORTCUT,Shortcut,Atalho
 SHORTCUT_TITLE,Assign to a direction,Atribuir a um direcional
 SHORTCUT_HINT,D-pad on the controller / numeric keypad,Direcional do controle / teclado numérico
@@ -269,3 +277,4 @@ SHORTCUT_RIGHT,Right,Direita
 SHORTCUT_DOWN,Down,Baixo
 SHORTCUT_EQUIPPED,Equipped: %s,Equipado: %s
 PICKUP_AMMO_AGAIN,+%d %s,+%d %s
+PICKUP_SHOTGUN_AMMO_AGAIN,+%d %s,+%d %s

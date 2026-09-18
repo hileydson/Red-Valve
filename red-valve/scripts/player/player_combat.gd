@@ -382,6 +382,215 @@ func recarregar_terceira_pessoa() -> void:
 	_recarregando_3p = false
 
 
+# =========================================================================
+# A CAÇADEIRA (MAYCOW NORMAL)
+# =========================================================================
+# Irmã do bloco de cima, e separada dele pelas duas coisas que não dão para
+# resolver com um `if`: o tiro é um punhado de chumbo em vez de uma bala, e a
+# recarga é um gesto com peças móveis — a arma DOBRA, despeja as cápsulas e é
+# alimentada um cartucho por vez.
+#
+# O gesto em si é do `player_shotgun_hold.gd`. Daqui saem os sons, as cápsulas
+# e o efeito no inventário, e os MOMENTO_* abaixo são cópias das constantes
+# M_* de lá. Eles TÊM de bater: som de encaixe fora do quadro em que a mão
+# encaixa é o que mais denuncia uma animação falsa.
+
+## Cadência. Mais lenta que a da pistola: é uma arma pesada, e com dois tiros
+## no total o ritmo dela é "escolhe a hora", não "despeja".
+const TEMPO_ENTRE_TIROS_SHOTGUN := 0.85
+
+## O gesto inteiro de recarga. Longo de propósito — abrir, virar, pôr dois
+## cartuchos na mão e fechar não cabe em um segundo e meio, e encurtar isso
+## transformaria a única fraqueza da arma em nada.
+##
+## Eram 2,8 s, e o problema não era o total: era que os dois cartuchos entravam
+## com meio segundo de intervalo, e meio segundo não lê como "um, depois o
+## outro" — lê como um borrão só. Agora a mão VOLTA ao cinto no meio, e entre
+## um encaixe e o outro passam 0,86 s.
+const TEMPO_RECARGA_SHOTGUN := 3.6
+
+## Os momentos do gesto, em fração dele. Espelham os M_* do
+## `player_shotgun_hold.gd` — mexeu lá, muda aqui.
+const MOMENTO_ABRE := 0.08
+const MOMENTO_EJETA := 0.31
+const MOMENTO_BALA1 := 0.60
+const MOMENTO_BALA2 := 0.84
+const MOMENTO_FECHA := 0.90
+
+## Quantos chumbos saem por tiro, e quanto a carga se abre (graus de meio-ângulo
+## do cone). 2,5 graus dá ~9 cm de espalhamento a 2 m e ~90 cm a 20 m: mata de
+## perto e só arranha de longe, que é o contrato de uma caçadeira.
+const PELOTAS_SHOTGUN := 7
+const ESPALHAMENTO_SHOTGUN := 2.5
+
+var _recarregando_shotgun: bool = false
+
+
+func atirar_shotgun() -> void:
+	if not SaveManager.is_equipped("shotgun"): return
+	if not player.can_shoot_again or player.is_reloading: return
+	if player.clip_shotgun_ammo <= 0:
+		# Os dois canos vazios: quem avisa é o silêncio mais o contador zerado.
+		# Recarregar é do jogador — e aqui ele NÃO tem escolha, porque a arma
+		# só aceita recarga com os dois vazios.
+		return
+
+	var gun_hold = player._shotgun_hold()
+
+	player.clip_shotgun_ammo -= 1
+	player.update_ammo_ui()
+	player.can_shoot_again = false
+
+	player.shotgun_shot.play()
+	# Tranco maior que o da pistola nos dois canais. É o coice: numa arma de
+	# dois tiros ele é parte do que faz cada tiro pesar.
+	GlobalUtils.shake_camera(0.11, 0.16)
+	GlobalUtils.vibrate_controller(Input, 0.9, 0.35, 0.18)
+
+	if gun_hold and gun_hold.tem_arma_na_mao():
+		_piscar_clarao(gun_hold.boca_do_cano())
+
+	_raio_do_tiro_shotgun()
+
+	await get_tree().create_timer(TEMPO_ENTRE_TIROS_SHOTGUN).timeout
+	player.can_shoot_again = true
+
+
+## Recarga da caçadeira.
+##
+## SÓ com os dois canos vazios, e isso é regra da arma, não economia de código:
+## uma break-action não tem como repor um cano só sem abrir e despejar o outro,
+## e é essa espera obrigatória que equilibra dois tiros que derrubam qualquer
+## coisa. Apertar recarregar com um tiro na agulha não faz nada.
+func recarregar_shotgun() -> void:
+	if _recarregando_shotgun or player.is_reloading: return
+	if not SaveManager.is_equipped("shotgun"): return
+	if player.clip_shotgun_ammo > 0: return
+	if SaveManager.get_item_amount("shotgun_ammo") <= 0: return
+
+	_recarregando_shotgun = true
+	player.is_reloading = true
+
+	var gun_hold = player._shotgun_hold()
+	if gun_hold:
+		gun_hold.recarregar(TEMPO_RECARGA_SHOTGUN)
+
+	# O gesto é contado do começo, e não somando esperas: assim atrasar um
+	# momento não empurra todos os seguintes junto.
+	var decorrido := 0.0
+
+	decorrido = await _esperar_ate(MOMENTO_ABRE, decorrido)
+	player.shotgun_break.play()
+
+	decorrido = await _esperar_ate(MOMENTO_EJETA, decorrido)
+	_soltar_capsulas_shotgun(gun_hold)
+
+	for momento in [MOMENTO_BALA1, MOMENTO_BALA2]:
+		decorrido = await _esperar_ate(momento, decorrido)
+		# Cada cartucho entra NO QUADRO em que a mão encaixa, e não todos no
+		# fim: aqui a mão vai buscar um por vez, e o contador subindo de um em
+		# um é o que faz o gesto e o HUD contarem a mesma história.
+		if SaveManager.get_item_amount("shotgun_ammo") <= 0:
+			continue
+		if player.clip_shotgun_ammo >= player.max_clip_shotgun:
+			continue
+		SaveManager.remove_item_amount("shotgun_ammo", 1)
+		player.clip_shotgun_ammo += 1
+		player.update_ammo_ui()
+		player.shotgun_load_shell.play()
+
+	decorrido = await _esperar_ate(MOMENTO_FECHA, decorrido)
+	player.shotgun_close.play()
+
+	await _esperar_ate(1.0, decorrido)
+	player.is_reloading = false
+	_recarregando_shotgun = false
+
+
+## Espera até o instante `fracao` do gesto, sabendo que já se passou
+## `decorrido`. Devolve o novo `decorrido` para a próxima chamada.
+func _esperar_ate(fracao: float, decorrido: float) -> float:
+	var falta := (fracao - decorrido) * TEMPO_RECARGA_SHOTGUN
+	if falta > 0.0:
+		await get_tree().create_timer(falta).timeout
+	return fracao
+
+
+## As duas cápsulas caindo da culatra quando a arma vira.
+##
+## Saem das BOCAS DAS CÂMARAS de verdade — o componente da arma sabe onde elas
+## estão neste quadro, inclusive já giradas pela dobra. Por isso o cálculo mora
+## lá e não aqui: aqui não há como saber o quanto a arma está aberta.
+##
+## E caem, não voam: o extrator de uma break-action empurra o cartucho um dedo
+## para fora e a gravidade faz o resto. Um impulso de pistola aqui mandaria as
+## duas para longe, que é justamente o que não acontece.
+func _soltar_capsulas_shotgun(gun_hold) -> void:
+	if not player.capsula_shotgun_scene or not is_inside_tree(): return
+	if gun_hold == null or not gun_hold.tem_arma_na_mao(): return
+
+	var direcao_saida: Vector3 = gun_hold.direcao_do_cano()
+	for ponto in gun_hold.bocas_das_camaras():
+		var capsula = player.capsula_shotgun_scene.instantiate()
+		get_tree().current_scene.add_child(capsula)
+		capsula.add_collision_exception_with(player)
+		capsula.global_position = ponto
+		capsula.look_at_from_position(ponto, ponto + direcao_saida, Vector3.UP)
+		# Para TRÁS do cano (é por onde o cartucho sai) e um empurrãozinho.
+		capsula.apply_central_impulse(-direcao_saida * randf_range(0.25, 0.45)
+			+ Vector3.UP * randf_range(0.05, 0.15))
+		capsula.apply_torque(Vector3(randf_range(-2, 2), randf_range(-2, 2),
+			randf_range(-2, 2)))
+
+
+## O punhado de chumbo.
+##
+## Um raio por chumbo, todos saindo do MESMO ponto da câmera (pelo motivo do
+## `_raio_do_tiro_3p`: é o centro da tela que o jogador usou para mirar) e cada
+## um desviado dentro de um cone. Um raio só com dano triplicado seria mais
+## barato e mentiria: a graça da arma é acertar metade da carga a meia
+## distância, e isso só existe se os chumbos forem contados separados.
+func _raio_do_tiro_shotgun() -> void:
+	var cam = player.get_viewport().get_camera_3d()
+	if cam == null: return
+
+	var origem: Vector3 = cam.global_position
+	var frente: Vector3 = -cam.global_transform.basis.z
+	var direita: Vector3 = cam.global_transform.basis.x
+	var cima: Vector3 = cam.global_transform.basis.y
+	var espaco := player.get_world_3d().direct_space_state
+	var abertura := deg_to_rad(ESPALHAMENTO_SHOTGUN)
+
+	# Um alvo levar sete vezes o efeito colateral de um tiro (sangue, pulo do
+	# inimigo) por um disparo só ficaria exagerado; o dano soma, o resto não.
+	var ja_sangrou: Array = []
+
+	for i in PELOTAS_SHOTGUN:
+		# Ponto aleatório DENTRO do disco, e não na borda: sqrt() é o que
+		# espalha parejo por área em vez de amontoar tudo na circunferência.
+		var angulo := randf() * TAU
+		var raio := sqrt(randf()) * abertura
+		var desvio := (direita * cos(angulo) + cima * sin(angulo)) * tan(raio)
+		var dir := (frente + desvio).normalized()
+
+		var consulta := PhysicsRayQueryParameters3D.create(origem,
+			origem + dir * ALCANCE_TIRO_3P)
+		consulta.collision_mask = 12
+		consulta.collide_with_areas = true
+		consulta.exclude = [player.get_rid()]
+
+		var toque := espaco.intersect_ray(consulta)
+		if toque.is_empty(): continue
+
+		var alvo = toque.get("collider")
+		if alvo == null or not alvo.has_method("take_damage"): continue
+
+		alvo.take_damage(player.damage_shotgun_pelota)
+		if alvo.is_in_group("enemies") and not alvo in ja_sangrou:
+			ja_sangrou.append(alvo)
+			spawn_blood_raycast(toque["position"], toque["normal"])
+
+
 ## O raio sai da CÂMERA, não do cano: é o centro da tela que o jogador usou para
 ## mirar. O cano aponta para o mesmo ponto (o braço inteiro aponta para ele), só
 ## que de um palmo ao lado — usar o cano como origem faria o tiro passar raspando
