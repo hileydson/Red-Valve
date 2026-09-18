@@ -1170,8 +1170,9 @@ func _physics_process(delta: float) -> void:
 		# e processa o combate para que a cogblade possa girar e voar.
 		if not is_on_floor():
 			velocity += get_gravity() * delta
+		var vel_pre := velocity
 		move_and_slide()
-		_empurrar_corpos_fisicos()
+		_empurrar_corpos_fisicos(vel_pre)
 
 		var combat_comp = get_node_or_null("PlayerCombat")
 		if combat_comp: combat_comp.process_combat(delta)
@@ -1882,8 +1883,9 @@ func _physics_process(delta: float) -> void:
 			pistola.position = pistola.position.lerp(target_pos, 12.0 * delta)
 
 	# 9. FINALIZAÇÃO
+	var vel_antes := velocity
 	move_and_slide()
-	_empurrar_corpos_fisicos()
+	_empurrar_corpos_fisicos(vel_antes)
 
 	if head_bob_ON:
 		head_bob(delta)
@@ -1902,20 +1904,44 @@ func _physics_process(delta: float) -> void:
 ## `move_and_slide()` so' faz o player deslizar contra um RigidBody3D como se
 ## fosse parede — CharacterBody3D nao empurra corpo fisico sozinho. Sem isto,
 ## cadeira e caixa do cenario ficam duras mesmo tendo RigidBody3D de verdade.
-const FORCA_EMPURRAO := 7.0
+##
+## `vel_antes` TEM de ser a velocidade de ANTES do `move_and_slide()`: ele
+## desconta da `velocity` tudo que bateu no obstaculo, entao quem anda de frente
+## numa cadeira chega aqui com velocidade zero — lendo a `velocity` de depois, a
+## forca nunca sai e a cadeira parece pregada no chao.
+## Tem de VENCER O ATRITO: cadeira de 5 kg parada no chao so' desliza acima de
+## ~50 N (atrito 1.0 x massa x gravidade). Forca = esta constante x velocidade
+## do player, entao andando (2,2 m/s) da' ~100 N e correndo bate mais forte.
+const FORCA_EMPURRAO := 45.0
 
-func _empurrar_corpos_fisicos() -> void:
-	var vel_horizontal := Vector2(velocity.x, velocity.z).length()
+func _empurrar_corpos_fisicos(vel_antes: Vector3) -> void:
+	var vel_horizontal := Vector2(vel_antes.x, vel_antes.z).length()
 	if vel_horizontal < 0.05:
 		return
+	# Teto na velocidade: correndo, a conta passaria de 150 N e a cadeira sairia
+	# voando pela sala em vez de ser empurrada.
+	vel_horizontal = minf(vel_horizontal, 2.6)
+	var passo := get_physics_process_delta_time()
 	for i in get_slide_collision_count():
 		var colisao := get_slide_collision(i)
 		var corpo := colisao.get_collider()
-		if corpo is RigidBody3D:
-			var direcao := -colisao.get_normal()
-			direcao.y = 0.0
-			if direcao.length() > 0.01:
-				corpo.apply_central_force(direcao.normalized() * FORCA_EMPURRAO * vel_horizontal)
+		if not (corpo is RigidBody3D):
+			continue
+		var direcao := -colisao.get_normal()
+		direcao.y = 0.0
+		if direcao.length() < 0.01:
+			continue
+		# Cadeira assentada DORME, e corpo dormindo descarta forca calada —
+		# `apply_force` nao acorda ninguem. Sem este `sleeping = false` o
+		# empurrao existe no papel e nao acontece nada na tela.
+		corpo.sleeping = false
+		# No ponto de CONTATO, nao no centro de massa: e' o que faz a cadeira
+		# girar ao ser esbarrada de lado, em vez de deslizar reta e de pe'. O
+		# teto na altura segura o tombo: o contato vem na altura do peito do
+		# player, e la' em cima o empurrao capota a cadeira em vez de arrastar.
+		var ponto: Vector3 = colisao.get_position() - corpo.global_position
+		ponto.y = minf(ponto.y, 0.6)
+		corpo.apply_impulse(direcao.normalized() * FORCA_EMPURRAO * vel_horizontal * passo, ponto)
 
 
 func dash():
