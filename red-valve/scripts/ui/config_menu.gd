@@ -892,6 +892,7 @@ func _setup_debug_spinbox(spin: SpinBox, min_v: float, max_v: float, cur_v: floa
 		spin.mouse_entered.connect(func(): if is_instance_valid(le): le.grab_focus())
 
 func _auto_save_debug() -> void:
+	SaveManager.current_slot = 1
 	SaveManager.save_game()
 
 func _debug_set_array_entry(target_array: Array, entry_id: String, active: bool) -> void:

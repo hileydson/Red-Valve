@@ -247,6 +247,11 @@ func _ready():
 						config[key] = data[key]
 	apply_configs()
 
+	# Ao rodar qualquer scene do game pelo editor (ou ao iniciar), o default sempre é o save do Slot 1:
+	current_slot = 1
+	if FileAccess.file_exists(get_save_path(1)):
+		load_slot_data_only(1)
+
 func save_config() -> void:
 	var file = FileAccess.open(CONFIG_PATH, FileAccess.WRITE)
 	if file:
@@ -410,6 +415,7 @@ func save_game(scene_path: String = ""):
 		"iron_rusks": iron_rusks,
 		"arquivos_desbloqueados": arquivos_desbloqueados,
 		"tutorial_amuleto_visto": tutorial_amuleto_visto,
+		"escola_portao_destrancado": GlobalEvents.escola_portao_destrancado,
 		"stage_1_saved_position": stage_1_saved_position,
 		"mapas_descobertos": mapas_descobertos
 	}
@@ -467,6 +473,7 @@ func load_game(slot_id: int = -1) -> bool:
 				iron_rusks_display = iron_rusks
 				arquivos_desbloqueados = data.get("arquivos_desbloqueados", [])
 				tutorial_amuleto_visto = data.get("tutorial_amuleto_visto", false)
+				GlobalEvents.escola_portao_destrancado = data.get("escola_portao_destrancado", false)
 				stage_1_saved_position = data.get("stage_1_saved_position", {})
 				mapas_descobertos = data.get("mapas_descobertos", {})
 				# As mascaras vivas sao do save ANTERIOR: sem isto, a escola
@@ -542,6 +549,7 @@ func load_slot_data_only(slot_id: int = 1) -> bool:
 	iron_rusks_display = iron_rusks
 	arquivos_desbloqueados = data.get("arquivos_desbloqueados", [])
 	tutorial_amuleto_visto = data.get("tutorial_amuleto_visto", false)
+	GlobalEvents.escola_portao_destrancado = data.get("escola_portao_destrancado", false)
 	stage_1_saved_position = data.get("stage_1_saved_position", {})
 	mapas_descobertos = data.get("mapas_descobertos", {})
 	print("Game data loaded into memory from slot ", slot_id, " (no scene change)")
@@ -553,6 +561,7 @@ func reset_progress() -> void:
 	prolog_finished = false
 	battlefield_1_intro_played = false
 	stage_1_intro_played = false
+	GlobalEvents.escola_portao_destrancado = false
 	inventory_normal = [{"id": "maycow_watch", "amount": 1}]
 	inventory_combat = [{"id": "cogblade", "amount": 1}]
 	equipped_items = ["cogblade"]
