@@ -75,7 +75,14 @@ const CAMINHOS := [
 ## Onde moram os clipes que o editor deixa editar (ver `extrair_clipes.gd`).
 const BIBLIOTECA := "maos_fp_clipes.tres"
 
-const CABO_NO_PULSO := 0.080
+## Quao longe do osso `mao` cai o cabo, por arma, no tamanho desenhado.
+##
+## Nao ha' numero certo: e' onde a pose POE a arma, e cada arma e' segurada de
+## um jeito. O da cacadeira vem da pose que foi autorada no editor e assada em
+## `shotgun_idle` (ver `assar_idle_da_shotgun.gd`) — se voce reautorar o idle
+## e este valor sair da folga, meca de novo e atualize aqui. O que a checagem
+## pega e' a arma que SAI da mao sozinha, nao meio centimetro de gosto.
+const CABO_NO_PULSO := {"pistol": 0.080, "shotgun": 0.072}
 const FOLGA_NA_MAO := 0.015
 
 ## Quanto tempo esperar pelo relogio, e nao por quadros.
@@ -458,7 +465,7 @@ func _conferir_arma(qual: String, duas_maos: bool) -> void:
 	# coisas entram na conta, senao um ajuste de meio centimetro reprovaria
 	# aqui. O que a checagem continua pegando e' a arma que SAI da mao sozinha.
 	var ajuste: Dictionary = _rig.AJUSTE.get(qual, {})
-	var esperado: float = CABO_NO_PULSO \
+	var esperado: float = float(CABO_NO_PULSO.get(qual, 0.080)) \
 		* float(ajuste.get("tamanho", 100.0)) / 100.0
 	var mexido: float = (ajuste.get("arma", Vector3.ZERO) as Vector3).length() / 100.0
 	_ok(absf(longe - esperado) < FOLGA_NA_MAO + mexido,

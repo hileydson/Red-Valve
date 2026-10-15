@@ -497,6 +497,57 @@ func load_game(slot_id: int = -1) -> bool:
 					return true
 	return false
 
+## Carrega os dados do save em memória SEM disparar troca de cena e sem resetar texturas do jogo ativo.
+## Usado pelo menu Debug para inspecionar e alterar eventos do Slot 1 (ou outro slot).
+func load_slot_data_only(slot_id: int = 1) -> bool:
+	current_slot = slot_id
+	var path = get_save_path(slot_id)
+	if not FileAccess.file_exists(path):
+		return false
+		
+	var file = FileAccess.open(path, FileAccess.READ)
+	if not file:
+		return false
+		
+	var content = file.get_as_text()
+	file.close()
+	
+	var json = JSON.new()
+	var error = json.parse(content)
+	if error != OK:
+		return false
+		
+	var data = json.get_data()
+	if typeof(data) != TYPE_DICTIONARY:
+		return false
+		
+	var loaded_stage = data.get("current_stage", "")
+	if loaded_stage != "":
+		current_stage = loaded_stage
+	prolog_finished = data.get("prolog_finished", false)
+	battlefield_1_intro_played = data.get("battlefield_1_intro_played", false)
+	stage_1_intro_played = data.get("stage_1_intro_played", false)
+	inventory_normal = data.get("inventory_normal", [{"id": "maycow_watch", "amount": 1}])
+	inventory_combat = data.get("inventory_combat", [{"id": "cogblade", "amount": 1}])
+	equipped_items = data.get("equipped_items", ["cogblade"])
+	atalhos = data.get("atalhos", {})
+	ultima_arma_equipada = data.get("ultima_arma_equipada", "")
+	equipado_na_cidade = data.get("equipado_na_cidade", "")
+	pickups_pegos = data.get("pickups_pegos", [])
+	_sincronizar_itens_compartilhados()
+	garantir_equipamento_do_normal()
+	max_mp = data.get("max_mp", 30.0)
+	current_mp = data.get("current_mp", 30.0)
+	iron_rusks = data.get("iron_rusks", 0)
+	iron_rusks_display = iron_rusks
+	arquivos_desbloqueados = data.get("arquivos_desbloqueados", [])
+	tutorial_amuleto_visto = data.get("tutorial_amuleto_visto", false)
+	stage_1_saved_position = data.get("stage_1_saved_position", {})
+	mapas_descobertos = data.get("mapas_descobertos", {})
+	print("Game data loaded into memory from slot ", slot_id, " (no scene change)")
+	return true
+
+
 func reset_progress() -> void:
 	current_stage = ""
 	prolog_finished = false

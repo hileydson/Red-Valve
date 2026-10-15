@@ -17,6 +17,41 @@ var default_language:String = language_pt_br
 
 var is_maycow_normal = false
 var entering_chapter_1: bool = false
+var debug_mode_unlocked: bool = false
+
+func show_debug_mode_banner() -> void:
+	debug_mode_unlocked = true
+	var tree = Engine.get_main_loop() as SceneTree
+	if not tree:
+		return
+	var canvas = CanvasLayer.new()
+	canvas.layer = 250
+	canvas.process_mode = Node.PROCESS_MODE_ALWAYS
+	
+	var label = Label.new()
+	label.text = "DEBUG MODE"
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.set_anchors_preset(Control.PRESET_FULL_RECT)
+	label.add_theme_font_size_override("font_size", 96)
+	label.add_theme_color_override("font_color", Color(1.0, 0.1, 0.1, 1.0))
+	label.add_theme_constant_override("outline_size", 16)
+	label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1.0))
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	label.modulate.a = 0.0
+	canvas.add_child(label)
+	
+	tree.root.add_child(canvas)
+	
+	if GlobalUtils:
+		GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/selecionar_item.mp3")
+	
+	var tween = canvas.create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tween.tween_property(label, "modulate:a", 1.0, 0.3)
+	tween.tween_interval(1.5)
+	tween.tween_property(label, "modulate:a", 0.0, 0.4)
+	tween.tween_callback(func(): canvas.queue_free())
+
 
 ## --- Janelinha anti-dash ao fechar menu ---
 ## O `ui_dash` está no mesmo botão do controle (B) que fecha o pause, o

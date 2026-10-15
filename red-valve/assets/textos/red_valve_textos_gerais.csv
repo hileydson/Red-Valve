@@ -278,3 +278,37 @@ SHORTCUT_DOWN,Down,Baixo
 SHORTCUT_EQUIPPED,Equipped: %s,Equipado: %s
 PICKUP_AMMO_AGAIN,+%d %s,+%d %s
 PICKUP_SHOTGUN_AMMO_AGAIN,+%d %s,+%d %s
+DEBUG_MODE_BANNER,DEBUG MODE,DEBUG MODE
+CONFIG_TAB_DEBUG_TRAVEL,Debug Travel,Debug Travel
+DEBUG_TRAVEL_MAYCOW_HOUSE,Maycow's House,Casa do Maycow
+DEBUG_TRAVEL_CHURCH,Church,Igreja
+DEBUG_TRAVEL_JIMMY_HOUSE,Jimmy's House,Casa do Jimmy
+DEBUG_TRAVEL_HOSPITAL,Hospital,Hospital
+DEBUG_TRAVEL_SCHOOL,School,Escola
+DEBUG_EVENT_PROLOG_FINISHED,Prologue Finished (Cap. 1),Prólogo Finalizado (Cap. 1)
+DEBUG_EVENT_STAGE1_INTRO,Stage 1 Intro Played,Intro da Stage 1 Reproduzida
+DEBUG_EVENT_BATTLEFIELD1_INTRO,Battlefield 1 Intro Played,Intro da Battlefield 1 Reproduzida
+DEBUG_EVENT_AMULETO_TUTORIAL,Amulet Tutorial Seen,Tutorial do Amuleto Visto
+DEBUG_EVENT_ESCOLA_PORTAO,School Gate Unbolted,Portão da Escola Destrancado
+DEBUG_EVENT_FILE_APOS_TRABALHO,File: After a Day of Work,Arquivo: Após um Dia de Trabalho
+DEBUG_EVENT_FILE_TELEFONE,File: Nice's Phone Call,Arquivo: Telefonema Dona Nice
+DEBUG_EVENT_FILE_CADERNO,File: Jimmy's Notebook,Arquivo: Caderno do Jimmy
+DEBUG_EVENT_PICKUP_PISTOL,Pickup: Pistol on Counter,Pickup: Pistola no Balcão
+DEBUG_EVENT_PICKUP_AMMO1,Pickup: Pistol Ammo 1,Pickup: Munição Pistola 1
+DEBUG_EVENT_PICKUP_AMMO2,Pickup: Pistol Ammo 2,Pickup: Munição Pistola 2
+DEBUG_EVENT_PICKUP_SHOTGUN,Pickup: Shotgun on Counter,Pickup: Espingarda no Balcão
+DEBUG_EVENT_PICKUP_SHOTGUN_AMMO1,Pickup: Shotgun Ammo 1,Pickup: Munição Espingarda 1
+DEBUG_EVENT_PICKUP_SHOTGUN_AMMO2,Pickup: Shotgun Ammo 2,Pickup: Munição Espingarda 2
+DEBUG_EVENT_IRON_RUSKS,Iron Rusks,Iron Rusks
+DEBUG_EVENT_MAX_MP,Max MP,MP Máximo
+DEBUG_EVENT_CURRENT_MP,Current MP,MP Atual
+DEBUG_APPLY_AND_SAVE,Apply and Save Events,Salvar e Aplicar Eventos
+DEBUG_EVENT_PHONE_ANSWERED,Telephone Answered (House),Telefone Atendido (Casa)
+DEBUG_ITEM_WATCH,Maycow's Watch,Relógio do Maycow
+DEBUG_ITEM_AMULETO,Gear Amulet,Amuleto da Engrenagem
+DEBUG_ITEM_LANTERNA,Flashlight,Lanterna
+DEBUG_ITEM_PISTOL,Pistol (The Negotiator V1),Pistola (The Negotiator V1)
+DEBUG_ITEM_SHOTGUN,Shotgun (The Negotiator Mk.III),Espingarda (The Negotiator Mk.III)
+DEBUG_ITEM_COGBLADE,Cogblade,Cogblade
+DEBUG_ITEM_PISTOL_AMMO,Pistol Ammo,Munição de Pistola
+DEBUG_ITEM_SHOTGUN_AMMO,Shotgun Shells,Cartuchos de Espingarda

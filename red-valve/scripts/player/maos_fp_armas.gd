@@ -196,10 +196,14 @@ const AJUSTE := {
 	ITEM_SHOTGUN: {
 		"tela": Vector3(1.6, -10.0, -2.0),
 		"giro": Vector3(-8.0, -18.0, -6.0),
-		"arma": Vector3(5.4, -12.2, -0.2),
-		"arma_giro": Vector3(8.0, -2.0, 0.0),
-		"mao_e": Vector3(3.0, -2.6, 25.6),
-		"mao_e_giro": Vector3(-308.0, 250.0, 8.0),
+		# Zerados de proposito: a arma e a mao esquerda agora estao no lugar
+		# CERTO DENTRO DO CLIPE `shotgun_idle`, posadas no editor. Empurrar
+		# mais por aqui so' faria o jogo divergir do que se ve' na
+		# `PreviaDaTela` — e e' pela previa que a animacao e' feita.
+		"arma": Vector3(0.0, 0.0, 0.0),
+		"arma_giro": Vector3(0.0, 0.0, 0.0),
+		"mao_e": Vector3(0.0, 0.0, 0.0),
+		"mao_e_giro": Vector3(0.0, 0.0, 0.0),
 		"tamanho": 206.0,
 	},
 }

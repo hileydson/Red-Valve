@@ -53,12 +53,26 @@ var cel_check: CheckButton
 var cel_intensity_label: Label
 var cel_intensity_slider: HSlider
 
-# Debug Tab (só pra esta fase de testes)
+# Debug Tab (só visível após sequência)
 var tab_debug: MarginContainer
 var debug_infinite_hp_label: Label
 var debug_infinite_hp_check: CheckButton
 var debug_infinite_stamina_label: Label
 var debug_infinite_stamina_check: CheckButton
+var debug_events_scroll: ScrollContainer
+var debug_event_checks: Dictionary = {}
+var debug_rusks_spin: SpinBox
+var debug_max_mp_spin: SpinBox
+var debug_curr_mp_spin: SpinBox
+var debug_ammo_pistol_spin: SpinBox
+var debug_ammo_shotgun_spin: SpinBox
+var debug_save_btn: Button
+
+# Debug Travel Tab (só visível após sequência)
+var tab_debug_travel: MarginContainer
+var debug_travel_first_btn: Button
+
+
 
 func _ready() -> void:
 	self.layer = 130 # Fica acima de tudo
@@ -92,11 +106,15 @@ func _ready() -> void:
 	tab_container.custom_minimum_size = Vector2(850, 520)
 	main_vbox.add_child(tab_container)
 	
-	# Ordem das Abas: Gameplay, Controles, Vídeo
+	# Ordem das Abas: Gameplay, Controles, Vídeo, e Debugs se destravados
 	_build_gameplay_tab()
 	_build_controls_tab()
 	_build_video_tab()
-	_build_debug_tab()
+	if GlobalEvents.debug_mode_unlocked:
+		# Sempre carregar os dados em memória como estão gravados no Slot 1 (sem troca de cena)
+		SaveManager.load_slot_data_only(1)
+		_build_debug_tab()
+		_build_debug_travel_tab()
 	
 	_update_tab_titles()
 	
@@ -122,6 +140,11 @@ func _focus_first_item() -> void:
 		display_option.grab_focus()
 	elif tab_container.current_tab == 3 and is_instance_valid(debug_infinite_hp_check):
 		debug_infinite_hp_check.grab_focus()
+	elif tab_container.current_tab == 4 and is_instance_valid(debug_travel_first_btn):
+		debug_travel_first_btn.grab_focus()
+
+
+
 
 func _wire_option_popup(option: OptionButton) -> void:
 	# Enquanto a lista está aberta ela é a única a receber navegação: soltamos o
@@ -166,12 +189,18 @@ func _process(delta: float) -> void:
 		var joy_y = Input.get_axis("ui_look_up", "ui_look_down")
 		if abs(joy_y) > 0.1:
 			controls_scroll.scroll_vertical += int(joy_y * 600 * delta)
+	elif tab_container.current_tab == 3 and is_instance_valid(debug_events_scroll):
+		var joy_y = Input.get_axis("ui_look_up", "ui_look_down")
+		if abs(joy_y) > 0.1:
+			debug_events_scroll.scroll_vertical += int(joy_y * 600 * delta)
 
 func _update_tab_titles():
-	tab_container.set_tab_title(0, tr("CONFIG_TAB_GAMEPLAY"))
-	tab_container.set_tab_title(1, tr("CONFIG_TAB_CONTROLS"))
-	tab_container.set_tab_title(2, tr("CONFIG_TAB_VIDEO"))
-	tab_container.set_tab_title(3, tr("CONFIG_TAB_DEBUG"))
+	if tab_container.get_tab_count() > 0: tab_container.set_tab_title(0, tr("CONFIG_TAB_GAMEPLAY"))
+	if tab_container.get_tab_count() > 1: tab_container.set_tab_title(1, tr("CONFIG_TAB_CONTROLS"))
+	if tab_container.get_tab_count() > 2: tab_container.set_tab_title(2, tr("CONFIG_TAB_VIDEO"))
+	if tab_container.get_tab_count() > 3: tab_container.set_tab_title(3, tr("CONFIG_TAB_DEBUG"))
+	if tab_container.get_tab_count() > 4: tab_container.set_tab_title(4, tr("CONFIG_TAB_DEBUG_TRAVEL"))
+
 
 func _build_gameplay_tab():
 	tab_gameplay = MarginContainer.new()
@@ -504,44 +533,368 @@ func _update_cel_shading_ui() -> void:
 func _build_debug_tab():
 	tab_debug = MarginContainer.new()
 	tab_debug.name = "Debug"
-	tab_debug.add_theme_constant_override("margin_left", 40)
-	tab_debug.add_theme_constant_override("margin_right", 40)
-	tab_debug.add_theme_constant_override("margin_top", 30)
-	tab_debug.add_theme_constant_override("margin_bottom", 30)
+	tab_debug.add_theme_constant_override("margin_left", 30)
+	tab_debug.add_theme_constant_override("margin_right", 30)
+	tab_debug.add_theme_constant_override("margin_top", 20)
+	tab_debug.add_theme_constant_override("margin_bottom", 20)
+
+	var scroll = ScrollContainer.new()
+	scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	scroll.follow_focus = true
+	debug_events_scroll = scroll
+	tab_debug.add_child(scroll)
 
 	var vbox = VBoxContainer.new()
-	vbox.add_theme_constant_override("separation", 20)
-	tab_debug.add_child(vbox)
+	vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	vbox.add_theme_constant_override("separation", 14)
+	scroll.add_child(vbox)
 
-	debug_infinite_hp_label = Label.new()
-	debug_infinite_hp_label.text = tr("CONFIG_DEBUG_INFINITE_HP")
-	debug_infinite_hp_label.add_theme_font_size_override("font_size", 20)
-	vbox.add_child(debug_infinite_hp_label)
+	# --- Batalha / Testes ---
+	var section_combat = Label.new()
+	section_combat.text = "--- " + tr("CONFIG_TAB_GAMEPLAY") + " / Status ---"
+	section_combat.add_theme_font_size_override("font_size", 22)
+	section_combat.add_theme_color_override("font_color", Color(1.0, 0.4, 0.4))
+	vbox.add_child(section_combat)
 
 	debug_infinite_hp_check = CheckButton.new()
-	debug_infinite_hp_check.add_theme_font_size_override("font_size", 20)
+	debug_infinite_hp_check.text = tr("CONFIG_DEBUG_INFINITE_HP")
+	debug_infinite_hp_check.add_theme_font_size_override("font_size", 18)
 	debug_infinite_hp_check.button_pressed = PlayerScript.is_infinite_health_debug()
-	debug_infinite_hp_check.toggled.connect(_on_debug_infinite_hp_toggled)
+	debug_infinite_hp_check.toggled.connect(func(pressed): PlayerScript.set_infinite_health_debug(pressed))
 	vbox.add_child(debug_infinite_hp_check)
 
-	debug_infinite_stamina_label = Label.new()
-	debug_infinite_stamina_label.text = tr("CONFIG_DEBUG_INFINITE_STAMINA")
-	debug_infinite_stamina_label.add_theme_font_size_override("font_size", 20)
-	vbox.add_child(debug_infinite_stamina_label)
-
 	debug_infinite_stamina_check = CheckButton.new()
-	debug_infinite_stamina_check.add_theme_font_size_override("font_size", 20)
+	debug_infinite_stamina_check.text = tr("CONFIG_DEBUG_INFINITE_STAMINA")
+	debug_infinite_stamina_check.add_theme_font_size_override("font_size", 18)
 	debug_infinite_stamina_check.button_pressed = PlayerScript.is_infinite_stamina_debug()
-	debug_infinite_stamina_check.toggled.connect(_on_debug_infinite_stamina_toggled)
+	debug_infinite_stamina_check.toggled.connect(func(pressed): PlayerScript.set_infinite_stamina_debug(pressed))
 	vbox.add_child(debug_infinite_stamina_check)
+
+	# --- Eventos do Jogo e Save do Player (Slot 1) ---
+	var section_events = Label.new()
+	section_events.text = "--- " + tr("MENU_TAB_FILES") + " / Eventos do Save (Slot 1) ---"
+	section_events.add_theme_font_size_override("font_size", 22)
+	section_events.add_theme_color_override("font_color", Color(1.0, 0.4, 0.4))
+	vbox.add_child(section_events)
+
+	# Eventos de História e Progressão
+	_add_event_checkbox(vbox, "prolog_finished", tr("DEBUG_EVENT_PROLOG_FINISHED"), SaveManager.prolog_finished, func(val):
+		SaveManager.prolog_finished = val
+		_auto_save_debug()
+	)
+	_add_event_checkbox(vbox, "phone_answered", tr("DEBUG_EVENT_PHONE_ANSWERED"), SaveManager.tem_arquivo("telefonema_dona_nice"), func(val):
+		if val:
+			if not SaveManager.arquivos_desbloqueados.has("telefonema_dona_nice"):
+				SaveManager.arquivos_desbloqueados.append("telefonema_dona_nice")
+		else:
+			SaveManager.arquivos_desbloqueados.erase("telefonema_dona_nice")
+		if debug_event_checks.has("file_telefone"):
+			debug_event_checks["file_telefone"].set_pressed_no_signal(val)
+		_auto_save_debug()
+	)
+	_add_event_checkbox(vbox, "stage_1_intro_played", tr("DEBUG_EVENT_STAGE1_INTRO"), SaveManager.stage_1_intro_played, func(val):
+		SaveManager.stage_1_intro_played = val
+		_auto_save_debug()
+	)
+	_add_event_checkbox(vbox, "battlefield_1_intro_played", tr("DEBUG_EVENT_BATTLEFIELD1_INTRO"), SaveManager.battlefield_1_intro_played, func(val):
+		SaveManager.battlefield_1_intro_played = val
+		_auto_save_debug()
+	)
+	_add_event_checkbox(vbox, "tutorial_amuleto_visto", tr("DEBUG_EVENT_AMULETO_TUTORIAL"), SaveManager.tutorial_amuleto_visto, func(val):
+		SaveManager.tutorial_amuleto_visto = val
+		_auto_save_debug()
+	)
+	_add_event_checkbox(vbox, "escola_portao_destrancado", tr("DEBUG_EVENT_ESCOLA_PORTAO"), GlobalEvents.escola_portao_destrancado, func(val):
+		GlobalEvents.escola_portao_destrancado = val
+		_auto_save_debug()
+	)
+
+	# --- Armas e Itens Possuídos (Inventário) ---
+	var section_items = Label.new()
+	section_items.text = "--- Armas e Itens no Inventário ---"
+	section_items.add_theme_font_size_override("font_size", 20)
+	section_items.add_theme_color_override("font_color", Color(1.0, 0.4, 0.4))
+	vbox.add_child(section_items)
+
+	_add_event_checkbox(vbox, "item_watch", tr("DEBUG_ITEM_WATCH"), SaveManager.tem_item("maycow_watch"), func(val):
+		_debug_set_item("maycow_watch", val, 1)
+	)
+	_add_event_checkbox(vbox, "item_amuleto", tr("DEBUG_ITEM_AMULETO"), SaveManager.tem_item("amuleto"), func(val):
+		_debug_set_item("amuleto", val, 1)
+	)
+	_add_event_checkbox(vbox, "item_lanterna", tr("DEBUG_ITEM_LANTERNA"), SaveManager.tem_item("lanterna"), func(val):
+		_debug_set_item("lanterna", val, 1)
+	)
+	_add_event_checkbox(vbox, "item_pistol", tr("DEBUG_ITEM_PISTOL"), SaveManager.tem_item("pistol"), func(val):
+		_debug_set_item("pistol", val, 1)
+	)
+	_add_event_checkbox(vbox, "item_shotgun", tr("DEBUG_ITEM_SHOTGUN"), SaveManager.tem_item("shotgun"), func(val):
+		_debug_set_item("shotgun", val, 1)
+	)
+	_add_event_checkbox(vbox, "item_cogblade", tr("DEBUG_ITEM_COGBLADE"), SaveManager.tem_item("cogblade"), func(val):
+		_debug_set_item("cogblade", val, 1)
+	)
+
+	# Arquivos desbloqueados
+	var section_files = Label.new()
+	section_files.text = "--- Arquivos Desbloqueados ---"
+	section_files.add_theme_font_size_override("font_size", 18)
+	section_files.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
+	vbox.add_child(section_files)
+
+	_add_event_checkbox(vbox, "file_apos_trabalho", tr("DEBUG_EVENT_FILE_APOS_TRABALHO"), SaveManager.arquivos_desbloqueados.has("apos_um_dia_de_trabalho"), func(val):
+		_debug_set_array_entry(SaveManager.arquivos_desbloqueados, "apos_um_dia_de_trabalho", val)
+	)
+	_add_event_checkbox(vbox, "file_telefone", tr("DEBUG_EVENT_FILE_TELEFONE"), SaveManager.arquivos_desbloqueados.has("telefonema_dona_nice"), func(val):
+		_debug_set_array_entry(SaveManager.arquivos_desbloqueados, "telefonema_dona_nice", val)
+		if debug_event_checks.has("phone_answered"):
+			debug_event_checks["phone_answered"].set_pressed_no_signal(val)
+	)
+	_add_event_checkbox(vbox, "file_caderno", tr("DEBUG_EVENT_FILE_CADERNO"), SaveManager.arquivos_desbloqueados.has("caderno_do_jimmy"), func(val):
+		_debug_set_array_entry(SaveManager.arquivos_desbloqueados, "caderno_do_jimmy", val)
+	)
+
+	# Pickups do cenário
+	var section_pickups = Label.new()
+	section_pickups.text = "--- Pickups do Cenário Recolhidos ---"
+	section_pickups.add_theme_font_size_override("font_size", 18)
+	section_pickups.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
+	vbox.add_child(section_pickups)
+
+	_add_event_checkbox(vbox, "pickup_pistol", tr("DEBUG_EVENT_PICKUP_PISTOL"), SaveManager.pickups_pegos.has("hospital_pistola_no_balcao"), func(val):
+		_debug_set_array_entry(SaveManager.pickups_pegos, "hospital_pistola_no_balcao", val)
+	)
+	_add_event_checkbox(vbox, "pickup_ammo1", tr("DEBUG_EVENT_PICKUP_AMMO1"), SaveManager.pickups_pegos.has("hospital_municao_no_balcao"), func(val):
+		_debug_set_array_entry(SaveManager.pickups_pegos, "hospital_municao_no_balcao", val)
+	)
+	_add_event_checkbox(vbox, "pickup_ammo2", tr("DEBUG_EVENT_PICKUP_AMMO2"), SaveManager.pickups_pegos.has("hospital_municao_no_balcao_2"), func(val):
+		_debug_set_array_entry(SaveManager.pickups_pegos, "hospital_municao_no_balcao_2", val)
+	)
+	_add_event_checkbox(vbox, "pickup_shotgun", tr("DEBUG_EVENT_PICKUP_SHOTGUN"), SaveManager.pickups_pegos.has("hospital_shotgun_no_balcao"), func(val):
+		_debug_set_array_entry(SaveManager.pickups_pegos, "hospital_shotgun_no_balcao", val)
+	)
+	_add_event_checkbox(vbox, "pickup_shotgun_ammo1", tr("DEBUG_EVENT_PICKUP_SHOTGUN_AMMO1"), SaveManager.pickups_pegos.has("hospital_shotgun_municao_no_balcao"), func(val):
+		_debug_set_array_entry(SaveManager.pickups_pegos, "hospital_shotgun_municao_no_balcao", val)
+	)
+	_add_event_checkbox(vbox, "pickup_shotgun_ammo2", tr("DEBUG_EVENT_PICKUP_SHOTGUN_AMMO2"), SaveManager.pickups_pegos.has("hospital_shotgun_municao_no_balcao_2"), func(val):
+		_debug_set_array_entry(SaveManager.pickups_pegos, "hospital_shotgun_municao_no_balcao_2", val)
+	)
+
+	# Recursos Numéricos e Munições
+	var section_numeric = Label.new()
+	section_numeric.text = "--- Recursos e Munições ---"
+	section_numeric.add_theme_font_size_override("font_size", 18)
+	section_numeric.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
+	vbox.add_child(section_numeric)
+
+	# Iron Rusks
+	var hbox_rusks = HBoxContainer.new()
+	hbox_rusks.add_theme_constant_override("separation", 20)
+	var lbl_rusks = Label.new()
+	lbl_rusks.text = tr("DEBUG_EVENT_IRON_RUSKS")
+	lbl_rusks.add_theme_font_size_override("font_size", 18)
+	hbox_rusks.add_child(lbl_rusks)
+	debug_rusks_spin = SpinBox.new()
+	debug_rusks_spin.min_value = 0
+	debug_rusks_spin.max_value = 99999
+	debug_rusks_spin.value = SaveManager.iron_rusks
+	debug_rusks_spin.value_changed.connect(func(v):
+		SaveManager.iron_rusks = int(v)
+		SaveManager.iron_rusks_display = SaveManager.iron_rusks
+		_auto_save_debug()
+	)
+	hbox_rusks.add_child(debug_rusks_spin)
+	vbox.add_child(hbox_rusks)
+
+	# Max MP
+	var hbox_max_mp = HBoxContainer.new()
+	hbox_max_mp.add_theme_constant_override("separation", 20)
+	var lbl_max_mp = Label.new()
+	lbl_max_mp.text = tr("DEBUG_EVENT_MAX_MP")
+	lbl_max_mp.add_theme_font_size_override("font_size", 18)
+	hbox_max_mp.add_child(lbl_max_mp)
+	debug_max_mp_spin = SpinBox.new()
+	debug_max_mp_spin.min_value = 1
+	debug_max_mp_spin.max_value = 100
+	debug_max_mp_spin.value = SaveManager.max_mp
+	debug_max_mp_spin.value_changed.connect(func(v):
+		SaveManager.max_mp = float(v)
+		_auto_save_debug()
+	)
+	hbox_max_mp.add_child(debug_max_mp_spin)
+	vbox.add_child(hbox_max_mp)
+
+	# Current MP
+	var hbox_curr_mp = HBoxContainer.new()
+	hbox_curr_mp.add_theme_constant_override("separation", 20)
+	var lbl_curr_mp = Label.new()
+	lbl_curr_mp.text = tr("DEBUG_EVENT_CURRENT_MP")
+	lbl_curr_mp.add_theme_font_size_override("font_size", 18)
+	hbox_curr_mp.add_child(lbl_curr_mp)
+	debug_curr_mp_spin = SpinBox.new()
+	debug_curr_mp_spin.min_value = 0
+	debug_curr_mp_spin.max_value = 100
+	debug_curr_mp_spin.value = SaveManager.current_mp
+	debug_curr_mp_spin.value_changed.connect(func(v):
+		SaveManager.current_mp = float(v)
+		_auto_save_debug()
+	)
+	hbox_curr_mp.add_child(debug_curr_mp_spin)
+	vbox.add_child(hbox_curr_mp)
+
+	# Munição Pistola
+	var hbox_ammo_p = HBoxContainer.new()
+	hbox_ammo_p.add_theme_constant_override("separation", 20)
+	var lbl_ammo_p = Label.new()
+	lbl_ammo_p.text = tr("DEBUG_ITEM_PISTOL_AMMO")
+	lbl_ammo_p.add_theme_font_size_override("font_size", 18)
+	hbox_ammo_p.add_child(lbl_ammo_p)
+	debug_ammo_pistol_spin = SpinBox.new()
+	debug_ammo_pistol_spin.min_value = 0
+	debug_ammo_pistol_spin.max_value = 999
+	debug_ammo_pistol_spin.value = _debug_get_item_amount("pistol_ammo")
+	debug_ammo_pistol_spin.value_changed.connect(func(v):
+		_debug_set_item_amount("pistol_ammo", int(v))
+	)
+	hbox_ammo_p.add_child(debug_ammo_pistol_spin)
+	vbox.add_child(hbox_ammo_p)
+
+	# Munição Espingarda
+	var hbox_ammo_s = HBoxContainer.new()
+	hbox_ammo_s.add_theme_constant_override("separation", 20)
+	var lbl_ammo_s = Label.new()
+	lbl_ammo_s.text = tr("DEBUG_ITEM_SHOTGUN_AMMO")
+	lbl_ammo_s.add_theme_font_size_override("font_size", 18)
+	hbox_ammo_s.add_child(lbl_ammo_s)
+	debug_ammo_shotgun_spin = SpinBox.new()
+	debug_ammo_shotgun_spin.min_value = 0
+	debug_ammo_shotgun_spin.max_value = 999
+	debug_ammo_shotgun_spin.value = _debug_get_item_amount("shotgun_ammo")
+	debug_ammo_shotgun_spin.value_changed.connect(func(v):
+		_debug_set_item_amount("shotgun_ammo", int(v))
+	)
+	hbox_ammo_s.add_child(debug_ammo_shotgun_spin)
+	vbox.add_child(hbox_ammo_s)
 
 	tab_container.add_child(tab_debug)
 
-func _on_debug_infinite_hp_toggled(pressed: bool) -> void:
-	PlayerScript.set_infinite_health_debug(pressed)
+func _add_event_checkbox(parent: Node, id: String, title: String, current_state: bool, on_toggled: Callable) -> void:
+	var check = CheckButton.new()
+	check.text = title
+	check.add_theme_font_size_override("font_size", 18)
+	check.button_pressed = current_state
+	check.toggled.connect(on_toggled)
+	parent.add_child(check)
+	debug_event_checks[id] = check
 
-func _on_debug_infinite_stamina_toggled(pressed: bool) -> void:
-	PlayerScript.set_infinite_stamina_debug(pressed)
+func _auto_save_debug() -> void:
+	SaveManager.save_game()
+
+func _debug_set_array_entry(target_array: Array, entry_id: String, active: bool) -> void:
+	if active:
+		if not target_array.has(entry_id):
+			target_array.append(entry_id)
+	else:
+		target_array.erase(entry_id)
+	_auto_save_debug()
+
+func _debug_set_item(item_id: String, active: bool, amount: int = 1) -> void:
+	if active:
+		if not SaveManager.tem_item(item_id):
+			SaveManager.add_item(item_id, amount)
+	else:
+		for lista in [SaveManager.inventory_normal, SaveManager.inventory_combat]:
+			for i in range(lista.size() - 1, -1, -1):
+				if lista[i].get("id") == item_id:
+					lista.remove_at(i)
+		if item_id in SaveManager.equipped_items:
+			SaveManager.equipped_items.erase(item_id)
+		if SaveManager.ultima_arma_equipada == item_id:
+			SaveManager.ultima_arma_equipada = ""
+		if SaveManager.equipado_na_cidade == item_id:
+			SaveManager.equipado_na_cidade = ""
+		SaveManager.garantir_equipamento_do_normal()
+	_auto_save_debug()
+
+func _debug_get_item_amount(item_id: String) -> int:
+	for item in SaveManager.inventory_normal:
+		if item.get("id") == item_id:
+			return int(item.get("amount", 0))
+	for item in SaveManager.inventory_combat:
+		if item.get("id") == item_id:
+			return int(item.get("amount", 0))
+	return 0
+
+func _debug_set_item_amount(item_id: String, new_amount: int) -> void:
+	if new_amount <= 0:
+		for lista in [SaveManager.inventory_normal, SaveManager.inventory_combat]:
+			for i in range(lista.size() - 1, -1, -1):
+				if lista[i].get("id") == item_id:
+					lista.remove_at(i)
+	else:
+		var current_amt = _debug_get_item_amount(item_id)
+		if current_amt == 0:
+			SaveManager.add_item(item_id, new_amount)
+		else:
+			for lista in [SaveManager.inventory_normal, SaveManager.inventory_combat]:
+				for item in lista:
+					if item.get("id") == item_id:
+						item["amount"] = new_amount
+	_auto_save_debug()
+
+func _build_debug_travel_tab() -> void:
+	tab_debug_travel = MarginContainer.new()
+	tab_debug_travel.name = "Debug Travel"
+	tab_debug_travel.add_theme_constant_override("margin_left", 40)
+	tab_debug_travel.add_theme_constant_override("margin_right", 40)
+	tab_debug_travel.add_theme_constant_override("margin_top", 30)
+	tab_debug_travel.add_theme_constant_override("margin_bottom", 30)
+
+	var vbox = VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 18)
+	tab_debug_travel.add_child(vbox)
+
+	var title = Label.new()
+	title.text = "Fast Travel (Debug):"
+	title.add_theme_font_size_override("font_size", 24)
+	title.add_theme_color_override("font_color", Color(1.0, 0.4, 0.4))
+	vbox.add_child(title)
+
+	var destinations = [
+		{"name": tr("DEBUG_TRAVEL_MAYCOW_HOUSE"), "scene": "res://scenes/stages/prolog/the_house.tscn", "flag": "entrando_na_casa_maycow"},
+		{"name": tr("DEBUG_TRAVEL_CHURCH"), "scene": "res://scenes/stages/igreja/igreja_interior.tscn", "flag": ""},
+		{"name": tr("DEBUG_TRAVEL_JIMMY_HOUSE"), "scene": "res://scenes/stages/jimmy_house/casa_jimmy_interior.tscn", "flag": ""},
+		{"name": tr("DEBUG_TRAVEL_HOSPITAL"), "scene": "res://scenes/stages/hospital/hospital.tscn", "flag": ""},
+		{"name": tr("DEBUG_TRAVEL_SCHOOL"), "scene": "res://scenes/stages/escola/escola.tscn", "flag": ""}
+	]
+
+	debug_travel_first_btn = null
+	for dest in destinations:
+		var btn = Button.new()
+		btn.text = dest["name"]
+		btn.add_theme_font_size_override("font_size", 20)
+		btn.custom_minimum_size = Vector2(350, 45)
+		btn.pressed.connect(func(): _fast_travel_to(dest["scene"], dest["flag"]))
+		vbox.add_child(btn)
+		if debug_travel_first_btn == null:
+			debug_travel_first_btn = btn
+
+	tab_container.add_child(tab_debug_travel)
+
+func _fast_travel_to(scene_path: String, flag: String) -> void:
+	GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/selecionar_item.mp3")
+	if flag == "entrando_na_casa_maycow":
+		GlobalEvents.entrando_na_casa_maycow = true
+	
+	# Despausa e limpa resíduos de combate se houver
+	get_tree().paused = false
+	GlobalUtils.cleanup_gameplay_leftovers()
+	
+	LoadingScreen.load_scene(scene_path)
+	queue_free()
+
+
 
 func _on_display_mode_selected(index: int):
 	if index == 0:

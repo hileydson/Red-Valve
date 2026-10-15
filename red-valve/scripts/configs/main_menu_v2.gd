@@ -532,11 +532,53 @@ func _on_exit_pressed() -> void:
 	GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/selecionar_item_voltar.mp3")
 	get_tree().quit()
 
+var _debug_seq_expected := ["R", "R", "L", "L", "U", "U", "D", "D"]
+var _debug_seq_index: int = 0
+
+func _check_debug_sequence(input_dir: String) -> void:
+	if input_dir == _debug_seq_expected[_debug_seq_index]:
+		_debug_seq_index += 1
+		if _debug_seq_index >= _debug_seq_expected.size():
+			_debug_seq_index = 0
+			GlobalEvents.show_debug_mode_banner()
+	elif input_dir == _debug_seq_expected[0]:
+		_debug_seq_index = 1
+	else:
+		_debug_seq_index = 0
+
 func _input(event: InputEvent) -> void:
 	if input_locked:
 		get_viewport().set_input_as_handled()
 		return
+	
+	# Verificação de sequência de debug no menu principal
+	var dir := ""
+	if event.is_action_pressed("ui_right") or event.is_action_pressed("ui_mover_direita"):
+		dir = "R"
+	elif event.is_action_pressed("ui_left") or event.is_action_pressed("ui_mover_esquerda"):
+		dir = "L"
+	elif event.is_action_pressed("ui_up") or event.is_action_pressed("ui_mover_cima"):
+		dir = "U"
+	elif event.is_action_pressed("ui_down") or event.is_action_pressed("ui_mover_baixo"):
+		dir = "D"
+	elif event is InputEventKey and event.pressed and not event.echo:
+		match event.keycode:
+			KEY_D, KEY_RIGHT: dir = "R"
+			KEY_A, KEY_LEFT: dir = "L"
+			KEY_W, KEY_UP: dir = "U"
+			KEY_S, KEY_DOWN: dir = "D"
+	elif event is InputEventJoypadButton and event.pressed:
+		match event.button_index:
+			JOY_BUTTON_DPAD_RIGHT: dir = "R"
+			JOY_BUTTON_DPAD_LEFT: dir = "L"
+			JOY_BUTTON_DPAD_UP: dir = "U"
+			JOY_BUTTON_DPAD_DOWN: dir = "D"
+	
+	if dir != "":
+		_check_debug_sequence(dir)
+
 	var is_back = event.is_action_pressed("ui_cancel") or (event is InputEventJoypadButton and event.button_index == JOY_BUTTON_B and event.pressed)
+
 	if is_back:
 		if is_instance_valid(slots_panel) and slots_panel.visible:
 			if slots_panel.has_node("DeletePrompt"):
