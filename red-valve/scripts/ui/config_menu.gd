@@ -72,6 +72,12 @@ var debug_save_btn: Button
 var tab_debug_travel: MarginContainer
 var debug_travel_first_btn: Button
 
+# Controle de alteração de valores numéricos via analógico direito
+var _stick_val_hold_time: float = 0.0
+var _stick_val_repeat_timer: float = 0.0
+var _stick_val_last_dir: int = 0
+var _stick_sound_timer: float = 0.0
+
 
 
 func _ready() -> void:
@@ -185,14 +191,107 @@ func _input(event: InputEvent) -> void:
 
 func _process(delta: float) -> void:
 	if _popup_open: return
-	if tab_container.current_tab == 1 and is_instance_valid(controls_scroll):
-		var joy_y = Input.get_axis("ui_look_up", "ui_look_down")
-		if abs(joy_y) > 0.1:
-			controls_scroll.scroll_vertical += int(joy_y * 600 * delta)
-	elif tab_container.current_tab == 3 and is_instance_valid(debug_events_scroll):
-		var joy_y = Input.get_axis("ui_look_up", "ui_look_down")
-		if abs(joy_y) > 0.1:
-			debug_events_scroll.scroll_vertical += int(joy_y * 600 * delta)
+	
+	var active_target := _get_active_spin_or_slider()
+	if not active_target.is_empty():
+		_process_stick_value_change(active_target, delta)
+	else:
+		if tab_container.current_tab == 1 and is_instance_valid(controls_scroll):
+			var joy_y = Input.get_axis("ui_look_up", "ui_look_down")
+			if abs(joy_y) > 0.1:
+				controls_scroll.scroll_vertical += int(joy_y * 600 * delta)
+		elif tab_container.current_tab == 3 and is_instance_valid(debug_events_scroll):
+			var joy_y = Input.get_axis("ui_look_up", "ui_look_down")
+			if abs(joy_y) > 0.1:
+				debug_events_scroll.scroll_vertical += int(joy_y * 600 * delta)
+
+func _get_active_spin_or_slider() -> Dictionary:
+	var focus_owner = get_viewport().gui_get_focus_owner() if get_viewport() else null
+	if not is_instance_valid(focus_owner):
+		return {}
+	if focus_owner is SpinBox:
+		return {"spin": focus_owner}
+	elif focus_owner.get_parent() is SpinBox:
+		return {"spin": focus_owner.get_parent() as SpinBox}
+	elif focus_owner is HSlider:
+		return {"slider": focus_owner}
+	return {}
+
+func _process_stick_value_change(target: Dictionary, delta: float) -> void:
+	var joy_x = Input.get_axis("ui_look_left", "ui_look_right")
+	var joy_y = Input.get_axis("ui_look_down", "ui_look_up") # Cima = positivo (+1.0)
+	
+	var input_dir := 0
+	if abs(joy_x) >= abs(joy_y):
+		if abs(joy_x) > 0.25:
+			input_dir = 1 if joy_x > 0 else -1
+	else:
+		if abs(joy_y) > 0.25:
+			input_dir = 1 if joy_y > 0 else -1
+			
+	if input_dir == 0:
+		_stick_val_last_dir = 0
+		_stick_val_hold_time = 0.0
+		_stick_val_repeat_timer = 0.0
+		_stick_sound_timer = 0.0
+		return
+		
+	if _stick_val_last_dir != input_dir:
+		_stick_val_last_dir = input_dir
+		_stick_val_hold_time = 0.0
+		_stick_val_repeat_timer = 0.30 # Delay inicial antes da aceleração
+		_stick_sound_timer = 0.0
+		_apply_value_step(target, input_dir, 1.0, true)
+	else:
+		_stick_val_hold_time += delta
+		_stick_val_repeat_timer -= delta
+		_stick_sound_timer -= delta
+		if _stick_val_repeat_timer <= 0.0:
+			var mult := 1.0
+			if _stick_val_hold_time > 3.5:
+				mult = 100.0
+			elif _stick_val_hold_time > 2.0:
+				mult = 20.0
+			elif _stick_val_hold_time > 1.0:
+				mult = 5.0
+			else:
+				mult = 1.0
+			
+			_stick_val_repeat_timer = 0.05
+			var play_sound := false
+			if _stick_sound_timer <= 0.0:
+				play_sound = true
+				_stick_sound_timer = 0.12
+			_apply_value_step(target, input_dir, mult, play_sound)
+
+func _apply_value_step(target: Dictionary, dir: int, mult: float, play_sound: bool) -> void:
+	if target.has("spin"):
+		var spin: SpinBox = target["spin"]
+		if is_instance_valid(spin):
+			var step: float = maxf(float(spin.step), 1.0)
+			if spin.max_value >= 10000:
+				step = step * mult
+			elif spin.max_value >= 500:
+				step = step * minf(mult, 25.0)
+			elif spin.max_value >= 100:
+				step = step * minf(mult, 5.0)
+			
+			var new_val: float = clampf(float(spin.value) + (float(dir) * step), float(spin.min_value), float(spin.max_value))
+			if new_val != spin.value:
+				spin.value = new_val
+				if is_instance_valid(spin.get_line_edit()):
+					spin.get_line_edit().text = str(int(new_val) if spin.step >= 1.0 else new_val)
+				if play_sound:
+					GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/mudar_selecao.mp3")
+	elif target.has("slider"):
+		var slider: HSlider = target["slider"]
+		if is_instance_valid(slider):
+			var step: float = maxf(float(slider.step), 1.0)
+			var new_val: float = clampf(float(slider.value) + (float(dir) * step), float(slider.min_value), float(slider.max_value))
+			if new_val != slider.value:
+				slider.value = new_val
+				if play_sound:
+					GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/mudar_selecao.mp3")
 
 func _update_tab_titles():
 	if tab_container.get_tab_count() > 0: tab_container.set_tab_title(0, tr("CONFIG_TAB_GAMEPLAY"))
@@ -696,9 +795,7 @@ func _build_debug_tab():
 	lbl_rusks.add_theme_font_size_override("font_size", 18)
 	hbox_rusks.add_child(lbl_rusks)
 	debug_rusks_spin = SpinBox.new()
-	debug_rusks_spin.min_value = 0
-	debug_rusks_spin.max_value = 99999
-	debug_rusks_spin.value = SaveManager.iron_rusks
+	_setup_debug_spinbox(debug_rusks_spin, 0, 99999, SaveManager.iron_rusks)
 	debug_rusks_spin.value_changed.connect(func(v):
 		SaveManager.iron_rusks = int(v)
 		SaveManager.iron_rusks_display = SaveManager.iron_rusks
@@ -715,9 +812,7 @@ func _build_debug_tab():
 	lbl_max_mp.add_theme_font_size_override("font_size", 18)
 	hbox_max_mp.add_child(lbl_max_mp)
 	debug_max_mp_spin = SpinBox.new()
-	debug_max_mp_spin.min_value = 1
-	debug_max_mp_spin.max_value = 100
-	debug_max_mp_spin.value = SaveManager.max_mp
+	_setup_debug_spinbox(debug_max_mp_spin, 1, 100, SaveManager.max_mp)
 	debug_max_mp_spin.value_changed.connect(func(v):
 		SaveManager.max_mp = float(v)
 		_auto_save_debug()
@@ -733,9 +828,7 @@ func _build_debug_tab():
 	lbl_curr_mp.add_theme_font_size_override("font_size", 18)
 	hbox_curr_mp.add_child(lbl_curr_mp)
 	debug_curr_mp_spin = SpinBox.new()
-	debug_curr_mp_spin.min_value = 0
-	debug_curr_mp_spin.max_value = 100
-	debug_curr_mp_spin.value = SaveManager.current_mp
+	_setup_debug_spinbox(debug_curr_mp_spin, 0, 100, SaveManager.current_mp)
 	debug_curr_mp_spin.value_changed.connect(func(v):
 		SaveManager.current_mp = float(v)
 		_auto_save_debug()
@@ -751,9 +844,7 @@ func _build_debug_tab():
 	lbl_ammo_p.add_theme_font_size_override("font_size", 18)
 	hbox_ammo_p.add_child(lbl_ammo_p)
 	debug_ammo_pistol_spin = SpinBox.new()
-	debug_ammo_pistol_spin.min_value = 0
-	debug_ammo_pistol_spin.max_value = 999
-	debug_ammo_pistol_spin.value = _debug_get_item_amount("pistol_ammo")
+	_setup_debug_spinbox(debug_ammo_pistol_spin, 0, 999, _debug_get_item_amount("pistol_ammo"))
 	debug_ammo_pistol_spin.value_changed.connect(func(v):
 		_debug_set_item_amount("pistol_ammo", int(v))
 	)
@@ -768,14 +859,13 @@ func _build_debug_tab():
 	lbl_ammo_s.add_theme_font_size_override("font_size", 18)
 	hbox_ammo_s.add_child(lbl_ammo_s)
 	debug_ammo_shotgun_spin = SpinBox.new()
-	debug_ammo_shotgun_spin.min_value = 0
-	debug_ammo_shotgun_spin.max_value = 999
-	debug_ammo_shotgun_spin.value = _debug_get_item_amount("shotgun_ammo")
+	_setup_debug_spinbox(debug_ammo_shotgun_spin, 0, 999, _debug_get_item_amount("shotgun_ammo"))
 	debug_ammo_shotgun_spin.value_changed.connect(func(v):
 		_debug_set_item_amount("shotgun_ammo", int(v))
 	)
 	hbox_ammo_s.add_child(debug_ammo_shotgun_spin)
 	vbox.add_child(hbox_ammo_s)
+
 
 	tab_container.add_child(tab_debug)
 
@@ -787,6 +877,19 @@ func _add_event_checkbox(parent: Node, id: String, title: String, current_state:
 	check.toggled.connect(on_toggled)
 	parent.add_child(check)
 	debug_event_checks[id] = check
+
+func _setup_debug_spinbox(spin: SpinBox, min_v: float, max_v: float, cur_v: float) -> void:
+	spin.min_value = min_v
+	spin.max_value = max_v
+	spin.step = 1
+	spin.value = cur_v
+	spin.custom_minimum_size = Vector2(140, 36)
+	spin.focus_mode = Control.FOCUS_ALL
+	var le = spin.get_line_edit()
+	if is_instance_valid(le):
+		le.add_theme_font_size_override("font_size", 18)
+		le.focus_mode = Control.FOCUS_ALL
+		spin.mouse_entered.connect(func(): if is_instance_valid(le): le.grab_focus())
 
 func _auto_save_debug() -> void:
 	SaveManager.save_game()
