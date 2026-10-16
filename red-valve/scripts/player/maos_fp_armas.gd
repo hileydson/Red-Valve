@@ -187,7 +187,7 @@ func _atualizar_pose() -> void:
 			aberturas_esq[dedo] = lerpf(aberturas_esq[dedo], apoio.aberturas()[dedo], apoio_esquerdo)
 	var dedos_dir: Dictionary = direita.dedos()
 	dedos_dir["indicador"] += Vector3(10,10,5) * pressao_gatilho
-	_aplicar_mao(_dir, direita.global_transform, dedos_dir, direita.aberturas(), cotovelo_direito, true)
+	_aplicar_mao(_dir, direita.global_transform, dedos_dir, direita.aberturas(), cotovelo_direito, true, 0.0, float(direita.get("avanco_indicador") if direita.get("avanco_indicador") != null else 0.0))
 	_aplicar_mao(_esq, alvo_esq, dedos_esq, aberturas_esq, cotovelo_esquerdo, false, torcao_esq)
 	for nome in ["fire", "faisca"]:
 		var efeito := get_parent().get_node_or_null(nome) as Node3D
@@ -198,7 +198,7 @@ func _atualizar_pose() -> void:
 
 ## Converte um controle do pulso em pose do rig; sem escalar os ossos.
 func _aplicar_mao(sk: Skeleton3D, alvo: Transform3D, dedos: Dictionary,
-		aberturas: Dictionary, cotovelo: Vector3, direita: bool, torcao := 0.0) -> void:
+		aberturas: Dictionary, cotovelo: Vector3, direita: bool, torcao := 0.0, avanco_indicador := 0.0) -> void:
 	var local := sk.global_transform.affine_inverse() * alvo
 	var y := -local.basis.z.normalized()
 	var z := local.basis.y.normalized()
@@ -216,6 +216,9 @@ func _aplicar_mao(sk: Skeleton3D, alvo: Transform3D, dedos: Dictionary,
 			if direita:
 				lateral = -lateral
 			var rest := sk.get_bone_rest(i)
+			if dedo == "indicador" and f == 0 and avanco_indicador != 0.0:
+				var avanco_local := sk.global_basis.inverse() * (-alvo.basis.z.normalized() * avanco_indicador)
+				rest.origin += pulso.basis.inverse() * avanco_local
 			# O descanso importado traz os dedos abertos com desvios alternados
 			# entre as falanges. Dobrar sobre esses desvios produz dedos em zigue-zague.
 			# Cada cadeia usa agora seu eixo longitudinal; o polegar preserva a oposicao.

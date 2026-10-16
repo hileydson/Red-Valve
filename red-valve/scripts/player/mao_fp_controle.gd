@@ -10,6 +10,8 @@ extends Marker3D
 @export var anelar := Vector3(57, 34, 20)
 @export var mindinho := Vector3(58, 32, 18)
 @export var polegar := Vector3(20, 20, 12)
+## Deslocamento do indicador para a frente, em metros, sem alterar as falanges.
+@export_range(0.0, 0.03, 0.001) var avanco_indicador := 0.0
 @export_group("Abertura lateral (graus)")
 @export var abertura := Vector3(6, 0, -3)
 @export var abertura_mindinho := -7.0
