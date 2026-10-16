@@ -49,44 +49,59 @@ func reload() -> void:
 	if SaveManager.is_equipped("shotgun"):
 		recarregar_shotgun()
 		return
-	if player.is_first_person and not player.is_reloading and not player.is_magic_attacking:
-		var total = SaveManager.get_item_amount("pistol_ammo")
-		if total <= 0 or player.clip_pistol_ammo >= player.max_clip_pistol:
-			return
-			
-		player.is_reloading = true
-		
-		var needed = player.max_clip_pistol - player.clip_pistol_ammo
-		var taken = mini(needed, total)
-		SaveManager.remove_item_amount("pistol_ammo", taken)
-		player.clip_pistol_ammo += taken
-		player.update_ammo_ui()
-		
-		if not is_instance_valid(player.current_weapon): 
-			player.is_reloading = false
-			return
+	if player.is_first_person:
+		_iniciar_recarga_fp("pistol")
 
-		player.gun_load.play()
-		
-		if is_instance_valid(player.hand_magic_3d): 
-			player.hand_magic_3d.position = player.hand_magic_3d_pos_original
-			player.hand_magic_3d.visible = true
-			
-		GlobalUtils.safe_travel(player.hand_magic_tree, "magic_reload")
-		
-		if player.hand_animations:
-			player.hand_animations.play("reload")
-			await player.hand_animations.animation_finished
-		else:
-			await get_tree().create_timer(1.0).timeout
-			
-		await get_tree().create_timer(0.2).timeout
-			
-		if is_instance_valid(player.hand_magic_3d): 
-			var tween_retorno = create_tween()
-			tween_retorno.tween_property(player.hand_magic_3d, "position", player.hand_magic_3d_pos_hidden, 0.6).set_trans(Tween.TRANS_SINE)
-			
-		player.is_reloading = false
+
+## Os sons e a municao seguem chaves de METODO do AnimationPlayer da mao_armada.
+## A terceira pessoa mantem seu proprio gesto e seus tempos.
+func _iniciar_recarga_fp(item: String) -> void:
+	if player.is_reloading or player.is_magic_attacking or player.cogblade_melee_active:
+		return
+	if not SaveManager.is_equipped(item):
+		return
+	if item == "pistol":
+		if player.clip_pistol_ammo >= player.max_clip_pistol or SaveManager.get_item_amount("pistol_ammo") <= 0:
+			return
+	elif player.clip_shotgun_ammo > 0 or SaveManager.get_item_amount("shotgun_ammo") <= 0:
+		return
+	var maos_fp = player._maos_fp()
+	if maos_fp == null or not maos_fp.tem_arma_na_mao() or maos_fp.em_troca() or maos_fp.arma_na_mao() != item:
+		return
+	if not maos_fp.recarga_evento.is_connected(_evento_recarga_fp):
+		maos_fp.recarga_evento.connect(_evento_recarga_fp)
+	player.is_reloading = true
+	_recarregando_shotgun = item == "shotgun"
+	if not maos_fp.recarregar(maos_fp.duracao_recarga(), mini(2, SaveManager.get_item_amount("shotgun_ammo")) if item == "shotgun" else 2):
+		_evento_recarga_fp("cancelada")
+
+
+func _evento_recarga_fp(evento: String) -> void:
+	if not is_instance_valid(player):
+		return
+	match evento:
+		"abre": player.shotgun_break.play()
+		"ejeta": _soltar_capsulas_shotgun(player._maos_fp())
+		"cartucho":
+			if SaveManager.get_item_amount("shotgun_ammo") > 0 and player.clip_shotgun_ammo < player.max_clip_shotgun:
+				SaveManager.remove_item_amount("shotgun_ammo", 1)
+				player.clip_shotgun_ammo += 1
+				player.update_ammo_ui()
+				player.shotgun_load_shell.play()
+		"pente":
+			var necessario = player.max_clip_pistol - player.clip_pistol_ammo
+			var quantidade = mini(necessario, SaveManager.get_item_amount("pistol_ammo"))
+			SaveManager.remove_item_amount("pistol_ammo", quantidade)
+			player.clip_pistol_ammo += quantidade
+			player.update_ammo_ui()
+			player.gun_load.play()
+		"fecha": player.shotgun_close.play()
+		"fim", "cancelada":
+			player.is_reloading = false
+			_recarregando_shotgun = false
+			var maos_fp = player._maos_fp()
+			if maos_fp != null and maos_fp.recarga_evento.is_connected(_evento_recarga_fp):
+				maos_fp.recarga_evento.disconnect(_evento_recarga_fp)
 
 func _resolve_enemy_target(node: Node) -> Node3D:
 	if not is_instance_valid(node):
@@ -239,6 +254,9 @@ func shoot(input: Variant) -> void:
 	if not SaveManager.is_equipped("pistol"): return
 	if player.is_reloading: return
 	if player.is_using_ultimate or player.cogblade_melee_active: return
+	var maos_atuais = player._maos_fp()
+	if maos_atuais != null and (maos_atuais.em_troca() or not maos_atuais.tem_arma_na_mao() or maos_atuais.arma_na_mao() != "pistol"):
+		return
 	
 	if player.can_shoot_again and player.camera.current:
 		if player.clip_pistol_ammo <= 0:
@@ -250,19 +268,18 @@ func shoot(input: Variant) -> void:
 		if not is_instance_valid(player.current_weapon): return
 
 		player.current_weapon = player.hand_with_pistol
-		var rotation_default = player.current_weapon.rotation
-		# O coice nos dedos e na arma. O resto deste bloco continua sendo o
-		# tranco do NÓ inteiro, que é o que sacode a tela.
+		# O coice dos dedos e da arma vem do clipe editavel da primeira pessoa.
 		var maos_fp = player._maos_fp()
 		if maos_fp and maos_fp.has_method("atirar"):
 			maos_fp.atirar()
 
-		var tween = create_tween()
-		player.fire.play("shoot")
+		if maos_fp == null:
+			player.fire.play("shoot")
 		GlobalUtils.shake_camera(0.03, 0.05)
 		GlobalUtils.vibrate_controller(input, 0.5, 0.0, 0.1)
-		player.faisca.restart()
-		player.faisca.emitting = true
+		if maos_fp == null:
+			player.faisca.restart()
+			player.faisca.emitting = true
 		player.gun_shot.play()
 		player.can_shoot_again = false
 		
@@ -270,7 +287,7 @@ func shoot(input: Variant) -> void:
 			var capsula = player.capsula_scene.instantiate()
 			get_tree().current_scene.add_child(capsula)
 			capsula.add_collision_exception_with(player)
-			var spawn_pos = player.camera.global_position + player.camera.global_transform.basis * Vector3(0.4, -0.1, -0.75)
+			var spawn_pos = maos_fp.ponto_de_ejecao() if maos_fp else player.camera.global_position + player.camera.global_transform.basis * Vector3(0.4, -0.1, -0.75)
 			capsula.global_position = spawn_pos
 			capsula.global_rotation = player.camera.global_rotation
 			
@@ -282,15 +299,7 @@ func shoot(input: Variant) -> void:
 		player.flash_tela.color.a = 0.1 
 		flash_tween.tween_property(player.flash_tela, "color:a", 0.0, 0.2).set_trans(Tween.TRANS_SINE)
 		
-		tween.parallel().tween_property(player.current_weapon, "position:x", player.current_weapon.position.x + 0.01, 0.05).set_trans(Tween.TRANS_SINE)
-		tween.parallel().tween_property(player.current_weapon, "position:y", player.current_weapon.position.y - 0.01, 0.05).set_trans(Tween.TRANS_SINE)
-
-		tween.tween_interval(0.1)
-
-		player.current_weapon.rotation = rotation_default
-		tween.parallel().tween_property(player.current_weapon, "position:x", player.current_weapon.position.x, 0.1).set_trans(Tween.TRANS_BACK)
-		tween.parallel().tween_property(player.current_weapon, "position:y", player.current_weapon.position.y, 0.1).set_trans(Tween.TRANS_BACK)
-		
+		# O coice esta no clipe editavel pistola_tiro. O sway permanece no no pai.
 		raycast_process_shoot()		
 				
 		await get_tree().create_timer(0.56).timeout
@@ -460,6 +469,9 @@ func atirar_shotgun() -> void:
 		return
 
 	var gun_hold = player._shotgun_hold()
+	if player.is_first_person and gun_hold != null and gun_hold.has_method("em_troca"):
+		if gun_hold.em_troca() or gun_hold.arma_na_mao() != "shotgun":
+			return
 
 	player.clip_shotgun_ammo -= 1
 	player.update_ammo_ui()
@@ -495,6 +507,9 @@ func atirar_shotgun() -> void:
 ## e é essa espera obrigatória que equilibra dois tiros que derrubam qualquer
 ## coisa. Apertar recarregar com um tiro na agulha não faz nada.
 func recarregar_shotgun() -> void:
+	if player.is_first_person:
+		_iniciar_recarga_fp("shotgun")
+		return
 	if _recarregando_shotgun or player.is_reloading: return
 	if not SaveManager.is_equipped("shotgun"): return
 	if player.clip_shotgun_ammo > 0: return

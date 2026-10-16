@@ -48,6 +48,15 @@ const CLIPE := "shotgun_idle"
 const OSSO_ARMA := "arma"
 
 func _ready() -> void:
+	# Esta ferramenta e anterior aos controles editaveis de primeira pessoa.
+	# O novo idle e editado diretamente no AnimationPlayer de mao_armada.
+	var atual: Node = load(CENA).instantiate()
+	var usa_controles := atual.has_node("rig/Armas")
+	atual.free()
+	if usa_controles:
+		print("mao_armada: edite shotgun_idle no AnimationPlayer; nao e necessario assar ossos.")
+		get_tree().quit()
+		return
 	var cena: Node3D = load(CENA).instantiate()
 	add_child(cena)
 	await get_tree().process_frame

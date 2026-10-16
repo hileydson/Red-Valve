@@ -2552,7 +2552,7 @@ func _acender_fogo_parasita() -> void:
 	#    propósito.
 	if fogo_na_mao_primeira_pessoa:
 		_acender_mao_esquerda("Camera3D/hand_with_magic/hand_magic/Armature/Skeleton3D/mao_esq")
-		_acender_mao_esquerda("Camera3D/hand_with_pistol/rig/Armature/Skeleton3D/mao_esq")
+		_acender_mao_esquerda("Camera3D/hand_with_pistol/rig/Malhas/Armature/Skeleton3D/mao_esq")
 
 
 ## Põe fogo em UMA malha de mão esquerda.
