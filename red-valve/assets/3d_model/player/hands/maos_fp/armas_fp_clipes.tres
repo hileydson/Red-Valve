@@ -1,5 +1,15 @@
 [gd_resource type="AnimationLibrary" format=3 uid="uid://do3uq3ok60boj"]
 
+[sub_resource type="Animation" id="Animation_mfkjo"]
+length = 0.001
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Armas/Shotgun/Movimento/Articulacao/ApoioEsquerdo")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, -0.07606945, -0.06252295, -0.06673685)
+
 [sub_resource type="Animation" id="Animation_7k5tn"]
 resource_name = "pistola_guardar"
 length = 0.45
@@ -2096,7 +2106,7 @@ tracks/31/keys = {
 
 [sub_resource type="Animation" id="Animation_e3r5f"]
 resource_name = "shotgun_recarga"
-length = 3.6
+length = 4.1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -2396,7 +2406,7 @@ tracks/27/enabled = true
 tracks/27/path = NodePath("Armas/Shotgun/Movimento/Articulacao/ApoioEsquerdo")
 tracks/27/interp = 1
 tracks/27/loop_wrap = true
-tracks/27/keys = PackedFloat32Array(0, 1, -0.07606945, -0.06252295, -0.06673685, 0.72, 1, -0.07606945, -0.06252295, -0.06673685, 0.94, 1, -0.10806945, -0.08952295, -0.054736845, 1.015, 1, -0.10806945, -0.08952295, -0.054736845, 1.116, 1, -0.074069455, -0.058522947, -0.06673685, 1.2, 1, -0.09006945, -0.08052295, -0.058736846, 1.4, 1, -0.07606945, -0.06252295, -0.06673685, 3.6, 1, -0.07606945, -0.06252295, -0.06673685)
+tracks/27/keys = PackedFloat32Array(0, 1, -0.07606945, -0.06252295, -0.06673685, 0.72, 1, -0.07606945, -0.06252295, -0.06673685, 0.94, 1, -0.10806945, -0.08952295, -0.054736845, 1.015, 1, -0.10806945, -0.08952295, -0.054736845, 1.116, 1, -0.074069455, -0.058522947, -0.06673685, 1.2, 1, -0.09006945, -0.08052295, -0.058736846, 1.4, 1, -0.07606945, -0.06252295, -0.06673685, 3.6, 1, -0.07606945, -0.06252295, -0.06673685, 3.8333333, 1, -0.053189278, -0.08929336, -0.15876895, 4.0333333, 1, -0.070316225, -0.06925437, -0.08987832)
 tracks/28/type = "rotation_3d"
 tracks/28/imported = false
 tracks/28/enabled = true
@@ -3557,6 +3567,7 @@ tracks/32/keys = {
 
 [resource]
 _data = {
+&"RESET": SubResource("Animation_mfkjo"),
 &"pistola_guardar": SubResource("Animation_7k5tn"),
 &"pistola_idle": SubResource("Animation_pc1jy"),
 &"pistola_recarga": SubResource("Animation_3nmiy"),
