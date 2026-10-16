@@ -1,18 +1,18 @@
 [gd_scene format=3 uid="uid://bbaf3oui2vnkx"]
 
-[ext_resource type="Script" path="res://scripts/player/hand_with_pistol.gd" id="1_sway"]
-[ext_resource type="PackedScene" path="res://assets/3d_model/player/hands/maos_fp/maos_fp.glb" id="2_rig"]
-[ext_resource type="Script" path="res://scripts/player/maos_fp_armas.gd" id="3_armas"]
+[ext_resource type="Script" uid="uid://byqlaykhy5nq" path="res://scripts/player/hand_with_pistol.gd" id="1_sway"]
+[ext_resource type="PackedScene" uid="uid://33tuk2yjdpe3" path="res://assets/3d_model/player/hands/maos_fp/maos_fp.glb" id="2_rig"]
+[ext_resource type="Script" uid="uid://b7folb2e5abeg" path="res://scripts/player/maos_fp_armas.gd" id="3_armas"]
 [ext_resource type="Material" path="res://assets/3d_model/player/hands/maos_fp/maos_fp_pele.tres" id="4_pele"]
 [ext_resource type="Material" path="res://assets/3d_model/player/hands/maos_fp/maos_fp_pele_magica.tres" id="5_pele_e"]
-[ext_resource type="SpriteFrames" path="res://scripts/player/sprite_fire.tres" id="7_fogo"]
-[ext_resource type="PackedScene" path="res://assets/3d_model/player/the_negotiator_V3/the_negotiator_V3_dobravel.glb" id="8_previa"]
-[ext_resource type="Script" path="res://scripts/player/arma_fp_config.gd" id="9_e1ntg"]
+[ext_resource type="SpriteFrames" uid="uid://cawar0ym41nu6" path="res://scripts/player/sprite_fire.tres" id="7_fogo"]
+[ext_resource type="PackedScene" uid="uid://cmjyydu7kf1eu" path="res://assets/3d_model/player/the_negotiator_V3/the_negotiator_V3_dobravel.glb" id="8_previa"]
+[ext_resource type="Script" uid="uid://4628u640vbd2" path="res://scripts/player/arma_fp_config.gd" id="9_e1ntg"]
 [ext_resource type="PackedScene" path="res://assets/3d_model/player/the_negotiator_V1/pistola_fp.tscn" id="10_o0s6i"]
-[ext_resource type="Script" path="res://scripts/player/mao_fp_controle.gd" id="11_qrhw1"]
-[ext_resource type="PackedScene" path="res://assets/3d_model/player/the_negotiator_V3/cartridge/the_negotiator_V3_bullet.glb" id="13_as1tx"]
-[ext_resource type="AnimationLibrary" path="res://assets/3d_model/player/hands/maos_fp/armas_fp_clipes.tres" id="14_on5tm"]
-[ext_resource type="Script" path="res://scripts/player/previa_da_tela.gd" id="20_previa"]
+[ext_resource type="Script" uid="uid://b5uja326chj3s" path="res://scripts/player/mao_fp_controle.gd" id="11_qrhw1"]
+[ext_resource type="PackedScene" uid="uid://ca77isphcdbcu" path="res://assets/3d_model/player/the_negotiator_V3/cartridge/the_negotiator_V3_bullet.glb" id="13_as1tx"]
+[ext_resource type="AnimationLibrary" uid="uid://do3uq3ok60boj" path="res://assets/3d_model/player/hands/maos_fp/armas_fp_clipes.tres" id="14_on5tm"]
+[ext_resource type="Script" uid="uid://dfo761n03kf2r" path="res://scripts/player/previa_da_tela.gd" id="20_previa"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5knfa"]
 albedo_color = Color(0.055, 0.06, 0.065, 1)
@@ -68,11 +68,11 @@ script = ExtResource("3_armas")
 transform = Transform3D(0.17, 0, 0, 0, 0.17, 0, 0, 0, 0.17, 0, 0, 0)
 
 [node name="Skeleton3D" parent="rig/Malhas/Armature" parent_id_path=PackedInt32Array(1345610690, 1517908256) index="0" unique_id=176226078]
-bones/0/position = Vector3(-0.4176095, -1.9537356, -2.0410743)
-bones/0/rotation = Quaternion(-0.528999, -0.14411016, -0.17269284, 0.8182723)
+bones/0/position = Vector3(-0.63329494, -2.0495522, -1.1417928)
+bones/0/rotation = Quaternion(-0.47385603, -0.16336496, -0.20184457, 0.84144586)
 bones/0/scale = Vector3(1, 1, 1)
-bones/1/position = Vector3(0, 1.8681712, 0)
-bones/1/rotation = Quaternion(-0.07766327, -0.027121274, -0.32857367, 0.94088906)
+bones/1/position = Vector3(5.9604645e-08, 1.8681712, 0)
+bones/1/rotation = Quaternion(-0.059796583, -0.023308305, -0.36242944, 0.9297989)
 bones/1/scale = Vector3(1, 1, 1)
 bones/2/rotation = Quaternion(0.47699526, 0.012490561, -0.023004754, 0.87851596)
 bones/2/scale = Vector3(1, 1, 1)
@@ -103,17 +103,18 @@ bones/15/rotation = Quaternion(0.17962182, -0.027728017, -0.1500208, 0.9718338)
 bones/15/scale = Vector3(1, 1, 1)
 bones/16/rotation = Quaternion(0.2046887, 0.022140225, 0.097334385, 0.973724)
 bones/16/scale = Vector3(1, 1, 1)
+bones/17/rotation = Quaternion(-0.7071068, 0, 0, 0.7071068)
 
 [node name="mao_esq" parent="rig/Malhas/Armature/Skeleton3D" index="0" unique_id=854327732]
 cast_shadow = 0
 surface_material_override/0 = ExtResource("5_pele_e")
 
 [node name="Skeleton3D" parent="rig/Malhas/Armature_dir" parent_id_path=PackedInt32Array(1345610690, 2083814527) index="0" unique_id=988876978]
-bones/0/position = Vector3(1.7005433, -2.2716684, -0.68661785)
-bones/0/rotation = Quaternion(-0.36545897, -0.5138145, 0.286568, 0.7213274)
+bones/0/position = Vector3(1.6403683, -2.7198176, 0.23361325)
+bones/0/rotation = Quaternion(-0.23236611, -0.55084544, 0.28815866, 0.748024)
 bones/0/scale = Vector3(1, 1, 1)
-bones/1/position = Vector3(0, 1.8681707, 0)
-bones/1/rotation = Quaternion(0.08611167, -0.04132648, 0.43069214, 0.8974303)
+bones/1/position = Vector3(0, 1.8681712, -1.1920929e-07)
+bones/1/rotation = Quaternion(-0.03522572, 0.017163113, 0.43767154, 0.8982807)
 bones/1/scale = Vector3(1, 1, 1)
 bones/2/rotation = Quaternion(0.65583426, -0.017173626, 0.019755997, 0.7544509)
 bones/2/scale = Vector3(1, 1, 1)
@@ -144,12 +145,14 @@ bones/14/scale = Vector3(1, 1, 1)
 bones/15/rotation = Quaternion(0.17962186, 0.02772799, 0.15002067, 0.9718338)
 bones/16/rotation = Quaternion(0.20468858, -0.022140214, -0.09733433, 0.973724)
 bones/16/scale = Vector3(1, 1, 1)
+bones/17/rotation = Quaternion(-0.7071068, 0, 0, 0.7071068)
 
 [node name="mao_dir" parent="rig/Malhas/Armature_dir/Skeleton3D" index="0" unique_id=1101556511]
 cast_shadow = 0
 surface_material_override/0 = ExtResource("4_pele")
 
 [node name="Armas" type="Node3D" parent="rig" unique_id=1395360999]
+transform = Transform3D(0.9890442, 0, -0.14761952, -0.021873064, 0.98896164, -0.14654855, 0.14599004, 0.14817187, 0.97812676, -0.10653543, -0.0777868, 0.18793364)
 
 [node name="Pistola" type="Node3D" parent="rig/Armas" unique_id=1433108812]
 transform = Transform3D(0.9319682, 0.12931848, 0.3386916, -0.08630754, 0.9864998, -0.1391731, -0.35211688, 0.10047327, 0.9305476, 0.18, -0.17, -0.36)
@@ -281,7 +284,7 @@ current = true
 script = ExtResource("20_previa")
 
 [node name="faisca" type="GPUParticles3D" parent="." unique_id=2063996884]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.076085575, -0.14700766, -0.81753963)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.089401364, -0.1050267, -0.62239844)
 emitting = false
 amount = 15
 lifetime = 0.25
@@ -291,7 +294,7 @@ process_material = SubResource("ParticleProcessMaterial_faisca")
 draw_pass_1 = SubResource("BoxMesh_faisca")
 
 [node name="fire" type="AnimatedSprite3D" parent="." unique_id=1620432565]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.076085575, -0.14700766, -0.81753963)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.089401364, -0.1050267, -0.62239844)
 pixel_size = 0.0025
 billboard = 1
 sprite_frames = ExtResource("7_fogo")
