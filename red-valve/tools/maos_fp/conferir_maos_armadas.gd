@@ -125,7 +125,7 @@ func _conferir_encaixes() -> void:
 		var na_camara: Node3D = rig.get_node("Armas/Shotgun/Movimento/Articulacao/Camara%d/Cartucho"%par[1])
 		_ok(na_mao.global_position.distance_to(na_camara.global_position)<0.001,"cartucho %d chega a camara sem salto"%par[1])
 	_pose("pistol","pistola_recarga",2.04-0.00001)
-	var na_mao: Node3D = rig.get_node("AjusteEsquerdo/ControleEsquerdo/CarregadorNaMao")
+	var na_mao: Node3D = rig.get_node("Armas/Pistola/ControleRecargaEsquerdo/CarregadorNaMao")
 	var na_arma: Node3D = rig.get_node("Armas/Pistola/Movimento/Carregador")
 	_ok(na_mao.global_position.distance_to(na_arma.global_position)<0.001,"carregador encaixa sem salto")
 	_ok(na_mao.global_basis.orthonormalized().is_equal_approx(na_arma.global_basis.orthonormalized()),"carregador orientado como o alojamento")

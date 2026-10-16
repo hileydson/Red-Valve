@@ -12,40 +12,13 @@
 [ext_resource type="Script" uid="uid://b5uja326chj3s" path="res://scripts/player/mao_fp_controle.gd" id="11_qrhw1"]
 [ext_resource type="PackedScene" uid="uid://ca77isphcdbcu" path="res://assets/3d_model/player/the_negotiator_V3/cartridge/the_negotiator_V3_bullet.glb" id="13_as1tx"]
 [ext_resource type="AnimationLibrary" uid="uid://do3uq3ok60boj" path="res://assets/3d_model/player/hands/maos_fp/armas_fp_clipes.tres" id="14_on5tm"]
-[ext_resource type="PackedScene" path="res://assets/3d_model/player/the_negotiator_V1/pente_pistola_fp.tscn" id="21_pente"]
 [ext_resource type="Script" uid="uid://dfo761n03kf2r" path="res://scripts/player/previa_da_tela.gd" id="20_previa"]
-
-[sub_resource type="Environment" id="Environment_c3ies"]
-background_mode = 1
-background_color = Color(0.1, 0.12, 0.15, 1)
-ambient_light_source = 2
-ambient_light_energy = 0.8
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_faisca"]
-direction = Vector3(1, 0, -1)
-spread = 20.0
-initial_velocity_min = 8.0
-initial_velocity_max = 10.0
-gravity = Vector3(0, -20.8, 0)
-damping_min = 3.0
-damping_max = 5.0
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_faisca"]
-shading_mode = 0
-albedo_color = Color(1, 1, 0.8235294, 1)
-
-[sub_resource type="BoxMesh" id="BoxMesh_faisca"]
-material = SubResource("StandardMaterial3D_faisca")
-size = Vector3(0.009, 0.01, 0.01)
+[ext_resource type="PackedScene" path="res://assets/3d_model/player/the_negotiator_V1/pente_pistola_fp.tscn" id="21_pente"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_aro_camara"]
 albedo_color = Color(0.18, 0.16, 0.12, 1)
 metallic = 0.85
 roughness = 0.4
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fundo_camara"]
-albedo_color = Color(0.009, 0.008, 0.007, 1)
-roughness = 1.0
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_aro_camara"]
 material = SubResource("StandardMaterial3D_aro_camara")
@@ -53,6 +26,9 @@ top_radius = 0.0123
 bottom_radius = 0.0123
 height = 0.0012
 radial_segments = 32
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fundo_camara"]
+albedo_color = Color(0.009, 0.008, 0.007, 1)
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_fundo_camara"]
 material = SubResource("StandardMaterial3D_fundo_camara")
@@ -79,6 +55,29 @@ top_radius = 0.0028
 bottom_radius = 0.0028
 height = 0.0005
 radial_segments = 24
+
+[sub_resource type="Environment" id="Environment_c3ies"]
+background_mode = 1
+background_color = Color(0.1, 0.12, 0.15, 1)
+ambient_light_source = 2
+ambient_light_energy = 0.8
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_faisca"]
+direction = Vector3(1, 0, -1)
+spread = 20.0
+initial_velocity_min = 8.0
+initial_velocity_max = 10.0
+gravity = Vector3(0, -20.8, 0)
+damping_min = 3.0
+damping_max = 5.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_faisca"]
+shading_mode = 0
+albedo_color = Color(1, 1, 0.8235294, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_faisca"]
+material = SubResource("StandardMaterial3D_faisca")
+size = Vector3(0.009, 0.01, 0.01)
 
 [node name="MaoArmada" type="Node3D" unique_id=792329764]
 editor_description = "Primeira pessoa: PreviaDaTela e o olho do jogo. Selecione rig para escolher arma, acao e instante; edite os clipes no AnimationPlayer. F6: F1 pistola, F2 shotgun, R recarga, clique tiro. Armas contem os modelos usados no jogo; Malhas e somente o rig importado."
@@ -180,8 +179,8 @@ surface_material_override/0 = ExtResource("4_pele")
 transform = Transform3D(0.9890442, 0, -0.14761952, -0.021873064, 0.98896164, -0.14654855, 0.14599004, 0.14817187, 0.97812676, -0.10653543, -0.0777868, 0.18793364)
 
 [node name="Pistola" type="Node3D" parent="rig/Armas" unique_id=1433108812]
-transform = Transform3D(0.92616785, 0.16762465, 0.3378093, -0.120368935, 0.9803263, -0.15643448, -0.35738558, 0.104222834, 0.9281235, 0.22, -0.18, -0.44)
-visible = false
+editor_description = "Ajuste o angulo de porte em Transform/Rotation deste no. Movimento contem os gestos animados; ControleRecargaEsquerdo acompanha a mesma orientacao e preserva o encaixe do pente."
+transform = Transform3D(0.98020625, 0.059100006, 0.18895206, -0.08630754, 0.9864998, 0.1391731, -0.17817603, -0.15272634, 0.97207403, 0.19, -0.28, -0.515)
 script = ExtResource("9_e1ntg")
 
 [node name="Movimento" type="Node3D" parent="rig/Armas/Pistola" unique_id=365356786]
@@ -191,7 +190,7 @@ transform = Transform3D(-6.3381513e-09, 0, -0.145, 0, 0.145, 0, 0.145, 0, -6.338
 
 [node name="PegadaDireita" type="Marker3D" parent="rig/Armas/Pistola/Movimento" unique_id=230042829]
 editor_description = "Pulso direito. Mover ou girar ajusta a pegada no editor e no jogo. -Z segue os dedos; +Y aponta para a palma. As componentes dos dedos sao as tres falanges em graus."
-transform = Transform3D(0, -1, 0, 0.98480775, 0, -0.17364818, 0.17364818, 0, 0.98480775, 0.050, -0.022, 0.075)
+transform = Transform3D(0, -1, 0, 0.9848077, 0, -0.17364818, 0.17364818, 0, 0.9848077, 0.05, -0.022, 0.075)
 gizmo_extents = 0.02
 script = ExtResource("11_qrhw1")
 indicador = Vector3(8, 30, 18)
@@ -215,10 +214,24 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.018, 0.07, -0.025)
 gizmo_extents = 0.02
 
 [node name="Carregador" parent="rig/Armas/Pistola/Movimento" unique_id=282751417 instance=ExtResource("21_pente")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.062, 0.005)
+transform = Transform3D(1, 0, 0, 0, 0.9510565, 0.309017, 0, -0.309017, 0.9510565, 0, -0.057, 0.014)
 
 [node name="CarregadorSolto" parent="rig/Armas/Pistola/Movimento" unique_id=1349635170 instance=ExtResource("21_pente")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.062, 0.005)
+transform = Transform3D(1, 0, 0, 0, 0.9510565, 0.309017, 0, -0.309017, 0.9510565, 0, -0.057, 0.014)
+visible = false
+
+[node name="ControleRecargaEsquerdo" type="Marker3D" parent="rig/Armas/Pistola" unique_id=235294289]
+editor_description = "Pulso esquerdo da recarga, relativo a pistola. As trilhas no AnimationPlayer acompanham este no; gire o pai Pistola para mudar o porte inteiro."
+transform = Transform3D(0.23461124, 0.9195743, -0.3151836, -0.9710088, 0.20640731, -0.1205734, -0.045819998, 0.3343339, 0.94134015, -0.3997826, -0.14189841, -0.088099554)
+gizmo_extents = 0.02
+script = ExtResource("11_qrhw1")
+indicador = Vector3(18, 24, 16)
+medio = Vector3(18, 24, 16)
+anelar = Vector3(18, 24, 16)
+mindinho = Vector3(18, 24, 16)
+
+[node name="CarregadorNaMao" parent="rig/Armas/Pistola/ControleRecargaEsquerdo" unique_id=752189240 instance=ExtResource("21_pente")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.025, -0.07)
 visible = false
 
 [node name="Shotgun" type="Node3D" parent="rig/Armas" unique_id=750630314]
@@ -260,7 +273,7 @@ gizmo_extents = 0.02
 
 [node name="ApoioEsquerdo" type="Marker3D" parent="rig/Armas/Shotgun/Movimento/Articulacao" unique_id=2118950894]
 editor_description = "Pulso esquerdo apoiado na telha. Acompanha a articulacao. Durante a recarga, apoio_esquerdo=0 entrega a mao ao ControleEsquerdo."
-transform = Transform3D(0.117469855, -0.19146803, -0.97444385, -0.074593365, 0.9767643, -0.20091625, 0.990271, 0.09628866, 0.10045812, -0.07606945, -0.06252295, -0.06673685)
+transform = Transform3D(0.11746985, -0.191468, -0.97444385, -0.074593365, 0.9767641, -0.20091626, 0.99027073, 0.09628865, 0.10045814, -0.07606945, -0.06252295, -0.06673685)
 gizmo_extents = 0.02
 script = ExtResource("11_qrhw1")
 indicador = Vector3(48, 35, 20)
@@ -269,24 +282,24 @@ indicador = Vector3(48, 35, 20)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.013, 0.047, 0)
 gizmo_extents = 0.02
 
-[node name="Aro" type="MeshInstance3D" parent="rig/Armas/Shotgun/Movimento/Articulacao/Camara1"]
+[node name="Aro" type="MeshInstance3D" parent="rig/Armas/Shotgun/Movimento/Articulacao/Camara1" unique_id=742125153]
 transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.0008)
 mesh = SubResource("CylinderMesh_aro_camara")
 
-[node name="Interior" type="MeshInstance3D" parent="rig/Armas/Shotgun/Movimento/Articulacao/Camara1"]
+[node name="Interior" type="MeshInstance3D" parent="rig/Armas/Shotgun/Movimento/Articulacao/Camara1" unique_id=306990213]
 transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.0017)
 mesh = SubResource("CylinderMesh_fundo_camara")
 
-[node name="Cartucho" type="Node3D" parent="rig/Armas/Shotgun/Movimento/Articulacao/Camara1"]
-position = Vector3(0, 0, -0.0328)
-visible = false
+[node name="Cartucho" type="Node3D" parent="rig/Armas/Shotgun/Movimento/Articulacao/Camara1" unique_id=1946738352]
 editor_description = "Cartucho assentado: so o culote fica exposto na culatra. O corpo entra na camara e some da mao."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.0328)
+visible = false
 
-[node name="Culote" type="MeshInstance3D" parent="rig/Armas/Shotgun/Movimento/Articulacao/Camara1/Cartucho"]
+[node name="Culote" type="MeshInstance3D" parent="rig/Armas/Shotgun/Movimento/Articulacao/Camara1/Cartucho" unique_id=1446429962]
 transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.0355)
 mesh = SubResource("CylinderMesh_culote_camara")
 
-[node name="Espoleta" type="MeshInstance3D" parent="rig/Armas/Shotgun/Movimento/Articulacao/Camara1/Cartucho"]
+[node name="Espoleta" type="MeshInstance3D" parent="rig/Armas/Shotgun/Movimento/Articulacao/Camara1/Cartucho" unique_id=1512266654]
 transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.0365)
 mesh = SubResource("CylinderMesh_espoleta_camara")
 
@@ -294,24 +307,24 @@ mesh = SubResource("CylinderMesh_espoleta_camara")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.013, 0.047, 0)
 gizmo_extents = 0.02
 
-[node name="Aro" type="MeshInstance3D" parent="rig/Armas/Shotgun/Movimento/Articulacao/Camara2"]
+[node name="Aro" type="MeshInstance3D" parent="rig/Armas/Shotgun/Movimento/Articulacao/Camara2" unique_id=1735316889]
 transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.0008)
 mesh = SubResource("CylinderMesh_aro_camara")
 
-[node name="Interior" type="MeshInstance3D" parent="rig/Armas/Shotgun/Movimento/Articulacao/Camara2"]
+[node name="Interior" type="MeshInstance3D" parent="rig/Armas/Shotgun/Movimento/Articulacao/Camara2" unique_id=308018065]
 transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.0017)
 mesh = SubResource("CylinderMesh_fundo_camara")
 
-[node name="Cartucho" type="Node3D" parent="rig/Armas/Shotgun/Movimento/Articulacao/Camara2"]
-position = Vector3(0, 0, -0.0328)
-visible = false
+[node name="Cartucho" type="Node3D" parent="rig/Armas/Shotgun/Movimento/Articulacao/Camara2" unique_id=854395816]
 editor_description = "Cartucho assentado: so o culote fica exposto na culatra. O corpo entra na camara e some da mao."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.0328)
+visible = false
 
-[node name="Culote" type="MeshInstance3D" parent="rig/Armas/Shotgun/Movimento/Articulacao/Camara2/Cartucho"]
+[node name="Culote" type="MeshInstance3D" parent="rig/Armas/Shotgun/Movimento/Articulacao/Camara2/Cartucho" unique_id=849082244]
 transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.0355)
 mesh = SubResource("CylinderMesh_culote_camara")
 
-[node name="Espoleta" type="MeshInstance3D" parent="rig/Armas/Shotgun/Movimento/Articulacao/Camara2/Cartucho"]
+[node name="Espoleta" type="MeshInstance3D" parent="rig/Armas/Shotgun/Movimento/Articulacao/Camara2/Cartucho" unique_id=1059570565]
 transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.0365)
 mesh = SubResource("CylinderMesh_espoleta_camara")
 
@@ -328,10 +341,6 @@ mindinho = Vector3(18, 24, 16)
 
 [node name="CartuchoNaMao" parent="rig/AjusteEsquerdo/ControleEsquerdo" unique_id=5016126 instance=ExtResource("13_as1tx")]
 transform = Transform3D(-1.5998368e-09, 0, -0.0366, 0, 0.0366, 0, 0.0366, 0, -1.5998368e-09, 0, 0.02, -0.12)
-visible = false
-
-[node name="CarregadorNaMao" parent="rig/AjusteEsquerdo/ControleEsquerdo" unique_id=752189240 instance=ExtResource("21_pente")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.025, -0.07)
 visible = false
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="rig" unique_id=169355755]

@@ -28,6 +28,8 @@ signal recarga_evento(evento: String)
 ## Anime de 1 (mao na telha da shotgun) a 0 (mao livre para recarregar).
 @export_range(0.0, 1.0) var apoio_esquerdo := 1.0
 @export_range(0.0, 1.0) var pressao_gatilho := 0.0
+## Acompanha o ControleRecargaEsquerdo da arma, preservando o encaixe ao girar seu no.
+@export_range(0.0, 1.0) var mao_esquerda_na_recarga := 0.0
 @export_group("Entrada dos antebracos (metros)")
 @export var cotovelo_direito := Vector3(0.30, -0.55, 0.12)
 @export var cotovelo_esquerdo := Vector3(-0.32, -0.55, 0.12)
@@ -167,6 +169,14 @@ func _atualizar_pose() -> void:
 	# Durante o reload do @tool, uma propriedade exportada pode ficar nula por um frame.
 	var torcao_controle = esquerda.get("torcao_antebraco")
 	var torcao_esq: float = torcao_controle if torcao_controle != null else 0.0
+	var controle_recarga := arma.get_node_or_null("ControleRecargaEsquerdo") as Node3D
+	if controle_recarga != null and mao_esquerda_na_recarga > 0.0:
+		alvo_esq = alvo_esq.interpolate_with(controle_recarga.global_transform, mao_esquerda_na_recarga)
+		var torcao_recarga = controle_recarga.get("torcao_antebraco")
+		torcao_esq = lerpf(torcao_esq, torcao_recarga if torcao_recarga != null else 0.0, mao_esquerda_na_recarga)
+		for dedo in dedos_esq:
+			dedos_esq[dedo] = (dedos_esq[dedo] as Vector3).lerp(controle_recarga.dedos()[dedo], mao_esquerda_na_recarga)
+			aberturas_esq[dedo] = lerpf(aberturas_esq[dedo], controle_recarga.aberturas()[dedo], mao_esquerda_na_recarga)
 	if arma.usa_apoio:
 		var apoio: Node3D = arma.get_node("Movimento/Articulacao/ApoioEsquerdo")
 		alvo_esq = alvo_esq.interpolate_with(apoio.global_transform, apoio_esquerdo)

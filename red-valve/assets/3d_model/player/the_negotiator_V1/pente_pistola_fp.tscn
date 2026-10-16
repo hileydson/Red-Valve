@@ -6,4 +6,4 @@
 editor_description = "Pente em metros: origem na base, alimentacao para +Y, projeteis para -Z. Ajuste Modelo aqui para atualizar o pente na arma, na mao e na queda."
 
 [node name="Modelo" parent="." instance=ExtResource("1_pente")]
-transform = Transform3D(0, -0.049, 0, 0.049, 0, 0, 0, 0, 0.049, -0.0000943, 0.0466126, 0.0000822)
+transform = Transform3D(0, -0.067, 0, 0.067, 0, 0, 0, 0, 0.067, -0.0001289, 0.0637356, 0.0001124)
