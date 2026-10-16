@@ -164,11 +164,14 @@ func _atualizar_pose() -> void:
 	var alvo_esq := esquerda.global_transform
 	var dedos_esq: Dictionary = esquerda.dedos()
 	var aberturas_esq: Dictionary = esquerda.aberturas()
-	var torcao_esq: float = esquerda.torcao_antebraco
+	# Durante o reload do @tool, uma propriedade exportada pode ficar nula por um frame.
+	var torcao_controle = esquerda.get("torcao_antebraco")
+	var torcao_esq: float = torcao_controle if torcao_controle != null else 0.0
 	if arma.usa_apoio:
 		var apoio: Node3D = arma.get_node("Movimento/Articulacao/ApoioEsquerdo")
 		alvo_esq = alvo_esq.interpolate_with(apoio.global_transform, apoio_esquerdo)
-		torcao_esq = lerpf(torcao_esq, apoio.torcao_antebraco, apoio_esquerdo)
+		var torcao_apoio = apoio.get("torcao_antebraco")
+		torcao_esq = lerpf(torcao_esq, torcao_apoio if torcao_apoio != null else 0.0, apoio_esquerdo)
 		for dedo in dedos_esq:
 			dedos_esq[dedo] = (dedos_esq[dedo] as Vector3).lerp(apoio.dedos()[dedo], apoio_esquerdo)
 			aberturas_esq[dedo] = lerpf(aberturas_esq[dedo], apoio.aberturas()[dedo], apoio_esquerdo)

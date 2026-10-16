@@ -12,25 +12,8 @@
 [ext_resource type="Script" uid="uid://b5uja326chj3s" path="res://scripts/player/mao_fp_controle.gd" id="11_qrhw1"]
 [ext_resource type="PackedScene" uid="uid://ca77isphcdbcu" path="res://assets/3d_model/player/the_negotiator_V3/cartridge/the_negotiator_V3_bullet.glb" id="13_as1tx"]
 [ext_resource type="AnimationLibrary" uid="uid://do3uq3ok60boj" path="res://assets/3d_model/player/hands/maos_fp/armas_fp_clipes.tres" id="14_on5tm"]
+[ext_resource type="PackedScene" path="res://assets/3d_model/player/the_negotiator_V1/pente_pistola_fp.tscn" id="21_pente"]
 [ext_resource type="Script" uid="uid://dfo761n03kf2r" path="res://scripts/player/previa_da_tela.gd" id="20_previa"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5knfa"]
-albedo_color = Color(0.055, 0.06, 0.065, 1)
-metallic = 0.8
-roughness = 0.45
-
-[sub_resource type="BoxMesh" id="BoxMesh_0yjye"]
-material = SubResource("StandardMaterial3D_5knfa")
-size = Vector3(0.024, 0.093, 0.034)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4eejs"]
-albedo_color = Color(0.055, 0.06, 0.065, 1)
-metallic = 0.8
-roughness = 0.45
-
-[sub_resource type="BoxMesh" id="BoxMesh_o0s6i"]
-material = SubResource("StandardMaterial3D_4eejs")
-size = Vector3(0.024, 0.093, 0.034)
 
 [sub_resource type="Environment" id="Environment_c3ies"]
 background_mode = 1
@@ -231,14 +214,12 @@ gizmo_extents = 0.02
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.018, 0.07, -0.025)
 gizmo_extents = 0.02
 
-[node name="Carregador" type="MeshInstance3D" parent="rig/Armas/Pistola/Movimento" unique_id=282751417]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.075, 0.015)
-mesh = SubResource("BoxMesh_0yjye")
+[node name="Carregador" parent="rig/Armas/Pistola/Movimento" unique_id=282751417 instance=ExtResource("21_pente")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.062, 0.005)
 
-[node name="CarregadorSolto" type="MeshInstance3D" parent="rig/Armas/Pistola/Movimento" unique_id=1349635170]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.075, 0.015)
+[node name="CarregadorSolto" parent="rig/Armas/Pistola/Movimento" unique_id=1349635170 instance=ExtResource("21_pente")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.062, 0.005)
 visible = false
-mesh = SubResource("BoxMesh_0yjye")
 
 [node name="Shotgun" type="Node3D" parent="rig/Armas" unique_id=750630314]
 transform = Transform3D(0.92616785, 0.16762465, 0.3378093, -0.120368935, 0.9803263, -0.15643448, -0.35738558, 0.104222834, 0.9281235, 0.22, -0.22, -0.42)
@@ -349,10 +330,9 @@ mindinho = Vector3(18, 24, 16)
 transform = Transform3D(-1.5998368e-09, 0, -0.0366, 0, 0.0366, 0, 0.0366, 0, -1.5998368e-09, 0, 0.02, -0.12)
 visible = false
 
-[node name="CarregadorNaMao" type="MeshInstance3D" parent="rig/AjusteEsquerdo/ControleEsquerdo" unique_id=752189240]
+[node name="CarregadorNaMao" parent="rig/AjusteEsquerdo/ControleEsquerdo" unique_id=752189240 instance=ExtResource("21_pente")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.025, -0.07)
 visible = false
-mesh = SubResource("BoxMesh_o0s6i")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="rig" unique_id=169355755]
 libraries/ = ExtResource("14_on5tm")
