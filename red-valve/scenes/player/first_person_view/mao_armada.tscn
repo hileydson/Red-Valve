@@ -93,10 +93,10 @@ transform = Transform3D(0.17, 0, 0, 0, 0.17, 0, 0, 0, 0.17, 0, 0, 0)
 
 [node name="Skeleton3D" parent="rig/Malhas/Armature" parent_id_path=PackedInt32Array(1345610690, 1517908256) index="0" unique_id=176226078]
 bones/0/position = Vector3(-0.63329494, -2.0495522, -1.1417928)
-bones/0/rotation = Quaternion(-0.47385603, -0.16336499, -0.20184456, 0.84144586)
+bones/0/rotation = Quaternion(-0.47385603, -0.16336495, -0.20184456, 0.84144586)
 bones/0/scale = Vector3(1, 1, 1)
-bones/1/position = Vector3(0, 1.8681712, 2.3841858e-07)
-bones/1/rotation = Quaternion(-0.05979658, -0.023308292, -0.36242944, 0.9297989)
+bones/1/position = Vector3(0, 1.8681712, 0)
+bones/1/rotation = Quaternion(-0.059796594, -0.02330832, -0.3624294, 0.9297989)
 bones/1/scale = Vector3(1, 1, 1)
 bones/2/rotation = Quaternion(0.47699526, 0.012490561, -0.023004754, 0.87851596)
 bones/2/scale = Vector3(1, 1, 1)
@@ -218,12 +218,12 @@ gizmo_extents = 0.02
 transform = Transform3D(1, 0, 0, 0, 0.9510565, 0.309017, 0, -0.309017, 0.9510565, 0, -0.057, 0.014)
 
 [node name="CarregadorSolto" parent="rig/Armas/Pistola/Movimento" unique_id=1349635170 instance=ExtResource("21_pente")]
-transform = Transform3D(1, 0, 0, 0, 0.95105636, 0.30901706, 0, -0.30901706, 0.95105636, 0, -0.057, 0.014)
+transform = Transform3D(1, 0, 0, 0, 0.9510563, 0.30901712, 0, -0.30901712, 0.9510563, 0, -0.057, 0.014)
 visible = false
 
 [node name="ControleRecargaEsquerdo" type="Marker3D" parent="rig/Armas/Pistola" unique_id=235294289]
 editor_description = "Pulso esquerdo da recarga, relativo a pistola. As trilhas no AnimationPlayer acompanham este no; gire o pai Pistola para mudar o porte inteiro."
-transform = Transform3D(0.23461127, 0.9195743, -0.3151835, -0.97100866, 0.20640731, -0.12057344, -0.04582006, 0.3343339, 0.94134015, -0.3997826, -0.14189841, -0.088099554)
+transform = Transform3D(0.23461126, 0.9195742, -0.31518352, -0.97100854, 0.2064073, -0.1205735, -0.0458201, 0.3343339, 0.94134, -0.3997826, -0.14189841, -0.088099554)
 gizmo_extents = 0.02
 script = ExtResource("11_qrhw1")
 indicador = Vector3(18, 24, 16)
@@ -274,7 +274,7 @@ gizmo_extents = 0.02
 
 [node name="ApoioEsquerdo" type="Marker3D" parent="rig/Armas/Shotgun/Movimento/Articulacao" unique_id=2118950894]
 editor_description = "Pulso esquerdo apoiado na telha. Acompanha a articulacao. Durante a recarga, apoio_esquerdo=0 entrega a mao ao ControleEsquerdo."
-transform = Transform3D(0.11746982, -0.19146796, -0.97444385, -0.07459334, 0.9767639, -0.20091626, 0.99027044, 0.09628863, 0.10045814, -0.07606945, -0.06252295, -0.06673685)
+transform = Transform3D(0.11746968, -0.19146778, -0.97444385, -0.07459325, 0.976763, -0.20091626, 0.9902693, 0.09628854, 0.10045814, -0.07606945, -0.06252295, -0.06673685)
 gizmo_extents = 0.02
 script = ExtResource("11_qrhw1")
 indicador = Vector3(48, 35, 20)
