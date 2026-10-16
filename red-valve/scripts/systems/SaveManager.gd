@@ -200,6 +200,12 @@ const EQUIPAMENTO_EXCLUSIVO := ["amuleto", "pistol", "shotgun"]
 ## Quais dos exclusivos sao ARMA (e nao poder). E' o que a arena devolve.
 const ARMAS_DE_FOGO := ["pistol", "shotgun"]
 
+## A cogblade esta empunhada como arma corpo a corpo (duas maos)?
+## Quando ativo, substitui a arma de fogo na primeira pessoa e libera os
+## ataques melee variados e a defesa. Os poderes da cogblade (segurar C)
+## continuam funcionando independente disto.
+var cogblade_arma_ativa: bool = false
+
 
 ## Tem ALGUMA arma de fogo na mao?
 ##
@@ -211,6 +217,11 @@ func arma_de_fogo_equipada() -> bool:
 		if is_equipped(arma):
 			return true
 	return false
+
+
+## A cogblade esta empunhada como arma E o jogador a tem no inventario?
+func cogblade_como_arma() -> bool:
+	return cogblade_arma_ativa and tem_item("cogblade")
 
 func _ready():
 	self.process_mode = Node.PROCESS_MODE_ALWAYS
@@ -417,7 +428,8 @@ func save_game(scene_path: String = ""):
 		"tutorial_amuleto_visto": tutorial_amuleto_visto,
 		"escola_portao_destrancado": GlobalEvents.escola_portao_destrancado,
 		"stage_1_saved_position": stage_1_saved_position,
-		"mapas_descobertos": mapas_descobertos
+		"mapas_descobertos": mapas_descobertos,
+		"cogblade_arma_ativa": cogblade_arma_ativa
 	}
 	
 	save_config() # Sempre salvar config junto
@@ -476,6 +488,7 @@ func load_game(slot_id: int = -1) -> bool:
 				GlobalEvents.escola_portao_destrancado = data.get("escola_portao_destrancado", false)
 				stage_1_saved_position = data.get("stage_1_saved_position", {})
 				mapas_descobertos = data.get("mapas_descobertos", {})
+				cogblade_arma_ativa = data.get("cogblade_arma_ativa", false)
 				# As mascaras vivas sao do save ANTERIOR: sem isto, a escola
 				# descoberta no slot 1 apareceria descoberta no slot 2.
 				MapaNevoa.esquecer_tudo()
@@ -552,6 +565,7 @@ func load_slot_data_only(slot_id: int = 1) -> bool:
 	GlobalEvents.escola_portao_destrancado = data.get("escola_portao_destrancado", false)
 	stage_1_saved_position = data.get("stage_1_saved_position", {})
 	mapas_descobertos = data.get("mapas_descobertos", {})
+	cogblade_arma_ativa = data.get("cogblade_arma_ativa", false)
 	print("Game data loaded into memory from slot ", slot_id, " (no scene change)")
 	return true
 
@@ -741,6 +755,8 @@ func remove_item_amount(item_id: String, amount: int) -> void:
 ## a pistola agora so' existe depois do hospital. Sem esta segunda metade o jogo
 ## desenhava a mao com a arma de quem nunca a pegou.
 func is_equipped(item_id: String) -> bool:
+	if item_id == "cogblade":
+		return cogblade_arma_ativa and tem_item("cogblade")
 	return item_id in equipped_items and tem_item(item_id)
 
 
@@ -754,6 +770,17 @@ func pode_equipar(item_id: String) -> bool:
 
 
 func equip_item(item_id: String) -> void:
+	# Equipar a cogblade como arma corpo a corpo: desliga as armas de fogo e
+	# o amuleto do slot exclusivo, mas a cogblade continua em equipped_items
+	# (ela nunca sai de la').
+	if item_id == "cogblade":
+		for outro in EQUIPAMENTO_EXCLUSIVO:
+			equipped_items.erase(outro)
+		cogblade_arma_ativa = true
+		return
+	# Qualquer outro item exclusivo desativa a cogblade-arma.
+	if item_id in EQUIPAMENTO_EXCLUSIVO:
+		cogblade_arma_ativa = false
 	# Um item do grupo exclusivo derruba o outro: e' o mesmo botao de mira que
 	# muda de funcao, entao os dois juntos nao querem dizer nada.
 	if item_id in EQUIPAMENTO_EXCLUSIVO:
@@ -767,7 +794,9 @@ func equip_item(item_id: String) -> void:
 		equipped_items.append(item_id)
 
 func unequip_item(item_id: String) -> void:
-	if item_id == "cogblade": return # Cogblade nao desequipa
+	if item_id == "cogblade":
+		cogblade_arma_ativa = false
+		return
 	if item_id in equipped_items:
 		equipped_items.erase(item_id)
 
@@ -797,10 +826,13 @@ func garantir_equipamento_do_normal() -> void:
 ## coisa. Agora a troca e' automatica nos dois sentidos.
 func entrar_na_arena() -> void:
 	equipado_na_cidade = ""
-	for id in EQUIPAMENTO_EXCLUSIVO:
-		if is_equipped(id):
-			equipado_na_cidade = id
-			break
+	if cogblade_arma_ativa:
+		equipado_na_cidade = "cogblade"
+	else:
+		for id in EQUIPAMENTO_EXCLUSIVO:
+			if is_equipped(id):
+				equipado_na_cidade = id
+				break
 	if ultima_arma_equipada != "" and tem_item(ultima_arma_equipada):
 		equip_item(ultima_arma_equipada)
 

@@ -509,7 +509,7 @@ func _render_action_menu() -> void:
 		# item equipado sem abrir o menu.
 		if i == 3 and equipavel: enabled = true
 
-		if i == 1 and item_id == "cogblade": enabled = false # Cogblade nao desequipa
+		if i == 1 and item_id == "cogblade" and GlobalEvents.is_maycow_normal: enabled = false
 
 		btn.disabled = not enabled
 		
@@ -759,20 +759,16 @@ func execute_action() -> void:
 		
 	# Equipar [1]
 	elif action_menu_index == 1 and SaveManager.pode_equipar(item_id):
-		if item_id == "cogblade":
-			pass # Não pode desequipar
+		if item_id == "cogblade" and GlobalEvents.is_maycow_normal:
+			pass
 		else:
 			if SaveManager.is_equipped(item_id):
 				SaveManager.unequip_item(item_id)
 			else:
-				# `equip_item` desequipa sozinho o outro item do grupo exclusivo
-				# (amuleto x pistola): os dois disputam o botão de mira.
 				SaveManager.equip_item(item_id)
-			# Equipar é progresso: quem equipa a arma e fecha o jogo tem de
-			# reencontrá-la na mão.
 			SaveManager.save_game()
-			# Atualiza o UI do player imediatamente
 			get_tree().call_group("player", "update_ammo_ui")
+			get_tree().call_group("player", "update_equipment_visuals")
 		close_action_menu()
 		
 	# Inspecionar [2]

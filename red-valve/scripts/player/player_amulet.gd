@@ -208,7 +208,7 @@ func _hide_amulet_magic() -> void:
 			player.control_weapons.visible = false
 			player.control_magic.visible = false
 	elif player.is_first_person and not player.is_reloading:
-		if SaveManager.arma_de_fogo_equipada():
+		if player._deve_mostrar_maos_fp():
 			player.hand_with_pistol.visible = true
 		if player.hand_with_magic:
 			player.hand_with_magic.visible = true

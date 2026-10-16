@@ -270,6 +270,27 @@ var is_exhausted: bool = false
 @export var melee_hand_push: float = 0.12
 ## Tempo que a mão leva para voltar devagar ao lugar (igual ao fim do reload).
 @export var melee_hand_return_time: float = 0.6
+
+# --- COGBLADE EMPUNHADA COMO ARMA MELEE (equipar via atalho/menu) ---
+@export_group("Cogblade Weapon")
+## Dano de cada golpe melee com a cogblade empunhada.
+@export var cogblade_attack_damage: int = 5
+## Alcance dos golpes melee.
+@export var cogblade_attack_range: float = 3.2
+## Duracao total da animacao de um golpe (wind-up + strike + follow-through).
+@export var cogblade_attack_duration: float = 0.90
+## Estamina gasta por golpe.
+@export var cogblade_attack_stamina: float = 10.0
+## Milissegundos de espera entre o fim de um golpe e o proximo.
+@export var cogblade_attack_cooldown_ms: int = 100
+## Reducao de dano ao bloquear (0.4 = 40% menos dano).
+@export var cogblade_block_damage_reduction: float = 0.4
+## Estamina drenada por segundo enquanto segura a defesa.
+@export var cogblade_block_stamina_drain: float = 5.0
+## Estamina extra gasta ao receber um golpe enquanto defende.
+@export var cogblade_block_hit_stamina: float = 15.0
+
+var cogblade_blocking: bool = false
 var mp_bar: ProgressBar
 
 var hud_layer: CanvasLayer
@@ -968,6 +989,12 @@ func _maos_fp() -> Node:
 	return get_node_or_null("Camera3D/hand_with_pistol/rig")
 
 
+## As maos de primeira pessoa devem estar visiveis? Verdadeiro quando qualquer
+## arma de fogo OU a cogblade-arma esta equipada.
+func _deve_mostrar_maos_fp() -> bool:
+	return SaveManager.arma_de_fogo_equipada() or SaveManager.cogblade_como_arma()
+
+
 ## O componente da arma que está equipada AGORA, ou null se for nenhuma.
 ##
 ## Existe porque quase todo mundo que pergunta pelo `_gun_hold()` na verdade
@@ -1182,6 +1209,11 @@ func _ready():
 	cogblade_menu_component.name = "PlayerCogbladeMenu"
 	add_child(cogblade_menu_component)
 
+	# Instancia Componente de Combate Melee com a Cogblade (equipar como arma)
+	var cogblade_combat_component = load("res://scripts/player/player_cogblade_combat.gd").new()
+	cogblade_combat_component.name = "PlayerCogbladeCombat"
+	add_child(cogblade_combat_component)
+
 	# Instancia Componente dos Atalhos do direcional (trocar o item equipado
 	# sem abrir o menu)
 	var atalhos_component = load("res://scripts/player/player_atalhos.gd").new()
@@ -1342,10 +1374,14 @@ func _physics_process(delta: float) -> void:
 		
 	# --- STAMINA LOGIC ---
 	var is_running_stam = _run_toggle_active and velocity.length() > 0.1 and (current_stamina > 0 or _stamina_infinita() or GlobalEvents.is_maycow_normal) and stamina_active and not is_exhausted and not is_aiming
+	var _bloqueando_cogblade := cogblade_blocking
 	if is_running_stam:
 		if not _stamina_infinita() and not GlobalEvents.is_maycow_normal:
 			current_stamina -= 20.0 * delta
 		if current_stamina < 0: current_stamina = 0
+		stamina_fade_timer = 2.0
+		if is_instance_valid(stamina_bar): stamina_bar.modulate.a = 1.0
+	elif _bloqueando_cogblade or cogblade_melee_active:
 		stamina_fade_timer = 2.0
 		if is_instance_valid(stamina_bar): stamina_bar.modulate.a = 1.0
 	else:
@@ -1408,19 +1444,23 @@ func _physics_process(delta: float) -> void:
 			if camera_third_person:
 				camera_third_person.current = false
 			control_weapons.visible = true
-			hand_with_pistol.visible = SaveManager.arma_de_fogo_equipada()
+			hand_with_pistol.visible = _deve_mostrar_maos_fp()
 			if hand_with_magic: hand_with_magic.visible = true
 			control_magic.visible = true
-			
-		var wants_to_aim = not cutscene_blocked and Input.is_action_pressed("ui_hold_first_person_view")
+
+		# A cogblade empunhada assume os dois botoes: tiro vira melee e mira
+		# vira defesa. A logica de mira do amuleto nao roda.
+		var _cogblade_arma := SaveManager.cogblade_como_arma()
+
+		var wants_to_aim = not cutscene_blocked and Input.is_action_pressed("ui_hold_first_person_view") and not _cogblade_arma
 		var has_mp = SaveManager.current_mp > 0
-		
-		if not cutscene_blocked and (Input.is_action_just_released("ui_hold_first_person_view") or (is_aiming and wants_to_aim and not has_mp)):
+
+		if not cutscene_blocked and not _cogblade_arma and (Input.is_action_just_released("ui_hold_first_person_view") or (is_aiming and wants_to_aim and not has_mp)):
 			if amulet_selected_enemies.size() == 0:
 				AudioServer.playback_speed_scale = 1.0
 			_on_amulet_magic_released()
 
-		if not cutscene_blocked and wants_to_aim and not has_mp and Input.is_action_just_pressed("ui_hold_first_person_view"):
+		if not cutscene_blocked and not _cogblade_arma and wants_to_aim and not has_mp and Input.is_action_just_pressed("ui_hold_first_person_view"):
 			if is_instance_valid(gun_load): gun_load.play()
 
 		if cutscene_blocked:
@@ -1443,7 +1483,7 @@ func _physics_process(delta: float) -> void:
 			# Acabou de sair de cutscene: restaura mãos e controles para o gameplay
 			if not transition_camera and not camera_bullet_time_ON and not is_using_ultimate:
 				control_weapons.visible = true
-				hand_with_pistol.visible = SaveManager.arma_de_fogo_equipada() and not is_reloading
+				hand_with_pistol.visible = _deve_mostrar_maos_fp() and not is_reloading
 				if hand_with_magic: hand_with_magic.visible = true
 				control_magic.visible = true
 
@@ -1497,7 +1537,7 @@ func _physics_process(delta: float) -> void:
 			if Input.is_action_just_pressed("ui_reload") and !transition_camera and !is_magic_attacking:
 				reload()
 			
-			if Input.is_action_just_pressed("ui_shoot") and !transition_camera and !is_using_ultimate and !cogblade_melee_active:
+			if Input.is_action_just_pressed("ui_shoot") and !transition_camera and !is_using_ultimate and !cogblade_melee_active and not _cogblade_arma:
 				shoot(Input)
 			
 			# O Cogblade Thrown saiu do botão Y: agora ele é uma das opções da
@@ -2148,7 +2188,7 @@ func transicao_camera(origem: Camera3D, camera_destino: Camera3D, destino: Marke
 	if camera_destino == camera_third_person:
 		control_magic.visible = show_ui
 		control_weapons.visible = show_ui
-		hand_with_pistol.visible = show_ui and SaveManager.arma_de_fogo_equipada()
+		hand_with_pistol.visible = show_ui and _deve_mostrar_maos_fp()
 		if hand_with_magic: hand_with_magic.visible = show_ui
 		await get_tree().create_timer(0.1).timeout
 		GlobalUtils.remover_camera_lenta()
@@ -2176,7 +2216,7 @@ func transicao_camera(origem: Camera3D, camera_destino: Camera3D, destino: Marke
 		# Mostra/Esconde a UI com delay pra nao ficar estranho
 		control_magic.visible = show_ui
 		control_weapons.visible = show_ui
-		hand_with_pistol.visible = show_ui and SaveManager.arma_de_fogo_equipada()
+		hand_with_pistol.visible = show_ui and _deve_mostrar_maos_fp()
 		if hand_with_magic: hand_with_magic.visible = show_ui
 		)
 	
@@ -2242,6 +2282,12 @@ func take_damage(number:int):
 		return
 	if current_health <= 0:
 		return
+
+	# Bloqueio com a cogblade empunhada: reduz o dano e gasta estamina extra.
+	if cogblade_blocking:
+		var comp = get_node_or_null("PlayerCogbladeCombat")
+		if comp:
+			number = comp.processar_dano_bloqueio(number)
 
 	# Teste de vida infinita: zera o valor aqui em vez de sair da funcao, pra
 	# todo o retorno do golpe (sangue, tremor, vibracao, blur) continuar
@@ -2382,8 +2428,11 @@ func _activate_cogblade_fire_cross() -> void:
 	if comp: comp._activate_cogblade_fire_cross()
 
 func cogblade_melee_slash() -> bool:
-	var comp = get_node_or_null("PlayerUltimate")
-	if comp: return comp.cogblade_melee_slash()
+	# Se a cogblade esta empunhada como arma, usa o sistema de ataques variados.
+	if SaveManager.cogblade_como_arma():
+		var combat = get_node_or_null("PlayerCogbladeCombat")
+		if combat: return combat.executar_ataque()
+		return false
 	return false
 
 func _apply_aoe_damage_slowly(pos: Vector3, damage: int = 30, radius: float = 15.0):

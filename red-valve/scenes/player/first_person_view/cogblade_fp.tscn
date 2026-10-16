@@ -1,0 +1,63 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/player/arma_fp_config.gd" id="1_config"]
+[ext_resource type="ArrayMesh" path="res://assets/3d_model/player/Crescent Cogblade/cogblade_duas_maos.res" id="2_modelo"]
+[ext_resource type="Script" path="res://scripts/player/mao_fp_controle.gd" id="3_controle"]
+
+[node name="Cogblade" type="Node3D"]
+editor_description = "Porte da cogblade: ajuste este no. Movimento e animado pelo AnimationPlayer da mao_armada; Modelo ajusta o plano do fio; o cabo ja usa os eixos do controle. Ambas as pegadas acompanham o cabo em todos os clipes."
+position = Vector3(-0.30, -0.37, -0.74)
+rotation = Vector3(-0.48869219, 0.73303829, -0.83775804)
+script = ExtResource("1_config")
+item_id = "cogblade"
+prefixo = "cogblade/cogblade"
+usa_apoio = true
+
+[node name="Movimento" type="Node3D" parent="."]
+
+[node name="Modelo" type="MeshInstance3D" parent="Movimento"]
+editor_description = "Variante de primeira pessoa com cabo de duas maos. A cabeca e o pomo preservam as proporcoes originais. Rotacao Y ajusta o plano do fio sem mudar as pegadas do cabo."
+rotation = Vector3(0, 0.61086524, 0)
+mesh = ExtResource("2_modelo")
+
+[node name="PegadaDireita" type="Marker3D" parent="Movimento"]
+editor_description = "Mao direita dianteira: guia o golpe, abaixo da guarda. -Z segue os dedos; +Y aponta para a palma."
+transform = Transform3D(0, 0, 1, -1, 0, 0, 0, -1, 0, 0.055, 0.35, 0.03)
+gizmo_extents = 0.025
+script = ExtResource("3_controle")
+indicador = Vector3(65, 65, 35)
+medio = Vector3(70, 65, 35)
+anelar = Vector3(72, 65, 35)
+mindinho = Vector3(75, 65, 35)
+polegar = Vector3(60, 40, 35)
+abertura = Vector3(0, 0, 0)
+abertura_mindinho = 0.0
+abertura_polegar = 25.0
+alinhamento_antebraco = 0.0
+limite_flexao_pulso = 25.0
+
+[node name="Articulacao" type="Node3D" parent="Movimento"]
+
+[node name="ApoioEsquerdo" type="Marker3D" parent="Movimento/Articulacao"]
+editor_description = "Mao esquerda junto a base: apoio e alavanca. A palma acompanha o cabo sem dobrar o pulso."
+transform = Transform3D(0, -0.76604444, 0.64278761, 1, 0, 0, 0, 0.64278761, 0.76604444, 0.035, 0.12, 0.0381699)
+gizmo_extents = 0.025
+script = ExtResource("3_controle")
+indicador = Vector3(65, 65, 35)
+medio = Vector3(70, 65, 35)
+anelar = Vector3(72, 65, 35)
+mindinho = Vector3(75, 65, 35)
+polegar = Vector3(48, 25, 20)
+abertura = Vector3(0, 0, 0)
+abertura_mindinho = 0.0
+abertura_polegar = 12.0
+alinhamento_antebraco = 0.0
+limite_flexao_pulso = 25.0
+
+[node name="Cabo" type="Marker3D" parent="Movimento"]
+
+[node name="RastroBase" type="Marker3D" parent="Movimento"]
+position = Vector3(-0.1994, 0.80, -0.0930)
+
+[node name="RastroPonta" type="Marker3D" parent="Movimento"]
+position = Vector3(-0.1813, 1.23, -0.0845)

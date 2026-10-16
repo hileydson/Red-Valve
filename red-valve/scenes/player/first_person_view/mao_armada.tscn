@@ -15,6 +15,9 @@
 [ext_resource type="Script" uid="uid://dfo761n03kf2r" path="res://scripts/player/previa_da_tela.gd" id="20_previa"]
 [ext_resource type="PackedScene" path="res://assets/3d_model/player/the_negotiator_V1/pente_pistola_fp.tscn" id="21_pente"]
 
+[ext_resource type="PackedScene" path="res://scenes/player/first_person_view/cogblade_fp.tscn" id="22_cogblade"]
+[ext_resource type="AnimationLibrary" path="res://assets/3d_model/player/hands/maos_fp/cogblade_fp_clipes.tres" id="23_cogblade_clipes"]
+
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_aro_camara"]
 albedo_color = Color(0.18, 0.16, 0.12, 1)
 metallic = 0.85
@@ -80,12 +83,12 @@ material = SubResource("StandardMaterial3D_faisca")
 size = Vector3(0.009, 0.01, 0.01)
 
 [node name="MaoArmada" type="Node3D" unique_id=792329764]
-editor_description = "Primeira pessoa: PreviaDaTela e o olho do jogo. Selecione rig para escolher arma, acao e instante; edite os clipes no AnimationPlayer. F6: F1 pistola, F2 shotgun, R recarga, clique tiro. Armas contem os modelos usados no jogo; Malhas e somente o rig importado."
+editor_description = "Primeira pessoa: PreviaDaTela e o olho do jogo. Selecione rig para escolher arma, acao e instante; edite os clipes no AnimationPlayer. F6: F1 pistola, F2 shotgun, F3 cogblade, R recarga, clique ataca, direito defende. Armas contem os modelos usados no jogo; Malhas e somente o rig importado."
 script = ExtResource("1_sway")
 
 [node name="rig" type="Node3D" parent="." unique_id=1137792349]
 process_priority = 10
-editor_description = "Previa: escolha arma/acao/instante no inspetor. No AnimationPlayer, edite Movimento (gesto), ControleEsquerdo (mao livre), Articulacao (dobra), e as chaves evento_recarga (som e municao)."
+editor_description = "Previa: escolha arma/acao/instante no inspetor. No AnimationPlayer, edite Movimento (gesto), ControleEsquerdo (mao livre), Articulacao (dobra), e as chaves evento_recarga (som e municao). Cogblade: biblioteca cogblade, pegadas em Armas/Cogblade, impacto e rastro nas chaves evento_golpe_cogblade."
 script = ExtResource("3_armas")
 
 [node name="Malhas" parent="rig" unique_id=1345610690 instance=ExtResource("2_rig")]
@@ -333,6 +336,9 @@ mesh = SubResource("CylinderMesh_culote_camara")
 transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.0365)
 mesh = SubResource("CylinderMesh_espoleta_camara")
 
+[node name="Cogblade" parent="rig/Armas" instance=ExtResource("22_cogblade")]
+visible = false
+
 [node name="AjusteEsquerdo" type="Node3D" parent="rig" unique_id=713055753]
 
 [node name="ControleEsquerdo" type="Marker3D" parent="rig/AjusteEsquerdo" unique_id=307727323]
@@ -351,6 +357,7 @@ visible = false
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="rig" unique_id=169355755]
 libraries/ = ExtResource("14_on5tm")
+libraries/cogblade = ExtResource("23_cogblade_clipes")
 
 [node name="PreviaDaTela" type="Camera3D" parent="." unique_id=1620826670]
 environment = SubResource("Environment_c3ies")
@@ -377,3 +384,5 @@ frame = 9
 frame_progress = 1.0
 
 [editable path="rig/Malhas"]
+
+[editable path="rig/Armas/Cogblade"]

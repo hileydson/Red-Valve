@@ -103,10 +103,12 @@ func _process(_delta: float) -> void:
 			# Só executa se o analógico/mouse estiver apontando para uma opção
 			_close_menu(true)
 		elif _pressing:
-			# Não abriu o menu: foi um toque, então sai o golpe melee.
-			# Apertar várias vezes executa vários golpes, mas cada um só começa
-			# depois que o anterior termina (checado dentro do próprio golpe).
-			player.cogblade_melee_slash()
+			# Toque rápido: melee SÓ se a cogblade estiver empunhada como arma.
+			# Sem estar equipada como arma, o toque não faz nada — o melee agora
+			# depende de estar com a cogblade na mão (botão de tiro faz o melee,
+			# e o C também, mas só empunhando).
+			if SaveManager.cogblade_como_arma():
+				player.cogblade_melee_slash()
 		_pressing = false
 
 # =========================================================================

@@ -1,0 +1,332 @@
+[gd_resource type="AnimationLibrary" format=3]
+
+[sub_resource type="Animation" id="Animation_qxng2"]
+resource_name = "cogblade_ataque_1"
+length = 1.05
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Armas/Cogblade/Movimento")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 0, 0, 0, 0.22, 1, 0.29317036, -0.11403232, 0.18581988, 0.34, 1, 0.24262817, -0.051999755, 0.14894244, 0.48, 1, 0.020174243, 0.064365335, -0.036828686, 0.64, 1, -0.062978484, -0.16231813, -0.10740821, 0.8, 1, -0.008977558, -0.087922595, -0.07763063, 1.05, 1, 0, 0, 0)
+tracks/1/type = "rotation_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Armas/Cogblade/Movimento")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, 4.4703484e-08, 1.8626451e-08, -8.881784e-16, 1, 0.22, 1, 0.19968331, -0.01121453, 0.1637529, 0.96601546, 0.34, 1, 0.13699219, -0.021974184, 0.095107794, 0.9857509, 0.48, 1, -0.11976033, -0.2781361, -0.1386257, 0.9429108, 0.64, 1, -0.20402588, -0.47290015, -0.28293088, 0.8091286, 0.8, 1, -0.10477113, -0.2682864, -0.17383683, 0.94171447, 1.05, 1, 4.4703484e-08, 1.8626451e-08, -8.881784e-16, 1)
+tracks/2/type = "position_3d"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Armas/Cogblade/Movimento/Articulacao/ApoioEsquerdo")
+tracks/2/interp = 2
+tracks/2/loop_wrap = true
+tracks/2/keys = PackedFloat32Array(0, 1, 0.035, 0.12, 0.0381699, 0.22, 1, 0.035, 0.16, 0.0381699, 0.34, 1, 0.035, 0.14, 0.0381699, 0.48, 1, 0.035, 0.12, 0.0381699, 0.64, 1, 0.035, 0.12, 0.0381699, 0.8, 1, 0.035, 0.12, 0.0381699, 1.05, 1, 0.035, 0.12, 0.0381699)
+tracks/3/type = "method"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath(".")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0.35, 0.48, 0.66, 1.05),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"values": [{
+"args": ["rastro_inicio"],
+"method": &"evento_golpe_cogblade"
+}, {
+"args": ["impacto"],
+"method": &"evento_golpe_cogblade"
+}, {
+"args": ["rastro_fim"],
+"method": &"evento_golpe_cogblade"
+}, {
+"args": ["fim"],
+"method": &"evento_golpe_cogblade"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_befmf"]
+resource_name = "cogblade_ataque_2"
+length = 1.05
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Armas/Cogblade/Movimento")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 0, 0, 0, 0.22, 1, 0.38658947, 0.040358774, 0.36172473, 0.34, 1, 0.2835118, 0.080700606, 0.26274222, 0.48, 1, -0.022550136, 0.05783452, -0.05637294, 0.64, 1, -0.41294858, -0.35122797, -0.32685995, 0.8, 1, -0.17848226, -0.17981204, -0.18292545, 1.05, 1, 0, 0, 0)
+tracks/1/type = "rotation_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Armas/Cogblade/Movimento")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, 4.4703484e-08, 1.8626451e-08, -8.881784e-16, 1, 0.22, 1, -0.04590685, 0.10658007, -0.23428942, 0.9652159, 0.34, 1, 0.00047232257, 0.053849835, -0.17794739, 0.9825654, 0.48, 1, 0.060452327, -0.10728326, -0.07662531, 0.9894263, 0.64, 1, 0.037818763, -0.28865686, -0.031252842, 0.9561748, 0.8, 1, 0.06473217, -0.17039311, -0.0310096, 0.9827585, 1.05, 1, 4.4703484e-08, 1.8626451e-08, -8.881784e-16, 1)
+tracks/2/type = "position_3d"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Armas/Cogblade/Movimento/Articulacao/ApoioEsquerdo")
+tracks/2/interp = 2
+tracks/2/loop_wrap = true
+tracks/2/keys = PackedFloat32Array(0, 1, 0.035, 0.12, 0.0381699, 0.22, 1, 0.035, 0.16, 0.0381699, 0.34, 1, 0.035, 0.14, 0.0381699, 0.48, 1, 0.035, 0.12, 0.0381699, 0.64, 1, 0.035, 0.12, 0.0381699, 0.8, 1, 0.035, 0.12, 0.0381699, 1.05, 1, 0.035, 0.12, 0.0381699)
+tracks/3/type = "method"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath(".")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0.35, 0.48, 0.66, 1.05),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"values": [{
+"args": ["rastro_inicio"],
+"method": &"evento_golpe_cogblade"
+}, {
+"args": ["impacto"],
+"method": &"evento_golpe_cogblade"
+}, {
+"args": ["rastro_fim"],
+"method": &"evento_golpe_cogblade"
+}, {
+"args": ["fim"],
+"method": &"evento_golpe_cogblade"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_f668w"]
+resource_name = "cogblade_ataque_3"
+length = 1.05
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Armas/Cogblade/Movimento")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 0, 0, 0, 0.22, 1, -0.3595587, -0.33105338, -0.2776282, 0.34, 1, -0.2483443, -0.18366098, -0.19584748, 0.48, 1, -0.006109138, 0.065530986, -0.04307977, 0.64, 1, 0.4513775, 0.100529425, 0.42448023, 0.8, 1, 0.26218084, 0.053413127, 0.20336728, 1.05, 1, 0, 0, 0)
+tracks/1/type = "rotation_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Armas/Cogblade/Movimento")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, 4.4703484e-08, 1.8626451e-08, -8.881784e-16, 1, 0.22, 1, 0.23131278, -0.24352355, 0.046137255, 0.94077736, 0.34, 1, 0.17913349, -0.18053941, -0.0072344136, 0.9670907, 0.48, 1, 0.05653213, -0.111431524, -0.08434774, 0.988571, 0.64, 1, -0.1237279, -0.11096354, -0.26254377, 0.9504995, 0.8, 1, -0.04320142, -0.06254183, -0.20786491, 0.97519964, 1.05, 1, 4.4703484e-08, 1.8626451e-08, -8.881784e-16, 1)
+tracks/2/type = "position_3d"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Armas/Cogblade/Movimento/Articulacao/ApoioEsquerdo")
+tracks/2/interp = 2
+tracks/2/loop_wrap = true
+tracks/2/keys = PackedFloat32Array(0, 1, 0.035, 0.12, 0.0381699, 0.22, 1, 0.035, 0.16, 0.0381699, 0.34, 1, 0.035, 0.14, 0.0381699, 0.48, 1, 0.035, 0.12, 0.0381699, 0.64, 1, 0.035, 0.12, 0.0381699, 0.8, 1, 0.035, 0.12, 0.0381699, 1.05, 1, 0.035, 0.12, 0.0381699)
+tracks/3/type = "method"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath(".")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0.35, 0.48, 0.66, 1.05),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"values": [{
+"args": ["rastro_inicio"],
+"method": &"evento_golpe_cogblade"
+}, {
+"args": ["impacto"],
+"method": &"evento_golpe_cogblade"
+}, {
+"args": ["rastro_fim"],
+"method": &"evento_golpe_cogblade"
+}, {
+"args": ["fim"],
+"method": &"evento_golpe_cogblade"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_leut6"]
+resource_name = "cogblade_ataque_4"
+length = 1.05
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Armas/Cogblade/Movimento")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 0, 0, 0, 0.22, 1, -0.015242353, -0.42584842, -0.20428726, 0.34, 1, 0.004067065, -0.26469842, -0.15644324, 0.48, 1, 0.03717437, 0.07905835, -0.015583418, 0.64, 1, 0.21352488, 0.17293984, 0.44823146, 0.8, 1, 0.11122162, 0.12034346, 0.21168305, 1.05, 1, 0, 0, 0)
+tracks/1/type = "rotation_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Armas/Cogblade/Movimento")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, 4.4703484e-08, 1.8626451e-08, -8.881784e-16, 1, 0.22, 1, -0.25594476, -0.41611978, -0.23574671, 0.8400953, 0.34, 1, -0.13201934, -0.3460819, -0.19060706, 0.9091024, 0.48, 1, 0.016822282, -0.107543804, -0.106360696, 0.9883515, 0.64, 1, 0.09765602, 0.28234798, -0.18537915, 0.9361504, 0.8, 1, 0.07417648, 0.0983551, -0.15195957, 0.9806796, 1.05, 1, 4.4703484e-08, 1.8626451e-08, -8.881784e-16, 1)
+tracks/2/type = "position_3d"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Armas/Cogblade/Movimento/Articulacao/ApoioEsquerdo")
+tracks/2/interp = 2
+tracks/2/loop_wrap = true
+tracks/2/keys = PackedFloat32Array(0, 1, 0.035, 0.12, 0.0381699, 0.22, 1, 0.035, 0.16, 0.0381699, 0.34, 1, 0.035, 0.14, 0.0381699, 0.48, 1, 0.035, 0.12, 0.0381699, 0.64, 1, 0.035, 0.12, 0.0381699, 0.8, 1, 0.035, 0.12, 0.0381699, 1.05, 1, 0.035, 0.12, 0.0381699)
+tracks/3/type = "method"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath(".")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0.35, 0.48, 0.66, 1.05),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"values": [{
+"args": ["rastro_inicio"],
+"method": &"evento_golpe_cogblade"
+}, {
+"args": ["impacto"],
+"method": &"evento_golpe_cogblade"
+}, {
+"args": ["rastro_fim"],
+"method": &"evento_golpe_cogblade"
+}, {
+"args": ["fim"],
+"method": &"evento_golpe_cogblade"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_3tcdt"]
+resource_name = "cogblade_defesa"
+length = 0.3
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Armas/Cogblade/Movimento")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 0, 0, 0, 0.3, 1, -0.20457573, 0.09017654, 0.1331051)
+tracks/1/type = "rotation_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Armas/Cogblade/Movimento")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, 2.9802322e-08, 1.4901161e-08, -7.450581e-09, 1, 0.3, 1, -0.0028000413, 0.12305758, -0.32133147, 0.93893296)
+tracks/2/type = "position_3d"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Armas/Cogblade/Movimento/Articulacao/ApoioEsquerdo")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = PackedFloat32Array(0, 1, 0.035, 0.12, 0.0381699, 0.3, 1, 0.035, 0.12, 0.0381699)
+
+[sub_resource type="Animation" id="Animation_8ks4d"]
+resource_name = "cogblade_guardar"
+length = 0.38
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Armas/Cogblade/Movimento")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 0, 0, 0, 0.38, 1, 0.15786745, -0.4112293, -0.09256533)
+tracks/1/type = "rotation_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Armas/Cogblade/Movimento")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, 2.9802322e-08, 1.4901161e-08, -7.450581e-09, 1, 0.38, 1, -0.054282863, -0.1671127, -0.27548587, 0.94511074)
+tracks/2/type = "position_3d"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Armas/Cogblade/Movimento/Articulacao/ApoioEsquerdo")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = PackedFloat32Array(0, 1, 0.035, 0.12, 0.0381699, 0.38, 1, 0.035, 0.12, 0.0381699)
+
+[sub_resource type="Animation" id="Animation_ecb63"]
+resource_name = "cogblade_idle"
+length = 2.8
+loop_mode = 1
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Armas/Cogblade/Movimento")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 0, 0, 0, 1.4, 1, -0.001968468, 0.0017724164, 0.0014084107, 2.8, 1, 0, 0, 0)
+tracks/1/type = "rotation_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Armas/Cogblade/Movimento")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, 2.9802322e-08, 1.4901161e-08, -7.450581e-09, 1, 1.4, 1, 0.0011701368, 0.0012950349, 0.0017453382, 0.99999696, 2.8, 1, 2.9802322e-08, 1.4901161e-08, -7.450581e-09, 1)
+tracks/2/type = "position_3d"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Armas/Cogblade/Movimento/Articulacao/ApoioEsquerdo")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = PackedFloat32Array(0, 1, 0.035, 0.12, 0.0381699, 2.8, 1, 0.035, 0.12, 0.0381699)
+
+[sub_resource type="Animation" id="Animation_vliwi"]
+resource_name = "cogblade_impacto_defesa"
+length = 0.32
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Armas/Cogblade/Movimento")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, -0.20457573, 0.09017654, 0.1331051, 0.07, 1, -0.16960052, 0.02565647, 0.17798151, 0.32, 1, -0.20457573, 0.09017654, 0.1331051)
+tracks/1/type = "rotation_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Armas/Cogblade/Movimento")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, -0.0028000413, 0.12305758, -0.32133147, 0.93893296, 0.07, 1, -0.055187706, 0.083323166, -0.35524854, 0.92941386, 0.32, 1, -0.0028000413, 0.12305758, -0.32133147, 0.93893296)
+tracks/2/type = "position_3d"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Armas/Cogblade/Movimento/Articulacao/ApoioEsquerdo")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = PackedFloat32Array(0, 1, 0.035, 0.12, 0.0381699, 0.32, 1, 0.035, 0.12, 0.0381699)
+
+[sub_resource type="Animation" id="Animation_7j640"]
+resource_name = "cogblade_sacar"
+length = 0.52
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Armas/Cogblade/Movimento")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 0.15786745, -0.4112293, -0.09256533, 0.36, 1, -0.004676942, 0.013215167, -0.0018668608, 0.52, 1, 0, 0, 0)
+tracks/1/type = "rotation_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Armas/Cogblade/Movimento")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, -0.054282863, -0.1671127, -0.27548587, 0.94511074, 0.36, 1, 0.0058955615, 0.0064338944, 0.008726189, 0.9999238, 0.52, 1, 2.9802322e-08, 1.4901161e-08, -7.450581e-09, 1)
+tracks/2/type = "position_3d"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Armas/Cogblade/Movimento/Articulacao/ApoioEsquerdo")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = PackedFloat32Array(0, 1, 0.035, 0.12, 0.0381699, 0.52, 1, 0.035, 0.12, 0.0381699)
+
+[resource]
+_data = {
+&"cogblade_ataque_1": SubResource("Animation_qxng2"),
+&"cogblade_ataque_2": SubResource("Animation_befmf"),
+&"cogblade_ataque_3": SubResource("Animation_f668w"),
+&"cogblade_ataque_4": SubResource("Animation_leut6"),
+&"cogblade_defesa": SubResource("Animation_3tcdt"),
+&"cogblade_guardar": SubResource("Animation_8ks4d"),
+&"cogblade_idle": SubResource("Animation_ecb63"),
+&"cogblade_impacto_defesa": SubResource("Animation_vliwi"),
+&"cogblade_sacar": SubResource("Animation_7j640")
+}

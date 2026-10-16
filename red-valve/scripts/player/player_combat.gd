@@ -794,7 +794,7 @@ func bullet_time_back() -> void:
 	if player.is_first_person:
 		player.camera.make_current()
 		player.control_weapons.visible = true
-		player.hand_with_pistol.visible = SaveManager.arma_de_fogo_equipada()
+		player.hand_with_pistol.visible = player._deve_mostrar_maos_fp()
 		if player.hand_with_magic: player.hand_with_magic.visible = true
 		player.control_magic.visible = true
 	else:
@@ -1229,7 +1229,7 @@ func _start_cogblade_pulse() -> void:
 func update_equipment_visuals() -> void:
 	if player.is_first_person and not player.is_reloading and player.control_weapons.visible:
 		if not player.are_cutscene_inputs_blocked():
-			player.hand_with_pistol.visible = SaveManager.arma_de_fogo_equipada()
+			player.hand_with_pistol.visible = player._deve_mostrar_maos_fp()
 		else:
 			player.hand_with_pistol.visible = false
 	# A arma na mão do Maycow normal não precisa de nada aqui: o

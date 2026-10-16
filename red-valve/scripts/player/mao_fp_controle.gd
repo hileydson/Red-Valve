@@ -18,6 +18,12 @@ extends Marker3D
 @export var abertura_polegar := -17.0
 ## Rotacao do antebraco em relacao a palma: permite pronacao sem travar o pulso.
 @export_range(-45.0, 45.0, 0.1) var torcao_antebraco := 0.0
+## Mantem o antebraco na continuidade da palma. 0 usa a entrada do cotovelo;
+## 1 deixa o pulso neutro. Util para empunhaduras de machado com duas maos.
+@export_range(0.0, 1.0, 0.01) var alinhamento_antebraco := 0.0
+## Limita a dobra entre a mao e o antebraco sem apagar a direcao do cotovelo.
+## 180 preserva o comportamento antigo; empunhaduras longas usam um valor menor.
+@export_range(0.0, 180.0, 0.1) var limite_flexao_pulso := 180.0
 
 func dedos() -> Dictionary:
 	return {"indicador": indicador, "medio": medio, "anelar": anelar,

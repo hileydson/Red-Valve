@@ -2,6 +2,7 @@
 extends Node3D
 
 signal recarga_evento(evento: String)
+signal cogblade_evento(evento: String)
 
 ## PRIMEIRA PESSOA. A cena e a fonte de verdade: nao instancia armas escondidas,
 ## nao muda enquadramento em codigo. Edite Armas, as pegadas e o AnimationPlayer.
@@ -14,7 +15,7 @@ signal recarga_evento(evento: String)
 		arma_previa = valor
 		if is_inside_tree() and Engine.is_editor_hint():
 			_prever()
-@export_enum("idle", "tiro", "recarga", "guardar", "sacar") var acao_previa := "idle":
+@export_enum("idle", "tiro", "recarga", "guardar", "sacar", "ataque_1", "ataque_2", "ataque_3", "ataque_4", "defesa", "impacto_defesa") var acao_previa := "idle":
 	set(valor):
 		acao_previa = valor
 		if is_inside_tree() and Engine.is_editor_hint():
@@ -33,6 +34,9 @@ signal recarga_evento(evento: String)
 @export_group("Entrada dos antebracos (metros)")
 @export var cotovelo_direito := Vector3(0.30, -0.55, 0.12)
 @export var cotovelo_esquerdo := Vector3(-0.32, -0.55, 0.12)
+@export_group("Entrada dos antebracos / Cogblade")
+@export var cotovelo_cogblade_direito := Vector3(0.64, -0.86, 0.10)
+@export var cotovelo_cogblade_esquerdo := Vector3(-0.90, -0.72, 0.08)
 
 var _animador: AnimationPlayer
 var _dir: Skeleton3D
@@ -97,16 +101,24 @@ func _process(delta: float) -> void:
 		# Tambem reconhece a animacao escolhida no painel Animation.
 		for item in _armas:
 			if String(_animador.assigned_animation).begins_with(_armas[item].prefixo + "_"):
-				_na_mao = item
+				if _na_mao != item:
+					_na_mao = item
+					_mostrar_arma(item)
 				break
 	else:
 		var quer := arma_previa if _modo_previa else _arma_equipada()
 		if quer != _na_mao and not _trocando:
 			_trocar_para(quer)
-		if not _trocando and not _animador.is_playing() and _na_mao != "":
+		if not _trocando and not _animador.is_playing() and _na_mao != "" and not _defesa_cogblade():
 			_recarregando = false
 			_animador.play(_clipe(_na_mao, "idle"), 0.10)
 		_atualizar_mao_magica(delta)
+		if _na_mao == "cogblade":
+			var poder: bool = is_instance_valid(_player) and (_player.is_using_ultimate or _player.is_magic_attacking)
+			for item in _armas:
+				_armas[item].visible = item == "cogblade" and not poder
+			for sk in [_dir, _esq]:
+				sk.get_child(0).visible = not poder
 	_atualizar_pose()
 
 func _prever() -> void:
@@ -122,8 +134,10 @@ func _prever() -> void:
 	_atualizar_pose()
 
 func _arma_equipada() -> String:
+	if SaveManager.cogblade_como_arma() and not GlobalEvents.is_maycow_normal:
+		return "cogblade"
 	for item in _armas:
-		if SaveManager.is_equipped(item):
+		if item != "cogblade" and SaveManager.is_equipped(item):
 			return item
 	return ""
 
@@ -155,7 +169,8 @@ func _trocar_para(nova: String) -> void:
 	if nova != "" and _animador.has_animation(_clipe(nova, "sacar")):
 		_animador.play(_clipe(nova, "sacar"))
 		await get_tree().create_timer(_animador.current_animation_length).timeout
-	_trocando = false
+	if geracao == _geracao_troca:
+		_trocando = false
 
 func _atualizar_pose() -> void:
 	if not _armas.has(_na_mao) or _esq == null:
@@ -168,6 +183,8 @@ func _atualizar_pose() -> void:
 	var aberturas_esq: Dictionary = esquerda.aberturas()
 	# Durante o reload do @tool, uma propriedade exportada pode ficar nula por um frame.
 	var torcao_controle = esquerda.get("torcao_antebraco")
+	var alinhamento_esq := 0.0
+	var limite_esq := 180.0
 	var torcao_esq: float = torcao_controle if torcao_controle != null else 0.0
 	var controle_recarga := arma.get_node_or_null("ControleRecargaEsquerdo") as Node3D
 	if controle_recarga != null and mao_esquerda_na_recarga > 0.0:
@@ -179,33 +196,42 @@ func _atualizar_pose() -> void:
 			aberturas_esq[dedo] = lerpf(aberturas_esq[dedo], controle_recarga.aberturas()[dedo], mao_esquerda_na_recarga)
 	if arma.usa_apoio:
 		var apoio: Node3D = arma.get_node("Movimento/Articulacao/ApoioEsquerdo")
-		alvo_esq = alvo_esq.interpolate_with(apoio.global_transform, apoio_esquerdo)
+		alinhamento_esq = float(apoio.get("alinhamento_antebraco") if apoio.get("alinhamento_antebraco") != null else 0.0)
+		limite_esq = float(apoio.get("limite_flexao_pulso") if apoio.get("limite_flexao_pulso") != null else 180.0)
+		var peso_apoio := 1.0 if _na_mao == "cogblade" else apoio_esquerdo
+		alvo_esq = alvo_esq.interpolate_with(apoio.global_transform, peso_apoio)
 		var torcao_apoio = apoio.get("torcao_antebraco")
-		torcao_esq = lerpf(torcao_esq, torcao_apoio if torcao_apoio != null else 0.0, apoio_esquerdo)
+		torcao_esq = lerpf(torcao_esq, torcao_apoio if torcao_apoio != null else 0.0, peso_apoio)
 		for dedo in dedos_esq:
-			dedos_esq[dedo] = (dedos_esq[dedo] as Vector3).lerp(apoio.dedos()[dedo], apoio_esquerdo)
-			aberturas_esq[dedo] = lerpf(aberturas_esq[dedo], apoio.aberturas()[dedo], apoio_esquerdo)
+			dedos_esq[dedo] = (dedos_esq[dedo] as Vector3).lerp(apoio.dedos()[dedo], peso_apoio)
+			aberturas_esq[dedo] = lerpf(aberturas_esq[dedo], apoio.aberturas()[dedo], peso_apoio)
 	var dedos_dir: Dictionary = direita.dedos()
-	dedos_dir["indicador"] += Vector3(10,10,5) * pressao_gatilho
-	_aplicar_mao(_dir, direita.global_transform, dedos_dir, direita.aberturas(), cotovelo_direito, true, 0.0, float(direita.get("avanco_indicador") if direita.get("avanco_indicador") != null else 0.0))
-	_aplicar_mao(_esq, alvo_esq, dedos_esq, aberturas_esq, cotovelo_esquerdo, false, torcao_esq)
+	dedos_dir["indicador"] += Vector3(10,10,5) * (0.0 if _na_mao == "cogblade" else pressao_gatilho)
+	var entrada_dir := cotovelo_cogblade_direito if _na_mao == "cogblade" else cotovelo_direito
+	var entrada_esq := cotovelo_cogblade_esquerdo if _na_mao == "cogblade" else cotovelo_esquerdo
+	var avanco_dir := float(direita.get("avanco_indicador") if direita.get("avanco_indicador") != null else 0.0)
+	var alinhamento_dir := float(direita.get("alinhamento_antebraco") if direita.get("alinhamento_antebraco") != null else 0.0)
+	var limite_dir := float(direita.get("limite_flexao_pulso") if direita.get("limite_flexao_pulso") != null else 180.0)
+	_aplicar_mao(_dir, direita.global_transform, dedos_dir, direita.aberturas(), entrada_dir, true, 0.0, avanco_dir, alinhamento_dir, limite_dir)
+	_aplicar_mao(_esq, alvo_esq, dedos_esq, aberturas_esq, entrada_esq, false, torcao_esq, 0.0, alinhamento_esq, limite_esq)
 	for nome in ["fire", "faisca"]:
 		var efeito := get_parent().get_node_or_null(nome) as Node3D
 		if efeito != null:
 			efeito.global_position = boca_do_cano()
-	if not Engine.is_editor_hint() and _peso_magia > 0.0:
+	if not Engine.is_editor_hint() and _peso_magia > 0.0 and _na_mao != "cogblade":
 		_copiar_gesto_magico()
 
 ## Converte um controle do pulso em pose do rig; sem escalar os ossos.
 func _aplicar_mao(sk: Skeleton3D, alvo: Transform3D, dedos: Dictionary,
-		aberturas: Dictionary, cotovelo: Vector3, direita: bool, torcao := 0.0, avanco_indicador := 0.0) -> void:
+		aberturas: Dictionary, cotovelo: Vector3, direita: bool, torcao := 0.0, avanco_indicador := 0.0,
+		alinhamento := 0.0, limite_flexao := 180.0) -> void:
 	var local := sk.global_transform.affine_inverse() * alvo
 	var y := -local.basis.z.normalized()
 	var z := local.basis.y.normalized()
 	var x := y.cross(z).normalized()
 	z = x.cross(y).normalized()
 	var pulso := Transform3D(Basis(x, y, z), local.origin)
-	_assentar_pulso(sk, pulso, cotovelo, torcao)
+	_assentar_pulso(sk, pulso, cotovelo, torcao, alinhamento, limite_flexao)
 	for dedo in dedos:
 		var dobras: Vector3 = dedos[dedo] * (PI / 180.0)
 		for f in 3:
@@ -226,10 +252,20 @@ func _aplicar_mao(sk: Skeleton3D, alvo: Transform3D, dedos: Dictionary,
 				rest.basis = Basis.IDENTITY
 			_pose(sk, i, rest * Transform3D(Basis.from_euler(Vector3(dobras[f], 0, lateral)), Vector3.ZERO))
 
-func _assentar_pulso(sk: Skeleton3D, pulso: Transform3D, cotovelo: Vector3, torcao := 0.0) -> void:
+func _assentar_pulso(sk: Skeleton3D, pulso: Transform3D, cotovelo: Vector3, torcao := 0.0,
+		alinhamento := 0.0, limite_flexao := 180.0) -> void:
 	var z := pulso.basis.z
 	var origem := sk.to_local(to_global(cotovelo))
 	var direcao := (pulso.origin - origem).normalized()
+	if alinhamento > 0.0:
+		# O pulso continua preso a pegada; e o antebraco que acompanha a palma,
+		# em vez de exigir flexao extrema para apontar ao cotovelo fixo.
+		direcao = direcao.slerp(pulso.basis.y.normalized(), alinhamento).normalized()
+	var eixo_mao := pulso.basis.y.normalized()
+	var angulo := direcao.angle_to(eixo_mao)
+	var limite := deg_to_rad(limite_flexao)
+	if angulo > limite and angulo > 0.0001:
+		direcao = direcao.slerp(eixo_mao, (angulo - limite) / angulo).normalized()
 	z = z.rotated(direcao, deg_to_rad(torcao))
 	var comprimento := sk.get_bone_rest(1).origin.length()
 	var ante := Transform3D(_base(direcao, z), pulso.origin - direcao * comprimento)
@@ -250,7 +286,7 @@ func _pose(sk: Skeleton3D, i: int, t: Transform3D) -> void:
 func _atualizar_mao_magica(delta: float) -> void:
 	var armado := _na_mao != ""
 	if _malha_magica != null:
-		_malha_magica.visible = not armado
+		_malha_magica.visible = not armado or (_na_mao == "cogblade" and is_instance_valid(_player) and _player.is_magic_attacking)
 	var usando := false
 	if is_instance_valid(_player):
 		usando = _player.is_magic_attacking or _player.cogblade_melee_active or _player.is_using_ultimate
@@ -287,6 +323,13 @@ func em_troca() -> bool:
 func atirar() -> void:
 	if not tem_arma_na_mao() or _trocando or _recarregando:
 		return
+	if _na_mao == "cogblade":
+		if _modo_previa:
+			var variante := randi_range(1, 4)
+			var anterior := String(_animador.assigned_animation).get_slice("ataque_", 1).to_int()
+			if variante == anterior: variante = variante % 4 + 1
+			animar_cogblade("ataque_%d" % variante)
+		return
 	_animador.play(_clipe(_na_mao, "tiro"), 0.025)
 	if _na_mao == "pistol":
 		get_parent().get_node("fire").play("shoot")
@@ -299,7 +342,7 @@ func atirar() -> void:
 		get_tree().current_scene.add_child(fx)
 
 func recarregar(tempo: float, quantidade: int = 2) -> bool:
-	if not tem_arma_na_mao() or _trocando or _recarregando:
+	if not tem_arma_na_mao() or _trocando or _recarregando or _na_mao == "cogblade":
 		return false
 	var nome := _clipe(_na_mao, "recarga")
 	if _na_mao == "shotgun" and quantidade == 1 and _animador.has_animation(nome + "_uma"):
@@ -344,7 +387,7 @@ func bocas_das_camaras() -> Array:
 		return []
 	return [_armas[_na_mao].ponto("Camara1"), _armas[_na_mao].ponto("Camara2")]
 
-## F6 nesta cena: F1 pistola, F2 shotgun, R recarga e clique esquerdo tiro.
+## F6: F1 pistola, F2 shotgun, F3 cogblade. Clique ataca; direito defende a cogblade.
 func _unhandled_input(event: InputEvent) -> void:
 	if Engine.is_editor_hint() or not _modo_previa:
 		return
@@ -352,10 +395,14 @@ func _unhandled_input(event: InputEvent) -> void:
 		match event.keycode:
 			KEY_F1: arma_previa = "pistol"
 			KEY_F2: arma_previa = "shotgun"
+			KEY_F3: arma_previa = "cogblade"
 			KEY_R:
 				if tem_arma_na_mao(): recarregar(duracao_recarga())
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		atirar()
+	if event is InputEventMouseButton:
+		if event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+			atirar()
+		elif event.button_index == MOUSE_BUTTON_RIGHT and _na_mao == "cogblade":
+			animar_cogblade("defesa" if event.pressed else "idle", 0.12)
 
 ## A lista de previa acompanha as armas da cena; adicionar outra nao exige ifs.
 func _validate_property(propriedade: Dictionary) -> void:
@@ -367,3 +414,23 @@ func _validate_property(propriedade: Dictionary) -> void:
 		if "item_id" in arma: ids.append(arma.item_id)
 	propriedade.hint = PROPERTY_HINT_ENUM
 	propriedade.hint_string = ",".join(ids)
+
+## As chaves de metodo dos clipes mantem o impacto e o rastro sincronizados.
+func evento_golpe_cogblade(evento: String) -> void:
+	if not Engine.is_editor_hint() and not _modo_previa and _na_mao == "cogblade":
+		cogblade_evento.emit(evento)
+
+func animar_cogblade(acao: String, transicao := 0.06, duracao := 0.0) -> bool:
+	if _na_mao != "cogblade" or _trocando:
+		return false
+	var nome := _clipe("cogblade", acao)
+	if not _animador.has_animation(nome):
+		return false
+	var velocidade := _animador.get_animation(nome).length / duracao if duracao > 0.0 else 1.0
+	_animador.play(nome, transicao, velocidade)
+	return true
+
+func _defesa_cogblade() -> bool:
+	if _na_mao != "cogblade": return false
+	var nome := String(_animador.assigned_animation)
+	return nome.ends_with("_defesa") or nome.ends_with("_impacto_defesa")

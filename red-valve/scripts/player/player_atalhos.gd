@@ -70,6 +70,8 @@ func _equipar_do_atalho(direcao: String) -> void:
 	# erro: o atalho pode ter sido criado para um item de mais adiante no jogo.
 	if not SaveManager.tem_item(item_id):
 		return
+	if item_id == "cogblade" and GlobalEvents.is_maycow_normal:
+		return
 	if SaveManager.is_equipped(item_id):
 		return
 
