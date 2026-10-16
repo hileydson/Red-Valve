@@ -164,16 +164,18 @@ func _atualizar_pose() -> void:
 	var alvo_esq := esquerda.global_transform
 	var dedos_esq: Dictionary = esquerda.dedos()
 	var aberturas_esq: Dictionary = esquerda.aberturas()
+	var torcao_esq: float = esquerda.torcao_antebraco
 	if arma.usa_apoio:
 		var apoio: Node3D = arma.get_node("Movimento/Articulacao/ApoioEsquerdo")
 		alvo_esq = alvo_esq.interpolate_with(apoio.global_transform, apoio_esquerdo)
+		torcao_esq = lerpf(torcao_esq, apoio.torcao_antebraco, apoio_esquerdo)
 		for dedo in dedos_esq:
 			dedos_esq[dedo] = (dedos_esq[dedo] as Vector3).lerp(apoio.dedos()[dedo], apoio_esquerdo)
 			aberturas_esq[dedo] = lerpf(aberturas_esq[dedo], apoio.aberturas()[dedo], apoio_esquerdo)
 	var dedos_dir: Dictionary = direita.dedos()
 	dedos_dir["indicador"] += Vector3(10,10,5) * pressao_gatilho
 	_aplicar_mao(_dir, direita.global_transform, dedos_dir, direita.aberturas(), cotovelo_direito, true)
-	_aplicar_mao(_esq, alvo_esq, dedos_esq, aberturas_esq, cotovelo_esquerdo, false)
+	_aplicar_mao(_esq, alvo_esq, dedos_esq, aberturas_esq, cotovelo_esquerdo, false, torcao_esq)
 	for nome in ["fire", "faisca"]:
 		var efeito := get_parent().get_node_or_null(nome) as Node3D
 		if efeito != null:
@@ -183,14 +185,14 @@ func _atualizar_pose() -> void:
 
 ## Converte um controle do pulso em pose do rig; sem escalar os ossos.
 func _aplicar_mao(sk: Skeleton3D, alvo: Transform3D, dedos: Dictionary,
-		aberturas: Dictionary, cotovelo: Vector3, direita: bool) -> void:
+		aberturas: Dictionary, cotovelo: Vector3, direita: bool, torcao := 0.0) -> void:
 	var local := sk.global_transform.affine_inverse() * alvo
 	var y := -local.basis.z.normalized()
 	var z := local.basis.y.normalized()
 	var x := y.cross(z).normalized()
 	z = x.cross(y).normalized()
 	var pulso := Transform3D(Basis(x, y, z), local.origin)
-	_assentar_pulso(sk, pulso, cotovelo)
+	_assentar_pulso(sk, pulso, cotovelo, torcao)
 	for dedo in dedos:
 		var dobras: Vector3 = dedos[dedo] * (PI / 180.0)
 		for f in 3:
@@ -208,10 +210,11 @@ func _aplicar_mao(sk: Skeleton3D, alvo: Transform3D, dedos: Dictionary,
 				rest.basis = Basis.IDENTITY
 			_pose(sk, i, rest * Transform3D(Basis.from_euler(Vector3(dobras[f], 0, lateral)), Vector3.ZERO))
 
-func _assentar_pulso(sk: Skeleton3D, pulso: Transform3D, cotovelo: Vector3) -> void:
+func _assentar_pulso(sk: Skeleton3D, pulso: Transform3D, cotovelo: Vector3, torcao := 0.0) -> void:
 	var z := pulso.basis.z
 	var origem := sk.to_local(to_global(cotovelo))
 	var direcao := (pulso.origin - origem).normalized()
+	z = z.rotated(direcao, deg_to_rad(torcao))
 	var comprimento := sk.get_bone_rest(1).origin.length()
 	var ante := Transform3D(_base(direcao, z), pulso.origin - direcao * comprimento)
 	_pose(sk, 0, ante)

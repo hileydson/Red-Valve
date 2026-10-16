@@ -14,6 +14,8 @@ extends Marker3D
 @export var abertura := Vector3(6, 0, -3)
 @export var abertura_mindinho := -7.0
 @export var abertura_polegar := -17.0
+## Rotacao do antebraco em relacao a palma: permite pronacao sem travar o pulso.
+@export_range(-45.0, 45.0, 0.1) var torcao_antebraco := 0.0
 
 func dedos() -> Dictionary:
 	return {"indicador": indicador, "medio": medio, "anelar": anelar,
