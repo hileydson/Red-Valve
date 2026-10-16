@@ -191,7 +191,7 @@ transform = Transform3D(-6.3381513e-09, 0, -0.145, 0, 0.145, 0, 0.145, 0, -6.338
 
 [node name="PegadaDireita" type="Marker3D" parent="rig/Armas/Pistola/Movimento" unique_id=230042829]
 editor_description = "Pulso direito. Mover ou girar ajusta a pegada no editor e no jogo. -Z segue os dedos; +Y aponta para a palma. As componentes dos dedos sao as tres falanges em graus."
-transform = Transform3D(0, -1, 0, 0.9848077, 0, -0.17364818, 0.17364818, 0, 0.9848077, 0.05, 0, 0.075)
+transform = Transform3D(0, -1, 0, 0.9659258, 0, -0.25881904, 0.25881904, 0, 0.9659258, 0.05, 0.025, 0.075)
 gizmo_extents = 0.02
 script = ExtResource("11_qrhw1")
 indicador = Vector3(18, 42, 20)
