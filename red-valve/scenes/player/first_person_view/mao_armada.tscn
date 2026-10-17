@@ -14,9 +14,8 @@
 [ext_resource type="AnimationLibrary" uid="uid://do3uq3ok60boj" path="res://assets/3d_model/player/hands/maos_fp/armas_fp_clipes.tres" id="14_on5tm"]
 [ext_resource type="Script" uid="uid://dfo761n03kf2r" path="res://scripts/player/previa_da_tela.gd" id="20_previa"]
 [ext_resource type="PackedScene" path="res://assets/3d_model/player/the_negotiator_V1/pente_pistola_fp.tscn" id="21_pente"]
-
 [ext_resource type="PackedScene" path="res://scenes/player/first_person_view/cogblade_fp.tscn" id="22_cogblade"]
-[ext_resource type="AnimationLibrary" path="res://assets/3d_model/player/hands/maos_fp/cogblade_fp_clipes.tres" id="23_cogblade_clipes"]
+[ext_resource type="AnimationLibrary" uid="uid://bpbqwby8evlbj" path="res://assets/3d_model/player/hands/maos_fp/cogblade_fp_clipes.tres" id="23_cogblade_clipes"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_aro_camara"]
 albedo_color = Color(0.18, 0.16, 0.12, 1)
@@ -90,45 +89,47 @@ script = ExtResource("1_sway")
 process_priority = 10
 editor_description = "Previa: escolha arma/acao/instante no inspetor. No AnimationPlayer, edite Movimento (gesto), ControleEsquerdo (mao livre), Articulacao (dobra), e as chaves evento_recarga (som e municao). Cogblade: biblioteca cogblade, pegadas em Armas/Cogblade, impacto e rastro nas chaves evento_golpe_cogblade."
 script = ExtResource("3_armas")
+cotovelo_cogblade_direito = Vector3(0.34, -0.9, 0.06)
+cotovelo_cogblade_esquerdo = Vector3(-0.36, -0.9, 0.06)
 
 [node name="Malhas" parent="rig" unique_id=1345610690 instance=ExtResource("2_rig")]
 transform = Transform3D(0.17, 0, 0, 0, 0.17, 0, 0, 0, 0.17, 0, 0, 0)
 
 [node name="Skeleton3D" parent="rig/Malhas/Armature" parent_id_path=PackedInt32Array(1345610690, 1517908256) index="0" unique_id=176226078]
-bones/0/position = Vector3(-0.63329494, -2.0495522, -1.1417928)
-bones/0/rotation = Quaternion(-0.47385603, -0.16336495, -0.20184456, 0.84144586)
+bones/0/position = Vector3(-1.304285, -2.699841, -1.645208)
+bones/0/rotation = Quaternion(-0.24280868, 0.59669566, -0.5346576, 0.5469365)
 bones/0/scale = Vector3(1, 1, 1)
-bones/1/position = Vector3(0, 1.8681712, 0)
-bones/1/rotation = Quaternion(-0.059796594, -0.02330832, -0.3624294, 0.9297989)
+bones/1/position = Vector3(0, 1.868171, 5.9604645e-08)
+bones/1/rotation = Quaternion(0.010077495, 0.00030863538, -0.030608887, 0.9994806)
 bones/1/scale = Vector3(1, 1, 1)
-bones/2/rotation = Quaternion(0.47699526, 0.012490561, -0.023004754, 0.87851596)
+bones/2/rotation = Quaternion(0.5877853, 0, 0, 0.809017)
 bones/2/scale = Vector3(1, 1, 1)
-bones/3/rotation = Quaternion(0.2923717, 0, 0, 0.9563048)
+bones/3/rotation = Quaternion(0.53729963, 0, 0, 0.8433914)
 bones/3/scale = Vector3(1, 1, 1)
-bones/4/rotation = Quaternion(0.17364816, 0, 0, 0.9848078)
+bones/4/rotation = Quaternion(0.3007058, 0, 0, 0.953717)
 bones/4/scale = Vector3(1, 1, 1)
-bones/5/rotation = Quaternion(0.40617925, -0.021286951, 0.04781127, 0.9122935)
+bones/5/rotation = Quaternion(0.53729963, 0, 0, 0.8433914)
 bones/5/scale = Vector3(1, 1, 1)
-bones/6/rotation = Quaternion(0.3007058, 0, 0, 0.953717)
+bones/6/rotation = Quaternion(0.53729963, 0, 0, 0.8433914)
 bones/6/scale = Vector3(1, 1, 1)
-bones/7/rotation = Quaternion(0.17364816, 0, 0, 0.9848078)
+bones/7/rotation = Quaternion(0.3007058, 0, 0, 0.953717)
 bones/7/scale = Vector3(1, 1, 1)
-bones/8/rotation = Quaternion(0.46947157, 0, 0, 0.88294756)
+bones/8/rotation = Quaternion(0.5735764, 0, 0, 0.81915206)
 bones/8/scale = Vector3(1, 1, 1)
-bones/9/rotation = Quaternion(0.2923717, 0, 0, 0.9563048)
+bones/9/rotation = Quaternion(0.53729963, 0, 0, 0.8433914)
 bones/9/scale = Vector3(1, 1, 1)
-bones/10/rotation = Quaternion(0.17364816, 0, 0, 0.9848078)
+bones/10/rotation = Quaternion(0.3007058, 0, 0, 0.953717)
 bones/10/scale = Vector3(1, 1, 1)
-bones/11/rotation = Quaternion(0.48390538, 0.029596921, -0.05339426, 0.87298834)
+bones/11/rotation = Quaternion(0.60876137, 0, 0, 0.7933534)
 bones/11/scale = Vector3(1, 1, 1)
-bones/12/rotation = Quaternion(0.27563736, 0, 0, 0.9612617)
+bones/12/rotation = Quaternion(0.53729963, 0, 0, 0.8433914)
 bones/12/scale = Vector3(1, 1, 1)
-bones/13/rotation = Quaternion(0.15643446, 0, 0, 0.9876883)
+bones/13/rotation = Quaternion(0.3007058, 0, 0, 0.953717)
 bones/13/scale = Vector3(1, 1, 1)
-bones/14/rotation = Quaternion(0.14015438, 0.10771297, 0.2753634, 0.94494957)
-bones/15/rotation = Quaternion(0.17962182, -0.027728017, -0.1500208, 0.9718338)
+bones/14/rotation = Quaternion(0.3833083, 0.14365955, 0.46368763, 0.78576744)
+bones/15/rotation = Quaternion(0.22184166, -0.034245446, -0.14866856, 0.96307385)
 bones/15/scale = Vector3(1, 1, 1)
-bones/16/rotation = Quaternion(0.2046887, 0.022140225, 0.097334385, 0.973724)
+bones/16/rotation = Quaternion(0.27211362, 0.028875994, 0.09555286, 0.9570737)
 bones/16/scale = Vector3(1, 1, 1)
 bones/17/rotation = Quaternion(-0.7071068, 0, 0, 0.7071068)
 
@@ -137,40 +138,40 @@ cast_shadow = 0
 surface_material_override/0 = ExtResource("5_pele_e")
 
 [node name="Skeleton3D" parent="rig/Malhas/Armature_dir" parent_id_path=PackedInt32Array(1345610690, 2083814527) index="0" unique_id=988876978]
-bones/0/position = Vector3(1.6403683, -2.7198176, 0.23361325)
-bones/0/rotation = Quaternion(-0.23236611, -0.55084544, 0.28815866, 0.748024)
+bones/0/position = Vector3(2.3096962, -2.5119114, -3.6295207)
+bones/0/rotation = Quaternion(-0.29275823, 0.9367456, -0.118769854, -0.1506455)
 bones/0/scale = Vector3(1, 1, 1)
-bones/1/position = Vector3(0, 1.8681712, -1.1920929e-07)
-bones/1/rotation = Quaternion(-0.03522572, 0.017163113, 0.43767154, 0.8982807)
+bones/1/position = Vector3(-2.3841858e-07, 1.8681712, 0)
+bones/1/rotation = Quaternion(-0.044187993, -0.0021678633, -0.04895321, 0.9978208)
 bones/1/scale = Vector3(1, 1, 1)
-bones/2/rotation = Quaternion(0.65583426, -0.017173626, 0.019755997, 0.7544509)
+bones/2/rotation = Quaternion(0.5877853, 0, 0, 0.809017)
 bones/2/scale = Vector3(1, 1, 1)
-bones/3/rotation = Quaternion(0.15643446, 0, 0, 0.9876883)
+bones/3/rotation = Quaternion(0.53729963, 0, 0, 0.8433914)
 bones/3/scale = Vector3(1, 1, 1)
-bones/4/rotation = Quaternion(0.21643962, 0, 0, 0.976296)
+bones/4/rotation = Quaternion(0.3007058, 0, 0, 0.953717)
 bones/4/scale = Vector3(1, 1, 1)
-bones/5/rotation = Quaternion(0.100966744, 0.027053958, -0.25740123, 0.9606344)
+bones/5/rotation = Quaternion(0.53729963, 0, 0, 0.8433914)
 bones/5/scale = Vector3(1, 1, 1)
-bones/6/rotation = Quaternion(0.4617486, 0, 0, 0.8870108)
+bones/6/rotation = Quaternion(0.53729963, 0, 0, 0.8433914)
 bones/6/scale = Vector3(1, 1, 1)
 bones/7/rotation = Quaternion(0.3007058, 0, 0, 0.953717)
 bones/7/scale = Vector3(1, 1, 1)
-bones/8/rotation = Quaternion(0.64278764, 0, 0, 0.76604444)
+bones/8/rotation = Quaternion(0.5735764, 0, 0, 0.81915206)
 bones/8/scale = Vector3(1, 1, 1)
-bones/9/rotation = Quaternion(0.17364816, 0, 0, 0.9848078)
+bones/9/rotation = Quaternion(0.53729963, 0, 0, 0.8433914)
 bones/9/scale = Vector3(1, 1, 1)
-bones/10/rotation = Quaternion(0.21643962, 0, 0, 0.976296)
+bones/10/rotation = Quaternion(0.3007058, 0, 0, 0.953717)
 bones/10/scale = Vector3(1, 1, 1)
-bones/11/rotation = Quaternion(0.67433006, -0.041243795, 0.04500971, 0.7359022)
+bones/11/rotation = Quaternion(0.60876137, 0, 0, 0.7933534)
 bones/11/scale = Vector3(1, 1, 1)
-bones/12/rotation = Quaternion(0.1305262, 0, 0, 0.9914449)
+bones/12/rotation = Quaternion(0.53729963, 0, 0, 0.8433914)
 bones/12/scale = Vector3(1, 1, 1)
-bones/13/rotation = Quaternion(0.17364816, 0, 0, 0.9848078)
+bones/13/rotation = Quaternion(0.3007058, 0, 0, 0.953717)
 bones/13/scale = Vector3(1, 1, 1)
-bones/14/rotation = Quaternion(0.14015444, -0.107712954, -0.27536336, 0.94494957)
+bones/14/rotation = Quaternion(0.38330838, -0.14365953, -0.4636876, 0.78576744)
 bones/14/scale = Vector3(1, 1, 1)
-bones/15/rotation = Quaternion(0.17962186, 0.02772799, 0.15002067, 0.9718338)
-bones/16/rotation = Quaternion(0.20468858, -0.022140214, -0.09733433, 0.973724)
+bones/15/rotation = Quaternion(0.22184175, 0.034245417, 0.14866842, 0.96307385)
+bones/16/rotation = Quaternion(0.27211356, -0.028875984, -0.09555281, 0.9570737)
 bones/16/scale = Vector3(1, 1, 1)
 bones/17/rotation = Quaternion(-0.7071068, 0, 0, 0.7071068)
 
@@ -222,19 +223,18 @@ gizmo_extents = 0.02
 transform = Transform3D(1, 0, 0, 0, 0.9510565, 0.309017, 0, -0.309017, 0.9510565, 0, -0.057, 0.014)
 
 [node name="CarregadorSolto" parent="rig/Armas/Pistola/Movimento" unique_id=1349635170 instance=ExtResource("21_pente")]
-transform = Transform3D(1, 0, 0, 0, 0.9510563, 0.30901712, 0, -0.30901712, 0.9510563, 0, -0.057, 0.014)
+transform = Transform3D(1, 0, 0, 0, 0.95105624, 0.30901724, 0, -0.30901724, 0.95105624, 0, -0.057, 0.014)
 visible = false
 
 [node name="ControleRecargaEsquerdo" type="Marker3D" parent="rig/Armas/Pistola" unique_id=235294289]
 editor_description = "Pulso esquerdo da recarga, relativo a pistola. As trilhas no AnimationPlayer acompanham este no; gire o pai Pistola para mudar o porte inteiro."
-transform = Transform3D(0.23461126, 0.9195742, -0.31518352, -0.97100854, 0.2064073, -0.1205735, -0.0458201, 0.3343339, 0.94134, -0.3997826, -0.14189841, -0.088099554)
+transform = Transform3D(0.23461126, 0.9195742, -0.31518346, -0.9710085, 0.20640728, -0.120573506, -0.045820117, 0.33433387, 0.94134, -0.3997826, -0.14189841, -0.088099554)
 gizmo_extents = 0.02
 script = ExtResource("11_qrhw1")
 indicador = Vector3(18, 24, 16)
 medio = Vector3(18, 24, 16)
 anelar = Vector3(18, 24, 16)
 mindinho = Vector3(18, 24, 16)
-avanco_indicador = null
 
 [node name="CarregadorNaMao" parent="rig/Armas/Pistola/ControleRecargaEsquerdo" unique_id=752189240 instance=ExtResource("21_pente")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.025, -0.07)
@@ -242,6 +242,7 @@ visible = false
 
 [node name="Shotgun" type="Node3D" parent="rig/Armas" unique_id=750630314]
 transform = Transform3D(0.92616785, 0.16762465, 0.3378093, -0.120368935, 0.9803263, -0.15643448, -0.35738558, 0.104222834, 0.9281235, 0.22, -0.22, -0.42)
+visible = false
 script = ExtResource("9_e1ntg")
 item_id = "shotgun"
 prefixo = "shotgun"
@@ -261,7 +262,6 @@ indicador = Vector3(12, 55, 35)
 medio = Vector3(80, 20, 25)
 anelar = Vector3(82, 18, 25)
 mindinho = Vector3(85, 15, 20)
-avanco_indicador = null
 abertura = Vector3(30, 0, -3)
 
 [node name="Cabo" type="Marker3D" parent="rig/Armas/Shotgun/Movimento" unique_id=807124801]
@@ -280,11 +280,10 @@ gizmo_extents = 0.02
 
 [node name="ApoioEsquerdo" type="Marker3D" parent="rig/Armas/Shotgun/Movimento/Articulacao" unique_id=2118950894]
 editor_description = "Pulso esquerdo apoiado na telha. Acompanha a articulacao. Durante a recarga, apoio_esquerdo=0 entrega a mao ao ControleEsquerdo."
-transform = Transform3D(0.11746967, -0.19146778, -0.97444385, -0.074593246, 0.976763, -0.20091626, 0.9902692, 0.09628854, 0.10045814, -0.07606945, -0.06252295, -0.06673685)
+transform = Transform3D(0.11746967, -0.19146784, -0.97444385, -0.074593276, 0.976763, -0.20091632, 0.99026906, 0.09628858, 0.10045814, -0.07606945, -0.06252295, -0.06673685)
 gizmo_extents = 0.02
 script = ExtResource("11_qrhw1")
 indicador = Vector3(48, 35, 20)
-avanco_indicador = null
 
 [node name="Camara1" type="Marker3D" parent="rig/Armas/Shotgun/Movimento/Articulacao" unique_id=228762871]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.013, 0.047, 0)
@@ -336,20 +335,37 @@ mesh = SubResource("CylinderMesh_culote_camara")
 transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.0365)
 mesh = SubResource("CylinderMesh_espoleta_camara")
 
-[node name="Cogblade" parent="rig/Armas" instance=ExtResource("22_cogblade")]
-visible = false
+[node name="Cogblade" parent="rig/Armas" unique_id=20456578 instance=ExtResource("22_cogblade")]
+transform = Transform3D(0.64952135, 0.65159774, 0.39184484, -0.75950456, 0.5318108, 0.3746066, 0.035705492, -0.54092294, 0.8403139, -0.1, -0.36, -0.7)
+
+[node name="Movimento" parent="rig/Armas/Cogblade" index="0"]
+transform = Transform3D(1, 3.4416914e-15, 3.7252903e-08, -1.110223e-16, 1, -8.940697e-08, -3.7252903e-08, 8.940697e-08, 1, 0, 0, 0)
+
+[node name="Modelo" parent="rig/Armas/Cogblade/Movimento" index="0"]
+transform = Transform3D(0.92955816, 0.050783735, 0.36516178, -0.020865887, 0.99612665, -0.08541693, -0.3680853, 0.07178054, 0.92701733, 0, -0.14, -0.075)
+
+[node name="Articulacao" parent="rig/Armas/Cogblade/Movimento" index="2"]
+transform = Transform3D(-0.65589446, 0.48844743, 0.57551855, -0.7228263, -0.6261318, -0.2923717, 0.21754225, -0.6077649, 0.763739, -0.05, 0.075, 0.02)
+
+[node name="ApoioEsquerdo" parent="rig/Armas/Cogblade/Movimento/Articulacao" index="0"]
+transform = Transform3D(0, -0.76604444, 0.64278764, 1, 0, 0, 0, 0.64278764, 0.76604444, 0.035, 0.12, 0.0381699)
+
+[node name="RastroBase" parent="rig/Armas/Cogblade/Movimento" index="4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.1994, 0.8, -0.093)
+
+[node name="RastroPonta" parent="rig/Armas/Cogblade/Movimento" index="5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.1813, 1.23, -0.0845)
 
 [node name="AjusteEsquerdo" type="Node3D" parent="rig" unique_id=713055753]
 
 [node name="ControleEsquerdo" type="Marker3D" parent="rig/AjusteEsquerdo" unique_id=307727323]
-transform = Transform3D(0.07221272, 0.9878046, -0.13794015, -0.92974067, 0.016601624, -0.36784038, -0.36106434, 0.15481132, 0.919601, -0.23, -0.19, -0.32)
+transform = Transform3D(0.0722126, 0.9878046, -0.13794015, -0.92974067, 0.016601512, -0.36784038, -0.36106437, 0.15481128, 0.919601, -0.23, -0.19, -0.32)
 gizmo_extents = 0.02
 script = ExtResource("11_qrhw1")
 indicador = Vector3(18, 24, 16)
 medio = Vector3(18, 24, 16)
 anelar = Vector3(18, 24, 16)
 mindinho = Vector3(18, 24, 16)
-avanco_indicador = null
 
 [node name="CartuchoNaMao" parent="rig/AjusteEsquerdo/ControleEsquerdo" unique_id=5016126 instance=ExtResource("13_as1tx")]
 transform = Transform3D(-1.5998367e-09, 0, -0.036599997, 0, 0.036599997, 0, 0.036599997, 0, -1.5998367e-09, -0.033, 0.032, -0.108)
@@ -365,7 +381,7 @@ current = true
 script = ExtResource("20_previa")
 
 [node name="faisca" type="GPUParticles3D" parent="." unique_id=2063996884]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.089401364, -0.1050267, -0.62239844)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.10210619, -0.32904172, -0.564696)
 emitting = false
 amount = 15
 lifetime = 0.25
@@ -375,7 +391,7 @@ process_material = SubResource("ParticleProcessMaterial_faisca")
 draw_pass_1 = SubResource("BoxMesh_faisca")
 
 [node name="fire" type="AnimatedSprite3D" parent="." unique_id=1620432565]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.089401364, -0.1050267, -0.62239844)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.10210619, -0.32904172, -0.564696)
 pixel_size = 0.0025
 billboard = 1
 sprite_frames = ExtResource("7_fogo")
@@ -384,5 +400,4 @@ frame = 9
 frame_progress = 1.0
 
 [editable path="rig/Malhas"]
-
 [editable path="rig/Armas/Cogblade"]

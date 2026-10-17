@@ -1,4 +1,4 @@
-[gd_resource type="AnimationLibrary" format=3]
+[gd_resource type="AnimationLibrary" format=3 uid="uid://bpbqwby8evlbj"]
 
 [sub_resource type="Animation" id="Animation_qxng2"]
 resource_name = "cogblade_ataque_1"
