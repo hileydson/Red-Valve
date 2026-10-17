@@ -35,8 +35,8 @@ signal cogblade_evento(evento: String)
 @export var cotovelo_direito := Vector3(0.30, -0.55, 0.12)
 @export var cotovelo_esquerdo := Vector3(-0.32, -0.55, 0.12)
 @export_group("Entrada dos antebracos / Cogblade")
-@export var cotovelo_cogblade_direito := Vector3(0.64, -0.86, 0.10)
-@export var cotovelo_cogblade_esquerdo := Vector3(-0.90, -0.72, 0.08)
+@export var cotovelo_cogblade_direito := Vector3(0.38, -0.70, 0.08)
+@export var cotovelo_cogblade_esquerdo := Vector3(-0.38, -0.70, 0.08)
 
 var _animador: AnimationPlayer
 var _dir: Skeleton3D
