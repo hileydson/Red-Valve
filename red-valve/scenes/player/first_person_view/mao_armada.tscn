@@ -96,11 +96,11 @@ cotovelo_cogblade_esquerdo = Vector3(-0.36, -0.9, 0.06)
 transform = Transform3D(0.17, 0, 0, 0, 0.17, 0, 0, 0, 0.17, 0, 0, 0)
 
 [node name="Skeleton3D" parent="rig/Malhas/Armature" parent_id_path=PackedInt32Array(1345610690, 1517908256) index="0" unique_id=176226078]
-bones/0/position = Vector3(-1.304285, -2.699841, -1.645208)
-bones/0/rotation = Quaternion(-0.24280868, 0.59669566, -0.5346576, 0.5469365)
+bones/0/position = Vector3(-1.304285, -2.699841, -1.6452079)
+bones/0/rotation = Quaternion(-0.24280868, 0.59669566, -0.5346576, 0.54693645)
 bones/0/scale = Vector3(1, 1, 1)
-bones/1/position = Vector3(0, 1.868171, 5.9604645e-08)
-bones/1/rotation = Quaternion(0.010077495, 0.00030863538, -0.030608887, 0.9994806)
+bones/1/position = Vector3(0, 1.8681711, -8.940697e-08)
+bones/1/rotation = Quaternion(0.010077487, 0.0003086116, -0.030608876, 0.9994806)
 bones/1/scale = Vector3(1, 1, 1)
 bones/2/rotation = Quaternion(0.5877853, 0, 0, 0.809017)
 bones/2/scale = Vector3(1, 1, 1)
@@ -138,11 +138,11 @@ cast_shadow = 0
 surface_material_override/0 = ExtResource("5_pele_e")
 
 [node name="Skeleton3D" parent="rig/Malhas/Armature_dir" parent_id_path=PackedInt32Array(1345610690, 2083814527) index="0" unique_id=988876978]
-bones/0/position = Vector3(2.3096962, -2.5119114, -3.6295207)
-bones/0/rotation = Quaternion(-0.29275823, 0.9367456, -0.118769854, -0.1506455)
+bones/0/position = Vector3(0.62504965, -1.9298453, -2.3624177)
+bones/0/rotation = Quaternion(-0.5052459, -0.28513953, -0.018032221, 0.81430763)
 bones/0/scale = Vector3(1, 1, 1)
-bones/1/position = Vector3(-2.3841858e-07, 1.8681712, 0)
-bones/1/rotation = Quaternion(-0.044187993, -0.0021678633, -0.04895321, 0.9978208)
+bones/1/position = Vector3(0, 1.868171, -2.3841858e-07)
+bones/1/rotation = Quaternion(-0.038451992, -0.0009288961, -0.024132283, 0.9989686)
 bones/1/scale = Vector3(1, 1, 1)
 bones/2/rotation = Quaternion(0.5877853, 0, 0, 0.809017)
 bones/2/scale = Vector3(1, 1, 1)
@@ -228,7 +228,7 @@ visible = false
 
 [node name="ControleRecargaEsquerdo" type="Marker3D" parent="rig/Armas/Pistola" unique_id=235294289]
 editor_description = "Pulso esquerdo da recarga, relativo a pistola. As trilhas no AnimationPlayer acompanham este no; gire o pai Pistola para mudar o porte inteiro."
-transform = Transform3D(0.23461126, 0.9195742, -0.31518346, -0.9710085, 0.20640728, -0.120573506, -0.045820117, 0.33433387, 0.94134, -0.3997826, -0.14189841, -0.088099554)
+transform = Transform3D(0.23461126, 0.9195742, -0.31518346, -0.9710085, 0.20640728, -0.1205735, -0.04582011, 0.33433387, 0.94134, -0.3997826, -0.14189841, -0.088099554)
 gizmo_extents = 0.02
 script = ExtResource("11_qrhw1")
 indicador = Vector3(18, 24, 16)
@@ -280,7 +280,7 @@ gizmo_extents = 0.02
 
 [node name="ApoioEsquerdo" type="Marker3D" parent="rig/Armas/Shotgun/Movimento/Articulacao" unique_id=2118950894]
 editor_description = "Pulso esquerdo apoiado na telha. Acompanha a articulacao. Durante a recarga, apoio_esquerdo=0 entrega a mao ao ControleEsquerdo."
-transform = Transform3D(0.11746967, -0.19146784, -0.97444385, -0.074593276, 0.976763, -0.20091632, 0.99026906, 0.09628858, 0.10045814, -0.07606945, -0.06252295, -0.06673685)
+transform = Transform3D(0.117469646, -0.19146778, -0.97444385, -0.07459323, 0.976763, -0.20091626, 0.990269, 0.09628854, 0.10045814, -0.07606945, -0.06252295, -0.06673685)
 gizmo_extents = 0.02
 script = ExtResource("11_qrhw1")
 indicador = Vector3(48, 35, 20)
@@ -339,10 +339,13 @@ mesh = SubResource("CylinderMesh_espoleta_camara")
 transform = Transform3D(0.64952135, 0.65159774, 0.39184484, -0.75950456, 0.5318108, 0.3746066, 0.035705492, -0.54092294, 0.8403139, -0.1, -0.36, -0.7)
 
 [node name="Movimento" parent="rig/Armas/Cogblade" index="0"]
-transform = Transform3D(1, 3.4416914e-15, 3.7252903e-08, -1.110223e-16, 1, -8.940697e-08, -3.7252903e-08, 8.940697e-08, 1, 0, 0, 0)
+transform = Transform3D(1, 1.4901161e-08, 2.9802322e-08, -1.490116e-08, 1, -5.9604645e-08, -2.9802322e-08, 5.9604645e-08, 1, 0, 0, 0)
 
 [node name="Modelo" parent="rig/Armas/Cogblade/Movimento" index="0"]
 transform = Transform3D(0.92955816, 0.050783735, 0.36516178, -0.020865887, 0.99612665, -0.08541693, -0.3680853, 0.07178054, 0.92701733, 0, -0.14, -0.075)
+
+[node name="PegadaDireita" parent="rig/Armas/Cogblade/Movimento" index="1"]
+transform = Transform3D(0.34728095, -0.9323744, 0.10037108, 0.54821396, 0.11501572, -0.82839215, 0.7608268, 0.34270966, 0.55108327, 0.07500005, 0.35000008, 0.029999971)
 
 [node name="Articulacao" parent="rig/Armas/Cogblade/Movimento" index="2"]
 transform = Transform3D(-0.65589446, 0.48844743, 0.57551855, -0.7228263, -0.6261318, -0.2923717, 0.21754225, -0.6077649, 0.763739, -0.05, 0.075, 0.02)
@@ -359,7 +362,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.1813, 1.23, -0.0845)
 [node name="AjusteEsquerdo" type="Node3D" parent="rig" unique_id=713055753]
 
 [node name="ControleEsquerdo" type="Marker3D" parent="rig/AjusteEsquerdo" unique_id=307727323]
-transform = Transform3D(0.0722126, 0.9878046, -0.13794015, -0.92974067, 0.016601512, -0.36784038, -0.36106437, 0.15481128, 0.919601, -0.23, -0.19, -0.32)
+transform = Transform3D(0.07221272, 0.9878046, -0.13794015, -0.92974067, 0.016601624, -0.36784038, -0.36106434, 0.15481132, 0.919601, -0.23, -0.19, -0.32)
 gizmo_extents = 0.02
 script = ExtResource("11_qrhw1")
 indicador = Vector3(18, 24, 16)
