@@ -46,6 +46,9 @@ const PONTOS := [
 	["19_desenhos_101", Vector3(9.5, 1.6, 4.0), Vector3(15.0, 1.5, 4.5)],
 	["20_bandeirinhas", Vector3(22.0, 1.7, 44.0), Vector3(22.0, 4.0, 29.0)],
 	["21_bandeira_caida", Vector3(33.0, 1.7, 38.0), Vector3(38.0, 1.0, 44.0)],
+	# a lanterna na mesa da 103: de perto, e o clarao visto do corredor
+	["22_lanterna_mesa", Vector3(33.3, 1.45, 6.2), Vector3(31.65, 0.8, 5.17)],
+	["23_lanterna_corredor", Vector3(44.0, 1.7, 12.6), Vector3(36.0, 0.6, 10.6)],
 ]
 
 
@@ -53,6 +56,10 @@ func _ready() -> void:
 	# save_game() roda no _ready da escola: sem isto o teste grava por cima do
 	# save do jogador.
 	SaveManager.current_slot = 9
+	# O autoload ja' carregou o save do slot 1 na memoria. Se ele tiver a
+	# lanterna, a escola tira a da mesa no _ready — e a foto 22 sai sem ela.
+	if OS.get_environment("ESCOLA_SEM_LANTERNA") == "1":
+		SaveManager.remove_item_amount("lanterna", 99)
 	var pasta := OS.get_environment("ESCOLA_FOTOS")
 	if pasta.is_empty():
 		pasta = "/tmp/escola_fotos"

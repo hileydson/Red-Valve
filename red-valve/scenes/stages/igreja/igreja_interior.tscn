@@ -7,7 +7,6 @@
 [ext_resource type="Script" uid="uid://b15nxncjtugoa" path="res://scripts/stages/igreja/igreja_interior.gd" id="5_script"]
 [ext_resource type="Script" uid="uid://2fanem5ncv8p" path="res://scripts/stages/igreja/igreja_materiais.gd" id="6_materiais"]
 [ext_resource type="AudioStream" uid="uid://b3ahi8d8px8qi" path="res://assets/sounds/episodios/ambiente_noise_sublime.mp3" id="7_ambiente"]
-[ext_resource type="PackedScene" uid="uid://bcaxl6o85d803" path="res://assets/3d_model/player/lanterna/lanterna.glb" id="8_lanterna"]
 [ext_resource type="PackedScene" path="res://scenes/ui/minimap_igreja.tscn" id="9_minimapa"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ceu_mat"]
@@ -109,9 +108,6 @@ scale_max = 1.4
 color = Color(1, 1, 1, 0.16)
 turbulence_enabled = true
 turbulence_noise_strength = 0.15
-
-[sub_resource type="BoxShape3D" id="caixa_lanterna"]
-size = Vector3(3, 2.6, 3)
 
 [sub_resource type="BoxShape3D" id="caixa_porta"]
 size = Vector3(6, 3.4, 3.6)
@@ -339,34 +335,6 @@ preprocess = 14.0
 visibility_aabb = AABB(-14, -8, -22, 28, 16, 44)
 process_material = SubResource("proc_poeira_nave")
 draw_pass_1 = SubResource("malha_poeira")
-
-[node name="lanterna_no_chao" type="Node3D" parent="." unique_id=1217005005]
-
-[node name="modelo" parent="lanterna_no_chao" unique_id=1532524788 instance=ExtResource("8_lanterna")]
-transform = Transform3D(-0.14222567, -0.008309048, -0.07281855, 0.008312825, -0.15976737, 0.001995053, -0.07282001, -0.0020098693, 0.14245059, 1.0549098, 0.05, 8.433446)
-
-[node name="facho" type="SpotLight3D" parent="lanterna_no_chao" unique_id=1698927479]
-transform = Transform3D(-0.9982, 0, 0.05989, -0.00328, 0.9985, -0.05472, -0.0598, -0.05482, -0.9967, 1.15, 0.08, 8.38)
-light_color = Color(1, 0.94, 0.82, 1)
-light_energy = 13.0
-light_volumetric_fog_energy = 4.0
-spot_range = 26.0
-spot_angle = 30.0
-spot_angle_attenuation = 0.45
-
-[node name="brilho" type="OmniLight3D" parent="lanterna_no_chao" unique_id=649176322]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.15, 0.17, 8.3)
-light_color = Color(1, 0.9, 0.75, 1)
-light_energy = 3.6
-omni_range = 6.0
-
-[node name="area" type="Area3D" parent="lanterna_no_chao" unique_id=1461649382]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.15, 1.05, 8.2)
-collision_layer = 0
-monitorable = false
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="lanterna_no_chao/area" unique_id=1187776378]
-shape = SubResource("caixa_lanterna")
 
 [node name="porta" type="Area3D" parent="." unique_id=247292082]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 2)

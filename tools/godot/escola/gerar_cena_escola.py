@@ -850,6 +850,9 @@ def escrever_cena(colisoes, props, portas, plano_luz, lista_luminarias, nav,
     for b in (P.BURACO_ENTRADA, P.BURACO_SAIDA):
         _emitir_buraco(c, b, id_buraco_gd)
 
+    # ---- a lanterna na mesa da sala 103
+    _emitir_lanterna(c)
+
     # ---- os pontos de chegada
     #
     # Sao tres: a rua, o deposito (buraco de entrada) e o almoxarifado (buraco
@@ -1389,6 +1392,54 @@ def _emitir_porta(c, d, id_script):
          props=[("transform", C.transform_pos((0.0, P.PORTA_H * 0.5, 0.0))),
                 ("collision_layer", "0"), ("monitorable", "false")])
     c.no("forma", tipo="CollisionShape3D", pai=caminho + "/area",
+         props=[("shape", 'SubResource("%s")' % ident)])
+
+
+def _emitir_lanterna(c):
+    """A lanterna acesa em cima da mesa da professora (ver `P.lanterna()`).
+
+    Mesmo conjunto que ela tinha na igreja — modelo, facho, brilho e a area do
+    prompt —, com o mesmo nome (`lanterna_no_chao`), porque quem pega e' o
+    mesmo codigo, agora no `escola.gd`.
+
+    O modelo tem a LENTE no -X local e 1,9 unidade de comprimento: a escala de
+    0,16 da' uns 30 cm, e o giro em Y poe o -X em cima da direcao do facho
+    (rotation.y = t leva o -X a (-cos t, 0, sen t)). A altura de 0,052 e' a
+    metade da altura do modelo ja' escalado: ela assenta no tampo.
+
+    O facho desce um pouco (0,10) pra cair no piso perto da porta e vazar pro
+    corredor — e' por esse clarao no chao do corredor que ela e' achada. Sem
+    sombra: encostado na luz, o proprio corpo da lanterna tapava o cone.
+    """
+    (x, y, z), (dx, dz) = P.lanterna()
+    giro = math.atan2(dz, -dx)
+    c.no("lanterna_no_chao", tipo="Node3D", pai=".")
+    c.no("modelo", pai="lanterna_no_chao",
+         instancia=c.externo("PackedScene",
+                             "res://assets/3d_model/player/lanterna/lanterna.glb"),
+         props=[("transform", C.transform_pos((x, y + 0.052, z), giro, 0.16))])
+    c.no("facho", tipo="SpotLight3D", pai="lanterna_no_chao",
+         props=[("transform", C.transform_olhando(
+                    (x + dx * 0.18, y + 0.07, z + dz * 0.18), (dx, -0.10, dz))),
+                ("light_color", C.cor((1.0, 0.94, 0.82, 1))),
+                ("light_energy", "18.0"),
+                ("light_volumetric_fog_energy", "4.0"),
+                ("shadow_enabled", "false"),
+                ("spot_range", "10.0"),
+                ("spot_angle", "28.0"),
+                ("spot_angle_attenuation", "0.45")])
+    c.no("brilho", tipo="OmniLight3D", pai="lanterna_no_chao",
+         props=[("transform", C.transform_pos((x + dx * 0.30, y + 0.10, z + dz * 0.30))),
+                ("light_color", C.cor((1.0, 0.9, 0.75, 1))),
+                ("light_energy", "0.7"),
+                ("omni_range", "1.8")])
+    # A area cobre a frente da mesa, onde o jogador para: a mesa bloqueia
+    # 1,5 x 0,8 m, entao uma caixa so' do tamanho do tampo nunca seria tocada.
+    ident = c.forma(3.2, 2.6, 3.2)
+    c.no("area", tipo="Area3D", pai="lanterna_no_chao",
+         props=[("transform", C.transform_pos((x + 0.9, y + 0.5, z))),
+                ("collision_layer", "0"), ("monitorable", "false")])
+    c.no("CollisionShape3D", tipo="CollisionShape3D", pai="lanterna_no_chao/area",
          props=[("shape", 'SubResource("%s")' % ident)])
 
 

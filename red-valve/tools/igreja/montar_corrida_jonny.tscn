@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://tools/igreja/montar_corrida_jonny.gd" id="1"]
+
+[node name="montar_corrida_jonny" type="Node"]
+script = ExtResource("1")

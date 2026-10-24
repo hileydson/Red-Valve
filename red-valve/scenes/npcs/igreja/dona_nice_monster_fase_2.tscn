@@ -1,0 +1,19 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/npcs/igreja/ator_igreja.gd" id="1_ator"]
+[ext_resource type="PackedScene" path="res://assets/3d_model/npc/igreja/dona_nice_monster_fase_2.glb" id="2_modelo"]
+[ext_resource type="AnimationLibrary" path="res://assets/3d_model/npc/igreja/dona_nice_monster_fase_2_clipes.tres" id="3_clipes"]
+
+[node name="dona_nice_monster_fase_2" type="Node3D"]
+editor_description = "A Dona Nice monstro fase 2: 5 m, flutua. Os clipes estao em anim (biblioteca dona_nice_monster_fase_2_clipes.tres): abra o AnimationPlayer pra mexer. Dissolver/sangue/veias so aparecem com o jogo rodando."
+script = ExtResource("1_ator")
+clipe_inicial = &"flutuar"
+escala_ruido = 1.6
+
+[node name="modelo" parent="." instance=ExtResource("2_modelo")]
+
+[node name="anim" type="AnimationPlayer" parent="."]
+root_node = NodePath("../modelo")
+libraries = {
+&"": ExtResource("3_clipes")
+}

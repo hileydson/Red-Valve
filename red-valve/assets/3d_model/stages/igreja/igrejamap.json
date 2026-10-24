@@ -63,14 +63,6 @@
  ],
  "pontos": [
   {
-   "id": "lanterna",
-   "chave": "",
-   "tipo": "interrogacao",
-   "x": 1.15,
-   "z": 8.2,
-   "oculto_com_item": "lanterna"
-  },
-  {
    "id": "item_secreto",
    "chave": "",
    "tipo": "interrogacao",

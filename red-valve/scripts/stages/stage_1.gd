@@ -50,6 +50,7 @@ const CENA_IGREJA := "res://scenes/stages/igreja/igreja_interior.tscn"
 # INSTÂNCIA: giram e andam junto com ela, de graça.
 const NO_HOSPITAL := "locais_importantes/hospital_exterior"
 const CENA_HOSPITAL := "res://scenes/stages/hospital/hospital.tscn"
+const CENA_CORRIDA_JONNY := "res://scenes/stages/stage_1/corrida_jonny.tscn"
 
 # --- Escola ------------------------------------------------------------------
 # Mesmíssimo arranjo do hospital, e pelo mesmo motivo: a escola é uma instância
@@ -98,7 +99,9 @@ func _ready() -> void:
 	GlobalEvents.in_cutscene = false
 	if is_instance_valid(real_time_label):
 		real_time_label.queue_free()
-	SaveManager.save_game()
+	# Na corrida com o Jonny o checkpoint continua sendo o hospital (a igreja ja'
+	# gravou assim): fechar o jogo no meio da corrida volta com ele no colo.
+	SaveManager.save_game(CENA_HOSPITAL if GlobalEvents.corrida_com_jonny else "")
 	GlobalEvents.set_low_nevoa()
 	GlobalEvents.is_maycow_normal = true
 	#$cameras/camera_1.make_current()
@@ -176,6 +179,8 @@ func setup_player_spawn() -> void:
 		if jogador and saida:
 			jogador.global_position = saida.global_position
 			jogador.global_rotation.y = saida.global_rotation.y
+	elif GlobalEvents.corrida_com_jonny:
+		_corrida_com_jonny()
 	elif GlobalEvents.voltando_da_igreja:
 		GlobalEvents.voltando_da_igreja = false
 		_devolver_ao_adro_da_igreja()
@@ -631,6 +636,40 @@ func _devolver_ao_adro_da_igreja() -> void:
 	# dentro do `_ready`, antes de existir qualquer estado de colisao pra
 	# consultar. Sem o defer, o raycast sai vazio e o jogador fica pendurado.
 	_pousar_no_chao.call_deferred(jogador, IGREJA_PORTA)
+
+
+## A corrida da igreja pro hospital com o Jonny no colo (evento da Dona Nice).
+## A cidade so' serve de cenario: o jogador fica escondido e parado, quem
+## aparece e' o duble da cena `corrida_jonny.tscn`. No fim, o hospital.
+func _corrida_com_jonny() -> void:
+	var jogador = get_node_or_null("Player")
+	if not jogador:
+		jogador = find_child("Player", true, false)
+	GlobalEvents.in_cutscene = true
+	if jogador:
+		jogador.cutscene_set_hud_enabled(false)
+		jogador.cutscene_set_player_control(false)
+		jogador.cutscene_set_camera_current(false)
+		jogador.cutscene_set_model_hidden(true)
+	var corrida: Node = load(CENA_CORRIDA_JONNY).instantiate()
+	add_child(corrida)
+	# Parado e sem fisica: escondido, ele nao precisa de chao — e solto ele cai
+	# no vazio (a colisao do Terrain3D so' existe em volta dele) e a morte por
+	# queda nao respeita `in_cutscene`. O _ready do player religa a propria
+	# fisica dois quadros depois de nascer: congelar antes disso nao pega.
+	for _i in 3:
+		await get_tree().process_frame
+	if jogador:
+		jogador.velocity = Vector3.ZERO
+		jogador.set_physics_process(false)
+		# longe de toda area de porta (nascia dentro da da casa do Maycow, e o
+		# "Entrar na casa?" aparecia por cima da corrida)
+		jogador.global_position += Vector3(0.0, 300.0, 0.0)
+	_esconder_prompt(true)
+	corrida.comecar(self)
+	await corrida.terminou
+	GlobalEvents.corrida_com_jonny = false
+	LoadingScreen.load_scene(CENA_HOSPITAL)
 
 
 ## Acha o chão sob `alvo` e põe o nó em pé nele.

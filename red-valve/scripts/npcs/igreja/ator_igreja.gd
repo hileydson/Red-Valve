@@ -1,0 +1,154 @@
+@tool
+extends Node3D
+class_name AtorIgreja
+
+## Um personagem da cena da igreja: o modelo rigado (`modelo`, instancia do
+## .glb) + um AnimationPlayer (`anim`) que toca os clipes da biblioteca
+## `<personagem>_clipes.tres` — a que da' pra abrir e editar no editor.
+##
+## O .glb tem o proprio AnimationPlayer, com os mesmos clipes IMPORTADOS. Ele
+## fica parado: quem anima e' o `anim` daqui (root_node = ../modelo, por isso
+## as trilhas "dona_nice_rig/Skeleton3D:hips" do .tres batem).
+##
+## Os clipes vem do Blender (`tools/blender/igreja_dona_nice/`) e do
+## extrator (`tools/igreja/extrair_clipes.tscn`). Depois de extraidos, a
+## fonte e' o .tres.
+##
+## A pele: no jogo, todo material do modelo vira o `carne_igreja.gdshader`,
+## que faz o que o material do .glb fazia e mais dissolver/sangue/veias. Os
+## tres sao propriedades AQUI, animaveis por trilha no AnimationPlayer do
+## diretor da cena. No editor a troca nao acontece (gravaria os materiais na
+## cena ao salvar); o que se ve' no editor e' o .glb puro.
+
+const SHADER_CARNE := preload("res://shaders/npcs/carne_igreja.gdshader")
+
+## Clipe que comeca tocando quando a cena abre (vazio = nenhum).
+@export var clipe_inicial: StringName = &""
+
+@export_group("Pele")
+## 0 = inteira, 1 = sumiu. Anime isto pra transformar uma na outra.
+@export_range(0.0, 1.0) var dissolver: float = 0.0:
+	set(v):
+		dissolver = v
+		_parametro("dissolver", v)
+## Quanto sangue por cima da textura.
+@export_range(0.0, 1.0) var sangue: float = 0.0:
+	set(v):
+		sangue = v
+		_parametro("sangue", v)
+## Veias escuras pulsando (a possessao).
+@export_range(0.0, 1.0) var veias: float = 0.0:
+	set(v):
+		veias = v
+		_parametro("veias", v)
+@export var cor_borda: Color = Color(1.0, 0.28, 0.06):
+	set(v):
+		cor_borda = v
+		_parametro("cor_borda", v)
+## Tamanho da mancha do dissolver (maior = manchas menores). Personagem grande
+## (a fase 2 tem 5 m) pede numero menor, senao a borda vira chuvisco.
+@export var escala_ruido: float = 5.0
+
+@export_group("Seguir as maos de outro ator")
+## O ator que carrega este (o Jonny no colo do Maycow). Vazio = nao segue.
+@export var seguir: NodePath
+## 0 = fica onde a cena o pos; 1 = preso entre as maos do outro. Anime isto
+## pra o corpo sair do chao e ir pro colo.
+@export_range(0.0, 1.0) var seguir_peso: float = 0.0:
+	set(v):
+		if seguir_peso <= 0.0 and v > 0.0:
+			_base_seguir = global_transform if is_inside_tree() else transform
+		seguir_peso = v
+## Deslocamento do ponto entre as maos, no espaco de quem carrega (+Z = frente dele).
+@export var seguir_offset: Vector3 = Vector3(0.0, 0.04, 0.06)
+## Giro em Y, em graus, em relacao a quem carrega (o Jonny atravessado: 90).
+@export var seguir_giro_y: float = 90.0
+## Os dois ossos das maos de quem carrega.
+@export var osso_mao_direita: String = "RightHand"
+@export var osso_mao_esquerda: String = "LeftHand"
+
+var _materiais: Array[ShaderMaterial] = []
+var _base_seguir := Transform3D.IDENTITY
+
+@onready var anim: AnimationPlayer = get_node_or_null("anim")
+
+
+func _ready() -> void:
+	if Engine.is_editor_hint():
+		return
+	_trocar_materiais()
+	if clipe_inicial != &"" and anim and anim.has_animation(clipe_inicial):
+		anim.play(clipe_inicial)
+
+
+func _process(_delta: float) -> void:
+	if seguir_peso <= 0.0 or seguir.is_empty():
+		return
+	var outro := get_node_or_null(seguir) as Node3D
+	if outro == null or not outro.has_method("posicao_do_osso"):
+		return
+	var md: Vector3 = outro.posicao_do_osso(osso_mao_direita)
+	var me: Vector3 = outro.posicao_do_osso(osso_mao_esquerda)
+	var b := outro.global_basis.orthonormalized() * Basis(Vector3.UP, deg_to_rad(seguir_giro_y))
+	var alvo := Transform3D(b, (md + me) * 0.5 + outro.global_basis.orthonormalized() * seguir_offset)
+	global_transform = _base_seguir.interpolate_with(alvo, seguir_peso) if seguir_peso < 1.0 else alvo
+
+
+## Toca um clipe com mistura (segundos) a partir do que estiver tocando.
+func tocar(clipe: StringName, mistura: float = 0.25, velocidade: float = 1.0) -> void:
+	if anim == null or not anim.has_animation(clipe):
+		push_warning("%s: sem o clipe %s" % [name, clipe])
+		return
+	anim.play(clipe, mistura, velocidade)
+
+
+func esqueleto() -> Skeleton3D:
+	return find_child("Skeleton3D", true, false) as Skeleton3D
+
+
+## Posicao de mundo de um osso (a mao com a faca, a cabeca pra mira...).
+func posicao_do_osso(osso: String) -> Vector3:
+	var sk := esqueleto()
+	if sk == null:
+		return global_position
+	var i := sk.find_bone(osso)
+	if i < 0:
+		return global_position
+	return sk.global_transform * sk.get_bone_global_pose(i).origin
+
+
+func _trocar_materiais() -> void:
+	for malha in find_children("*", "MeshInstance3D", true, false):
+		var mi := malha as MeshInstance3D
+		if mi.mesh == null:
+			continue
+		for s in mi.mesh.get_surface_count():
+			var original := mi.get_active_material(s)
+			var novo := ShaderMaterial.new()
+			novo.shader = SHADER_CARNE
+			if original is BaseMaterial3D:
+				var b := original as BaseMaterial3D
+				novo.set_shader_parameter("albedo_cor", b.albedo_color)
+				if b.albedo_texture:
+					novo.set_shader_parameter("albedo_tex", b.albedo_texture)
+				if b.normal_enabled and b.normal_texture:
+					novo.set_shader_parameter("tem_normal", true)
+					novo.set_shader_parameter("normal_tex", b.normal_texture)
+					novo.set_shader_parameter("normal_forca", b.normal_scale)
+				if b.roughness_texture:
+					novo.set_shader_parameter("tem_orm", true)
+					novo.set_shader_parameter("orm_tex", b.roughness_texture)
+				novo.set_shader_parameter("rugosidade", b.roughness)
+				novo.set_shader_parameter("metalico", b.metallic)
+			novo.set_shader_parameter("escala_ruido", escala_ruido)
+			mi.set_surface_override_material(s, novo)
+			_materiais.append(novo)
+	_parametro("dissolver", dissolver)
+	_parametro("sangue", sangue)
+	_parametro("veias", veias)
+	_parametro("cor_borda", cor_borda)
+
+
+func _parametro(nome: String, valor) -> void:
+	for m in _materiais:
+		m.set_shader_parameter(nome, valor)

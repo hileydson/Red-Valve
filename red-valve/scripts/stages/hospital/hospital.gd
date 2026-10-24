@@ -17,6 +17,8 @@ extends Node3D
 ## atravessaria o predio em queda livre — daí a varredura de conferencia.
 const LAYER_CHAO := 2
 const CENA_MAPA := "res://scenes/stages/stage_1/stage_1.tscn"
+const CENA_JONNY := "res://scenes/npcs/igreja/jonny.tscn"
+const CARREGAR_JONNY := "res://scripts/player/player_carregar_jonny.gd"
 
 @onready var fade: ColorRect = $fade
 
@@ -43,7 +45,33 @@ func _ready() -> void:
 	# Jimmy e a' igreja.
 	SaveManager.save_game()
 
-	GlobalUtils.mostrar_objetivo(tr("OBJ_HOSP_EXPLORAR"))
+	if SaveManager.evento_dona_nice >= 4:
+		_jonny_no_hospital()
+		GlobalUtils.mostrar_objetivo(tr("OBJ_HOSPITAL_AJUDA_JONNY"))
+	else:
+		GlobalUtils.mostrar_objetivo(tr("OBJ_HOSP_EXPLORAR"))
+
+
+## O Jonny chegou da igreja no colo do Maycow (evento da Dona Nice).
+##   4 = ainda no colo: o jogador so' anda ate' largar ele (B / G)
+##   5 = ja' foi deixado: fica deitado onde ficou
+## Nos dois casos a porta da rua fica trancada (ver `sair_do_hospital`).
+func _jonny_no_hospital() -> void:
+	var jogador := get_node_or_null("Player")
+	if jogador == null:
+		jogador = get_tree().get_first_node_in_group("player")
+	if SaveManager.evento_dona_nice == 4 and jogador:
+		var c: Node = load(CARREGAR_JONNY).new()
+		c.name = "CarregarJonny"
+		jogador.add_child.call_deferred(c)
+	elif SaveManager.evento_dona_nice == 5 and SaveManager.jonny_no_hospital.size() == 4:
+		var p: Array = SaveManager.jonny_no_hospital
+		var jonny: Node3D = load(CENA_JONNY).instantiate()
+		jonny.clipe_inicial = &"deitado"
+		jonny.sangue = 0.45
+		add_child(jonny)
+		jonny.global_position = Vector3(p[0], p[1], p[2])
+		jonny.rotation.y = p[3]
 
 
 ## A lente e' exclusiva desta instancia do player; o FOV continua sob controle
@@ -107,6 +135,11 @@ func _preparar_lampadas() -> void:
 ## ele reapareceria no ponto de entrada padrão do mapa, do outro lado da cidade.
 func sair_do_hospital() -> void:
 	if _saindo:
+		return
+	# Com o Jonny aqui dentro a porta nao abre — a saida vem com a chave, que e'
+	# outra parte da historia.
+	if SaveManager.evento_dona_nice >= 4:
+		GlobalUtils.show_center_message("hospital_trancado", tr("AVISO_HOSPITAL_TRANCADO"), 16, 2.2)
 		return
 	_saindo = true
 	GlobalEvents.in_cutscene = true

@@ -60,6 +60,19 @@ var arquivos_desbloqueados: Array = []
 ## A mascara em si e do MapaNevoa; aqui ela so fica guardada entre uma visita
 ## e outra. Ver scripts/ui/mapa_nevoa.gd.
 var mapas_descobertos: Dictionary = {}
+## Onde o evento da Dona Nice (a igreja) esta' — ver `scripts/stages/igreja/`.
+##   0 nada aconteceu (a primeira entrada na igreja dispara a cutscene)
+##   1 cutscene vista, luta contra a fase 1
+##   2 luta contra a fase 2
+##   3 ela morreu; o Jonny ainda esta' caido na igreja
+##   4 o Maycow esta' carregando o Jonny (corrida pro hospital, e no hospital)
+##   5 o Jonny ficou no chao do hospital
+## E' daqui que a igreja sabe se roda a cutscene, recomeca a luta (morte do
+## jogador volta pro comeco da fase em que ele estava) ou so' mostra o
+## resultado final.
+var evento_dona_nice: int = 0
+## Onde o Jonny foi deixado no hospital (estado 5): [x, y, z, giro_y].
+var jonny_no_hospital: Array = []
 var iron_rusks_pending: int = 0 # Ganho na luta atual, ainda não somado visualmente no HUD
 var iron_rusks_display: int = 0 # Valor mostrado no canto da tela, só sobe com a animação de tally
 
@@ -429,7 +442,9 @@ func save_game(scene_path: String = ""):
 		"escola_portao_destrancado": GlobalEvents.escola_portao_destrancado,
 		"stage_1_saved_position": stage_1_saved_position,
 		"mapas_descobertos": mapas_descobertos,
-		"cogblade_arma_ativa": cogblade_arma_ativa
+		"cogblade_arma_ativa": cogblade_arma_ativa,
+		"evento_dona_nice": evento_dona_nice,
+		"jonny_no_hospital": jonny_no_hospital
 	}
 	
 	save_config() # Sempre salvar config junto
@@ -489,6 +504,8 @@ func load_game(slot_id: int = -1) -> bool:
 				stage_1_saved_position = data.get("stage_1_saved_position", {})
 				mapas_descobertos = data.get("mapas_descobertos", {})
 				cogblade_arma_ativa = data.get("cogblade_arma_ativa", false)
+				evento_dona_nice = int(data.get("evento_dona_nice", 0))
+				jonny_no_hospital = data.get("jonny_no_hospital", [])
 				# As mascaras vivas sao do save ANTERIOR: sem isto, a escola
 				# descoberta no slot 1 apareceria descoberta no slot 2.
 				MapaNevoa.esquecer_tudo()
@@ -566,6 +583,8 @@ func load_slot_data_only(slot_id: int = 1) -> bool:
 	stage_1_saved_position = data.get("stage_1_saved_position", {})
 	mapas_descobertos = data.get("mapas_descobertos", {})
 	cogblade_arma_ativa = data.get("cogblade_arma_ativa", false)
+	evento_dona_nice = int(data.get("evento_dona_nice", 0))
+	jonny_no_hospital = data.get("jonny_no_hospital", [])
 	print("Game data loaded into memory from slot ", slot_id, " (no scene change)")
 	return true
 
@@ -592,6 +611,8 @@ func reset_progress() -> void:
 	stage_1_saved_position = {}
 	spawn_from_saved_position = false
 	mapas_descobertos = {}
+	evento_dona_nice = 0
+	jonny_no_hospital = []
 	MapaNevoa.esquecer_tudo()
 
 

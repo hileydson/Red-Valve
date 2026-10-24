@@ -306,6 +306,14 @@
    "tipo": "marco",
    "x": 1.78,
    "z": 33.0
+  },
+  {
+   "id": "lanterna",
+   "chave": "",
+   "tipo": "interrogacao",
+   "x": 31.65,
+   "z": 5.17,
+   "oculto_com_item": "lanterna"
   }
  ]
 }

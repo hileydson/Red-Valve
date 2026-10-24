@@ -403,6 +403,10 @@ var _desvio_e := PUNHO_DESVIO_E
 ##
 ## Desligar NAO solta a arma: ela volta pro porte, que tambem e' com as duas
 ## maos. Quem tira a arma das maos e' desequipar ela.
+## Some com a arma e solta o braco enquanto isto estiver ligado, mesmo
+## equipada (o Maycow carregando o Jonny precisa das duas maos).
+var suspensa: bool = false
+
 func mirar(ativo: bool, ponto: Vector3 = Vector3.ZERO) -> void:
 	_mirando = ativo
 	if ativo:
@@ -487,7 +491,7 @@ func _process_modification_with_delta(delta: float) -> void:
 	if _i_braco_d < 0 and not _procurar_ossos(sk):
 		return
 
-	var equipada: bool = SaveManager.is_equipped(ITEM_SHOTGUN)
+	var equipada: bool = SaveManager.is_equipped(ITEM_SHOTGUN) and not suspensa
 	_garantir_arma(equipada)
 
 	# O peso e' 1 enquanto ela estiver EQUIPADA: com uma arma longa nao existe

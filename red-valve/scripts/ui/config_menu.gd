@@ -708,6 +708,21 @@ func _build_debug_tab():
 		GlobalEvents.escola_portao_destrancado = val
 		_auto_save_debug()
 	)
+	# O evento da Dona Nice (igreja), por etapa: 0 nada, 1 luta fase 1, 2 luta
+	# fase 2, 3 o Jonny no chao da igreja, 4 no colo (hospital), 5 deixado la'.
+	var linha_dona_nice = HBoxContainer.new()
+	var rotulo_dona_nice = Label.new()
+	rotulo_dona_nice.text = tr("DEBUG_EVENT_DONA_NICE")
+	rotulo_dona_nice.add_theme_font_size_override("font_size", 18)
+	linha_dona_nice.add_child(rotulo_dona_nice)
+	var spin_dona_nice = SpinBox.new()
+	_setup_debug_spinbox(spin_dona_nice, 0, 5, SaveManager.evento_dona_nice)
+	spin_dona_nice.value_changed.connect(func(v):
+		SaveManager.evento_dona_nice = int(v)
+		_auto_save_debug()
+	)
+	linha_dona_nice.add_child(spin_dona_nice)
+	vbox.add_child(linha_dona_nice)
 
 	# --- Armas e Itens Possuídos (Inventário) ---
 	var section_items = Label.new()

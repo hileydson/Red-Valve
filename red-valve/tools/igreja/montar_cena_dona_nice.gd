@@ -1,0 +1,987 @@
+extends Node
+
+## MONTA a cena das cutscenes da Dona Nice (scenes/stages/igreja/cena_dona_nice.tscn).
+##
+##     Godot_v4.6.1 --headless --path red-valve res://tools/igreja/montar_cena_dona_nice.tscn
+##
+## Roda UMA vez. Depois disso a fonte e' o .tscn — abra no editor e mexa no
+## AnimationPlayer `diretor`. Rodar de novo SOBRESCREVE a cena inteira (e tudo
+## o que tiver sido ajustado a mao nela).
+##
+## Por que um gerador e nao a cena feita a mao: varios planos dependem de onde
+## a mao, a faca e a cabeca estao DE VERDADE num instante de um clipe (a gota
+## cai da ponta da faca em cima do peito do Jonny; a camera gira junto com a
+## cabeca dela). Aqui os atores sao posados no proprio motor e medidos, e a
+## camera e' posta em cima do que foi medido.
+##
+## Coordenadas: as da igreja (scenes/stages/igreja/igreja_interior.tscn). A
+## porta fica em z ~ 0, a nave sobe pro +Z ate' o altar (z ~ 42), o feixe do
+## rombo do teto cai em (0, 0, 15,5).
+
+const SAIDA := "res://scenes/stages/igreja/cena_dona_nice.tscn"
+const ATORES := "res://scenes/npcs/igreja/"
+const SONS := "res://assets/sounds/igreja/"
+const TEX := "res://assets/images/textures/igreja/"
+
+## Onde o Jonny esta' deitado: no corredor central, atravessado, ainda dentro
+## do facho de lua do rombo (que cai em z 15,5 com ~7 m de raio no chao).
+const JONNY_POS := Vector3(0.0, 0.0, 19.6)
+const JONNY_GIRO := 90.0
+## Onde o Maycow para depois de entrar (e onde o jogador volta a ter controle).
+const MAYCOW_FIM := Vector3(0.0, 0.0, 4.2)
+## Passada do andar_lento (m/s) — o no' anda junto com o pe', senao o pe' patina.
+const MAYCOW_VELOCIDADE := 0.86
+
+var raiz: Node3D
+var lib: AnimationLibrary
+var a: Animation
+var atores := {}
+
+
+func _ready() -> void:
+	SaveManager.current_slot = 9
+	raiz = Node3D.new()
+	raiz.name = "cena_dona_nice"
+	raiz.set_script(load("res://scripts/stages/igreja/cena_dona_nice.gd"))
+	add_child(raiz)
+	_montar_estrutura()
+	await get_tree().process_frame
+	await get_tree().process_frame
+	_montar_chegada()
+	_montar_vira_fase_2()
+	_montar_morte_final()
+	_montar_pega_jonny()
+	_gravar()
+	get_tree().quit()
+
+
+# ==============================================================================
+# ESTRUTURA
+# ==============================================================================
+func _no(tipo, nome: String, pai: Node) -> Node:
+	var n: Node = tipo.new()
+	n.name = nome
+	pai.add_child(n)
+	n.owner = raiz
+	return n
+
+
+func _instancia(caminho: String, nome: String, pai: Node) -> Node:
+	var n: Node = load(caminho).instantiate()
+	n.name = nome
+	pai.add_child(n)
+	n.owner = raiz
+	return n
+
+
+func _montar_estrutura() -> void:
+	var previa := _instancia("res://assets/3d_model/stages/igreja/igreja_interior.glb",
+		"previa_igreja", raiz)
+	previa.editor_description = "So' pra ver a igreja no editor. Some no jogo."
+
+	var at := _no(Node3D, "atores", raiz)
+	for d in [["Maycow", "maycow_cena"], ["Jonny", "jonny"], ["DonaNice", "dona_nice"],
+			["Monstro", "dona_nice_monster"]]:
+		var n := _instancia(ATORES + d[1] + ".tscn", d[0], at)
+		atores[d[0]] = n
+		var ap := n.get_node("anim") as AnimationPlayer
+		ap.playback_default_blend_time = 0.35
+	atores["Jonny"].position = JONNY_POS
+	atores["Jonny"].rotation_degrees.y = JONNY_GIRO
+	atores["Jonny"].sangue = 0.45
+	atores["Jonny"].clipe_inicial = &"caido_agonia"
+	atores["DonaNice"].sangue = 0.55
+	atores["DonaNice"].clipe_inicial = &"ajoelhada_sussurro"
+	atores["Maycow"].position = MAYCOW_FIM
+	atores["Maycow"].clipe_inicial = &""
+	atores["Monstro"].visible = false
+	atores["Monstro"].dissolver = 1.0
+	atores["Monstro"].sangue = 0.3
+	atores["Monstro"].clipe_inicial = &""
+
+	_posicionar_dona_nice()
+	_faca()
+	_pistola()
+	_cameras_base()
+	_efeitos()
+	_palcos()
+	_sons()
+	_lente()
+
+	var diretor := _no(AnimationPlayer, "diretor", raiz) as AnimationPlayer
+	lib = AnimationLibrary.new()
+	diretor.add_animation_library("", lib)
+
+
+## Ela fica ajoelhada do lado da porta, de costas pro Maycow, e a ponta da
+## faca tem de ficar em cima do PEITO do Jonny (de la' cai a gota). A posicao
+## sai disso: mede-se a mao no clipe e anda-se o corpo ate' a mao caber.
+func _posicionar_dona_nice() -> void:
+	var dn: Node3D = atores["DonaNice"]
+	dn.position = Vector3(0.0, 0.0, JONNY_POS.z - 1.0)
+	_posar(dn, "ajoelhada_sussurro", 0.0)
+	_posar(atores["Jonny"], "caido_agonia", 0.0)
+	var mao: Vector3 = dn.posicao_do_osso("hand.R")
+	var peito: Vector3 = atores["Jonny"].posicao_do_osso("chest")
+	# a ponta da faca fica ~0,18 m alem da mao na direcao do braco
+	var alvo := Vector3(peito.x, 0.0, peito.z - 0.10)
+	dn.position += Vector3(alvo.x - mao.x, 0.0, alvo.z - mao.z - 0.12)
+	print("DonaNice em ", dn.position, " (mao ", mao, " peito ", peito, ")")
+
+
+## Filho novo dentro de cena instanciada (a faca no esqueleto, que mora no
+## .glb, que mora na cena do ator) so' e' gravado se as DUAS instancias
+## estiverem como "Editable Children" — senao o pack ignora em silencio.
+func _editavel(ator: Node3D) -> void:
+	raiz.set_editable_instance(ator, true)
+	raiz.set_editable_instance(ator.get_node("modelo"), true)
+
+
+func _posar(ator: Node3D, clipe: String, t: float) -> void:
+	var ap := ator.get_node("anim") as AnimationPlayer
+	ap.play(clipe)
+	ap.seek(t, true)
+	(ator.esqueleto() as Skeleton3D).force_update_all_bone_transforms()
+
+
+func _global_do_osso(ator: Node3D, osso: String) -> Transform3D:
+	var sk := ator.esqueleto() as Skeleton3D
+	return sk.global_transform * sk.get_bone_global_pose(sk.find_bone(osso))
+
+
+## A faca: presa no osso da mao direita (BoneAttachment3D) por um pivo. O
+## giro do pivo e' calculado pra que, ajoelhada, a lamina aponte pra baixo e
+## pra frente — pro Jonny. Daí em diante ela segue a mao.
+func _faca() -> void:
+	var dn: Node3D = atores["DonaNice"]
+	var sk := dn.esqueleto() as Skeleton3D
+	_editavel(dn)
+	var at := _no(BoneAttachment3D, "mao_faca", sk) as BoneAttachment3D
+	at.bone_name = "hand.R"
+	var pivo := _no(Node3D, "pivo_faca", at) as Node3D
+	pivo.editor_description = "Gire/mova este pivo pra acertar a faca na mao."
+	var faca := _instancia("res://assets/3d_model/npc/igreja/faca_ritual.glb", "faca", pivo)
+	_posar(dn, "ajoelhada_sussurro", 0.0)
+	var mao := _global_do_osso(dn, "hand.R")
+	var desejo := Basis.looking_at(Vector3(0.0, -0.85, 0.45).normalized(), Vector3(0, 0, 1))
+	# looking_at aponta o -Z; a lamina e' o +Y da faca
+	var b := desejo * Basis(Vector3(1, 0, 0), deg_to_rad(-90.0))
+	var global := Transform3D(b, mao.origin + mao.basis.y.normalized() * 0.05)
+	pivo.transform = mao.affine_inverse() * global
+	# o sangue da lamina com borda escorrida
+	var sangue := faca.find_child("sangue", true, false) as MeshInstance3D
+	if sangue:
+		var m := ShaderMaterial.new()
+		m.shader = load("res://shaders/npcs/sangue_lamina.gdshader")
+		sangue.material_override = m
+	# o sangue que pinga da ponta, sem parar, enquanto ela esta' ajoelhada
+	var gotas := _no(GPUParticles3D, "pingos", pivo) as GPUParticles3D
+	gotas.position = Vector3(0.0, 0.236, -0.004)
+	gotas.amount = 4
+	gotas.lifetime = 1.4
+	gotas.local_coords = false
+	var pm := ParticleProcessMaterial.new()
+	pm.direction = Vector3(0, -1, 0)
+	pm.spread = 2.0
+	pm.initial_velocity_min = 0.0
+	pm.initial_velocity_max = 0.05
+	pm.gravity = Vector3(0, -4.0, 0)
+	pm.scale_min = 0.6
+	pm.scale_max = 1.0
+	gotas.process_material = pm
+	var malha := SphereMesh.new()
+	malha.radius = 0.0028
+	malha.height = 0.009
+	malha.radial_segments = 8
+	malha.rings = 4
+	malha.material = _material_sangue()
+	gotas.draw_pass_1 = malha
+	gotas.visibility_aabb = AABB(Vector3(-0.3, -1.5, -0.3), Vector3(0.6, 1.6, 0.6))
+
+
+func _material_sangue() -> StandardMaterial3D:
+	var m := StandardMaterial3D.new()
+	m.albedo_color = Color(0.11, 0.0, 0.004)
+	m.roughness = 0.05
+	m.metallic_specular = 0.8
+	m.clearcoat_enabled = true
+	m.clearcoat = 1.0
+	m.clearcoat_roughness = 0.02
+	return m
+
+
+## A pistola do duble do Maycow: mesma arma do jogo, na mao direita, com o
+## cano pra frente e o cabo na palma no instante em que ele ja' mira.
+func _pistola() -> void:
+	var mc: Node3D = atores["Maycow"]
+	var sk := mc.esqueleto() as Skeleton3D
+	_editavel(mc)
+	var at := _no(BoneAttachment3D, "mao_arma", sk) as BoneAttachment3D
+	at.bone_name = "RightHand"
+	var pivo := _no(Node3D, "pivo_arma", at) as Node3D
+	pivo.editor_description = "Gire/mova este pivo pra acertar a pistola na mao."
+	var arma := _instancia("res://assets/3d_model/player/the_negotiator_V1/the_negotiator_v1.glb",
+		"pistola", pivo) as Node3D
+	pivo.visible = false
+	_posar(mc, "mirando", 0.0)
+	var mao := _global_do_osso(mc, "RightHand")
+	# o modelo tem o cano no -X, o alto no +Y e 1,92 unidade (22 cm)
+	var frente := Vector3(0, 0, 1)
+	var b := Basis(Vector3(0, 1, 0), deg_to_rad(90.0))       # -X do modelo -> +Z
+	b = b.scaled(Vector3.ONE * 0.115)
+	var cabo := b * Vector3(0.61, -0.33, 0.0)
+	var global := Transform3D(b, mao.origin + Vector3(0, 0.02, 0.04) - cabo)
+	pivo.transform = mao.affine_inverse() * global
+	arma.name = "pistola"
+
+
+func _cameras_base() -> void:
+	_no(Node3D, "cameras", raiz)
+
+
+## `nome` pode ser so' o nome (vai pra `cameras/`) ou um caminho a partir da
+## raiz (camera filha de um palco, que se move com ele).
+func _camera(nome: String) -> Camera3D:
+	var caminho := nome if "/" in nome else "cameras/" + nome
+	var c := raiz.get_node_or_null(caminho) as Camera3D
+	if c == null:
+		var pai := raiz.get_node(caminho.get_base_dir())
+		c = _no(Camera3D, caminho.get_file(), pai) as Camera3D
+		c.near = 0.02
+		c.far = 120.0
+	return c
+
+
+func _efeitos() -> void:
+	var ef := _no(Node3D, "efeitos", raiz)
+	# --- o chao do ritual: poca embaixo dele, respingos, o simbolo, o rastro
+	_decal(ef, "poca_jonny", "sangue_poca", JONNY_POS + Vector3(0, 0, 0.05), Vector3(2.2, 0.6, 1.8), 0.0)
+	_decal(ef, "simbolo", "simbolo_culto", JONNY_POS, Vector3(4.2, 0.6, 4.2), 12.0, 0.85)
+	_decal(ef, "respingo_1", "sangue_respingo", JONNY_POS + Vector3(-1.4, 0, -0.7), Vector3(1.4, 0.6, 1.4), 40.0)
+	_decal(ef, "respingo_2", "sangue_respingo", JONNY_POS + Vector3(1.6, 0, 0.9), Vector3(1.1, 0.6, 1.1), 200.0)
+	_decal(ef, "rastro", "sangue_rastro", JONNY_POS + Vector3(0.0, 0, -2.6), Vector3(1.2, 0.6, 3.4), 0.0, 0.7)
+	var gota_decal := _decal(ef, "respingo_gota", "sangue_respingo",
+		Vector3.ZERO, Vector3(0.35, 0.4, 0.35), 0.0)
+	gota_decal.scale = Vector3(0.01, 1, 0.01)
+	# --- as velas em volta do Jonny (luz quente que treme: uma omni so')
+	var velas := _no(Node3D, "velas", ef)
+	for i in 7:
+		var ang := TAU * i / 7.0 + 0.2
+		var p := JONNY_POS + Vector3(cos(ang) * 1.75, 0.0, sin(ang) * 1.75)
+		_vela(velas, "vela_%d" % i, p, 0.10 + 0.08 * fmod(i * 0.37, 1.0))
+	var luz := _no(OmniLight3D, "luz_velas", ef) as OmniLight3D
+	luz.position = JONNY_POS + Vector3(0, 0.45, 0)
+	luz.light_color = Color(1.0, 0.62, 0.32)
+	luz.light_energy = 2.2
+	luz.omni_range = 4.5
+	luz.shadow_enabled = true
+	luz.set_meta("piscar", "nervoso")
+	# --- o pulso vermelho da transformacao (ocupa o lugar da rebote_rombo)
+	var pulso := _no(OmniLight3D, "luz_pulso", ef) as OmniLight3D
+	pulso.position = JONNY_POS + Vector3(0, 1.6, -1.2)
+	pulso.light_color = Color(1.0, 0.08, 0.04)
+	pulso.light_energy = 0.0
+	pulso.omni_range = 8.0
+	pulso.visible = false
+	# --- contraluz da porta (a lua de fora atras do Maycow)
+	var porta := _no(SpotLight3D, "luz_porta", ef) as SpotLight3D
+	porta.position = Vector3(0.0, 3.4, -2.6)
+	porta.look_at_from_position(porta.position, Vector3(0.0, 0.8, 4.0))
+	porta.light_color = Color(0.62, 0.72, 1.0)
+	porta.light_energy = 6.0
+	porta.spot_range = 12.0
+	porta.spot_angle = 28.0
+	porta.shadow_enabled = true
+	# --- luz de chave no Maycow: a porta e' o lugar mais escuro da igreja, e
+	# os planos de rosto, da mao e da arma acontecem todos ali
+	var chave := _no(SpotLight3D, "luz_chave_maycow", ef) as SpotLight3D
+	chave.position = Vector3(1.1, 3.2, MAYCOW_FIM.z + 4.6)
+	chave.look_at_from_position(chave.position, MAYCOW_FIM + Vector3(0, 1.3, -1.2))
+	chave.light_color = Color(0.85, 0.82, 0.95)
+	chave.light_energy = 11.0
+	chave.spot_range = 12.0
+	chave.spot_angle = 30.0
+	chave.spot_angle_attenuation = 1.6
+	chave.shadow_enabled = true
+	# --- a gota que cai em camera lenta
+	var gota := _no(MeshInstance3D, "gota", ef) as MeshInstance3D
+	var esf := SphereMesh.new()
+	esf.radius = 0.0045
+	esf.height = 0.013
+	esf.material = _material_sangue()
+	gota.mesh = esf
+	gota.visible = false
+	var resp := _no(GPUParticles3D, "respingo", ef) as GPUParticles3D
+	resp.emitting = false
+	resp.one_shot = true
+	resp.explosiveness = 0.95
+	resp.amount = 28
+	resp.lifetime = 1.2
+	var pm := ParticleProcessMaterial.new()
+	pm.direction = Vector3(0, 1, 0)
+	pm.spread = 70.0
+	pm.initial_velocity_min = 0.25
+	pm.initial_velocity_max = 0.7
+	pm.gravity = Vector3(0, -6.0, 0)
+	pm.scale_min = 0.3
+	pm.scale_max = 0.9
+	resp.process_material = pm
+	var mm := SphereMesh.new()
+	mm.radius = 0.004
+	mm.height = 0.008
+	mm.radial_segments = 6
+	mm.rings = 3
+	mm.material = _material_sangue()
+	resp.draw_pass_1 = mm
+	# --- a nevoa de sangue e os pedacos da transformacao
+	var nevoa := _no(GPUParticles3D, "nevoa_sangue", ef) as GPUParticles3D
+	nevoa.emitting = false
+	nevoa.amount = 220
+	nevoa.lifetime = 2.2
+	nevoa.explosiveness = 0.0
+	var pn := ParticleProcessMaterial.new()
+	pn.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_SPHERE
+	pn.emission_sphere_radius = 0.45
+	pn.direction = Vector3(0, 1, 0)
+	pn.spread = 180.0
+	pn.initial_velocity_min = 0.6
+	pn.initial_velocity_max = 2.4
+	pn.gravity = Vector3(0, -3.5, 0)
+	pn.damping_min = 0.4
+	pn.damping_max = 1.2
+	pn.scale_min = 0.4
+	pn.scale_max = 1.6
+	nevoa.process_material = pn
+	var pedaco := SphereMesh.new()
+	pedaco.radius = 0.012
+	pedaco.height = 0.02
+	pedaco.radial_segments = 6
+	pedaco.rings = 3
+	pedaco.material = _material_sangue()
+	nevoa.draw_pass_1 = pedaco
+	nevoa.visibility_aabb = AABB(Vector3(-4, -1, -4), Vector3(8, 5, 8))
+
+
+func _decal(pai: Node, nome: String, tex: String, pos: Vector3, tam: Vector3,
+		giro: float, opac: float = 1.0) -> Decal:
+	var d := _no(Decal, nome, pai) as Decal
+	d.position = pos
+	d.rotation_degrees.y = giro
+	d.size = tam
+	d.texture_albedo = load(TEX + tex + ".png")
+	d.texture_orm = load(TEX + tex + "_orm.png")
+	d.albedo_mix = opac
+	d.upper_fade = 0.2
+	d.lower_fade = 0.2
+	d.cull_mask = 1
+	return d
+
+
+func _vela(pai: Node, nome: String, pos: Vector3, altura: float) -> void:
+	var v := _no(MeshInstance3D, nome, pai) as MeshInstance3D
+	var cil := CylinderMesh.new()
+	cil.top_radius = 0.022
+	cil.bottom_radius = 0.025
+	cil.height = altura
+	cil.radial_segments = 10
+	var cera := StandardMaterial3D.new()
+	cera.albedo_color = Color(0.78, 0.74, 0.66)
+	cera.roughness = 0.6
+	cil.material = cera
+	v.mesh = cil
+	v.position = pos + Vector3(0, altura * 0.5, 0)
+	var chama := _no(MeshInstance3D, "chama", v) as MeshInstance3D
+	var q := QuadMesh.new()
+	q.size = Vector2(0.025, 0.05)
+	var fogo := StandardMaterial3D.new()
+	fogo.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	fogo.billboard_mode = BaseMaterial3D.BILLBOARD_FIXED_Y
+	fogo.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	fogo.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	fogo.albedo_color = Color(1.0, 0.6, 0.2, 0.9)
+	fogo.emission_enabled = true
+	fogo.emission = Color(1.0, 0.55, 0.18)
+	fogo.emission_energy_multiplier = 4.0
+	q.material = fogo
+	chama.mesh = q
+	chama.position = Vector3(0, altura * 0.5 + 0.03, 0)
+
+
+func _sons() -> void:
+	var s := _no(Node3D, "sons", raiz)
+	for d in [["sussurro", "sussurro_culto.ogg", -6.0], ["batimento", "batimento_lento.ogg", -4.0],
+			["batimento_rapido", "batimento_rapido.ogg", -3.0], ["gota", "gota_sangue.ogg", -2.0],
+			["gota_impacto", "gota_impacto.ogg", -4.0], ["ossos", "transformacao_ossos.ogg", 0.0],
+			["grito", "grito_transformacao.ogg", -3.0], ["rugido", "rugido_monstro.ogg", 1.0],
+			["ambiente", "ambiente_ritual.ogg", -10.0], ["gemido", "gemido_jonny.ogg", -6.0]]:
+		var p := _no(AudioStreamPlayer, d[0], s) as AudioStreamPlayer
+		p.stream = load(SONS + d[1])
+		p.volume_db = d[2]
+	var arma := _no(AudioStreamPlayer, "arma", s) as AudioStreamPlayer
+	arma.stream = load("res://assets/sounds/player/load_gun.mp3")
+
+
+func _lente() -> void:
+	var cl := _no(CanvasLayer, "lente", raiz) as CanvasLayer
+	cl.layer = 80
+	var tela := _no(ColorRect, "tela", cl) as ColorRect
+	tela.set_anchors_preset(Control.PRESET_FULL_RECT)
+	tela.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var m := ShaderMaterial.new()
+	m.shader = load("res://shaders/cutscenes/igreja_lente.gdshader")
+	tela.material = m
+	var leg := _no(Label, "legenda", cl) as Label
+	leg.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+	leg.offset_top = -150
+	leg.offset_bottom = -100
+	leg.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	leg.add_theme_font_size_override("font_size", 34)
+	leg.add_theme_color_override("font_color", Color(0.86, 0.80, 0.78))
+	leg.add_theme_color_override("font_outline_color", Color(0, 0, 0))
+	leg.add_theme_constant_override("outline_size", 6)
+	var fonte := load("res://assets/fonts/SpecialElite-Regular.ttf") as Font
+	if fonte:
+		leg.add_theme_font_override("font", fonte)
+	leg.modulate.a = 0.0
+
+
+# ==============================================================================
+# TRILHAS
+# ==============================================================================
+func _trilha(tipo: int, caminho: String) -> int:
+	var i := a.add_track(tipo)
+	a.track_set_path(i, NodePath(caminho))
+	return i
+
+
+func _valor(caminho: String, chaves: Array, discreto := false) -> void:
+	var i := _trilha(Animation.TYPE_VALUE, caminho)
+	a.value_track_set_update_mode(i, Animation.UPDATE_DISCRETE if discreto
+		else Animation.UPDATE_CONTINUOUS)
+	for k in chaves:
+		a.track_insert_key(i, k[0], k[1], k[2] if k.size() > 2 else 1.0)
+
+
+func _pos(caminho: String, chaves: Array) -> void:
+	var i := _trilha(Animation.TYPE_POSITION_3D, caminho)
+	for k in chaves:
+		a.position_track_insert_key(i, k[0], k[1])
+
+
+func _rot(caminho: String, chaves: Array) -> void:
+	var i := _trilha(Animation.TYPE_ROTATION_3D, caminho)
+	for k in chaves:
+		a.rotation_track_insert_key(i, k[0], k[1])
+
+
+func _clipe(ator: String, chaves: Array) -> void:
+	var caminho := (ator if "/" in ator else "atores/" + ator) + "/anim"
+	var i := _trilha(Animation.TYPE_ANIMATION, caminho)
+	for k in chaves:
+		a.animation_track_insert_key(i, k[0], k[1])
+
+
+func _metodo(chaves: Array) -> void:
+	var i := _trilha(Animation.TYPE_METHOD, ".")
+	for k in chaves:
+		a.track_insert_key(i, k[0], {"method": k[1], "args": k[2]})
+
+
+func _som(nome: String, chaves: Array) -> void:
+	var i := _trilha(Animation.TYPE_AUDIO, "sons/" + nome)
+	var p := raiz.get_node("sons/" + nome) as AudioStreamPlayer
+	for k in chaves:
+		a.audio_track_insert_key(i, k[0], p.stream, k[1] if k.size() > 1 else 0.0)
+
+
+## Uma camera com chaves de (tempo, posicao, alvo, fov). Entre as chaves a
+## camera anda e gira (posicao linear, giro slerp). A primeira chave tambem
+## vira a pose de descanso do no', pra a camera aparecer no lugar no editor.
+func _cam(nome: String, chaves: Array) -> void:
+	var c := _camera(nome)
+	var ps := []
+	var rs := []
+	var fs := []
+	for k in chaves:
+		var t: float = k[0]
+		var p: Vector3 = k[1]
+		var alvo: Vector3 = k[2]
+		var b := Basis.looking_at(alvo - p, Vector3.UP)
+		ps.append([t, p])
+		rs.append([t, b.get_rotation_quaternion()])
+		fs.append([t, float(k[3])])
+	c.position = chaves[0][1]
+	c.basis = Basis(rs[0][1])
+	c.fov = chaves[0][3]
+	var caminho := nome if "/" in nome else "cameras/" + nome
+	_pos(caminho, ps)
+	_rot(caminho, rs)
+	_valor("%s:fov" % caminho, fs)
+
+
+# ==============================================================================
+# A CHEGADA
+# ==============================================================================
+func _montar_chegada() -> void:
+	a = Animation.new()
+	lib.add_animation("chegada", a)
+	var dn: Node3D = atores["DonaNice"]
+	var DN: Vector3 = dn.position
+	var J := JONNY_POS
+
+	# ---------------------------------------------------------------- tempos
+	const T_ENTRA := 0.0
+	const T_PARA := 6.0
+	const T_MAO := 6.0          # esticar_mao (2,6 s)
+	const T_OMBRO := 9.6
+	const T_FACA := 14.0
+	const T_GOTA := 18.0
+	const T_GOTA_CAI := 19.4
+	const T_GOTA_BATE := 21.8
+	const T_LONGE := 23.0
+	const T_LEVANTA := 30.0     # levantar (4,6 s)
+	const T_CABECA := 34.6      # girar_cabeca (3,5 s)
+	const T_SACA := 39.4        # sacar_arma (1,5 s)
+	const T_OLHOS := 41.0
+	const T_MIRA := 43.5
+	const T_VIRA := 46.0        # virar_corpo (1,6 s)
+	const T_CONVULSAO := 47.6   # convulsao (5,1 s)
+	const T_RUGIDO := 52.7      # rugido (2,9 s)
+	const T_FIM := 57.0
+	a.length = T_FIM
+
+	# ---------------------------------------------------------------- lente
+	_valor(".:barras", [[0.0, 0.0], [1.2, 1.0], [55.6, 1.0], [56.8, 0.0]])
+	_valor(".:saturacao", [[0.0, 0.85], [T_GOTA, 0.85], [T_GOTA + 0.6, 0.55],
+		[T_LONGE, 0.85], [T_CONVULSAO, 0.85], [T_CONVULSAO + 2.0, 0.6], [T_FIM, 0.85]])
+	_valor(".:vermelho", [[0.0, 0.0], [T_CONVULSAO, 0.0], [T_CONVULSAO + 2.5, 0.45],
+		[T_RUGIDO + 1.0, 0.35], [T_FIM, 0.0]])
+	_valor(".:tremor", [[0.0, 0.0], [T_MIRA, 0.0], [T_MIRA + 0.1, 0.05], [T_VIRA, 0.05],
+		[T_CONVULSAO, 0.15], [T_CONVULSAO + 3.0, 0.5], [T_RUGIDO, 0.3], [T_RUGIDO + 0.5, 1.0],
+		[T_RUGIDO + 2.2, 0.25], [T_FIM, 0.0]])
+	_valor(".:flash", [[0.0, 0.0], [T_RUGIDO + 0.6, 0.0], [T_RUGIDO + 0.7, 0.55],
+		[T_RUGIDO + 1.3, 0.0]])
+	_valor(".:borrao", [[0.0, 0.0], [T_RUGIDO + 0.6, 0.0], [T_RUGIDO + 0.7, 0.7],
+		[T_RUGIDO + 1.6, 0.0]])
+	_valor(".:pulso", [[0.0, 0.0], [T_CONVULSAO, 0.0], [T_CONVULSAO + 0.4, 0.8],
+		[T_CONVULSAO + 0.8, 0.2], [T_CONVULSAO + 1.3, 1.0], [T_CONVULSAO + 1.7, 0.3],
+		[T_CONVULSAO + 2.2, 1.0], [T_CONVULSAO + 3.0, 0.6], [T_RUGIDO + 0.7, 1.0],
+		[T_FIM, 0.15]])
+
+	# ---------------------------------------------------------------- planos
+	_valor(".:plano", [[0.0, "cam_entrada"], [T_MAO + 0.6, "cam_rosto"],
+		[T_OMBRO, "cam_ombro"], [T_FACA, "cam_faca"], [T_GOTA, "cam_gota"],
+		[T_LONGE, "cam_longe"], [T_LEVANTA, "cam_levanta"], [T_CABECA, "cam_cabeca"],
+		[T_SACA, "cam_sacar"], [T_OLHOS, "cam_olhos"], [T_MIRA, "cam_mira"],
+		[T_VIRA, "cam_lateral"], [T_CONVULSAO, "cam_transforma"],
+		[T_RUGIDO, "cam_rugido"], [T_FIM - 0.05, ""]], true)
+
+	# ---------------------------------------------------------------- Maycow
+	var z0 := MAYCOW_FIM.z - MAYCOW_VELOCIDADE * (T_PARA - T_ENTRA)
+	_pos("atores/Maycow", [[0.0, Vector3(0, 0, z0)], [T_PARA, MAYCOW_FIM]])
+	_rot("atores/Maycow", [[0.0, Quaternion()]])
+	_clipe("Maycow", [[0.0, "andar_lento"], [T_MAO, "esticar_mao"],
+		[T_MAO + 2.6, "mao_esticada"], [T_SACA, "sacar_arma"], [T_SACA + 1.5, "mirando"]])
+	_valor("atores/Maycow/modelo/Armature/Skeleton3D/mao_arma/pivo_arma:visible",
+		[[0.0, false], [T_SACA + 0.45, true]], true)
+
+	var olho := func(z): return Vector3(0.0, 1.62, z)
+	_cam("cam_entrada", [
+		[0.0, Vector3(0.45, 1.45, 9.4), olho.call(z0), 26.0],
+		[2.0, Vector3(0.45, 1.45, 9.3), olho.call(z0 + 1.72), 26.0],
+		[4.0, Vector3(0.42, 1.46, 9.15), olho.call(z0 + 3.44), 27.0],
+		[T_PARA, Vector3(0.40, 1.47, 9.0), olho.call(MAYCOW_FIM.z), 28.0],
+		[T_MAO + 0.6, Vector3(0.40, 1.47, 9.0), olho.call(MAYCOW_FIM.z), 28.0]])
+	_cam("cam_rosto", [
+		[T_MAO + 0.6, Vector3(-0.35, 1.66, 5.35), Vector3(0.0, 1.6, 4.25), 34.0],
+		[T_OMBRO, Vector3(-0.30, 1.65, 5.05), Vector3(0.0, 1.6, 4.25), 32.0]])
+	_cam("cam_ombro", [
+		[T_OMBRO, Vector3(-0.42, 1.74, 3.35), Vector3(0.0, 0.75, J.z), 40.0],
+		[T_FACA, Vector3(-0.36, 1.71, 3.85), Vector3(0.0, 0.70, J.z), 36.0]])
+
+	# ---------------------------------------------------------------- Jonny
+	_clipe("Jonny", [[0.0, "caido_agonia"]])
+	_som("gemido", [[T_LONGE + 2.0], [T_LEVANTA + 3.0]])
+
+	# ---------------------------------------------------------------- a faca
+	_posar(dn, "ajoelhada_sussurro", 0.0)
+	var ponta := _ponta_da_faca()
+	_cam("cam_faca", [
+		[T_FACA, ponta + Vector3(0.42, 0.20, -0.30), ponta + Vector3(0, 0.04, 0), 30.0],
+		[T_GOTA, ponta + Vector3(0.30, 0.12, -0.20), ponta, 24.0]])
+	# a gota: nasce na ponta, engorda, desprende e cai DEVAGAR ate' o peito dele
+	_posar(atores["Jonny"], "caido_agonia", 0.0)
+	var peito: Vector3 = atores["Jonny"].posicao_do_osso("chest")
+	var chao_gota := Vector3(ponta.x, peito.y + 0.09, ponta.z)
+	_valor("efeitos/gota:visible", [[0.0, false], [T_GOTA, true], [T_GOTA_BATE, false]], true)
+	var gp := []
+	for i in 13:
+		var u := i / 12.0
+		gp.append([T_GOTA_CAI + u * (T_GOTA_BATE - T_GOTA_CAI), ponta.lerp(chao_gota, u * u)])
+	_pos("efeitos/gota", [[T_GOTA, ponta + Vector3(0, -0.004, 0)]] + gp)
+	_valor("efeitos/gota:scale", [[T_GOTA, Vector3(0.3, 0.3, 0.3)],
+		[T_GOTA_CAI - 0.2, Vector3(1.0, 1.15, 1.0)], [T_GOTA_CAI, Vector3(0.9, 1.4, 0.9)],
+		[T_GOTA_CAI + 0.4, Vector3(1.0, 1.0, 1.0)], [T_GOTA_BATE, Vector3(1.0, 1.25, 1.0)]])
+	_pos("efeitos/respingo", [[0.0, chao_gota]])
+	_pos("efeitos/respingo_gota", [[0.0, chao_gota]])
+	_valor("efeitos/respingo_gota:scale", [[0.0, Vector3(0.01, 1, 0.01)],
+		[T_GOTA_BATE, Vector3(0.01, 1, 0.01)], [T_GOTA_BATE + 0.25, Vector3(1, 1, 1)]])
+	_metodo([[T_GOTA_BATE, "estourar", [NodePath("efeitos/respingo")]],
+		[T_GOTA_BATE, "vibrar", [0.25, 0.15]]])
+	_cam("cam_gota", [
+		[T_GOTA, ponta + Vector3(0.24, 0.02, -0.16), ponta + Vector3(0, -0.01, 0), 22.0],
+		[T_GOTA_CAI, ponta + Vector3(0.24, 0.0, -0.16), ponta + Vector3(0, -0.03, 0), 22.0],
+		[T_GOTA_CAI + 1.2, ponta.lerp(chao_gota, 0.3) + Vector3(0.26, 0.02, -0.18),
+			ponta.lerp(chao_gota, 0.35), 24.0],
+		[T_GOTA_BATE, chao_gota + Vector3(0.30, 0.10, -0.24), chao_gota, 26.0],
+		[T_LONGE, chao_gota + Vector3(0.36, 0.16, -0.30), chao_gota, 28.0]])
+	_som("gota", [[T_GOTA_CAI - 0.1]])
+	_som("gota_impacto", [[T_GOTA_BATE]])
+	_som("batimento", [[T_GOTA]])
+
+	# ---------------------------------------------------------------- o sussurro
+	_clipe("DonaNice", [[0.0, "ajoelhada_sussurro"], [T_LEVANTA, "levantar"],
+		[T_CABECA, "girar_cabeca"], [T_CABECA + 3.5, "olhando_parada"],
+		[T_VIRA, "virar_corpo"], [T_CONVULSAO, "convulsao"]])
+	_som("sussurro", [[0.0]])
+	_valor("sons/sussurro:volume_db", [[0.0, -20.0], [T_OMBRO, -12.0], [T_FACA, -6.0],
+		[T_LONGE, -2.0], [T_LEVANTA + 2.0, -4.0], [T_CABECA, -30.0]])
+	_som("ambiente", [[0.0]])
+	_metodo([[T_LONGE + 0.6, "legenda", ["IGR_SUSSURRO_1", 3.0]],
+		[T_LONGE + 3.6, "legenda", ["IGR_SUSSURRO_2", 3.0]],
+		[T_LEVANTA - 0.6, "legenda", ["IGR_SUSSURRO_3", 3.2]],
+		[T_LEVANTA + 2.6, "legenda", ["IGR_SUSSURRO_4", 2.8]],
+		[T_OLHOS + 0.4, "legenda", ["IGR_SUSSURRO_5", 2.6]]])
+	_cam("cam_longe", [
+		[T_LONGE, Vector3(1.3, 1.75, J.z + 8.0), Vector3(0.0, 0.5, J.z - 0.3), 30.0],
+		[T_LEVANTA, Vector3(1.0, 1.65, J.z + 6.6), Vector3(0.0, 0.5, J.z - 0.3), 30.0]])
+	_cam("cam_levanta", [
+		[T_LEVANTA, Vector3(0.75, 0.55, J.z + 2.3), Vector3(DN.x, 0.8, DN.z), 40.0],
+		[T_LEVANTA + 2.2, Vector3(0.70, 0.58, J.z + 2.1), Vector3(DN.x, 1.0, DN.z), 40.0],
+		[T_CABECA, Vector3(0.65, 0.62, J.z + 1.9), Vector3(DN.x, 1.35, DN.z), 42.0]])
+
+	# ---------------------------------------------------------------- a cabeca
+	_cam_cabeca(T_CABECA, DN)
+	_som("batimento_rapido", [[T_OLHOS - 0.3]])
+
+	# ---------------------------------------------------------------- a arma
+	_som("arma", [[T_SACA + 0.5]])
+	_cam("cam_sacar", [
+		[T_SACA, Vector3(0.95, 1.45, MAYCOW_FIM.z + 2.5), Vector3(0.0, 1.35, MAYCOW_FIM.z), 34.0],
+		[T_OLHOS, Vector3(0.85, 1.48, MAYCOW_FIM.z + 2.3), Vector3(-0.1, 1.42, MAYCOW_FIM.z), 32.0]])
+	_posar(dn, "girar_cabeca", 3.49)
+	var cabeca: Vector3 = dn.posicao_do_osso("head") + Vector3(0, 0.08, 0)
+	_cam("cam_olhos", [
+		[T_OLHOS, cabeca + Vector3(0.10, 0.02, -0.62), cabeca, 30.0],
+		[T_MIRA, cabeca + Vector3(0.07, 0.01, -0.48), cabeca, 28.0]])
+	_cam("cam_mira", [
+		[T_MIRA, Vector3(-0.32, 1.68, MAYCOW_FIM.z - 0.25), cabeca - Vector3(0, 0.55, 0), 30.0],
+		[T_VIRA, Vector3(-0.30, 1.67, MAYCOW_FIM.z - 0.1), cabeca - Vector3(0, 0.50, 0), 26.0]])
+
+	# ---------------------------------------------------------------- vira o corpo
+	_cam("cam_lateral", [
+		[T_VIRA, Vector3(-4.3, 1.4, DN.z - 4.0), Vector3(DN.x, 1.15, DN.z), 36.0],
+		[T_CONVULSAO, Vector3(-4.0, 1.35, DN.z - 3.6), Vector3(DN.x, 1.15, DN.z), 36.0]])
+	# no fim do virar_corpo ela olha pra porta; o no' gira 180 graus no mesmo
+	# quadro em que o clipe seguinte comeca de frente
+	var de_frente := Quaternion(Vector3.UP, PI)
+	_rot("atores/DonaNice", [[0.0, Quaternion()], [T_CONVULSAO - 0.001, Quaternion()],
+		[T_CONVULSAO, de_frente]])
+
+	# ---------------------------------------------------------------- transformacao
+	var mo: Node3D = atores["Monstro"]
+	mo.position = DN
+	_pos("atores/Monstro", [[0.0, DN]])
+	_rot("atores/Monstro", [[0.0, de_frente]])
+	_valor("atores/Monstro:visible", [[0.0, false], [T_CONVULSAO, true]], true)
+	_clipe("Monstro", [[T_CONVULSAO, "convulsao"], [T_RUGIDO, "rugido"]])
+	_valor("atores/DonaNice:veias", [[0.0, 0.0], [T_CONVULSAO, 0.0], [T_CONVULSAO + 1.2, 1.0]])
+	_valor("atores/Monstro:veias", [[0.0, 0.0], [T_CONVULSAO, 1.0], [T_RUGIDO + 1.5, 0.35]])
+	_valor("atores/DonaNice:dissolver", [[0.0, 0.0], [T_CONVULSAO + 1.2, 0.0],
+		[T_CONVULSAO + 4.2, 1.0]])
+	_valor("atores/Monstro:dissolver", [[0.0, 1.0], [T_CONVULSAO + 1.5, 1.0],
+		[T_CONVULSAO + 4.5, 0.0]])
+	_valor("atores/DonaNice:visible", [[0.0, true], [T_CONVULSAO + 4.3, false]], true)
+	_pos("efeitos/nevoa_sangue", [[0.0, DN + Vector3(0, 1.0, 0)]])
+	_valor("efeitos/nevoa_sangue:emitting", [[0.0, false], [T_CONVULSAO + 1.0, true],
+		[T_CONVULSAO + 4.4, false]], true)
+	_metodo([[T_CONVULSAO + 0.2, "vibrar", [0.4, 0.5]], [T_CONVULSAO + 2.2, "vibrar", [0.7, 0.8]],
+		[T_RUGIDO + 0.7, "vibrar", [1.0, 1.2]]])
+	_som("ossos", [[T_CONVULSAO]])
+	_som("grito", [[T_CONVULSAO + 0.5]])
+	_som("rugido", [[T_RUGIDO + 0.4]])
+	var cam_t := []
+	for i in 11:
+		var u := i / 10.0
+		var ang := deg_to_rad(-25.0 + 95.0 * u)
+		var p := DN + Vector3(sin(ang) * 3.1, 1.25 - 0.25 * u, -cos(ang) * 3.1)
+		cam_t.append([T_CONVULSAO + u * (T_RUGIDO - T_CONVULSAO), p, DN + Vector3(0, 1.0, 0),
+			36.0 - 6.0 * u])
+	_cam("cam_transforma", cam_t)
+	_cam("cam_rugido", [
+		[T_RUGIDO, DN + Vector3(0.35, 0.85, -2.6), DN + Vector3(0, 1.45, 0), 42.0],
+		[T_RUGIDO + 0.7, DN + Vector3(0.30, 0.80, -2.2), DN + Vector3(0, 1.55, 0), 48.0],
+		[T_FIM, DN + Vector3(0.25, 0.95, -3.4), DN + Vector3(0, 1.4, 0), 40.0]])
+
+
+## A ponta da faca no mundo, pela mao e pelo pivo (o BoneAttachment so' anda
+## no proximo quadro, entao a conta e' feita direto).
+func _ponta_da_faca() -> Vector3:
+	var dn: Node3D = atores["DonaNice"]
+	var mao := _global_do_osso(dn, "hand.R")
+	var pivo := dn.find_child("pivo_faca", true, false) as Node3D
+	return mao * pivo.transform * Vector3(0.0, 0.236, -0.004)
+
+
+## A camera que gira com a cabeca dela. Fica atras da cabeca, olhando pra
+## onde ela olha: comeca vendo o altar por cima do ombro dela, e conforme a
+## cabeca gira 180 graus a camera gira junto — e termina vendo o que ela ve',
+## o Maycow la' na porta, com a mao esticada. Ai' a lente fecha nele.
+func _cam_cabeca(t0: float, DN: Vector3) -> void:
+	var dn: Node3D = atores["DonaNice"]
+	var chaves := []
+	var marcos := [[0.0, 0.0], [0.5, 12.0], [0.9, 18.0], [1.25, 95.0], [1.5, 90.0],
+		[1.9, 100.0], [2.4, 172.0], [2.6, 188.0], [2.85, 178.0], [3.5, 180.0]]
+	for i in 36:
+		var t := i * 0.1
+		_posar(dn, "girar_cabeca", t)
+		var cab: Vector3 = dn.posicao_do_osso("head") + Vector3(0, 0.12, 0)
+		var g := deg_to_rad(_interp_marcos(marcos, t))
+		var olha := Vector3(sin(g), 0.0, cos(g))
+		var p := cab - olha * 0.95 + Vector3(0, 0.32, 0) + olha.cross(Vector3.UP) * 0.30
+		var alvo := cab + olha * 8.0 + Vector3(0, -0.2, 0)
+		if t > 2.8:
+			alvo = alvo.lerp(MAYCOW_FIM + Vector3(0, 1.4, 0), (t - 2.8) / 0.7)
+		chaves.append([t0 + t, p, alvo, 50.0])
+	var ult: Array = chaves[-1]
+	chaves.append([t0 + 3.6, ult[1], MAYCOW_FIM + Vector3(0, 1.3, 0), 50.0])
+	chaves.append([t0 + 4.6, ult[1], MAYCOW_FIM + Vector3(0, 1.3, 0), 20.0])
+	_cam("cam_cabeca", chaves)
+
+
+func _interp_marcos(m: Array, t: float) -> float:
+	for i in m.size() - 1:
+		if m[i][0] <= t and t <= m[i + 1][0]:
+			var u: float = (t - m[i][0]) / (m[i + 1][0] - m[i][0])
+			return lerpf(m[i][1], m[i + 1][1], u * u * (3.0 - 2.0 * u))
+	return m[-1][1]
+
+
+# ==============================================================================
+# OS PALCOS: as cutscenes que acontecem onde a luta deixou a Dona Nice
+# ==============================================================================
+## `palco_fase_2` e' posto pela igreja (evento_dona_nice.gd) onde a fase 1
+## morreu, de frente pra onde ela estava virada. Tudo dentro dele — a monstro
+## morrendo, a gigante nascendo e as cameras — anda junto. No editor ele fica
+## no meio da nave, pra dar pra ver.
+func _palcos() -> void:
+	var p := _no(Node3D, "palco_fase_2", raiz) as Node3D
+	p.position = Vector3(0.0, 0.0, 14.0)
+	p.rotation.y = PI
+	p.editor_description = "Posto no jogo onde a fase 1 morreu. Atores e cameras daqui andam junto."
+	var morrendo := _instancia(ATORES + "dona_nice_monster.tscn", "Morrendo", p) as Node3D
+	morrendo.visible = false
+	morrendo.veias = 1.0
+	morrendo.sangue = 0.35
+	var gigante := _instancia(ATORES + "dona_nice_monster_fase_2.tscn", "Gigante", p) as Node3D
+	gigante.visible = false
+	gigante.dissolver = 1.0
+	gigante.veias = 0.6
+	for n in [morrendo, gigante]:
+		(n.get_node("anim") as AnimationPlayer).playback_default_blend_time = 0.3
+		n.clipe_inicial = &""
+	atores["Morrendo"] = morrendo
+	atores["Gigante"] = gigante
+	var ef := _no(Node3D, "efeitos_f2", p)
+	var nevoa := (raiz.get_node("efeitos/nevoa_sangue") as GPUParticles3D).duplicate()
+	nevoa.name = "nevoa"
+	ef.add_child(nevoa)
+	nevoa.owner = raiz
+	# a morte final acontece num lugar fixo, junto do Jonny
+	var pm := _no(Node3D, "palco_morte", raiz) as Node3D
+	pm.position = JONNY_POS + Vector3(2.6, 0.0, 2.2)
+	pm.rotation.y = deg_to_rad(-140.0)
+	var gm := _instancia(ATORES + "dona_nice_monster_fase_2.tscn", "GiganteMorre", pm) as Node3D
+	gm.visible = false
+	gm.position = Vector3(0, 0.55, 0)
+	(gm.get_node("anim") as AnimationPlayer).playback_default_blend_time = 0.3
+	gm.clipe_inicial = &""
+	atores["GiganteMorre"] = gm
+	# onde o corpo dela fica caido, de cara pro Jonny
+	var corpo := _no(Marker3D, "corpo_da_monstro", raiz.get_node("efeitos")) as Marker3D
+	corpo.position = JONNY_POS + Vector3(2.35, 0.0, 0.55)
+	corpo.rotation.y = deg_to_rad(-90.0)
+
+
+# ==============================================================================
+# VIRA_FASE_2: a fase 1 morre e cresce na gigante
+# ==============================================================================
+func _montar_vira_fase_2() -> void:
+	a = Animation.new()
+	lib.add_animation("vira_fase_2", a)
+	a.length = 9.0
+	const P := "palco_fase_2/"
+	_valor(".:barras", [[0.0, 0.0], [0.6, 1.0], [8.2, 1.0], [9.0, 0.0]])
+	_valor(".:plano", [[0.0, P + "cam_f2_a"], [2.0, P + "cam_f2_b"],
+		[5.2, P + "cam_f2_c"], [8.95, ""]], true)
+	_valor(".:vermelho", [[0.0, 0.2], [2.0, 0.55], [6.0, 0.4], [9.0, 0.0]])
+	_valor(".:tremor", [[0.0, 0.2], [1.8, 0.5], [5.3, 1.0], [7.0, 0.3], [9.0, 0.0]])
+	_valor(".:flash", [[0.0, 0.0], [5.3, 0.0], [5.4, 0.6], [6.0, 0.0]])
+	_valor(".:borrao", [[0.0, 0.0], [5.3, 0.0], [5.4, 0.7], [6.4, 0.0]])
+	_valor(".:pulso", [[0.0, 0.3], [1.0, 1.0], [1.6, 0.3], [2.4, 1.0], [3.4, 0.4],
+		[5.4, 1.0], [9.0, 0.2]])
+	# a monstro: de joelhos, convulsiona, e a carne sai em brasa
+	_valor(P + "Morrendo:visible", [[0.0, true], [3.9, false]], true)
+	_clipe(P + "Morrendo", [[0.0, "morrer"]])
+	_valor(P + "Morrendo:dissolver", [[0.0, 0.0], [1.6, 0.0], [3.8, 1.0]])
+	_pos(P + "efeitos_f2/nevoa", [[0.0, Vector3(0, 1.0, 0)]])
+	# a gigante nasce no lugar dela, pequena, e cresce subindo do chao
+	_valor(P + "Gigante:visible", [[0.0, false], [1.8, true]], true)
+	_clipe(P + "Gigante", [[1.9, "surgir"], [4.8, "flutuar"]])
+	_valor(P + "Gigante:dissolver", [[0.0, 1.0], [1.8, 1.0], [4.4, 0.0]])
+	_valor(P + "Gigante:scale", [[0.0, Vector3.ONE * 0.36], [2.0, Vector3.ONE * 0.36],
+		[5.2, Vector3.ONE * 1.0]])
+	_pos(P + "Gigante", [[0.0, Vector3.ZERO], [2.0, Vector3.ZERO], [5.2, Vector3(0, 0.55, 0)]])
+	_metodo([[0.2, "vibrar", [0.5, 0.6]], [2.2, "estourar", [NodePath(P + "efeitos_f2/nevoa")]],
+		[5.4, "vibrar", [1.0, 1.2]]])
+	_som("ossos", [[0.0]])
+	_som("grito", [[1.6]])
+	_som("rugido", [[5.0]])
+	# cameras do palco (coordenadas do palco: +Z e' pra onde ela olhava)
+	_cam(P + "cam_f2_a", [[0.0, Vector3(0.6, 0.9, 2.6), Vector3(0, 0.9, 0), 40.0],
+		[2.0, Vector3(0.5, 0.85, 2.2), Vector3(0, 0.95, 0), 38.0]])
+	_cam(P + "cam_f2_b", [[2.0, Vector3(-1.2, 1.2, 4.2), Vector3(0, 1.2, 0), 40.0],
+		[5.2, Vector3(-2.2, 1.0, 8.4), Vector3(0, 3.0, 0), 46.0]])
+	_cam(P + "cam_f2_c", [[5.2, Vector3(1.0, 0.45, 6.6), Vector3(0, 3.4, 0), 52.0],
+		[9.0, Vector3(1.4, 0.55, 8.0), Vector3(0, 3.2, 0), 50.0]])
+
+
+# ==============================================================================
+# MORTE_FINAL: a gigante morre e cai, monstro de novo, perto do Jonny
+# ==============================================================================
+func _montar_morte_final() -> void:
+	a = Animation.new()
+	lib.add_animation("morte_final", a)
+	a.length = 11.0
+	const P := "palco_morte/"
+	var corpo := raiz.get_node("efeitos/corpo_da_monstro") as Node3D
+	_valor(".:barras", [[0.0, 0.0], [0.6, 1.0], [10.2, 1.0], [11.0, 0.0]])
+	_valor(".:plano", [[0.0, P + "cam_m_a"], [3.0, P + "cam_m_b"], [6.0, "cam_m_c"],
+		[10.95, ""]], true)
+	_valor(".:vermelho", [[0.0, 0.4], [4.0, 0.2], [8.0, 0.0]])
+	_valor(".:saturacao", [[0.0, 0.85], [6.0, 0.7], [11.0, 0.8]])
+	_valor(".:tremor", [[0.0, 0.6], [2.8, 0.8], [4.6, 0.2], [5.4, 0.7], [6.0, 0.0]])
+	_valor(".:pulso", [[0.0, 1.0], [2.0, 0.6], [4.0, 0.0]])
+	_valor(P + "GiganteMorre:visible", [[0.0, true], [4.7, false]], true)
+	_clipe(P + "GiganteMorre", [[0.0, "morrer"]])
+	_valor(P + "GiganteMorre:dissolver", [[0.0, 0.0], [2.6, 0.0], [4.6, 1.0]])
+	_valor(P + "GiganteMorre:scale", [[0.0, Vector3.ONE], [2.6, Vector3.ONE],
+		[4.6, Vector3.ONE * 0.5]])
+	# o corpo de verdade aparece por baixo e desaba de cara no chao
+	_pos("atores/Monstro", [[0.0, corpo.position]])
+	_rot("atores/Monstro", [[0.0, corpo.quaternion]])
+	_valor("atores/Monstro:visible", [[0.0, false], [2.8, true]], true)
+	_valor("atores/Monstro:dissolver", [[0.0, 1.0], [2.8, 1.0], [4.5, 0.0]])
+	_valor("atores/Monstro:veias", [[0.0, 1.0], [6.0, 0.0]])
+	_clipe("Monstro", [[2.8, "morrer"], [4.9, "cair_morta"], [6.5, "morta"]])
+	_som("rugido", [[0.0]])
+	_som("ossos", [[2.6]])
+	_metodo([[0.1, "vibrar", [0.6, 0.6]], [5.4, "vibrar", [0.9, 0.5]]])
+	# o Jonny continua ali, vivo
+	_clipe("Jonny", [[0.0, "caido_agonia"]])
+	_som("gemido", [[8.0]])
+	_cam(P + "cam_m_a", [[0.0, Vector3(1.6, 0.6, 6.5), Vector3(0, 3.0, 0), 50.0],
+		[3.0, Vector3(1.3, 0.7, 5.8), Vector3(0, 2.6, 0), 46.0]])
+	_cam(P + "cam_m_b", [[3.0, Vector3(-2.0, 1.4, 4.8), Vector3(0, 1.2, 0), 42.0],
+		[6.0, Vector3(-2.2, 1.3, 4.2), Vector3(0, 0.6, 0), 40.0]])
+	var J := JONNY_POS
+	_cam("cam_m_c", [[6.0, J + Vector3(-1.2, 0.5, -1.8), J + Vector3(1.0, 0.25, 0.4), 40.0],
+		[11.0, J + Vector3(-2.0, 3.6, -3.4), J + Vector3(0.8, 0.0, 0.3), 46.0]])
+
+
+# ==============================================================================
+# PEGA_JONNY: ajoelha, ergue o Jonny e corre com ele pra fora da igreja
+# ==============================================================================
+func _montar_pega_jonny() -> void:
+	a = Animation.new()
+	lib.add_animation("pega_jonny", a)
+	var J := JONNY_POS
+	var mc: Node3D = atores["Maycow"]
+	var jo: Node3D = atores["Jonny"]
+	# o Maycow ajoelha do lado do Jonny, de frente pra ele (do lado da porta)
+	var inicio := Vector3(J.x + 0.05, 0.0, J.z - 0.62)
+	mc.position = inicio
+	mc.rotation = Vector3.ZERO
+	_posar(mc, "pegar_jonny", 3.29)
+	var md: Vector3 = mc.posicao_do_osso("RightHand")
+	var me: Vector3 = mc.posicao_do_osso("LeftHand")
+	var colo: Vector3 = (md + me) * 0.5 + Vector3(0, 0.06, 0.04)           # Maycow ainda olhando pro +Z
+
+	const T_LEVANTA := 3.3
+	const T_VIRA := 4.1
+	const T_CORRE := 4.4
+	var porta := Vector3(0.0, 0.0, -1.6)
+	var corrida := inicio.distance_to(Vector3(inicio.x, 0, porta.z))
+	const VEL := 4.2                            # m/s do correr_carregando
+	var t_porta := T_CORRE + corrida / VEL
+	a.length = t_porta + 1.2
+
+	_valor(".:barras", [[0.0, 1.0], [a.length, 1.0]])
+	_valor(".:plano", [[0.0, "cam_pj_a"], [T_LEVANTA - 0.4, "cam_pj_b"],
+		[T_CORRE + 0.8, "cam_pj_c"], [a.length - 0.05, ""]], true)
+	_valor(".:saturacao", [[0.0, 0.8], [a.length, 0.7]])
+	_valor("atores/Maycow:visible", [[0.0, true]], true)
+	_valor("atores/Maycow/modelo/Armature/Skeleton3D/mao_arma/pivo_arma:visible",
+		[[0.0, false]], true)
+	_clipe("Maycow", [[0.0, "pegar_jonny"], [T_LEVANTA, "parado_carregando"],
+		[T_CORRE, "correr_carregando"]])
+	_clipe("Jonny", [[0.0, "sendo_erguido"], [T_LEVANTA, "no_colo"]])
+	# Maycow: parado ajoelhando, vira pra porta, corre
+	var de_costas := Quaternion(Vector3.UP, PI)
+	_pos("atores/Maycow", [[0.0, inicio], [T_CORRE, inicio],
+		[t_porta, Vector3(inicio.x, 0, porta.z)]])
+	_rot("atores/Maycow", [[0.0, Quaternion()], [T_LEVANTA + 0.1, Quaternion()],
+		[T_VIRA, de_costas]])
+	# Jonny: preso as maos do Maycow pelo `seguir` do AtorIgreja. Fica no chao
+	# ate' os bracos dele passarem por baixo (1,7 s) e vai pro colo ate' ele
+	# levantar; dai' em diante gira e corre junto, sem chave nenhuma de posicao.
+	jo.seguir = NodePath("../Maycow")
+	jo.seguir_giro_y = JONNY_GIRO
+	_valor("atores/Jonny:seguir_peso", [[0.0, 0.0], [1.7, 0.0], [T_LEVANTA, 1.0]])
+	_som("gemido", [[1.2]])
+	_som("batimento_rapido", [[T_CORRE]])
+	_cam("cam_pj_a", [[0.0, inicio + Vector3(1.4, 0.9, 1.4), inicio + Vector3(0, 0.6, 0.5), 42.0],
+		[T_LEVANTA - 0.4, inicio + Vector3(1.2, 0.95, 1.2), inicio + Vector3(0, 0.8, 0.5), 40.0]])
+	_cam("cam_pj_b", [[T_LEVANTA - 0.4, inicio + Vector3(-1.6, 1.3, -0.6), colo, 40.0],
+		[T_CORRE + 0.8, inicio + Vector3(-1.4, 1.5, -1.6), inicio + Vector3(0, 1.2, -1.6), 44.0]])
+	# a ultima: a camera vai na frente dele, de costas pra porta, recuando
+	var cc := []
+	for i in 6:
+		var u := i / 5.0
+		var t := lerpf(T_CORRE + 0.8, a.length, u)
+		var z := lerpf(inicio.z - (T_CORRE + 0.8 - T_CORRE) * VEL, porta.z, clampf((t - T_CORRE) / (t_porta - T_CORRE), 0.0, 1.0))
+		cc.append([t, Vector3(0.3, 1.5, z - 3.2 + u * 1.2), Vector3(0, 1.2, z), 46.0])
+	_cam("cam_pj_c", cc)
+
+
+# ==============================================================================
+func _gravar() -> void:
+	# os atores voltam pro clipe de abertura antes de gravar (a pose do editor)
+	for n in atores.values():
+		var ap := n.get_node("anim") as AnimationPlayer
+		ap.stop()
+		# o AtorIgreja troca os materiais no _ready (aqui o jogo esta' rodando);
+		# com as instancias editaveis o pack gravaria essas trocas na cena
+		for mi in n.find_children("*", "MeshInstance3D", true, false):
+			if mi.owner == raiz:
+				continue
+			for i in (mi as MeshInstance3D).get_surface_override_material_count():
+				(mi as MeshInstance3D).set_surface_override_material(i, null)
+	remove_child(raiz)
+	var cena := PackedScene.new()
+	var erro := cena.pack(raiz)
+	if erro != OK:
+		push_error("montar_cena: pack falhou (%d)" % erro)
+		return
+	erro = ResourceSaver.save(cena, SAIDA)
+	print("== gravado %s (erro %d)" % [SAIDA, erro])

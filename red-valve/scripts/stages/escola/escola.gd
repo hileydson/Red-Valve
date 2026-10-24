@@ -25,6 +25,9 @@ extends Node3D
 const LAYER_CHAO := 2
 const CENA_MAPA := "res://scenes/stages/stage_1/stage_1.tscn"
 const CENA_PORAO := "res://scenes/stages/escola/porao.tscn"
+const CENA_ITEM_OBTIDO := "res://scenes/ui/item_obtido.tscn"
+const ITEM_LANTERNA := "lanterna"
+const MODELO_LANTERNA := "res://assets/3d_model/player/lanterna/lanterna.glb"
 
 ## Quanto tempo o fade leva antes da troca de cena. O mesmo do hospital e da
 ## igreja, para a transição entre os prédios da cidade ter um ritmo só.
@@ -45,6 +48,9 @@ var _saindo: bool = false
 ## voltas por segundo). Os parados nem entram na lista.
 var _pas: Array[Dictionary] = []
 
+var player_na_lanterna: bool = false
+var _pegando_lanterna: bool = false
+
 
 func _ready() -> void:
 	GlobalEvents.in_cutscene = false
@@ -56,6 +62,7 @@ func _ready() -> void:
 	_preparar_ventiladores()
 	_preparar_sons()
 	_posicionar_jogador()
+	_preparar_lanterna()
 
 	# save_game() toma o caminho da cena atual como checkpoint, igual à casa do
 	# Jimmy, à igreja e ao hospital.
@@ -197,6 +204,93 @@ func _process(delta: float) -> void:
 		var pas: Node3D = item["pas"]
 		if is_instance_valid(pas):
 			pas.rotate_y(TAU * float(item["velocidade"]) * delta)
+
+	if player_na_lanterna and not _pegando_lanterna and not _saindo \
+			and not GlobalEvents.in_cutscene \
+			and not GlobalUtils.in_cinematic_cutscene \
+			and Input.is_action_just_pressed("ui_accept"):
+		_pegar_lanterna()
+
+
+# ==============================================================================
+# A LANTERNA NA MESA DA SALA 103
+# ==============================================================================
+## Ela morava no chão da igreja e mudou para cá: fica acesa em cima da mesa da
+## professora, com o facho saindo pela porta — quem anda o corredor norte vê o
+## clarão no chão antes de ver a sala. O lugar sai de `planta.py` (`lanterna()`),
+## que também põe a interrogação no mapa.
+##
+## Evento de uma vez só: quem já pegou não a encontra de novo. A checagem é no
+## inventário salvo, e não numa flag à parte — assim um save antigo que já tenha
+## a lanterna (pega ainda na igreja) também chega com a mesa vazia.
+func _preparar_lanterna() -> void:
+	var conjunto := get_node_or_null("lanterna_no_chao")
+	if conjunto == null:
+		return
+	if SaveManager.tem_item(ITEM_LANTERNA):
+		conjunto.queue_free()
+		return
+	var area := conjunto.get_node_or_null("area") as Area3D
+	if area:
+		if not area.body_entered.is_connected(_ao_entrar_na_lanterna):
+			area.body_entered.connect(_ao_entrar_na_lanterna)
+		if not area.body_exited.is_connected(_ao_sair_da_lanterna):
+			area.body_exited.connect(_ao_sair_da_lanterna)
+
+
+func _ao_entrar_na_lanterna(body: Node3D) -> void:
+	if not _eh_player(body):
+		return
+	player_na_lanterna = true
+	GlobalUtils.show_center_message("pegar_lanterna", tr("PROMPT_TAKE_FLASHLIGHT"), 16)
+
+
+func _ao_sair_da_lanterna(body: Node3D) -> void:
+	if not _eh_player(body):
+		return
+	player_na_lanterna = false
+	GlobalUtils.hide_center_message("pegar_lanterna")
+
+
+func _pegar_lanterna() -> void:
+	_pegando_lanterna = true
+	player_na_lanterna = false
+	GlobalUtils.hide_center_message("pegar_lanterna")
+
+	SaveManager.add_item(ITEM_LANTERNA, 1)
+	SaveManager.save_game()
+
+	var conjunto := get_node_or_null("lanterna_no_chao")
+	if conjunto:
+		conjunto.queue_free()
+
+	# Espera o prompt sumir ANTES de abrir a tela. `hide_center_message` apaga
+	# com um tween de meio segundo, e tween não anda com a árvore pausada — sem
+	# esta pausa o "Pegar a lanterna?" ficava congelado atrás do modelo 3D até
+	# o jogador fechar a tela.
+	await get_tree().create_timer(0.55).timeout
+
+	# A mensagem muda com o dispositivo em uso: quem está no controle procura
+	# L3, quem está no teclado procura Y.
+	var chave := "PICKUP_FLASHLIGHT_L3" if GlobalEvents.usando_controle \
+		else "PICKUP_FLASHLIGHT_KEY"
+	var tela: CanvasLayer = load(CENA_ITEM_OBTIDO).instantiate()
+	tela.model_path = MODELO_LANTERNA
+	tela.texto = tr(chave)
+	get_tree().root.add_child(tela)
+	await tela.fechado
+
+	# Sai daqui já acesa: ele acabou de ver uma lanterna acesa em cima da mesa,
+	# e ficar no escuro logo depois de pegá-la seria o contrário do que a cena
+	# mostrou.
+	var jogador := _jogador()
+	if jogador and jogador.has_method("acender_lanterna_agora"):
+		jogador.acender_lanterna_agora()
+	_pegando_lanterna = false
+
+
+func _eh_player(body: Node3D) -> bool:
+	return body.is_in_group("player") or body.name.to_lower() == "player"
 
 
 ## Duas falhas diferentes, as mesmas da casa do Jimmy, da igreja e do hospital:

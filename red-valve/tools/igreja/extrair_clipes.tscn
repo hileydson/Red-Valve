@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://tools/igreja/extrair_clipes.gd" id="1"]
+
+[node name="extrair_clipes" type="Node"]
+script = ExtResource("1")

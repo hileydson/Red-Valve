@@ -22,8 +22,9 @@ DE ONDE VEM CADA NUMERO
 
   - a planta (paredes, pilares, escadas, abside) sai de `igreja_pontos.json`,
     bloco "planta", que o gerador do Blender escreve junto com o modelo;
-  - a posicao da lanterna e a do item secreto saem de `gerar_cena_igreja.py`,
-    que e' quem as escreve na cena.
+  - a posicao do item secreto sai de `gerar_cena_igreja.py`, que e' quem a
+    escreve na cena. (A lanterna, que tambem tinha interrogacao aqui, mudou
+    para a escola: o mapa dela agora e' o `make_mapa_escola.py`.)
 
 Nada e' digitado duas vezes: mover o pilar no Blender move o pilar aqui.
 
@@ -71,7 +72,7 @@ from PIL import Image, ImageDraw
 _AQUI = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, _AQUI)
 
-from gerar_cena_igreja import ITEM_SECRETO_POS, LANTERNA_POS  # noqa: E402
+from gerar_cena_igreja import ITEM_SECRETO_POS  # noqa: E402
 
 RAIZ = os.path.dirname(os.path.dirname(os.path.dirname(_AQUI)))
 ASSETS = os.path.join(RAIZ, "red-valve", "assets", "3d_model", "stages", "igreja")
@@ -409,21 +410,15 @@ def _zonas(p):
 
 
 def _pontos(p):
-    """As duas interrogacoes do mapa.
+    """A interrogacao do mapa.
 
     `chave` vazia de proposito: uma interrogacao com o nome do item escrito ao
     lado nao seria uma interrogacao. O que o rotulo diz, quando diz, e' o ANDAR
     — e isso nao entrega nada, so' evita que o jogador procure no chao um
     item que esta' dez metros acima da cabeca dele.
 
-    `oculto_com_item` e' lido pelo Godot contra o inventario salvo: a
-    interrogacao da lanterna some no instante em que a lanterna e' pega, e um
-    save antigo que ja' a tenha tambem chega com o mapa limpo.
     """
     return [
-        {"id": "lanterna", "chave": "", "tipo": "interrogacao",
-         "x": round(LANTERNA_POS[0], 2), "z": round(LANTERNA_POS[2], 2),
-         "oculto_com_item": "lanterna"},
         {"id": "item_secreto", "chave": "", "tipo": "interrogacao",
          "x": round(ITEM_SECRETO_POS[0], 2), "z": round(ITEM_SECRETO_POS[2], 2),
          "andar": "MAP_FLOOR_GALLERY"},

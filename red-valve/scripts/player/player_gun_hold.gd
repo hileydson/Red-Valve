@@ -255,6 +255,10 @@ var _deslize := PUNHO_DESLIZE
 # O QUE O PLAYER CHAMA
 # ==============================================================================
 ## Liga/desliga a pose de mira e diz pra onde o cano aponta (mundo).
+## Some com a arma e solta o braco enquanto isto estiver ligado, mesmo
+## equipada (o Maycow carregando o Jonny precisa das duas maos).
+var suspensa: bool = false
+
 func mirar(ativo: bool, ponto: Vector3 = Vector3.ZERO) -> void:
 	_mirando = ativo
 	if ativo:
@@ -318,7 +322,7 @@ func _process_modification_with_delta(delta: float) -> void:
 	if _i_braco_d < 0 and not _procurar_ossos(sk):
 		return
 
-	var equipada: bool = SaveManager.is_equipped(ITEM_PISTOLA)
+	var equipada: bool = SaveManager.is_equipped(ITEM_PISTOLA) and not suspensa
 	_garantir_arma(equipada)
 	if not equipada:
 		_peso = 0.0

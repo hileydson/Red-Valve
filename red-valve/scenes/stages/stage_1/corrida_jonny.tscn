@@ -1,0 +1,377 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/stages/stage_1/corrida_jonny.gd" id="1_uo6iv"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/igreja/maycow_cena.tscn" id="2_6qnjk"]
+[ext_resource type="Script" path="res://scripts/npcs/igreja/ator_igreja.gd" id="3_bwvij"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/igreja/jonny.tscn" id="4_jyq0u"]
+[ext_resource type="AudioStream" path="res://assets/sounds/igreja/batimento_rapido.ogg" id="5_8r8fy"]
+[ext_resource type="AudioStream" path="res://assets/sounds/episodios/trailer/storms.mp3" id="6_dk5q3"]
+[ext_resource type="AudioStream" path="res://assets/sounds/igreja/gemido_jonny.ogg" id="7_gw8p8"]
+[ext_resource type="Shader" path="res://shaders/cutscenes/igreja_lente.gdshader" id="8_by4s8"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3rhp5"]
+shader = ExtResource("8_by4s8")
+shader_parameter/barras = null
+shader_parameter/aberration = null
+shader_parameter/radial_blur = null
+shader_parameter/barrel = null
+shader_parameter/vignette_strength = null
+shader_parameter/vignette_softness = null
+shader_parameter/grain = null
+shader_parameter/exposure = null
+shader_parameter/saturation = null
+shader_parameter/grade_shadows = null
+shader_parameter/grade_highlights = null
+shader_parameter/grade_amount = null
+shader_parameter/flash_color = null
+shader_parameter/flash = null
+shader_parameter/vermelho = null
+shader_parameter/gosma = null
+shader_parameter/sangue_tela = null
+
+[sub_resource type="Animation" id="Animation_81jiy"]
+length = 13.8
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:barras")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 13.8),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [1.0, 1.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:preto")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.6, 12.4, 13.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [1.0, 0.0, 0.0, 1.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".:plano")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 4.2, 9.6),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": ["palco_igreja/cam_a", "palco_hospital/cam_b", "palco_hospital/cam_c"]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("palco_igreja:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 4.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("palco_hospital:visible")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 4.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, true]
+}
+tracks/5/type = "animation"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("palco_igreja/MaycowA/anim")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"clips": PackedStringArray("correr_carregando"),
+"times": PackedFloat32Array(0)
+}
+tracks/6/type = "animation"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("palco_igreja/JonnyA/anim")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"clips": PackedStringArray("no_colo"),
+"times": PackedFloat32Array(0)
+}
+tracks/7/type = "animation"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("palco_hospital/MaycowB/anim")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"clips": PackedStringArray("correr_carregando"),
+"times": PackedFloat32Array(4.2)
+}
+tracks/8/type = "animation"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("palco_hospital/JonnyB/anim")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"clips": PackedStringArray("no_colo"),
+"times": PackedFloat32Array(4.2)
+}
+tracks/9/type = "position_3d"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("palco_igreja/MaycowA")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = PackedFloat32Array(0, 1, 0, 0, 0, 4.2, 1, 0, 0, 17.64)
+tracks/10/type = "position_3d"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("palco_hospital/MaycowB")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = PackedFloat32Array(4.2, 1, 0.3, 0, -23.98, 9.6, 1, 0.3, 0, -1.3, 13.8, 1, 0, 0, 13.694)
+tracks/11/type = "audio"
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/path = NodePath("sons/batimento")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/keys = {
+"clips": [{
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": ExtResource("5_8r8fy")
+}],
+"times": PackedFloat32Array(0)
+}
+tracks/11/use_blend = true
+tracks/12/type = "audio"
+tracks/12/imported = false
+tracks/12/enabled = true
+tracks/12/path = NodePath("sons/trovao")
+tracks/12/interp = 1
+tracks/12/loop_wrap = true
+tracks/12/keys = {
+"clips": [{
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": ExtResource("6_dk5q3")
+}],
+"times": PackedFloat32Array(1.2)
+}
+tracks/12/use_blend = true
+tracks/13/type = "audio"
+tracks/13/imported = false
+tracks/13/enabled = true
+tracks/13/path = NodePath("sons/gemido")
+tracks/13/interp = 1
+tracks/13/loop_wrap = true
+tracks/13/keys = {
+"clips": [{
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": ExtResource("7_gw8p8")
+}],
+"times": PackedFloat32Array(6)
+}
+tracks/13/use_blend = true
+tracks/14/type = "value"
+tracks/14/imported = false
+tracks/14/enabled = true
+tracks/14/path = NodePath("lente/tela:material:shader_parameter/flash")
+tracks/14/interp = 1
+tracks/14/loop_wrap = true
+tracks/14/keys = {
+"times": PackedFloat32Array(0, 1.3, 1.35, 1.5, 1.6, 2.1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [0.0, 0.0, 0.55, 0.1, 0.45, 0.0]
+}
+tracks/15/type = "position_3d"
+tracks/15/imported = false
+tracks/15/enabled = true
+tracks/15/path = NodePath("palco_igreja/cam_a")
+tracks/15/interp = 1
+tracks/15/loop_wrap = true
+tracks/15/keys = PackedFloat32Array(0, 1, 1.4, 1, 19.5, 2.5, 1, 1.4, 1, 19.5, 4.2, 1, 1.6, 1.05, 19.2)
+tracks/16/type = "rotation_3d"
+tracks/16/imported = false
+tracks/16/enabled = true
+tracks/16/path = NodePath("palco_igreja/cam_a")
+tracks/16/interp = 1
+tracks/16/loop_wrap = true
+tracks/16/keys = PackedFloat32Array(0, 1, 0.006389303, 0.035827544, -0.00022906478, 0.99933755, 2.5, 1, 0.013679142, 0.07707559, -0.0010575738, 0.99693084, 4.2, 1, 0.04111118, 0.38813567, -0.017334426, 0.9205216)
+tracks/17/type = "value"
+tracks/17/imported = false
+tracks/17/enabled = true
+tracks/17/path = NodePath("palco_igreja/cam_a:fov")
+tracks/17/interp = 1
+tracks/17/loop_wrap = true
+tracks/17/keys = {
+"times": PackedFloat32Array(0, 2.5, 4.2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [32.0, 34.0, 40.0]
+}
+tracks/18/type = "position_3d"
+tracks/18/imported = false
+tracks/18/enabled = true
+tracks/18/path = NodePath("palco_hospital/cam_b")
+tracks/18/interp = 1
+tracks/18/loop_wrap = true
+tracks/18/keys = PackedFloat32Array(4.2, 1, 2.6, 1.6, 2.6, 9.6, 1, 2.4, 1.5, 2.2)
+tracks/19/type = "rotation_3d"
+tracks/19/imported = false
+tracks/19/enabled = true
+tracks/19/path = NodePath("palco_hospital/cam_b")
+tracks/19/interp = 1
+tracks/19/loop_wrap = true
+tracks/19/keys = PackedFloat32Array(4.2, 1, -0.00748883, 0.0431435, 0.0003234046, 0.9990408, 9.6, 1, -0.03534473, 0.266754, 0.009789924, 0.9630666)
+tracks/20/type = "value"
+tracks/20/imported = false
+tracks/20/enabled = true
+tracks/20/path = NodePath("palco_hospital/cam_b:fov")
+tracks/20/interp = 1
+tracks/20/loop_wrap = true
+tracks/20/keys = {
+"times": PackedFloat32Array(4.2, 9.6),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [14.0, 34.0]
+}
+tracks/21/type = "position_3d"
+tracks/21/imported = false
+tracks/21/enabled = true
+tracks/21/path = NodePath("palco_hospital/cam_c")
+tracks/21/interp = 1
+tracks/21/loop_wrap = true
+tracks/21/keys = PackedFloat32Array(9.6, 1, -0.9, 1.5, -4.7, 10.44, 1, -0.9, 1.64, -1.7012, 11.28, 1, -0.9, 1.78, 1.2976, 12.12, 1, -0.9, 1.92, 4.2964, 12.96, 1, -0.9, 2.06, 7.2952, 13.8, 1, -0.9, 2.2, 10.294)
+tracks/22/type = "rotation_3d"
+tracks/22/imported = false
+tracks/22/enabled = true
+tracks/22/path = NodePath("palco_hospital/cam_c")
+tracks/22/interp = 1
+tracks/22/loop_wrap = true
+tracks/22/keys = PackedFloat32Array(9.6, 1, 0.0022574125, 0.99621934, 0.02727578, -0.082449645, 10.44, 1, 0.0024075336, 0.996168, 0.029089658, -0.08244539, 11.28, 1, 0.0025575839, 0.9961134, 0.030902676, -0.082440875, 12.12, 1, 0.002707558, 0.99605554, 0.032714784, -0.082436085, 12.96, 1, 0.0028574504, 0.99599445, 0.03452589, -0.08243102, 13.8, 1, 0.003007258, 0.9959301, 0.036335994, -0.082425684)
+tracks/23/type = "value"
+tracks/23/imported = false
+tracks/23/enabled = true
+tracks/23/path = NodePath("palco_hospital/cam_c:fov")
+tracks/23/interp = 1
+tracks/23/loop_wrap = true
+tracks/23/keys = {
+"times": PackedFloat32Array(9.6, 10.44, 11.28, 12.12, 12.96, 13.8),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [46.0, 46.0, 46.0, 46.0, 46.0, 46.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_scm3w"]
+_data = {
+&"corrida": SubResource("Animation_81jiy")
+}
+
+[node name="corrida_jonny" type="Node3D" unique_id=861900172]
+script = ExtResource("1_uo6iv")
+colados_no_chao = Array[NodePath]([NodePath("palco_igreja/MaycowA"), NodePath("palco_hospital/MaycowB")])
+
+[node name="palco_igreja" type="Node3D" parent="." unique_id=1417355807]
+editor_description = "Posto na praca da igreja no jogo (+Z = pra onde ele corre)."
+
+[node name="MaycowA" type="Node3D" parent="palco_igreja" unique_id=1685974850 instance=ExtResource("2_6qnjk")]
+editor_description = "Duble do Maycow normal pras cutscenes (o jogador fica escondido). Os clipes estao em anim (biblioteca maycow_clipes.tres): abra o AnimationPlayer pra mexer. Dissolver/sangue/veias so aparecem com o jogo rodando."
+script = ExtResource("3_bwvij")
+clipe_inicial = &"correr_carregando"
+
+[node name="JonnyA" type="Node3D" parent="palco_igreja" unique_id=1031776559 instance=ExtResource("4_jyq0u")]
+editor_description = "O Jonny. Os clipes estao em anim (biblioteca jonny_clipes.tres): abra o AnimationPlayer pra mexer. Dissolver/sangue/veias so aparecem com o jogo rodando."
+script = ExtResource("3_bwvij")
+clipe_inicial = &"no_colo"
+sangue = 0.45
+seguir = NodePath("../MaycowA")
+seguir_peso = 1.0
+
+[node name="cam_a" type="Camera3D" parent="palco_igreja" unique_id=33722437]
+transform = Transform3D(0.99743265, 0.00091565214, 0.07160469, 0, 0.9999182, -0.012786555, -0.07161055, 0.012753728, 0.9973511, 1.4, 1, 19.5)
+current = true
+fov = 32.0
+far = 400.0
+
+[node name="palco_hospital" type="Node3D" parent="." unique_id=1118412139]
+editor_description = "Posto no pe' da escada do hospital no jogo (+Z = a porta)."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 0, 0)
+
+[node name="MaycowB" type="Node3D" parent="palco_hospital" unique_id=807499765 instance=ExtResource("2_6qnjk")]
+editor_description = "Duble do Maycow normal pras cutscenes (o jogador fica escondido). Os clipes estao em anim (biblioteca maycow_clipes.tres): abra o AnimationPlayer pra mexer. Dissolver/sangue/veias so aparecem com o jogo rodando."
+script = ExtResource("3_bwvij")
+clipe_inicial = &"correr_carregando"
+
+[node name="JonnyB" type="Node3D" parent="palco_hospital" unique_id=444104245 instance=ExtResource("4_jyq0u")]
+editor_description = "O Jonny. Os clipes estao em anim (biblioteca jonny_clipes.tres): abra o AnimationPlayer pra mexer. Dissolver/sangue/veias so aparecem com o jogo rodando."
+script = ExtResource("3_bwvij")
+clipe_inicial = &"no_colo"
+sangue = 0.45
+seguir = NodePath("../MaycowB")
+seguir_peso = 1.0
+
+[node name="cam_b" type="Camera3D" parent="palco_hospital" unique_id=1903039106]
+transform = Transform3D(0.9962771, -0.0012923775, 0.08619939, 5.820766e-11, 0.99988765, 0.014991199, -0.08620907, -0.014935388, 0.9961651, 2.6, 1.6, 2.6)
+fov = 14.0
+far = 400.0
+
+[node name="cam_c" type="Camera3D" parent="palco_hospital" unique_id=306347774]
+transform = Transform3D(-0.9863939, 0.0089955125, -0.16415271, -4.656613e-10, 0.9985019, 0.054717567, 0.164399, 0.053973075, -0.9849161, -0.9, 1.5, -4.7)
+fov = 46.0
+far = 400.0
+
+[node name="sons" type="Node3D" parent="." unique_id=1850826693]
+
+[node name="batimento" type="AudioStreamPlayer" parent="sons" unique_id=317049376]
+stream = ExtResource("5_8r8fy")
+volume_db = -3.0
+
+[node name="trovao" type="AudioStreamPlayer" parent="sons" unique_id=1190524620]
+stream = ExtResource("6_dk5q3")
+
+[node name="gemido" type="AudioStreamPlayer" parent="sons" unique_id=1311327591]
+stream = ExtResource("7_gw8p8")
+volume_db = -6.0
+
+[node name="lente" type="CanvasLayer" parent="." unique_id=532134248]
+layer = 80
+
+[node name="tela" type="ColorRect" parent="lente" unique_id=1767633297]
+material = SubResource("ShaderMaterial_3rhp5")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -1920.0
+offset_bottom = -1080.0
+mouse_filter = 2
+
+[node name="preto" type="ColorRect" parent="lente" unique_id=706174882]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -1920.0
+offset_bottom = -1080.0
+mouse_filter = 2
+color = Color(0, 0, 0, 0)
+
+[node name="diretor" type="AnimationPlayer" parent="." unique_id=780944811]
+libraries/ = SubResource("AnimationLibrary_scm3w")

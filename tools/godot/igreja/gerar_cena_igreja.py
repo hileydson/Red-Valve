@@ -51,31 +51,11 @@ EXTERNOS = [
     ("Script", "res://scripts/stages/igreja/igreja_interior.gd", "5_script"),
     ("Script", "res://scripts/stages/igreja/igreja_materiais.gd", "6_materiais"),
     ("AudioStream", "res://assets/sounds/episodios/ambiente_noise_sublime.mp3", "7_ambiente"),
-    ("PackedScene", "res://assets/3d_model/player/lanterna/lanterna.glb", "8_lanterna"),
     # O minimapa: a igreja tem planta propria (nao e' a da cidade), desenhada
     # por `make_mapa_igreja.py`. Ele tambem e' quem diz a' aba MAPA do menu
     # qual mapa mostrar enquanto o jogador esta' aqui dentro.
     ("PackedScene", "res://scenes/ui/minimap_igreja.tscn", "9_minimapa"),
 ]
-
-# --------------------------------------------------------------------------
-# A LANTERNA LARGADA NO CHÃO
-#
-# É o objeto que o jogador vem buscar aqui, então ela tem de ser a primeira
-# coisa que se vê ao entrar: fica acesa, caída NO CORREDOR CENTRAL, alguns
-# passos adiante do portal, com o facho varrendo a nave rumo ao altar. A luz
-# dela é forte de propósito — é isca.
-#
-# No corredor e não entre os bancos: a 3,4 m do eixo ela caía dentro de uma
-# fileira, e a única coisa que dava para ver era o brilho vazando por baixo do
-# assento.
-#
-# O modelo tem a LENTE apontando para -X local (conferido renderizando o .glb),
-# e 1,9 unidade de comprimento; daí o giro de 90° (lente para +Z, na direção do
-# altar) e a escala de 0,16, que deixa a lanterna com uns 30 cm de verdade.
-LANTERNA_POS = (1.15, 0.05, 8.2)
-LANTERNA_ESCALA = 0.16
-LANTERNA_GIRO = math.pi * 0.5
 
 # --------------------------------------------------------------------------
 # O ITEM SECRETO
@@ -375,7 +355,6 @@ def gerar():
         "adjustment_saturation = 0.88",
     ]))
     sub.append(("caixa_porta", "BoxShape3D", ["size = Vector3(6, 3.4, 3.6)"]))
-    sub.append(("caixa_lanterna", "BoxShape3D", ["size = Vector3(3.0, 2.6, 3.0)"]))
 
     # poeira: quadzinho billboard. `billboard_keep_scale` NAO e' opcional —
     # sem ele o billboard descarta a escala e scale_min/max viram enfeite.
@@ -485,41 +464,6 @@ def gerar():
         ("process_material", "SubResource(\"proc_poeira_nave\")"),
         ("draw_pass_1", "SubResource(\"malha_poeira\")"),
     ])
-
-    # --- a lanterna no chão
-    lx, ly, lz = LANTERNA_POS
-    no("lanterna_no_chao", tipo="Node3D", pai=".")
-    no("modelo", pai="lanterna_no_chao", instancia="8_lanterna", props=[
-        ("transform", transform_posto((lx, ly, lz), LANTERNA_GIRO, 0.14,
-                                      LANTERNA_ESCALA))])
-    # Facho apontado um grau ACIMA da horizontal e sem sombra. Rente ao chão
-    # (que é onde a lanterna está, a 7 cm) o cone raspava o piso e o clarão
-    # ficava invisível a cinco passos; e com sombra ligada era o próprio corpo
-    # da lanterna, encostado na luz, que tapava metade do facho.
-    no("facho", tipo="SpotLight3D", pai="lanterna_no_chao", props=[
-        ("transform", transform_olhando((lx, ly + 0.03, lz + 0.18), (0.06, 0.055, 1.0))),
-        ("light_color", cor((1.0, 0.94, 0.82, 1))),
-        ("light_energy", "13.0"),
-        ("light_volumetric_fog_energy", "4.0"),
-        ("shadow_enabled", "false"),
-        ("spot_range", "26.0"),
-        ("spot_angle", "30.0"),
-        ("spot_angle_attenuation", "0.45"),
-    ])
-    no("brilho", tipo="OmniLight3D", pai="lanterna_no_chao", props=[
-        ("transform", transform_pos((lx, ly + 0.12, lz + 0.10))),
-        ("light_color", cor((1.0, 0.9, 0.75, 1))),
-        ("light_energy", "3.6"),
-        ("omni_range", "6.0"),
-    ])
-    no("area", tipo="Area3D", pai="lanterna_no_chao", props=[
-        ("transform", transform_pos((lx, ly + 1.0, lz))),
-        ("collision_layer", "0"),
-        ("collision_mask", "1"),
-        ("monitorable", "false"),
-    ])
-    no("CollisionShape3D", tipo="CollisionShape3D", pai="lanterna_no_chao/area",
-       props=[("shape", "SubResource(\"caixa_lanterna\")")])
 
     # --- porta: area de saida + o ponto onde o jogador nasce ao entrar
     no("porta", tipo="Area3D", pai=".", props=[

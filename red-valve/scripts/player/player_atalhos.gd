@@ -50,6 +50,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if not is_instance_valid(player) or player.are_cutscene_inputs_blocked():
 		return
+	if player.carregando_jonny:
+		return
 	# No meio do ultimate da cogblade a tela é toda dela: trocar de item ali
 	# deixaria o jogador sem entender o que aconteceu.
 	if player.is_using_ultimate or player.camera_bullet_time_ON:

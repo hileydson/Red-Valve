@@ -70,6 +70,9 @@ func _ready() -> void:
 	# do capítulo no meio da cidade.
 	if GlobalEvents.voltando_da_igreja:
 		return
+	# A corrida com o Jonny no colo (igreja -> hospital) tambem passa por aqui.
+	if GlobalEvents.corrida_com_jonny:
+		return
 	if not has_animation(ANIM_INTRO):
 		return
 

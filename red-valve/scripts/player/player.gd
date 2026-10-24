@@ -608,6 +608,10 @@ var modelo_visual: MeshInstance3D # resolvido em _ready() conforme a variante at
 ## reaparecer no quadro seguinte, e o Maycow ficava visível ao lado da câmera
 ## durante o agarrão. Quem esconde por cutscene liga isto (`cutscene_set_model_hidden`).
 var _modelo_escondido_por_cena: bool = false
+## O Maycow esta' com o Jonny no colo (evento da Dona Nice, no hospital). So'
+## anda: nada de mirar, atirar, recarregar, correr, dash, lanterna ou atalho.
+## Quem liga e desliga e' o `player_carregar_jonny.gd`.
+var carregando_jonny: bool = false
 
 
 # HAND ADJUSTMENTS
@@ -1234,6 +1238,8 @@ func are_cutscene_inputs_blocked() -> bool:
 func _input(event):
 	if are_cutscene_inputs_blocked():
 		return
+	if carregando_jonny:
+		return
 
 	# Lanterna antes de qualquer outra trava: acender não é ação de combate, e
 	# ficar sem luz porque se está mirando ou no bullet time seria absurdo.
@@ -1353,7 +1359,7 @@ func _physics_process(delta: float) -> void:
 	last_rotation_y = rotation.y
 	last_camera_rot_x = current_camera_rot_x
 	
-	if not are_cutscene_inputs_blocked():
+	if not are_cutscene_inputs_blocked() and not carregando_jonny:
 		if SaveManager.config.get("run_mode", "hold") == "toggle":
 			if Input.is_action_just_pressed("ui_run"):
 				_run_toggle_active = not _run_toggle_active
@@ -1569,7 +1575,7 @@ func _physics_process(delta: float) -> void:
 		if dash_cooldown_timer > 0:
 			dash_cooldown_timer -= delta
 
-		if not are_cutscene_inputs_blocked() and Input.is_action_just_pressed("ui_dash") and not GlobalEvents.dash_bloqueado() and not is_dashing and dash_cooldown_timer <= 0 and (current_stamina >= 30.0 or _stamina_infinita()):
+		if not are_cutscene_inputs_blocked() and not carregando_jonny and Input.is_action_just_pressed("ui_dash") and not GlobalEvents.dash_bloqueado() and not is_dashing and dash_cooldown_timer <= 0 and (current_stamina >= 30.0 or _stamina_infinita()):
 			if not _stamina_infinita():
 				current_stamina -= 30.0
 			stamina_fade_timer = 2.0
@@ -1714,7 +1720,7 @@ func _physics_process(delta: float) -> void:
 	# DAQUI PRA FRENTE É O MAYCOW SEM PODERES (E NORMAL APOS PROLOGO)
 	else:
 		var cutscene_blocked = are_cutscene_inputs_blocked()
-		var normal_can_aim = SaveManager.prolog_finished and not cutscene_blocked
+		var normal_can_aim = SaveManager.prolog_finished and not cutscene_blocked and not carregando_jonny
 		if cutscene_blocked:
 			if is_aiming:
 				is_aiming = false

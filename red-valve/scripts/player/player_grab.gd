@@ -359,6 +359,8 @@ func _entrar_em_cena() -> void:
 
 func _sair(fp: Node3D, inimigo: Node3D) -> void:
 	_congelar_inimigo(inimigo, false)
+	if is_instance_valid(inimigo) and inimigo.has_method("agarrao_soltou"):
+		inimigo.agarrao_soltou()
 
 	if is_instance_valid(fp):
 		fp.tocar(&"guardar")
@@ -607,6 +609,11 @@ func _mover_inimigo(inimigo: Node3D, destino: Vector3, duracao: float) -> void:
 
 func _atacar_inimigo(inimigo: Node3D) -> void:
 	if not is_instance_valid(inimigo):
+		return
+	# Inimigo sem AnimationTree (a Dona Nice da igreja, que toca clipes por
+	# AnimationPlayer) faz o proprio ataque — e o que mais vier com ele.
+	if inimigo.has_method("agarrao_atacar"):
+		inimigo.agarrao_atacar()
 		return
 	var arvore = inimigo.get("animation_tree")
 	if arvore is AnimationTree:

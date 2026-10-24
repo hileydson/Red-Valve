@@ -378,3 +378,18 @@ DEBUG_ITEM_SHOTGUN,Shotgun (The Negotiator Mk.III),Espingarda (The Negotiator Mk
 DEBUG_ITEM_COGBLADE,Cogblade,Cogblade
 DEBUG_ITEM_PISTOL_AMMO,Pistol Ammo,Munição de Pistola
 DEBUG_ITEM_SHOTGUN_AMMO,Shotgun Shells,Cartuchos de Espingarda
+IGR_SUSSURRO_1,Rubra valva... aperi te... vel'nara oth sumé...,Rubra valva... aperi te... vel'nara oth sumé...
+IGR_SUSSURRO_2,Sanguis pueri... clavis mundi... nhar'eth... nhar'eth...,Sanguis pueri... clavis mundi... nhar'eth... nhar'eth...
+IGR_SUSSURRO_3,Take me to the other side... take me home...,Me leva pro outro lado... me leva pra casa...
+IGR_SUSSURRO_4,Almost there... just a little more of him...,Quase lá... só mais um pouco dele...
+IGR_SUSSURRO_5,"You... you came to watch, boy...","Você... veio assistir, menino..."
+IGR_BOSS_NOME,Dona Nice,Dona Nice
+IGR_BOSS_NOME_2,Dona Nice — what she became,Dona Nice — o que ela se tornou
+PROMPT_CARRY_JONNY,Take Jonny to the hospital,Levar Jonny ao hospital
+AVISO_LARGAR_JONNY_CONTROLE,B: put Jonny down,B: deixar Jonny no chão
+AVISO_LARGAR_JONNY_TECLADO,G: put Jonny down,G: deixar Jonny no chão
+PROMPT_PICK_JONNY_UP,Pick Jonny up,Pegar Jonny no colo
+AVISO_HOSPITAL_TRANCADO,The door is locked. There's no way out.,A porta está trancada. Não tem como sair.
+OBJ_HOSPITAL_AJUDA_JONNY,Find help for Jonny,Encontre ajuda para o Jonny
+AVISO_SEM_MUNICAO_IGREJA,Out of ammo — look for ammo boxes around the church,Sem munição — procure caixas de munição pela igreja
+DEBUG_EVENT_DONA_NICE,Dona Nice event (0-5),Evento Dona Nice (0-5)
