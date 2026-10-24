@@ -3,19 +3,20 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dpmwjbvou1bxd"
-path="res://.godot/imported/picke_dirty_01_diff_1k.jpg-a4fc5fe60b9d209ec2ab9d0f4de7fb15.ctex"
+path.s3tc="res://.godot/imported/picke_dirty_01_diff_1k.jpg-a4fc5fe60b9d209ec2ab9d0f4de7fb15.s3tc.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/3d_model/polyhaven/picke_dirty_01/textures/picke_dirty_01_diff_1k.jpg"
-dest_files=["res://.godot/imported/picke_dirty_01_diff_1k.jpg-a4fc5fe60b9d209ec2ab9d0f4de7fb15.ctex"]
+dest_files=["res://.godot/imported/picke_dirty_01_diff_1k.jpg-a4fc5fe60b9d209ec2ab9d0f4de7fb15.s3tc.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
@@ -23,7 +24,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=false
+mipmaps/generate=true
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""
@@ -37,4 +38,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=1
+detect_3d/compress_to=0

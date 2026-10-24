@@ -148,26 +148,23 @@ var _ocupado: bool = false
 # alt     — faixa de altura, so' pro papel "parede".
 # grande  — ganha caixa de colisao; `col` e' o tamanho dela.
 const CATALOGO := [
-	# --- na guia ----------------------------------------------------------
-	{"n": "concrete_road_barrier_02", "papel": "guia", "peso": 4, "base_y": 0.0, "raio": 0.9,
-		"esc": [0.95, 1.05], "grande": true, "col": [1.6, 1.1, 0.5]},
-	{"n": "barricade_interditado", "papel": "guia", "peso": 5, "base_y": 0.0, "raio": 0.85,
-		"esc": [0.95, 1.05], "grande": true, "col": [1.5, 1.0, 0.45]},
-	{"n": "dumpster_kraycik", "papel": "guia", "peso": 3, "base_y": 0.0, "raio": 1.1,
-		"esc": [0.95, 1.05], "grande": true, "col": [1.6, 1.2, 1.0]},
-	{"n": "industrial_storage_cart", "papel": "guia", "peso": 2, "base_y": 0.0, "raio": 0.75,
-		"esc": [0.95, 1.05], "grande": true, "col": [1.3, 1.1, 0.8]},
-	{"n": "wheelchair_01", "papel": "guia", "peso": 1, "base_y": 0.0, "raio": 0.55,
-		"esc": [0.95, 1.05]},
-	{"n": "covered_car", "papel": "guia", "peso": 1, "base_y": 0.0, "raio": 2.4,
-		"esc": [0.98, 1.02], "grande": true, "col": [2.1, 1.5, 4.4]},
+	# --- na guia (desativado: pista livre para passagem de carros) ---------
 
 	# --- encostado no muro, pelo lado da rua ------------------------------
-	{"n": "trash_pile_clutter", "papel": "muro", "peso": 12, "base_y": 0.0, "raio": 0.45, "esc": [0.85, 1.25]},
-	{"n": "street_shrine_velas", "papel": "muro", "peso": 3, "base_y": 0.0, "raio": 0.35, "esc": [0.9, 1.1]},
-	{"n": "missing_board_1994", "papel": "muro", "peso": 2, "base_y": 0.0, "raio": 0.65, "esc": [0.95, 1.05]},
-	{"n": "red_valve_pipe_junction", "papel": "muro", "peso": 5, "base_y": 0.0, "raio": 0.3, "esc": [0.95, 1.08]},
-	{"n": "dumpster_kraycik", "papel": "muro", "peso": 2, "base_y": 0.0, "raio": 1.1, "esc": [0.92, 1.02], "grande": true, "col": [1.6, 1.2, 1.0]},
+	{"n": "barricade_interditado", "papel": "muro", "peso": 4, "base_y": 0.0, "raio": 0.85, "encosto": 0.32,
+		"esc": [0.95, 1.05], "grande": true, "col": [1.5, 1.0, 0.45]},
+	{"n": "concrete_road_barrier_02", "papel": "muro", "peso": 3, "base_y": 0.0, "raio": 0.9, "encosto": 0.26,
+		"esc": [0.95, 1.05], "grande": true, "col": [1.6, 1.1, 0.5]},
+	{"n": "dumpster_kraycik", "papel": "muro", "peso": 3, "base_y": 0.0, "raio": 1.1, "encosto": 0.52,
+		"esc": [0.92, 1.02], "grande": true, "col": [1.6, 1.2, 1.0]},
+	{"n": "industrial_storage_cart", "papel": "muro", "peso": 2, "base_y": 0.0, "raio": 0.75, "encosto": 0.48,
+		"esc": [0.95, 1.05], "grande": true, "col": [1.3, 1.1, 0.8]},
+	{"n": "wheelchair_01", "papel": "muro", "peso": 2, "base_y": 0.0, "raio": 0.55, "encosto": 0.42,
+		"esc": [0.95, 1.05]},
+	{"n": "trash_pile_clutter", "papel": "muro", "peso": 12, "base_y": 0.0, "raio": 0.45, "encosto": 0.32, "esc": [0.85, 1.25]},
+	{"n": "street_shrine_velas", "papel": "muro", "peso": 5, "base_y": 0.0, "raio": 0.35, "encosto": 0.20, "esc": [0.9, 1.1]},
+	{"n": "missing_board_1994", "papel": "muro", "peso": 4, "base_y": 0.0, "raio": 0.65, "encosto": 0.22, "esc": [0.95, 1.05]},
+	{"n": "red_valve_pipe_junction", "papel": "muro", "peso": 5, "base_y": 0.0, "raio": 0.3, "encosto": 0.16, "esc": [0.95, 1.08]},
 	{"n": "ladder_sectioned_01", "papel": "muro", "peso": 3, "base_y": 0.0, "raio": 0.45, "esc": [0.95, 1.05]},
 	{"n": "wooden_ladder_02", "papel": "muro", "peso": 3, "base_y": 0.0, "raio": 0.55, "esc": [0.95, 1.05]},
 	## lata de spray largada — o rastro de quem pichou o muro na etapa 09
@@ -247,8 +244,6 @@ const CATALOGO := [
 	{"n": "potted_plant_02", "papel": "quintal", "peso": 4, "base_y": 0.0, "raio": 0.4, "esc": [0.9, 1.1]},
 
 	# --- praca do obelisco -------------------------------------------------
-	{"n": "missing_board_1994", "papel": "praca", "peso": 3, "base_y": 0.0, "raio": 0.7, "esc": [0.95, 1.05]},
-	{"n": "street_shrine_velas", "papel": "praca", "peso": 3, "base_y": 0.0, "raio": 0.4, "esc": [0.95, 1.1]},
 	{"n": "korean_public_payphone_01", "papel": "praca", "peso": 2, "base_y": 0.0, "raio": 0.35, "esc": [1.0, 1.0]},
 	{"n": "wooden_lantern_01", "papel": "praca", "peso": 3, "base_y": 0.0, "raio": 0.2, "esc": [0.95, 1.15]},
 	{"n": "planter_pot_clay", "papel": "praca", "peso": 8, "base_y": 0.0, "raio": 0.22, "esc": [1.0, 1.5]},
@@ -259,7 +254,7 @@ const CATALOGO := [
 
 ## Quantos candidatos cada papel tenta, antes da densidade e das rejeicoes.
 const TENTATIVAS := {
-	"guia": 140, "muro": 3400, "parede": 950, "quintal": 2800, "praca": 1100,
+	"guia": 0, "muro": 4200, "parede": 950, "quintal": 2800, "praca": 900,
 }
 
 var _rng := RandomNumberGenerator.new()
@@ -593,11 +588,26 @@ func _espalhar_guia(lista: Array, saida: Dictionary) -> int:
 	return n
 
 
+func _perto_da_rua(p: Vector3, margem: float) -> bool:
+	if _mapa.eh_rua(p):
+		return true
+	var d7 := margem * 0.707
+	for d in [
+		Vector3(margem, 0.0, 0.0), Vector3(-margem, 0.0, 0.0),
+		Vector3(0.0, 0.0, margem), Vector3(0.0, 0.0, -margem),
+		Vector3(d7, 0.0, d7), Vector3(-d7, 0.0, d7),
+		Vector3(d7, 0.0, -d7), Vector3(-d7, 0.0, -d7),
+	]:
+		if _mapa.eh_rua(p + d):
+			return true
+	return false
+
+
 func _espalhar_muro(lista: Array, saida: Dictionary) -> int:
 	"""Entulho encostado no muro, pelo lado de fora.
 
 	O ponto sai da superficie do muro (`CityMapa.sortear_muro`) e desce pro
-	chao; o adereço afasta o proprio raio da parede pra nao entrar nela."""
+	chao; o adereço fica colado junto ao muro, longe do meio da pista."""
 	if lista.is_empty() or not _mapa.tem_muros():
 		return 0
 	var n := 0
@@ -608,19 +618,25 @@ func _espalhar_muro(lista: Array, saida: Dictionary) -> int:
 			break
 		var item := _sortear(lista)
 		var raio: float = float(item.get("raio", 0.4))
+		var encosto: float = float(item.get("encosto", minf(raio, 0.25)))
 		var normal: Vector3 = s["n"]
 		var base: Vector3 = s["p"]
-		var p := base + normal * (raio + _rng.randf_range(0.05, 0.35))
+		var p := base + normal * (encosto + _rng.randf_range(0.01, 0.08))
 		p.y = 0.0
-		if _mapa.eh_rua(p) or _mapa.dentro_de_casa(p, raio) or not _livre(p, raio):
+		var tangente := Vector3(-normal.z, 0.0, normal.x)
+		var frente := p + normal * (encosto + 0.35)
+		if _mapa.eh_rua(p) or _mapa.eh_rua(frente) or _mapa.eh_rua(frente + tangente * raio) or _mapa.eh_rua(frente - tangente * raio):
+			continue
+		if _mapa.dentro_de_casa(p, encosto) or not _livre(p, raio):
 			continue
 		# lado de fora = o que da' pra rua. Sem isto, metade do entulho nasce
 		# dentro do lote, invisivel atras do proprio muro.
 		if not _mapa.eh_rua(p + normal * 3.5) and not _mapa.eh_rua(p + normal * 6.0):
 			continue
 		p.y = _mapa.chao(p.x, p.z, float(s["ymin"])) + float(item.get("base_y", 0.0))
-		# de costas pro muro, com a torcao de quem largou ali
-		var giro := atan2(normal.x, normal.z) + _rng.randf_range(-0.4, 0.4)
+		# de costas pro muro, alinhado ao muro quando for peca larga
+		var desvio_giro := 0.12 if raio >= 0.5 else 0.35
+		var giro := atan2(normal.x, normal.z) + _rng.randf_range(-desvio_giro, desvio_giro)
 		saida[_chave_saida(item)].append(_transform(item, p, giro))
 		_esp.ocupar(p, _vao(raio))
 		n += 1
@@ -690,7 +706,7 @@ func _espalhar_quintal(lista: Array, saida: Dictionary) -> int:
 			maxf(float(casa["w"]), float(casa["d"])) * 0.65 + 1.2, 12.0)
 		var p := Vector3(float(casa["x"]) + cos(ang) * dist, 0.0,
 			float(casa["z"]) + sin(ang) * dist)
-		if _mapa.eh_rua(p) or _mapa.dentro_de_casa(p, raio + 0.4) or not _livre(p, raio):
+		if _perto_da_rua(p, raio + 1.5) or _mapa.dentro_de_casa(p, raio + 0.4) or not _livre(p, raio):
 			continue
 		p.y = _mapa.chao(p.x, p.z, float(casa["y"])) + float(item.get("base_y", 0.0))
 		saida[_chave_saida(item)].append(_transform(item, p, _rng.randf_range(0.0, TAU)))
