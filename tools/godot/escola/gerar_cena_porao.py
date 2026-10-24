@@ -383,8 +383,27 @@ def escrever_cena(colisoes, props, plano, lista_luminarias, nav, rabiscos):
     c.no("colisao_entulho", tipo="StaticBody3D", pai=".",
          props=[("collision_layer", "2"), ("collision_mask", "0")])
     for (i, p) in enumerate(props):
+        id_modelo = c.externo("PackedScene", MOB.caminho(p["modelo"]))
+        if p.get("fisico"):
+            c.no(p["nome"], tipo="RigidBody3D", pai="entulho",
+                 props=[("transform", C.transform_pos((p["x"], p["y"], p["z"]),
+                                                       p["giro"])),
+                        ("collision_layer", "2"), ("collision_mask", "2"),
+                        ("mass", "5.0"), ("linear_damp", "2.0"),
+                        ("angular_damp", "3.0")])
+            c.no(p["nome"] + "_malha", pai="entulho/" + p["nome"],
+                 instancia=id_modelo,
+                 props=[("transform", C.transform_pos((0.0, 0.0, 0.0), 0.0,
+                                                      p["escala"]))])
+            cx, cy, cz = p["fisico_centro"]
+            ident = c.forma(*p["fisico_caixa"])
+            c.no(p["nome"] + "_colisao", tipo="CollisionShape3D",
+                 pai="entulho/" + p["nome"],
+                 props=[("transform", C.transform_pos((cx, cy, cz))),
+                        ("shape", 'SubResource("%s")' % ident)])
+            continue
         c.no(p["nome"], pai="entulho",
-             instancia=c.externo("PackedScene", MOB.caminho(p["modelo"])),
+             instancia=id_modelo,
              props=[("transform", C.transform_pos((p["x"], p["y"], p["z"]),
                                                   p["giro"], p["escala"]))])
         lx, lz = p["bloqueia"]

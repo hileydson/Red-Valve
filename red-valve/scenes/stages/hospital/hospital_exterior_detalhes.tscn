@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3]
+[gd_scene load_steps=19 format=3]
 
 [ext_resource type="Script" path="res://scripts/stages/hospital/hospital_detalhes.gd" id="1"]
 [ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/wheelchair_01/wheelchair_01_1k.gltf" id="2"]
@@ -41,11 +41,20 @@ radial_segments = 12
 [sub_resource type="BoxShape3D" id="colisao_banco"]
 size = Vector3(0.75, 1.18, 1.62)
 
-[sub_resource type="BoxShape3D" id="colisao_cadeira"]
-size = Vector3(1.1, 1.15, 1.2)
-
 [sub_resource type="BoxShape3D" id="colisao_lixeira"]
 size = Vector3(0.62, 0.83, 0.62)
+
+[sub_resource type="BoxShape3D" id="fisico_0"]
+size = Vector3(0.8241, 1.1035, 1.0909)
+
+[sub_resource type="BoxShape3D" id="fisico_1"]
+size = Vector3(0.4489, 0.4887, 0.3935)
+
+[sub_resource type="BoxShape3D" id="fisico_2"]
+size = Vector3(0.3432, 0.3737, 0.3009)
+
+[sub_resource type="BoxShape3D" id="fisico_3"]
+size = Vector3(0.6319, 0.3176, 0.5069)
 
 [node name="hospital_exterior_detalhes" type="Node3D"]
 script = ExtResource("1")
@@ -88,30 +97,74 @@ outline_size = 8
 modulate = Color(0.90, 0.95, 0.88, 1)
 outline_modulate = Color(0.02, 0.03, 0.028, 1)
 
-[node name="cadeira_rodas_abandonada" parent="." instance=ExtResource("2")]
+[node name="cadeira_rodas_abandonada" type="RigidBody3D" parent="."]
 position = Vector3(7.6500, 0.0000, -5.5000)
 rotation = Vector3(0.0000, 2.5000, 0.0000)
+collision_layer = 2
+collision_mask = 2
+mass = 6.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="malha" parent="cadeira_rodas_abandonada" instance=ExtResource("2")]
 scale = Vector3(1.0000, 1.0000, 1.0000)
+
+[node name="colisao" type="CollisionShape3D" parent="cadeira_rodas_abandonada"]
+position = Vector3(-0.0016, 0.5575, 0.0598)
+shape = SubResource("fisico_0")
 
 [node name="banco_espera" parent="." instance=ExtResource("3")]
 position = Vector3(8.0000, 0.0000, 5.6000)
 rotation = Vector3(0.0000, 1.5708, 0.0000)
 scale = Vector3(1.3500, 1.3500, 1.3500)
 
-[node name="saco_entrada" parent="." instance=ExtResource("4")]
-position = Vector3(8.2500, 0.0000, 8.0000)
+[node name="saco_entrada" type="RigidBody3D" parent="."]
+position = Vector3(8.2500, 0.0012, 8.0000)
 rotation = Vector3(0.0000, 0.8000, 0.0000)
+collision_layer = 2
+collision_mask = 2
+mass = 3.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="malha" parent="saco_entrada" instance=ExtResource("4")]
 scale = Vector3(0.8500, 0.8500, 0.8500)
 
-[node name="saco_descartado" parent="." instance=ExtResource("4")]
-position = Vector3(1.1500, 0.0000, -7.5000)
+[node name="colisao" type="CollisionShape3D" parent="saco_entrada"]
+position = Vector3(0.0030, 0.2431, -0.0071)
+shape = SubResource("fisico_1")
+
+[node name="saco_descartado" type="RigidBody3D" parent="."]
+position = Vector3(1.1500, 0.0009, -7.5000)
 rotation = Vector3(0.0000, 2.2000, 0.0000)
+collision_layer = 2
+collision_mask = 2
+mass = 3.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="malha" parent="saco_descartado" instance=ExtResource("4")]
 scale = Vector3(0.6500, 0.6500, 0.6500)
 
-[node name="caixa_residuos" parent="." instance=ExtResource("5")]
+[node name="colisao" type="CollisionShape3D" parent="saco_descartado"]
+position = Vector3(0.0023, 0.1859, -0.0054)
+shape = SubResource("fisico_2")
+
+[node name="caixa_residuos" type="RigidBody3D" parent="."]
 position = Vector3(7.9000, 0.0000, 8.8000)
 rotation = Vector3(0.0000, 0.3000, 0.0000)
+collision_layer = 2
+collision_mask = 2
+mass = 3.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="malha" parent="caixa_residuos" instance=ExtResource("5")]
 scale = Vector3(1.2500, 1.2500, 1.2500)
+
+[node name="colisao" type="CollisionShape3D" parent="caixa_residuos"]
+position = Vector3(0.0000, 0.1588, 0.0000)
+shape = SubResource("fisico_3")
 
 [node name="colisao_banco_espera" type="StaticBody3D" parent="."]
 position = Vector3(8.0000, 0.5900, 5.6000)
@@ -121,24 +174,17 @@ collision_mask = 0
 [node name="forma" type="CollisionShape3D" parent="colisao_banco_espera"]
 shape = SubResource("colisao_banco")
 
-[node name="colisao_cadeira_rodas" type="StaticBody3D" parent="."]
-position = Vector3(7.6500, 0.5750, -5.5000)
-collision_layer = 2
-collision_mask = 0
-
-[node name="forma" type="CollisionShape3D" parent="colisao_cadeira_rodas"]
-shape = SubResource("colisao_cadeira")
-
-[node name="colisao_lixeira_marquise" type="StaticBody3D" parent="."]
-position = Vector3(8.4500, 0.4150, 7.1000)
-collision_layer = 2
-collision_mask = 0
-
-[node name="forma" type="CollisionShape3D" parent="colisao_lixeira_marquise"]
-shape = SubResource("colisao_lixeira")
-
-[node name="lixeira_marquise" type="Node3D" parent="."]
+[node name="lixeira_marquise" type="RigidBody3D" parent="."]
 position = Vector3(8.4500, 0.0000, 7.1000)
+collision_layer = 2
+collision_mask = 2
+mass = 3.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="colisao" type="CollisionShape3D" parent="lixeira_marquise"]
+position = Vector3(0.0000, 0.4150, 0.0000)
+shape = SubResource("colisao_lixeira")
 
 [node name="corpo" type="MeshInstance3D" parent="lixeira_marquise"]
 mesh = SubResource("cilindro")

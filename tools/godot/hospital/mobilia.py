@@ -107,11 +107,15 @@ MODELOS = {
 # Moveis pequenos e soltos: em vez da caixa estatica de `bloqueia`, ganham
 # RigidBody3D e reagem a ser esbarrado ou chutado. Fora daqui fica tudo que e'
 # grande, fixo na parede ou pesado demais pra fazer sentido rolando pelo
-# corredor (maca, prancheta, extintor, contentor industrial).
+# corredor (maca, bancada, armario, contentor industrial).
 FISICOS = {
     "plastic_monobloc_chair_01", "SchoolChair_01",
     "plastic_crate_01", "plastic_crate_02",
     "trashbag", "cardboard_box_01",
+    "wheelchair_01", "metal_stool_01", "WetFloorSign_01",
+    "vintage_crutches_01", "metal_toolbox", "tool_cart",
+    "industrial_storage_cart", "korean_fire_extinguisher_01",
+    "industrial_pastic_container", "worn_metal_rack",
 }
 
 _aabb_cache = {}
@@ -438,6 +442,7 @@ def _prop(tipo, sala, x, z, giro, **extra):
         d["fisico"] = True
         d["fisico_caixa"] = tuple((mx[k] - mn[k]) * esc for k in range(3))
         d["fisico_centro"] = tuple((mn[k] + mx[k]) * 0.5 * esc for k in range(3))
+        d["dy"] = d.get("dy", 0.0) + max(0.0, -mn[1] * esc)
         d["bloqueia"] = None
     return d
 

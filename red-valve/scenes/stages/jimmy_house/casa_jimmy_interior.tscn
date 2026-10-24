@@ -726,6 +726,9 @@ size = Vector3(0.9, 1.2, 2)
 [sub_resource type="BoxShape3D" id="bs_0p385_0p892_0p744"]
 size = Vector3(0.385, 0.892, 0.744)
 
+[sub_resource type="BoxShape3D" id="bs_cesto"]
+size = Vector3(0.39, 0.14, 0.30)
+
 [sub_resource type="StandardMaterial3D" id="poeira_material"]
 transparency = 1
 shading_mode = 0
@@ -2635,15 +2638,17 @@ angular_damp = 3.0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.514, 0)
 shape = SubResource("bs_0p822_1p028_0p739")
 
-[node name="pufe_estar" parent="mobilia" instance=ExtResource("mb_tiny_living_modern_pouffe_36")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 5.6)
-
-[node name="col_pufe_estar" type="StaticBody3D" parent="colisoes_mobilia"]
+[node name="pufe_estar" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 5.6)
 collision_layer = 2
-collision_mask = 0
+collision_mask = 2
+mass = 3.0
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="colisoes_mobilia/col_pufe_estar"]
+[node name="pufe_estar_malha" parent="mobilia/pufe_estar" instance=ExtResource("mb_tiny_living_modern_pouffe_36")]
+
+[node name="pufe_estar_colisao" type="CollisionShape3D" parent="mobilia/pufe_estar"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2645, 0)
 shape = SubResource("bs_0p594_0p529_0p604")
 
@@ -2814,8 +2819,19 @@ transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 12.84, 2.15, 5.9)
 [node name="quadro_sala" parent="mobilia" instance=ExtResource("ph_hanging_picture_frame_02")]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 7.76, 2, 5.3)
 
-[node name="cesto_sala" parent="mobilia" instance=ExtResource("ph_wicker_basket_01")]
+[node name="cesto_sala" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(0.921061, 0, 0.389418, 0, 1, 0, -0.389418, 0, 0.921061, 12.4, 0, 6.5)
+collision_layer = 2
+collision_mask = 2
+mass = 1.5
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="cesto_sala_malha" parent="mobilia/cesto_sala" instance=ExtResource("ph_wicker_basket_01")]
+
+[node name="cesto_sala_colisao" type="CollisionShape3D" parent="mobilia/cesto_sala"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.07, 0)
+shape = SubResource("bs_cesto")
 
 [node name="armario_coz_1" parent="mobilia" instance=ExtResource("ph_painted_wooden_cabinet")]
 transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 19.47, 0, 1.3)
@@ -2914,8 +2930,19 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.6, 1.85, 0.32)
 [node name="prateleira_cozinha_2" parent="mobilia" instance=ExtResource("mb_tiny_living_tiered_shelf_29")]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 13.35, 2.05, 2.2)
 
-[node name="cesto_cozinha" parent="mobilia" instance=ExtResource("ph_wicker_basket_01")]
+[node name="cesto_cozinha" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(0.955336, 0, -0.29552, 0, 1, 0, 0.29552, 0, 0.955336, 13.6, 0, 6.4)
+collision_layer = 2
+collision_mask = 2
+mass = 1.5
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="cesto_cozinha_malha" parent="mobilia/cesto_cozinha" instance=ExtResource("ph_wicker_basket_01")]
+
+[node name="cesto_cozinha_colisao" type="CollisionShape3D" parent="mobilia/cesto_cozinha"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.07, 0)
+shape = SubResource("bs_cesto")
 
 [node name="caixa_cozinha" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(0.877583, 0, 0.479426, 0, 1, 0, -0.479426, 0, 0.877583, 19.2, 0, 6.5)
@@ -2991,15 +3018,17 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 2, 7.33)
 [node name="quadro_corredor_3" parent="mobilia" instance=ExtResource("ph_hanging_picture_frame_02")]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 9.5, 2, 10.07)
 
-[node name="malas_corredor" parent="mobilia" instance=ExtResource("ph_vintage_suitcase")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 17.16, 0, 9.88)
-
-[node name="col_malas_corredor" type="StaticBody3D" parent="colisoes_mobilia"]
+[node name="malas_corredor" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 17.16, 0, 9.88)
 collision_layer = 2
-collision_mask = 0
+collision_mask = 2
+mass = 4.0
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="colisoes_mobilia/col_malas_corredor"]
+[node name="malas_corredor_malha" parent="mobilia/malas_corredor" instance=ExtResource("ph_vintage_suitcase")]
+
+[node name="malas_corredor_colisao" type="CollisionShape3D" parent="mobilia/malas_corredor"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.285, 0)
 shape = SubResource("bs_1p61_0p57_0p24")
 
@@ -3196,15 +3225,17 @@ transform = Transform3D(0.980067, 0, 0.198669, 0, 1, 0, -0.198669, 0, 0.980067, 
 [node name="quadro_torto_q3" parent="mobilia" instance=ExtResource("mb_tiny_living_simpleand_clean_art_39")]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 10.4, 1.6, 14.66)
 
-[node name="malas_q3" parent="mobilia" instance=ExtResource("ph_vintage_suitcase")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 13.1, 0, 14.2)
-
-[node name="col_malas_q3" type="StaticBody3D" parent="colisoes_mobilia"]
+[node name="malas_q3" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 13.1, 0, 14.2)
 collision_layer = 2
-collision_mask = 0
+collision_mask = 2
+mass = 4.0
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="colisoes_mobilia/col_malas_q3"]
+[node name="malas_q3_malha" parent="mobilia/malas_q3" instance=ExtResource("ph_vintage_suitcase")]
+
+[node name="malas_q3_colisao" type="CollisionShape3D" parent="mobilia/malas_q3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.285, 0)
 shape = SubResource("bs_1p61_0p57_0p24")
 
@@ -3300,8 +3331,19 @@ shape = SubResource("bs_0p65_1p37_0p679")
 [node name="espelho_banheiro" parent="mobilia" instance=ExtResource("mb_tinyt_living_miracle_mirror_26")]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 17.5, 1.75, 11.4)
 
-[node name="cesto_banheiro" parent="mobilia" instance=ExtResource("ph_wicker_basket_01")]
+[node name="cesto_banheiro" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(0.980067, 0, 0.198669, 0, 1, 0, -0.198669, 0, 0.980067, 19.3, 0, 11.1)
+collision_layer = 2
+collision_mask = 2
+mass = 1.5
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="cesto_banheiro_malha" parent="mobilia/cesto_banheiro" instance=ExtResource("ph_wicker_basket_01")]
+
+[node name="cesto_banheiro_colisao" type="CollisionShape3D" parent="mobilia/cesto_banheiro"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.07, 0)
+shape = SubResource("bs_cesto")
 
 [node name="cadeira_caida_q3" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-0.092892, 0.61463, 0.783327, -0.988771, -0.149438, 0, 0.117059, -0.774531, 0.62161, 12.5, 0.33, 13.7)

@@ -176,9 +176,8 @@ MODELOS = {
 }
 
 # Moveis pequenos e soltos: em vez da caixa estatica de `bloqueia`, ganham
-# RigidBody3D e reagem a ser esbarrado ou chutado. NAO inclui nada do
-# ENTULHO_PORAO (wooden_crate_01/02, old_tyre) — esses caem no gerador do
-# porao, que ainda nao sabe ler o campo `fisico`.
+# RigidBody3D e reagem a ser esbarrado ou chutado. O entulho do porao tem
+# lista propria abaixo, pois troncos continuam fixos no solo.
 FISICOS = {
     "SchoolChair_01", "SchoolChair_01_leve", "plastic_monobloc_chair_01",
     "painted_wooden_chair_01",
@@ -189,6 +188,9 @@ FISICOS = {
     # corredor escuro e' metade do clima da escola.
     "can_rusted", "bleach_bottle", "russian_food_cans_01", "plastic_jerrycan",
     "cigarette_pack", "multi_cleaner_5_litre", "drain_cleaner", "dustpan",
+    "WetFloorSign_01", "cement_bag", "hand_truck",
+    "korean_fire_extinguisher_01", "plastic_broom", "old_tyre",
+    "baseball_bat", "plunger", "wooden_broom", "mousetrap", "picke_dirty_01",
 }
 
 _aabb_cache = {}
@@ -474,6 +476,7 @@ def _prop(tipo, sala, x, z, giro, **extra):
         d["fisico"] = True
         d["fisico_caixa"] = tuple((mx[k] - mn[k]) * esc for k in range(3))
         d["fisico_centro"] = tuple((mn[k] + mx[k]) * 0.5 * esc for k in range(3))
+        d["dy"] = max(d.get("dy", 0.0), -mn[1] * esc)
         d["bloqueia"] = None
     return d
 
@@ -1000,6 +1003,7 @@ ENTULHO_PORAO = ("wooden_crate_01", "wooden_crate_02", "Barrel_02", "barrel_03",
                  "wicker_basket_01", "vintage_suitcase", "cement_bag",
                  "plastic_bottle_gallon", "old_tyre", "propane_tank",
                  "tree_stump_01")
+FISICOS_PORAO = set(ENTULHO_PORAO) - {"tree_stump_01"}
 
 
 def mobiliar_porao():
@@ -1025,11 +1029,20 @@ def mobiliar_porao():
         x = (celula[0] + 0.5 + vx * 0.24) * PO.CELULA
         z = (celula[1] + 0.5 + vz * 0.24) * PO.CELULA
         nome = ENTULHO_PORAO[i % len(ENTULHO_PORAO)]
-        itens.append({"tipo": "modelo", "sala": "porao", "modelo": nome,
-                      "nome": "entulho_%d" % i, "x": x, "y": 0.0, "z": z,
-                      "giro": d.uniform(0.0, 6.28),
-                      "escala": d.uniform(0.85, 1.15),
-                      "bloqueia": (0.9, 0.9), "dy": 0.0})
+        giro = d.uniform(0.0, 6.28)
+        esc = d.uniform(0.85, 1.15)
+        item = {"tipo": "modelo", "sala": "porao", "modelo": nome,
+                "nome": "entulho_%d" % i, "x": x, "y": 0.0, "z": z,
+                "giro": giro, "escala": esc,
+                "bloqueia": (0.9, 0.9), "dy": 0.0}
+        if nome in FISICOS_PORAO:
+            mn, mx = aabb(nome)
+            item["fisico"] = True
+            item["fisico_caixa"] = tuple((mx[k] - mn[k]) * esc for k in range(3))
+            item["fisico_centro"] = tuple((mn[k] + mx[k]) * 0.5 * esc for k in range(3))
+            item["y"] = max(0.0, -mn[1] * esc)
+            item["bloqueia"] = None
+        itens.append(item)
     return itens
 
 

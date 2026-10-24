@@ -2125,6 +2125,14 @@ func _empurrar_corpos_fisicos(vel_antes: Vector3) -> void:
 			continue
 		var direcao := -colisao.get_normal()
 		direcao.y = 0.0
+		if direcao.length() < 0.25:
+			# Objeto baixo (lata, garrafa, caixa pequena): o hemisferio de baixo
+			# da capsula toca por cima e a normal sai quase vertical. Empurra na
+			# direcao da caminhada + afasta do pe' pra chutar em vez de subir.
+			var para_corpo: Vector3 = corpo.global_position - global_position
+			para_corpo.y = 0.0
+			var dir_vel := Vector3(vel_antes.x, 0.0, vel_antes.z)
+			direcao = para_corpo.normalized() * 0.55 + dir_vel.normalized() * 0.45
 		if direcao.length() < 0.01:
 			continue
 		# Cadeira assentada DORME, e corpo dormindo descarta forca calada —
@@ -2137,7 +2145,8 @@ func _empurrar_corpos_fisicos(vel_antes: Vector3) -> void:
 		# player, e la' em cima o empurrao capota a cadeira em vez de arrastar.
 		var ponto: Vector3 = colisao.get_position() - corpo.global_position
 		ponto.y = minf(ponto.y, 0.6)
-		corpo.apply_impulse(direcao.normalized() * FORCA_EMPURRAO * vel_horizontal * passo, ponto)
+		var fator_massa := clampf(corpo.mass / 5.0, 0.3, 1.5)
+		corpo.apply_impulse(direcao.normalized() * FORCA_EMPURRAO * fator_massa * vel_horizontal * passo, ponto)
 
 
 func dash():

@@ -40,6 +40,8 @@ const TRAJETOS := [
 
 func _ready() -> void:
 	var cena: Node = load(CENA).instantiate()
+	# A cena real salva checkpoint no _ready; o teste so' precisa da navmesh.
+	cena.set_script(null)
 	add_child(cena)
 	# O NavigationServer so' costura a malha no fim de um quadro de fisica; sem
 	# esperar, toda consulta volta vazia e o teste "reprova" um navmesh bom.

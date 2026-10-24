@@ -541,7 +541,9 @@ def escrever_cena(colisoes):
     dy = -E.ORIGEM[1]
     dz = -E.ORIGEM[2]
 
-    externos = [("PackedScene", RES_MODELO + "/hospital_exterior.gltf", "e0")]
+    externos = [("PackedScene", RES_MODELO + "/hospital_exterior.gltf", "e0"),
+                ("PackedScene",
+                 "res://scenes/stages/hospital/hospital_exterior_detalhes.tscn", "e1")]
     sub = []
     formas = {}
 
@@ -574,6 +576,7 @@ def escrever_cena(colisoes):
     no("predio", tipo="Node3D", pai=".",
        props_=[("transform", G.transform_pos((dx, dy, dz)))])
     no("estrutura", pai="predio", instancia="e0")
+    no("detalhes", pai=".", instancia="e1")
 
     no("colisao", tipo="StaticBody3D", pai="predio",
        props_=[("collision_layer", "2"), ("collision_mask", "0")])

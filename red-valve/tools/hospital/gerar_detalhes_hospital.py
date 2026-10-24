@@ -63,10 +63,15 @@ linhas.extend([
     'height = 1.0',
     'radial_segments = 16',
     '',
+    '[sub_resource type="CylinderShape3D" id="colisao_lixeira"]',
+    'radius = 0.245',
+    'height = 0.70',
+    '',
     '[node name="hospital_detalhes" type="Node3D"]',
     'script = ExtResource("1")',
     '',
 ])
+formas_fisicas = []
 
 
 def node(nome, tipo, pai=".", props=(), instancia=None):
@@ -92,8 +97,38 @@ def caixa(nome, pai, x, y, z, sx, sy, sz, mat, rot=0.0):
     ))
 
 
-def modelo(nome, tipo, x, y, z, rot=0, escala=1):
+def modelo(nome, tipo, x, y, z, rot=0, escala=1, fisico=False):
     indice = list(assets).index(tipo) + 2
+    if fisico:
+        caminho = ROOT / assets[tipo].removeprefix("res://")
+        dados = json.loads(caminho.read_text(encoding="utf-8"))
+        minimo, maximo = [float("inf")] * 3, [float("-inf")] * 3
+        for malha in dados["meshes"]:
+            for primitiva in malha["primitives"]:
+                acesso = dados["accessors"][primitiva["attributes"]["POSITION"]]
+                for eixo in range(3):
+                    minimo[eixo] = min(minimo[eixo], acesso["min"][eixo])
+                    maximo[eixo] = max(maximo[eixo], acesso["max"][eixo])
+        forma = "fisico_" + str(len(formas_fisicas) // 3)
+        formas_fisicas.extend([
+            f'[sub_resource type="BoxShape3D" id={q(forma)}]',
+            f'size = {v(*(max(.05, (maximo[e] - minimo[e]) * escala) for e in range(3)))}',
+            '',
+        ])
+        # Algumas caixas têm origem no centro; compensar evita nascerem sob o piso.
+        altura = max(0.0, -minimo[1] * escala)
+        node(nome, "RigidBody3D", ".", (
+            f'position = {v(x, y + altura, z)}',
+            f'rotation = {v(0, rot, 0)}',
+            'collision_layer = 2', 'collision_mask = 2',
+            'mass = 3.0', 'linear_damp = 2.0', 'angular_damp = 3.0',
+        ))
+        node("malha", None, nome, (f'scale = {v(escala, escala, escala)}',), str(indice))
+        node("colisao", "CollisionShape3D", nome, (
+            f'position = {v(*( (minimo[e] + maximo[e]) * .5 * escala for e in range(3)))}',
+            f'shape = SubResource({q(forma)})',
+        ))
+        return
     node(nome, None, ".", (
         f'position = {v(x, y, z)}',
         f'rotation = {v(0, rot, 0)}',
@@ -220,7 +255,15 @@ lixeiras = [
 ]
 for nome, x, y, z in lixeiras:
     pai = "lixeira_" + nome
-    node(pai, "Node3D", ".", (f'position = {v(x, y, z)}',))
+    node(pai, "RigidBody3D", ".", (
+        f'position = {v(x, y, z)}',
+        'collision_layer = 2', 'collision_mask = 2',
+        'mass = 3.0', 'linear_damp = 2.0', 'angular_damp = 3.0',
+    ))
+    node("colisao", "CollisionShape3D", pai, (
+        f'position = {v(0, .35, 0)}',
+        'shape = SubResource("colisao_lixeira")',
+    ))
     node("corpo", "MeshInstance3D", pai, (
         'mesh = SubResource("cilindro")', 'material_override = SubResource("mat_metal")',
         f'position = {v(0, .31, 0)}', f'scale = {v(.44, .62, .44)}', 'cast_shadow = 0',
@@ -260,7 +303,7 @@ modelos = [
     ("frasco_refeitorio", "frasco", 33.8, .95, 43.7, 2.4, .42),
 ]
 for item in modelos:
-    modelo(*item)
+    modelo(*item, fisico=(item[1] in ("saco", "papelao") and item[3] in (0, 4.2)))
 
 
 # Papéis abandonados em pontos controlados, com variação de ângulo e cor.
@@ -300,6 +343,9 @@ for nome, x, y, z, cor, energia, alcance in acentos:
         'distance_fade_length = 9.0',
     ))
 
+raiz = linhas.index('[node name="hospital_detalhes" type="Node3D"]')
+linhas[raiz:raiz] = formas_fisicas
+linhas[0] = f'[gd_scene load_steps={1 + sum(l.startswith(("[ext_resource", "[sub_resource")) for l in linhas)} format=3]'
 DESTINO.parent.mkdir(parents=True, exist_ok=True)
 DESTINO.write_text("\n".join(linhas), encoding="utf-8")
 print(f"{DESTINO}: {len(portas)} placas de salas, {len(avisos)} avisos, "

@@ -945,6 +945,22 @@ def escrever_cena(cena_gltf, setores, colisoes, props, portas, plano_luz,
        props_=[("stream", 'ExtResource("%s")' % id_ambiente),
                ("volume_db", "-14.0"), ("autoplay", "true")])
 
+    # Detalhes e lente do hospital fazem parte da cena gerada, inclusive ao
+    # reconstruir a planta depois de ajustar a fisica da mobilia.
+    id_detalhes = externo("PackedScene",
+                          "res://scenes/stages/hospital/hospital_detalhes.tscn")
+    id_lente = externo("Texture2D",
+                       "res://assets/3d_model/stages/hospital/textures/lente_hospital.png")
+    no("LenteHospital", tipo="CanvasLayer", pai=".",
+       props_=[("layer", "-1")])
+    no("Vinheta", tipo="TextureRect", pai="LenteHospital",
+       props_=[("anchors_preset", "15"), ("anchor_right", "1.0"),
+               ("anchor_bottom", "1.0"), ("grow_horizontal", "2"),
+               ("grow_vertical", "2"), ("mouse_filter", "2"),
+               ("texture", 'ExtResource("%s")' % id_lente),
+               ("expand_mode", "1"), ("stretch_mode", "0")])
+    no("detalhes", pai=".", instancia=id_detalhes)
+
     cabecalho = ["[gd_scene load_steps=%d format=3]"
                  % (len(externos) + len(sub) + 1), ""]
     for tipo, caminho, ident in externos:
@@ -1383,8 +1399,8 @@ def _ambiente(sub):
         'sky = SubResource("ceu")',
         "background_energy_multiplier = 0.5",
         "ambient_light_source = 3",
-        "ambient_light_color = Color(0.20, 0.23, 0.29, 1)",
-        "ambient_light_sky_contribution = 0.25",
+        "ambient_light_color = Color(0.16, 0.20, 0.23, 1)",
+        "ambient_light_sky_contribution = 0.22",
         # A luz ambiente e' o PISO da cena: define o quao escuro chega a ficar
         # um comodo sem lampada nenhuma. Em 0,55 (a primeira tentativa) o
         # jogador nao enxergava a propria mao e o predio inteiro virava uma
@@ -1394,15 +1410,15 @@ def _ambiente(sub):
         # E' esse o trabalho deste numero — e e' por isso que ele e' alto para
         # uma cena de terror: quem faz o medo aqui sao as lampadas, nao a
         # ausencia total de imagem.
-        "ambient_light_energy = 1.90",
+        "ambient_light_energy = 1.65",
         "reflected_light_source = 2",
         "tonemap_mode = 3",
-        "tonemap_exposure = 1.0",
+        "tonemap_exposure = 0.98",
         "tonemap_white = 7.5",
         "glow_enabled = true",
-        "glow_intensity = 0.45",
-        "glow_strength = 1.05",
-        "glow_bloom = 0.16",
+        "glow_intensity = 0.34",
+        "glow_strength = 0.94",
+        "glow_bloom = 0.10",
         "glow_blend_mode = 1",
         "glow_hdr_threshold = 1.10",
         # A nevoa e' o que faz o fim do corredor sumir. Densidade alta o
@@ -1410,17 +1426,17 @@ def _ambiente(sub):
         # nao lavar o que esta' perto.
         "fog_enabled = true",
         "fog_mode = 0",
-        "fog_light_color = Color(0.13, 0.15, 0.19, 1)",
-        "fog_light_energy = 0.8",
-        "fog_density = 0.016",
+        "fog_light_color = Color(0.09, 0.14, 0.15, 1)",
+        "fog_light_energy = 0.65",
+        "fog_density = 0.018",
         "fog_aerial_perspective = 0.1",
         "fog_sky_affect = 0.15",
         "fog_height = -2.0",
         "fog_height_density = 0.06",
         "adjustment_enabled = true",
         "adjustment_brightness = 1.0",
-        "adjustment_contrast = 1.12",
-        "adjustment_saturation = 0.80",
+        "adjustment_contrast = 1.14",
+        "adjustment_saturation = 0.76",
     ]))
 
 

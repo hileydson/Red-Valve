@@ -54,9 +54,6 @@ linhas.extend([
     '[sub_resource type="BoxShape3D" id="colisao_banco"]',
     'size = Vector3(0.75, 1.18, 1.62)',
     '',
-    '[sub_resource type="BoxShape3D" id="colisao_cadeira"]',
-    'size = Vector3(1.1, 1.15, 1.2)',
-    '',
     '[sub_resource type="BoxShape3D" id="colisao_lixeira"]',
     'size = Vector3(0.62, 0.83, 0.62)',
     '',
@@ -64,6 +61,7 @@ linhas.extend([
     'script = ExtResource("1")',
     '',
 ])
+formas_fisicas = []
 
 
 def no(nome, tipo, pai=".", props=(), instancia=None):
@@ -87,8 +85,38 @@ def cubo(nome, pai, x, y, z, sx, sy, sz, material, rot=0):
     ))
 
 
-def modelo(nome, chave, x, y, z, rot=0, escala=1):
+def modelo(nome, chave, x, y, z, rot=0, escala=1, fisico=False):
     indice = list(modelos).index(chave) + 2
+    if fisico:
+        caminho = ROOT / modelos[chave].removeprefix("res://")
+        dados = json.loads(caminho.read_text(encoding="utf-8"))
+        minimo, maximo = [float("inf")] * 3, [float("-inf")] * 3
+        for malha in dados["meshes"]:
+            for primitiva in malha["primitives"]:
+                acesso = dados["accessors"][primitiva["attributes"]["POSITION"]]
+                for eixo in range(3):
+                    minimo[eixo] = min(minimo[eixo], acesso["min"][eixo])
+                    maximo[eixo] = max(maximo[eixo], acesso["max"][eixo])
+        forma = "fisico_" + str(len(formas_fisicas) // 3)
+        formas_fisicas.extend([
+            f'[sub_resource type="BoxShape3D" id={q(forma)}]',
+            f'size = {v(*(max(.05, (maximo[e] - minimo[e]) * escala) for e in range(3)))}',
+            '',
+        ])
+        altura = max(0.0, -minimo[1] * escala)
+        no(nome, "RigidBody3D", ".", (
+            f'position = {v(x, y + altura, z)}',
+            f'rotation = {v(0, rot, 0)}',
+            'collision_layer = 2', 'collision_mask = 2',
+            f'mass = {6.0 if chave == "cadeira_rodas" else 3.0}',
+            'linear_damp = 2.0', 'angular_damp = 3.0',
+        ))
+        no("malha", None, nome, (f'scale = {v(escala, escala, escala)}',), str(indice))
+        no("colisao", "CollisionShape3D", nome, (
+            f'position = {v(*((minimo[e] + maximo[e]) * .5 * escala for e in range(3)))}',
+            f'shape = SubResource({q(forma)})',
+        ))
+        return
     no(nome, None, ".", (
         f'position = {v(x, y, z)}',
         f'rotation = {v(0, rot, 0)}',
@@ -116,16 +144,14 @@ no("texto", "Label3D", "placa_emergencia", (
 ))
 
 # Mobiliário e descarte ficam junto à parede e ao extremo da marquise.
-modelo("cadeira_rodas_abandonada", "cadeira_rodas", 7.65, 0, -5.5, 2.50, 1.0)
+modelo("cadeira_rodas_abandonada", "cadeira_rodas", 7.65, 0, -5.5, 2.50, 1.0, fisico=True)
 modelo("banco_espera", "banco", 8.0, 0, 5.6, 1.5708, 1.35)
-modelo("saco_entrada", "saco", 8.25, 0, 8.0, .8, .85)
-modelo("saco_descartado", "saco", 1.15, 0, -7.5, 2.2, .65)
-modelo("caixa_residuos", "caixa", 7.9, 0, 8.8, .3, 1.25)
+modelo("saco_entrada", "saco", 8.25, 0, 8.0, .8, .85, fisico=True)
+modelo("saco_descartado", "saco", 1.15, 0, -7.5, 2.2, .65, fisico=True)
+modelo("caixa_residuos", "caixa", 7.9, 0, 8.8, .3, 1.25, fisico=True)
 
 for nome, forma, x, y, z in [
     ("banco_espera", "colisao_banco", 8.0, .59, 5.6),
-    ("cadeira_rodas", "colisao_cadeira", 7.65, .575, -5.5),
-    ("lixeira_marquise", "colisao_lixeira", 8.45, .415, 7.1),
 ]:
     pai = "colisao_" + nome
     no(pai, "StaticBody3D", ".", (
@@ -135,7 +161,15 @@ for nome, forma, x, y, z in [
     ))
     no("forma", "CollisionShape3D", pai, (f'shape = SubResource("{forma}")',))
 
-no("lixeira_marquise", "Node3D", ".", (f'position = {v(8.45, 0, 7.1)}',))
+no("lixeira_marquise", "RigidBody3D", ".", (
+    f'position = {v(8.45, 0, 7.1)}',
+    'collision_layer = 2', 'collision_mask = 2',
+    'mass = 3.0', 'linear_damp = 2.0', 'angular_damp = 3.0',
+))
+no("colisao", "CollisionShape3D", "lixeira_marquise", (
+    f'position = {v(0, .415, 0)}',
+    'shape = SubResource("colisao_lixeira")',
+))
 no("corpo", "MeshInstance3D", "lixeira_marquise", (
     'mesh = SubResource("cilindro")',
     'material_override = SubResource("mat_metal")',
@@ -177,5 +211,8 @@ no("luz_emergencia", "OmniLight3D", ".", (
     'omni_attenuation = 1.6',
 ))
 
+raiz = linhas.index('[node name="hospital_exterior_detalhes" type="Node3D"]')
+linhas[raiz:raiz] = formas_fisicas
+linhas[0] = f'[gd_scene load_steps={1 + sum(l.startswith(("[ext_resource", "[sub_resource")) for l in linhas)} format=3]'
 DESTINO.write_text("\n".join(linhas).rstrip("\n") + "\n", encoding="utf-8")
 print(f"{DESTINO.relative_to(ROOT)}: {len(linhas)} linhas")

@@ -28,6 +28,7 @@ extends Node3D
 ## quando o adereço é de rua. Por isso esta etapa mora na `stage_1`, e não na
 ## `city.tscn`: é lá que o terreno existe.
 
+const CityFisicaProps := preload("res://tools/godot/citybuild/city_fisica_props.gd")
 const CAMINHO_PH := "res://assets/3d_model/polyhaven/%s/%s_1k.gltf"
 ## Malhas extraídas dos .gltf. Sem isso cada MultiMesh embute a própria cópia
 ## da geometria: 37 adereços viraram 74 ArrayMesh embutidos e a cena saltou de
@@ -191,6 +192,20 @@ var _ocupacao_parede: Dictionary = {}
 var _terreno: Node3D = null
 var _desloc := Vector3.ZERO
 var _sem_terreno := 0
+var _fisica_runtime = null
+
+
+func _ready() -> void:
+	if Engine.is_editor_hint():
+		set_physics_process(false)
+		return
+	_fisica_runtime = CityFisicaProps.new()
+	_fisica_runtime.preparar(self, camada_colisao)
+
+
+func _physics_process(_delta: float) -> void:
+	if _fisica_runtime != null:
+		_fisica_runtime.atualizar()
 
 
 # --------------------------------------------------------------------------

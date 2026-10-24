@@ -34,6 +34,7 @@ extends Node3D
 ## `CityMapa`, o mesmo das etapas 09 e 11.
 
 const CityMapa := preload("res://tools/godot/citybuild/city_mapa.gd")
+const CityFisicaProps := preload("res://tools/godot/citybuild/city_fisica_props.gd")
 const CAMINHO_PH := "res://assets/3d_model/polyhaven/%s/%s_1k.gltf"
 ## Malhas fundidas/recortadas gravadas aqui. Sem isso cada MultiMesh embute a
 ## propria copia da geometria e a cena salta de centenas de KB pra dezenas de
@@ -152,13 +153,13 @@ const CATALOGO := [
 
 	# --- encostado no muro, pelo lado da rua ------------------------------
 	{"n": "barricade_interditado", "papel": "muro", "peso": 4, "base_y": 0.0, "raio": 0.85, "encosto": 0.32,
-		"esc": [0.95, 1.05], "grande": true, "col": [1.5, 1.0, 0.45]},
+		"esc": [0.95, 1.05]},
 	{"n": "concrete_road_barrier_02", "papel": "muro", "peso": 3, "base_y": 0.0, "raio": 0.9, "encosto": 0.26,
 		"esc": [0.95, 1.05], "grande": true, "col": [1.6, 1.1, 0.5]},
 	{"n": "dumpster_kraycik", "papel": "muro", "peso": 3, "base_y": 0.0, "raio": 1.1, "encosto": 0.52,
 		"esc": [0.92, 1.02], "grande": true, "col": [1.6, 1.2, 1.0]},
 	{"n": "industrial_storage_cart", "papel": "muro", "peso": 2, "base_y": 0.0, "raio": 0.75, "encosto": 0.48,
-		"esc": [0.95, 1.05], "grande": true, "col": [1.3, 1.1, 0.8]},
+		"esc": [0.95, 1.05]},
 	{"n": "wheelchair_01", "papel": "muro", "peso": 2, "base_y": 0.0, "raio": 0.55, "encosto": 0.42,
 		"esc": [0.95, 1.05]},
 	{"n": "trash_pile_clutter", "papel": "muro", "peso": 12, "base_y": 0.0, "raio": 0.45, "encosto": 0.32, "esc": [0.85, 1.25]},
@@ -261,6 +262,20 @@ var _rng := RandomNumberGenerator.new()
 var _mapa = null
 var _esp = null
 var _esp_herdado = null
+var _fisica_runtime = null
+
+
+func _ready() -> void:
+	if Engine.is_editor_hint():
+		set_physics_process(false)
+		return
+	_fisica_runtime = CityFisicaProps.new()
+	_fisica_runtime.preparar(self, camada_colisao)
+
+
+func _physics_process(_delta: float) -> void:
+	if _fisica_runtime != null:
+		_fisica_runtime.atualizar()
 
 
 # --------------------------------------------------------------------------
@@ -618,7 +633,7 @@ func _espalhar_muro(lista: Array, saida: Dictionary) -> int:
 			break
 		var item := _sortear(lista)
 		var raio: float = float(item.get("raio", 0.4))
-		var encosto: float = float(item.get("encosto", minf(raio, 0.25)))
+		var encosto: float = float(item.get("encosto", maxf(raio * 0.85, 0.20)))
 		var normal: Vector3 = s["n"]
 		var base: Vector3 = s["p"]
 		var p := base + normal * (encosto + _rng.randf_range(0.01, 0.08))

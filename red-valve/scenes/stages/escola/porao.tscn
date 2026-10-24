@@ -1,4 +1,4 @@
-[gd_scene load_steps=441 format=3]
+[gd_scene load_steps=497 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="e0"]
 [ext_resource type="PackedScene" path="res://scenes/configs/pause.tscn" id="e1"]
@@ -1215,9 +1215,177 @@ size = Vector3(0.8000, 0.5000, 2.8000)
 size = Vector3(3.2000, 4.0000, 3.2000)
 
 [sub_resource type="BoxShape3D" id="f375"]
-size = Vector3(0.9000, 1.2000, 0.9000)
+size = Vector3(0.8310, 0.3520, 0.4120)
 
 [sub_resource type="BoxShape3D" id="f376"]
+size = Vector3(0.3740, 0.6150, 0.3740)
+
+[sub_resource type="BoxShape3D" id="f377"]
+size = Vector3(0.3770, 0.3030, 0.1300)
+
+[sub_resource type="BoxShape3D" id="f378"]
+size = Vector3(0.6610, 0.6610, 0.1820)
+
+[sub_resource type="BoxShape3D" id="f379"]
+size = Vector3(0.6330, 0.9280, 0.6370)
+
+[sub_resource type="BoxShape3D" id="f380"]
+size = Vector3(0.3910, 0.1200, 0.3010)
+
+[sub_resource type="BoxShape3D" id="f381"]
+size = Vector3(0.1750, 0.2880, 0.1330)
+
+[sub_resource type="BoxShape3D" id="f382"]
+size = Vector3(0.6680, 0.6680, 0.1840)
+
+[sub_resource type="BoxShape3D" id="f383"]
+size = Vector3(0.9000, 1.2000, 0.9000)
+
+[sub_resource type="BoxShape3D" id="f384"]
+size = Vector3(0.4120, 0.3320, 0.1420)
+
+[sub_resource type="BoxShape3D" id="f385"]
+size = Vector3(0.7980, 0.3380, 0.3950)
+
+[sub_resource type="BoxShape3D" id="f386"]
+size = Vector3(0.4260, 0.7680, 0.4230)
+
+[sub_resource type="BoxShape3D" id="f387"]
+size = Vector3(0.8100, 0.3430, 0.4010)
+
+[sub_resource type="BoxShape3D" id="f388"]
+size = Vector3(0.7290, 1.0690, 0.7340)
+
+[sub_resource type="BoxShape3D" id="f389"]
+size = Vector3(0.3010, 0.3910, 0.1480)
+
+[sub_resource type="BoxShape3D" id="f390"]
+size = Vector3(0.5000, 0.9010, 0.4960)
+
+[sub_resource type="BoxShape3D" id="f391"]
+size = Vector3(0.5540, 0.8140, 0.5580)
+
+[sub_resource type="BoxShape3D" id="f392"]
+size = Vector3(0.7840, 0.3320, 0.3880)
+
+[sub_resource type="BoxShape3D" id="f393"]
+size = Vector3(0.3950, 0.1210, 0.3040)
+
+[sub_resource type="BoxShape3D" id="f394"]
+size = Vector3(0.3130, 0.5130, 0.3130)
+
+[sub_resource type="BoxShape3D" id="f395"]
+size = Vector3(0.8830, 0.3740, 0.4370)
+
+[sub_resource type="BoxShape3D" id="f396"]
+size = Vector3(0.4620, 0.4060, 1.0190)
+
+[sub_resource type="BoxShape3D" id="f397"]
+size = Vector3(0.5200, 0.9370, 0.5160)
+
+[sub_resource type="BoxShape3D" id="f398"]
+size = Vector3(0.7610, 0.3220, 0.3770)
+
+[sub_resource type="BoxShape3D" id="f399"]
+size = Vector3(0.3210, 0.3390, 1.2910)
+
+[sub_resource type="BoxShape3D" id="f400"]
+size = Vector3(0.6150, 0.6150, 0.1690)
+
+[sub_resource type="BoxShape3D" id="f401"]
+size = Vector3(0.5880, 0.8630, 0.5920)
+
+[sub_resource type="BoxShape3D" id="f402"]
+size = Vector3(0.3890, 0.5050, 0.1910)
+
+[sub_resource type="BoxShape3D" id="f403"]
+size = Vector3(0.3270, 0.1000, 0.2520)
+
+[sub_resource type="BoxShape3D" id="f404"]
+size = Vector3(0.5510, 0.5510, 0.1520)
+
+[sub_resource type="BoxShape3D" id="f405"]
+size = Vector3(0.3730, 0.3630, 0.3480)
+
+[sub_resource type="BoxShape3D" id="f406"]
+size = Vector3(0.4210, 0.3390, 0.1450)
+
+[sub_resource type="BoxShape3D" id="f407"]
+size = Vector3(0.6670, 0.6670, 0.1830)
+
+[sub_resource type="BoxShape3D" id="f408"]
+size = Vector3(0.3720, 0.6110, 0.3720)
+
+[sub_resource type="BoxShape3D" id="f409"]
+size = Vector3(0.4810, 0.4220, 1.0610)
+
+[sub_resource type="BoxShape3D" id="f410"]
+size = Vector3(0.6170, 0.9060, 0.6220)
+
+[sub_resource type="BoxShape3D" id="f411"]
+size = Vector3(0.2910, 0.3080, 1.1720)
+
+[sub_resource type="BoxShape3D" id="f412"]
+size = Vector3(0.3640, 0.1110, 0.2800)
+
+[sub_resource type="BoxShape3D" id="f413"]
+size = Vector3(0.4860, 0.8770, 0.4830)
+
+[sub_resource type="BoxShape3D" id="f414"]
+size = Vector3(0.7000, 1.0270, 0.7050)
+
+[sub_resource type="BoxShape3D" id="f415"]
+size = Vector3(0.4650, 0.1810, 0.7040)
+
+[sub_resource type="BoxShape3D" id="f416"]
+size = Vector3(0.5610, 0.5610, 0.1540)
+
+[sub_resource type="BoxShape3D" id="f417"]
+size = Vector3(0.5010, 0.4040, 0.1730)
+
+[sub_resource type="BoxShape3D" id="f418"]
+size = Vector3(0.5490, 0.9900, 0.5450)
+
+[sub_resource type="BoxShape3D" id="f419"]
+size = Vector3(0.2980, 0.3140, 1.1960)
+
+[sub_resource type="BoxShape3D" id="f420"]
+size = Vector3(0.4400, 0.3540, 0.1520)
+
+[sub_resource type="BoxShape3D" id="f421"]
+size = Vector3(0.5340, 0.4680, 1.1770)
+
+[sub_resource type="BoxShape3D" id="f422"]
+size = Vector3(0.3200, 0.4150, 0.1570)
+
+[sub_resource type="BoxShape3D" id="f423"]
+size = Vector3(0.3740, 0.3640, 0.3490)
+
+[sub_resource type="BoxShape3D" id="f424"]
+size = Vector3(0.3380, 0.1030, 0.2600)
+
+[sub_resource type="BoxShape3D" id="f425"]
+size = Vector3(0.5540, 0.5540, 0.1520)
+
+[sub_resource type="BoxShape3D" id="f426"]
+size = Vector3(0.7220, 0.3060, 0.3580)
+
+[sub_resource type="BoxShape3D" id="f427"]
+size = Vector3(0.5550, 0.4870, 1.2240)
+
+[sub_resource type="BoxShape3D" id="f428"]
+size = Vector3(0.3240, 0.5320, 0.3240)
+
+[sub_resource type="BoxShape3D" id="f429"]
+size = Vector3(0.3690, 0.3590, 0.3440)
+
+[sub_resource type="BoxShape3D" id="f430"]
+size = Vector3(0.4340, 0.1330, 0.3340)
+
+[sub_resource type="BoxShape3D" id="f431"]
+size = Vector3(0.6400, 0.9390, 0.6440)
+
+[sub_resource type="BoxShape3D" id="f432"]
 size = Vector3(4.0000, 2.4000, 4.0000)
 
 [sub_resource type="StandardMaterial3D" id="pich_mat_0"]
@@ -4063,446 +4231,902 @@ shape = SubResource("f374")
 collision_layer = 2
 collision_mask = 0
 
-[node name="entulho_0" parent="entulho" instance=ExtResource("e8")]
-transform = Transform3D(-0.18185, 0.00000, 0.98983, 0.00000, 1.00640, 0.00000, -0.98983, 0.00000, -0.18185, 4.26000, 0.00000, 7.50000)
+[node name="entulho_0" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(-0.18069, 0.00000, 0.98354, 0.00000, 1.00000, 0.00000, -0.98354, 0.00000, -0.18069, 4.26000, 0.00798, 7.50000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="ce0" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 4.26000, 0.60000, 7.50000)
+[node name="entulho_0_malha" parent="entulho/entulho_0" instance=ExtResource("e8")]
+transform = Transform3D(1.00640, 0.00000, 0.00000, 0.00000, 1.00640, 0.00000, -0.00000, 0.00000, 1.00640, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_0_colisao" type="CollisionShape3D" parent="entulho/entulho_0"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.16794, 0.00839)
 shape = SubResource("f375")
 
-[node name="entulho_12" parent="entulho" instance=ExtResource("e9")]
-transform = Transform3D(-0.49346, 0.00000, 0.99400, 0.00000, 1.10974, 0.00000, -0.99400, 0.00000, -0.49346, 10.50000, 0.00000, 6.26000)
+[node name="entulho_12" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(-0.44466, 0.00000, 0.89570, 0.00000, 1.00000, 0.00000, -0.89570, 0.00000, -0.44466, 10.50000, 0.00000, 6.26000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="ce1" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 10.50000, 0.60000, 6.26000)
-shape = SubResource("f375")
+[node name="entulho_12_malha" parent="entulho/entulho_12" instance=ExtResource("e9")]
+transform = Transform3D(1.10974, 0.00000, 0.00000, 0.00000, 1.10974, 0.00000, -0.00000, 0.00000, 1.10974, 0.00000, 0.00000, 0.00000)
 
-[node name="entulho_36" parent="entulho" instance=ExtResource("e10")]
-transform = Transform3D(0.34928, 0.00000, 0.78739, 0.00000, 0.86138, 0.00000, -0.78739, 0.00000, 0.34928, 15.26000, 0.00000, 60.50000)
+[node name="entulho_12_colisao" type="CollisionShape3D" parent="entulho/entulho_12"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.30732, 0.00000)
+shape = SubResource("f376")
 
-[node name="ce2" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 15.26000, 0.60000, 60.50000)
-shape = SubResource("f375")
+[node name="entulho_36" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(0.40549, 0.00000, 0.91410, 0.00000, 1.00000, 0.00000, -0.91410, 0.00000, 0.40549, 15.26000, 0.29561, 60.50000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="entulho_53" parent="entulho" instance=ExtResource("e11")]
-transform = Transform3D(-1.09668, 0.00000, 0.10091, 0.00000, 1.10131, 0.00000, -0.10091, 0.00000, -1.09668, 18.50000, 0.00000, 8.26000)
+[node name="entulho_36_malha" parent="entulho/entulho_36" instance=ExtResource("e10")]
+transform = Transform3D(0.86138, 0.00000, 0.00000, 0.00000, 0.86138, 0.00000, -0.00000, 0.00000, 0.86138, 0.00000, 0.00000, 0.00000)
 
-[node name="ce3" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 18.50000, 0.60000, 8.26000)
-shape = SubResource("f375")
+[node name="entulho_36_colisao" type="CollisionShape3D" parent="entulho/entulho_36"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00032, -0.14388, 0.00824)
+shape = SubResource("f377")
 
-[node name="entulho_59" parent="entulho" instance=ExtResource("e12")]
-transform = Transform3D(0.92339, 0.00000, 0.37820, 0.00000, 0.99784, 0.00000, -0.37820, 0.00000, 0.92339, 18.74000, 0.00000, 60.50000)
+[node name="entulho_53" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(-0.99579, 0.00000, 0.09163, 0.00000, 1.00000, 0.00000, -0.09163, 0.00000, -0.99579, 18.50000, 0.33039, 8.26000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="ce4" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 18.74000, 0.60000, 60.50000)
-shape = SubResource("f375")
+[node name="entulho_53_malha" parent="entulho/entulho_53" instance=ExtResource("e11")]
+transform = Transform3D(1.10131, 0.00000, 0.00000, 0.00000, 1.10131, 0.00000, -0.00000, 0.00000, 1.10131, 0.00000, 0.00000, 0.00000)
 
-[node name="entulho_63" parent="entulho" instance=ExtResource("e13")]
-transform = Transform3D(-0.12175, 0.00000, 1.01175, 0.00000, 1.01905, 0.00000, -1.01175, 0.00000, -0.12175, 19.74000, 0.00000, 8.50000)
+[node name="entulho_53_colisao" type="CollisionShape3D" parent="entulho/entulho_53"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, -0.00029)
+shape = SubResource("f378")
 
-[node name="ce5" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 19.74000, 0.60000, 8.50000)
-shape = SubResource("f375")
+[node name="entulho_59" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(0.92539, 0.00000, 0.37901, 0.00000, 1.00000, 0.00000, -0.37901, 0.00000, 0.92539, 18.74000, 0.00000, 60.50000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="entulho_66" parent="entulho" instance=ExtResource("e14")]
-transform = Transform3D(0.85977, 0.00000, 0.60205, 0.00000, 1.04960, 0.00000, -0.60205, 0.00000, 0.85977, 19.50000, 0.00000, 49.74000)
+[node name="entulho_59_malha" parent="entulho/entulho_59" instance=ExtResource("e12")]
+transform = Transform3D(0.99784, 0.00000, 0.00000, 0.00000, 0.99784, 0.00000, -0.00000, 0.00000, 0.99784, 0.00000, 0.00000, 0.00000)
 
-[node name="ce6" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 19.50000, 0.60000, 49.74000)
-shape = SubResource("f375")
+[node name="entulho_59_colisao" type="CollisionShape3D" parent="entulho/entulho_59"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.46423, 0.00000)
+shape = SubResource("f379")
 
-[node name="entulho_67" parent="entulho" instance=ExtResource("e11")]
-transform = Transform3D(0.90962, 0.00000, -0.64287, 0.00000, 1.11386, 0.00000, 0.64287, 0.00000, 0.90962, 19.50000, 0.00000, 54.26000)
+[node name="entulho_63" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(-0.11947, 0.00000, 0.99284, 0.00000, 1.00000, 0.00000, -0.99284, 0.00000, -0.11947, 19.74000, 0.00093, 8.50000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="ce7" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 19.50000, 0.60000, 54.26000)
-shape = SubResource("f375")
+[node name="entulho_63_malha" parent="entulho/entulho_63" instance=ExtResource("e13")]
+transform = Transform3D(1.01905, 0.00000, 0.00000, 0.00000, 1.01905, 0.00000, -0.00000, 0.00000, 1.01905, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_63_colisao" type="CollisionShape3D" parent="entulho/entulho_63"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00028, 0.05890, -0.00044)
+shape = SubResource("f380")
+
+[node name="entulho_66" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(0.81914, 0.00000, 0.57360, 0.00000, 1.00000, 0.00000, -0.57360, 0.00000, 0.81914, 19.50000, 0.00013, 49.74000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_66_malha" parent="entulho/entulho_66" instance=ExtResource("e14")]
+transform = Transform3D(1.04960, 0.00000, 0.00000, 0.00000, 1.04960, 0.00000, -0.00000, 0.00000, 1.04960, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_66_colisao" type="CollisionShape3D" parent="entulho/entulho_66"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00494, 0.14392, -0.00196)
+shape = SubResource("f381")
+
+[node name="entulho_67" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(0.81664, 0.00000, -0.57715, 0.00000, 1.00000, 0.00000, 0.57715, 0.00000, 0.81664, 19.50000, 0.33416, 54.26000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_67_malha" parent="entulho/entulho_67" instance=ExtResource("e11")]
+transform = Transform3D(1.11386, 0.00000, 0.00000, 0.00000, 1.11386, 0.00000, -0.00000, 0.00000, 1.11386, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_67_colisao" type="CollisionShape3D" parent="entulho/entulho_67"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, -0.00029)
+shape = SubResource("f382")
 
 [node name="entulho_69" parent="entulho" instance=ExtResource("e15")]
 transform = Transform3D(-0.92650, 0.00000, 0.11331, 0.00000, 0.93341, 0.00000, -0.11331, 0.00000, -0.92650, 19.74000, 0.00000, 62.50000)
 
 [node name="ce8" type="CollisionShape3D" parent="colisao_entulho"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 19.74000, 0.60000, 62.50000)
-shape = SubResource("f375")
+shape = SubResource("f383")
 
-[node name="entulho_106" parent="entulho" instance=ExtResource("e10")]
-transform = Transform3D(0.46927, 0.00000, -0.81836, 0.00000, 0.94336, 0.00000, 0.81836, 0.00000, 0.46927, 24.26000, 0.00000, 39.50000)
+[node name="entulho_106" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(0.49745, 0.00000, -0.86749, 0.00000, 1.00000, 0.00000, 0.86749, 0.00000, 0.49745, 24.26000, 0.32374, 39.50000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="ce9" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 24.26000, 0.60000, 39.50000)
-shape = SubResource("f375")
+[node name="entulho_106_malha" parent="entulho/entulho_106" instance=ExtResource("e10")]
+transform = Transform3D(0.94336, 0.00000, 0.00000, 0.00000, 0.94336, 0.00000, -0.00000, 0.00000, 0.94336, 0.00000, 0.00000, 0.00000)
 
-[node name="entulho_112" parent="entulho" instance=ExtResource("e8")]
-transform = Transform3D(-0.30913, 0.00000, 0.91577, 0.00000, 0.96654, 0.00000, -0.91577, 0.00000, -0.30913, 24.26000, 0.00000, 45.50000)
+[node name="entulho_106_colisao" type="CollisionShape3D" parent="entulho/entulho_106"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00035, -0.15757, 0.00902)
+shape = SubResource("f384")
 
-[node name="ce10" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 24.26000, 0.60000, 45.50000)
-shape = SubResource("f375")
+[node name="entulho_112" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(-0.31984, 0.00000, 0.94747, 0.00000, 1.00000, 0.00000, -0.94747, 0.00000, -0.31984, 24.26000, 0.00767, 45.50000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="entulho_114" parent="entulho" instance=ExtResource("e16")]
-transform = Transform3D(-0.67064, 0.00000, 0.55820, 0.00000, 0.87255, 0.00000, -0.55820, 0.00000, -0.67064, 24.26000, 0.00000, 47.50000)
+[node name="entulho_112_malha" parent="entulho/entulho_112" instance=ExtResource("e8")]
+transform = Transform3D(0.96654, 0.00000, 0.00000, 0.00000, 0.96654, 0.00000, -0.00000, 0.00000, 0.96654, 0.00000, 0.00000, 0.00000)
 
-[node name="ce11" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 24.26000, 0.60000, 47.50000)
-shape = SubResource("f375")
+[node name="entulho_112_colisao" type="CollisionShape3D" parent="entulho/entulho_112"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.16129, 0.00806)
+shape = SubResource("f385")
+
+[node name="entulho_114" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(-0.76860, 0.00000, 0.63973, 0.00000, 1.00000, 0.00000, -0.63973, 0.00000, -0.76860, 24.26000, 0.00000, 47.50000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_114_malha" parent="entulho/entulho_114" instance=ExtResource("e16")]
+transform = Transform3D(0.87255, 0.00000, 0.00000, 0.00000, 0.87255, 0.00000, -0.00000, 0.00000, 0.87255, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_114_colisao" type="CollisionShape3D" parent="entulho/entulho_114"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.38797, -0.00000)
+shape = SubResource("f386")
 
 [node name="entulho_125" parent="entulho" instance=ExtResource("e15")]
 transform = Transform3D(-0.04328, 0.00000, 0.86516, 0.00000, 0.86625, 0.00000, -0.86516, 0.00000, -0.04328, 25.50000, 0.00000, 68.26000)
 
 [node name="ce12" type="CollisionShape3D" parent="colisao_entulho"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 25.50000, 0.60000, 68.26000)
-shape = SubResource("f375")
-
-[node name="entulho_126" parent="entulho" instance=ExtResource("e8")]
-transform = Transform3D(0.61527, 0.00000, 0.76486, 0.00000, 0.98162, 0.00000, -0.76486, 0.00000, 0.61527, 25.26000, 0.00000, 71.50000)
-
-[node name="ce13" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 25.26000, 0.60000, 71.50000)
-shape = SubResource("f375")
-
-[node name="entulho_129" parent="entulho" instance=ExtResource("e12")]
-transform = Transform3D(-1.11331, 0.00000, 0.28546, 0.00000, 1.14933, 0.00000, -0.28546, 0.00000, -1.11331, 26.26000, 0.00000, 18.50000)
-
-[node name="ce14" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 26.26000, 0.60000, 18.50000)
-shape = SubResource("f375")
-
-[node name="entulho_130" parent="entulho" instance=ExtResource("e17")]
-transform = Transform3D(-0.05809, 0.00000, -0.85726, 0.00000, 0.85922, 0.00000, 0.85726, 0.00000, -0.05809, 26.50000, 0.00000, 37.26000)
-
-[node name="ce15" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 26.50000, 0.60000, 37.26000)
-shape = SubResource("f375")
-
-[node name="entulho_142" parent="entulho" instance=ExtResource("e16")]
-transform = Transform3D(-0.84773, 0.00000, -0.57322, 0.00000, 1.02334, 0.00000, 0.57322, 0.00000, -0.84773, 27.50000, 0.00000, 71.74000)
-
-[node name="ce16" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 27.50000, 0.60000, 71.74000)
-shape = SubResource("f375")
-
-[node name="entulho_157" parent="entulho" instance=ExtResource("e12")]
-transform = Transform3D(-0.87327, 0.00000, -0.04265, 0.00000, 0.87431, 0.00000, 0.04265, 0.00000, -0.87327, 29.50000, 0.00000, 72.74000)
-
-[node name="ce17" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 29.50000, 0.60000, 72.74000)
-shape = SubResource("f375")
-
-[node name="entulho_168" parent="entulho" instance=ExtResource("e8")]
-transform = Transform3D(0.41272, 0.00000, -0.85551, 0.00000, 0.94986, 0.00000, 0.85551, 0.00000, 0.41272, 31.50000, 0.00000, 53.74000)
-
-[node name="ce18" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 31.50000, 0.60000, 53.74000)
-shape = SubResource("f375")
-
-[node name="entulho_175" parent="entulho" instance=ExtResource("e13")]
-transform = Transform3D(0.76881, 0.00000, -0.68644, 0.00000, 1.03066, 0.00000, 0.68644, 0.00000, 0.76881, 32.74000, 0.00000, 69.50000)
-
-[node name="ce19" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 32.74000, 0.60000, 69.50000)
-shape = SubResource("f375")
-
-[node name="entulho_180" parent="entulho" instance=ExtResource("e9")]
-transform = Transform3D(-0.87647, 0.00000, 0.30205, 0.00000, 0.92706, 0.00000, -0.30205, 0.00000, -0.87647, 33.50000, 0.00000, 53.74000)
-
-[node name="ce20" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 33.50000, 0.60000, 53.74000)
-shape = SubResource("f375")
-
-[node name="entulho_182" parent="entulho" instance=ExtResource("e8")]
-transform = Transform3D(0.43397, 0.00000, 0.97762, 0.00000, 1.06961, 0.00000, -0.97762, 0.00000, 0.43397, 33.50000, 0.00000, 73.74000)
-
-[node name="ce21" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 33.50000, 0.60000, 73.74000)
-shape = SubResource("f375")
-
-[node name="entulho_183" parent="entulho" instance=ExtResource("e18")]
-transform = Transform3D(-0.27503, 0.00000, -0.82968, 0.00000, 0.87408, 0.00000, 0.82968, 0.00000, -0.27503, 34.74000, 0.00000, 21.50000)
-
-[node name="ce22" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 34.74000, 0.60000, 21.50000)
-shape = SubResource("f375")
-
-[node name="entulho_184" parent="entulho" instance=ExtResource("e16")]
-transform = Transform3D(0.58034, 0.00000, -0.89208, 0.00000, 1.06424, 0.00000, 0.89208, 0.00000, 0.58034, 34.50000, 0.00000, 24.74000)
-
-[node name="ce23" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 34.50000, 0.60000, 24.74000)
-shape = SubResource("f375")
-
-[node name="entulho_210" parent="entulho" instance=ExtResource("e8")]
-transform = Transform3D(0.06045, 0.00000, 0.91970, 0.00000, 0.92169, 0.00000, -0.91970, 0.00000, 0.06045, 38.50000, 0.00000, 53.74000)
-
-[node name="ce24" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 38.50000, 0.60000, 53.74000)
-shape = SubResource("f375")
-
-[node name="entulho_216" parent="entulho" instance=ExtResource("e19")]
-transform = Transform3D(-0.98917, 0.00000, -0.09826, 0.00000, 0.99404, 0.00000, 0.09826, 0.00000, -0.98917, 39.50000, 0.00000, 53.74000)
-
-[node name="ce25" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 39.50000, 0.60000, 53.74000)
-shape = SubResource("f375")
-
-[node name="entulho_221" parent="entulho" instance=ExtResource("e11")]
-transform = Transform3D(0.37089, 0.00000, -0.95472, 0.00000, 1.02423, 0.00000, 0.95472, 0.00000, 0.37089, 40.50000, 0.00000, 36.26000)
-
-[node name="ce26" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 40.50000, 0.60000, 36.26000)
-shape = SubResource("f375")
-
-[node name="entulho_269" parent="entulho" instance=ExtResource("e12")]
-transform = Transform3D(-0.65179, 0.00000, -0.66026, 0.00000, 0.92778, 0.00000, 0.66026, 0.00000, -0.65179, 46.50000, 0.00000, 71.74000)
-
-[node name="ce27" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 46.50000, 0.60000, 71.74000)
-shape = SubResource("f375")
-
-[node name="entulho_270" parent="entulho" instance=ExtResource("e17")]
-transform = Transform3D(-1.03923, 0.00000, -0.39166, 0.00000, 1.11058, 0.00000, 0.39166, 0.00000, -1.03923, 47.74000, 0.00000, 8.50000)
-
-[node name="ce28" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 47.74000, 0.60000, 8.50000)
-shape = SubResource("f375")
-
-[node name="entulho_273" parent="entulho" instance=ExtResource("e13")]
-transform = Transform3D(-0.51514, 0.00000, -0.68063, 0.00000, 0.85360, 0.00000, 0.68063, 0.00000, -0.51514, 47.74000, 0.00000, 24.50000)
-
-[node name="ce29" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 47.74000, 0.60000, 24.50000)
-shape = SubResource("f375")
-
-[node name="entulho_277" parent="entulho" instance=ExtResource("e11")]
-transform = Transform3D(-0.42910, 0.00000, 0.81218, 0.00000, 0.91856, 0.00000, -0.81218, 0.00000, -0.42910, 47.74000, 0.00000, 42.50000)
-
-[node name="ce30" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 47.74000, 0.60000, 42.50000)
-shape = SubResource("f375")
-
-[node name="entulho_285" parent="entulho" instance=ExtResource("e20")]
-transform = Transform3D(0.98934, 0.00000, 0.23712, 0.00000, 1.01736, 0.00000, -0.23712, 0.00000, 0.98934, 47.74000, 0.00000, 50.50000)
-
-[node name="ce31" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 47.74000, 0.60000, 50.50000)
-shape = SubResource("f375")
-
-[node name="entulho_288" parent="entulho" instance=ExtResource("e10")]
-transform = Transform3D(-0.96251, 0.00000, 0.02111, 0.00000, 0.96274, 0.00000, -0.02111, 0.00000, -0.96251, 48.74000, 0.00000, 9.50000)
-
-[node name="ce32" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 48.74000, 0.60000, 9.50000)
-shape = SubResource("f375")
-
-[node name="entulho_291" parent="entulho" instance=ExtResource("e11")]
-transform = Transform3D(0.53534, 0.00000, -0.97442, 0.00000, 1.11179, 0.00000, 0.97442, 0.00000, 0.53534, 48.50000, 0.00000, 20.26000)
-
-[node name="ce33" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 48.50000, 0.60000, 20.26000)
-shape = SubResource("f375")
-
-[node name="entulho_292" parent="entulho" instance=ExtResource("e9")]
-transform = Transform3D(-0.94315, 0.00000, -0.57120, 0.00000, 1.10263, 0.00000, 0.57120, 0.00000, -0.94315, 48.50000, 0.00000, 23.74000)
-
-[node name="ce34" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 48.50000, 0.60000, 23.74000)
-shape = SubResource("f375")
-
-[node name="entulho_295" parent="entulho" instance=ExtResource("e18")]
-transform = Transform3D(0.75312, 0.00000, -0.51022, 0.00000, 0.90968, 0.00000, 0.51022, 0.00000, 0.75312, 48.50000, 0.00000, 68.26000)
-
-[node name="ce35" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 48.50000, 0.60000, 68.26000)
-shape = SubResource("f375")
-
-[node name="entulho_297" parent="entulho" instance=ExtResource("e12")]
-transform = Transform3D(-0.63426, 0.00000, -0.73854, 0.00000, 0.97352, 0.00000, 0.73854, 0.00000, -0.63426, 49.50000, 0.00000, 10.26000)
-
-[node name="ce36" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 49.50000, 0.60000, 10.26000)
-shape = SubResource("f375")
-
-[node name="entulho_300" parent="entulho" instance=ExtResource("e19")]
-transform = Transform3D(0.89400, 0.00000, 0.12045, 0.00000, 0.90208, 0.00000, -0.12045, 0.00000, 0.89400, 49.26000, 0.00000, 16.50000)
-
-[node name="ce37" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 49.26000, 0.60000, 16.50000)
-shape = SubResource("f375")
-
-[node name="entulho_301" parent="entulho" instance=ExtResource("e13")]
-transform = Transform3D(0.75032, 0.00000, -0.58158, 0.00000, 0.94933, 0.00000, 0.58158, 0.00000, 0.75032, 49.26000, 0.00000, 17.50000)
-
-[node name="ce38" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 49.26000, 0.60000, 17.50000)
-shape = SubResource("f375")
-
-[node name="entulho_310" parent="entulho" instance=ExtResource("e16")]
-transform = Transform3D(0.99135, 0.00000, 0.10020, 0.00000, 0.99640, 0.00000, -0.10020, 0.00000, 0.99135, 50.26000, 0.00000, 19.50000)
-
-[node name="ce39" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 50.26000, 0.60000, 19.50000)
-shape = SubResource("f375")
-
-[node name="entulho_325" parent="entulho" instance=ExtResource("e12")]
-transform = Transform3D(0.48733, 0.00000, -0.99038, 0.00000, 1.10379, 0.00000, 0.99038, 0.00000, 0.48733, 52.74000, 0.00000, 15.50000)
-
-[node name="ce40" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 52.74000, 0.60000, 15.50000)
-shape = SubResource("f375")
-
-[node name="entulho_331" parent="entulho" instance=ExtResource("e21")]
-transform = Transform3D(-0.84970, 0.00000, -0.53814, 0.00000, 1.00577, 0.00000, 0.53814, 0.00000, -0.84970, 52.50000, 0.00000, 67.26000)
-
-[node name="ce41" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 52.50000, 0.60000, 67.26000)
-shape = SubResource("f375")
-
-[node name="entulho_361" parent="entulho" instance=ExtResource("e11")]
-transform = Transform3D(-0.75461, 0.00000, 0.55193, 0.00000, 0.93491, 0.00000, -0.55193, 0.00000, -0.75461, 57.50000, 0.00000, 65.26000)
-
-[node name="ce42" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 57.50000, 0.60000, 65.26000)
-shape = SubResource("f375")
-
-[node name="entulho_386" parent="entulho" instance=ExtResource("e10")]
-transform = Transform3D(0.40116, 0.00000, -1.07306, 0.00000, 1.14560, 0.00000, 1.07306, 0.00000, 0.40116, 61.50000, 0.00000, 32.26000)
-
-[node name="ce43" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 61.50000, 0.60000, 32.26000)
-shape = SubResource("f375")
-
-[node name="entulho_408" parent="entulho" instance=ExtResource("e16")]
-transform = Transform3D(-0.81740, 0.00000, 0.77249, 0.00000, 1.12467, 0.00000, -0.77249, 0.00000, -0.81740, 63.74000, 0.00000, 58.50000)
-
-[node name="ce44" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 63.74000, 0.60000, 58.50000)
-shape = SubResource("f375")
-
-[node name="entulho_412" parent="entulho" instance=ExtResource("e19")]
-transform = Transform3D(-0.27545, 0.00000, 0.87872, 0.00000, 0.92088, 0.00000, -0.87872, 0.00000, -0.27545, 63.26000, 0.00000, 69.50000)
-
-[node name="ce45" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 63.26000, 0.60000, 69.50000)
-shape = SubResource("f375")
-
-[node name="entulho_414" parent="entulho" instance=ExtResource("e10")]
-transform = Transform3D(-0.85614, 0.00000, -0.52734, 0.00000, 1.00551, 0.00000, 0.52734, 0.00000, -0.85614, 64.50000, 0.00000, 16.74000)
-
-[node name="ce46" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 64.50000, 0.60000, 16.74000)
-shape = SubResource("f375")
+shape = SubResource("f383")
+
+[node name="entulho_126" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(0.62679, 0.00000, 0.77919, 0.00000, 1.00000, 0.00000, -0.77919, 0.00000, 0.62679, 25.26000, 0.00779, 71.50000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_126_malha" parent="entulho/entulho_126" instance=ExtResource("e8")]
+transform = Transform3D(0.98162, 0.00000, 0.00000, 0.00000, 0.98162, 0.00000, -0.00000, 0.00000, 0.98162, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_126_colisao" type="CollisionShape3D" parent="entulho/entulho_126"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.16381, 0.00818)
+shape = SubResource("f387")
+
+[node name="entulho_129" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(-0.96867, 0.00000, 0.24837, 0.00000, 1.00000, 0.00000, -0.24837, 0.00000, -0.96867, 26.26000, 0.00000, 18.50000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_129_malha" parent="entulho/entulho_129" instance=ExtResource("e12")]
+transform = Transform3D(1.14933, 0.00000, 0.00000, 0.00000, 1.14933, 0.00000, -0.00000, 0.00000, 1.14933, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_129_colisao" type="CollisionShape3D" parent="entulho/entulho_129"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.53471, 0.00000)
+shape = SubResource("f388")
+
+[node name="entulho_130" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(-0.06760, 0.00000, -0.99771, 0.00000, 1.00000, 0.00000, 0.99771, 0.00000, -0.06760, 26.50000, 0.00000, 37.26000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_130_malha" parent="entulho/entulho_130" instance=ExtResource("e17")]
+transform = Transform3D(0.85922, 0.00000, 0.00000, 0.00000, 0.85922, 0.00000, -0.00000, 0.00000, 0.85922, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_130_colisao" type="CollisionShape3D" parent="entulho/entulho_130"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00430, 0.19555, -0.00235)
+shape = SubResource("f389")
+
+[node name="entulho_142" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(-0.82839, 0.00000, -0.56015, 0.00000, 1.00000, 0.00000, 0.56015, 0.00000, -0.82839, 27.50000, 0.00000, 71.74000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_142_malha" parent="entulho/entulho_142" instance=ExtResource("e16")]
+transform = Transform3D(1.02334, 0.00000, 0.00000, 0.00000, 1.02334, 0.00000, -0.00000, 0.00000, 1.02334, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_142_colisao" type="CollisionShape3D" parent="entulho/entulho_142"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.45501, -0.00000)
+shape = SubResource("f390")
+
+[node name="entulho_157" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(-0.99881, 0.00000, -0.04878, 0.00000, 1.00000, 0.00000, 0.04878, 0.00000, -0.99881, 29.50000, 0.00000, 72.74000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_157_malha" parent="entulho/entulho_157" instance=ExtResource("e12")]
+transform = Transform3D(0.87431, 0.00000, 0.00000, 0.00000, 0.87431, 0.00000, -0.00000, 0.00000, 0.87431, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_157_colisao" type="CollisionShape3D" parent="entulho/entulho_157"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.40676, 0.00000)
+shape = SubResource("f391")
+
+[node name="entulho_168" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(0.43451, 0.00000, -0.90067, 0.00000, 1.00000, 0.00000, 0.90067, 0.00000, 0.43451, 31.50000, 0.00754, 53.74000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_168_malha" parent="entulho/entulho_168" instance=ExtResource("e8")]
+transform = Transform3D(0.94986, 0.00000, 0.00000, 0.00000, 0.94986, 0.00000, -0.00000, 0.00000, 0.94986, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_168_colisao" type="CollisionShape3D" parent="entulho/entulho_168"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.15851, 0.00792)
+shape = SubResource("f392")
+
+[node name="entulho_175" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(0.74594, 0.00000, -0.66602, 0.00000, 1.00000, 0.00000, 0.66602, 0.00000, 0.74594, 32.74000, 0.00094, 69.50000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_175_malha" parent="entulho/entulho_175" instance=ExtResource("e13")]
+transform = Transform3D(1.03066, 0.00000, 0.00000, 0.00000, 1.03066, 0.00000, -0.00000, 0.00000, 1.03066, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_175_colisao" type="CollisionShape3D" parent="entulho/entulho_175"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00028, 0.05957, -0.00045)
+shape = SubResource("f393")
+
+[node name="entulho_180" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(-0.94543, 0.00000, 0.32582, 0.00000, 1.00000, 0.00000, -0.32582, 0.00000, -0.94543, 33.50000, 0.00000, 53.74000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_180_malha" parent="entulho/entulho_180" instance=ExtResource("e9")]
+transform = Transform3D(0.92706, 0.00000, 0.00000, 0.00000, 0.92706, 0.00000, -0.00000, 0.00000, 0.92706, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_180_colisao" type="CollisionShape3D" parent="entulho/entulho_180"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.25672, 0.00000)
+shape = SubResource("f394")
+
+[node name="entulho_182" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(0.40573, 0.00000, 0.91399, 0.00000, 1.00000, 0.00000, -0.91399, 0.00000, 0.40573, 33.50000, 0.00849, 73.74000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_182_malha" parent="entulho/entulho_182" instance=ExtResource("e8")]
+transform = Transform3D(1.06961, 0.00000, 0.00000, 0.00000, 1.06961, 0.00000, -0.00000, 0.00000, 1.06961, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_182_colisao" type="CollisionShape3D" parent="entulho/entulho_182"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.17849, 0.00892)
+shape = SubResource("f395")
+
+[node name="entulho_183" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(-0.31466, 0.00000, -0.94921, 0.00000, 1.00000, 0.00000, 0.94921, 0.00000, -0.31466, 34.74000, 0.00859, 21.50000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_183_malha" parent="entulho/entulho_183" instance=ExtResource("e18")]
+transform = Transform3D(0.87408, 0.00000, 0.00000, 0.00000, 0.87408, 0.00000, -0.00000, 0.00000, 0.87408, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_183_colisao" type="CollisionShape3D" parent="entulho/entulho_183"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.19418, -0.00016)
+shape = SubResource("f396")
+
+[node name="entulho_184" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(0.54531, 0.00000, -0.83823, 0.00000, 1.00000, 0.00000, 0.83823, 0.00000, 0.54531, 34.50000, 0.00000, 24.74000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_184_malha" parent="entulho/entulho_184" instance=ExtResource("e16")]
+transform = Transform3D(1.06424, 0.00000, 0.00000, 0.00000, 1.06424, 0.00000, -0.00000, 0.00000, 1.06424, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_184_colisao" type="CollisionShape3D" parent="entulho/entulho_184"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.47320, -0.00000)
+shape = SubResource("f397")
+
+[node name="entulho_210" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(0.06558, 0.00000, 0.99785, 0.00000, 1.00000, 0.00000, -0.99785, 0.00000, 0.06558, 38.50000, 0.00731, 53.74000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_210_malha" parent="entulho/entulho_210" instance=ExtResource("e8")]
+transform = Transform3D(0.92169, 0.00000, 0.00000, 0.00000, 0.92169, 0.00000, -0.00000, 0.00000, 0.92169, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_210_colisao" type="CollisionShape3D" parent="entulho/entulho_210"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.15381, 0.00768)
+shape = SubResource("f398")
+
+[node name="entulho_216" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(-0.99510, 0.00000, -0.09885, 0.00000, 1.00000, 0.00000, 0.09885, 0.00000, -0.99510, 39.50000, 0.13938, 53.74000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_216_malha" parent="entulho/entulho_216" instance=ExtResource("e19")]
+transform = Transform3D(0.99404, 0.00000, 0.00000, 0.00000, 0.99404, 0.00000, -0.00000, 0.00000, 0.99404, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_216_colisao" type="CollisionShape3D" parent="entulho/entulho_216"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.02439, 0.03009, 0.01511)
+shape = SubResource("f399")
+
+[node name="entulho_221" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(0.36211, 0.00000, -0.93213, 0.00000, 1.00000, 0.00000, 0.93213, 0.00000, 0.36211, 40.50000, 0.30727, 36.26000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_221_malha" parent="entulho/entulho_221" instance=ExtResource("e11")]
+transform = Transform3D(1.02423, 0.00000, 0.00000, 0.00000, 1.02423, 0.00000, -0.00000, 0.00000, 1.02423, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_221_colisao" type="CollisionShape3D" parent="entulho/entulho_221"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, -0.00027)
+shape = SubResource("f400")
+
+[node name="entulho_269" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(-0.70253, 0.00000, -0.71165, 0.00000, 1.00000, 0.00000, 0.71165, 0.00000, -0.70253, 46.50000, 0.00000, 71.74000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_269_malha" parent="entulho/entulho_269" instance=ExtResource("e12")]
+transform = Transform3D(0.92778, 0.00000, 0.00000, 0.00000, 0.92778, 0.00000, -0.00000, 0.00000, 0.92778, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_269_colisao" type="CollisionShape3D" parent="entulho/entulho_269"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.43164, 0.00000)
+shape = SubResource("f401")
+
+[node name="entulho_270" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(-0.93575, 0.00000, -0.35267, 0.00000, 1.00000, 0.00000, 0.35267, 0.00000, -0.93575, 47.74000, 0.00000, 8.50000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_270_malha" parent="entulho/entulho_270" instance=ExtResource("e17")]
+transform = Transform3D(1.11058, 0.00000, 0.00000, 0.00000, 1.11058, 0.00000, -0.00000, 0.00000, 1.11058, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_270_colisao" type="CollisionShape3D" parent="entulho/entulho_270"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00556, 0.25276, -0.00304)
+shape = SubResource("f402")
+
+[node name="entulho_273" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(-0.60349, 0.00000, -0.79737, 0.00000, 1.00000, 0.00000, 0.79737, 0.00000, -0.60349, 47.74000, 0.00078, 24.50000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_273_malha" parent="entulho/entulho_273" instance=ExtResource("e13")]
+transform = Transform3D(0.85360, 0.00000, 0.00000, 0.00000, 0.85360, 0.00000, -0.00000, 0.00000, 0.85360, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_273_colisao" type="CollisionShape3D" parent="entulho/entulho_273"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00023, 0.04933, -0.00037)
+shape = SubResource("f403")
+
+[node name="entulho_277" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(-0.46714, 0.00000, 0.88418, 0.00000, 1.00000, 0.00000, -0.88418, 0.00000, -0.46714, 47.74000, 0.27557, 42.50000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_277_malha" parent="entulho/entulho_277" instance=ExtResource("e11")]
+transform = Transform3D(0.91856, 0.00000, 0.00000, 0.00000, 0.91856, 0.00000, -0.00000, 0.00000, 0.91856, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_277_colisao" type="CollisionShape3D" parent="entulho/entulho_277"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, -0.00024)
+shape = SubResource("f404")
+
+[node name="entulho_285" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(0.97246, 0.00000, 0.23307, 0.00000, 1.00000, 0.00000, -0.23307, 0.00000, 0.97246, 47.74000, 0.00773, 50.50000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_285_malha" parent="entulho/entulho_285" instance=ExtResource("e20")]
+transform = Transform3D(1.01736, 0.00000, 0.00000, 0.00000, 1.01736, 0.00000, -0.00000, 0.00000, 1.01736, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_285_colisao" type="CollisionShape3D" parent="entulho/entulho_285"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00098, 0.17375, 0.00105)
+shape = SubResource("f405")
+
+[node name="entulho_288" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(-0.99976, 0.00000, 0.02192, 0.00000, 1.00000, 0.00000, -0.02192, 0.00000, -0.99976, 48.74000, 0.33039, 9.50000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_288_malha" parent="entulho/entulho_288" instance=ExtResource("e10")]
+transform = Transform3D(0.96274, 0.00000, 0.00000, 0.00000, 0.96274, 0.00000, -0.00000, 0.00000, 0.96274, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_288_colisao" type="CollisionShape3D" parent="entulho/entulho_288"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00036, -0.16080, 0.00920)
+shape = SubResource("f406")
+
+[node name="entulho_291" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(0.48151, 0.00000, -0.87644, 0.00000, 1.00000, 0.00000, 0.87644, 0.00000, 0.48151, 48.50000, 0.33354, 20.26000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_291_malha" parent="entulho/entulho_291" instance=ExtResource("e11")]
+transform = Transform3D(1.11179, 0.00000, 0.00000, 0.00000, 1.11179, 0.00000, -0.00000, 0.00000, 1.11179, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_291_colisao" type="CollisionShape3D" parent="entulho/entulho_291"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, -0.00029)
+shape = SubResource("f407")
+
+[node name="entulho_292" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(-0.85536, 0.00000, -0.51804, 0.00000, 1.00000, 0.00000, 0.51804, 0.00000, -0.85536, 48.50000, 0.00000, 23.74000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_292_malha" parent="entulho/entulho_292" instance=ExtResource("e9")]
+transform = Transform3D(1.10263, 0.00000, 0.00000, 0.00000, 1.10263, 0.00000, -0.00000, 0.00000, 1.10263, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_292_colisao" type="CollisionShape3D" parent="entulho/entulho_292"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.30535, 0.00000)
+shape = SubResource("f408")
+
+[node name="entulho_295" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(0.82790, 0.00000, -0.56088, 0.00000, 1.00000, 0.00000, 0.56088, 0.00000, 0.82790, 48.50000, 0.00894, 68.26000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_295_malha" parent="entulho/entulho_295" instance=ExtResource("e18")]
+transform = Transform3D(0.90968, 0.00000, 0.00000, 0.00000, 0.90968, 0.00000, -0.00000, 0.00000, 0.90968, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_295_colisao" type="CollisionShape3D" parent="entulho/entulho_295"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.20209, -0.00016)
+shape = SubResource("f409")
+
+[node name="entulho_297" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(-0.65152, 0.00000, -0.75863, 0.00000, 1.00000, 0.00000, 0.75863, 0.00000, -0.65152, 49.50000, 0.00000, 10.26000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_297_malha" parent="entulho/entulho_297" instance=ExtResource("e12")]
+transform = Transform3D(0.97352, 0.00000, 0.00000, 0.00000, 0.97352, 0.00000, -0.00000, 0.00000, 0.97352, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_297_colisao" type="CollisionShape3D" parent="entulho/entulho_297"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.45292, 0.00000)
+shape = SubResource("f410")
+
+[node name="entulho_300" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(0.99104, 0.00000, 0.13353, 0.00000, 1.00000, 0.00000, -0.13353, 0.00000, 0.99104, 49.26000, 0.12649, 16.50000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_300_malha" parent="entulho/entulho_300" instance=ExtResource("e19")]
+transform = Transform3D(0.90208, 0.00000, 0.00000, 0.00000, 0.90208, 0.00000, -0.00000, 0.00000, 0.90208, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_300_colisao" type="CollisionShape3D" parent="entulho/entulho_300"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.02213, 0.02731, 0.01371)
+shape = SubResource("f411")
+
+[node name="entulho_301" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(0.79037, 0.00000, -0.61262, 0.00000, 1.00000, 0.00000, 0.61262, 0.00000, 0.79037, 49.26000, 0.00087, 17.50000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_301_malha" parent="entulho/entulho_301" instance=ExtResource("e13")]
+transform = Transform3D(0.94933, 0.00000, 0.00000, 0.00000, 0.94933, 0.00000, -0.00000, 0.00000, 0.94933, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_301_colisao" type="CollisionShape3D" parent="entulho/entulho_301"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00026, 0.05487, -0.00041)
+shape = SubResource("f412")
+
+[node name="entulho_310" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(0.99493, 0.00000, 0.10056, 0.00000, 1.00000, 0.00000, -0.10056, 0.00000, 0.99493, 50.26000, 0.00000, 19.50000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_310_malha" parent="entulho/entulho_310" instance=ExtResource("e16")]
+transform = Transform3D(0.99640, 0.00000, 0.00000, 0.00000, 0.99640, 0.00000, -0.00000, 0.00000, 0.99640, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_310_colisao" type="CollisionShape3D" parent="entulho/entulho_310"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.44304, -0.00000)
+shape = SubResource("f413")
+
+[node name="entulho_325" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(0.44150, 0.00000, -0.89726, 0.00000, 1.00000, 0.00000, 0.89726, 0.00000, 0.44150, 52.74000, 0.00000, 15.50000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_325_malha" parent="entulho/entulho_325" instance=ExtResource("e12")]
+transform = Transform3D(1.10379, 0.00000, 0.00000, 0.00000, 1.10379, 0.00000, -0.00000, 0.00000, 1.10379, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_325_colisao" type="CollisionShape3D" parent="entulho/entulho_325"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.51352, 0.00000)
+shape = SubResource("f414")
+
+[node name="entulho_331" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(-0.84482, 0.00000, -0.53505, 0.00000, 1.00000, 0.00000, 0.53505, 0.00000, -0.84482, 52.50000, 0.00000, 67.26000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_331_malha" parent="entulho/entulho_331" instance=ExtResource("e21")]
+transform = Transform3D(1.00577, 0.00000, 0.00000, 0.00000, 1.00577, 0.00000, -0.00000, 0.00000, 1.00577, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_331_colisao" type="CollisionShape3D" parent="entulho/entulho_331"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00240, 0.09177, 0.00160)
+shape = SubResource("f415")
+
+[node name="entulho_361" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(-0.80714, 0.00000, 0.59036, 0.00000, 1.00000, 0.00000, -0.59036, 0.00000, -0.80714, 57.50000, 0.28047, 65.26000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_361_malha" parent="entulho/entulho_361" instance=ExtResource("e11")]
+transform = Transform3D(0.93491, 0.00000, 0.00000, 0.00000, 0.93491, 0.00000, -0.00000, 0.00000, 0.93491, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_361_colisao" type="CollisionShape3D" parent="entulho/entulho_361"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, -0.00025)
+shape = SubResource("f416")
+
+[node name="entulho_386" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(0.35018, 0.00000, -0.93668, 0.00000, 1.00000, 0.00000, 0.93668, 0.00000, 0.35018, 61.50000, 0.39315, 32.26000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_386_malha" parent="entulho/entulho_386" instance=ExtResource("e10")]
+transform = Transform3D(1.14560, 0.00000, 0.00000, 0.00000, 1.14560, 0.00000, -0.00000, 0.00000, 1.14560, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_386_colisao" type="CollisionShape3D" parent="entulho/entulho_386"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00043, -0.19135, 0.01095)
+shape = SubResource("f417")
+
+[node name="entulho_408" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(-0.72679, 0.00000, 0.68686, 0.00000, 1.00000, 0.00000, -0.68686, 0.00000, -0.72679, 63.74000, 0.00000, 58.50000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_408_malha" parent="entulho/entulho_408" instance=ExtResource("e16")]
+transform = Transform3D(1.12467, 0.00000, 0.00000, 0.00000, 1.12467, 0.00000, -0.00000, 0.00000, 1.12467, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_408_colisao" type="CollisionShape3D" parent="entulho/entulho_408"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.50007, -0.00000)
+shape = SubResource("f418")
+
+[node name="entulho_412" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(-0.29912, 0.00000, 0.95422, 0.00000, 1.00000, 0.00000, -0.95422, 0.00000, -0.29912, 63.26000, 0.12913, 69.50000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_412_malha" parent="entulho/entulho_412" instance=ExtResource("e19")]
+transform = Transform3D(0.92088, 0.00000, 0.00000, 0.00000, 0.92088, 0.00000, -0.00000, 0.00000, 0.92088, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_412_colisao" type="CollisionShape3D" parent="entulho/entulho_412"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.02259, 0.02788, 0.01400)
+shape = SubResource("f419")
+
+[node name="entulho_414" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(-0.85144, 0.00000, -0.52445, 0.00000, 1.00000, 0.00000, 0.52445, 0.00000, -0.85144, 64.50000, 0.34507, 16.74000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_414_malha" parent="entulho/entulho_414" instance=ExtResource("e10")]
+transform = Transform3D(1.00551, 0.00000, 0.00000, 0.00000, 1.00551, 0.00000, -0.00000, 0.00000, 1.00551, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_414_colisao" type="CollisionShape3D" parent="entulho/entulho_414"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00038, -0.16795, 0.00961)
+shape = SubResource("f420")
 
 [node name="entulho_419" parent="entulho" instance=ExtResource("e15")]
 transform = Transform3D(1.06196, 0.00000, -0.40468, 0.00000, 1.13646, 0.00000, 0.40468, 0.00000, 1.06196, 64.50000, 0.00000, 66.26000)
 
 [node name="ce47" type="CollisionShape3D" parent="colisao_entulho"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 64.50000, 0.60000, 66.26000)
-shape = SubResource("f375")
+shape = SubResource("f383")
 
-[node name="entulho_421" parent="entulho" instance=ExtResource("e18")]
-transform = Transform3D(0.16586, 0.00000, 0.99585, 0.00000, 1.00957, 0.00000, -0.99585, 0.00000, 0.16586, 65.50000, 0.00000, 14.26000)
+[node name="entulho_421" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(0.16429, 0.00000, 0.98641, 0.00000, 1.00000, 0.00000, -0.98641, 0.00000, 0.16429, 65.50000, 0.00992, 14.26000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="ce48" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 65.50000, 0.60000, 14.26000)
-shape = SubResource("f375")
+[node name="entulho_421_malha" parent="entulho/entulho_421" instance=ExtResource("e18")]
+transform = Transform3D(1.00957, 0.00000, 0.00000, 0.00000, 1.00957, 0.00000, -0.00000, 0.00000, 1.00957, 0.00000, 0.00000, 0.00000)
 
-[node name="entulho_424" parent="entulho" instance=ExtResource("e17")]
-transform = Transform3D(0.91189, 0.00000, 0.01891, 0.00000, 0.91208, 0.00000, -0.01891, 0.00000, 0.91189, 65.50000, 0.00000, 34.74000)
+[node name="entulho_421_colisao" type="CollisionShape3D" parent="entulho/entulho_421"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.22428, -0.00018)
+shape = SubResource("f421")
 
-[node name="ce49" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 65.50000, 0.60000, 34.74000)
-shape = SubResource("f375")
+[node name="entulho_424" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(0.99978, 0.00000, 0.02074, 0.00000, 1.00000, 0.00000, -0.02074, 0.00000, 0.99978, 65.50000, 0.00000, 34.74000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="entulho_439" parent="entulho" instance=ExtResource("e20")]
-transform = Transform3D(0.71473, 0.00000, 0.72694, 0.00000, 1.01945, 0.00000, -0.72694, 0.00000, 0.71473, 67.50000, 0.00000, 31.26000)
+[node name="entulho_424_malha" parent="entulho/entulho_424" instance=ExtResource("e17")]
+transform = Transform3D(0.91208, 0.00000, 0.00000, 0.00000, 0.91208, 0.00000, -0.00000, 0.00000, 0.91208, 0.00000, 0.00000, 0.00000)
 
-[node name="ce50" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 67.50000, 0.60000, 31.26000)
-shape = SubResource("f375")
+[node name="entulho_424_colisao" type="CollisionShape3D" parent="entulho/entulho_424"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00456, 0.20758, -0.00250)
+shape = SubResource("f422")
 
-[node name="entulho_441" parent="entulho" instance=ExtResource("e13")]
-transform = Transform3D(0.87522, 0.00000, -0.09934, 0.00000, 0.88084, 0.00000, 0.09934, 0.00000, 0.87522, 67.26000, 0.00000, 50.50000)
+[node name="entulho_439" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(0.70109, 0.00000, 0.71307, 0.00000, 1.00000, 0.00000, -0.71307, 0.00000, 0.70109, 67.50000, 0.00775, 31.26000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="ce51" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 67.26000, 0.60000, 50.50000)
-shape = SubResource("f375")
+[node name="entulho_439_malha" parent="entulho/entulho_439" instance=ExtResource("e20")]
+transform = Transform3D(1.01945, 0.00000, 0.00000, 0.00000, 1.01945, 0.00000, -0.00000, 0.00000, 1.01945, 0.00000, 0.00000, 0.00000)
 
-[node name="entulho_445" parent="entulho" instance=ExtResource("e11")]
-transform = Transform3D(0.85193, 0.00000, 0.35656, 0.00000, 0.92354, 0.00000, -0.35656, 0.00000, 0.85193, 68.50000, 0.00000, 14.26000)
+[node name="entulho_439_colisao" type="CollisionShape3D" parent="entulho/entulho_439"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00098, 0.17411, 0.00105)
+shape = SubResource("f423")
 
-[node name="ce52" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 68.50000, 0.60000, 14.26000)
-shape = SubResource("f375")
+[node name="entulho_441" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(0.99362, 0.00000, -0.11278, 0.00000, 1.00000, 0.00000, 0.11278, 0.00000, 0.99362, 67.26000, 0.00081, 50.50000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_441_malha" parent="entulho/entulho_441" instance=ExtResource("e13")]
+transform = Transform3D(0.88084, 0.00000, 0.00000, 0.00000, 0.88084, 0.00000, -0.00000, 0.00000, 0.88084, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_441_colisao" type="CollisionShape3D" parent="entulho/entulho_441"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00024, 0.05091, -0.00038)
+shape = SubResource("f424")
+
+[node name="entulho_445" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(0.92247, 0.00000, 0.38608, 0.00000, 1.00000, 0.00000, -0.38608, 0.00000, 0.92247, 68.50000, 0.27706, 14.26000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_445_malha" parent="entulho/entulho_445" instance=ExtResource("e11")]
+transform = Transform3D(0.92354, 0.00000, 0.00000, 0.00000, 0.92354, 0.00000, -0.00000, 0.00000, 0.92354, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_445_colisao" type="CollisionShape3D" parent="entulho/entulho_445"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, -0.00024)
+shape = SubResource("f425")
 
 [node name="entulho_447" parent="entulho" instance=ExtResource("e15")]
 transform = Transform3D(0.92636, 0.00000, 0.16515, 0.00000, 0.94097, 0.00000, -0.16515, 0.00000, 0.92636, 68.50000, 0.00000, 31.26000)
 
 [node name="ce53" type="CollisionShape3D" parent="colisao_entulho"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 68.50000, 0.60000, 31.26000)
-shape = SubResource("f375")
+shape = SubResource("f383")
 
 [node name="entulho_475" parent="entulho" instance=ExtResource("e15")]
 transform = Transform3D(0.52062, 0.00000, -0.89638, 0.00000, 1.03660, 0.00000, 0.89638, 0.00000, 0.52062, 72.50000, 0.00000, 29.26000)
 
 [node name="ce54" type="CollisionShape3D" parent="colisao_entulho"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 72.50000, 0.60000, 29.26000)
-shape = SubResource("f375")
+shape = SubResource("f383")
 
-[node name="entulho_476" parent="entulho" instance=ExtResource("e8")]
-transform = Transform3D(0.09246, 0.00000, -0.86996, 0.00000, 0.87486, 0.00000, 0.86996, 0.00000, 0.09246, 72.74000, 0.00000, 32.50000)
+[node name="entulho_476" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(0.10568, 0.00000, -0.99440, 0.00000, 1.00000, 0.00000, 0.99440, 0.00000, 0.10568, 72.74000, 0.00694, 32.50000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="ce55" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 72.74000, 0.60000, 32.50000)
-shape = SubResource("f375")
+[node name="entulho_476_malha" parent="entulho/entulho_476" instance=ExtResource("e8")]
+transform = Transform3D(0.87486, 0.00000, 0.00000, 0.00000, 0.87486, 0.00000, -0.00000, 0.00000, 0.87486, 0.00000, 0.00000, 0.00000)
 
-[node name="entulho_477" parent="entulho" instance=ExtResource("e18")]
-transform = Transform3D(0.77994, 0.00000, 0.70173, 0.00000, 1.04916, 0.00000, -0.70173, 0.00000, 0.77994, 72.50000, 0.00000, 69.26000)
+[node name="entulho_476_colisao" type="CollisionShape3D" parent="entulho/entulho_476"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.14599, 0.00729)
+shape = SubResource("f426")
 
-[node name="ce56" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 72.50000, 0.60000, 69.26000)
-shape = SubResource("f375")
+[node name="entulho_477" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(0.74340, 0.00000, 0.66885, 0.00000, 1.00000, 0.00000, -0.66885, 0.00000, 0.74340, 72.50000, 0.01031, 69.26000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_477_malha" parent="entulho/entulho_477" instance=ExtResource("e18")]
+transform = Transform3D(1.04916, 0.00000, 0.00000, 0.00000, 1.04916, 0.00000, -0.00000, 0.00000, 1.04916, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_477_colisao" type="CollisionShape3D" parent="entulho/entulho_477"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.23307, -0.00019)
+shape = SubResource("f427")
 
 [node name="entulho_489" parent="entulho" instance=ExtResource("e15")]
 transform = Transform3D(-0.01379, 0.00000, -0.94024, 0.00000, 0.94034, 0.00000, 0.94024, 0.00000, -0.01379, 74.50000, 0.00000, 28.26000)
 
 [node name="ce57" type="CollisionShape3D" parent="colisao_entulho"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 74.50000, 0.60000, 28.26000)
-shape = SubResource("f375")
+shape = SubResource("f383")
 
-[node name="entulho_497" parent="entulho" instance=ExtResource("e13")]
-transform = Transform3D(0.93341, 0.00000, 0.41328, 0.00000, 1.02081, 0.00000, -0.41328, 0.00000, 0.93341, 75.26000, 0.00000, 27.50000)
+[node name="entulho_497" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(0.91438, 0.00000, 0.40486, 0.00000, 1.00000, 0.00000, -0.40486, 0.00000, 0.91438, 75.26000, 0.00094, 27.50000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="ce58" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 75.26000, 0.60000, 27.50000)
-shape = SubResource("f375")
+[node name="entulho_497_malha" parent="entulho/entulho_497" instance=ExtResource("e13")]
+transform = Transform3D(1.02081, 0.00000, 0.00000, 0.00000, 1.02081, 0.00000, -0.00000, 0.00000, 1.02081, 0.00000, 0.00000, 0.00000)
 
-[node name="entulho_502" parent="entulho" instance=ExtResource("e9")]
-transform = Transform3D(-0.34432, 0.00000, -0.89729, 0.00000, 0.96108, 0.00000, 0.89729, 0.00000, -0.34432, 76.74000, 0.00000, 19.50000)
+[node name="entulho_497_colisao" type="CollisionShape3D" parent="entulho/entulho_497"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00028, 0.05900, -0.00044)
+shape = SubResource("f380")
 
-[node name="ce59" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 76.74000, 0.60000, 19.50000)
-shape = SubResource("f375")
+[node name="entulho_502" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(-0.35826, 0.00000, -0.93362, 0.00000, 1.00000, 0.00000, 0.93362, 0.00000, -0.35826, 76.74000, 0.00000, 19.50000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="entulho_509" parent="entulho" instance=ExtResource("e20")]
-transform = Transform3D(-0.88247, 0.00000, 0.48321, 0.00000, 1.00610, 0.00000, -0.48321, 0.00000, -0.88247, 77.50000, 0.00000, 29.74000)
+[node name="entulho_502_malha" parent="entulho/entulho_502" instance=ExtResource("e9")]
+transform = Transform3D(0.96108, 0.00000, 0.00000, 0.00000, 0.96108, 0.00000, -0.00000, 0.00000, 0.96108, 0.00000, 0.00000, 0.00000)
 
-[node name="ce60" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 77.50000, 0.60000, 29.74000)
-shape = SubResource("f375")
+[node name="entulho_502_colisao" type="CollisionShape3D" parent="entulho/entulho_502"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.26615, 0.00000)
+shape = SubResource("f428")
 
-[node name="entulho_511" parent="entulho" instance=ExtResource("e13")]
-transform = Transform3D(0.00801, 0.00000, -1.13219, 0.00000, 1.13222, 0.00000, 1.13219, 0.00000, 0.00801, 77.50000, 0.00000, 75.74000)
+[node name="entulho_509" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(-0.87711, 0.00000, 0.48028, 0.00000, 1.00000, 0.00000, -0.48028, 0.00000, -0.87711, 77.50000, 0.00765, 29.74000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="ce61" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 77.50000, 0.60000, 75.74000)
-shape = SubResource("f375")
+[node name="entulho_509_malha" parent="entulho/entulho_509" instance=ExtResource("e20")]
+transform = Transform3D(1.00610, 0.00000, 0.00000, 0.00000, 1.00610, 0.00000, -0.00000, 0.00000, 1.00610, 0.00000, 0.00000, 0.00000)
 
-[node name="entulho_521" parent="entulho" instance=ExtResource("e12")]
-transform = Transform3D(0.74182, 0.00000, -0.68375, 0.00000, 1.00886, 0.00000, 0.68375, 0.00000, 0.74182, 79.74000, 0.00000, 73.50000)
+[node name="entulho_509_colisao" type="CollisionShape3D" parent="entulho/entulho_509"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00097, 0.17183, 0.00104)
+shape = SubResource("f429")
 
-[node name="ce62" type="CollisionShape3D" parent="colisao_entulho"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 79.74000, 0.60000, 73.50000)
-shape = SubResource("f375")
+[node name="entulho_511" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(0.00707, 0.00000, -0.99997, 0.00000, 1.00000, 0.00000, 0.99997, 0.00000, 0.00707, 77.50000, 0.00104, 75.74000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_511_malha" parent="entulho/entulho_511" instance=ExtResource("e13")]
+transform = Transform3D(1.13222, 0.00000, 0.00000, 0.00000, 1.13222, 0.00000, -0.00000, 0.00000, 1.13222, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_511_colisao" type="CollisionShape3D" parent="entulho/entulho_511"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00031, 0.06544, -0.00049)
+shape = SubResource("f430")
+
+[node name="entulho_521" type="RigidBody3D" parent="entulho"]
+transform = Transform3D(0.73530, 0.00000, -0.67774, 0.00000, 1.00000, 0.00000, 0.67774, 0.00000, 0.73530, 79.74000, 0.00000, 73.50000)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="entulho_521_malha" parent="entulho/entulho_521" instance=ExtResource("e12")]
+transform = Transform3D(1.00886, 0.00000, 0.00000, 0.00000, 1.00886, 0.00000, -0.00000, 0.00000, 1.00886, 0.00000, 0.00000, 0.00000)
+
+[node name="entulho_521_colisao" type="CollisionShape3D" parent="entulho/entulho_521"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.46936, 0.00000)
+shape = SubResource("f431")
 
 [node name="luminarias" type="Node3D" parent="."]
 
@@ -4756,7 +5380,7 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="boca_entrada/area"]
-shape = SubResource("f376")
+shape = SubResource("f432")
 
 [node name="boca_saida" type="Node3D" parent="."]
 transform = Transform3D(0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 78.00000, 0.00000, 74.00000)
@@ -4769,7 +5393,7 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="boca_saida/area"]
-shape = SubResource("f376")
+shape = SubResource("f432")
 
 [node name="chegada_entrada" type="Marker3D" parent="."]
 transform = Transform3D(0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 7.60000, 0.10000, 8.00000)

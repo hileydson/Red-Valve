@@ -394,6 +394,18 @@ size = Vector3(1.1, 0.22, 0.22)
 [sub_resource type="BoxShape3D" id="forma_entrada"]
 size = Vector3(7, 4, 6)
 
+[sub_resource type="BoxShape3D" id="bs_cadeira_balanco"]
+size = Vector3(0.68, 1.05, 0.95)
+
+[sub_resource type="BoxShape3D" id="bs_lanterna"]
+size = Vector3(0.28, 0.45, 0.28)
+
+[sub_resource type="BoxShape3D" id="bs_caixa_alpendre"]
+size = Vector3(0.42, 0.38, 0.52)
+
+[sub_resource type="BoxShape3D" id="bs_barril"]
+size = Vector3(0.65, 0.92, 0.65)
+
 [node name="casa_jimmy_exterior" type="Node3D"]
 
 [node name="colisao_corpo" type="StaticBody3D" parent="."]
@@ -1313,11 +1325,33 @@ metadata/piscar = "nervoso"
 
 [node name="objetos" type="Node3D" parent="."]
 
-[node name="cadeira_balanco" parent="objetos" instance=ExtResource("ph_Rockingchair_01")]
+[node name="cadeira_balanco" type="RigidBody3D" parent="objetos"]
 transform = Transform3D(-0.939373, 0, 0.342898, 0, 1, 0, -0.342898, 0, -0.939373, -1.7, 0.35, -8.8)
+collision_layer = 2
+collision_mask = 2
+mass = 5.0
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="lanterna_alpendre" parent="objetos" instance=ExtResource("ph_wooden_lantern_01")]
+[node name="cadeira_balanco_malha" parent="objetos/cadeira_balanco" instance=ExtResource("ph_Rockingchair_01")]
+
+[node name="cadeira_balanco_colisao" type="CollisionShape3D" parent="objetos/cadeira_balanco"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.52, 0)
+shape = SubResource("bs_cadeira_balanco")
+
+[node name="lanterna_alpendre" type="RigidBody3D" parent="objetos"]
 transform = Transform3D(0.921061, 0, -0.389418, 0, 1, 0, 0.389418, 0, 0.921061, 2.5, 0.45, -8.1)
+collision_layer = 2
+collision_mask = 2
+mass = 2.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="lanterna_alpendre_malha" parent="objetos/lanterna_alpendre" instance=ExtResource("ph_wooden_lantern_01")]
+
+[node name="lanterna_alpendre_colisao" type="CollisionShape3D" parent="objetos/lanterna_alpendre"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.22, 0)
+shape = SubResource("bs_lanterna")
 
 [node name="floreira_1" parent="objetos" instance=ExtResource("ph_planter_box_02")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.6, 0.45, -10.15)
@@ -1328,8 +1362,19 @@ transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 9.88, 3.3, 1.5)
 [node name="lanterna_porta" parent="objetos" instance=ExtResource("ph_wooden_lantern_01")]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 1.25, 2.5, -7.78)
 
-[node name="caixa_alpendre" parent="objetos" instance=ExtResource("ph_cardboard_box_01")]
+[node name="caixa_alpendre" type="RigidBody3D" parent="objetos"]
 transform = Transform3D(0.825336, 0, 0.564642, 0, 1, 0, -0.564642, 0, 0.825336, -2.7, 0.45, -9.9)
+collision_layer = 2
+collision_mask = 2
+mass = 2.5
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="caixa_alpendre_malha" parent="objetos/caixa_alpendre" instance=ExtResource("ph_cardboard_box_01")]
+
+[node name="caixa_alpendre_colisao" type="CollisionShape3D" parent="objetos/caixa_alpendre"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.19, 0)
+shape = SubResource("bs_caixa_alpendre")
 
 [node name="fogueira" parent="objetos" instance=ExtResource("ph_stone_fire_pit")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0.05, -11.5)
@@ -1340,8 +1385,19 @@ transform = Transform3D(0.696707, 0, 0.717356, 0, 1, 0, -0.717356, 0, 0.696707, 
 [node name="tronco_caido" parent="objetos" instance=ExtResource("ph_dead_tree_trunk_02")]
 transform = Transform3D(0.362358, 0, 0.932039, 0, 1, 0, -0.932039, 0, 0.362358, -11.5, 0.35, 4)
 
-[node name="barril" parent="objetos" instance=ExtResource("ph_Barrel_02")]
+[node name="barril" type="RigidBody3D" parent="objetos"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.6, 0, 5.4)
+collision_layer = 2
+collision_mask = 2
+mass = 6.0
+linear_damp = 2.0
+angular_damp = 3.0
+
+[node name="barril_malha" parent="objetos/barril" instance=ExtResource("ph_Barrel_02")]
+
+[node name="barril_colisao" type="CollisionShape3D" parent="objetos/barril"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.46, 0)
+shape = SubResource("bs_barril")
 
 [node name="floreira_2" parent="objetos" instance=ExtResource("ph_planter_box_02")]
 transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -10.6, 0, -2)

@@ -724,8 +724,7 @@ def _patio(saida, s, d, ocup):
                    d.uniform(0, math.tau), d.uniform(1.0, 2.0), tipo="chao")
     _espalhar_chao(saida, s, d, ocup, papeis=10, bolas=6, lixo=5, margem=1.0)
     x, z = s["x1"] - 3.0, s["z1"] - 4.2
-    saida.props.append(_modelo(s, "baseball_bat", x, z, 0.7, "taco", dy=0.03,
-                               fisico=False))
+    saida.props.append(_modelo(s, "baseball_bat", x, z, 0.7, "taco", dy=0.03))
     _bandeirinhas(saida, d)
 
 
@@ -1008,13 +1007,12 @@ def _servico(saida, s, d, ocup):
             incl = -0.25    # encostada na parede
         saida.props.append(_modelo(s, nome, x, z, GIRO[lado] + d.uniform(-0.6, 0.6),
                                    "zeladoria_%d" % k, incl=incl,
-                                   dy=0.05 if nome == "wooden_broom" else 0.0,
-                                   fisico=False if nome in ("wooden_broom", "plunger") else None))
+                                   dy=0.05 if nome == "wooden_broom" else 0.0))
     if s["ident"] == "deposito":
         b = P.BURACO_ENTRADA
         # a picareta que cavou o rombo, encostada do lado dele
         saida.props.append(_modelo(s, "picke_dirty_01", b["x"] + 1.6, b["z"] - 0.3, 0.2,
-                                   "picareta", dy=0.32, incl=0.32, fisico=False))
+                                   "picareta", dy=0.32, incl=0.32))
         saida.quad("chao", "barro", (b["x"], P.cota() + 0.01, b["z"] - 1.6), "chao", 0.0, 2.8,
                    tipo="chao", tom=1.0)
         saida.quad("chao", "barro", (b["x"] - 1.6, P.cota() + 0.01, b["z"] - 3.2), "chao", 1.3, 2.0,
