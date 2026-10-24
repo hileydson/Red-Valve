@@ -1,6 +1,7 @@
-[gd_scene load_steps=18 format=3]
+[gd_scene load_steps=19 format=3]
 
 [ext_resource type="PackedScene" path="res://assets/3d_model/stages/hospital/hospital_exterior.gltf" id="e0"]
+[ext_resource type="PackedScene" path="res://scenes/stages/hospital/hospital_exterior_detalhes.tscn" id="e1"]
 
 [sub_resource type="BoxShape3D" id="f0"]
 size = Vector3(56.0000, 6.0000, 68.0000)
@@ -56,6 +57,8 @@ size = Vector3(21.0000, 5.0000, 20.0000)
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 13.00000, 0.60000, -34.20000)
 
 [node name="estrutura" parent="predio" instance=ExtResource("e0")]
+
+[node name="detalhes" parent="." instance=ExtResource("e1")]
 
 [node name="colisao" type="StaticBody3D" parent="predio"]
 collision_layer = 2

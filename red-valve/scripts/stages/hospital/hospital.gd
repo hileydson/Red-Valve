@@ -37,12 +37,26 @@ func _ready() -> void:
 
 	_conferir_colisao()
 	_preparar_lampadas()
+	_preparar_cameras()
 
 	# save_game() toma o caminho da cena atual como checkpoint, igual a' casa do
 	# Jimmy e a' igreja.
 	SaveManager.save_game()
 
 	GlobalUtils.mostrar_objetivo(tr("OBJ_HOSP_EXPLORAR"))
+
+
+## A lente e' exclusiva desta instancia do player; o FOV continua sob controle
+## do script de movimento/mira para nao alterar a jogabilidade.
+func _preparar_cameras() -> void:
+	for caminho in ["Player/Camera3D", "Player/SpringArm3D/camera_third_person"]:
+		var camera_local := get_node_or_null(caminho) as Camera3D
+		if camera_local == null:
+			continue
+		var lente := CameraAttributesPractical.new()
+		lente.exposure_multiplier = 0.96
+		camera_local.attributes = lente
+		camera_local.far = 115.0
 
 
 ## Varre a cena atras de corpo estatico fora da layer do chao. Barato, roda uma

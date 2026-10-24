@@ -1,4 +1,4 @@
-[gd_scene load_steps=311 format=3]
+[gd_scene load_steps=313 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="e0"]
 [ext_resource type="PackedScene" path="res://scenes/configs/pause.tscn" id="e1"]
@@ -96,6 +96,8 @@
 [ext_resource type="PackedScene" path="res://assets/3d_model/player/the_negotiator_V1/cartridge/scene.gltf" id="e93"]
 [ext_resource type="PackedScene" path="res://assets/3d_model/player/the_negotiator_V3/the_negotiator_V3.glb" id="e94"]
 [ext_resource type="PackedScene" path="res://assets/3d_model/player/the_negotiator_V3/cartridge/the_negotiator_V3_bullet_x2.glb" id="e95"]
+[ext_resource type="PackedScene" path="res://scenes/stages/hospital/hospital_detalhes.tscn" id="e96"]
+[ext_resource type="Texture2D" path="res://assets/3d_model/stages/hospital/textures/lente_hospital.png" id="e97"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ceu_mat"]
 sky_top_color = Color(0.035, 0.04, 0.06, 1)
@@ -114,32 +116,32 @@ background_mode = 2
 sky = SubResource("ceu")
 background_energy_multiplier = 0.5
 ambient_light_source = 3
-ambient_light_color = Color(0.20, 0.23, 0.29, 1)
-ambient_light_sky_contribution = 0.25
-ambient_light_energy = 1.90
+ambient_light_color = Color(0.16, 0.20, 0.23, 1)
+ambient_light_sky_contribution = 0.22
+ambient_light_energy = 1.65
 reflected_light_source = 2
 tonemap_mode = 3
-tonemap_exposure = 1.0
+tonemap_exposure = 0.98
 tonemap_white = 7.5
 glow_enabled = true
-glow_intensity = 0.45
-glow_strength = 1.05
-glow_bloom = 0.16
+glow_intensity = 0.34
+glow_strength = 0.94
+glow_bloom = 0.10
 glow_blend_mode = 1
 glow_hdr_threshold = 1.10
 fog_enabled = true
 fog_mode = 0
-fog_light_color = Color(0.13, 0.15, 0.19, 1)
-fog_light_energy = 0.8
-fog_density = 0.016
+fog_light_color = Color(0.09, 0.14, 0.15, 1)
+fog_light_energy = 0.65
+fog_density = 0.018
 fog_aerial_perspective = 0.1
 fog_sky_affect = 0.15
 fog_height = -2.0
 fog_height_density = 0.06
 adjustment_enabled = true
 adjustment_brightness = 1.0
-adjustment_contrast = 1.12
-adjustment_saturation = 0.80
+adjustment_contrast = 1.14
+adjustment_saturation = 0.76
 
 [sub_resource type="StandardMaterial3D" id="cone_mat_0"]
 transparency = 1
@@ -937,6 +939,20 @@ script = ExtResource("e4")
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("ambiente")
 
+[node name="LenteHospital" type="CanvasLayer" parent="."]
+layer = -1
+
+[node name="Vinheta" type="TextureRect" parent="LenteHospital"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("e97")
+expand_mode = 1
+stretch_mode = 0
+
 [node name="Pause" parent="." instance=ExtResource("e1")]
 
 [node name="fade" parent="." instance=ExtResource("e2")]
@@ -947,6 +963,8 @@ environment = SubResource("ambiente")
 transform = Transform3D(0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 6.00000, 1.05000, 34.20000)
 
 [node name="estrutura" parent="." instance=ExtResource("e7")]
+
+[node name="detalhes" parent="." instance=ExtResource("e96")]
 
 [node name="colisao" type="StaticBody3D" parent="."]
 collision_layer = 2
