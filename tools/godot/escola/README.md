@@ -332,6 +332,126 @@ O porão não leva pichação nenhuma — quem pixa quer plateia, e o túnel foi
   cena, não o buraco. Os pontos de chegada são `Marker3D` da cena gerada, nunca
   coordenada escrita no `.gd`.
 
+## A camada de vida: escrita, papel, lixo, agua
+
+Por cima da planta e da mobilia vem `detalhes.py`, que espalha o que faz o
+lugar parecer escola — e abandonada. Nada dele declara `bloqueia`: ou e' chato
+(decalque no chao, o jogador pisa por cima), ou e' pequeno e solto (lata,
+garrafa: corpo fisico que o pe' empurra), ou mora na parede. O navmesh nao
+muda por causa dele.
+
+| O que | Como chega na cena |
+| :--- | :--- |
+| lousa escrita, placa de porta, SAIDA, sinalizacao, aviso do mural, rabisco | `Label3D` com a CHAVE do CSV no `text` |
+| cartaz didatico, desenho de crianca, folha de caderno, prova, jornal, foto de desaparecido | quad com as texturas de `texturas.py` |
+| poca, caco de vidro, folha seca, barro, pegada, teia, infiltracao, forro furado | quad (chao, parede ou teto) |
+| bolinha de papel | `SphereMesh` de 6 lados |
+| lata, garrafa, galao, maco de cigarro | modelo do Poly Haven com corpo fisico |
+| ventilador de teto (tres ainda giram, pelo `escola.gd`) | `ceiling_fan`, grupo `ventilador` |
+| bandeirinhas da festa junina no patio, um cordao arrebentado no chao | duas `MultiMesh` |
+
+O que conta historia sem uma palavra: a picareta encostada no rombo do
+deposito, a trilha de pezinhos de barro que sai da grade e entra nele, a seta
+de giz pra baixo, as maos na parede do corredor sul, a lousa da 104 com "Eu
+nao vou descer ao porao" escrito sete vezes, e o brilho alaranjado que sobe de
+dentro de cada buraco (`luzes.luzes_dos_buracos`).
+
+### Os textos: `textos.py`
+
+Toda palavra da escola mora la', com o ingles do lado. `textos.sincronizar()`
+(chamado pelo gerador) escreve no `assets/textos/red_valve_textos_gerais.csv`:
+atualiza a chave que ja' existe NO LUGAR e enfia a nova logo depois do bloco
+`ESC_`, nunca no fim do arquivo — o CSV e' editado por outras frentes ao mesmo
+tempo. `\n` vira quebra de linha (o .import tem `unescape_translations`).
+
+As fontes sao do Google Fonts (`assets/fonts/`, licencas ao lado): Caveat (giz),
+Oswald (placa), Special Elite (maquina de escrever), Permanent Marker e Rock
+Salt (rabisco).
+
+### As texturas proprias: `texturas.py`
+
+Quatro atlas desenhados em Python (`assets/images/textures/escola/`), com
+semente fixa. **Nenhuma palavra na textura**: o papel so' tem garrancho que
+parece letra, e a faixa do titulo do cartaz nasce vazia — quem escreve e' o
+`Label3D`. Letra solta e numero (alfabeto, tabuada) podem, nao tem idioma.
+
+Desenhar com `ImageDraw` numa imagem RGBA SUBSTITUI o alfa em vez de misturar:
+a mancha de 20 % virava uma bola marrom solida. Por isso o papel e' desenhado
+em RGB e o recorte so' entra no fim (`_fechar`).
+
+## A luz, a lente e os 32 degraus
+
+**O filtro PS1 do jogador** (`shader_ps1_ps2_graphics`, CanvasLayer 1 dentro do
+`player.tscn`) quantiza a tela em 32 degraus por canal. Tudo abaixo de ~8/255
+vira PRETO PURO. Medido no harness: a mediana da imagem da escola era 9/255 em
+qualquer vista — o primeiro degrau — e por isso o predio inteiro era um breu
+onde nenhum detalhe existia. Esse filtro e' do jogo todo e nao foi mexido; quem
+resolve e' a escola:
+
+- `ambient_light_source = 2` (COR). O 3 e' CEU, e o ceu noturno quase preto
+  anulava qualquer `ambient_light_energy`;
+- `tonemap_exposure = 1.6` (escola) e `1.8` (porao);
+- a **lente** (`shaders/post_process/escola_lente.gdshader`, CanvasLayer -1,
+  por baixo do HUD) tem um `gama` < 1 que levanta o escuro muito mais que o
+  claro, e tira a forma das coisas do primeiro degrau sem lavar as lampadas.
+
+A lente tambem faz grao (mais forte no escuro), vinheta que esfria o canto,
+aberracao cromatica na borda, grade de cor (sombra verde-azulada, luz de
+fluorescente velha), uma respiracao lenta de exposicao e, rara, uma faixa de
+interferencia. Os numeros sao por cena: `LENTE` em `gerar_cena_escola.py` e
+`LENTE_PORAO` em `gerar_cena_porao.py` (o porao levanta MENOS — la' quem tira
+a forma do escuro e' a lanterna, e sem ela o tunel continua preto).
+
+O barril da lente esta' em 0: com ele a imagem era reamostrada e as colunas de
+~1,9 px do filtro PS1 viravam listras. E nada de `filter_linear_mipmap` no
+`hint_screen_texture` — so' o nivel 0 e' lido.
+
+Luz que entrou nesta passada:
+
+- **luar nas salas** (`luzes_de_luar_salas`): um spot com sombra por fachada
+  de comodo, de fora, desenhando no chao e nas carteiras o retangulo de cada
+  janela. E' o que faz a sala apagada ter forma. Eles levaram o setor da
+  estrutura de 20 m para 8 m (o limite de 8 luzes por malha);
+- **feixes de luar** em geometria (`shaders/environment/feixe_janela.gdshader`):
+  uma BoxMesh CISALHADA pelo transform vira o prisma que a janela recorta;
+- os **cones das luminarias** ganharam shader proprio
+  (`shaders/environment/cone_luz.gdshader`): o material chapado era um
+  triangulo de borda dura, e a curva da lente o virava cunha cinza;
+- **SAIDA** acesa (verde, na bateria) sobre a porta principal e o portao;
+- **nevoa escura**: o fundo do corredor some no preto, nao no cinza.
+
+## Som
+
+`assets/sounds/escola/` (CC0, OpenGameArt — creditos em `CREDITOS.txt`; o
+Pixabay e o BigSoundBank recusaram download automatizado): o zumbido das
+fluorescentes que piscam (o `escola.gd` liga o volume ao piscar), goteira onde
+ha' poca, vento nas janelas quebradas, a chuva do patio, o relogio da 102 e
+uma atmosfera de fundo. Os dois sons reaproveitados de outras cenas (chuva e
+relogio) nao tem laco no .import, entao o laco e' feito no `escola.gd` (grupo
+`som_em_laco`).
+
+## Modelos leves (`<nome>_leve`)
+
+`mobilia.caminho()` e `mobilia.aabb()` usam `polyhaven/<nome>_leve/` quando
+ela existe. Sao decimacoes feitas no Blender (Dissolve + Collapse em
+superficie dura, so' Collapse no organico), conferindo a caixa delimitadora
+contra o original: carteira, cadeira, as moitas e a urtiga do patio,
+ventilador, extintor, gaveteiro, luminaria de mesa, projetor, enciclopedia,
+bola. A troca e' so' aqui: hospital e as outras cenas continuam nos originais.
+
+## Fotografar sem jogar
+
+```bash
+Godot_v4.6.1 --path red-valve --resolution 1280x720 res://tools/escola/fotos.tscn
+```
+
+Tira ~20 fotos de pontos fixos (e de perto: lousa, mural, buraco, SAIDA) com o
+FPS medio de 2 s de cada uma. Variaveis: `ESCOLA_FOTOS` (pasta),
+`ESCOLA_FOTOS_SO="3,5"`, `ESCOLA_CENA=porao`, `ESCOLA_LANTERNA=1`,
+`ESCOLA_IDIOMA=pt`, `ESCOLA_JOGADOR=1` (pela camera do jogador),
+`ESCOLA_ENV="tonemap_exposure=1.4"` e `ESCOLA_LENTE="gama=0.6"` (ajuste sem
+regerar), `ESCOLA_ESCONDER="detalhes,lente"` (mede o custo de um no').
+
 ## Onde mexer em cada coisa
 
 | Arquivo | Assunto |
@@ -342,6 +462,9 @@ O porão não leva pichação nenhuma — quem pixa quer plateia, e o túnel foi
 | `materiais.py` | textura e cor: interior, porão e fachada |
 | `mobilia.py` | o que vai em cada sala, a quadra e os bancos, o entulho do porão |
 | `pichacao.py` | onde nasce cada rabisco |
+| `detalhes.py` | a camada de vida: escrita, papel, lixo, agua, teia, bandeirinha |
+| `textos.py` | toda palavra da escola (PT + EN) e a sincronia com o CSV |
+| `texturas.py` | os atlas proprios: papel, cartaz, marca, chao, bandeira |
 | `navmesh.py` | malha de navegação + conferidor da planta + o teste da grade |
 | `comum.py` | setor de malha, Transform3D, juntador de peças, escritor de .tscn |
 | `gerar_cena_escola.py` | monta o `.tscn` do interior |

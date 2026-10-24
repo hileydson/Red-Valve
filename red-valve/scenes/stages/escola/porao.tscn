@@ -1,4 +1,4 @@
-[gd_scene load_steps=428 format=3]
+[gd_scene load_steps=441 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="e0"]
 [ext_resource type="PackedScene" path="res://scenes/configs/pause.tscn" id="e1"]
@@ -25,6 +25,9 @@
 [ext_resource type="PackedScene" path="res://assets/3d_model/stages/escola/pecas_porao/bulbo_5cc96b1375.gltf" id="e22"]
 [ext_resource type="PackedScene" path="res://assets/3d_model/stages/escola/pecas_porao/bulbo_54472a2b3a.gltf" id="e23"]
 [ext_resource type="Texture2D" path="res://assets/images/textures/pichacao/pichacao_parede.png" id="e24"]
+[ext_resource type="Shader" path="res://shaders/post_process/escola_lente.gdshader" id="e25"]
+[ext_resource type="AudioStream" path="res://assets/sounds/escola/goteira_porao.ogg" id="e26"]
+[ext_resource type="AudioStream" path="res://assets/sounds/escola/atmosfera_fantasma.ogg" id="e27"]
 
 [sub_resource type="Environment" id="ambiente"]
 background_mode = 0
@@ -34,7 +37,7 @@ ambient_light_color = Color(0.22, 0.17, 0.12, 1)
 ambient_light_energy = 0.42
 reflected_light_source = 0
 tonemap_mode = 3
-tonemap_exposure = 1.0
+tonemap_exposure = 1.8
 tonemap_white = 6.0
 glow_enabled = true
 glow_intensity = 0.55
@@ -1227,8 +1230,8 @@ specular_mode = 2
 albedo_color = Color(0.550, 0.550, 0.550, 1)
 albedo_texture = ExtResource("e24")
 texture_repeat = false
-uv1_scale = Vector3(0.125000, 0.205128, 1)
-uv1_offset = Vector3(0.001953, 0.001603, 0)
+uv1_scale = Vector3(0.125000, 0.140351, 1)
+uv1_offset = Vector3(0.128906, 0.001096, 0)
 distance_fade_mode = 1
 distance_fade_min_distance = 34.0
 distance_fade_max_distance = 24.0
@@ -1247,15 +1250,15 @@ specular_mode = 2
 albedo_color = Color(0.550, 0.550, 0.550, 1)
 albedo_texture = ExtResource("e24")
 texture_repeat = false
-uv1_scale = Vector3(0.250000, 0.205128, 1)
-uv1_offset = Vector3(0.255859, 0.001603, 0)
+uv1_scale = Vector3(0.187500, 0.105263, 1)
+uv1_offset = Vector3(0.699219, 0.248904, 0)
 distance_fade_mode = 1
 distance_fade_min_distance = 34.0
 distance_fade_max_distance = 24.0
 
 [sub_resource type="QuadMesh" id="pich_malha_1"]
 material = SubResource("pich_mat_1")
-size = Vector2(2.10, 2.10)
+size = Vector2(1.80, 1.80)
 
 [sub_resource type="StandardMaterial3D" id="pich_mat_2"]
 transparency = 1
@@ -1267,71 +1270,159 @@ specular_mode = 2
 albedo_color = Color(0.550, 0.550, 0.550, 1)
 albedo_texture = ExtResource("e24")
 texture_repeat = false
-uv1_scale = Vector3(0.125000, 0.205128, 1)
-uv1_offset = Vector3(0.128906, 0.001603, 0)
+uv1_scale = Vector3(0.187500, 0.105263, 1)
+uv1_offset = Vector3(0.509766, 0.248904, 0)
 distance_fade_mode = 1
 distance_fade_min_distance = 34.0
 distance_fade_max_distance = 24.0
 
 [sub_resource type="QuadMesh" id="pich_malha_2"]
 material = SubResource("pich_mat_2")
-size = Vector2(1.10, 2.10)
-
-[sub_resource type="QuadMesh" id="pich_malha_3"]
-material = SubResource("pich_mat_0")
-size = Vector2(1.00, 2.00)
-
-[sub_resource type="QuadMesh" id="pich_malha_4"]
-material = SubResource("pich_mat_1")
-size = Vector2(1.90, 1.90)
-
-[sub_resource type="QuadMesh" id="pich_malha_5"]
-material = SubResource("pich_mat_1")
 size = Vector2(1.70, 1.70)
 
+[sub_resource type="StandardMaterial3D" id="pich_mat_3"]
+transparency = 1
+blend_mode = 0
+depth_draw_mode = 2
+cull_mode = 2
+shading_mode = 1
+specular_mode = 2
+albedo_color = Color(0.550, 0.550, 0.550, 1)
+albedo_texture = ExtResource("e24")
+texture_repeat = false
+uv1_scale = Vector3(0.250000, 0.140351, 1)
+uv1_offset = Vector3(0.382812, 0.001096, 0)
+distance_fade_mode = 1
+distance_fade_min_distance = 34.0
+distance_fade_max_distance = 24.0
+
+[sub_resource type="QuadMesh" id="pich_malha_3"]
+material = SubResource("pich_mat_3")
+size = Vector2(1.80, 1.80)
+
+[sub_resource type="StandardMaterial3D" id="pich_mat_4"]
+transparency = 1
+blend_mode = 0
+depth_draw_mode = 2
+cull_mode = 2
+shading_mode = 1
+specular_mode = 2
+albedo_color = Color(0.550, 0.550, 0.550, 1)
+albedo_texture = ExtResource("e24")
+texture_repeat = false
+uv1_scale = Vector3(0.125000, 0.140351, 1)
+uv1_offset = Vector3(0.255859, 0.001096, 0)
+distance_fade_mode = 1
+distance_fade_min_distance = 34.0
+distance_fade_max_distance = 24.0
+
+[sub_resource type="QuadMesh" id="pich_malha_4"]
+material = SubResource("pich_mat_4")
+size = Vector2(1.00, 2.00)
+
+[sub_resource type="StandardMaterial3D" id="pich_mat_5"]
+transparency = 1
+blend_mode = 0
+depth_draw_mode = 2
+cull_mode = 2
+shading_mode = 1
+specular_mode = 2
+albedo_color = Color(0.550, 0.550, 0.550, 1)
+albedo_texture = ExtResource("e24")
+texture_repeat = false
+uv1_scale = Vector3(0.125000, 0.140351, 1)
+uv1_offset = Vector3(0.001953, 0.001096, 0)
+distance_fade_mode = 1
+distance_fade_min_distance = 34.0
+distance_fade_max_distance = 24.0
+
+[sub_resource type="QuadMesh" id="pich_malha_5"]
+material = SubResource("pich_mat_5")
+size = Vector2(1.10, 2.10)
+
 [sub_resource type="QuadMesh" id="pich_malha_6"]
-material = SubResource("pich_mat_1")
-size = Vector2(1.30, 1.30)
+material = SubResource("pich_mat_4")
+size = Vector2(1.10, 2.10)
 
 [sub_resource type="QuadMesh" id="pich_malha_7"]
-material = SubResource("pich_mat_0")
-size = Vector2(1.50, 3.10)
+material = SubResource("pich_mat_2")
+size = Vector2(1.40, 1.40)
 
 [sub_resource type="QuadMesh" id="pich_malha_8"]
-material = SubResource("pich_mat_2")
-size = Vector2(1.80, 3.50)
+material = SubResource("pich_mat_1")
+size = Vector2(1.40, 1.40)
 
 [sub_resource type="QuadMesh" id="pich_malha_9"]
 material = SubResource("pich_mat_2")
-size = Vector2(2.00, 3.90)
+size = Vector2(1.00, 1.00)
 
 [sub_resource type="QuadMesh" id="pich_malha_10"]
-material = SubResource("pich_mat_0")
-size = Vector2(0.90, 1.80)
+material = SubResource("pich_mat_5")
+size = Vector2(1.60, 3.20)
 
 [sub_resource type="QuadMesh" id="pich_malha_11"]
-material = SubResource("pich_mat_0")
-size = Vector2(1.80, 3.60)
+material = SubResource("pich_mat_3")
+size = Vector2(2.10, 2.10)
 
 [sub_resource type="QuadMesh" id="pich_malha_12"]
 material = SubResource("pich_mat_0")
-size = Vector2(1.30, 2.60)
+size = Vector2(1.80, 3.50)
 
 [sub_resource type="QuadMesh" id="pich_malha_13"]
 material = SubResource("pich_mat_1")
-size = Vector2(1.60, 1.60)
+size = Vector2(1.50, 1.50)
 
 [sub_resource type="QuadMesh" id="pich_malha_14"]
-material = SubResource("pich_mat_1")
-size = Vector2(1.80, 1.80)
+material = SubResource("pich_mat_2")
+size = Vector2(1.30, 1.30)
 
 [sub_resource type="QuadMesh" id="pich_malha_15"]
-material = SubResource("pich_mat_2")
-size = Vector2(1.00, 2.10)
+material = SubResource("pich_mat_4")
+size = Vector2(0.90, 1.80)
 
 [sub_resource type="QuadMesh" id="pich_malha_16"]
+material = SubResource("pich_mat_5")
+size = Vector2(1.90, 3.80)
+
+[sub_resource type="QuadMesh" id="pich_malha_17"]
+material = SubResource("pich_mat_4")
+size = Vector2(1.30, 2.60)
+
+[sub_resource type="QuadMesh" id="pich_malha_18"]
+material = SubResource("pich_mat_1")
+size = Vector2(2.00, 2.00)
+
+[sub_resource type="QuadMesh" id="pich_malha_19"]
+material = SubResource("pich_mat_1")
+size = Vector2(1.30, 1.30)
+
+[sub_resource type="QuadMesh" id="pich_malha_20"]
 material = SubResource("pich_mat_0")
 size = Vector2(1.00, 2.10)
+
+[sub_resource type="QuadMesh" id="pich_malha_21"]
+material = SubResource("pich_mat_5")
+size = Vector2(1.00, 2.10)
+
+[sub_resource type="QuadMesh" id="pich_malha_22"]
+material = SubResource("pich_mat_3")
+size = Vector2(1.70, 1.70)
+
+[sub_resource type="ShaderMaterial" id="lente_mat"]
+shader = ExtResource("e25")
+shader_parameter/barril = 0.0
+shader_parameter/aberracao = 1.8
+shader_parameter/exposicao = 1.0
+shader_parameter/contraste = 1.10
+shader_parameter/saturacao = 0.70
+shader_parameter/gama = 0.86
+shader_parameter/forca_tom = 0.30
+shader_parameter/tom_sombra = Color(0.16, 0.12, 0.08, 1)
+shader_parameter/grao = 0.085
+shader_parameter/vinheta = 1.0
+shader_parameter/vinheta_raio = 0.52
+shader_parameter/respiracao = 0.05
+shader_parameter/interferencia = 0.5
 
 [node name="porao" type="Node3D"]
 script = ExtResource("e4")
@@ -4483,7 +4574,7 @@ transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0
 [node name="bulbo_0" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 10.58581, 2.05000, 8.45858)
 light_color = Color(1.0000, 0.7000, 0.3600, 1.0000)
-light_energy = 1.600
+light_energy = 1.100
 light_volumetric_fog_energy = 1.80
 shadow_enabled = false
 omni_range = 5.00
@@ -4495,7 +4586,7 @@ distance_fade_length = 8.0
 [node name="bulbo_1" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 19.50609, 2.05000, 10.40243)
 light_color = Color(1.0000, 0.7000, 0.3600, 1.0000)
-light_energy = 1.300
+light_energy = 0.900
 light_volumetric_fog_energy = 1.80
 shadow_enabled = false
 omni_range = 5.00
@@ -4508,7 +4599,7 @@ metadata/piscar = "nervoso"
 [node name="bulbo_3" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 38.14606, 2.05000, 24.44382)
 light_color = Color(1.0000, 0.7000, 0.3600, 1.0000)
-light_energy = 1.600
+light_energy = 1.100
 light_volumetric_fog_energy = 1.80
 shadow_enabled = false
 omni_range = 5.00
@@ -4520,7 +4611,7 @@ distance_fade_length = 8.0
 [node name="bulbo_5" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 61.62678, 2.05000, 16.18661)
 light_color = Color(1.0000, 0.7000, 0.3600, 1.0000)
-light_energy = 2.100
+light_energy = 1.500
 light_volumetric_fog_energy = 1.80
 shadow_enabled = false
 omni_range = 5.00
@@ -4533,7 +4624,7 @@ metadata/piscar = "quebrado"
 [node name="bulbo_6" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 74.27201, 2.05000, 18.68002)
 light_color = Color(1.0000, 0.7000, 0.3600, 1.0000)
-light_energy = 1.600
+light_energy = 1.100
 light_volumetric_fog_energy = 1.80
 shadow_enabled = false
 omni_range = 5.00
@@ -4545,7 +4636,7 @@ distance_fade_length = 8.0
 [node name="bulbo_8" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 66.18116, 2.05000, 33.15157)
 light_color = Color(1.0000, 0.7000, 0.3600, 1.0000)
-light_energy = 1.300
+light_energy = 0.900
 light_volumetric_fog_energy = 1.80
 shadow_enabled = false
 omni_range = 5.00
@@ -4558,7 +4649,7 @@ metadata/piscar = "nervoso"
 [node name="bulbo_9" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 48.36952, 2.05000, 37.05219)
 light_color = Color(1.0000, 0.7000, 0.3600, 1.0000)
-light_energy = 1.600
+light_energy = 1.100
 light_volumetric_fog_energy = 1.80
 shadow_enabled = false
 omni_range = 5.00
@@ -4570,7 +4661,7 @@ distance_fade_length = 8.0
 [node name="bulbo_11" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 28.00617, 4.65000, 51.99520)
 light_color = Color(1.0000, 0.7000, 0.3600, 1.0000)
-light_energy = 1.600
+light_energy = 1.100
 light_volumetric_fog_energy = 1.80
 shadow_enabled = false
 omni_range = 5.00
@@ -4582,7 +4673,7 @@ distance_fade_length = 8.0
 [node name="bulbo_12" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 17.00505, 2.05000, 60.51261)
 light_color = Color(1.0000, 0.7000, 0.3600, 1.0000)
-light_energy = 2.100
+light_energy = 1.500
 light_volumetric_fog_energy = 1.80
 shadow_enabled = false
 omni_range = 5.00
@@ -4595,7 +4686,7 @@ metadata/piscar = "quebrado"
 [node name="bulbo_14" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 36.69600, 2.05000, 71.61486)
 light_color = Color(1.0000, 0.7000, 0.3600, 1.0000)
-light_energy = 1.300
+light_energy = 0.900
 light_volumetric_fog_energy = 1.80
 shadow_enabled = false
 omni_range = 5.00
@@ -4608,7 +4699,7 @@ metadata/piscar = "nervoso"
 [node name="bulbo_15" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 52.46984, 2.05000, 68.51005)
 light_color = Color(1.0000, 0.7000, 0.3600, 1.0000)
-light_energy = 1.600
+light_energy = 1.100
 light_volumetric_fog_energy = 1.80
 shadow_enabled = false
 omni_range = 5.00
@@ -4620,7 +4711,7 @@ distance_fade_length = 8.0
 [node name="bulbo_17" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 73.87787, 2.05000, 71.93893)
 light_color = Color(1.0000, 0.7000, 0.3600, 1.0000)
-light_energy = 1.600
+light_energy = 1.100
 light_volumetric_fog_energy = 1.80
 shadow_enabled = false
 omni_range = 5.00
@@ -4632,7 +4723,7 @@ distance_fade_length = 8.0
 [node name="bulbo_18" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 31.68000, 4.65000, 42.30000)
 light_color = Color(1.0000, 0.7000, 0.3600, 1.0000)
-light_energy = 1.600
+light_energy = 1.100
 light_volumetric_fog_energy = 1.80
 shadow_enabled = false
 omni_range = 5.00
@@ -4644,7 +4735,7 @@ distance_fade_length = 8.0
 [node name="bulbo_20" type="OmniLight3D" parent="luzes"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 35.52000, 4.65000, 48.96000)
 light_color = Color(1.0000, 0.7000, 0.3600, 1.0000)
-light_energy = 1.300
+light_energy = 0.900
 light_volumetric_fog_energy = 1.80
 shadow_enabled = false
 omni_range = 5.00
@@ -4698,48 +4789,48 @@ mesh = SubResource("pich_malha_0")
 cast_shadow = 0
 
 [node name="rab_1" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 5.50000, 1.32298, 9.95000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 5.50000, 1.36200, 9.95000)
 mesh = SubResource("pich_malha_1")
 cast_shadow = 0
 
 [node name="rab_2" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 9.50000, 1.32583, 9.95000)
-mesh = SubResource("pich_malha_1")
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 9.50000, 1.37178, 9.95000)
+mesh = SubResource("pich_malha_2")
 cast_shadow = 0
 
 [node name="rab_3" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 12.05000, 1.23473, 45.50000)
-mesh = SubResource("pich_malha_2")
+transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 12.05000, 1.14754, 45.50000)
+mesh = SubResource("pich_malha_1")
 cast_shadow = 0
 
 [node name="rab_4" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 14.95000, 1.35267, 44.50000)
-mesh = SubResource("pich_malha_2")
+transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 14.95000, 1.44160, 44.50000)
+mesh = SubResource("pich_malha_3")
 cast_shadow = 0
 
 [node name="rab_5" type="MeshInstance3D" parent="manchas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 15.50000, 1.22731, 7.05000)
-mesh = SubResource("pich_malha_3")
+mesh = SubResource("pich_malha_4")
 cast_shadow = 0
 
 [node name="rab_6" type="MeshInstance3D" parent="manchas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 16.50000, 1.39195, 11.95000)
-mesh = SubResource("pich_malha_0")
+mesh = SubResource("pich_malha_5")
 cast_shadow = 0
 
 [node name="rab_7" type="MeshInstance3D" parent="manchas"]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 18.95000, 1.34427, 61.50000)
-mesh = SubResource("pich_malha_2")
+mesh = SubResource("pich_malha_0")
 cast_shadow = 0
 
 [node name="rab_8" type="MeshInstance3D" parent="manchas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 19.50000, 1.37796, 47.05000)
-mesh = SubResource("pich_malha_0")
+mesh = SubResource("pich_malha_6")
 cast_shadow = 0
 
 [node name="rab_9" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 19.95000, 1.43904, 62.50000)
-mesh = SubResource("pich_malha_4")
+transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 19.95000, 1.63359, 62.50000)
+mesh = SubResource("pich_malha_7")
 cast_shadow = 0
 
 [node name="rab_10" type="MeshInstance3D" parent="manchas"]
@@ -4749,127 +4840,127 @@ cast_shadow = 0
 
 [node name="rab_11" type="MeshInstance3D" parent="manchas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 22.50000, 1.22860, 13.95000)
-mesh = SubResource("pich_malha_0")
+mesh = SubResource("pich_malha_5")
 cast_shadow = 0
 
 [node name="rab_12" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 24.50000, 1.07040, 10.05000)
-mesh = SubResource("pich_malha_5")
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 24.50000, 0.96787, 10.05000)
+mesh = SubResource("pich_malha_8")
 cast_shadow = 0
 
 [node name="rab_13" type="MeshInstance3D" parent="manchas"]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 24.95000, 1.33515, 67.50000)
-mesh = SubResource("pich_malha_2")
+mesh = SubResource("pich_malha_0")
 cast_shadow = 0
 
 [node name="rab_14" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 24.50000, 0.94009, 67.05000)
-mesh = SubResource("pich_malha_6")
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 24.50000, 0.83420, 67.05000)
+mesh = SubResource("pich_malha_9")
 cast_shadow = 0
 
 [node name="rab_15" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 25.05000, 3.09940, 37.50000)
-mesh = SubResource("pich_malha_7")
+transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 25.05000, 3.06978, 37.50000)
+mesh = SubResource("pich_malha_10")
 cast_shadow = 0
 
 [node name="rab_16" type="MeshInstance3D" parent="manchas"]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 27.05000, 1.24035, 19.50000)
-mesh = SubResource("pich_malha_2")
+mesh = SubResource("pich_malha_11")
 cast_shadow = 0
 
 [node name="rab_17" type="MeshInstance3D" parent="manchas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 29.50000, 1.29874, 23.95000)
-mesh = SubResource("pich_malha_0")
+mesh = SubResource("pich_malha_6")
 cast_shadow = 0
 
 [node name="rab_18" type="MeshInstance3D" parent="manchas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 30.50000, 3.07924, 36.05000)
-mesh = SubResource("pich_malha_8")
+mesh = SubResource("pich_malha_12")
 cast_shadow = 0
 
 [node name="rab_19" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 31.50000, 2.72474, 53.95000)
-mesh = SubResource("pich_malha_9")
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 31.50000, 2.95306, 53.95000)
+mesh = SubResource("pich_malha_11")
 cast_shadow = 0
 
 [node name="rab_20" type="MeshInstance3D" parent="manchas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 33.50000, 1.36663, 73.95000)
-mesh = SubResource("pich_malha_0")
+mesh = SubResource("pich_malha_5")
 cast_shadow = 0
 
 [node name="rab_21" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 35.50000, 1.29515, 22.05000)
-mesh = SubResource("pich_malha_2")
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 35.50000, 1.28100, 22.05000)
+mesh = SubResource("pich_malha_13")
 cast_shadow = 0
 
 [node name="rab_22" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 36.50000, 1.13173, 73.95000)
-mesh = SubResource("pich_malha_5")
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 36.50000, 1.00957, 73.95000)
+mesh = SubResource("pich_malha_14")
 cast_shadow = 0
 
 [node name="rab_23" type="MeshInstance3D" parent="manchas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 41.50000, 1.35310, 23.05000)
-mesh = SubResource("pich_malha_2")
+mesh = SubResource("pich_malha_0")
 cast_shadow = 0
 
 [node name="rab_24" type="MeshInstance3D" parent="manchas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 43.50000, 1.34305, 7.05000)
-mesh = SubResource("pich_malha_0")
+mesh = SubResource("pich_malha_6")
 cast_shadow = 0
 
 [node name="rab_25" type="MeshInstance3D" parent="manchas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 46.50000, 1.65887, 52.95000)
-mesh = SubResource("pich_malha_10")
+mesh = SubResource("pich_malha_15")
 cast_shadow = 0
 
 [node name="rab_26" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 47.95000, 2.97956, 41.50000)
-mesh = SubResource("pich_malha_11")
+transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 47.95000, 2.93567, 41.50000)
+mesh = SubResource("pich_malha_16")
 cast_shadow = 0
 
 [node name="rab_27" type="MeshInstance3D" parent="manchas"]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 47.95000, 1.77770, 50.50000)
-mesh = SubResource("pich_malha_12")
+mesh = SubResource("pich_malha_17")
 cast_shadow = 0
 
 [node name="rab_28" type="MeshInstance3D" parent="manchas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 48.50000, 1.30811, 20.05000)
-mesh = SubResource("pich_malha_0")
+mesh = SubResource("pich_malha_6")
 cast_shadow = 0
 
 [node name="rab_29" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 48.50000, 1.33573, 39.95000)
-mesh = SubResource("pich_malha_2")
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 48.50000, 1.35449, 39.95000)
+mesh = SubResource("pich_malha_18")
 cast_shadow = 0
 
 [node name="rab_30" type="MeshInstance3D" parent="manchas"]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 49.05000, 1.39616, 17.50000)
-mesh = SubResource("pich_malha_2")
+mesh = SubResource("pich_malha_0")
 cast_shadow = 0
 
 [node name="rab_31" type="MeshInstance3D" parent="manchas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 51.50000, 1.33372, 67.05000)
-mesh = SubResource("pich_malha_0")
+mesh = SubResource("pich_malha_6")
 cast_shadow = 0
 
 [node name="rab_32" type="MeshInstance3D" parent="manchas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 56.50000, 1.24216, 20.95000)
-mesh = SubResource("pich_malha_0")
-cast_shadow = 0
-
-[node name="rab_33" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 56.50000, 1.47512, 65.05000)
 mesh = SubResource("pich_malha_5")
 cast_shadow = 0
 
+[node name="rab_33" type="MeshInstance3D" parent="manchas"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 56.50000, 1.59043, 65.05000)
+mesh = SubResource("pich_malha_14")
+cast_shadow = 0
+
 [node name="rab_34" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 57.50000, 1.43811, 16.05000)
-mesh = SubResource("pich_malha_13")
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 57.50000, 1.48727, 16.05000)
+mesh = SubResource("pich_malha_19")
 cast_shadow = 0
 
 [node name="rab_35" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 58.50000, 1.51067, 16.05000)
-mesh = SubResource("pich_malha_14")
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 58.50000, 1.72531, 16.05000)
+mesh = SubResource("pich_malha_7")
 cast_shadow = 0
 
 [node name="rab_36" type="MeshInstance3D" parent="manchas"]
@@ -4879,22 +4970,22 @@ cast_shadow = 0
 
 [node name="rab_37" type="MeshInstance3D" parent="manchas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 61.50000, 1.25343, 17.95000)
-mesh = SubResource("pich_malha_0")
+mesh = SubResource("pich_malha_5")
 cast_shadow = 0
 
 [node name="rab_38" type="MeshInstance3D" parent="manchas"]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 61.95000, 1.21317, 35.50000)
-mesh = SubResource("pich_malha_0")
+mesh = SubResource("pich_malha_6")
 cast_shadow = 0
 
 [node name="rab_39" type="MeshInstance3D" parent="manchas"]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 64.95000, 1.30157, 13.50000)
-mesh = SubResource("pich_malha_2")
+mesh = SubResource("pich_malha_0")
 cast_shadow = 0
 
 [node name="rab_40" type="MeshInstance3D" parent="manchas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 65.50000, 1.39611, 34.95000)
-mesh = SubResource("pich_malha_0")
+mesh = SubResource("pich_malha_5")
 cast_shadow = 0
 
 [node name="rab_41" type="MeshInstance3D" parent="manchas"]
@@ -4904,42 +4995,42 @@ cast_shadow = 0
 
 [node name="rab_42" type="MeshInstance3D" parent="manchas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 67.50000, 1.21809, 17.95000)
-mesh = SubResource("pich_malha_15")
+mesh = SubResource("pich_malha_20")
 cast_shadow = 0
 
 [node name="rab_43" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 67.50000, 1.11730, 67.05000)
-mesh = SubResource("pich_malha_14")
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 67.50000, 0.93359, 67.05000)
+mesh = SubResource("pich_malha_7")
 cast_shadow = 0
 
 [node name="rab_44" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 68.05000, 1.35535, 71.50000)
-mesh = SubResource("pich_malha_16")
+transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 68.05000, 1.34785, 71.50000)
+mesh = SubResource("pich_malha_21")
 cast_shadow = 0
 
 [node name="rab_45" type="MeshInstance3D" parent="manchas"]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 69.95000, 1.39463, 52.50000)
-mesh = SubResource("pich_malha_0")
+mesh = SubResource("pich_malha_5")
 cast_shadow = 0
 
 [node name="rab_46" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 70.50000, 1.27198, 72.95000)
-mesh = SubResource("pich_malha_2")
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 70.50000, 1.25358, 72.95000)
+mesh = SubResource("pich_malha_18")
 cast_shadow = 0
 
 [node name="rab_47" type="MeshInstance3D" parent="manchas"]
 transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 72.95000, 1.25998, 32.50000)
-mesh = SubResource("pich_malha_0")
+mesh = SubResource("pich_malha_5")
 cast_shadow = 0
 
 [node name="rab_48" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 76.50000, 1.31495, 30.95000)
-mesh = SubResource("pich_malha_2")
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 76.50000, 1.34420, 30.95000)
+mesh = SubResource("pich_malha_22")
 cast_shadow = 0
 
 [node name="rab_49" type="MeshInstance3D" parent="manchas"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 77.50000, 1.28045, 71.05000)
-mesh = SubResource("pich_malha_2")
+mesh = SubResource("pich_malha_0")
 cast_shadow = 0
 
 [node name="poeira" type="GPUParticles3D" parent="."]
@@ -4954,4 +5045,59 @@ draw_pass_1 = SubResource("poeira_quad")
 [node name="ambiencia" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("e7")
 volume_db = -10.0
+autoplay = true
+
+[node name="lente" type="CanvasLayer" parent="."]
+layer = -1
+
+[node name="tela" type="ColorRect" parent="lente"]
+material = SubResource("lente_mat")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="sons" type="Node3D" parent="."]
+
+[node name="goteira_0" type="AudioStreamPlayer3D" parent="sons"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 28.77469, 1.80000, 19.24306)
+stream = ExtResource("e26")
+volume_db = -8.0
+unit_size = 3.0
+max_distance = 16.0
+max_polyphony = 1
+autoplay = true
+
+[node name="goteira_1" type="AudioStreamPlayer3D" parent="sons"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 77.69525, 1.80000, 27.23812)
+stream = ExtResource("e26")
+volume_db = -8.0
+unit_size = 3.0
+max_distance = 16.0
+max_polyphony = 1
+autoplay = true
+
+[node name="goteira_2" type="AudioStreamPlayer3D" parent="sons"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 42.55766, 1.80000, 40.67738)
+stream = ExtResource("e26")
+volume_db = -8.0
+unit_size = 3.0
+max_distance = 16.0
+max_polyphony = 1
+autoplay = true
+
+[node name="goteira_3" type="AudioStreamPlayer3D" parent="sons"]
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 36.69600, 1.80000, 71.61486)
+stream = ExtResource("e26")
+volume_db = -8.0
+unit_size = 3.0
+max_distance = 16.0
+max_polyphony = 1
+autoplay = true
+
+[node name="atmosfera" type="AudioStreamPlayer" parent="sons"]
+stream = ExtResource("e27")
+volume_db = -17.0
 autoplay = true

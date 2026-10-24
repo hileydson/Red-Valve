@@ -67,15 +67,24 @@ ESTRUTURA = [
     Material("mato", (0.26, 0.31, 0.21), 0.0, 1.0,
              textura="aerial_grass_rock", uv_escala=2.4),
 
-    # --- paredes: embaixo o azulejo (dado), em cima o reboco
-    Material("parede_dado", (0.66, 0.72, 0.68), 0.0, 1.0,
-             textura="interior_tiles", uv_escala=1.6),
+    # --- paredes: embaixo a BARRA, em cima o reboco pintado
+    #
+    # A barra e' tinta a oleo verde ate' 1,30 m — a parede de escola publica
+    # brasileira, lavavel, que leva o encosto de cadeira e a mao suja. A
+    # primeira versao usava azulejo bege em diagonal aqui, e o corredor parecia
+    # cozinha. O `painted_concrete` do Poly Haven ja' vem verde e lascado.
+    Material("parede_dado", (0.92, 1.00, 0.92), 0.0, 0.70,
+             textura="painted_concrete", uv_escala=3.6),
     Material("parede_dado_azul", (0.44, 0.58, 0.66), 0.0, 1.0,
              textura="interior_tiles", uv_escala=1.6),
-    Material("parede_alta", (0.72, 0.71, 0.66), 0.0, 1.0,
-             textura="white_rough_plaster", uv_escala=2.6),
-    Material("parede_alta_suja", (0.60, 0.55, 0.40), 0.0, 1.0,
-             textura="yellow_plaster", uv_escala=2.6),
+    # Reboco pintado de creme. O `white_rough_plaster` de antes era reboco
+    # DESCASCADO em toda a parede: contraste alto repetido a cada 2,6 m, que de
+    # longe virava camuflagem preta e branca. O descascado ficou so' nas alas
+    # podres (`parede_alta_suja`), onde ele conta alguma coisa.
+    Material("parede_alta", (0.88, 0.85, 0.74), 0.0, 0.95,
+             textura="painted_plaster_wall", uv_escala=3.2),
+    Material("parede_alta_suja", (0.74, 0.66, 0.58), 0.0, 0.95,
+             textura="peeling_painted_wall", uv_escala=2.8),
     Material("parede_azulejo", (0.78, 0.84, 0.82), 0.0, 1.0,
              textura="interior_tiles", uv_escala=1.7),
     # A parede vista DO PATIO: sem azulejo, so' reboco batido de chuva.
@@ -142,7 +151,7 @@ MOVEIS = [
     Material("mat_inox", (0.68, 0.70, 0.72), 0.88, 0.34),
     Material("mat_madeira", (0.44, 0.33, 0.21), 0.0, 0.74),
     Material("mat_madeira_clara", (0.60, 0.48, 0.32), 0.0, 0.72),
-    Material("mat_formica", (0.62, 0.58, 0.48), 0.0, 0.58),
+    Material("mat_formica", (0.52, 0.50, 0.43), 0.0, 0.58),
     # Verde de quadro-negro. A escola inteira gira em torno dele: e' a unica
     # coisa que toda sala de aula tem e que nenhum outro comodo tem.
     Material("mat_lousa", (0.07, 0.15, 0.11), 0.05, 0.42),
@@ -157,6 +166,20 @@ MOVEIS = [
              emissivo=(0.05, 0.42, 0.22)),
     Material("mat_rede", (0.58, 0.58, 0.54), 0.0, 0.90, dupla_face=True),
     Material("mat_trave", (0.70, 0.70, 0.66), 0.10, 0.52),
+    # Lombadas de livro. Cor de capa dura velha: nada saturado, que a
+    # biblioteca e' o comodo mais quieto da escola e a cor viva gritaria.
+    Material("mat_livro_1", (0.36, 0.12, 0.10), 0.0, 0.78),
+    Material("mat_livro_2", (0.12, 0.20, 0.30), 0.0, 0.78),
+    Material("mat_livro_3", (0.16, 0.26, 0.16), 0.0, 0.80),
+    Material("mat_livro_4", (0.50, 0.40, 0.22), 0.0, 0.82),
+    Material("mat_livro_5", (0.62, 0.58, 0.50), 0.0, 0.86),
+    Material("mat_livro_6", (0.22, 0.16, 0.24), 0.0, 0.78),
+    # A placa de SAIDA. Verde aceso: e' a unica luz da escola que ninguem
+    # desligou, porque esta' na bateria — e por isso ela e' a mais forte.
+    # Emissao CONTIDA: o texto branco por cima tem de ser mais claro que o
+    # fundo. Com o verde a 0,95 a placa saturava no glow e a palavra sumia.
+    Material("mat_placa_saida", (0.02, 0.20, 0.08), 0.0, 0.40,
+             emissivo=(0.02, 0.30, 0.10)),
 ]
 
 # ==========================================================================

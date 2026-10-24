@@ -464,9 +464,48 @@ def escrever_cena(colisoes, props, plano, lista_luminarias, nav, rabiscos):
          props=[("stream", 'ExtResource("%s")' % id_ambiente),
                 ("volume_db", "-10.0"), ("autoplay", "true")])
 
+    # ---- a lente e o som da agua
+    #
+    # A mesma lente da escola (`gerar_cena_escola._emitir_lente`), com os
+    # numeros do porao: a curva de sombra levanta MENOS (o escuro aqui e' o
+    # assunto, e quem tira a forma dele e' a lanterna), o grao e' mais grosso
+    # e a vinheta fecha mais.
+    import gerar_cena_escola as GE
+    GE._emitir_lente(c, LENTE_PORAO)
+    c.no("sons", tipo="Node3D", pai=".")
+    id_gota = c.externo("AudioStream", GE.SONS["goteira"])
+    for (i, t) in enumerate((0.12, 0.38, 0.55, 0.81)):
+        x, z = L._ponto_no_caminho(t)
+        c.no("goteira_%d" % i, tipo="AudioStreamPlayer3D", pai="sons",
+             props=[("transform", C.transform_pos((x, 1.8, z))),
+                    ("stream", 'ExtResource("%s")' % id_gota),
+                    ("volume_db", "-8.0"), ("unit_size", "3.0"),
+                    ("max_distance", "16.0"), ("max_polyphony", "1"),
+                    ("autoplay", "true")])
+    c.no("atmosfera", tipo="AudioStreamPlayer", pai="sons",
+         props=[("stream", 'ExtResource("%s")'
+                 % c.externo("AudioStream", GE.SONS["fantasma"])),
+                ("volume_db", "-17.0"), ("autoplay", "true")])
     c.gravar(SAIDA_CENA)
     print("  %d nos, %d sub-recursos"
           % (sum(1 for l in c.linhas if l.startswith("[node ")), len(c.sub)))
+
+
+LENTE_PORAO = [
+    ("barril", "0.0"),
+    ("aberracao", "1.8"),
+    ("exposicao", "1.0"),
+    ("contraste", "1.10"),
+    ("saturacao", "0.70"),
+    ("gama", "0.86"),
+    ("forca_tom", "0.30"),
+    ("tom_sombra", "Color(0.16, 0.12, 0.08, 1)"),
+    ("grao", "0.085"),
+    ("vinheta", "1.0"),
+    ("vinheta_raio", "0.52"),
+    ("respiracao", "0.05"),
+    ("interferencia", "0.5"),
+]
 
 
 def _ponto_de_entrada():
@@ -508,7 +547,13 @@ def _ambiente(c):
         "ambient_light_energy = 0.42",
         "reflected_light_source = 0",
         "tonemap_mode = 3",
-        "tonemap_exposure = 1.0",
+        # 1,8 com a lente da escola por cima: o ambiente continua abaixo do
+        # primeiro degrau do filtro PS1 do jogador (o tunel segue preto sem
+        # lanterna, que e' a regra do porao), mas o facho da lanterna passa a
+        # mostrar parede, escora e chao. Com 1,0 nem a lanterna tirava o
+        # tunel do preto. Medido no harness `tools/escola/fotos.tscn`
+        # (ESCOLA_CENA=porao ESCOLA_LANTERNA=1).
+        "tonemap_exposure = 1.8",
         "tonemap_white = 6.0",
         "glow_enabled = true",
         "glow_intensity = 0.55",

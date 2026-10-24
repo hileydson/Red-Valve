@@ -72,6 +72,27 @@ def transform_pos(pos, giro_y=0.0, escala=1.0):
     return _matriz((c, 0.0, -s), (0.0, escala, 0.0), (s, 0.0, c), pos)
 
 
+def transform_geral(pos, giro_y=0.0, incl_x=0.0, incl_z=0.0, escala=1.0):
+    """Giro em Y, depois inclinacao em X e em Z locais (Ry * Rx * Rz).
+
+    Para o que nao fica em pe': cadeira tombada, vassoura encostada, quadro
+    torto, placa de forro caida. Com as duas inclinacoes zeradas da'
+    exatamente o mesmo que `transform_pos`.
+    """
+    def mul(a, b):
+        return [[sum(a[i][k] * b[k][j] for k in range(3)) for j in range(3)]
+                for i in range(3)]
+    cy, sy = math.cos(giro_y), math.sin(giro_y)
+    cx, sx = math.cos(incl_x), math.sin(incl_x)
+    cz, sz = math.cos(incl_z), math.sin(incl_z)
+    ry = [[cy, 0.0, sy], [0.0, 1.0, 0.0], [-sy, 0.0, cy]]
+    rx = [[1.0, 0.0, 0.0], [0.0, cx, -sx], [0.0, sx, cx]]
+    rz = [[cz, -sz, 0.0], [sz, cz, 0.0], [0.0, 0.0, 1.0]]
+    m = mul(mul(ry, rx), rz)
+    col = lambda j: tuple(m[i][j] * escala for i in range(3))
+    return _matriz(col(0), col(1), col(2), pos)
+
+
 def transform_olhando(pos, direcao):
     """Transform3D com o -Z do no' apontando pra `direcao` — e' pro proprio -Z
     que uma luz do Godot ilumina."""

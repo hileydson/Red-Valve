@@ -1,0 +1,9 @@
+Sons de ambiente da escola e do porao. Todos CC0 (dominio publico), do OpenGameArt:
+
+zumbido_eletrico.ogg     "Electric Buzz"                 https://opengameart.org/content/electric-buzz
+goteira_porao.ogg        "Dripping Water Loop"           https://opengameart.org/content/dripping-water-loop  (convertido de FLAC)
+vento_janela.ogg         "Mild wind background noise"    https://opengameart.org/content/mild-wind-background-noise  (convertido de MP3)
+atmosfera_fantasma.ogg   "4 Atmospheric Ghostly Loops"   https://opengameart.org/content/4-atmospheric-ghostly-loops  (convertido de MP3)
+
+O Pixabay e o BigSoundBank recusaram download automatizado (HTTP 403) em 23/10/2026;
+o OpenGameArt foi o substituto, filtrando so' CC0.

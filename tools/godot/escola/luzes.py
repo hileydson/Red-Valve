@@ -268,6 +268,59 @@ def luzes_de_janela():
 
 
 # --------------------------------------------------------------------------
+# luar nas salas
+#
+# Um spot por FACHADA DE COMODO, de fora, a 6,5 m da parede e mirando pra
+# dentro e pra baixo, aberto o bastante pra pegar as janelas daquele comodo de
+# uma vez. A sombra e' obrigatoria: e' a parede que recorta o cone e desenha no
+# chao (e nas carteiras) o retangulo azul de cada janela. Sem esse retangulo a
+# sala de aula apagada era um poco preto, e o detalhe dela — carteira, lousa,
+# desenho na parede — nao existia pra ninguem.
+# --------------------------------------------------------------------------
+
+LUAR_SALA = ("sala_aula", "secretaria", "biblioteca", "laboratorio",
+             "almoxarifado", "deposito")
+LUAR_RECUO = 6.5
+
+
+def luzes_de_luar_salas():
+    grupos = {}
+    for m in P.muros():
+        if m["tipo"] != "externa":
+            continue
+        for v in m["vaos"]:
+            if v["tipo"] != "janela":
+                continue
+            for lado in (1.0, -1.0):
+                if m["eixo"] == "x":
+                    e = P.espaco_em(v["c"], m["coord"] + lado * 0.8)
+                else:
+                    e = P.espaco_em(m["coord"] + lado * 0.8, v["c"])
+                if e is not None:
+                    break
+            if e is None or e["tipo"] not in LUAR_SALA:
+                continue
+            chave = (e["ident"], m["eixo"], m["coord"], lado)
+            grupos.setdefault(chave, []).append(v)
+    saida = []
+    for (i, ((ident, eixo, coord, lado), vaos)) in enumerate(sorted(grupos.items())):
+        a = min(v["c"] - v["l"] * 0.5 for v in vaos)
+        b = max(v["c"] + v["l"] * 0.5 for v in vaos)
+        meio = (a + b) * 0.5
+        y = P.cota() + max(v["y1"] for v in vaos) + 1.6
+        if eixo == "x":
+            pos = (meio, y, coord - lado * LUAR_RECUO)
+            mira = (0.0, -0.40, lado)
+        else:
+            pos = (coord - lado * LUAR_RECUO, y, meio)
+            mira = (lado, -0.40, 0.0)
+        angulo = min(math.degrees(math.atan2((b - a) * 0.5 + 1.5, LUAR_RECUO)) + 6.0, 62.0)
+        saida.append(_luz("luar_%s_%d" % (ident, i), "SpotLight3D", pos, LUAR,
+                          7.5, 17.0, mira=mira, angulo=angulo, sombra=True, fog=2.4))
+    return saida
+
+
+# --------------------------------------------------------------------------
 # emergencia: so' onde faz sentido
 # --------------------------------------------------------------------------
 
@@ -290,6 +343,50 @@ def luzes_de_emergencia():
                                      "acesa": True, "comprimento": 0.5,
                                      "vermelha": True}))
     return saida
+
+
+# --------------------------------------------------------------------------
+# o brilho que sobe dos buracos
+#
+# Uma omni morna e fraca DENTRO do nicho de terra, tremendo: a lampada do porao
+# vista de cima. Ela nao ilumina o deposito — so' acende a boca do rombo, e e'
+# isso que faz o olho do jogador achar o buraco no fundo da sala escura sem
+# placa nenhuma dizendo "por aqui".
+# --------------------------------------------------------------------------
+
+def luzes_dos_buracos():
+    saida = []
+    for b in (P.BURACO_ENTRADA, P.BURACO_SAIDA):
+        dx, dz = {"n": (0.0, -1.0), "s": (0.0, 1.0),
+                  "o": (-1.0, 0.0), "l": (1.0, 0.0)}[b["lado"]]
+        pos = (b["x"] + dx * 2.0, P.cota() - 0.2, b["z"] + dz * 2.0)
+        saida.append(_luz("brilho_%s" % b["ident"], "OmniLight3D", pos, BULBO,
+                          1.4, 3.6, piscar="nervoso", fog=1.2))
+    return saida
+
+
+# --------------------------------------------------------------------------
+# as placas de SAIDA
+#
+# Uma omni verde, fraca e curta, logo a frente de cada placa. E' a unica luz da
+# escola que ninguem desligou (esta' na bateria), e a poca verde que ela deixa
+# na parede e no batente e' o que faz a porta ser achada no escuro.
+# --------------------------------------------------------------------------
+
+VERDE_SAIDA = (0.30, 1.00, 0.50, 1.0)
+
+
+def luzes_de_saida(saidas):
+    luzes = []
+    for (i, sd) in enumerate(saidas):
+        x, y, z = sd["pos"]
+        nx, nz = math.sin(sd["giro"]), math.cos(sd["giro"])
+        # 0,35, e nao 0,9: mais que isso a parede em volta clareava mais que
+        # a propria placa, e a palavra SAIDA sumia no verde.
+        luzes.append(_luz("saida_%d" % i, "OmniLight3D",
+                          (x + nx * 0.55, y - 0.25, z + nz * 0.55), VERDE_SAIDA,
+                          0.35, 3.0, fog=0.6))
+    return luzes
 
 
 # --------------------------------------------------------------------------
@@ -332,7 +429,9 @@ def montar():
     for s in P.salas():
         todas.extend(luzes_de_sala(s))
     todas.extend(luzes_de_janela())
+    todas.extend(luzes_de_luar_salas())
     todas.extend(luzes_de_emergencia())
+    todas.extend(luzes_dos_buracos())
 
     acompanhantes = []
     for luz in todas:

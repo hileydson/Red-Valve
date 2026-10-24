@@ -134,6 +134,45 @@ MODELOS = {
     "vintage_suitcase": {"escala": 1.0, "giro_extra": 0.0},
     "plastic_bottle_gallon": {"escala": 1.0, "giro_extra": 0.0},
     "propane_tank": {"escala": 1.0, "giro_extra": 0.0},
+    # a carteira de verdade (o par do SchoolChair_01) e o resto da camada de
+    # detalhe — ver `detalhes.py`
+    "SchoolDesk_01": {"escala": 1.0, "giro_extra": 0.0},
+    # As versoes LEVES da carteira e da cadeira (1.300 e 900 triangulos,
+    # contra 5.072 e 4.162 do original). Sao ~170 de cada na escola, e cada
+    # luar de sala com sombra as desenha de novo: com as originais a vista do
+    # corredor passava de 1,2 milhao de primitivas. Feitas no Blender por
+    # decimacao (Dissolve + Collapse na carteira, so' Collapse na cadeira de
+    # plastico), conferindo a caixa delimitadora contra a original.
+    "SchoolDesk_01_leve": {"escala": 1.0, "giro_extra": 0.0},
+    "SchoolChair_01_leve": {"escala": 1.0, "giro_extra": 0.0},
+    "standing_chalkboard_01": {"escala": 1.0, "giro_extra": 0.0},
+    "ceiling_fan": {"escala": 1.0, "giro_extra": 0.0},
+    "Television_01": {"escala": 1.0, "giro_extra": 0.0},
+    "Megaphone_01": {"escala": 1.0, "giro_extra": 0.0},
+    "vintage_stapler": {"escala": 1.0, "giro_extra": 0.0},
+    "cassette_player": {"escala": 1.0, "giro_extra": 0.0},
+    "filmstrip_projector_8mm": {"escala": 1.0, "giro_extra": 0.0},
+    "projector_screen": {"escala": 1.0, "giro_extra": 0.0},
+    "desk_lamp_arm_01": {"escala": 1.0, "giro_extra": 0.0},
+    "vintage_microscope": {"escala": 1.0, "giro_extra": 0.0},
+    "magnifying_glass_01": {"escala": 1.0, "giro_extra": 0.0},
+    "plastic_jerrycan": {"escala": 1.0, "giro_extra": 0.0},
+    "mousetrap": {"escala": 1.0, "giro_extra": 0.0},
+    "picke_dirty_01": {"escala": 1.0, "giro_extra": 0.0},
+    "rubber_duck_toy": {"escala": 1.0, "giro_extra": 0.0},
+    "alarm_clock_01": {"escala": 1.0, "giro_extra": 0.0},
+    "baseball_bat": {"escala": 1.0, "giro_extra": 0.0},
+    "plunger": {"escala": 1.0, "giro_extra": 0.0},
+    "drain_cleaner": {"escala": 1.0, "giro_extra": 0.0},
+    "bleach_bottle": {"escala": 1.0, "giro_extra": 0.0},
+    "multi_cleaner_5_litre": {"escala": 1.0, "giro_extra": 0.0},
+    "can_rusted": {"escala": 1.0, "giro_extra": 0.0},
+    "cigarette_pack": {"escala": 1.0, "giro_extra": 0.0},
+    "russian_food_cans_01": {"escala": 1.0, "giro_extra": 0.0},
+    "dustpan": {"escala": 1.0, "giro_extra": 0.0},
+    "wooden_broom": {"escala": 1.0, "giro_extra": 0.0},
+    "fancy_picture_frame_01": {"escala": 1.0, "giro_extra": 0.0},
+    "hanging_picture_frame_01": {"escala": 1.0, "giro_extra": 0.0},
 }
 
 # Moveis pequenos e soltos: em vez da caixa estatica de `bloqueia`, ganham
@@ -141,20 +180,39 @@ MODELOS = {
 # ENTULHO_PORAO (wooden_crate_01/02, old_tyre) — esses caem no gerador do
 # porao, que ainda nao sabe ler o campo `fisico`.
 FISICOS = {
-    "SchoolChair_01", "plastic_monobloc_chair_01", "painted_wooden_chair_01",
+    "SchoolChair_01", "SchoolChair_01_leve", "plastic_monobloc_chair_01",
+    "painted_wooden_chair_01",
     "wooden_stool_01", "trashbag", "cardboard_box_01",
     "plastic_crate_01", "plastic_crate_02", "plastic_crate_03",
     "dirty_football",
+    # o lixo miudo do chao: lata, garrafa, galao. Chutar uma lata vazia num
+    # corredor escuro e' metade do clima da escola.
+    "can_rusted", "bleach_bottle", "russian_food_cans_01", "plastic_jerrycan",
+    "cigarette_pack", "multi_cleaner_5_litre", "drain_cleaner", "dustpan",
 }
 
 _aabb_cache = {}
+
+
+def _pasta(nome):
+    """A pasta do modelo — a versao `<nome>_leve` quando ela existe.
+
+    As `_leve` sao decimacoes feitas no Blender dos modelos pesados demais pra
+    repetir (moita de 50 mil triangulos x 22 no patio, ventilador de 16 mil x
+    14 no teto). Trocar aqui, e nao receita a receita, faz a escola inteira
+    usar a leve sem ninguem lembrar de trocar o nome.
+    """
+    leve = os.path.join(DIR_MODELOS, nome + "_leve")
+    if not nome.endswith("_leve") and os.path.isdir(leve):
+        return nome + "_leve"
+    return nome
 
 
 def aabb(nome):
     """(min, max) do .gltf, lido direto dos accessors — sem abrir o Blender."""
     if nome in _aabb_cache:
         return _aabb_cache[nome]
-    pasta = os.path.join(DIR_MODELOS, nome)
+    pasta = os.path.join(DIR_MODELOS, _pasta(nome))
     arquivo = None
     for f in sorted(os.listdir(pasta)):
         if f.endswith(".gltf"):
@@ -174,6 +232,7 @@ def aabb(nome):
 
 
 def caminho(nome):
+    nome = _pasta(nome)
     pasta = os.path.join(DIR_MODELOS, nome)
     for f in sorted(os.listdir(pasta)):
         if f.endswith(".gltf"):
@@ -261,6 +320,28 @@ def estante(largura=1.80, altura=2.10, profundidade=0.42, andares=5):
     return p
 
 
+def estante_com_livros(variante, largura=2.60, altura=2.10, profundidade=0.48,
+                       andares=5):
+    """A estante de aco da biblioteca, cheia — e com os buracos de quem levou.
+
+    Tres variantes (pela semente) e nao uma por estante: cada estante distinta
+    vira um .gltf proprio, e trinta mil lombadas diferentes nao compram nada
+    que tres nao comprem. Os livros entram nas DUAS faces, porque a estante
+    fica no meio da sala e e' vista dos dois corredores.
+    """
+    import detalhes as DET
+    d = random.Random("estante/%d" % (variante % 3))
+    p = estante(largura, altura, profundidade, andares)
+    for i in range(andares - 1):
+        y = 0.16 + i * (altura - 0.24) / max(andares - 1, 1) + 0.018
+        for lado in (-1, 1):
+            for q in DET.livros_na_prateleira(d, largura - 0.06, y, profundidade * 0.5,
+                                              0.82 if i < 3 else 0.55):
+                p.append((q[0], q[1], lado * profundidade * 0.25, q[3], q[4], q[5],
+                          q[6]))
+    return p
+
+
 def bancada(largura, profundidade=0.66, altura=0.90):
     return [(0.0, altura - 0.03, 0.0, largura, 0.06, profundidade, "mat_formica"),
             (0.0, (altura - 0.06) * 0.5 + 0.08, -0.03, largura - 0.06,
@@ -312,10 +393,18 @@ def bebedouro():
             (0.0, 1.16, -0.06, 0.04, 0.16, 0.04, "mat_inox")]
 
 
+# Onde o NOME da ala e' escrito na placa pendurada (relativo ao forro). Quem
+# escreve e' `gerar_cena_escola._placas`, dos dois lados.
+PLACA_TEXTO_Y = -0.27
+
+
 def placa_seta(comprimento=1.60):
-    return [(0.0, -0.22, 0.0, comprimento, 0.26, 0.03, "mat_placa"),
-            (0.0, -0.22, 0.02, comprimento - 0.24, 0.14, 0.02, "mat_seta"),
-            (0.0, -0.06, 0.0, 0.04, 0.16, 0.04, "mat_metal_escuro")]
+    """Placa pendurada no forro: o nome da ala em cima, a faixa verde embaixo,
+    nas duas faces (ela e' vista chegando e voltando)."""
+    return [(0.0, -0.32, 0.0, comprimento, 0.44, 0.03, "mat_placa"),
+            (0.0, -0.475, 0.0, comprimento - 0.24, 0.07, 0.042, "mat_seta"),
+            (-comprimento * 0.38, -0.05, 0.0, 0.03, 0.10, 0.03, "mat_metal_escuro"),
+            (comprimento * 0.38, -0.05, 0.0, 0.03, 0.10, 0.03, "mat_metal_escuro")]
 
 
 def extintor_suporte():
@@ -503,10 +592,18 @@ def _sala_aula(s, d):
                                   "lousa", dy=1.55))
     itens.append(caixas_na_parede(s, mesa_professor(), parede_lousa, 0.5, 1.30,
                                   "mesa_prof", bloqueia=(1.5, 0.8)))
-    itens.append(modelo_na_parede(s, "SchoolChair_01", parede_lousa, 0.5, 2.15,
+    itens.append(modelo_na_parede(s, "SchoolChair_01_leve", parede_lousa, 0.5, 2.15,
                                   "cadeira_prof", giro_extra=math.pi))
 
-    # as carteiras: colunas ao longo do eixo longo, deixando um vao no meio
+    # as carteiras: colunas ao longo do eixo longo, deixando um vao no meio.
+    #
+    # Carteira e cadeira sao os dois modelos do Poly Haven (SchoolDesk_01 +
+    # SchoolChair_01), e nao mais a caixaria: de perto, a carteira de caixa era
+    # o que mais denunciava a escola como cenario. Os dois nascem olhando pro
+    # +Z local (o aluno olha a lousa); a cadeira fica 0,62 m ATRAS da carteira,
+    # longe o bastante pra o corpo fisico dela nao nascer dentro da caixa de
+    # colisao da carteira — encostados, os dois se empurravam no primeiro
+    # quadro e a cadeira voava.
     x0, x1, z0, z1 = s["x0"] + 1.6, s["x1"] - 1.4, s["z0"] + 1.4, s["z1"] - 1.4
     if largo:
         colunas = [z0 + (z1 - z0) * f for f in (0.14, 0.34, 0.66, 0.86)]
@@ -521,21 +618,35 @@ def _sala_aula(s, d):
         for f in fileiras:
             x, z = (f, c) if largo else (c, f)
             n += 1
-            # uma carteira em cada seis esta' virada ou caida — sala vazia com
-            # tudo alinhado parece cenario, nao lugar abandonado
+            # uma carteira em cada sete sumiu — sala vazia com tudo alinhado
+            # parece cenario, nao lugar abandonado
             if d.random() < 0.14:
                 continue
-            g = giro + (d.uniform(-0.5, 0.5) if d.random() < 0.3 else 0.0)
-            itens.append(caixas_solto(s, carteira(), x, z, g,
-                                      "carteira_%d" % n, bloqueia=(0.8, 1.1)))
+            g = giro + (d.uniform(-0.45, 0.45) if d.random() < 0.3 else 0.0)
+            itens.append(modelo_solto(s, "SchoolDesk_01_leve", x, z, g,
+                                      "carteira_%d" % n, bloqueia=(0.62, 0.48)))
+            sorte = d.random()
+            if sorte < 0.12:
+                continue                     # a cadeira foi parar em outro lugar
+            gc = g + (d.uniform(-0.9, 0.9) if sorte < 0.35 else d.uniform(-0.1, 0.1))
+            recuo = 0.62 + (d.uniform(0.1, 0.5) if sorte < 0.35 else 0.0)
+            cx = x - math.sin(g) * recuo
+            cz = z - math.cos(g) * recuo
+            cadeira = modelo_solto(s, "SchoolChair_01_leve", cx, cz, gc,
+                                   "cadeira_%d" % n)
+            if sorte > 0.88:
+                # tombada de costas: o corpo fisico assenta sozinho no chao
+                cadeira["incl"] = -math.pi * 0.5
+                cadeira["dy"] = cadeira.get("dy", 0.0) + 0.36
+            itens.append(cadeira)
 
     itens.append(modelo_na_parede(s, "wall_clock", parede_lousa, 0.14, 0.12,
                                   "relogio", dy=2.60))
     lado = "s" if largo else "l"
     itens.append(caixas_na_parede(s, armario_aco(), lado, 0.10, 0.30,
                                   "armario", bloqueia=(1.0, 0.6)))
-    itens.append(modelo_na_parede(s, "metal_trash_can", lado, 0.92, 0.45,
-                                  "lixo", bloqueia=(0.6, 0.6)))
+    # (o lixo da sala e' o cesto pequeno de `detalhes.py`: o metal_trash_can e'
+    # um PAR de latoes de rua de 1,30 m, que dentro da sala de aula nao cabe)
     return itens
 
 
@@ -547,9 +658,9 @@ def _secretaria(s, d):
                          bloqueia=(1.7, 1.0)),
         modelo_na_parede(s, "metal_office_desk", "n", 0.56, 1.30, "mesa_2",
                          bloqueia=(1.7, 1.0)),
-        modelo_na_parede(s, "SchoolChair_01", "n", 0.26, 2.30, "cadeira_1",
+        modelo_na_parede(s, "SchoolChair_01_leve", "n", 0.26, 2.30, "cadeira_1",
                          giro_extra=math.pi),
-        modelo_na_parede(s, "SchoolChair_01", "n", 0.56, 2.30, "cadeira_2",
+        modelo_na_parede(s, "SchoolChair_01_leve", "n", 0.56, 2.30, "cadeira_2",
                          giro_extra=math.pi),
         modelo_na_parede(s, "drawer_cabinet", "l", 0.30, 0.42, "gaveteiro_1"),
         modelo_na_parede(s, "drawer_cabinet", "l", 0.55, 0.42, "gaveteiro_2"),
@@ -598,7 +709,7 @@ def _biblioteca(s, d):
             x, _z = _lugar_na_parede(s, lado, 0.5, 0.0)
             px = s["x0"] + (s["x1"] - s["x0"]) * t
             n += 1
-            itens.append(caixas_solto(s, estante(2.60, 2.10, 0.48, 5), px, z,
+            itens.append(caixas_solto(s, estante_com_livros(n), px, z,
                                       math.pi * 0.5, "estante_%d" % n,
                                       bloqueia=(0.6, 2.7)))
         z += 3.4
@@ -633,8 +744,6 @@ def _laboratorio(s, d):
                          dy=0.90),
         modelo_na_parede(s, "bunsen_burner", "l", 0.52, 0.60, "bico",
                          dy=0.90),
-        modelo_na_parede(s, "metal_trash_can", "s", 0.90, 0.55, "lixo",
-                         bloqueia=(0.6, 0.6)),
     ]
     # duas bancadas de ilha, no eixo longo, com folga dos dois lados
     cx = (s["x0"] + s["x1"]) * 0.5
@@ -719,7 +828,7 @@ def _corredor(s, d):
                                           min(t + 0.11, 0.95), 0.45,
                                           "lixo_%d" % k, bloqueia=(0.6, 0.6)))
         if k % 3 == 2:
-            itens.append(modelo_na_parede(s, "SchoolChair_01", outro,
+            itens.append(modelo_na_parede(s, "SchoolChair_01_leve", outro,
                                           min(t + 0.10, 0.95), 0.60,
                                           "cadeira_%d" % k))
         if k % 4 == 3:

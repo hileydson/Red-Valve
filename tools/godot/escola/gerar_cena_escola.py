@@ -36,6 +36,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import comum as C
+import detalhes as DET
 import gltf
 import luzes as L
 import materiais as M
@@ -43,6 +44,8 @@ import mobilia as MOB
 import navmesh as NAV
 import pichacao as PICH
 import planta as P
+import textos as TXT
+import texturas as TEX
 
 SAIDA_CENA = os.path.join(C.BASE, "scenes", "stages", "escola", "escola.tscn")
 
@@ -519,8 +522,31 @@ def portas_da_planta():
 # ==========================================================================
 
 def gerar():
+    print("== texturas e textos ==")
+    TEX.gerar()
+    novas, atualizadas = TXT.sincronizar()
+    print("  csv de traducao: %d chaves novas, %d atualizadas"
+          % (novas, atualizadas))
+
+    # Moveis e detalhes ANTES da luz: as placas de SAIDA trazem luz propria,
+    # e a conta de luz por malha (que escolhe o tamanho do setor) tem de
+    # enxergar todas.
+    print("== moveis ==")
+    # Antes de qualquer coisa: modelo grande demais pra caber onde a receita o
+    # poe. Um .gltf modular do Poly Haven ja' atravessou tres comodos aqui sem
+    # dar erro nenhum — melhor descobrir contando.
+    for erro in MOB.conferir_modelos():
+        print("  !! " + erro)
+    props = MOB.mobiliar()
+    print("== detalhes ==")
+    det = DET.montar(props)
+    extras = det.props + _placas(det, props)
+    print("  %d decalques, %d textos, %d pecas soltas, %d bolinhas de papel, "
+          "%d ventiladores" % (len(det.quads), len(det.textos), len(extras),
+                               len(det.bolas), len(det.ventiladores)))
+
     print("== luzes ==")
-    plano_luz = L.montar()
+    plano_luz = L.montar() + L.luzes_de_saida(det.saidas)
     todas_luzes = L.so_luzes(plano_luz)
     lista_luminarias = L.luminarias(plano_luz)
     print("  %d luzes, %d luminarias" % (len(todas_luzes),
@@ -544,15 +570,9 @@ def gerar():
     print("  %d objetos de setor, %d triangulos, %d caixas de colisao"
           % (len(vivos), tris, len(colisoes)))
 
-    print("== moveis ==")
-    # Antes de qualquer coisa: modelo grande demais pra caber onde a receita o
-    # poe. Um .gltf modular do Poly Haven ja' atravessou tres comodos aqui sem
-    # dar erro nenhum — melhor descobrir contando.
-    for erro in MOB.conferir_modelos():
-        print("  !! " + erro)
-    props = MOB.mobiliar()
+    print("== pecas ==")
     pecas = C.Pecas()
-    for p in props:
+    for p in props + extras:
         if p["tipo"] == "caixas":
             p["arquivo"] = pecas.registrar("mov", p["pecas"])
     portas = portas_da_planta()
@@ -569,7 +589,7 @@ def gerar():
     arq_grade = pecas.registrar("grade", pecas_da_grade())
     tris_pecas = pecas.escrever([M.ESTRUTURA, M.MOVEIS, M.LUMINARIAS])
     print("  %d moveis, %d geometrias distintas, %d triangulos"
-          % (len(props), len(pecas.arquivos), tris_pecas))
+          % (len(props) + len(extras), len(pecas.arquivos), tris_pecas))
     print("  %d portas (%d duplas)"
           % (len(portas), sum(1 for d in portas if d["dupla"])))
 
@@ -580,12 +600,69 @@ def gerar():
     print("  %d rabiscos" % len(rabiscos))
 
     print("== navmesh ==")
-    nav = NAV.malha(props)
+    nav = NAV.malha(props + extras)
 
     print("== cena ==")
-    escrever_cena(colisoes, props, portas, plano_luz, lista_luminarias, nav,
-                  rabiscos, arq_grade)
+    escrever_cena(colisoes, props + extras, portas, plano_luz, lista_luminarias,
+                  nav, rabiscos, arq_grade, det)
     print("  gravado: %s" % SAIDA_CENA)
+
+
+# --------------------------------------------------------------------------
+# placas: o nome da sala sobre a porta, a SAIDA acesa, a placa pendurada do
+# corredor
+# --------------------------------------------------------------------------
+
+def _placas(det, props):
+    """Converte as placas que `detalhes.py` posicionou em pecas de caixa — e
+    escreve o TEXTO de cada uma na lista de textos do `det`."""
+    saida = []
+    falso = {"ident": "placas"}
+    for (i, pp) in enumerate(det.placas_porta):
+        x, y, z = pp["pos"]
+        pecas = [(0.0, 0.0, 0.0, 0.90, 0.22, 0.022, "mat_placa"),
+                 (0.0, 0.0, -0.008, 0.95, 0.27, 0.010, "mat_metal_escuro")]
+        p = MOB.caixas_solto(falso, pecas, x, z, pp["giro"], "porta_%d" % i,
+                             dy=y - P.cota())
+        saida.append(p)
+        nx, nz = math.sin(pp["giro"]), math.cos(pp["giro"])
+        det.texto(pp["chave"], "placa", (x + nx * 0.013, y, z + nz * 0.013),
+                  pp["giro"], 64, (0.10, 0.12, 0.11, 0.95), px=0.0017)
+    for (i, sd) in enumerate(det.saidas):
+        x, y, z = sd["pos"]
+        p = MOB.caixas_solto(falso, [(0.0, 0.0, 0.0, 0.66, 0.26, 0.07,
+                                      "mat_placa_saida")],
+                             x, z, sd["giro"], "saida_%d" % i, dy=y - P.cota())
+        saida.append(p)
+        nx, nz = math.sin(sd["giro"]), math.cos(sd["giro"])
+        det.texto("ESC_PLACA_SAIDA", "placa", (x + nx * 0.037, y, z + nz * 0.037),
+                  sd["giro"], 96, (0.92, 1.0, 0.94, 1.0), px=0.0019, aceso=True)
+    # A chapa de aviso presa na grade (`pecas_da_grade`: 0,52 x 0,36 m, a
+    # 1,70 m, deslocada 5 cm pro leste do eixo das barras). Escrita nas duas
+    # faces: quem chega pelo corredor e quem chega pelo almoxarifado le' o
+    # mesmo "nao passa".
+    cz = (P.GRADE_Z0 + P.GRADE_Z1) * 0.5
+    for (dx, g) in ((0.065, math.pi * 0.5), (0.035, -math.pi * 0.5)):
+        det.texto("ESC_PLACA_INTERDITADO", "placa",
+                  (P.GRADE_X + dx, P.cota() + 1.70, cz), g, 40,
+                  (0.55, 0.08, 0.06, 0.95), px=0.0011)
+    # A placa pendurada no forro de cada corredor (`placa_seta` do
+    # mobilia.py) ganha o nome da ala — dos dois lados, porque e' vista
+    # chegando e voltando.
+    nome_ala = {"corredor_norte": "ESC_PLACA_BLOCO_A",
+                "corredor_sul": "ESC_PLACA_BLOCO_B",
+                "corredor_leste": "ESC_PLACA_LESTE"}
+    for p in props:
+        if not p.get("nome", "").startswith("placa_") or p["sala"] not in nome_ala:
+            continue
+        y = p["y"] + p.get("dy", 0.0) + MOB.PLACA_TEXTO_Y
+        for lado in (1.0, -1.0):
+            g = p["giro"] + (0.0 if lado > 0 else math.pi)
+            nx, nz = math.sin(g), math.cos(g)
+            det.texto(nome_ala[p["sala"]], "placa",
+                      (p["x"] + nx * 0.022, y, p["z"] + nz * 0.022), g, 56,
+                      (0.90, 0.92, 0.88, 0.95), px=0.0016)
+    return saida
 
 
 # ==========================================================================
@@ -593,7 +670,7 @@ def gerar():
 # ==========================================================================
 
 def escrever_cena(colisoes, props, portas, plano_luz, lista_luminarias, nav,
-                  rabiscos, arq_grade):
+                  rabiscos, arq_grade, det):
     c = C.Cena()
 
     id_player = c.externo("PackedScene", "res://scenes/player/player.tscn")
@@ -658,8 +735,10 @@ def escrever_cena(colisoes, props, portas, plano_luz, lista_luminarias, nav,
             # quando rolar. Mesma layer/mask do chao: o player esbarra nele
             # igual esbarraria numa parede.
             c.no(nome, tipo="RigidBody3D", pai="mobilia",
-                 props=[("transform", C.transform_pos((p["x"], y, p["z"]),
-                                                      p["giro"])),
+                 props=[("transform", C.transform_geral((p["x"], y, p["z"]),
+                                                        p["giro"],
+                                                        p.get("incl", 0.0),
+                                                        p.get("incl_z", 0.0))),
                         ("collision_layer", "2"), ("collision_mask", "2"),
                         ("mass", "%.2f" % p.get("massa", 5.0)),
                         ("linear_damp", "2.0"), ("angular_damp", "3.0")])
@@ -673,9 +752,11 @@ def escrever_cena(colisoes, props, portas, plano_luz, lista_luminarias, nav,
                         ("shape", 'SubResource("%s")' % ident)])
             continue
         c.no(nome, pai="mobilia", instancia=id_peca,
-             props=[("transform", C.transform_pos((p["x"], y, p["z"]),
-                                                  p["giro"],
-                                                  p.get("escala", 1.0)))])
+             props=[("transform", C.transform_geral((p["x"], y, p["z"]),
+                                                    p["giro"],
+                                                    p.get("incl", 0.0),
+                                                    p.get("incl_z", 0.0),
+                                                    p.get("escala", 1.0)))])
         if p.get("bloqueia"):
             lx, lz = p["bloqueia"]
             ident = c.forma(lx, 1.6, lz)
@@ -793,6 +874,16 @@ def escrever_cena(colisoes, props, portas, plano_luz, lista_luminarias, nav,
     # ---- pichacao
     n_mat = C.emitir_pichacao(c, rabiscos)
 
+    # ---- a camada de vida: papel, cartaz, escrita, lixo, agua, teia
+    _emitir_decalques(c, det.quads)
+    _emitir_textos(c, det.textos)
+    _emitir_bolas(c, det.bolas)
+    _emitir_ventiladores(c, det.ventiladores)
+    _emitir_bandeirinhas(c, det.bandeiras, det.cordoes)
+    _emitir_feixes(c)
+    _emitir_sons(c, det.sons, L.so_luzes(plano_luz))
+    _emitir_lente(c)
+
     # ---- poeira, chuva e som
     c.no("poeira", tipo="GPUParticles3D", pai=".",
          props=[("transform", C.transform_pos((38.0, P.cota() + 1.6, 34.0))),
@@ -816,6 +907,413 @@ def escrever_cena(colisoes, props, portas, plano_luz, lista_luminarias, nav,
     print("  %d materiais de rabisco, %d nos, %d sub-recursos"
           % (n_mat, sum(1 for l in c.linhas if l.startswith("[node ")),
              len(c.sub)))
+
+
+# ==========================================================================
+# A CAMADA DE VIDA (ver `detalhes.py`)
+# ==========================================================================
+
+# Ate' onde cada coisa pequena e' desenhada. Papel de 20 cm a 30 m de distancia
+# ocupa meio pixel e custa uma chamada de desenho inteira; a escuridao e a
+# nevoa ja' engoliram tudo antes disso.
+ALCANCE_CHAO = 26.0
+ALCANCE_PAREDE = 34.0
+
+
+def _material_decalque(c, ident, q, tom):
+    u0, v0, du, dv = TEX.recorte(q["atlas"], q["cel"])
+    tex = c.externo("Texture2D", TEX.caminho_res(q["atlas"]))
+    linhas = [
+        'albedo_texture = ExtResource("%s")' % tex,
+        "texture_repeat = false",
+        "uv1_scale = Vector3(%.6f, %.6f, 1)" % (du, dv),
+        "uv1_offset = Vector3(%.6f, %.6f, 0)" % (u0, v0),
+        # `cull_mode = 2`: o QuadMesh FACE_Z nao encara o +Z local, e com
+        # culling ele some sem erro nenhum (ver `pichacao.py`)
+        "cull_mode = 2",
+    ]
+    tipo = q["tipo"]
+    if tipo in ("papel", "cartaz"):
+        # Papel tem silhueta cheia: corte por alfa (opaco, escreve
+        # profundidade, recebe sombra) e nao mistura. Cartaz e' plastificado,
+        # e o brilho dele e' o que a lanterna pega de raspao.
+        linhas += ["transparency = 2", "alpha_scissor_threshold = 0.5",
+                   "albedo_color = Color(%.3f, %.3f, %.3f, 1)" % (tom, tom, tom * 0.97),
+                   "roughness = %.2f" % (0.55 if tipo == "cartaz" else 0.92),
+                   "distance_fade_mode = 3",
+                   "distance_fade_min_distance = %.1f" % (ALCANCE_PAREDE if tipo == "cartaz" else ALCANCE_CHAO),
+                   "distance_fade_max_distance = %.1f" % ((ALCANCE_PAREDE if tipo == "cartaz" else ALCANCE_CHAO) - 6.0)]
+    elif tipo == "poca":
+        # A poca e' a unica superficie espelhada da escola: a cor vem do
+        # material (quase preta) e a textura so' da' a forma. O brilho e' o
+        # reflexo especular das lampadas — a coisa que mais vende "agua" no
+        # escuro.
+        # Meio transparente: opaca e escura, a poca virava um BURACO preto no
+        # chao (a curva de sombra da lente denunciava a borda dela de longe).
+        # Mistura comum com alfa BAIXO. Opaca e escura, a poca virava um
+        # buraco preto no chao; com alfa pre-multiplicado o reflexo entrava no
+        # quad INTEIRO (inclusive fora da mascara) e ela virava um quadrado.
+        linhas += ["transparency = 1", "depth_draw_mode = 2",
+                   "albedo_color = Color(0.07, 0.08, 0.09, 0.32)",
+                   "roughness = 0.02", "metallic = 0.0", "metallic_specular = 1.0"]
+    elif tipo == "caco":
+        linhas += ["transparency = 1", "depth_draw_mode = 2",
+                   "albedo_color = Color(0.80, 0.86, 0.88, 0.9)",
+                   "roughness = 0.10", "metallic = 0.55", "metallic_specular = 1.0"]
+    else:
+        linhas += ["transparency = 1", "depth_draw_mode = 2",
+                   "albedo_color = Color(%.3f, %.3f, %.3f, 1)" % (tom, tom, tom),
+                   "roughness = 0.95"]
+    if tipo not in ("papel", "cartaz"):
+        alcance = ALCANCE_PAREDE if q["plano"] != "chao" else ALCANCE_CHAO
+        linhas += ["distance_fade_mode = 1",
+                   "distance_fade_min_distance = %.1f" % alcance,
+                   "distance_fade_max_distance = %.1f" % (alcance - 6.0)]
+    c.recurso(ident, "StandardMaterial3D", linhas)
+
+
+def _xform_decalque(q):
+    x, y, z = q["pos"]
+    g = q["giro"]
+    co, si = math.cos(g), math.sin(g)
+    if q["plano"] == "chao":
+        return C._matriz((co, 0.0, -si), (-si, 0.0, -co), (0.0, 1.0, 0.0), (x, y, z))
+    if q["plano"] == "teto":
+        return C._matriz((co, 0.0, -si), (si, 0.0, co), (0.0, -1.0, 0.0), (x, y, z))
+    return C.transform_pos((x, y, z), g)
+
+
+def _emitir_decalques(c, quads):
+    c.no("detalhes", tipo="Node3D", pai=".")
+    c.no("decalques", tipo="Node3D", pai="detalhes")
+    mats, malhas = {}, {}
+    for (i, q) in enumerate(quads):
+        tom = round(q["tom"] * 5.0) / 5.0
+        chave = (q["atlas"], q["cel"], q["tipo"], tom)
+        if chave not in mats:
+            mats[chave] = "dec_mat_%d" % len(mats)
+            _material_decalque(c, mats[chave], q, tom)
+        w, h = round(q["largura"], 2), round(q["altura"], 2)
+        mchave = (mats[chave], w, h)
+        if mchave not in malhas:
+            malhas[mchave] = "dec_malha_%d" % len(malhas)
+            c.recurso(malhas[mchave], "QuadMesh", [
+                'material = SubResource("%s")' % mats[chave],
+                "size = Vector2(%.2f, %.2f)" % (w, h)])
+        c.no("d%d" % i, tipo="MeshInstance3D", pai="detalhes/decalques",
+             props=[("transform", _xform_decalque(q)),
+                    ("mesh", 'SubResource("%s")' % malhas[mchave]),
+                    ("cast_shadow", "0"),
+                    ("visibility_range_end", "%.1f" % (ALCANCE_CHAO if q["plano"] == "chao"
+                                                       else ALCANCE_PAREDE))])
+    print("  decalques: %d quads, %d materiais, %d malhas"
+          % (len(quads), len(mats), len(malhas)))
+
+
+def _emitir_textos(c, textos):
+    """Cada texto e' um Label3D com a CHAVE do CSV no `text`: o Godot traduz
+    sozinho (e retraduz quando o idioma muda no menu)."""
+    c.no("textos", tipo="Node3D", pai="detalhes")
+    for (i, t) in enumerate(textos):
+        fonte = c.externo("FontFile", DET.FONTES[t["fonte"]])
+        props_ = [
+            ("transform", C.transform_geral(t["pos"], t["giro"], 0.0, t["inclinacao"])),
+            ("cast_shadow", "0"),
+            ("visibility_range_end", "%.1f" % ALCANCE_PAREDE),
+            ("pixel_size", "%.5f" % t["px"]),
+            # aceso (a SAIDA) nao recebe luz: ele E' a luz. O resto recebe, e
+            # e' isso que deixa a lousa invisivel ate' a lanterna passar nela.
+            ("shaded", "false" if t["aceso"] else "true"),
+            ("double_sided", "false"),
+            ("modulate", C.cor(t["cor"])),
+            ("render_priority", "2"),
+            ("outline_render_priority", "1"),
+            ("outline_size", "0"),
+            ("text", '"%s"' % t["chave"]),
+            ("font", 'ExtResource("%s")' % fonte),
+            ("font_size", "%d" % t["tamanho"]),
+        ]
+        c.no("t%d" % i, tipo="Label3D", pai="detalhes/textos", props=props_)
+    print("  textos: %d Label3D" % len(textos))
+
+
+def _emitir_bolas(c, bolas):
+    """Bolinha de papel amassado: esfera de poucos lados, e e' justamente o
+    poligono grosseiro que a faz parecer papel amassado e nao bola de gude."""
+    c.recurso("bola_mat", "StandardMaterial3D", [
+        "albedo_color = Color(0.70, 0.68, 0.60, 1)", "roughness = 0.95"])
+    c.recurso("bola_malha", "SphereMesh", [
+        'material = SubResource("bola_mat")', "radius = 0.036", "height = 0.066",
+        "radial_segments = 6", "rings = 3"])
+    c.no("bolinhas", tipo="Node3D", pai="detalhes")
+    for (i, b) in enumerate(bolas):
+        c.no("b%d" % i, tipo="MeshInstance3D", pai="detalhes/bolinhas",
+             props=[("transform", C.transform_geral(b["pos"], b["giro"], 0.4, 0.2,
+                                                    b["escala"])),
+                    ("mesh", 'SubResource("bola_malha")'),
+                    ("cast_shadow", "0"),
+                    ("visibility_range_end", "%.1f" % (ALCANCE_CHAO - 6.0))])
+
+
+def _emitir_ventiladores(c, ventiladores):
+    """Ventilador de teto. Os que giram levam `velocidade` > 0 (voltas por
+    segundo) e quem os gira e' o `escola.gd`, pelo grupo."""
+    id_vent = c.externo("PackedScene", MOB.caminho("ceiling_fan"))
+    c.no("ventiladores", tipo="Node3D", pai="detalhes")
+    for (i, v) in enumerate(ventiladores):
+        c.no("ventilador_%d" % i, pai="detalhes/ventiladores", instancia=id_vent,
+             grupos=["ventilador"],
+             props=[("transform", C.transform_pos(v["pos"], v["giro"]))],
+             metas=[("velocidade", "%.2f" % v["velocidade"])])
+
+
+def _linha_multimesh(ex, ey, ez, pos):
+    """As 12 floats de uma instancia num buffer de MultiMesh 3D: as LINHAS da
+    matriz 3x4 (a mesma convencao por linhas do Transform3D do .tscn)."""
+    return [ex[0], ey[0], ez[0], pos[0],
+            ex[1], ey[1], ez[1], pos[1],
+            ex[2], ey[2], ez[2], pos[2]]
+
+
+def _multimesh(c, ident, malha, linhas):
+    buf = []
+    for l_ in linhas:
+        buf.extend(l_)
+    c.recurso(ident, "MultiMesh", [
+        "transform_format = 1",
+        "instance_count = %d" % len(linhas),
+        'mesh = SubResource("%s")' % malha,
+        "buffer = PackedFloat32Array(%s)" % ", ".join("%.4f" % v for v in buf)])
+
+
+def _emitir_bandeirinhas(c, bandeiras, cordoes):
+    """As bandeirinhas e o barbante, em MultiMesh: sao ~220 bandeiras e ~270
+    trechos de barbante, e um no' por peca seriam quinhentas chamadas de
+    desenho pra uma decoracao que se ve' de longe."""
+    if not bandeiras:
+        return
+    c.no("bandeirinhas", tipo="Node3D", pai="detalhes")
+    tex = c.externo("Texture2D", TEX.caminho_res("bandeiras"))
+    for (k, cor) in enumerate(TEX.BANDEIRAS):
+        u0, v0, du, dv = TEX.recorte("bandeiras", cor)
+        c.recurso("band_mat_%d" % k, "StandardMaterial3D", [
+            "transparency = 2", "alpha_scissor_threshold = 0.5", "cull_mode = 2",
+            'albedo_texture = ExtResource("%s")' % tex,
+            "albedo_color = Color(1, 1, 1, 1)", "roughness = 0.9",
+            "texture_repeat = false",
+            "uv1_scale = Vector3(%.5f, %.5f, 1)" % (du, dv),
+            "uv1_offset = Vector3(%.5f, %.5f, 0)" % (u0, v0)])
+        c.recurso("band_malha_%d" % k, "QuadMesh", [
+            'material = SubResource("band_mat_%d")' % k,
+            "size = Vector2(%.2f, %.2f)" % (DET.BANDEIRA_L, DET.BANDEIRA_H)])
+        linhas = [_linha_multimesh(ex, ey, ez, pos)
+                  for (pos, ex, ey, ez, ci) in bandeiras if ci == k]
+        if not linhas:
+            continue
+        _multimesh(c, "band_mm_%d" % k, "band_malha_%d" % k, linhas)
+        c.no("cor_%d" % k, tipo="MultiMeshInstance3D", pai="detalhes/bandeirinhas",
+             props=[("multimesh", 'SubResource("band_mm_%d")' % k), ("cast_shadow", "0")])
+    c.recurso("barbante_mat", "StandardMaterial3D", [
+        "albedo_color = Color(0.36, 0.34, 0.29, 1)", "roughness = 0.95"])
+    c.recurso("barbante_malha", "BoxMesh", [
+        'material = SubResource("barbante_mat")', "size = Vector3(1, 0.012, 0.012)"])
+    linhas = []
+    for (centro, v) in cordoes:
+        comp = math.sqrt(sum(x * x for x in v)) or 1.0
+        xn = tuple(x / comp for x in v)
+        z = DET._cruz(xn, (0.0, 1.0, 0.0))
+        if math.sqrt(sum(x * x for x in z)) < 1e-3:
+            z = (0.0, 0.0, 1.0)
+        z = DET._norm(z)
+        y = DET._cruz(z, xn)
+        linhas.append(_linha_multimesh(v, y, z, centro))
+    _multimesh(c, "barbante_mm", "barbante_malha", linhas)
+    c.no("barbante", tipo="MultiMeshInstance3D", pai="detalhes/bandeirinhas",
+         props=[("multimesh", 'SubResource("barbante_mm")'), ("cast_shadow", "0")])
+
+
+# --------------------------------------------------------------------------
+# luar pelas janelas, em geometria
+# --------------------------------------------------------------------------
+
+FEIXE_COMPRIMENTO = 4.6
+FEIXE_FORCA = 0.030
+FEIXE_FORCA_QUEBRADA = 0.042
+
+
+def _feixes():
+    """[(centro, eixo_x, eixo_y, eixo_z, quebrada)] — um prisma por janela.
+
+    So' janela de fora pra dentro de comodo COBERTO: no patio nao ha' o que
+    recortar a luz (ele ja' esta' no ceu).
+    """
+    saida = []
+    for m in P.muros():
+        if m["tipo"] != "externa":
+            continue
+        for v in m["vaos"]:
+            if v["tipo"] != "janela":
+                continue
+            lado = None
+            for l_ in (1.0, -1.0):
+                if m["eixo"] == "x":
+                    e = P.espaco_em(v["c"], m["coord"] + l_ * 0.8)
+                else:
+                    e = P.espaco_em(m["coord"] + l_ * 0.8, v["c"])
+                if e is not None:
+                    lado = l_ if not e.get("descoberto") else None
+                    break
+            if lado is None:
+                continue
+            if m["eixo"] == "x":
+                n, t = (0.0, lado), (1.0, 0.0)
+                base = (v["c"], 0.0, m["coord"])
+            else:
+                n, t = (lado, 0.0), (0.0, 1.0)
+                base = (m["coord"], 0.0, v["c"])
+            d = (n[0] + t[0] * 0.20, -0.62, n[1] + t[1] * 0.20)
+            norma = math.sqrt(sum(k * k for k in d))
+            d = tuple(k / norma for k in d)
+            h = v["y1"] - v["y0"] - 0.10
+            larg = v["l"] - 0.12
+            cy = P.cota() + (v["y0"] + v["y1"]) * 0.5
+            L_ = FEIXE_COMPRIMENTO
+            centro = (base[0] + d[0] * L_ * 0.5, cy + d[1] * L_ * 0.5,
+                      base[2] + d[2] * L_ * 0.5)
+            saida.append((centro, (t[0] * larg, 0.0, t[1] * larg), (0.0, h, 0.0),
+                          (d[0] * L_, d[1] * L_, d[2] * L_), v.get("quebrada", False)))
+    return saida
+
+
+def _emitir_feixes(c):
+    id_sh = c.externo("Shader", "res://shaders/environment/feixe_janela.gdshader")
+    for (ident, forca) in (("feixe_mat", FEIXE_FORCA),
+                           ("feixe_mat_quebrada", FEIXE_FORCA_QUEBRADA)):
+        c.recurso(ident, "ShaderMaterial", [
+            'shader = ExtResource("%s")' % id_sh,
+            "shader_parameter/cor = Color(%.3f, %.3f, %.3f, 1)" % L.LUAR[:3],
+            "shader_parameter/forca = %.4f" % forca])
+    c.recurso("feixe_caixa", "BoxMesh", ["size = Vector3(1, 1, 1)"])
+    c.no("feixes", tipo="Node3D", pai="detalhes")
+    lista = _feixes()
+    for (i, (centro, ex, ey, ez, quebrada)) in enumerate(lista):
+        c.no("feixe_%d" % i, tipo="MeshInstance3D", pai="detalhes/feixes",
+             props=[("transform", C._matriz(ex, ey, ez, centro)),
+                    ("mesh", 'SubResource("feixe_caixa")'),
+                    ("material_override", 'SubResource("%s")'
+                     % ("feixe_mat_quebrada" if quebrada else "feixe_mat")),
+                    ("cast_shadow", "0"),
+                    ("visibility_range_end", "30.0")])
+    print("  %d feixes de luar" % len(lista))
+
+
+# --------------------------------------------------------------------------
+# som
+# --------------------------------------------------------------------------
+
+SONS = {
+    "zumbido": "res://assets/sounds/escola/zumbido_eletrico.ogg",
+    "goteira": "res://assets/sounds/escola/goteira_porao.ogg",
+    "vento": "res://assets/sounds/escola/vento_janela.ogg",
+    "fantasma": "res://assets/sounds/escola/atmosfera_fantasma.ogg",
+    "chuva": "res://assets/sounds/episodios/prologo/chuva.mp3",
+    "relogio": "res://assets/sounds/episodios/capitulo_1/intro/relogio.mp3",
+}
+# Quantas fluorescentes zumbem. Todo AudioStreamPlayer3D tocando custa
+# mixagem, mesmo longe; vinte fontes curtas cobrem os corredores.
+MAX_ZUMBIDOS = 20
+
+
+def _som3d(c, nome, tipo, pos, volume, alcance, unidade=2.0, laco=False):
+    c.no(nome, tipo="AudioStreamPlayer3D", pai="detalhes/sons",
+         grupos=["som_em_laco"] if laco else None,
+         props=[("transform", C.transform_pos(pos)),
+                ("stream", 'ExtResource("%s")' % c.externo("AudioStream", SONS[tipo])),
+                ("volume_db", "%.1f" % volume),
+                ("unit_size", "%.1f" % unidade),
+                ("max_distance", "%.1f" % alcance),
+                ("max_polyphony", "1"),
+                ("autoplay", "true")])
+
+
+def _emitir_sons(c, sons, luzes):
+    """Zumbido nas fluorescentes que piscam (o `escola.gd` liga o volume ao
+    piscar), goteira onde ha' poca, vento nas janelas quebradas, a chuva do
+    patio e o relogio que ainda anda."""
+    c.no("sons", tipo="Node3D", pai="detalhes")
+    n = 0
+    for luz in luzes:
+        if n >= MAX_ZUMBIDOS:
+            break
+        if luz["tipo"] != "SpotLight3D" or luz["piscar"] is None \
+                or luz["nome"].startswith("refletor"):
+            continue
+        _som3d(c, "som_" + luz["nome"], "zumbido", luz["pos"], -20.0, 9.0, 1.5)
+        n += 1
+    for (i, s_) in enumerate(sons):
+        _som3d(c, "goteira_%d" % i, "goteira", s_["pos"], -12.0, 11.0, 2.5)
+    k = 0
+    for m in P.muros():
+        if m["tipo"] != "externa":
+            continue
+        for v in m["vaos"]:
+            if v["tipo"] != "janela" or not v.get("quebrada") or k % 2:
+                k += 1
+                continue
+            k += 1
+            if m["eixo"] == "x":
+                pos = (v["c"], P.cota() + 2.0, m["coord"])
+            else:
+                pos = (m["coord"], P.cota() + 2.0, v["c"])
+            _som3d(c, "vento_%d" % k, "vento", pos, -16.0, 12.0, 2.0)
+    patio = P.por_ident("patio")
+    px, pz = P.centro(patio)
+    _som3d(c, "chuva", "chuva", (px, P.cota() + 3.0, pz), -6.0, 46.0, 14.0, laco=True)
+    sala = P.por_ident("sala_102")
+    _som3d(c, "relogio", "relogio", (sala["x0"] + 0.3, P.cota() + 2.6,
+                                     sala["z0"] + (sala["z1"] - sala["z0"]) * 0.14),
+           -14.0, 7.0, 1.0, laco=True)
+    c.no("atmosfera", tipo="AudioStreamPlayer", pai="detalhes/sons",
+         props=[("stream", 'ExtResource("%s")' % c.externo("AudioStream", SONS["fantasma"])),
+                ("volume_db", "-22.0"), ("autoplay", "true")])
+
+
+# --------------------------------------------------------------------------
+# a lente
+# --------------------------------------------------------------------------
+
+def _emitir_lente(c, valores=None):
+    """O acabamento de camera (`shaders/post_process/escola_lente.gdshader`).
+
+    CanvasLayer -1: pega so' o 3D. O HUD (minimapa, layer 100), o fade e a
+    pausa ficam por cima dele, intocados.
+    """
+    id_sh = c.externo("Shader", "res://shaders/post_process/escola_lente.gdshader")
+    c.recurso("lente_mat", "ShaderMaterial", ['shader = ExtResource("%s")' % id_sh]
+              + ["shader_parameter/%s = %s" % kv for kv in (valores or LENTE)])
+    c.no("lente", tipo="CanvasLayer", pai=".", props=[("layer", "-1")])
+    c.no("tela", tipo="ColorRect", pai="lente",
+         props=[("material", 'SubResource("lente_mat")'),
+                ("anchors_preset", "15"), ("anchor_right", "1.0"),
+                ("anchor_bottom", "1.0"), ("grow_horizontal", "2"),
+                ("grow_vertical", "2"), ("mouse_filter", "2")])
+
+
+# Os numeros da lente DESTA cena (o porao usa outros, mais fechados).
+LENTE = [
+    ("barril", "0.0"),
+    ("aberracao", "1.4"),
+    ("exposicao", "1.0"),
+    ("gama", "0.70"),
+    ("piso_preto", "Color(0.02, 0.026, 0.028, 1)"),
+    ("contraste", "1.05"),
+    ("saturacao", "0.78"),
+    ("forca_tom", "0.42"),
+    ("grao", "0.065"),
+    ("vinheta", "0.70"),
+    ("respiracao", "0.035"),
+    ("interferencia", "0.35"),
+]
 
 
 def _olhar_para(de, para):
@@ -984,19 +1482,26 @@ def _ambiente(c):
         "background_mode = 2",
         'sky = SubResource("ceu")',
         "background_energy_multiplier = 0.6",
-        "ambient_light_source = 3",
-        "ambient_light_color = Color(0.20, 0.23, 0.28, 1)",
-        "ambient_light_sky_contribution = 0.30",
+        # COR, e nao ceu (3 = ceu). Com a fonte no ceu o ambiente vinha do
+        # ceu noturno quase preto e a `energy` abaixo nao chegava em lugar
+        # nenhum: a cena saia preta como breu, com 1,75 ou 3,0. Medido com o
+        # harness `tools/escola/fotos.tscn`.
+        "ambient_light_source = 2",
+        "ambient_light_color = Color(0.17, 0.20, 0.23, 1)",
         # O PISO DO ESCURO desta cena. Ele define o quao preto fica um comodo
         # sem lampada nenhuma. Alto para uma cena de terror, e de proposito:
         # quem faz o medo aqui sao as lampadas piscando, nao a ausencia de
         # imagem — o trecho entre duas luminarias precisa mostrar a FORMA das
         # coisas sem mostrar o detalhe delas. (No porao este numero e' quatro
         # vezes menor: la' o escuro E' o assunto.)
-        "ambient_light_energy = 1.75",
+        "ambient_light_energy = 1.5",
         "reflected_light_source = 2",
         "tonemap_mode = 3",
-        "tonemap_exposure = 1.0",
+        # 1,6 e nao 1,0: a escola tem de chegar a lente com as sombras FORA do
+        # primeiro degrau de 32 do filtro PS1 do jogador (ver
+        # `escola_lente.gdshader`, `gama`). Medido no harness: com 1,0 a
+        # mediana da imagem era 9/255 — o primeiro degrau — em qualquer vista.
+        "tonemap_exposure = 1.6",
         "tonemap_white = 7.5",
         "glow_enabled = true",
         "glow_intensity = 0.42",
@@ -1006,9 +1511,12 @@ def _ambiente(c):
         "glow_hdr_threshold = 1.10",
         "fog_enabled = true",
         "fog_mode = 0",
-        "fog_light_color = Color(0.13, 0.15, 0.19, 1)",
-        "fog_light_energy = 0.8",
-        "fog_density = 0.015",
+        # Nevoa ESCURA: o fundo do corredor some no preto, e nao num cinza
+        # azulado. E' o que faz a poca de luz da proxima luminaria ser a unica
+        # coisa la' no fim.
+        "fog_light_color = Color(0.035, 0.042, 0.05, 1)",
+        "fog_light_energy = 1.0",
+        "fog_density = 0.03",
         "fog_aerial_perspective = 0.1",
         "fog_sky_affect = 0.20",
         "fog_height = -2.0",
@@ -1041,26 +1549,21 @@ def _cones(c, luzes):
         familias.setdefault(chave, []).append(luz)
 
     feito = {}
+    id_sh = c.externo("Shader", "res://shaders/environment/cone_luz.gdshader")
     for (raio, alcance, cor_) in familias:
         ident_mat = "cone_mat_%d" % len(feito)
         ident_malha = "cone_malha_%d" % len(feito)
-        c.recurso(ident_mat, "StandardMaterial3D", [
-            "transparency = 1",
-            "blend_mode = 1",
-            "shading_mode = 0",
-            # So' a casca de TRAS do cone. Com as duas faces o olhar atravessa
-            # duas camadas aditivas de uma vez e o feixe dobra de intensidade
-            # bem no meio da tela.
-            "cull_mode = 1",
-            "albedo_color = Color(%.3f, %.3f, %.3f, 0.011)" % cor_,
-            "disable_receive_shadows = true",
-            "proximity_fade_enabled = true",
-            "proximity_fade_distance = 1.8",
-            "distance_fade_mode = 1",
-            "distance_fade_min_distance = 20.0",
-            "distance_fade_max_distance = 13.0",
-        ])
         altura = min(alcance, P.PE - 0.30)
+        # Shader proprio (`cone_luz.gdshader`), e nao StandardMaterial: o
+        # material chapado desenhava um triangulo de borda dura, e a curva de
+        # sombra da lente o transformava numa cunha cinza solida no meio do
+        # corredor.
+        c.recurso(ident_mat, "ShaderMaterial", [
+            'shader = ExtResource("%s")' % id_sh,
+            "shader_parameter/cor = Color(%.3f, %.3f, %.3f, 1)" % cor_,
+            "shader_parameter/forca = 0.030",
+            "shader_parameter/altura = %.3f" % altura,
+        ])
         c.recurso(ident_malha, "CylinderMesh", [
             'material = SubResource("%s")' % ident_mat,
             "top_radius = 0.22",

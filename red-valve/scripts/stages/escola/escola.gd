@@ -41,6 +41,10 @@ var _lampadas: Array[Dictionary] = []
 ## botão durante esses dois segundos empilha mais uma troca.
 var _saindo: bool = false
 
+## Pás dos ventiladores de teto que ainda giram (metadata "velocidade", em
+## voltas por segundo). Os parados nem entram na lista.
+var _pas: Array[Dictionary] = []
+
 
 func _ready() -> void:
 	GlobalEvents.in_cutscene = false
@@ -49,6 +53,8 @@ func _ready() -> void:
 
 	_conferir_colisao()
 	_preparar_lampadas()
+	_preparar_ventiladores()
+	_preparar_sons()
 	_posicionar_jogador()
 
 	# save_game() toma o caminho da cena atual como checkpoint, igual à casa do
@@ -102,19 +108,47 @@ func _jogador() -> Node3D:
 
 func _preparar_lampadas() -> void:
 	var cones := get_node_or_null("cones")
+	var sons := get_node_or_null("detalhes/sons")
 	for luz in find_children("*", "Light3D", true, false):
 		if not luz.has_meta("piscar"):
 			continue
 		var cone: Node3D = null
 		if cones:
 			cone = cones.get_node_or_null("cone_" + luz.name)
+		# O zumbido do reator, quando a lâmpada tem um (o gerador põe só nas
+		# que piscam): ele acompanha o piscar, senão a lâmpada apaga e o
+		# barulho continua igual — e o ouvido percebe antes do olho.
+		var zumbido: AudioStreamPlayer3D = null
+		if sons:
+			zumbido = sons.get_node_or_null("som_" + luz.name) as AudioStreamPlayer3D
 		_lampadas.append({
 			"luz": luz,
 			"cone": cone,
+			"zumbido": zumbido,
+			"volume": zumbido.volume_db if zumbido else 0.0,
 			"tipo": String(luz.get_meta("piscar")),
 			"base": (luz as Light3D).light_energy,
 			"proximo": randf() * 0.5,
 		})
+
+
+func _preparar_ventiladores() -> void:
+	for vent in get_tree().get_nodes_in_group("ventilador"):
+		var velocidade := float(vent.get_meta("velocidade", 0.0))
+		if velocidade <= 0.0:
+			continue
+		var pas := vent.find_child("ceiling_fan_blades", true, false) as Node3D
+		if pas:
+			_pas.append({"pas": pas, "velocidade": velocidade})
+
+
+## O som da chuva e o do relógio vêm de arquivos que outras cenas tocam uma vez
+## só, então o laço não pode morar no .import deles: é feito aqui.
+func _preparar_sons() -> void:
+	for som in get_tree().get_nodes_in_group("som_em_laco"):
+		var tocador := som as AudioStreamPlayer3D
+		if tocador:
+			tocador.finished.connect(tocador.play)
 
 
 # ==============================================================================
@@ -159,6 +193,10 @@ func usar_buraco(papel: String) -> void:
 
 func _process(delta: float) -> void:
 	_atualizar_lampadas(delta)
+	for item in _pas:
+		var pas: Node3D = item["pas"]
+		if is_instance_valid(pas):
+			pas.rotate_y(TAU * float(item["velocidade"]) * delta)
 
 
 ## Duas falhas diferentes, as mesmas da casa do Jimmy, da igreja e do hospital:
@@ -187,3 +225,7 @@ func _atualizar_lampadas(delta: float) -> void:
 			var cone: Node3D = lamp["cone"]
 			if is_instance_valid(cone):
 				cone.visible = acesa
+		var zumbido: AudioStreamPlayer3D = lamp["zumbido"]
+		if is_instance_valid(zumbido):
+			var fracao := clampf(luz.light_energy / maxf(lamp["base"], 0.001), 0.0, 1.6)
+			zumbido.volume_db = lamp["volume"] + (linear_to_db(fracao) if fracao > 0.02 else -60.0)
