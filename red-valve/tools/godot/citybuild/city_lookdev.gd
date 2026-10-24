@@ -12,13 +12,13 @@ extends Node
 @export var world_env_path: NodePath = NodePath("../WorldEnvironment/Sky3D")
 
 @export_group("Névoa de profundidade")
-## Densidade baixa: a 700 m, 0.006 apaga tudo. 0.0012 dá bruma sem apagar.
-@export var fog_density: float = 0.0012
-@export var fog_light_color: Color = Color(0.5775, 0.3917, 0.1621)
-@export var fog_light_energy: float = 1.0
-@export var fog_sun_scatter: float = 0.35
-@export var fog_aerial_perspective: float = 0.35
-@export var fog_sky_affect: float = 0.40
+## Densidade calibrada para atmosfera dark noturna: bruma densa nas ruas sem lavar o céu.
+@export var fog_density: float = 0.0015
+@export var fog_light_color: Color = Color(0.48, 0.33, 0.16)
+@export var fog_light_energy: float = 0.88
+@export var fog_sun_scatter: float = 0.30
+@export var fog_aerial_perspective: float = 0.28
+@export var fog_sky_affect: float = 0.35
 
 @export_group("Tonemap e ajuste")
 ## 0 Linear · 1 Reinhard · 2 Filmic · 3 ACES · 4 AgX
@@ -28,20 +28,20 @@ extends Node
 ## aproxima os dois.
 @export var tonemap_mode: int = 2
 @export var tonemap_white: float = 4.5
-@export var tonemap_exposure: float = 1.0
+@export var tonemap_exposure: float = 1.04
 @export var brilho: float = 1.0
-@export var contraste: float = 1.06
-@export var saturacao: float = 0.86
+@export var contraste: float = 1.08
+@export var saturacao: float = 0.85
 
 @export_group("LUT sépia")
 @export var lut_tamanho: int = 17
-@export var lut_forca: float = 0.75
-@export var lut_ganho_r: float = 1.06
-@export var lut_ganho_g: float = 1.00
-@export var lut_ganho_b: float = 0.90
-@export var lut_lift_r: float = 0.020
-@export var lut_lift_g: float = 0.014
-@export var lut_lift_b: float = 0.008
+@export var lut_forca: float = 0.78
+@export var lut_ganho_r: float = 1.05
+@export var lut_ganho_g: float = 0.98
+@export var lut_ganho_b: float = 0.88
+@export var lut_lift_r: float = 0.004
+@export var lut_lift_g: float = 0.006
+@export var lut_lift_b: float = 0.012
 @export var lut_caminho: String = "res://assets/3d_model/city/lut_sepia.tres"
 
 @export_multiline var last_result: String = ""

@@ -112,9 +112,9 @@ var _ocupado: bool = false
 ## Quantos candidatos cada papel tenta gerar, antes da densidade e das
 ## rejeicoes. O numero final sai bem abaixo disto.
 const TENTATIVAS := {
-	"muro": 1600, "muro_mancha": 520, "pichacao": 320, "alto": 320,
-	"mancha_parede": 260, "cartaz_muro": 520, "cartaz_parede": 260,
-	"mancha_chao": 700, "mancha_rua": 420,
+	"muro": 2200, "muro_mancha": 720, "pichacao": 540, "alto": 440,
+	"mancha_parede": 420, "cartaz_muro": 740, "cartaz_parede": 380,
+	"mancha_chao": 920, "mancha_rua": 720,
 }
 
 ## Normal local de cada face da caixa da casa, na ordem do `ponto_de_parede`.
@@ -581,6 +581,7 @@ func _material(caminho_atlas: String) -> ShaderMaterial:
 	mat.set_shader_parameter("atlas", load(caminho_atlas))
 	mat.set_shader_parameter("corte", corte)
 	mat.set_shader_parameter("ganho", ganho)
+	mat.set_shader_parameter("molhado", 1.0 if caminho_atlas.contains("chao") else 0.0)
 	mat.set_shader_parameter("dist_some_inicio", dist_some_inicio)
 	mat.set_shader_parameter("dist_some_fim", dist_some_fim)
 	return mat

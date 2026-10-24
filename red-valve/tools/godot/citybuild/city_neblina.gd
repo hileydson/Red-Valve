@@ -22,11 +22,11 @@ extends Node
 @export var resposta: float = 1.2
 
 @export_group("Cidade")
-@export var densidade_cidade: float = 0.0012
-@export var cor_cidade := Color(0.5775, 0.3917, 0.1621)
-@export var energia_cidade: float = 1.0
-@export var aerea_cidade: float = 0.35
-@export var ceu_cidade: float = 0.4
+@export var densidade_cidade: float = 0.0015
+@export var cor_cidade := Color(0.48, 0.33, 0.16)
+@export var energia_cidade: float = 0.88
+@export var aerea_cidade: float = 0.28
+@export var ceu_cidade: float = 0.35
 
 @export_group("Mata")
 ## Densidade alta e cor QUASE PRETA. Névoa no Godot é aditiva: ela pinta a

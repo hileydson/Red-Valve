@@ -1,5 +1,5 @@
 shader_type spatial;
-render_mode blend_mix, depth_draw_never, cull_disabled, specular_disabled, diffuse_lambert;
+render_mode blend_mix, depth_draw_never, cull_disabled, diffuse_lambert;
 
 // Pichacao, cartaz e mancha da cidade da stage_1.
 //
@@ -44,6 +44,8 @@ uniform float corte : hint_range(0.0, 0.5) = 0.02;
 // Multiplica o albedo. A cidade roda com LUT sepia; tinta saindo clara demais
 // da' cara de adesivo novo em parede velha.
 uniform float ganho : hint_range(0.0, 2.0) = 0.95;
+// Reflexo especular de pocas d'agua e oleo quando usado no atlas de chao.
+uniform float molhado : hint_range(0.0, 1.0) = 0.0;
 // Some com a distancia, pra pichacao nao brigar com a neblina no fundo.
 uniform float dist_some_inicio = 70.0;
 uniform float dist_some_fim = 110.0;
@@ -69,8 +71,15 @@ void fragment() {
 		discard;
 	}
 
-	ALBEDO = c.rgb * desgaste.rgb * ganho;
+	vec3 alb = c.rgb * desgaste.rgb * ganho;
+	ALBEDO = alb;
 	ALPHA = a;
-	ROUGHNESS = 0.94;
-	METALLIC = 0.0;
+
+	float luma = dot(c.rgb, vec3(0.299, 0.587, 0.114));
+	float reflexo_poca = clamp(1.0 - luma * 3.8, 0.0, 1.0) * molhado;
+	ROUGHNESS = mix(0.92, 0.08, reflexo_poca);
+	SPECULAR = mix(0.12, 0.88, reflexo_poca);
+	METALLIC = mix(0.0, 0.18, reflexo_poca);
+	// Leve leitura noturna para giz/cartazes claros e vermelho oxido na penumbra
+	EMISSION = alb * (1.0 - molhado) * clamp(luma - 0.12, 0.0, 1.0) * 0.055;
 }

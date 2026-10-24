@@ -30,22 +30,22 @@ void fragment() {
     // 3. Amostragem da textura
     vec4 color = texture(SCREEN_TEXTURE, screen_uv);
     
-    // 4. Quantização
-    color.rgb = floor(color.rgb * float(color_depth)) / float(color_depth);
+    // 4. Quantização suave (preserva detalhes nas baixas-luzes noturnas sem esmagar para 0)
+    vec3 quant = floor(color.rgb * float(color_depth) + 0.5) / float(color_depth);
+    color.rgb = mix(color.rgb, quant, 0.65);
     
     // 5. Vinheta
     vec2 center = vec2(0.5, 0.5);
     float dist = distance(screen_uv, center);
-    float vignette = smoothstep(0.4, 0.8, dist);
-    color.rgb = mix(color.rgb, color.rgb * (1.0 - vignette * vignette_strength), 0.3);
+    float vignette = smoothstep(0.42, 0.85, dist);
+    color.rgb *= (1.0 - vignette * max(vignette_strength, 0.12));
     
     // 6. Scanlines
     float scanline = sin(screen_uv.y * 800.0) * 0.5 + 0.5;
-    color.rgb = mix(color.rgb, color.rgb * (1.0 - scanline * scanline_intensity), 0.1);
+    color.rgb = mix(color.rgb, color.rgb * (1.0 - scanline * scanline_intensity), 0.10);
     
     // 7. Saída Final
     color.rgb *= tint_color;
-    color.rgb *= 1.1;
     
     COLOR = vec4(color.rgb, 1.0);
 }

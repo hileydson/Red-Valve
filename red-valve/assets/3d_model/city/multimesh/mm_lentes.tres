@@ -1,4 +1,4 @@
-[gd_resource type="MultiMesh" format=3 uid="uid://dcc6ycr11xk1s"]
+[gd_resource type="MultiMesh" format=3]
 
 [sub_resource type="BoxMesh" id="BoxMesh_0oobi"]
 size = Vector3(0.66, 0.06, 0.24)

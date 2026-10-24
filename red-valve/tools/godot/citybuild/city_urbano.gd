@@ -51,14 +51,14 @@ const DIR_MALHAS := "res://assets/3d_model/city/malhas_urbano"
 
 @export_group("Espalhamento")
 @export var semente: int = 20260915
-@export_range(0.0, 3.0, 0.05) var densidade: float = 1.0
+@export_range(0.0, 3.0, 0.05) var densidade: float = 1.45
 ## Distancia minima entre dois adereços, em metros. E' o passo da grade de
 ## ocupacao, entao o afastamento real fica entre este valor e o dobro dele.
-@export var espacamento: float = 2.4
+@export var espacamento: float = 1.45
 ## Piso de raio no espacamento. Sem ele, um adereço pequeno (galao, bola, lata
 ## de spray) reserva so' o proprio tamanho e tres deles acabam encostados —
 ## foi o que deixou a beira da praca com cara de deposito.
-@export var raio_minimo: float = 1.3
+@export var raio_minimo: float = 0.72
 ## Adereços que JA' existem na cena e tambem ocupam lugar. A etapa 08
 ## (`PropsExtra`) tem a propria grade de ocupacao, e as duas nao se enxergam:
 ## sem ler os adereços dela aqui, um engradado dela e um balde daqui podem
@@ -149,25 +149,59 @@ var _ocupado: bool = false
 # grande  — ganha caixa de colisao; `col` e' o tamanho dela.
 const CATALOGO := [
 	# --- na guia ----------------------------------------------------------
-	# O `covered_car` SAIU daqui: uma cidade com carro coberto em cada esquina
-	# parecia ferro-velho, nao rua de morador. O .gltf continua baixado em
-	# `assets/3d_model/polyhaven/covered_car/` — pra trazer de volta basta
-	# reinserir a linha e subir o TENTATIVAS["guia"].
-	{"n": "concrete_road_barrier_02", "papel": "guia", "peso": 3, "base_y": 0.0, "raio": 0.9,
+	{"n": "concrete_road_barrier_02", "papel": "guia", "peso": 4, "base_y": 0.0, "raio": 0.9,
 		"esc": [0.95, 1.05], "grande": true, "col": [1.6, 1.1, 0.5]},
+	{"n": "barricade_interditado", "papel": "guia", "peso": 5, "base_y": 0.0, "raio": 0.85,
+		"esc": [0.95, 1.05], "grande": true, "col": [1.5, 1.0, 0.45]},
+	{"n": "dumpster_kraycik", "papel": "guia", "peso": 3, "base_y": 0.0, "raio": 1.1,
+		"esc": [0.95, 1.05], "grande": true, "col": [1.6, 1.2, 1.0]},
+	{"n": "industrial_storage_cart", "papel": "guia", "peso": 2, "base_y": 0.0, "raio": 0.75,
+		"esc": [0.95, 1.05], "grande": true, "col": [1.3, 1.1, 0.8]},
+	{"n": "wheelchair_01", "papel": "guia", "peso": 1, "base_y": 0.0, "raio": 0.55,
+		"esc": [0.95, 1.05]},
+	{"n": "covered_car", "papel": "guia", "peso": 1, "base_y": 0.0, "raio": 2.4,
+		"esc": [0.98, 1.02], "grande": true, "col": [2.1, 1.5, 4.4]},
 
 	# --- encostado no muro, pelo lado da rua ------------------------------
+	{"n": "trash_pile_clutter", "papel": "muro", "peso": 12, "base_y": 0.0, "raio": 0.45, "esc": [0.85, 1.25]},
+	{"n": "street_shrine_velas", "papel": "muro", "peso": 3, "base_y": 0.0, "raio": 0.35, "esc": [0.9, 1.1]},
+	{"n": "missing_board_1994", "papel": "muro", "peso": 2, "base_y": 0.0, "raio": 0.65, "esc": [0.95, 1.05]},
+	{"n": "red_valve_pipe_junction", "papel": "muro", "peso": 5, "base_y": 0.0, "raio": 0.3, "esc": [0.95, 1.08]},
+	{"n": "dumpster_kraycik", "papel": "muro", "peso": 2, "base_y": 0.0, "raio": 1.1, "esc": [0.92, 1.02], "grande": true, "col": [1.6, 1.2, 1.0]},
 	{"n": "ladder_sectioned_01", "papel": "muro", "peso": 3, "base_y": 0.0, "raio": 0.45, "esc": [0.95, 1.05]},
 	{"n": "wooden_ladder_02", "papel": "muro", "peso": 3, "base_y": 0.0, "raio": 0.55, "esc": [0.95, 1.05]},
 	## lata de spray largada — o rastro de quem pichou o muro na etapa 09
-	{"n": "spray_paint_bottles_02", "papel": "muro", "peso": 5, "base_y": 0.0, "raio": 0.15, "esc": [0.9, 1.1]},
+	{"n": "spray_paint_bottles_02", "papel": "muro", "peso": 6, "base_y": 0.0, "raio": 0.15, "esc": [0.9, 1.1]},
 	{"n": "plastic_bottle_gallon", "papel": "muro", "peso": 6, "base_y": 0.0, "raio": 0.12, "esc": [0.9, 1.15]},
+	{"n": "plastic_jerrycan", "papel": "muro", "peso": 5, "base_y": 0.0, "raio": 0.18, "esc": [0.9, 1.15]},
+	{"n": "plastic_container", "papel": "muro", "peso": 4, "base_y": 0.0, "raio": 0.22, "esc": [0.9, 1.15]},
+	{"n": "bleach_bottle", "papel": "muro", "peso": 4, "base_y": 0.0, "raio": 0.12, "esc": [0.95, 1.2]},
+	{"n": "drain_cleaner", "papel": "muro", "peso": 4, "base_y": 0.0, "raio": 0.12, "esc": [0.95, 1.2]},
+	{"n": "can_rusted", "papel": "muro", "peso": 6, "base_y": 0.0, "raio": 0.12, "esc": [0.95, 1.25]},
+	{"n": "russian_food_cans_01", "papel": "muro", "peso": 4, "base_y": 0.0, "raio": 0.18, "esc": [0.95, 1.15]},
+	{"n": "cigarette_pack", "papel": "muro", "peso": 4, "base_y": 0.0, "raio": 0.1, "esc": [1.0, 1.25]},
 	{"n": "metal_jerrycan", "papel": "muro", "peso": 4, "base_y": 0.0, "raio": 0.2, "esc": [0.9, 1.1]},
-	{"n": "cement_bag", "papel": "muro", "peso": 4, "base_y": 0.0, "raio": 0.4, "esc": [0.9, 1.1]},
+	{"n": "cement_bag", "papel": "muro", "peso": 5, "base_y": 0.0, "raio": 0.4, "esc": [0.9, 1.1]},
 	{"n": "plastic_crate_01", "papel": "muro", "peso": 6, "base_y": 0.0, "raio": 0.25, "esc": [0.9, 1.15]},
 	{"n": "plastic_crate_03", "papel": "muro", "peso": 5, "base_y": 0.0, "raio": 0.3, "esc": [0.9, 1.15]},
 	{"n": "industrial_pastic_container", "papel": "muro", "peso": 4, "base_y": 0.0, "raio": 0.35, "esc": [0.9, 1.1]},
 	{"n": "wooden_bucket_01", "papel": "muro", "peso": 4, "base_y": 0.0, "raio": 0.22, "esc": [0.9, 1.15]},
+	{"n": "wicker_basket_01", "papel": "muro", "peso": 3, "base_y": 0.0, "raio": 0.25, "esc": [0.9, 1.15]},
+	{"n": "Television_01", "papel": "muro", "peso": 2, "base_y": 0.0, "raio": 0.35, "esc": [0.95, 1.05]},
+	{"n": "television_02", "papel": "muro", "peso": 2, "base_y": 0.0, "raio": 0.35, "esc": [0.95, 1.05]},
+	{"n": "vintage_suitcase", "papel": "muro", "peso": 2, "base_y": 0.0, "raio": 0.3, "esc": [0.95, 1.08]},
+	{"n": "vintage_crutches_01", "papel": "muro", "peso": 2, "base_y": 0.0, "raio": 0.25, "esc": [0.95, 1.05]},
+	{"n": "plastic_broom", "papel": "muro", "peso": 3, "base_y": 0.0, "raio": 0.2, "esc": [0.95, 1.05]},
+	{"n": "wooden_broom", "papel": "muro", "peso": 3, "base_y": 0.0, "raio": 0.2, "esc": [0.95, 1.05]},
+	{"n": "dustpan", "papel": "muro", "peso": 3, "base_y": 0.0, "raio": 0.18, "esc": [0.95, 1.1]},
+	{"n": "picke_dirty_01", "papel": "muro", "peso": 2, "base_y": 0.0, "raio": 0.3, "esc": [0.95, 1.05]},
+	{"n": "folding_wooden_stool", "papel": "muro", "peso": 3, "base_y": 0.0, "raio": 0.25, "esc": [0.95, 1.05]},
+	{"n": "metal_stool_01", "papel": "muro", "peso": 3, "base_y": 0.0, "raio": 0.25, "esc": [0.95, 1.05]},
+	{"n": "wooden_stool_01", "papel": "muro", "peso": 3, "base_y": 0.0, "raio": 0.25, "esc": [0.95, 1.05]},
+	{"n": "painted_wooden_chair_01", "papel": "muro", "peso": 2, "base_y": 0.0, "raio": 0.35, "esc": [0.95, 1.05]},
+	{"n": "metal_toolbox", "papel": "muro", "peso": 3, "base_y": 0.0, "raio": 0.25, "esc": [0.95, 1.1]},
+	{"n": "korean_fire_extinguisher_01", "papel": "muro", "peso": 2, "base_y": 0.0, "raio": 0.18, "esc": [0.95, 1.08]},
+	{"n": "wooden_lantern_01", "papel": "muro", "peso": 2, "base_y": 0.0, "raio": 0.18, "esc": [0.95, 1.1]},
 	{"n": "boombox", "papel": "muro", "peso": 1, "base_y": 0.0, "raio": 0.4, "esc": [0.95, 1.05]},
 	{"n": "tire_pump", "papel": "muro", "peso": 2, "base_y": 0.0, "raio": 0.15, "esc": [0.95, 1.05]},
 	{"n": "rusted_wheel_rim_01", "papel": "muro", "peso": 3, "base_y": 0.2, "raio": 0.25, "esc": [0.9, 1.1]},
@@ -179,20 +213,32 @@ const CATALOGO := [
 	# --- preso na parede da casa, ACIMA do muro ---------------------------
 	## cano de descida da calha: e' vertical e vai do beiral ao chao
 	{"n": "modular_metal_gutter", "peca": "modular_metal_gutter_section", "papel": "parede",
-		"peso": 8, "alt": [2.6, 3.4], "esc": [0.95, 1.05], "esc_y": [1.6, 2.6]},
-	{"n": "modular_airduct_circular_01", "peca": "modular_airduct_circular_double",
-		"papel": "parede", "peso": 3, "alt": [2.8, 3.6], "esc": [0.9, 1.1]},
-	{"n": "security_camera_02", "papel": "parede", "peso": 1, "alt": [3.0, 3.8], "esc": [0.95, 1.05]},
+		"peso": 7, "alt": [2.4, 3.2], "esc": [0.95, 1.05], "esc_y": [1.5, 2.3]},
+	{"n": "red_valve_pipe_junction", "papel": "parede",
+		"peso": 5, "alt": [0.9, 1.6], "esc": [0.95, 1.08]},
+	{"n": "power_box_01", "papel": "parede", "peso": 4, "alt": [1.6, 2.3], "esc": [0.95, 1.05]},
+	{"n": "industrial_caged_sconce", "papel": "parede", "peso": 4, "alt": [2.5, 3.3], "esc": [0.95, 1.1]},
+	{"n": "security_light", "papel": "parede", "peso": 3, "alt": [2.7, 3.5], "esc": [0.95, 1.08]},
+	{"n": "fire_alarm", "papel": "parede", "peso": 2, "alt": [1.6, 2.2], "esc": [0.95, 1.05]},
+	{"n": "security_camera_02", "papel": "parede", "peso": 2, "alt": [3.0, 3.8], "esc": [0.95, 1.05]},
 
 	# --- quintal e terreno entre casas ------------------------------------
+	{"n": "trash_pile_clutter", "papel": "quintal", "peso": 8, "base_y": 0.0, "raio": 0.5, "esc": [0.9, 1.25]},
 	{"n": "portable_generator", "papel": "quintal", "peso": 3, "base_y": 0.0, "raio": 0.5, "esc": [0.95, 1.05]},
 	{"n": "tool_cart", "papel": "quintal", "peso": 3, "base_y": 0.0, "raio": 0.7, "esc": [0.95, 1.05]},
 	{"n": "wooden_barrels_01", "papel": "quintal", "peso": 4, "base_y": 0.04, "raio": 2.2, "esc": [0.9, 1.05]},
 	{"n": "barrel_stove", "papel": "quintal", "peso": 3, "base_y": 0.0, "raio": 0.35, "esc": [0.95, 1.05]},
+	{"n": "old_bed_frame", "papel": "quintal", "peso": 2, "base_y": 0.0, "raio": 1.1, "esc": [0.95, 1.05]},
+	{"n": "Rockingchair_01", "papel": "quintal", "peso": 2, "base_y": 0.0, "raio": 0.5, "esc": [0.95, 1.05]},
+	{"n": "painted_wooden_table", "papel": "quintal", "peso": 2, "base_y": 0.0, "raio": 0.75, "esc": [0.95, 1.05]},
+	{"n": "small_wooden_table_01", "papel": "quintal", "peso": 3, "base_y": 0.0, "raio": 0.5, "esc": [0.95, 1.05]},
+	{"n": "worn_metal_rack", "papel": "quintal", "peso": 3, "base_y": 0.0, "raio": 0.65, "esc": [0.95, 1.05]},
+	{"n": "standing_chalkboard_01", "papel": "quintal", "peso": 2, "base_y": 0.0, "raio": 0.4, "esc": [0.95, 1.05]},
 	{"n": "garden_gnome", "papel": "quintal", "peso": 2, "base_y": 0.0, "raio": 0.2, "esc": [0.9, 1.1]},
 	{"n": "watering_can_metal_01", "papel": "quintal", "peso": 3, "base_y": 0.0, "raio": 0.25, "esc": [0.9, 1.1]},
 	{"n": "garden_sprinkler_01", "papel": "quintal", "peso": 2, "base_y": 0.0, "raio": 0.2, "esc": [0.9, 1.1]},
 	{"n": "planter_pot_clay", "papel": "quintal", "peso": 7, "base_y": 0.0, "raio": 0.2, "esc": [0.9, 1.35]},
+	{"n": "potted_plant_01", "papel": "quintal", "peso": 4, "base_y": 0.0, "raio": 0.35, "esc": [0.9, 1.15]},
 	{"n": "wooden_bucket_01", "papel": "quintal", "peso": 5, "base_y": 0.0, "raio": 0.22, "esc": [0.9, 1.15]},
 	{"n": "cement_bag", "papel": "quintal", "peso": 3, "base_y": 0.0, "raio": 0.4, "esc": [0.9, 1.1]},
 	{"n": "dry_branches_medium_01", "papel": "quintal", "peso": 6, "base_y": 0.02, "raio": 0.8, "esc": [0.85, 1.2]},
@@ -201,15 +247,10 @@ const CATALOGO := [
 	{"n": "potted_plant_02", "papel": "quintal", "peso": 4, "base_y": 0.0, "raio": 0.4, "esc": [0.9, 1.1]},
 
 	# --- praca do obelisco -------------------------------------------------
-	# SAIRAM daqui o `painted_wooden_bench` e o `CoffeeCart_01`: o banco nao
-	# combinava com a praca e o carrinho de cafe' ficava com cara de quiosque
-	# largado no meio da rua. Os .gltf continuam baixados em
-	# `assets/3d_model/polyhaven/`, e as malhas ja' extraidas em DIR_MALHAS —
-	# pra trazer qualquer um de volta basta reinserir a linha.
-	#
-	# Com o banco fora, o `_gravar_pontos` deixa de produzir lugar de SENTAR:
-	# sobra so' o de encostar no muro. Ver o comentario la' embaixo.
+	{"n": "missing_board_1994", "papel": "praca", "peso": 3, "base_y": 0.0, "raio": 0.7, "esc": [0.95, 1.05]},
+	{"n": "street_shrine_velas", "papel": "praca", "peso": 3, "base_y": 0.0, "raio": 0.4, "esc": [0.95, 1.1]},
 	{"n": "korean_public_payphone_01", "papel": "praca", "peso": 2, "base_y": 0.0, "raio": 0.35, "esc": [1.0, 1.0]},
+	{"n": "wooden_lantern_01", "papel": "praca", "peso": 3, "base_y": 0.0, "raio": 0.2, "esc": [0.95, 1.15]},
 	{"n": "planter_pot_clay", "papel": "praca", "peso": 8, "base_y": 0.0, "raio": 0.22, "esc": [1.0, 1.5]},
 	{"n": "potted_plant_02", "papel": "praca", "peso": 6, "base_y": 0.0, "raio": 0.4, "esc": [0.95, 1.15]},
 	{"n": "dirty_football", "papel": "praca", "peso": 2, "base_y": 0.0, "raio": 0.15, "esc": [0.95, 1.05]},
@@ -217,13 +258,8 @@ const CATALOGO := [
 ]
 
 ## Quantos candidatos cada papel tenta, antes da densidade e das rejeicoes.
-##
-## Sao MUITO maiores que o resultado, e de proposito: quem limita o numero
-## final e' o espacamento, nao a contagem. Subir tentativa nao adensa a cidade
-## — so' faz o espalhamento aproveitar melhor os vaos que sobraram, em vez de
-## desistir cedo e deixar quarteirao vazio ao lado de quarteirao cheio.
 const TENTATIVAS := {
-	"guia": 90, "muro": 2200, "parede": 700, "quintal": 2000, "praca": 900,
+	"guia": 140, "muro": 3400, "parede": 950, "quintal": 2800, "praca": 1100,
 }
 
 var _rng := RandomNumberGenerator.new()
@@ -348,6 +384,27 @@ func _montar_malha(raiz: Node, peca: String) -> ArrayMesh:
 	_colher_mesh_instances(raiz, raiz, peca, Transform3D.IDENTITY, achados)
 	if achados.is_empty():
 		return null
+	var min_v := Vector3(INF, INF, INF)
+	var max_v := Vector3(-INF, -INF, -INF)
+	for a in achados:
+		var mi_b: MeshInstance3D = a["mi"]
+		var xf_b: Transform3D = a["xf"]
+		var m_b: Mesh = mi_b.mesh
+		for si in m_b.get_surface_count():
+			var arr_b := m_b.surface_get_arrays(si)
+			if arr_b.is_empty():
+				continue
+			var v_b: PackedVector3Array = arr_b[Mesh.ARRAY_VERTEX]
+			for i in v_b.size():
+				var p := xf_b * v_b[i]
+				min_v = min_v.min(p)
+				max_v = max_v.max(p)
+	var desloc := Vector3.ZERO
+	if not peca.is_empty():
+		desloc = Vector3(-(min_v.x + max_v.x) * 0.5, -(min_v.y + max_v.y) * 0.5, -(min_v.z + max_v.z) * 0.5)
+	elif min_v.y < -0.02:
+		desloc = Vector3(0.0, -min_v.y, 0.0)
+
 	var saida := ArrayMesh.new()
 	for a in achados:
 		var mi: MeshInstance3D = a["mi"]
@@ -359,7 +416,7 @@ func _montar_malha(raiz: Node, peca: String) -> ArrayMesh:
 				continue
 			var verts: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
 			for i in verts.size():
-				verts[i] = xf * verts[i]
+				verts[i] = (xf * verts[i]) + desloc
 			arr[Mesh.ARRAY_VERTEX] = verts
 			# a normal gira, mas nao transladada — dai o basis puro
 			if arr[Mesh.ARRAY_NORMAL] != null:
@@ -673,7 +730,9 @@ func _espalhar_praca(lista: Array, saida: Dictionary) -> int:
 		var p := Vector3(praca_centro.x + cos(ang) * r, 0.0, praca_centro.y + sin(ang) * r)
 		if not esp.livre(p, raio * 1.15) or not _esp_herdado.livre(p, 0.1):
 			continue
-		p.y = _mapa.chao(p.x, p.z, 0.0) + float(item.get("base_y", 0.0))
+		var yc: float = _mapa.chao(p.x, p.z, 0.0)
+		var yr: float = _mapa.altura_rua(p)
+		p.y = (maxf(yc, yr) if not is_nan(yr) else yc) + float(item.get("base_y", 0.0))
 		# Giro solto: o que sobrou na praca e' vaso, moita e orelhao, e nenhum
 		# deles tem frente. O caso do movel virado pro obelisco morreu junto
 		# com o banco — se ele voltar, o giro dele e' `atan2(cos(ang),
