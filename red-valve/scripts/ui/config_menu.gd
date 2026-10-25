@@ -984,6 +984,7 @@ func _build_debug_travel_tab() -> void:
 		{"name": tr("DEBUG_TRAVEL_MAYCOW_HOUSE"), "scene": "res://scenes/stages/prolog/the_house.tscn", "flag": "entrando_na_casa_maycow"},
 		{"name": tr("DEBUG_TRAVEL_CHURCH"), "scene": "res://scenes/stages/igreja/igreja_interior.tscn", "flag": ""},
 		{"name": tr("DEBUG_TRAVEL_JIMMY_HOUSE"), "scene": "res://scenes/stages/jimmy_house/casa_jimmy_interior.tscn", "flag": ""},
+		{"name": tr("DEBUG_TRAVEL_NICE_HOUSE"), "scene": "res://scenes/stages/nice_house/casa_nice_interior.tscn", "flag": ""},
 		{"name": tr("DEBUG_TRAVEL_HOSPITAL"), "scene": "res://scenes/stages/hospital/hospital.tscn", "flag": ""},
 		{"name": tr("DEBUG_TRAVEL_SCHOOL"), "scene": "res://scenes/stages/escola/escola.tscn", "flag": ""}
 	]
