@@ -18,10 +18,13 @@ extends Node3D
 ## Quem cria este no' e' o `cena_dona_nice.gd`; quem manda afastar e' o
 ## diretor (`afastar_bancos`) ou o evento (`no_canto`, ao recomecar a luta).
 ##
-## O voo levanta poeira (so' no voo, `no_canto` e' sem efeito): uma onda de
-## fuligem rente ao chao saindo dela, a poeira de baixo de cada banco quando
-## ele arranca (com lascas de madeira), o rastro no ar, o baque onde ele cai
-## e o po' que o tranco solta do teto e fica descendo na nave.
+## O voo e' um estrago (so' no voo, `no_canto` e' sem efeito):
+##   - a onda de choque: um anel vermelho escuro correndo o chao a partir
+##     dela, com fuligem rente ao piso atras, e a rajada (som);
+##   - o teto: po' descendo na nave e pedras e reboco caindo e quicando;
+##   - cada banco: poeira de baixo dele quando arranca, lascas de madeira, o
+##     rastro no ar e, onde cai, o baque com mais poeira e mais lascas.
+## As velas da cena dobram com a rajada (`cena_dona_nice.afastar_bancos`).
 
 const LAYER_CHAO := 2
 ## z do meio de cada vao livre, por lado. O banco deita ao longo do z.
@@ -32,6 +35,9 @@ const COLUNAS := [8.9, 9.8, 10.7, 11.6]
 const ALTURA_DO_VOO := 2.4
 const ENTRADA_X := [5.3, 6.4]
 const SOM_BATIDA := "res://assets/sounds/igreja/tapa_chao.ogg"
+const SOM_RAJADA := "res://assets/sounds/igreja/rajada_bancos.ogg"
+const COR_ONDA := Color(0.95, 0.12, 0.05)
+const COR_PEDRA := Color(0.42, 0.39, 0.36)
 ## A poeira: escura, com um fundo de sangue seco (e' a igreja do ritual).
 const COR_POEIRA := Color(0.40, 0.35, 0.32, 0.34)
 const COR_FULIGEM := Color(0.34, 0.22, 0.19, 0.7)
@@ -47,6 +53,7 @@ var _som: AudioStreamPlayer
 var _fumaca: QuadMesh
 var _fuligem: QuadMesh
 var _lasca: BoxMesh
+var _pedra: BoxMesh
 
 
 func _ready() -> void:
@@ -139,7 +146,16 @@ func afastar() -> void:
 	_estado = "voando"
 	var centro := Vector3(0.0, 0.0, 18.0)
 	_onda(centro)
+	_anel_de_choque(centro)
+	_varrida(centro)
 	_po_do_teto()
+	_pedras_do_teto()
+	var rajada := AudioStreamPlayer.new()
+	rajada.stream = load(SOM_RAJADA)
+	rajada.volume_db = 2.0
+	add_child(rajada)
+	rajada.play()
+	rajada.finished.connect(rajada.queue_free)
 	_tween = create_tween().set_parallel(true)
 	for b in _bancos:
 		var longe := clampf(b["inicio"].origin.distance_to(centro) / 16.0, 0.0, 1.0)
@@ -193,6 +209,7 @@ func _pousou(b: Dictionary) -> void:
 		_soltar(rastro)
 	_poeira((b["alvo"] as Transform3D).origin, Vector3(0.6, 0.1, 1.4), 32, 3.0, 1.0, 2.6,
 		Vector3.UP, 75.0, Vector2(0.6, 1.6))
+	_lascas((b["alvo"] as Transform3D).origin + Vector3.UP * 0.4)
 	_som.pitch_scale = randf_range(0.8, 1.15)
 	_som.play()
 
@@ -251,6 +268,104 @@ func _onda(centro: Vector3) -> void:
 	_soltar(p)
 
 
+## A onda de choque: um anel vermelho escuro rente ao chao, que sai dela e
+## varre a nave em menos de um segundo, apagando enquanto corre.
+func _anel_de_choque(centro: Vector3) -> void:
+	var mi := MeshInstance3D.new()
+	var plano := PlaneMesh.new()
+	plano.size = Vector2(2.0, 2.0)
+	var m := StandardMaterial3D.new()
+	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	m.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	m.cull_mode = BaseMaterial3D.CULL_DISABLED
+	m.albedo_color = COR_ONDA
+	var anel := GradientTexture2D.new()
+	anel.fill = GradientTexture2D.FILL_RADIAL
+	anel.fill_from = Vector2(0.5, 0.5)
+	anel.fill_to = Vector2(1.0, 0.5)
+	var g := Gradient.new()
+	g.set_color(0, Color(1, 1, 1, 0))
+	g.add_point(0.55, Color(1, 1, 1, 0.0))
+	g.add_point(0.85, Color(1, 1, 1, 1.0))
+	g.set_color(g.get_point_count() - 1, Color(1, 1, 1, 0))
+	anel.gradient = g
+	m.albedo_texture = anel
+	plano.material = m
+	mi.mesh = plano
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(mi)
+	mi.global_position = centro + Vector3.UP * 0.04
+	mi.scale = Vector3(0.6, 1.0, 0.6)
+	var tw := create_tween().set_parallel(true)
+	tw.tween_property(mi, "scale", Vector3(20.0, 1.0, 20.0), 0.95) \
+		.set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
+	tw.tween_property(m, "albedo_color:a", 0.0, 0.95).set_trans(Tween.TRANS_QUAD) \
+		.set_ease(Tween.EASE_IN)
+	tw.chain().tween_callback(mi.queue_free)
+
+
+## A rajada em si: poeira na altura do peito saindo dela em todas as
+## direcoes, rapida, e freando contra as paredes.
+func _varrida(centro: Vector3) -> void:
+	var p := _particulas("varrida", self, 180, 2.2, 0.9, _fumaca)
+	p.global_position = centro + Vector3.UP * 1.0
+	var m := p.process_material as ParticleProcessMaterial
+	m.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_RING
+	m.emission_ring_axis = Vector3.UP
+	m.emission_ring_radius = 1.5
+	m.emission_ring_inner_radius = 1.0
+	m.emission_ring_height = 1.4
+	m.direction = Vector3.UP
+	m.spread = 15.0
+	m.initial_velocity_min = 0.2
+	m.initial_velocity_max = 0.8
+	m.radial_velocity_min = 11.0
+	m.radial_velocity_max = 16.0
+	m.damping_min = 4.0
+	m.damping_max = 6.0
+	m.gravity = Vector3.ZERO
+	m.scale_min = 0.6
+	m.scale_max = 1.5
+	p.emitting = true
+	_soltar(p)
+
+
+## Pedras e reboco soltos do teto: caem na nave e quicam no piso.
+func _pedras_do_teto() -> void:
+	var chao := GPUParticlesCollisionBox3D.new()
+	chao.name = "chao_das_pedras"
+	chao.size = Vector3(16.0, 1.0, 36.0)
+	add_child(chao)
+	chao.global_position = Vector3(0.0, -0.5, 18.0)
+	var p := _particulas("pedras", self, 120, 4.0, 0.0, _pedra)
+	p.global_position = Vector3(0.0, 9.0, 18.0)
+	p.one_shot = false
+	var m := p.process_material as ParticleProcessMaterial
+	m.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_BOX
+	m.emission_box_extents = Vector3(6.0, 0.3, 13.0)
+	m.direction = Vector3.DOWN
+	m.spread = 10.0
+	m.initial_velocity_min = 0.0
+	m.initial_velocity_max = 1.0
+	m.gravity = Vector3(0, -9.8, 0)
+	m.angular_velocity_min = -400.0
+	m.angular_velocity_max = 400.0
+	m.scale_min = 0.5
+	m.scale_max = 2.2
+	m.collision_mode = ParticleProcessMaterial.COLLISION_RIGID
+	m.collision_bounce = 0.25
+	m.collision_friction = 0.8
+	# pedra nao some aos poucos nem cresce
+	m.color_ramp = null
+	m.scale_curve = null
+	p.collision_base_size = 0.05
+	p.emitting = true
+	get_tree().create_timer(2.2, false).timeout.connect(func(): p.emitting = false)
+	_soltar(p, 2.2)
+	get_tree().create_timer(p.lifetime + 3.0, false).timeout.connect(chao.queue_free)
+
+
 ## O tranco solta o po' do teto: cai devagar sobre a nave por varios segundos.
 func _po_do_teto() -> void:
 	var p := _particulas("po_do_teto", self, 260, 7.0, 0.0, _fumaca)
@@ -295,7 +410,7 @@ func _poeira(onde: Vector3, caixa: Vector3, quantas: int, vida: float, esc_min: 
 
 
 func _lascas(onde: Vector3) -> void:
-	var p := _particulas("lascas", self, 12, 1.6, 1.0, _lasca)
+	var p := _particulas("lascas", self, 22, 1.6, 1.0, _lasca)
 	p.global_position = onde
 	var m := p.process_material as ParticleProcessMaterial
 	m.direction = Vector3.UP
@@ -372,6 +487,12 @@ func _montar_poeira() -> void:
 	bola.gradient = g
 	_fumaca = _nuvem(COR_POEIRA, bola, 1.0)
 	_fuligem = _nuvem(COR_FULIGEM, bola, 0.9)
+	_pedra = BoxMesh.new()
+	_pedra.size = Vector3(0.12, 0.08, 0.1)
+	var reboco := StandardMaterial3D.new()
+	reboco.albedo_color = COR_PEDRA
+	reboco.roughness = 1.0
+	_pedra.material = reboco
 	_lasca = BoxMesh.new()
 	_lasca.size = Vector3(0.025, 0.012, 0.14)
 	var madeira := StandardMaterial3D.new()

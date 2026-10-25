@@ -7,8 +7,8 @@ extends Node
 ## NO COLO ele so' ANDA e CORRE: o `player.carregando_jonny` trava mira, tiro,
 ## recarga, dash, lanterna, atalho e agarrao, e segura o passo no de quem
 ## carrega alguem. O corpo INTEIRO do Maycow sai da AnimationTree e toca os
-## clipes da cutscene da igreja (`parado_carregando` / `andar_carregando` /
-## `correr_carregando`, biblioteca `maycow_clipes.tres`): e' a mesma pose do
+## clipes da cutscene da igreja (`parado_carregando` / `correr_carregando`,
+## biblioteca `maycow_clipes.tres`): e' a mesma pose do
 ## colo da cutscene, e pra mudar ela se mexe no clipe, nao aqui.
 ##
 ## O Jonny vai SOBRE AS DUAS MAOS (`AtorIgreja.alvo_nas_maos`, a mesma conta da
@@ -39,21 +39,18 @@ const ESQUELETO := "maycow_lopes_normal/Armature/Skeleton3D"
 const MALHA := "maycow_lopes_normal/Armature/Skeleton3D/char1"
 
 const PARADO := &"parado_carregando"
-const ANDANDO := &"andar_carregando"
-const CORRENDO := &"correr_carregando"
+## Andando E correndo: o mesmo passo (o usuario gostou dele andando), so'
+## que mais rapido na corrida.
+const PASSO := &"correr_carregando"
 const LARGAR := &"largar_jonny"
 const PEGAR := &"pegar_jonny"
-## Velocidade (m/s) em que o `andar_carregando` casa o passo com o chao (medida
-## nos pes do clipe). Andando mais rapido ou mais devagar, o clipe acompanha.
-const PASSO_DO_CLIPE := 0.95
-## O mesmo pro `correr_carregando` (medido igual: passada curta, ~1,3 m/s), e
-## a partir de que rapidez o passo vira o da corrida.
-const PASSO_CORRENDO := 1.3
-const VIRA_CORRIDA := 2.0
-## Correndo (3,4 m/s) o `andar_carregando` casaria o pe' com o chao so' a
-## 3,6x; acelerado ate' 2x as pernas ja' giravam rapido demais. Fica nesse
-## teto, um pouco abaixo.
-const PASSADA_MAX_CORRENDO := 1.6
+## Velocidade (m/s) em que o `correr_carregando` casa o passo com o chao
+## (medida nos pes do clipe: passada curta, ~1,3 m/s). O clipe acompanha a
+## rapidez de verdade, ate' este teto.
+const PASSO_DO_CLIPE := 1.3
+## Correndo (3,4 m/s) o pe' casaria com o chao so' a 2,6x, e as pernas giram
+## rapido demais: a corrida fica nesse teto.
+const PASSADA_MAX := 1.8
 ## `largar_jonny` (3,2 s): o Jonny encosta no chao em 1,6 s.
 const DURACAO_LARGAR := 3.2
 const NO_CHAO := 1.6
@@ -193,21 +190,12 @@ func _no_colo() -> void:
 func _escolher_passo() -> void:
 	var v := Vector3(player.velocity.x, 0.0, player.velocity.z)
 	var rapidez := v.length()
-	var clipe := PARADO
-	# Os dois clipes vao TROCADOS: no jogo o `correr_carregando` (passada curta,
-	# corpo quieto) e' que parece andar, e o `andar_carregando` acelerado e' que
-	# parece a corrida aflita com ele no colo.
-	if rapidez > VIRA_CORRIDA:
-		clipe = ANDANDO
-	elif rapidez > 0.15:
-		clipe = CORRENDO
+	var clipe := PASSO if rapidez > 0.15 else PARADO
 	if _ap.current_animation != String(clipe):
 		_ap.play(clipe, 0.3)
-	if clipe == CORRENDO:
+	if clipe == PASSO:
 		var de_costas := v.dot(-player.global_basis.z) < -0.3 * rapidez
-		_ap.speed_scale = clampf(rapidez / PASSO_CORRENDO, 0.6, 1.6) * (-1.0 if de_costas else 1.0)
-	elif clipe == ANDANDO:
-		_ap.speed_scale = clampf(rapidez / PASSO_DO_CLIPE, 0.6, PASSADA_MAX_CORRENDO)
+		_ap.speed_scale = clampf(rapidez / PASSO_DO_CLIPE, 0.6, PASSADA_MAX) * (-1.0 if de_costas else 1.0)
 	else:
 		_ap.speed_scale = 1.0
 

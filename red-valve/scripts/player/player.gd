@@ -616,11 +616,11 @@ var _modelo_escondido_por_cena: bool = false
 ## dash, lanterna, atalho ou agarrao. Quem liga e desliga e' o
 ## `player_carregar_jonny.gd`.
 var carregando_jonny: bool = false
-## Teto do andar com o Jonny no colo (m/s): o passo de quem carrega alguem, e o
-## ritmo em que o clipe `andar_carregando` nao patina no chao.
-const VELOCIDADE_NO_COLO := 1.3
-## Teto da corrida com ele no colo: o `correr_carregando` (4,2 m/s no clipe)
-## toca um pouco mais devagar, e a cidade nao vira uma caminhada de 4 minutos.
+## Teto do andar com o Jonny no colo (m/s): o passo de quem carrega alguem (o
+## `correr_carregando` casa com o chao a 1,3; aqui toca um pouco mais devagar).
+const VELOCIDADE_NO_COLO := 1.15
+## Teto da corrida com ele no colo: o mesmo clipe acelerado, e a cidade nao
+## vira uma caminhada de 4 minutos.
 const VELOCIDADE_NO_COLO_CORRENDO := 3.4
 
 

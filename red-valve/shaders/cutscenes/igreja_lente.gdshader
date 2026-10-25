@@ -29,8 +29,10 @@ uniform float gosma : hint_range(0.0, 1.0) = 0.0;          // baba na tela
 uniform vec3 cor_gosma = vec3(0.22, 0.55, 0.08);            // verde da baba; bile na fase 2
 uniform float sangue_tela : hint_range(0.0, 1.0) = 0.0;    // respingo
 uniform float foco : hint_range(0.0, 1.0) = 0.0;           // tunel: borda borrada e escura, centro nitido
-uniform float foco_olhos : hint_range(0.0, 1.0) = 0.0;     // 1 = o nitido vira uma faixa estreita (os dois olhos)
-uniform float foco_tamanho : hint_range(0.2, 8.0) = 1.0;   // escala do que fica nitido (acompanha o zoom)
+uniform float foco_olhos : hint_range(0.0, 1.0) = 0.0;     // 1 = so' em volta de cada olho fica nitido
+uniform vec2 olho_a = vec2(0.45, 0.5);                      // os olhos na tela (0..1, de cima pra baixo)
+uniform vec2 olho_b = vec2(0.55, 0.5);
+uniform vec2 raio_olho = vec2(0.05, 0.1);                   // nitido ate' x, borrado de y (em alturas de tela)
 
 float hash12(vec2 p) {
 	vec3 p3 = fract(vec3(p.xyx) * 0.1031);
@@ -97,10 +99,13 @@ void fragment() {
 	}
 
 	// foco: so' o meio fica nitido; em volta, os mipmaps da tela borram. Nos
-	// olhos o meio nitido achata numa faixa larga e baixa
-	vec2 forma_foco = mix(vec2(1.25, 1.0), vec2(1.0, 3.2), foco_olhos);
-	vec2 raio_foco = mix(vec2(0.09, 0.44), vec2(0.06, 0.2), foco_olhos) * foco_tamanho;
-	float borda_foco = smoothstep(raio_foco.x, raio_foco.y, length(c * forma_foco));
+	// olhos, o nitido e' um circulo em volta de cada olho e o resto borra
+	float borda_foco = smoothstep(0.09, 0.44, length(c * vec2(1.25, 1.0)));
+	if (foco_olhos > 0.001) {
+		vec2 asp = vec2(SCREEN_PIXEL_SIZE.y / SCREEN_PIXEL_SIZE.x, 1.0);
+		float perto = min(length((SCREEN_UV - olho_a) * asp), length((SCREEN_UV - olho_b) * asp));
+		borda_foco = mix(borda_foco, smoothstep(raio_olho.x, raio_olho.y, perto), foco_olhos);
+	}
 	if (foco > 0.001) {
 		vec3 borrado = textureLod(tela, clamp(uv, vec2(0.001), vec2(0.999)),
 				4.5 * foco * borda_foco).rgb;
@@ -114,9 +119,11 @@ void fragment() {
 	luma = dot(col, vec3(0.2126, 0.7152, 0.0722));
 	col = mix(vec3(luma), col, saturation);
 	// ...e o resto escurece: o mundo some em volta do que ela olha
+	// (nos olhos quase so' borra: escurecendo, o olho parecia aceso)
 	if (foco > 0.001) {
-		col = mix(vec3(luma), col, 1.0 - 0.35 * foco);
-		col *= 1.0 - foco * (0.1 + 0.45 * borda_foco);
+		float escurece = foco * mix(1.0, 0.3, foco_olhos);
+		col = mix(vec3(luma), col, 1.0 - 0.35 * escurece);
+		col *= 1.0 - escurece * (0.1 + 0.45 * borda_foco);
 	}
 
 	// possessao: as sombras puxam pro vermelho e a borda pulsa

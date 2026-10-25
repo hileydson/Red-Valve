@@ -34,10 +34,10 @@ const MAYCOW_VELOCIDADE := 0.86
 ## No `andar_esticando` as pernas andam ate' x e param de vez em y (segundos
 ## do clipe); o braco sobe do 0 ao 2,6.
 const ANDA_ESTICANDO_FREIA := Vector2(1.9, 2.7)
-## Do ponto do rosto (cabeca + 8 cm, posada no comeco do `olhando_parada`)
-## ate' o meio dos olhos dela, 0,7 s depois de o plano abrir (medido em foto).
-## Dali em diante segue o osso da cabeca.
-const OLHOS_DO_ROSTO := Vector3(0.057, 0.028, -0.08)
+## Os dois olhos dela (as pupilas) no espaco do osso `head`, medidos em duas
+## fotos do plano (zoom aberto e fechado, que batem na mesma conta). A camera
+## mira entre eles e a lente deixa nitido so' em volta de cada um.
+const OLHOS_NO_OSSO := [Vector3(-0.0356, 0.1382, 0.1172), Vector3(0.0207, 0.1395, 0.1211)]
 ## O girar_cabeca dela toca mais devagar na chegada (3,5 s viram ~6,4 s).
 const VEL_CABECA := 0.55
 ## Os trechos do girar_cabeca (em tempo do CLIPE) em que o pescoco torce de
@@ -516,7 +516,7 @@ func _sons() -> void:
 			["grito", "grito_transformacao.ogg", -3.0], ["rugido", "rugido_monstro.ogg", 1.0],
 			["grito_monstro", "grito_monstro.ogg", 0.0],
 			["ambiente", "ambiente_ritual.ogg", -10.0], ["gemido", "gemido_jonny.ogg", -6.0],
-			["pescoco", "pescoco_torcendo.ogg", -1.0]]:
+			["pescoco", "pescoco_torcendo.ogg", 6.0]]:
 		var p := _no(AudioStreamPlayer, d[0], s) as AudioStreamPlayer
 		p.stream = load(SONS + d[1])
 		p.volume_db = d[2]
@@ -696,10 +696,9 @@ func _montar_chegada() -> void:
 		[T_GOTA_BATE, 0.9], [T_GOTA_BATE + 0.25, 0.0], [T_CABECA, 0.0], [T_CABECA + 0.7, 1.0],
 		[t_volta, 1.0], [t_volta + 0.35, 0.0], [T_OLHOS, 0.0], [T_OLHOS + 0.6, 0.85],
 		[T_MIRA - 0.3, 1.0], [T_MIRA, 0.0]])
-	# no rosto dela so' os olhos ficam nitidos; a faixa nitida cresce com o zoom
+	# no rosto dela so' em volta dos olhos fica nitido (`olhos_no_osso`)
 	_valor(".:foco_olhos", [[0.0, 0.0], [T_OLHOS - 0.01, 0.0], [T_OLHOS, 1.0],
 		[T_MIRA, 1.0], [T_MIRA + 0.01, 0.0]])
-	# (o `foco_tamanho` sai do `_cam_olhos`, junto com o zoom)
 	_valor(".:saturacao", [[0.0, 0.85], [T_GOTA, 0.85], [T_GOTA + 0.6, 0.55],
 		[T_LONGE, 0.85], [T_CONVULSAO, 0.85], [T_CONVULSAO + 2.0, 0.6], [T_FIM, 0.85]])
 	_valor(".:vermelho", [[0.0, 0.0], [T_CONVULSAO, 0.0], [T_CONVULSAO + 2.5, 0.45],
@@ -860,15 +859,10 @@ func _montar_chegada() -> void:
 		[T_OLHOS, Vector3(0.85, 1.48, MAYCOW_FIM.z + 2.3), Vector3(-0.1, 1.42, MAYCOW_FIM.z), 32.0]])
 	_posar(dn, "girar_cabeca", 3.49)
 	var cabeca: Vector3 = dn.posicao_do_osso("head") + Vector3(0, 0.08, 0)
-	# O rosto dela de perto, na fala. O `_posar` troca de clipe MISTURANDO e,
-	# sem o tempo andar, a pose fica a de antes (ajoelhada): a cabeca saia
-	# 37 cm abaixo e a camera ficava dentro das costas dela. Aqui o clipe
-	# entra sem mistura, com ela de pe'.
-	var ap_dn := dn.get_node("anim") as AnimationPlayer
-	ap_dn.play("olhando_parada", 0.0)
-	ap_dn.seek(0.0, true)
-	var rosto_dela: Vector3 = dn.posicao_do_osso("head") + Vector3(0, 0.08, 0)
-	_cam_olhos(T_OLHOS, T_ZOOM, T_MIRA, T_CABECA + dur_cabeca, rosto_dela)
+	# O rosto dela de perto, na fala, e o zoom nos olhos. O `_posar` troca de
+	# clipe MISTURANDO e, sem o tempo andar, a pose ficava a de antes
+	# (ajoelhada): o `_cam_olhos` posa sem mistura, com ela de pe'.
+	_cam_olhos(T_OLHOS, T_ZOOM, T_MIRA, T_CABECA + dur_cabeca)
 	_cam("cam_mira", [
 		[T_MIRA, Vector3(-0.32, 1.68, MAYCOW_FIM.z - 0.25), cabeca - Vector3(0, 0.55, 0), 30.0],
 		[T_VIRA, Vector3(-0.30, 1.67, MAYCOW_FIM.z - 0.1), cabeca - Vector3(0, 0.50, 0), 26.0]])
@@ -1038,21 +1032,18 @@ func _cam_cabeca(t0: float, t_dispara: float, t_chega: float, t_volta: float,
 
 
 ## O rosto dela de perto, na fala, e depois o zoom nos olhos. A camera mira o
-## meio dos olhos (o meio nitido do `foco`, achatado numa faixa pelo
-## `foco_olhos`) e acompanha a cabeca, que respira no `olhando_parada`: as
-## chaves saem da cabeca posada a cada 0,2 s. A faixa nitida (`foco_tamanho`)
-## cresce na mesma conta do zoom, pra cobrir sempre os dois olhos.
-func _cam_olhos(t0: float, t_zoom: float, t_fim: float, t_clipe: float, rosto: Vector3) -> void:
+## meio dos olhos e acompanha a cabeca, que respira no `olhando_parada`: as
+## chaves saem da cabeca posada a cada 0,2 s. A lente deixa nitido so' em
+## volta de cada olho: a cena projeta `olhos_no_osso` na tela a cada quadro.
+func _cam_olhos(t0: float, t_zoom: float, t_fim: float, t_clipe: float) -> void:
 	var dn: Node3D = atores["DonaNice"]
 	var L := (dn.get_node("anim") as AnimationPlayer).get_animation("olhando_parada").length
-	# a foto que mediu `OLHOS_DO_ROSTO` e' de 0,7 s depois do comeco do plano
-	_posar_seco(dn, "olhando_parada", fmod(t0 + 0.7 - t_clipe, L))
-	var olho_local := _global_do_osso(dn, "head").affine_inverse() * (rosto + OLHOS_DO_ROSTO)
+	var olho_local: Vector3 = (OLHOS_NO_OSSO[0] + OLHOS_NO_OSSO[1]) * 0.5
+	raiz.olhos_no_osso = PackedVector3Array(OLHOS_NO_OSSO)
 	# (tempo, deslocamento da camera a partir dos olhos, fov)
 	var marcos := [[t0, Vector3(0.10, 0.0, -0.56), 30.0], [t_zoom, Vector3(0.07, 0.0, -0.46), 28.0],
 		[t_zoom + 1.4, Vector3(0.03, 0.0, -0.42), 13.0], [t_fim, Vector3(0.025, 0.0, -0.40), 11.0]]
 	var chaves := []
-	var tam := []
 	var t := t0
 	while true:
 		var i := 0
@@ -1064,14 +1055,10 @@ func _cam_olhos(t0: float, t_zoom: float, t_fim: float, t_clipe: float, rosto: V
 		_posar_seco(dn, "olhando_parada", fmod(t - t_clipe, L))
 		var olhos := _global_do_osso(dn, "head") * olho_local
 		chaves.append([t, olhos + desloc, olhos, fov])
-		# o quanto os olhos crescem na tela, contra o primeiro quadro
-		var aumento := tan(deg_to_rad(15.0)) / tan(deg_to_rad(fov * 0.5)) * 0.56 / desloc.length()
-		tam.append([t, clampf(1.1 * aumento, 1.0, 8.0)])
 		if t >= t_fim:
 			break
 		t = minf(t + 0.2, t_fim)
 	_cam("cam_olhos", chaves)
-	_valor(".:foco_tamanho", [[0.0, 1.0], [t0 - 0.01, 1.0]] + tam + [[t_fim + 0.01, 1.0]])
 
 
 func _interp_marcos(m: Array, t: float) -> float:

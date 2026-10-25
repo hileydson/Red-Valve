@@ -382,22 +382,29 @@ def pescoco():
     ossos = normal(ler("skeleton1sfx_0.wav"))
     quebra = normal(ler("sfx_breaking_and_falling/bfh1_breaking_01.ogg"))
     madeira = [normal(ler("sfx_breaking_and_falling/bfh1_wood_breaking_%02d.ogg" % i)) for i in (1, 3, 4)]
+    mastiga = [normal(ler("crunch_-_tito/crunch.%d.ogg" % i)) for i in (1, 2, 3)]
     x = silencio(6.8)
     for ini, fim in ((1.45, 2.45), (3.27, 4.9)):
         # o rangido: a rajada de estalos do esqueleto, grave e esticada
         por(x, fade(tom(rajada, sorte.uniform(0.62, 0.7)), 0.03, 0.2), ini, 0.55)
         t = ini
         while t < fim:
-            por(x, tom(fundos[sorte.integers(10)], sorte.uniform(0.85, 1.25)), t, sorte.uniform(0.35, 0.7))
+            por(x, tom(fundos[sorte.integers(10)], sorte.uniform(0.85, 1.25)), t, sorte.uniform(0.6, 1.0))
+            if sorte.random() < 0.6:
+                por(x, tom(madeira[sorte.integers(3)], sorte.uniform(0.5, 0.65)), t + 0.02, 0.6)
             if sorte.random() < 0.5:
-                por(x, tom(madeira[sorte.integers(3)], sorte.uniform(0.5, 0.65)), t + 0.02, 0.45)
-            t += sorte.uniform(0.12, 0.3)
+                # a cartilagem: o estalo molhado de quem mastiga osso
+                por(x, tom(mastiga[sorte.integers(3)], sorte.uniform(0.6, 0.8)), t + 0.04, 0.55)
+            t += sorte.uniform(0.09, 0.22)
     # o estalo grande, quando a cabeca passa do ponto
     por(x, tom(fundos[2], 0.7), 4.38, 1.0)
     por(x, tom(quebra, 0.72), 4.4, 0.9)
     por(x, tom(ossos[int(0.3 * SR):int(0.9 * SR)], 0.8), 4.42, 0.7)
     por(x, tom(fundos[7], 0.6), 4.62, 0.6)
-    gravar("pescoco_torcendo.ogg", fade(reverb(x, 2.0, 0.28), 0.01, 0.6))
+    # seco e comprimido: tem de passar por cima do ambiente e do coracao
+    x = reverb(x, 1.3, 0.14)
+    x = np.tanh(normal(x) * 3.0).astype(np.float32)
+    gravar("pescoco_torcendo.ogg", fade(x, 0.01, 0.6))
 
 
 def teleporte():
@@ -428,6 +435,37 @@ def teleporte():
     por(x, tom(monstro, 0.5), 0.12, 0.8)
     por(x, tom(normal(ler("deep_breaks/Deep Break 9.wav")), 0.5), 0.0, 0.7)
     gravar("teleporte_surge.ogg", fade(reverb(x, 2.8, 0.42), 0.001, 0.8))
+
+
+def rajada():
+    """Os bancos voando: a rajada que ela solta (ar varrendo a nave, de baixo
+    pra cima e de volta), madeira rangendo e quebrando por cima e um ronco
+    grave no chao. Semente propria.
+    """
+    sorte = np.random.default_rng(4409)
+    dur = 4.0
+    n = int(dur * SR)
+    t = np.arange(n) / SR
+    ruido = sorte.standard_normal(n).astype(np.float32)
+    # o vento: o brilho sobe ate' o meio e desce, e o volume vem em onda
+    grave = passa_baixa(ruido, 500.0)
+    agudo = passa_baixa(ruido, 2600.0) - passa_baixa(ruido, 700.0)
+    forma = np.sin(np.pi * np.clip(t / 3.2, 0, 1)) ** 1.5
+    vento = (grave * 0.9 + agudo * forma * 0.8) * (0.2 + 0.8 * forma)
+    madeira = [normal(ler("sfx_breaking_and_falling/bfh1_wood_breaking_%02d.ogg" % i)) for i in (1, 2, 3, 4)]
+    batida = [normal(ler("sfx_breaking_and_falling/bfh1_wood_hit_%02d.ogg" % i)) for i in (1, 2, 3)]
+    ronco = passa_baixa(normal(ler("monster_roar.wav")), 400.0)
+    x = silencio(dur + 1.0)
+    por(x, vento.astype(np.float32), 0.0, 0.9)
+    por(x, tom(ronco, 0.45), 0.0, 0.8)
+    tt = 0.15
+    while tt < 2.6:
+        por(x, tom(madeira[sorte.integers(4)], sorte.uniform(0.45, 0.7)), tt, sorte.uniform(0.5, 0.9))
+        if sorte.random() < 0.4:
+            por(x, tom(batida[sorte.integers(3)], sorte.uniform(0.5, 0.7)), tt + 0.05, 0.6)
+        tt += sorte.uniform(0.12, 0.35)
+    x = np.tanh(normal(reverb(x, 2.6, 0.35)) * 1.8).astype(np.float32)
+    gravar("rajada_bancos.ogg", fade(x, 0.05, 1.0))
 
 
 def ambiente():
@@ -467,4 +505,5 @@ if __name__ == "__main__":
     respiracao_jonny()
     pescoco()
     teleporte()
+    rajada()
     creditos()

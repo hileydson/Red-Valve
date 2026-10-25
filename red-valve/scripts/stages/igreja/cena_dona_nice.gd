@@ -85,17 +85,14 @@ const SONS_FORA_DO_LENTO := [&"ambiente"]
 	set(v):
 		foco = v
 		_lente("foco", v)
-## Forma do `foco`: 0 = o tunel redondo, 1 = so' uma faixa estreita no meio
-## nitida (os olhos dela, com a camera mirando entre eles).
+## Forma do `foco`: 0 = o tunel redondo, 1 = so' em volta dos dois olhos da
+## Dona Nice fica nitido (`olhos_no_osso`, projetados na tela a cada quadro).
 @export_range(0.0, 1.0) var foco_olhos: float = 0.0:
 	set(v):
 		foco_olhos = v
 		_lente("foco_olhos", v)
-## Tamanho do que fica nitido no `foco` (cresce junto com o zoom).
-@export_range(0.2, 8.0) var foco_tamanho: float = 1.0:
-	set(v):
-		foco_tamanho = v
-		_lente("foco_tamanho", v)
+## Os dois olhos dela no espaco do osso `head` (medidos em foto pelo gerador).
+@export var olhos_no_osso: PackedVector3Array = PackedVector3Array()
 ## Fade pro preto (o fim da chegada fecha no preto e o jogo abre clareando).
 @export_range(0.0, 1.0) var preto: float = 0.0:
 	set(v):
@@ -224,7 +221,6 @@ func encerrar_lente() -> void:
 	borrao = 0.0
 	foco = 0.0
 	foco_olhos = 0.0
-	foco_tamanho = 1.0
 	flash = 0.0
 	tremor = 0.0
 
@@ -238,6 +234,31 @@ func clarear(duracao: float = 0.9) -> void:
 func afastar_bancos() -> void:
 	if is_instance_valid(_bancos):
 		_bancos.afastar()
+	_rajada_nas_velas()
+
+
+## A rajada que joga os bancos passa pelas velas: as chamas deitam e quase
+## apagam, a luz delas cai e volta tremendo.
+func _rajada_nas_velas() -> void:
+	var velas := get_node_or_null("efeitos/velas")
+	if velas:
+		for v in velas.get_children():
+			var chama := v.get_node_or_null("chama") as Node3D
+			if chama == null or not chama.visible:
+				continue
+			var tw := chama.create_tween()
+			tw.tween_property(chama, "scale", Vector3(1.4, 0.25, 1.0), 0.12)
+			tw.tween_property(chama, "scale", Vector3(0.8, 0.5, 1.0), 0.5)
+			tw.tween_property(chama, "scale", Vector3.ONE, 1.2).set_trans(Tween.TRANS_ELASTIC) \
+				.set_ease(Tween.EASE_OUT)
+	var luz := get_node_or_null("efeitos/luz_velas") as OmniLight3D
+	if luz and luz.visible:
+		var antes := luz.light_energy
+		var tw := luz.create_tween()
+		tw.tween_property(luz, "light_energy", antes * 0.15, 0.12)
+		for i in 5:
+			tw.tween_property(luz, "light_energy", antes * randf_range(0.2, 0.7), 0.12)
+		tw.tween_property(luz, "light_energy", antes, 0.8)
 
 
 ## Os bancos ja' nas naves laterais, sem voo (recomeco da luta, cutscene
@@ -300,6 +321,28 @@ func _process(_delta: float) -> void:
 	elif cam:
 		cam.h_offset = 0.0
 		cam.v_offset = 0.0
+	if cam and foco_olhos > 0.001:
+		_olhos_na_tela(cam)
+
+
+## Onde os olhos dela caem na tela, pro `foco_olhos`: cada um vira um circulo
+## nitido do tamanho do olho (proporcional a distancia entre eles na tela).
+func _olhos_na_tela(cam: Camera3D) -> void:
+	var dn := get_node_or_null("atores/DonaNice") as AtorIgreja
+	if dn == null or olhos_no_osso.size() < 2:
+		return
+	var sk := dn.esqueleto()
+	var i := sk.find_bone("head")
+	if i < 0:
+		return
+	var cabeca := sk.global_transform * sk.get_bone_global_pose(i)
+	var tam := get_viewport().get_visible_rect().size
+	var a := cam.unproject_position(cabeca * olhos_no_osso[0]) / tam
+	var b := cam.unproject_position(cabeca * olhos_no_osso[1]) / tam
+	var entre := ((a - b) * Vector2(tam.x / tam.y, 1.0)).length()
+	_lente("olho_a", a)
+	_lente("olho_b", b)
+	_lente("raio_olho", Vector2(0.2, 0.42) * entre)
 
 
 ## Legenda do sussurro/fala (trilha de metodo do diretor).
