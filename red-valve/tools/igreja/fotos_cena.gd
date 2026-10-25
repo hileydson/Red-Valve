@@ -28,6 +28,11 @@ func _ready() -> void:
 	var anim := OS.get_environment("IGREJA_ANIM")
 	if anim.is_empty():
 		anim = "chegada"
+	# as cenas depois da chegada acontecem com os bancos ja' nas naves laterais
+	# (e sem a Dona Nice de gente, que a chegada transformou)
+	if anim != "chegada":
+		cena.bancos_no_canto()
+		cena.get_node("atores/DonaNice").visible = false
 	cena.tocar(anim)
 	var diretor: AnimationPlayer = cena.get_node("diretor")
 	for s in OS.get_environment("IGREJA_TEMPOS").split(",", false):

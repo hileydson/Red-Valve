@@ -29,6 +29,15 @@ const JONNY_POS := Vector3(0.0, 0.0, 19.6)
 const JONNY_GIRO := 90.0
 ## Onde o Maycow fica na chegada (e onde o jogador volta a ter controle).
 const MAYCOW_FIM := Vector3(0.0, 0.0, 4.2)
+## Passada do andar_lento (m/s) — o no' anda junto com o pe', senao o pe' patina.
+const MAYCOW_VELOCIDADE := 0.86
+## No `andar_esticando` as pernas andam ate' x e param de vez em y (segundos
+## do clipe); o braco sobe do 0 ao 2,6.
+const ANDA_ESTICANDO_FREIA := Vector2(1.9, 2.7)
+## Do ponto do rosto (cabeca + 8 cm, posada no comeco do `olhando_parada`)
+## ate' o meio dos olhos dela, 0,7 s depois de o plano abrir (medido em foto).
+## Dali em diante segue o osso da cabeca.
+const OLHOS_DO_ROSTO := Vector3(0.057, 0.028, -0.08)
 ## O girar_cabeca dela toca mais devagar na chegada (3,5 s viram ~6,4 s).
 const VEL_CABECA := 0.55
 ## Os trechos do girar_cabeca (em tempo do CLIPE) em que o pescoco torce de
@@ -89,8 +98,9 @@ func _montar_estrutura() -> void:
 		atores[d[0]] = n
 		var ap := n.get_node("anim") as AnimationPlayer
 		ap.playback_default_blend_time = 0.35
-	atores["Jonny"].position = JONNY_POS
-	atores["Jonny"].rotation_degrees.y = JONNY_GIRO
+	# deitado ele assenta no chao (costas, cabeca e quadril): `AtorIgreja.no_chao`
+	atores["Jonny"].transform = atores["Jonny"].no_chao(
+		Transform3D(Basis(Vector3.UP, deg_to_rad(JONNY_GIRO)), JONNY_POS))
 	atores["Jonny"].sangue = 0.45
 	atores["Jonny"].clipe_inicial = &"caido_agonia"
 	atores["DonaNice"].sangue = 0.55
@@ -146,6 +156,49 @@ func _posar(ator: Node3D, clipe: String, t: float) -> void:
 	ap.play(clipe)
 	ap.seek(t, true)
 	(ator.esqueleto() as Skeleton3D).force_update_all_bone_transforms()
+
+
+## Posa SEM misturar com o clipe anterior (o `_posar` mistura: sem o tempo
+## andar, a pose fica a de antes).
+func _posar_seco(ator: Node3D, clipe: String, t: float) -> void:
+	var ap := ator.get_node("anim") as AnimationPlayer
+	ap.play(clipe, 0.0)
+	ap.seek(t, true)
+	(ator.esqueleto() as Skeleton3D).force_update_all_bone_transforms()
+
+
+## A altura do ponto mais baixo da PELE do ator, na pose atual: a malha
+## deformada na CPU (o osso fica dentro da carne e nao diz onde o corpo
+## encosta no chao).
+func _pele_mais_baixa(ator: Node3D, passo := 4) -> float:
+	var sk := ator.esqueleto() as Skeleton3D
+	var menor := INF
+	for mi_ in ator.find_children("*", "MeshInstance3D", true, false):
+		var mi := mi_ as MeshInstance3D
+		if mi.mesh == null or mi.skin == null:
+			continue
+		var poses := []
+		for i in mi.skin.get_bind_count():
+			var b := mi.skin.get_bind_bone(i)
+			if b < 0:
+				b = sk.find_bone(mi.skin.get_bind_name(i))
+			poses.append(sk.get_bone_global_pose(b) * mi.skin.get_bind_pose(i))
+		var g := mi.global_transform
+		for s in mi.mesh.get_surface_count():
+			var arr := mi.mesh.surface_get_arrays(s)
+			var vs: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+			var ossos = arr[Mesh.ARRAY_BONES]
+			var pesos = arr[Mesh.ARRAY_WEIGHTS]
+			var k: int = pesos.size() / vs.size()
+			for i in range(0, vs.size(), passo):
+				var p := Vector3.ZERO
+				for j in k:
+					var w: float = pesos[i * k + j]
+					if w > 0.0:
+						var o: int = ossos[i * k + j]
+						p += w * ((poses[o] as Transform3D) * vs[i])
+				menor = minf(menor, (g * p).y)
+	return menor
 
 
 func _global_do_osso(ator: Node3D, osso: String) -> Transform3D:
@@ -462,7 +515,8 @@ func _sons() -> void:
 			["gota_impacto", "gota_impacto.ogg", -4.0], ["ossos", "transformacao_ossos.ogg", 0.0],
 			["grito", "grito_transformacao.ogg", -3.0], ["rugido", "rugido_monstro.ogg", 1.0],
 			["grito_monstro", "grito_monstro.ogg", 0.0],
-			["ambiente", "ambiente_ritual.ogg", -10.0], ["gemido", "gemido_jonny.ogg", -6.0]]:
+			["ambiente", "ambiente_ritual.ogg", -10.0], ["gemido", "gemido_jonny.ogg", -6.0],
+			["pescoco", "pescoco_torcendo.ogg", -1.0]]:
 		var p := _no(AudioStreamPlayer, d[0], s) as AudioStreamPlayer
 		p.stream = load(SONS + d[1])
 		p.volume_db = d[2]
@@ -588,22 +642,25 @@ func _montar_chegada() -> void:
 	var J := JONNY_POS
 
 	# ---------------------------------------------------------------- tempos
-	# Abre com ele ja' parado na porta, esticando a mao (a entrada andando
-	# saiu). O giro da cabeca dela e' lento e escuro; quando o olhar chega
+	# Abre com ele entrando devagar pela porta; ANDANDO ele estica a mao pro
+	# ritual (`andar_esticando`) e so' para um pouco depois, com a mao ja'
+	# erguida. O giro da cabeca dela e' lento e escuro; quando o olhar chega
 	# nele, a camera dispara ate' o Maycow e gira de volta pra ela.
-	const T_MAO := 0.0          # esticar_mao (2,6 s)
-	const T_ROSTO := 2.6        # o plano aberto segura ate' a mao esticar
-	const T_OMBRO := 4.2
-	const T_FACA := 8.6
-	const T_GOTA := 12.6
-	const T_GOTA_CAI := 14.0
-	# a queda da gota e' em camera lenta: o jogo inteiro a LENTO (menos o
-	# som), entao 0,8 s de animacao duram 3,2 s na tela
-	const T_GOTA_BATE := 14.8
-	const LENTO := 0.25
-	const T_LONGE := 16.0
-	const T_LEVANTA := 23.0     # levantar (4,6 s)
-	const T_CABECA := 27.6      # girar_cabeca (3,5 s / VEL_CABECA)
+	const T_MAO := 2.2          # andar_esticando (3,2 s), andando desde o 0
+	const T_ROSTO := 5.6        # o plano aberto segura ate' ele parar
+	# tudo dali em diante e' o que era, 3 s depois (a entrada andando)
+	const E := 3.0
+	const T_OMBRO := E + 4.2
+	const T_FACA := E + 8.6
+	const T_GOTA := E + 12.6
+	const T_GOTA_CAI := E + 14.0
+	# a queda da gota e' em camera lenta: o jogo inteiro a LENTO (e o som da
+	# cena mais grave, menos o ambiente), entao 0,8 s de animacao duram 5 s
+	const T_GOTA_BATE := E + 14.8
+	const LENTO := 0.16
+	const T_LONGE := E + 16.0
+	const T_LEVANTA := E + 23.0     # levantar (4,6 s)
+	const T_CABECA := E + 27.6      # girar_cabeca (3,5 s / VEL_CABECA)
 	var dur_cabeca := 3.5 / VEL_CABECA
 	# o olhar dela trava no Maycow aos 2,9 s do clipe; dai' a camera dispara
 	var t_dispara := T_CABECA + 2.9 / VEL_CABECA
@@ -611,10 +668,14 @@ func _montar_chegada() -> void:
 	var t_volta := t_chega + 0.4
 	var T_SACA := t_volta + 0.55       # sacar_arma (1,5 s)
 	var T_OLHOS := T_SACA + 1.6
-	var T_MIRA := T_SACA + 4.1
-	var T_VIRA := T_SACA + 6.6         # virar_corpo (1,6 s)
-	var T_CONVULSAO := T_SACA + 8.2    # convulsao (5,1 s)
-	var T_RUGIDO := T_SACA + 13.3      # rugido (2,9 s)
+	# no rosto dela a camera nao corta: entra nos olhos (so' eles nitidos) e
+	# fica ali OLHAR segundos a mais
+	var T_ZOOM := T_SACA + 4.1
+	const OLHAR := 2.6
+	var T_MIRA := T_ZOOM + OLHAR
+	var T_VIRA := T_MIRA + 2.5         # virar_corpo (1,6 s)
+	var T_CONVULSAO := T_MIRA + 4.1    # convulsao (5,1 s)
+	var T_RUGIDO := T_MIRA + 9.2       # rugido (2,9 s)
 	# depois do rugido a camera se afasta e os bancos da nave voam pros lados;
 	# fecha no preto, e o jogo abre no Maycow
 	var T_BANCOS := T_RUGIDO + 2.6
@@ -633,7 +694,12 @@ func _montar_chegada() -> void:
 	# na gota tambem: so' ela nitida, o resto borrado (tunel + borrao radial)
 	_valor(".:foco", [[0.0, 0.0], [T_GOTA_CAI - 0.1, 0.0], [T_GOTA_CAI + 0.08, 0.9],
 		[T_GOTA_BATE, 0.9], [T_GOTA_BATE + 0.25, 0.0], [T_CABECA, 0.0], [T_CABECA + 0.7, 1.0],
-		[t_volta, 1.0], [t_volta + 0.35, 0.0]])
+		[t_volta, 1.0], [t_volta + 0.35, 0.0], [T_OLHOS, 0.0], [T_OLHOS + 0.6, 0.85],
+		[T_MIRA - 0.3, 1.0], [T_MIRA, 0.0]])
+	# no rosto dela so' os olhos ficam nitidos; a faixa nitida cresce com o zoom
+	_valor(".:foco_olhos", [[0.0, 0.0], [T_OLHOS - 0.01, 0.0], [T_OLHOS, 1.0],
+		[T_MIRA, 1.0], [T_MIRA + 0.01, 0.0]])
+	# (o `foco_tamanho` sai do `_cam_olhos`, junto com o zoom)
 	_valor(".:saturacao", [[0.0, 0.85], [T_GOTA, 0.85], [T_GOTA + 0.6, 0.55],
 		[T_LONGE, 0.85], [T_CONVULSAO, 0.85], [T_CONVULSAO + 2.0, 0.6], [T_FIM, 0.85]])
 	_valor(".:vermelho", [[0.0, 0.0], [T_CONVULSAO, 0.0], [T_CONVULSAO + 2.5, 0.45],
@@ -662,17 +728,36 @@ func _montar_chegada() -> void:
 		[T_RUGIDO, "cam_rugido"], [T_BANCOS, "cam_bancos"], [T_FIM - 0.05, ""]], true)
 
 	# ---------------------------------------------------------------- Maycow
-	_pos("atores/Maycow", [[0.0, MAYCOW_FIM]])
+	# o no' anda no ritmo do pe' (o `andar_lento` e' no lugar) e freia junto
+	# com as pernas do `andar_esticando`
+	var entrada := []
+	var t_para := T_MAO + ANDA_ESTICANDO_FREIA.y
+	var t_freia := T_MAO + ANDA_ESTICANDO_FREIA.x
+	var percurso := MAYCOW_VELOCIDADE * t_freia + MAYCOW_VELOCIDADE * (t_para - t_freia) * 0.5
+	var z0 := MAYCOW_FIM.z - percurso
+	for i in 31:
+		var t := t_para * i / 30.0
+		var andou := MAYCOW_VELOCIDADE * minf(t, t_freia)
+		if t > t_freia:
+			var u := (t - t_freia) / (t_para - t_freia)
+			andou += MAYCOW_VELOCIDADE * (t_para - t_freia) * (u - u * u * 0.5)
+		entrada.append([t, Vector3(MAYCOW_FIM.x, 0.0, z0 + andou)])
+	_pos("atores/Maycow", entrada)
 	_rot("atores/Maycow", [[0.0, Quaternion()]])
-	_clipe("Maycow", [[T_MAO, "esticar_mao"],
-		[T_MAO + 2.6, "mao_esticada"], [T_SACA, "sacar_arma"], [T_SACA + 1.5, "mirando"]])
+	_andar_esticando(fmod(T_MAO, (atores["Maycow"].get_node("anim") as AnimationPlayer) \
+		.get_animation("andar_lento").length))
+	_clipe("Maycow", [[0.0, "andar_lento"], [T_MAO, "cena/andar_esticando"],
+		[T_MAO + 3.2, "mao_esticada"], [T_SACA, "sacar_arma"], [T_SACA + 1.5, "mirando"]])
 	_valor("atores/Maycow/modelo/Armature/Skeleton3D/mao_arma/pivo_arma:visible",
 		[[0.0, false], [T_SACA + 0.45, true]], true)
 
 	var olho := func(z): return Vector3(0.0, 1.62, z)
-	# aberto o bastante pra caber o corpo inteiro e a mao (que estica pro -X)
+	# aberto o bastante pra caber o corpo inteiro e a mao (que estica pro -X);
+	# acompanha ele vindo da porta e chega no enquadramento de antes quando
+	# ele para
 	_cam("cam_entrada", [
-		[0.0, Vector3(0.75, 1.5, 9.6), Vector3(-0.25, 1.35, MAYCOW_FIM.z), 40.0],
+		[0.0, Vector3(0.8, 1.55, 9.9), Vector3(0.0, 1.25, z0 + 0.3), 42.0],
+		[t_para, Vector3(0.75, 1.5, 9.6), Vector3(-0.25, 1.35, MAYCOW_FIM.z), 40.0],
 		[T_ROSTO, Vector3(0.65, 1.5, 9.0), Vector3(-0.25, 1.38, MAYCOW_FIM.z), 37.0]])
 	_cam("cam_rosto", [
 		[T_ROSTO, Vector3(-0.35, 1.66, 5.35), Vector3(0.0, 1.6, 4.25), 34.0],
@@ -724,7 +809,8 @@ func _montar_chegada() -> void:
 	cg.append([T_LONGE, chao_gota + Vector3(0.36, 0.16, -0.30), chao_gota, 28.0])
 	_cam("cam_gota", cg)
 	_som("gota", [[T_GOTA_CAI - 0.1]])
-	_som("gota_impacto", [[T_GOTA_BATE]])
+	# um tico depois do fim da camera lenta: o pingo soa no tom certo
+	_som("gota_impacto", [[T_GOTA_BATE + 0.01]])
 	# o coracao batendo na queda, em primeiro plano, e some depois do pingo
 	_som("batimento", [[T_GOTA_CAI - 0.15]])
 	_valor("sons/batimento:volume_db", [[0.0, 3.0], [T_GOTA_BATE + 0.4, 3.0],
@@ -763,6 +849,8 @@ func _montar_chegada() -> void:
 
 	# ---------------------------------------------------------------- a cabeca
 	_cam_cabeca(T_CABECA, t_dispara, t_chega, t_volta, T_SACA)
+	# o pescoco estalando enquanto torce
+	_som("pescoco", [[T_CABECA]])
 	_som("batimento_rapido", [[T_OLHOS - 0.3]])
 
 	# ---------------------------------------------------------------- a arma
@@ -780,9 +868,7 @@ func _montar_chegada() -> void:
 	ap_dn.play("olhando_parada", 0.0)
 	ap_dn.seek(0.0, true)
 	var rosto_dela: Vector3 = dn.posicao_do_osso("head") + Vector3(0, 0.08, 0)
-	_cam("cam_olhos", [
-		[T_OLHOS, rosto_dela + Vector3(0.10, 0.02, -0.62), rosto_dela, 30.0],
-		[T_MIRA, rosto_dela + Vector3(0.07, 0.01, -0.48), rosto_dela, 28.0]])
+	_cam_olhos(T_OLHOS, T_ZOOM, T_MIRA, T_CABECA + dur_cabeca, rosto_dela)
 	_cam("cam_mira", [
 		[T_MIRA, Vector3(-0.32, 1.68, MAYCOW_FIM.z - 0.25), cabeca - Vector3(0, 0.55, 0), 30.0],
 		[T_VIRA, Vector3(-0.30, 1.67, MAYCOW_FIM.z - 0.1), cabeca - Vector3(0, 0.50, 0), 26.0]])
@@ -849,6 +935,48 @@ func _montar_chegada() -> void:
 		[T_FIM, Vector3(0.3, 7.6, DN.z + 8.5), Vector3(0.0, 0.2, DN.z - 9.0), 58.0]])
 
 
+## O clipe da entrada: o Maycow ANDANDO enquanto estica a mao. Nao existe no
+## Blender — e' montado aqui, osso a osso, das duas capturas: as pernas e o
+## quadril do `andar_lento` (continuando do passo em que ele estava, `fase`)
+## ate' frear e assentar na base do `esticar_mao`; o tronco, os bracos e a
+## cabeca do `esticar_mao`, entrando aos poucos no primeiro meio segundo.
+## Vai numa biblioteca propria do duble ("cena"), gravada nesta cena: a
+## `maycow_clipes.tres` nao muda.
+func _andar_esticando(fase: float) -> void:
+	var ap := atores["Maycow"].get_node("anim") as AnimationPlayer
+	var anda := ap.get_animation("andar_lento")
+	var estica := ap.get_animation("esticar_mao")
+	var novo := Animation.new()
+	novo.length = 3.2
+	const PERNAS := ["Hips", "LeftUpLeg", "LeftLeg", "LeftFoot", "LeftToeBase",
+		"RightUpLeg", "RightLeg", "RightFoot", "RightToeBase"]
+	for i in estica.get_track_count():
+		var caminho := estica.track_get_path(i)
+		var tipo := estica.track_get_type(i)
+		var j := anda.find_track(caminho, tipo)
+		var perna := String(caminho.get_concatenated_subnames()) in PERNAS
+		var n := novo.add_track(tipo)
+		novo.track_set_path(n, caminho)
+		for q in 97:
+			var t := q / 30.0
+			var te := minf(t, estica.length)
+			var ta := fmod(fase + t, anda.length)
+			# peso do `esticar_mao`: o tronco entra de cara, as pernas so' freando
+			var w := smoothstep(ANDA_ESTICANDO_FREIA.x, ANDA_ESTICANDO_FREIA.y, t) if perna \
+				else smoothstep(0.0, 0.5, t)
+			if tipo == Animation.TYPE_POSITION_3D:
+				var a0: Vector3 = anda.position_track_interpolate(j, ta) if j >= 0 \
+					else estica.position_track_interpolate(i, te)
+				novo.position_track_insert_key(n, t, a0.lerp(estica.position_track_interpolate(i, te), w))
+			elif tipo == Animation.TYPE_ROTATION_3D:
+				var q0: Quaternion = anda.rotation_track_interpolate(j, ta) if j >= 0 \
+					else estica.rotation_track_interpolate(i, te)
+				novo.rotation_track_insert_key(n, t, q0.slerp(estica.rotation_track_interpolate(i, te), w))
+	var cena_lib := AnimationLibrary.new()
+	cena_lib.add_animation("andar_esticando", novo)
+	ap.add_animation_library("cena", cena_lib)
+
+
 ## A ponta da faca no mundo, pela mao e pelo pivo (o BoneAttachment so' anda
 ## no proximo quadro, entao a conta e' feita direto).
 func _ponta_da_faca() -> Vector3:
@@ -907,6 +1035,43 @@ func _cam_cabeca(t0: float, t_dispara: float, t_chega: float, t_volta: float,
 		chaves.append([lerpf(t_chega, t_volta, u), perto, alvo, lerpf(36.0, 30.0, u)])
 	chaves.append([t_fim, perto + Vector3(0, 0, 0.12), dela, 27.0])
 	_cam("cam_cabeca", chaves)
+
+
+## O rosto dela de perto, na fala, e depois o zoom nos olhos. A camera mira o
+## meio dos olhos (o meio nitido do `foco`, achatado numa faixa pelo
+## `foco_olhos`) e acompanha a cabeca, que respira no `olhando_parada`: as
+## chaves saem da cabeca posada a cada 0,2 s. A faixa nitida (`foco_tamanho`)
+## cresce na mesma conta do zoom, pra cobrir sempre os dois olhos.
+func _cam_olhos(t0: float, t_zoom: float, t_fim: float, t_clipe: float, rosto: Vector3) -> void:
+	var dn: Node3D = atores["DonaNice"]
+	var L := (dn.get_node("anim") as AnimationPlayer).get_animation("olhando_parada").length
+	# a foto que mediu `OLHOS_DO_ROSTO` e' de 0,7 s depois do comeco do plano
+	_posar_seco(dn, "olhando_parada", fmod(t0 + 0.7 - t_clipe, L))
+	var olho_local := _global_do_osso(dn, "head").affine_inverse() * (rosto + OLHOS_DO_ROSTO)
+	# (tempo, deslocamento da camera a partir dos olhos, fov)
+	var marcos := [[t0, Vector3(0.10, 0.0, -0.56), 30.0], [t_zoom, Vector3(0.07, 0.0, -0.46), 28.0],
+		[t_zoom + 1.4, Vector3(0.03, 0.0, -0.42), 13.0], [t_fim, Vector3(0.025, 0.0, -0.40), 11.0]]
+	var chaves := []
+	var tam := []
+	var t := t0
+	while true:
+		var i := 0
+		while i < marcos.size() - 2 and t > marcos[i + 1][0]:
+			i += 1
+		var u := smoothstep(marcos[i][0], marcos[i + 1][0], t)
+		var desloc: Vector3 = (marcos[i][1] as Vector3).lerp(marcos[i + 1][1], u)
+		var fov := lerpf(marcos[i][2], marcos[i + 1][2], u)
+		_posar_seco(dn, "olhando_parada", fmod(t - t_clipe, L))
+		var olhos := _global_do_osso(dn, "head") * olho_local
+		chaves.append([t, olhos + desloc, olhos, fov])
+		# o quanto os olhos crescem na tela, contra o primeiro quadro
+		var aumento := tan(deg_to_rad(15.0)) / tan(deg_to_rad(fov * 0.5)) * 0.56 / desloc.length()
+		tam.append([t, clampf(1.1 * aumento, 1.0, 8.0)])
+		if t >= t_fim:
+			break
+		t = minf(t + 0.2, t_fim)
+	_cam("cam_olhos", chaves)
+	_valor(".:foco_tamanho", [[0.0, 1.0], [t0 - 0.01, 1.0]] + tam + [[t_fim + 0.01, 1.0]])
 
 
 func _interp_marcos(m: Array, t: float) -> float:
@@ -1031,8 +1196,7 @@ func _montar_morte_final() -> void:
 	_valor(P + "GiganteMorre:scale", [[0.0, Vector3.ONE], [2.6, Vector3.ONE],
 		[4.6, Vector3.ONE * 0.5]])
 	# o corpo de verdade aparece por baixo e desaba de cara no chao
-	_pos("atores/Monstro", [[0.0, corpo.position]])
-	_rot("atores/Monstro", [[0.0, corpo.quaternion]])
+	_corpo_caindo(corpo.transform)
 	_valor("atores/Monstro:visible", [[0.0, false], [2.8, true]], true)
 	_valor("atores/Monstro:dissolver", [[0.0, 1.0], [2.8, 1.0], [4.5, 0.0]])
 	_valor("atores/Monstro:veias", [[0.0, 1.0], [6.0, 0.0]])
@@ -1050,6 +1214,41 @@ func _montar_morte_final() -> void:
 	var J := JONNY_POS
 	_cam("cam_m_c", [[6.0, J + Vector3(-1.2, 0.5, -1.8), J + Vector3(1.0, 0.25, 0.4), 40.0],
 		[11.0, J + Vector3(-2.0, 3.6, -3.4), J + Vector3(0.8, 0.0, 0.3), 46.0]])
+
+
+## A monstro morrendo (`morrer` 2,8 s, `cair_morta` 4,9 s, `morta` 6,5 s) com
+## a pele sempre no chao: os clipes vem do Blender afundando os pes (`morrer`)
+## e deitam a 18 cm do piso (`morta`). A cada 0,1 s o no' sobe ou desce ate' o
+## ponto mais baixo da pele tocar o chao, e na queda ela vai girando ate' o
+## assentar de deitada (`AtorIgreja.no_chao`, o mesmo do corpo nas visitas).
+func _corpo_caindo(base: Transform3D) -> void:
+	var mo: Node3D = atores["Monstro"]
+	var deitada: Transform3D = mo.no_chao(base)
+	var giro_final := (base.basis.inverse() * deitada.basis).get_rotation_quaternion()
+	var ps := []
+	var rs := []
+	var t := 2.8
+	while t < 6.5 - 0.01:
+		var queda := smoothstep(4.9, 6.5, t)
+		var giro := Basis(Quaternion.IDENTITY.slerp(giro_final, queda))
+		mo.transform = base * Transform3D(giro, Vector3.ZERO)
+		if t < 4.9:
+			_posar_seco(mo, "morrer", t - 2.8)
+		else:
+			_posar_seco(mo, "cair_morta", t - 4.9)
+		var sobe := -_pele_mais_baixa(mo)
+		var tr := base * Transform3D(giro, Vector3(0.0, sobe, 0.0))
+		if ps.is_empty():
+			ps.append([0.0, tr.origin])
+			rs.append([0.0, tr.basis.get_rotation_quaternion()])
+		ps.append([t, tr.origin])
+		rs.append([t, tr.basis.get_rotation_quaternion()])
+		t += 0.1
+	ps.append([6.5, deitada.origin])
+	rs.append([6.5, deitada.basis.get_rotation_quaternion()])
+	_pos("atores/Monstro", ps)
+	_rot("atores/Monstro", rs)
+	mo.transform = base
 
 
 # ==============================================================================

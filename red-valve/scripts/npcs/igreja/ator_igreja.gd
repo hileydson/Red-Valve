@@ -49,15 +49,27 @@ const SHADER_CARNE := preload("res://shaders/npcs/carne_igreja.gdshader")
 ## (a fase 2 tem 5 m) pede numero menor, senao a borda vira chuvisco.
 @export var escala_ruido: float = 5.0
 
+@export_group("Deitado no chao")
+## Os clipes de deitado (o `deitado` e o `caido_agonia` do Jonny) vem do
+## Blender apoiados num ponto so' — a canela — e o resto do corpo flutua uns
+## centimetros. Este giro (graus, em X e Z, em volta da origem do ator) e esta
+## descida (metros) assentam costas, cabeca e quadril no chao; ver `no_chao`.
+## Medidos na pele (o menor vao de cada parte do corpo ate' o chao).
+@export var deitado_giro: Vector3 = Vector3.ZERO
+@export var deitado_altura: float = 0.0
+
 @export_group("Seguir as maos de outro ator")
 ## O ator que carrega este (o Jonny no colo do Maycow). Vazio = nao segue.
 @export var seguir: NodePath
 ## 0 = fica onde a cena o pos; 1 = preso entre as maos do outro. Anime isto
-## pra o corpo sair do chao e ir pro colo.
+## pra o corpo sair do chao e ir pro colo. No meio ele ja' sobe JUNTO com as
+## maos (do jeito que estava encostado nelas quando o peso saiu do zero) e
+## vai se acomodando no colo — nunca fica parado no ar com as maos subindo.
 @export_range(0.0, 1.0) var seguir_peso: float = 0.0:
 	set(v):
 		if seguir_peso <= 0.0 and v > 0.0:
 			_base_seguir = global_transform if is_inside_tree() else transform
+			_prender_base = true
 		seguir_peso = v
 ## Deslocamento do ponto entre as maos, no espaco de quem carrega (+Z = frente dele).
 @export var seguir_offset: Vector3 = Vector3(0.0, 0.04, 0.06)
@@ -69,6 +81,9 @@ const SHADER_CARNE := preload("res://shaders/npcs/carne_igreja.gdshader")
 
 var _materiais: Array[ShaderMaterial] = []
 var _base_seguir := Transform3D.IDENTITY
+## A base vira relativa as maos no primeiro quadro com peso (as maos so' sao
+## lidas no `_process`).
+var _prender_base := false
 
 @onready var anim: AnimationPlayer = get_node_or_null("anim")
 
@@ -97,7 +112,11 @@ func _process(_delta: float) -> void:
 	if outro == null or not outro.has_method("posicao_do_osso"):
 		return
 	var alvo := alvo_nas_maos(outro)
-	global_transform = _base_seguir.interpolate_with(alvo, seguir_peso) if seguir_peso < 1.0 else alvo
+	if _prender_base:
+		_base_seguir = alvo.affine_inverse() * _base_seguir
+		_prender_base = false
+	global_transform = (alvo * _base_seguir).interpolate_with(alvo, seguir_peso) \
+		if seguir_peso < 1.0 else alvo
 
 
 ## Onde este ator fica no colo de `outro`: entre as maos dele, com o
@@ -110,6 +129,14 @@ func alvo_nas_maos(outro: Node3D) -> Transform3D:
 	var base := outro.global_basis.orthonormalized()
 	var b := base * Basis(Vector3.UP, deg_to_rad(seguir_giro_y))
 	return Transform3D(b, (md + me) * 0.5 + base * seguir_offset)
+
+
+## Onde o ator fica deitado com a origem em `base` (no chao, de pe'): a base
+## com o giro e a descida de `deitado_*`.
+func no_chao(base: Transform3D) -> Transform3D:
+	var giro := Basis.from_euler(Vector3(deg_to_rad(deitado_giro.x), deg_to_rad(deitado_giro.y),
+		deg_to_rad(deitado_giro.z)))
+	return base * Transform3D(giro, Vector3(0.0, deitado_altura, 0.0))
 
 
 ## Toca um clipe com mistura (segundos) a partir do que estiver tocando.

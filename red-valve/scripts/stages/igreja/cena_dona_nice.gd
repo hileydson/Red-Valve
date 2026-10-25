@@ -9,10 +9,12 @@ extends Node3D
 ## escolha a animacao e edite as chaves — nao ha' tempo escrito em codigo.
 ##
 ## Animacoes do diretor:
-##   chegada         a primeira entrada: o Maycow, parado na porta, estica a
-##                   mao pro ritual; ela levanta, gira a cabeca (o pescoco
-##                   espirra sangue), ele saca a arma, ela vira monstro e
-##                   joga os bancos da nave pros lados
+##   chegada         a primeira entrada: o Maycow entra devagar e, ainda
+##                   andando, estica a mao pro ritual; a gota cai em camera
+##                   lenta (`lento`); ela levanta, gira a cabeca (o pescoco
+##                   estala e espirra sangue), a camera entra nos olhos dela,
+##                   ele saca a arma, ela vira monstro e joga os bancos da
+##                   nave pros lados (com poeira, `bancos_igreja.gd`)
 ##   vira_fase_2     a fase 1 morre e cresce na gigante que flutua
 ##   morte_final     a fase 2 morre e cai perto do Jonny
 ##   pega_jonny      o Maycow pega o Jonny no colo e sai correndo pela igreja
@@ -31,6 +33,8 @@ extends Node3D
 signal terminou(animacao: StringName)
 
 const BANCOS := preload("res://scripts/stages/igreja/bancos_igreja.gd")
+## Os sons que NAO entram na camera lenta (o clima de fundo segue normal).
+const SONS_FORA_DO_LENTO := [&"ambiente"]
 
 ## Nome da camera ativa (filha de `cameras`). Vazio = nenhuma desta cena.
 @export var plano: String = "":
@@ -81,6 +85,17 @@ const BANCOS := preload("res://scripts/stages/igreja/bancos_igreja.gd")
 	set(v):
 		foco = v
 		_lente("foco", v)
+## Forma do `foco`: 0 = o tunel redondo, 1 = so' uma faixa estreita no meio
+## nitida (os olhos dela, com a camera mirando entre eles).
+@export_range(0.0, 1.0) var foco_olhos: float = 0.0:
+	set(v):
+		foco_olhos = v
+		_lente("foco_olhos", v)
+## Tamanho do que fica nitido no `foco` (cresce junto com o zoom).
+@export_range(0.2, 8.0) var foco_tamanho: float = 1.0:
+	set(v):
+		foco_tamanho = v
+		_lente("foco_tamanho", v)
 ## Fade pro preto (o fim da chegada fecha no preto e o jogo abre clareando).
 @export_range(0.0, 1.0) var preto: float = 0.0:
 	set(v):
@@ -89,14 +104,19 @@ const BANCOS := preload("res://scripts/stages/igreja/bancos_igreja.gd")
 		if r:
 			r.color.a = v
 ## Camera lenta (a gota de sangue caindo da faca): a escala do tempo do jogo
-## inteiro — atores, chamas, particulas e o proprio diretor. O som fica de
-## fora (`Engine.time_scale` nao mexe no audio). Volta a 1 no fim da
-## animacao, ao pular e ao sair da cena.
+## inteiro — atores, chamas, particulas e o proprio diretor. O som desta cena
+## tambem fica lento (mais grave, `tom_do_lento`), menos o ambiente
+## (`SONS_FORA_DO_LENTO`): `Engine.time_scale` sozinho nao mexe no audio.
+## Volta a 1 no fim da animacao, ao pular e ao sair da cena.
 @export_range(0.05, 1.0) var lento: float = 1.0:
 	set(v):
 		lento = v
 		if not Engine.is_editor_hint() and is_inside_tree():
 			Engine.time_scale = v
+			_som_lento(v)
+## Quanto o som desce de tom na camera lenta: no tempo a 1/6, o som a ~0,4
+## (o tempo inteiro arrastaria o som a um ronco sem forma).
+@export_range(0.0, 1.0) var tom_do_lento: float = 0.5
 ## Tremor da camera ativa (0 parado, 1 terremoto).
 @export_range(0.0, 1.0) var tremor: float = 0.0
 ## Energia do pulso vermelho da transformacao (luz `efeitos/luz_pulso`).
@@ -113,6 +133,8 @@ const BANCOS := preload("res://scripts/stages/igreja/bancos_igreja.gd")
 var _offset_base := Vector2.ZERO
 var _legenda_tween: Tween
 var _bancos: Node3D
+## Tom original de cada som da cena, guardado na primeira camera lenta.
+var _tons := {}
 
 
 func _ready() -> void:
@@ -166,6 +188,22 @@ func _exit_tree() -> void:
 		Engine.time_scale = 1.0
 
 
+## Todo som da cena (os do diretor e os dos atores, como a respiracao do
+## Jonny) desce de tom junto com o tempo; o ambiente fica de fora.
+func _som_lento(v: float) -> void:
+	if _tons.is_empty():
+		if v >= 1.0:
+			return
+		for s in find_children("*", "", true, false):
+			if (s is AudioStreamPlayer or s is AudioStreamPlayer3D) \
+					and not s.name in SONS_FORA_DO_LENTO:
+				_tons[s] = s.pitch_scale
+	var fator := pow(v, tom_do_lento)
+	for s in _tons:
+		if is_instance_valid(s):
+			s.pitch_scale = _tons[s] * fator
+
+
 ## O Jonny esta' vivo: o clipe dele (que arfa) nunca fica parado. Quando o
 ## diretor termina uma animacao ele PARA os clipes que tocou nos atores, e o
 ## Jonny congelava ate' a proxima cutscene.
@@ -185,6 +223,8 @@ func encerrar_lente() -> void:
 	barras = 0.0
 	borrao = 0.0
 	foco = 0.0
+	foco_olhos = 0.0
+	foco_tamanho = 1.0
 	flash = 0.0
 	tremor = 0.0
 
@@ -222,7 +262,10 @@ func mostrar_corpo_da_monstro() -> void:
 	if mo == null:
 		return
 	if marco:
-		mo.global_transform = marco.global_transform
+		# o marco e' o lugar no chao; deitada de bruços ela assenta (ver
+		# `AtorIgreja.no_chao`), senao fica flutuando em cima do piso
+		mo.global_transform = mo.no_chao(marco.global_transform) if mo.has_method("no_chao") \
+			else marco.global_transform
 	mo.visible = true
 	mo.dissolver = 0.0
 	mo.veias = 0.0

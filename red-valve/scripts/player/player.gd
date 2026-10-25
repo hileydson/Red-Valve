@@ -1917,7 +1917,8 @@ func _physics_process(delta: float) -> void:
 					# Movimento para frente ou corrida
 					if is_running:
 						playback.travel("run")
-						if not is_aiming:
+						# com o Jonny no colo a corrida nao abre a camera
+						if not is_aiming and not carregando_jonny:
 							target_fov = 80.0 if is_first_person else 88.0
 					else:
 						playback.travel("walk")

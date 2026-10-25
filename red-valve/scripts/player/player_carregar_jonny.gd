@@ -50,6 +50,10 @@ const PASSO_DO_CLIPE := 0.95
 ## a partir de que rapidez o passo vira o da corrida.
 const PASSO_CORRENDO := 1.3
 const VIRA_CORRIDA := 2.0
+## Correndo (3,4 m/s) o `andar_carregando` casaria o pe' com o chao so' a
+## 3,6x; acelerado ate' 2x as pernas ja' giravam rapido demais. Fica nesse
+## teto, um pouco abaixo.
+const PASSADA_MAX_CORRENDO := 1.6
 ## `largar_jonny` (3,2 s): o Jonny encosta no chao em 1,6 s.
 const DURACAO_LARGAR := 3.2
 const NO_CHAO := 1.6
@@ -81,6 +85,8 @@ var _modo := ""
 ## 1 = Jonny nas maos, 0 = no `_base` (o chao). No meio, misturado.
 var _peso_maos := 1.0
 var _base := Transform3D.IDENTITY
+## `_base` virou relativa as maos (pegando, depois que elas sairam do chao).
+var _base_nas_maos := false
 var _perto := false
 
 
@@ -134,9 +140,10 @@ func _ready() -> void:
 	jonny.sangue = 0.45
 	player.get_parent().add_child(jonny)
 	if comecar_no_chao and SaveManager.jonny_no_hospital.size() == 4:
+		# o save guarda o lugar no chao (sem o assentar do corpo deitado)
 		var p: Array = SaveManager.jonny_no_hospital
-		jonny.global_position = Vector3(p[0], p[1], p[2])
-		jonny.rotation.y = p[3]
+		jonny.global_transform = jonny.no_chao(Transform3D(Basis(Vector3.UP, p[3]),
+			Vector3(p[0], p[1], p[2])))
 		_no_chao()
 	else:
 		_no_colo()
@@ -200,14 +207,21 @@ func _escolher_passo() -> void:
 		var de_costas := v.dot(-player.global_basis.z) < -0.3 * rapidez
 		_ap.speed_scale = clampf(rapidez / PASSO_CORRENDO, 0.6, 1.6) * (-1.0 if de_costas else 1.0)
 	elif clipe == ANDANDO:
-		_ap.speed_scale = clampf(rapidez / PASSO_DO_CLIPE, 0.6, 2.0)
+		_ap.speed_scale = clampf(rapidez / PASSO_DO_CLIPE, 0.6, PASSADA_MAX_CORRENDO)
 	else:
 		_ap.speed_scale = 1.0
 
 
 func _jonny_nas_maos() -> void:
 	var alvo: Transform3D = jonny.alvo_nas_maos(_suporte)
-	jonny.global_transform = alvo if _peso_maos >= 1.0 else _base.interpolate_with(alvo, _peso_maos)
+	# Pegando, ele sobe JUNTO com as maos desde o instante em que elas saem do
+	# chao (como estava encostado nelas) e vai se acomodando no colo — como o
+	# `seguir_peso` do AtorIgreja na cutscene.
+	if _modo == "pegando" and _peso_maos > 0.0 and not _base_nas_maos:
+		_base = alvo.affine_inverse() * _base
+		_base_nas_maos = true
+	var base := alvo * _base if _base_nas_maos else _base
+	jonny.global_transform = alvo if _peso_maos >= 1.0 else base.interpolate_with(alvo, _peso_maos)
 
 
 ## A AnimationTree e o colo nao dividem o esqueleto: com o Jonny nos bracos o
@@ -239,7 +253,8 @@ func _largar() -> void:
 	var frente := (_suporte.global_basis.z * Vector3(1, 0, 1)).normalized()
 	var chao := _chao_em(player.global_position + frente * 0.72)
 	var giro := Basis.looking_at(-frente, Vector3.UP) * Basis(Vector3.UP, deg_to_rad(90.0))
-	_base = Transform3D(giro, chao)
+	_base = jonny.no_chao(Transform3D(giro, chao))
+	_base_nas_maos = false
 	_peso_maos = 1.0
 	_ap.speed_scale = 1.0
 	_ap.play(LARGAR, 0.2)
@@ -255,8 +270,7 @@ func _largar() -> void:
 	player.carregando_jonny = false
 	player.cutscene_set_player_control(true)
 	SaveManager.evento_dona_nice = 5
-	SaveManager.jonny_no_hospital = [jonny.global_position.x, jonny.global_position.y,
-		jonny.global_position.z, jonny.global_rotation.y]
+	SaveManager.jonny_no_hospital = [chao.x, chao.y, chao.z, giro.get_euler().y]
 	SaveManager.jonny_deixado_em = get_tree().current_scene.scene_file_path
 	_gravar()
 	_no_chao()
@@ -323,6 +337,7 @@ func _pegar() -> void:
 	player.carregando_jonny = true
 	_suspender_armas(true)
 	_base = jonny.global_transform
+	_base_nas_maos = false
 	_peso_maos = 0.0
 
 	# Encaixa atras dele, de frente, como o duble na cutscene: o Jonny deitado

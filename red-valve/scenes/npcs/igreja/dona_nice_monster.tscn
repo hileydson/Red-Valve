@@ -9,6 +9,8 @@ editor_description = "A Dona Nice monstro (fase 1). Os clipes estao em anim (bib
 script = ExtResource("1_ator")
 clipe_inicial = &"parado"
 escala_ruido = 5.0
+deitado_giro = Vector3(7, 0, 5)
+deitado_altura = -0.172
 
 [node name="modelo" parent="." instance=ExtResource("2_modelo")]
 

@@ -10,6 +10,8 @@ editor_description = "O Jonny. Os clipes estao em anim (biblioteca jonny_clipes.
 script = ExtResource("1_ator")
 clipe_inicial = &"caido_agonia"
 escala_ruido = 5.0
+deitado_giro = Vector3(-6, 0, 9)
+deitado_altura = -0.024
 
 [node name="modelo" parent="." instance=ExtResource("2_modelo")]
 

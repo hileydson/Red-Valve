@@ -54,6 +54,9 @@ PACOTES = {
     "evil_screech_1.ogg": ("evil-screech-1", "Evil Screech 1"),
     "high_pitch_scream_gverb.mp3": ("high-pitch-scream-sounds2", "High pitch scream sounds(2)"),
     "breathing%20tired.wav": ("breathing-tired", "breathing tired"),
+    "skeleton1sfx_0.wav": ("skeletonsfxshortpack", "SkeletonSFXShortPack"),
+    "skeleton2sfx_0.wav": ("skeletonsfxshortpack", "SkeletonSFXShortPack"),
+    "sfx_breaking_and_falling.zip": ("75-cc0-breaking-falling-hit-sfx", "75 CC0 breaking / falling / hit sfx"),
 }
 
 rng = np.random.default_rng(1983)
@@ -364,6 +367,69 @@ def respiracao_jonny():
     gravar("respiracao_jonny.ogg", corpo)
 
 
+def pescoco():
+    """O pescoco dela torcendo pra tras (o `girar_cabeca`, 6,4 s na chegada).
+
+    Os estalos caem nos dois trechos em que o pescoco torce de verdade
+    (TORCE_PESCOCO do gerador da cena: 1,45-2,45 s e 3,27-4,9 s, ja' na
+    velocidade da chegada): um rangido de osso esfregando, estalos miudos em
+    rajada e, no fim do giro (~4,4 s, quando a cabeca passa dos 180 graus), o
+    estalo grande de quebrar. Semente propria: nao mexe nos outros sons.
+    """
+    sorte = np.random.default_rng(2207)
+    fundos = [normal(ler("deep_breaks/Deep Break %d.wav" % i)) for i in range(1, 11)]
+    rajada = normal(ler("skeleton2sfx_0.wav"))
+    ossos = normal(ler("skeleton1sfx_0.wav"))
+    quebra = normal(ler("sfx_breaking_and_falling/bfh1_breaking_01.ogg"))
+    madeira = [normal(ler("sfx_breaking_and_falling/bfh1_wood_breaking_%02d.ogg" % i)) for i in (1, 3, 4)]
+    x = silencio(6.8)
+    for ini, fim in ((1.45, 2.45), (3.27, 4.9)):
+        # o rangido: a rajada de estalos do esqueleto, grave e esticada
+        por(x, fade(tom(rajada, sorte.uniform(0.62, 0.7)), 0.03, 0.2), ini, 0.55)
+        t = ini
+        while t < fim:
+            por(x, tom(fundos[sorte.integers(10)], sorte.uniform(0.85, 1.25)), t, sorte.uniform(0.35, 0.7))
+            if sorte.random() < 0.5:
+                por(x, tom(madeira[sorte.integers(3)], sorte.uniform(0.5, 0.65)), t + 0.02, 0.45)
+            t += sorte.uniform(0.12, 0.3)
+    # o estalo grande, quando a cabeca passa do ponto
+    por(x, tom(fundos[2], 0.7), 4.38, 1.0)
+    por(x, tom(quebra, 0.72), 4.4, 0.9)
+    por(x, tom(ossos[int(0.3 * SR):int(0.9 * SR)], 0.8), 4.42, 0.7)
+    por(x, tom(fundos[7], 0.6), 4.62, 0.6)
+    gravar("pescoco_torcendo.ogg", fade(reverb(x, 2.0, 0.28), 0.01, 0.6))
+
+
+def teleporte():
+    """O teleporte da monstro: SOME num sopro puxado ao contrario (o ar sendo
+    sugado pra dentro dela) que fecha num estalo molhado, e SURGE num estouro
+    de carne com o rosnado por baixo. Semente propria.
+    """
+    sorte = np.random.default_rng(3301)
+    n = int(1.4 * SR)
+    t = np.arange(n) / SR
+    # sopro: ruido que sobe de brilho
+    ruido = sorte.standard_normal(n).astype(np.float32)
+    sopro = passa_baixa(ruido, 900.0) * 0.6 + passa_baixa(ruido, 3500.0) * (t / 1.4) * 0.4
+    sopro *= (t / 1.4) ** 2.2
+    respiro = normal(ler("80-CC0-creature-SFX_0/breath.ogg"))[::-1].copy()
+    squish = normal(ler("squish_03.mp3"))
+    monstro = normal(ler("80-CC0-creature-SFX_0/monster_05.ogg"))
+    x = silencio(2.4)
+    por(x, sopro.astype(np.float32), 0.0, 0.8)
+    por(x, tom(respiro, 0.5)[-int(1.4 * SR):], 0.0, 0.6)
+    por(x, tom(squish, 0.6), 1.36, 0.9)
+    por(x, tom(normal(ler("deep_breaks/Deep Break 5.wav")), 0.55), 1.38, 0.7)
+    gravar("teleporte_some.ogg", fade(reverb(x, 2.2, 0.4), 0.05, 0.5))
+    x = silencio(3.0)
+    estouro = normal(ler("water-splash-slime-sfx/splash_03.ogg"))
+    por(x, tom(estouro, 0.5), 0.0, 1.0)
+    por(x, tom(normal(ler("squish_05.mp3")), 0.55), 0.03, 0.8)
+    por(x, tom(monstro, 0.5), 0.12, 0.8)
+    por(x, tom(normal(ler("deep_breaks/Deep Break 9.wav")), 0.5), 0.0, 0.7)
+    gravar("teleporte_surge.ogg", fade(reverb(x, 2.8, 0.42), 0.001, 0.8))
+
+
 def ambiente():
     x = normal(ler("ambient_horror_0.ogg"))
     gravar("ambiente_ritual.ogg", fade(x, 0.5, 0.5))
@@ -399,4 +465,6 @@ if __name__ == "__main__":
     # por ultimo: a semente e' uma so', e os sons de antes nao mudam
     grito_monstro()
     respiracao_jonny()
+    pescoco()
+    teleporte()
     creditos()

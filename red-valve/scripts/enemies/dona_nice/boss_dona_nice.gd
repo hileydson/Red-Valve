@@ -3,7 +3,9 @@ extends CharacterBody3D
 ## A DONA NICE MONSTRO — fase 1 da luta da igreja.
 ##
 ## Anda DEVAGAR atras do Maycow (o andar cambaleante da captura, no ritmo do
-## pe'), e se chegar perto AGARRA PELO PESCOCO: a cena de primeira pessoa do
+## pe') e, quando ele abre distancia, de vez em quando SE TELETRANSPORTA pra
+## perto dele: o corpo queima e some (`teleporte_dona_nice.gd`) e ela surge a
+## uns 3 m, num ponto da nave a vista dele. Se chegar perto AGARRA PELO PESCOCO: a cena de primeira pessoa do
 ## agarrao (`player_grab.gd`, ramo "pescoco") — os olhos dele presos entre as
 ## maos dela enquanto ela morde, babando gosma verde na tela. Morre com
 ## ~30 tiros de pistola (a vida e' medida no dano da pistola do jogador, nao
@@ -26,6 +28,18 @@ const ESPERA_AGARRAO := 4.5
 ## cambaleando vira um boneco travado; nenhum vira uma esponja.
 const TIROS_POR_CAMBALEIO := 5
 const GRAVIDADE := 18.0
+## O teleporte: de quanto em quanto tempo (s), so' se ele estiver a mais de
+## LONGE_PRA_TELEPORTAR, e a que distancia dele ela surge (sempre fora do
+## alcance do agarrao).
+const INTERVALO_TELEPORTE := Vector2(10.0, 16.0)
+const LONGE_PRA_TELEPORTAR := 5.5
+const RAIO_PERTO := Vector2(2.6, 3.4)
+const TEMPO_SUMINDO := 0.6
+const TEMPO_SURGINDO := 0.6
+## A nave da igreja, onde ela pode surgir.
+const LIMITE_X := 5.5
+const LIMITE_Z := Vector2(5.5, 31.0)
+const TELEPORTE := preload("res://scripts/effects/teleporte_dona_nice.gd")
 
 @export var enemy_name: String = "IGR_BOSS_NOME"
 ## Lido pelo agarrao (player_grab.gd).
@@ -54,6 +68,10 @@ var _proximo_agarrao := 0.0
 var _tiros := 0
 var _agarrada := false
 var _ultimo_clipe := &""
+var _relogio := 0.0
+var _prox_teleporte := 0.0
+## No meio do teleporte: parada, e tiro nao pega.
+var _teleportando := false
 
 @onready var visual: Node3D = $visual
 @onready var som_passos: AudioStreamPlayer3D = $sons/passos
@@ -85,6 +103,7 @@ func _ready() -> void:
 func comecar() -> void:
 	_ativa = true
 	som_respira.play()
+	_prox_teleporte = _relogio + randf_range(INTERVALO_TELEPORTE.x, INTERVALO_TELEPORTE.y)
 
 
 func _jogador() -> Node3D:
@@ -105,8 +124,9 @@ func _physics_process(delta: float) -> void:
 		velocity.y = 0.0
 	velocity.x = 0.0
 	velocity.z = 0.0
+	_relogio += delta
 
-	if dead or not _ativa or cutscene_mode or _agarrada:
+	if dead or not _ativa or cutscene_mode or _agarrada or _teleportando:
 		move_and_slide()
 		return
 
@@ -123,6 +143,15 @@ func _physics_process(delta: float) -> void:
 	var para := jogador.global_position - global_position
 	para.y = 0.0
 	var dist := para.length()
+
+	if _relogio > _prox_teleporte and dist > LONGE_PRA_TELEPORTAR \
+			and not GlobalEvents.agarrao_rodando:
+		_prox_teleporte = _relogio + randf_range(INTERVALO_TELEPORTE.x, INTERVALO_TELEPORTE.y)
+		var destino: Variant = _lugar_perto(jogador)
+		if destino != null:
+			_teleportar(jogador, destino)
+			move_and_slide()
+			return
 
 	# vira devagar pra ele (frente = +Z)
 	var alvo_giro := atan2(para.x, para.z)
@@ -216,7 +245,7 @@ func _tela_de_gosma(valor: float, segundos: float) -> void:
 
 
 func take_damage(amount: int) -> void:
-	if dead or not _ativa:
+	if dead or not _ativa or _teleportando:
 		return
 	current_health = maxi(0, current_health - amount)
 	_tiros += 1
@@ -233,6 +262,70 @@ func take_damage(amount: int) -> void:
 		_ultimo_clipe = &""
 		_tocar(&"dano", 0.08)
 		_cambaleando = 0.85
+
+
+## Some (o corpo queima), e surge em `destino`, de frente pra ele.
+func _teleportar(jogador: Node3D, destino: Vector3) -> void:
+	_teleportando = true
+	som_passos.stop()
+	_ultimo_clipe = &""
+	_tocar(&"dano", 0.1)
+	TELEPORTE.criar(get_parent(), global_position, 1.0, false)
+	var some := create_tween().set_parallel(true)
+	some.tween_property(visual, "dissolver", 1.0, TEMPO_SUMINDO).set_trans(Tween.TRANS_QUAD) \
+		.set_ease(Tween.EASE_IN)
+	some.tween_property(visual, "veias", 1.0, TEMPO_SUMINDO * 0.5)
+	await some.finished
+	if dead:
+		return
+	visual.visible = false
+	await get_tree().create_timer(0.3, false).timeout
+	if dead:
+		return
+	global_position = destino
+	velocity = Vector3.ZERO
+	if is_instance_valid(jogador):
+		var d := jogador.global_position - destino
+		rotation.y = atan2(d.x, d.z)
+	TELEPORTE.criar(get_parent(), destino, 1.0, true)
+	await get_tree().create_timer(0.2, false).timeout
+	if dead:
+		return
+	visual.visible = true
+	_ultimo_clipe = &""
+	_tocar(&"parado", 0.2)
+	var surge := create_tween().set_parallel(true)
+	surge.tween_property(visual, "dissolver", 0.0, TEMPO_SURGINDO).set_trans(Tween.TRANS_QUAD) \
+		.set_ease(Tween.EASE_OUT)
+	surge.tween_property(visual, "veias", 0.35, TEMPO_SURGINDO * 1.5)
+	await surge.finished
+	_teleportando = false
+
+
+## Um ponto no chao da nave a RAIO_PERTO dele, que ele enxergue (sem parede no
+## meio). Null se nao achar.
+func _lugar_perto(jogador: Node3D) -> Variant:
+	var espaco := get_world_3d().direct_space_state
+	# a origem do jogador fica no meio do corpo (~1 m do chao); a dela, nos pes
+	var olho := jogador.global_position + Vector3.UP * 0.5
+	var fora: Array[RID] = [get_rid()]
+	if jogador is CollisionObject3D:
+		fora.append((jogador as CollisionObject3D).get_rid())
+	for _i in 14:
+		var ang := randf() * TAU
+		var p := jogador.global_position + Vector3(sin(ang), 0.0, cos(ang)) \
+			* randf_range(RAIO_PERTO.x, RAIO_PERTO.y)
+		if absf(p.x) > LIMITE_X or p.z < LIMITE_Z.x or p.z > LIMITE_Z.y:
+			continue
+		var chao := PhysicsRayQueryParameters3D.create(p + Vector3.UP * 2.0, p + Vector3.DOWN * 3.0, 3, fora)
+		var r := espaco.intersect_ray(chao)
+		if r.is_empty() or absf(r["position"].y - global_position.y) > 0.6:
+			continue
+		var vista := PhysicsRayQueryParameters3D.create(olho, r["position"] + Vector3.UP * 1.2, 3, fora)
+		if not espaco.intersect_ray(vista).is_empty():
+			continue
+		return r["position"]
+	return null
 
 
 func _piscar_carne() -> void:

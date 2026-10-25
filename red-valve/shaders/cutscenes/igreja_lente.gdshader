@@ -29,6 +29,8 @@ uniform float gosma : hint_range(0.0, 1.0) = 0.0;          // baba na tela
 uniform vec3 cor_gosma = vec3(0.22, 0.55, 0.08);            // verde da baba; bile na fase 2
 uniform float sangue_tela : hint_range(0.0, 1.0) = 0.0;    // respingo
 uniform float foco : hint_range(0.0, 1.0) = 0.0;           // tunel: borda borrada e escura, centro nitido
+uniform float foco_olhos : hint_range(0.0, 1.0) = 0.0;     // 1 = o nitido vira uma faixa estreita (os dois olhos)
+uniform float foco_tamanho : hint_range(0.2, 8.0) = 1.0;   // escala do que fica nitido (acompanha o zoom)
 
 float hash12(vec2 p) {
 	vec3 p3 = fract(vec3(p.xyx) * 0.1031);
@@ -94,8 +96,11 @@ void fragment() {
 		col.b = textureLod(tela, clamp(uv - dir, vec2(0.001), vec2(0.999)), 0.0).b;
 	}
 
-	// foco: so' o meio fica nitido; em volta, os mipmaps da tela borram
-	float borda_foco = smoothstep(0.09, 0.44, length(c * vec2(1.25, 1.0)));
+	// foco: so' o meio fica nitido; em volta, os mipmaps da tela borram. Nos
+	// olhos o meio nitido achata numa faixa larga e baixa
+	vec2 forma_foco = mix(vec2(1.25, 1.0), vec2(1.0, 3.2), foco_olhos);
+	vec2 raio_foco = mix(vec2(0.09, 0.44), vec2(0.06, 0.2), foco_olhos) * foco_tamanho;
+	float borda_foco = smoothstep(raio_foco.x, raio_foco.y, length(c * forma_foco));
 	if (foco > 0.001) {
 		vec3 borrado = textureLod(tela, clamp(uv, vec2(0.001), vec2(0.999)),
 				4.5 * foco * borda_foco).rgb;

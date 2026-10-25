@@ -17,6 +17,11 @@ extends Node3D
 ##
 ## Quem cria este no' e' o `cena_dona_nice.gd`; quem manda afastar e' o
 ## diretor (`afastar_bancos`) ou o evento (`no_canto`, ao recomecar a luta).
+##
+## O voo levanta poeira (so' no voo, `no_canto` e' sem efeito): uma onda de
+## fuligem rente ao chao saindo dela, a poeira de baixo de cada banco quando
+## ele arranca (com lascas de madeira), o rastro no ar, o baque onde ele cai
+## e o po' que o tranco solta do teto e fica descendo na nave.
 
 const LAYER_CHAO := 2
 ## z do meio de cada vao livre, por lado. O banco deita ao longo do z.
@@ -27,6 +32,10 @@ const COLUNAS := [8.9, 9.8, 10.7, 11.6]
 const ALTURA_DO_VOO := 2.4
 const ENTRADA_X := [5.3, 6.4]
 const SOM_BATIDA := "res://assets/sounds/igreja/tapa_chao.ogg"
+## A poeira: escura, com um fundo de sangue seco (e' a igreja do ritual).
+const COR_POEIRA := Color(0.40, 0.35, 0.32, 0.34)
+const COR_FULIGEM := Color(0.34, 0.22, 0.19, 0.7)
+const COR_LASCA := Color(0.24, 0.15, 0.09)
 
 var modelo: Node
 
@@ -34,6 +43,10 @@ var _bancos: Array[Dictionary] = []
 var _estado := ""   # "" | "voando" | "no_canto"
 var _tween: Tween
 var _som: AudioStreamPlayer
+## Malhas e materiais da poeira, feitos uma vez.
+var _fumaca: QuadMesh
+var _fuligem: QuadMesh
+var _lasca: BoxMesh
 
 
 func _ready() -> void:
@@ -125,10 +138,13 @@ func afastar() -> void:
 		return
 	_estado = "voando"
 	var centro := Vector3(0.0, 0.0, 18.0)
+	_onda(centro)
+	_po_do_teto()
 	_tween = create_tween().set_parallel(true)
 	for b in _bancos:
 		var longe := clampf(b["inicio"].origin.distance_to(centro) / 16.0, 0.0, 1.0)
 		var atraso: float = b["atraso"] + 0.45 * longe
+		_tween.tween_callback(_arrancou.bind(b)).set_delay(atraso)
 		_tween.tween_method(_voo.bind(b), 0.0, 1.0, b["duracao"]).set_delay(atraso) \
 			.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
 		_tween.tween_callback(_pousou.bind(b)).set_delay(atraso + b["duracao"])
@@ -171,8 +187,215 @@ func _voo(k: float, b: Dictionary) -> void:
 func _pousou(b: Dictionary) -> void:
 	(b["pivo"] as Node3D).global_transform = b["alvo"]
 	_colisao(b)
+	var rastro := (b["pivo"] as Node3D).get_node_or_null("rastro") as GPUParticles3D
+	if rastro:
+		rastro.emitting = false
+		_soltar(rastro)
+	_poeira((b["alvo"] as Transform3D).origin, Vector3(0.6, 0.1, 1.4), 32, 3.0, 1.0, 2.6,
+		Vector3.UP, 75.0, Vector2(0.6, 1.6))
 	_som.pitch_scale = randf_range(0.8, 1.15)
 	_som.play()
+
+
+# ------------------------------------------------------------------ poeira
+## O banco arranca do chao: a poeira que estava embaixo dele sobe, voam
+## lascas, e ele sai puxando um rastro de po'.
+func _arrancou(b: Dictionary) -> void:
+	var pivo := b["pivo"] as Node3D
+	var mi := pivo.get_child(0) as MeshInstance3D
+	var caixa: AABB = mi.global_transform * mi.get_aabb()
+	var chao := Vector3(caixa.get_center().x, (b["inicio"] as Transform3D).origin.y, caixa.get_center().z)
+	_poeira(chao, Vector3(caixa.size.x * 0.5, 0.05, caixa.size.z * 0.5), 44, 3.4, 1.2, 3.0,
+		Vector3.UP, 40.0, Vector2(0.3, 1.3))
+	_lascas(chao + Vector3.UP * 0.3)
+	var rastro := _particulas("rastro", pivo, 40, 1.6, 0.0, _fumaca)
+	rastro.position = Vector3(0.0, caixa.size.y * 0.5, 0.0)
+	var m := rastro.process_material as ParticleProcessMaterial
+	m.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_BOX
+	m.emission_box_extents = Vector3(0.4, 0.2, 0.6)
+	m.direction = Vector3.UP
+	m.spread = 180.0
+	m.initial_velocity_min = 0.05
+	m.initial_velocity_max = 0.3
+	m.gravity = Vector3(0, -0.15, 0)
+	m.scale_min = 0.8
+	m.scale_max = 1.8
+	# solta po' o voo inteiro, ate' pousar
+	rastro.one_shot = false
+	rastro.emitting = true
+
+
+## A onda: um anel de fuligem que sai dela rente ao chao, empurrado pra fora,
+## e corre a nave inteira.
+func _onda(centro: Vector3) -> void:
+	var p := _particulas("onda", self, 320, 3.8, 0.92, _fuligem)
+	p.global_position = centro + Vector3.UP * 0.15
+	var m := p.process_material as ParticleProcessMaterial
+	m.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_RING
+	m.emission_ring_axis = Vector3.UP
+	m.emission_ring_radius = 1.2
+	m.emission_ring_inner_radius = 0.6
+	m.emission_ring_height = 0.1
+	m.direction = Vector3.UP
+	m.spread = 10.0
+	m.initial_velocity_min = 0.1
+	m.initial_velocity_max = 0.5
+	m.radial_velocity_min = 7.0
+	m.radial_velocity_max = 11.0
+	m.damping_min = 2.0
+	m.damping_max = 3.2
+	m.gravity = Vector3(0, -0.2, 0)
+	m.scale_min = 2.0
+	m.scale_max = 4.0
+	p.emitting = true
+	_soltar(p)
+
+
+## O tranco solta o po' do teto: cai devagar sobre a nave por varios segundos.
+func _po_do_teto() -> void:
+	var p := _particulas("po_do_teto", self, 260, 7.0, 0.0, _fumaca)
+	p.global_position = Vector3(0.0, 9.0, 18.0)
+	p.one_shot = false
+	var m := p.process_material as ParticleProcessMaterial
+	m.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_BOX
+	m.emission_box_extents = Vector3(6.5, 0.5, 14.0)
+	m.direction = Vector3.DOWN
+	m.spread = 20.0
+	m.initial_velocity_min = 0.2
+	m.initial_velocity_max = 0.6
+	m.gravity = Vector3(0, -0.35, 0)
+	m.damping_min = 0.3
+	m.damping_max = 0.6
+	m.scale_min = 0.35
+	m.scale_max = 1.0
+	p.emitting = true
+	# para de cair depois de uns segundos e some quando o ultimo grao chega
+	get_tree().create_timer(4.0, false).timeout.connect(func(): p.emitting = false)
+	_soltar(p, 4.0)
+
+
+func _poeira(onde: Vector3, caixa: Vector3, quantas: int, vida: float, esc_min: float,
+		esc_max: float, rumo: Vector3, abertura: float, vel: Vector2) -> void:
+	var p := _particulas("poeira", self, quantas, vida, 0.85, _fumaca)
+	p.global_position = onde
+	var m := p.process_material as ParticleProcessMaterial
+	m.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_BOX
+	m.emission_box_extents = caixa
+	m.direction = rumo
+	m.spread = abertura
+	m.initial_velocity_min = vel.x
+	m.initial_velocity_max = vel.y
+	m.damping_min = 1.0
+	m.damping_max = 2.0
+	m.gravity = Vector3(0, -0.1, 0)
+	m.scale_min = esc_min
+	m.scale_max = esc_max
+	p.emitting = true
+	_soltar(p)
+
+
+func _lascas(onde: Vector3) -> void:
+	var p := _particulas("lascas", self, 12, 1.6, 1.0, _lasca)
+	p.global_position = onde
+	var m := p.process_material as ParticleProcessMaterial
+	m.direction = Vector3.UP
+	m.spread = 70.0
+	m.initial_velocity_min = 2.0
+	m.initial_velocity_max = 4.5
+	m.gravity = Vector3(0, -9.8, 0)
+	m.angle_min = -180.0
+	m.angle_max = 180.0
+	m.angular_velocity_min = -600.0
+	m.angular_velocity_max = 600.0
+	m.scale_min = 0.5
+	m.scale_max = 1.4
+	# a lasca nao some aos poucos (o rampa da fumaca e' so' pras nuvens)
+	m.color_ramp = null
+	m.scale_curve = null
+	p.emitting = true
+	_soltar(p)
+
+
+## Uma camada de particulas de disparo unico, no mundo (o banco voa, a poeira
+## fica). Fumaca cresce e se dissolve; as outras malhas ficam como sao.
+func _particulas(nome: String, pai: Node, quantas: int, vida: float, explosao: float,
+		malha: Mesh) -> GPUParticles3D:
+	if _fumaca == null:
+		_montar_poeira()
+	var p := GPUParticles3D.new()
+	p.name = nome
+	p.amount = quantas
+	p.lifetime = vida
+	p.one_shot = true
+	p.explosiveness = explosao
+	p.randomness = 0.5
+	p.local_coords = false
+	p.emitting = false
+	p.visibility_aabb = AABB(Vector3(-16, -10, -16), Vector3(32, 20, 32))
+	p.draw_pass_1 = malha
+	var m := ParticleProcessMaterial.new()
+	var cresce := CurveTexture.new()
+	var c := Curve.new()
+	c.add_point(Vector2(0.0, 0.35))
+	c.add_point(Vector2(1.0, 1.0))
+	cresce.curve = c
+	m.scale_curve = cresce
+	var g := Gradient.new()
+	g.set_color(0, Color(1, 1, 1, 0.0))
+	g.add_point(0.12, Color(1, 1, 1, 1.0))
+	g.set_color(g.get_point_count() - 1, Color(1, 1, 1, 0.0))
+	var rampa := GradientTexture1D.new()
+	rampa.gradient = g
+	m.color_ramp = rampa
+	m.angle_min = -180.0
+	m.angle_max = 180.0
+	p.process_material = m
+	pai.add_child(p)
+	return p
+
+
+func _soltar(p: GPUParticles3D, extra: float = 0.0) -> void:
+	get_tree().create_timer(p.lifetime + extra + 0.5, false).timeout.connect(p.queue_free)
+
+
+func _montar_poeira() -> void:
+	var bola := GradientTexture2D.new()
+	bola.fill = GradientTexture2D.FILL_RADIAL
+	bola.fill_from = Vector2(0.5, 0.5)
+	bola.fill_to = Vector2(1.0, 0.5)
+	var g := Gradient.new()
+	# borda bem macia: as nuvens se fundem numa poeira so', sem tufos
+	g.set_color(0, Color(1, 1, 1, 0.75))
+	g.add_point(0.35, Color(1, 1, 1, 0.35))
+	g.add_point(0.7, Color(1, 1, 1, 0.08))
+	g.set_color(g.get_point_count() - 1, Color(1, 1, 1, 0))
+	bola.gradient = g
+	_fumaca = _nuvem(COR_POEIRA, bola, 1.0)
+	_fuligem = _nuvem(COR_FULIGEM, bola, 0.9)
+	_lasca = BoxMesh.new()
+	_lasca.size = Vector3(0.025, 0.012, 0.14)
+	var madeira := StandardMaterial3D.new()
+	madeira.albedo_color = COR_LASCA
+	madeira.roughness = 0.9
+	_lasca.material = madeira
+
+
+## Nuvem: um quad virado pra camera (sem perder a escala da particula), com
+## sombra propria nenhuma — numa igreja escura o po' cinza e' que aparece.
+func _nuvem(cor: Color, tex: Texture2D, tam: float) -> QuadMesh:
+	var q := QuadMesh.new()
+	q.size = Vector2(tam, tam)
+	var m := StandardMaterial3D.new()
+	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	m.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
+	m.billboard_keep_scale = true
+	m.vertex_color_use_as_albedo = true
+	m.albedo_color = cor
+	m.albedo_texture = tex
+	m.disable_receive_shadows = true
+	q.material = m
+	return q
 
 
 ## Empilhado na nave lateral ele vira obstaculo de verdade (na nave, no

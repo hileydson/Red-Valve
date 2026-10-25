@@ -39,10 +39,11 @@ func _ready() -> void:
 
 	Input.action_press("ui_mover_cima")
 	await get_tree().create_timer(1.6).timeout
-	print("andando=", _rapidez(p), " clipe=", _clipe(p))
+	print("andando=", _rapidez(p), " clipe=", _clipe(p), " fov=", get_viewport().get_camera_3d().fov)
 	Input.action_press("ui_run")
 	await get_tree().create_timer(2.0).timeout
-	print("correndo=", _rapidez(p), " clipe=", _clipe(p))
+	print("correndo=", _rapidez(p), " clipe=", _clipe(p), " x", _passada(p),
+		" fov=", get_viewport().get_camera_3d().fov)
 	await _de_lado(p, "correndo")
 	Input.action_release("ui_run")
 	Input.action_release("ui_mover_cima")
@@ -63,6 +64,9 @@ func _ready() -> void:
 	print("largou: estado=", SaveManager.evento_dona_nice, " cena=", SaveManager.jonny_deixado_em,
 		" jonny=", SaveManager.jonny_no_hospital, " pos_salva=", SaveManager.stage_1_saved_position,
 		" pontos_vivos=", MapaDados.pontos_vivos(get_tree(), MapaDados.caminho_da_cena(get_tree())).size())
+	var jo := get_tree().current_scene.find_child("jonny", true, false) as Node3D
+	if jo:
+		print("jonny deitado: giro=", jo.global_rotation_degrees, " pos=", jo.global_position)
 	await _foto("mapa_com_jonny")
 	await _apertar("ui_accept")
 	await get_tree().create_timer(4.0).timeout
@@ -86,6 +90,11 @@ func _ready() -> void:
 
 func _rapidez(p: CharacterBody3D) -> float:
 	return Vector2(p.velocity.x, p.velocity.z).length()
+
+
+func _passada(p: Node) -> float:
+	var ap := p.find_child("AnimColo", true, false) as AnimationPlayer
+	return ap.speed_scale if ap else 0.0
 
 
 func _clipe(p: Node) -> String:

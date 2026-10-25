@@ -6,6 +6,8 @@ extends Node
 ##         --resolution 1280x720 res://tools/igreja/teste_luta.tscn
 ##
 ## IGREJA_ESTADO = o `evento_dona_nice` de partida (0 roda a chegada inteira).
+## IGREJA_IA=1 = antes de cada fase, acompanha a IA dela: o teleporte (forcado),
+## os jeitos da fase 2 e se o tapa pega perto e erra longe.
 ## Usa o slot 9. O driver vai pra raiz da arvore antes de trocar de cena, por
 ## isso sobrevive a ela.
 
@@ -73,7 +75,8 @@ func _roteiro() -> void:
 		await _foto("chegada")
 		await _esperar(20.0)
 		await _foto("chegada_20s")
-		await _esperar(40.0)
+		# a chegada tem ~65 s de tela (com a camera lenta da gota)
+		await _esperar(50.0)
 		var j := _jogador()
 		print("CHEGADA acabou: estado=", SaveManager.evento_dona_nice, " in_cutscene=",
 			GlobalEvents.in_cutscene, " controle_travado=", j._cutscene_inputs_disabled,
@@ -103,6 +106,8 @@ func _jonny_respira() -> void:
 func _fase_1() -> void:
 	await _foto("fase1_inicio")
 	var b := _boss()
+	if OS.get_environment("IGREJA_IA") == "1":
+		await _ia_fase_1(b)
 	var p0: Vector3 = b.global_position
 	await _esperar(4.0)
 	print("boss andou ", p0.distance_to(b.global_position), " m")
@@ -129,8 +134,76 @@ func _fase_1() -> void:
 	await _esperar(4.5)
 
 
+## Uma camera de fora, olhando pra ela, enquanto some e surge.
+func _fotos_do_teleporte(b: Node, rotulo: String) -> void:
+	var j := _jogador()
+	j._cutscene_camera_disabled = true
+	var cam := Camera3D.new()
+	get_tree().current_scene.add_child(cam)
+	var alto: float = 2.0 if rotulo == "ia2" else 1.1
+	var lente := get_tree().get_first_node_in_group("cena_dona_nice")
+	for k in 9:
+		var alvo: Vector3 = b.global_position + Vector3(0, alto, 0)
+		cam.global_position = Vector3(clampf(alvo.x * 0.5, -5.0, 5.0), alto + 1.0, alvo.z - 7.0 * alto / 2.0)
+		cam.look_at(alvo)
+		cam.make_current()
+		# a gosma do cuspe na lente cobriria a foto
+		if lente:
+			lente.get_node("lente").visible = false
+		await _esperar(0.25)
+		await _foto("%s_teleporte_%d" % [rotulo, k])
+	cam.queue_free()
+	if lente:
+		lente.get_node("lente").visible = true
+	j._cutscene_camera_disabled = false
+
+
+func _ia_fase_1(b: Node) -> void:
+	var j := _jogador()
+	j.global_position = Vector3(0, 1.05, 6.0)
+	b.global_position = Vector3(0, 0.0, 22.0)
+	await _esperar(0.5)
+	b._prox_teleporte = b._relogio
+	await _fotos_do_teleporte(b, "ia1")
+	print("IA1 teleporte: dist=", Vector2(b.global_position.x - j.global_position.x,
+		b.global_position.z - j.global_position.z).length(), " pos=", b.global_position,
+		" visivel=", b.visual.visible, " dissolver=", b.visual.dissolver)
+
+
+func _ia_fase_2(b: Node) -> void:
+	var j := _jogador()
+	j.global_position = Vector3(0, 1.05, 12.0)
+	for i in 40:
+		if i == 6:
+			while b._ocupada:
+				await _esperar(0.1)
+			b._prox_teleporte = b._tempo
+			await _fotos_do_teleporte(b, "ia2")
+		var d := Vector2(b.global_position.x - j.global_position.x, b.global_position.z - j.global_position.z)
+		print("IA2 t=%.1f jeito=%s dist=%.1f pos=(%.1f,%.1f) sumida=%s ocupada=%s" % [i * 0.5,
+			b._jeito, d.length(), b.global_position.x, b.global_position.z, b._sumida, b._ocupada])
+		await _esperar(0.5)
+	# o tapa: parado, pega; dois metros longe da mao, nao
+	for longe in [false, true]:
+		while b._ocupada:
+			await _esperar(0.1)
+		b._jeito = "caca"
+		b._prox_teleporte = b._tempo + 60.0
+		j.global_position = Vector3(0, 1.05, 14.0)
+		var vida: int = j.current_health
+		b._prox_tapa = b._tempo
+		await _esperar(1.0)
+		if longe:
+			j.global_position += (j.global_position - b.global_position).normalized() * 2.2 * Vector3(1, 0, 1)
+		await _esperar(1.6)
+		print("IA2 tapa longe=", longe, " vida ", vida, " -> ", j.current_health)
+		await _esperar(1.5)
+
+
 func _fase_2() -> void:
 	await _foto("fase2_inicio")
+	if OS.get_environment("IGREJA_IA") == "1":
+		await _ia_fase_2(_boss())
 	await _esperar(5.0)
 	await _foto("fase2_flutuando")
 	var b := _boss()
