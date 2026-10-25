@@ -92,15 +92,19 @@ COLO = {
     "neck": (0, 0.25, 1), "head": (0, 0.35, 1),
 }
 
+# Ajoelhado e DEBRUCADO sobre o Jonny: o tronco deita ~70 graus pra frente e
+# os bracos descem quase retos, pra as maos chegarem nele no chao (o braco do
+# Maycow tem 49 cm ate' o punho). O joelho de apoio vai um pouco pra tras, o
+# que baixa o quadril.
 AJOELHADO = {
-    "spine": (0, 0.45, 1), "chest": (0, 0.55, 1), "upper_chest": (0, 0.5, 1),
-    "neck": (0, 0.8, 1), "head": (0, 0.9, 1),
-    "upper_arm.L": (0.18, 0.75, -0.7), "forearm.L": (-0.15, 0.85, -0.5),
-    "hand.L": (-0.25, 0.8, -0.5),
-    # joelho direito no chao, esquerdo em cima
-    "thigh.L": (0.1, 1, -0.2), "shin.L": (0, -0.1, -1),
+    "spine": (0, 1.3, 1), "chest": (0, 3, 1), "upper_chest": (0, 1, 0),
+    "neck": (0, 1, -0.3), "head": (0, 0.6, -1),
+    "upper_arm.L": (0.06, 0.35, -1), "forearm.L": (-0.06, 0.4, -1),
+    "hand.L": (-0.1, 0.5, -1),
+    # joelho direito no chao, esquerdo em cima, numa afundada funda
+    "thigh.L": (0.14, 1, 0.25), "shin.L": (0, 0.3, -1),
     "foot.L": (0.05, 1, -0.5), "toe.L": (0.05, 1, 0),
-    "thigh.R": DR(0.06, -0.05, -1), "shin.R": DR(0, -1, -0.04),
+    "thigh.R": DR(0.06, -0.9, -1), "shin.R": DR(0, -1, -0.04),
     "foot.R": DR(0, -1, -0.12), "toe.R": DR(0, -1, 0.0),
 }
 AJOELHADO_COLO = dict(AJOELHADO)

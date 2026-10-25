@@ -951,9 +951,13 @@ class Igreja:
                     x, 0.02, z, rnd.uniform(0.12, 0.3), 0.02,
                     rnd.uniform(0.12, 0.3), rnd.uniform(0, 3.14)))
 
-        # bancos: em ordem na frente, revirados perto do buraco
+        # bancos: em ordem na frente, revirados perto do buraco. Cada banco e'
+        # um OBJETO proprio (`SM_igr_bancoNN_madeira`), e nao parte da fatia:
+        # na chegada da Dona Nice eles sao arrastados pros lados da nave, um
+        # por um (ver `bancos_igreja.gd`).
         z = 5.0
         fila = 0
+        n_banco = 0
         while z < 30.0:
             if abs(z - cz) < 3.6:
                 z += 1.55
@@ -964,9 +968,10 @@ class Igreja:
                 giro = rnd.uniform(-0.5, 0.5) * caos
                 dx = rnd.uniform(-1.2, 1.2) * caos
                 tombado = rnd.random() < caos * 0.55
-                self.por("madeira", banco(s * 4.05 + dx, z + rnd.uniform(-0.3, 0.3) * caos,
-                                          4.6, 0.62, giro, tombado, 0.3, rnd),
-                         z_ref=z)
+                self.m.add_pecas("banco%02d" % n_banco, "madeira",
+                                 banco(s * 4.05 + dx, z + rnd.uniform(-0.3, 0.3) * caos,
+                                       4.6, 0.62, giro, tombado, 0.3, rnd))
+                n_banco += 1
             z += 1.55
             fila += 1
 

@@ -62,6 +62,9 @@ func _ready() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
 	_apagar_tochas()
+	# da luta em diante os bancos da nave ficam nos lados, onde ela os jogou
+	if SaveManager.evento_dona_nice >= 1:
+		cena.bancos_no_canto()
 	match SaveManager.evento_dona_nice:
 		0:
 			_chegada()
@@ -147,6 +150,8 @@ func _chegada() -> void:
 	_por_maycow_na_porta()
 	cena.tocar(&"chegada")
 	await cena.terminou
+	# pulou a cutscene: o metodo que joga os bancos nao rodou
+	cena.bancos_no_canto()
 	_luta_1(false)
 
 
@@ -171,6 +176,8 @@ func _luta_1(recomeco: bool) -> void:
 	else:
 		cena.encerrar_lente()
 		_travar(false)
+		# a chegada fecha no preto: o jogo abre clareando no Maycow
+		cena.clarear()
 	GlobalUtils.hide_center_message("interacao_igreja")
 	# checkpoint: morrer daqui pra frente recomeca ESTA fase
 	SaveManager.save_game()

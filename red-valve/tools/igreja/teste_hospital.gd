@@ -58,11 +58,12 @@ func _ready() -> void:
 	await get_tree().create_timer(0.4).timeout
 	await _foto("prompt_pegar")
 	await _apertar("ui_accept")
-	await get_tree().create_timer(1.2).timeout
-	await _de_lado(p, "pegando_a")
-	await get_tree().create_timer(1.2).timeout
-	await _de_lado(p, "pegando_b")
-	await get_tree().create_timer(1.6).timeout
+	# encaixe (0,35 s) + 1,7 s de clipe: as maos chegam nele
+	await get_tree().create_timer(2.0).timeout
+	await _de_lado(p, "pegando_maos")
+	await get_tree().create_timer(0.5).timeout
+	await _de_lado(p, "pegando_ergue")
+	await get_tree().create_timer(1.5).timeout
 	await _de_lado(p, "pegou")
 	print("depois de pegar: estado=", SaveManager.evento_dona_nice, " carregando=", p.carregando_jonny,
 		" pontos_vivos=", MapaDados.pontos_vivos(get_tree(), MapaDados.caminho_da_cena(get_tree())).size())

@@ -53,10 +53,12 @@ const VIRA_CORRIDA := 2.0
 ## `largar_jonny` (3,2 s): o Jonny encosta no chao em 1,6 s.
 const DURACAO_LARGAR := 3.2
 const NO_CHAO := 1.6
-## `pegar_jonny` (3,3 s): ele sai do chao em 1,7 s e chega ao colo em 3,3 s —
-## os tempos da cutscene da igreja.
+## `pegar_jonny` (3,3 s): as maos chegam nele em 1,7 s (debrucado), ele cola
+## nelas ate' 2,3 s e sobe junto ate' o colo em 3,3 s — os tempos da cutscene
+## da igreja.
 const DURACAO_PEGAR := 3.3
 const SAI_DO_CHAO := 1.7
+const NAS_MAOS := 2.3
 ## Onde o Maycow fica pra pegar: atras do Jonny, de frente, a 62 cm — onde o
 ## duble para na cutscene da igreja. E quanto leva pra se encaixar ali.
 const ATRAS_DO_JONNY := 0.62
@@ -345,7 +347,7 @@ func _pegar() -> void:
 	jonny.tocar(&"sendo_erguido", 0.3)
 	var ergue := create_tween()
 	ergue.tween_interval(SAI_DO_CHAO)
-	ergue.tween_property(self, "_peso_maos", 1.0, DURACAO_PEGAR - SAI_DO_CHAO) \
+	ergue.tween_property(self, "_peso_maos", 1.0, NAS_MAOS - SAI_DO_CHAO) \
 		.set_trans(Tween.TRANS_SINE)
 	await get_tree().create_timer(DURACAO_PEGAR, false).timeout
 

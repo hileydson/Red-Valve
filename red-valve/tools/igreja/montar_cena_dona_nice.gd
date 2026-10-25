@@ -29,8 +29,11 @@ const JONNY_POS := Vector3(0.0, 0.0, 19.6)
 const JONNY_GIRO := 90.0
 ## Onde o Maycow fica na chegada (e onde o jogador volta a ter controle).
 const MAYCOW_FIM := Vector3(0.0, 0.0, 4.2)
-## O girar_cabeca dela toca mais devagar na chegada (3,5 s viram ~4,7 s).
-const VEL_CABECA := 0.75
+## O girar_cabeca dela toca mais devagar na chegada (3,5 s viram ~6,4 s).
+const VEL_CABECA := 0.55
+## Os trechos do girar_cabeca (em tempo do CLIPE) em que o pescoco torce de
+## verdade — e e' ai' que ele espirra sangue.
+const TORCE_PESCOCO := [[0.8, 1.35], [1.8, 2.7]]
 
 var raiz: Node3D
 var lib: AnimationLibrary
@@ -101,6 +104,7 @@ func _montar_estrutura() -> void:
 
 	_posicionar_dona_nice()
 	_faca()
+	_sangue_pescoco()
 	_pistola()
 	_cameras_base()
 	_efeitos()
@@ -197,6 +201,50 @@ func _faca() -> void:
 	malha.material = _material_sangue()
 	gotas.draw_pass_1 = malha
 	gotas.visibility_aabb = AABB(Vector3(-0.3, -1.5, -0.3), Vector3(0.6, 1.6, 0.6))
+
+
+## O pescoco que espirra quando ela torce a cabeca pra tras: jatos em roda,
+## em volta do osso, que caem pelo peso. Ligado pelo diretor nos trechos
+## `TORCE_PESCOCO` do giro.
+func _sangue_pescoco() -> void:
+	var dn: Node3D = atores["DonaNice"]
+	var sk := dn.esqueleto() as Skeleton3D
+	var at := _no(BoneAttachment3D, "pescoco", sk) as BoneAttachment3D
+	at.bone_name = "neck"
+	var jorro := _no(GPUParticles3D, "jorro", at) as GPUParticles3D
+	jorro.position = Vector3(0.0, 0.05, 0.0)
+	jorro.emitting = false
+	jorro.amount = 260
+	jorro.lifetime = 1.1
+	jorro.local_coords = false
+	var pm := ParticleProcessMaterial.new()
+	# em roda, perpendicular ao pescoco (o Y do osso), puxando um pouco pra cima
+	pm.direction = Vector3(1, 0.35, 0)
+	pm.spread = 180.0
+	pm.flatness = 0.75
+	pm.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_SPHERE
+	pm.emission_sphere_radius = 0.045
+	pm.initial_velocity_min = 0.9
+	pm.initial_velocity_max = 2.6
+	pm.gravity = Vector3(0, -9.0, 0)
+	pm.scale_min = 0.6
+	pm.scale_max = 1.5
+	# cada gota estica na direcao em que voa: le-se como jato, nao como poeira
+	pm.particle_flag_align_y = true
+	jorro.process_material = pm
+	var gota := SphereMesh.new()
+	gota.radius = 0.0065
+	gota.height = 0.055
+	gota.radial_segments = 6
+	gota.rings = 3
+	# mais vivo que o sangue parado: na igreja escura o vermelho-escuro some
+	var m := _material_sangue()
+	m.albedo_color = Color(0.42, 0.01, 0.02)
+	m.emission_enabled = true
+	m.emission = Color(0.3, 0.0, 0.01)
+	gota.material = m
+	jorro.draw_pass_1 = gota
+	jorro.visibility_aabb = AABB(Vector3(-2, -2.5, -2), Vector3(4, 4, 4))
 
 
 func _material_sangue() -> StandardMaterial3D:
@@ -435,6 +483,11 @@ func _lente() -> void:
 	# que a cena tinha sem ela
 	m.set_shader_parameter("exposure", 1.18)
 	tela.material = m
+	# o fade pro preto do fim de uma cena (o diretor anima `preto`)
+	var preto := _no(ColorRect, "preto", cl) as ColorRect
+	preto.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	preto.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	preto.color = Color(0, 0, 0, 0)
 	var leg := _no(Label, "legenda", cl) as Label
 	leg.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
 	leg.offset_top = -150
@@ -559,13 +612,17 @@ func _montar_chegada() -> void:
 	var T_VIRA := T_SACA + 6.6         # virar_corpo (1,6 s)
 	var T_CONVULSAO := T_SACA + 8.2    # convulsao (5,1 s)
 	var T_RUGIDO := T_SACA + 13.3      # rugido (2,9 s)
-	var T_FIM := T_SACA + 17.6
+	# depois do rugido a camera se afasta e os bancos da nave voam pros lados;
+	# fecha no preto, e o jogo abre no Maycow
+	var T_BANCOS := T_RUGIDO + 2.6
+	var T_FIM := T_BANCOS + 4.6
 	# o grito de monstro, no meio da transformacao (o pico vem ~1 s depois)
 	var t_grito := T_CONVULSAO + 1.4
 	a.length = T_FIM
 
 	# ---------------------------------------------------------------- lente
-	_valor(".:barras", [[0.0, 0.0], [1.2, 1.0], [T_FIM - 1.4, 1.0], [T_FIM - 0.2, 0.0]])
+	_valor(".:barras", [[0.0, 0.0], [1.2, 1.0], [T_FIM, 1.0]])
+	_valor(".:preto", [[0.0, 0.0], [T_FIM - 0.7, 0.0], [T_FIM, 1.0]])
 	# o giro da cabeca: tunel escuro, so' o meio nitido, ate' a camera
 	# terminar de voltar pra ela
 	_valor(".:foco", [[0.0, 0.0], [T_CABECA, 0.0], [T_CABECA + 0.7, 1.0],
@@ -576,7 +633,8 @@ func _montar_chegada() -> void:
 		[T_RUGIDO + 1.0, 0.35], [T_FIM, 0.0]])
 	_valor(".:tremor", [[0.0, 0.0], [T_MIRA, 0.0], [T_MIRA + 0.1, 0.05], [T_VIRA, 0.05],
 		[T_CONVULSAO, 0.15], [T_CONVULSAO + 3.0, 0.5], [T_RUGIDO, 0.3], [T_RUGIDO + 0.5, 1.0],
-		[T_RUGIDO + 2.2, 0.25], [T_FIM, 0.0]])
+		[T_RUGIDO + 2.2, 0.25], [T_BANCOS + 0.5, 0.25], [T_BANCOS + 0.8, 0.7],
+		[T_BANCOS + 3.0, 0.15], [T_FIM, 0.0]])
 	_valor(".:flash", [[0.0, 0.0], [T_RUGIDO + 0.6, 0.0], [T_RUGIDO + 0.7, 0.55],
 		[T_RUGIDO + 1.3, 0.0]])
 	_valor(".:borrao", [[0.0, 0.0], [t_dispara, 0.0], [t_dispara + 0.3, 0.35],
@@ -593,7 +651,7 @@ func _montar_chegada() -> void:
 		[T_LONGE, "cam_longe"], [T_LEVANTA, "cam_levanta"], [T_CABECA, "cam_cabeca"],
 		[T_SACA, "cam_sacar"], [T_OLHOS, "cam_olhos"], [T_MIRA, "cam_mira"],
 		[T_VIRA, "cam_lateral"], [T_CONVULSAO, "cam_transforma"],
-		[T_RUGIDO, "cam_rugido"], [T_FIM - 0.05, ""]], true)
+		[T_RUGIDO, "cam_rugido"], [T_BANCOS, "cam_bancos"], [T_FIM - 0.05, ""]], true)
 
 	# ---------------------------------------------------------------- Maycow
 	_pos("atores/Maycow", [[0.0, MAYCOW_FIM]])
@@ -660,6 +718,14 @@ func _montar_chegada() -> void:
 		[T_VIRA, "virar_corpo"], [T_CONVULSAO, "convulsao"]])
 	_valor("atores/DonaNice/anim:speed_scale", [[0.0, 1.0], [T_CABECA, VEL_CABECA],
 		[T_CABECA + dur_cabeca, 1.0]], true)
+	# o pescoco torcendo: espirra sangue, e ela fica suja dele
+	var jorro_k := [[0.0, false]]
+	for tr in TORCE_PESCOCO:
+		jorro_k.append([T_CABECA + tr[0] / VEL_CABECA, true])
+		jorro_k.append([T_CABECA + tr[1] / VEL_CABECA, false])
+	_valor("atores/DonaNice/modelo/dona_nice_rig/Skeleton3D/pescoco/jorro:emitting", jorro_k, true)
+	_valor("atores/DonaNice:sangue", [[0.0, 0.55], [T_CABECA + TORCE_PESCOCO[0][0] / VEL_CABECA, 0.55],
+		[T_CABECA + TORCE_PESCOCO[1][1] / VEL_CABECA, 0.85]])
 	_som("sussurro", [[0.0]])
 	_valor("sons/sussurro:volume_db", [[0.0, -20.0], [T_OMBRO, -12.0], [T_FACA, -6.0],
 		[T_LONGE, -2.0], [T_LEVANTA + 2.0, -4.0], [T_CABECA, -30.0]])
@@ -711,7 +777,7 @@ func _montar_chegada() -> void:
 	_pos("atores/Monstro", [[0.0, DN]])
 	_rot("atores/Monstro", [[0.0, de_frente]])
 	_valor("atores/Monstro:visible", [[0.0, false], [T_CONVULSAO, true]], true)
-	_clipe("Monstro", [[T_CONVULSAO, "convulsao"], [T_RUGIDO, "rugido"]])
+	_clipe("Monstro", [[T_CONVULSAO, "convulsao"], [T_RUGIDO, "rugido"], [T_RUGIDO + 2.9, "parado"]])
 	_valor("atores/DonaNice:veias", [[0.0, 0.0], [T_CONVULSAO, 0.0], [T_CONVULSAO + 1.2, 1.0]])
 	_valor("atores/Monstro:veias", [[0.0, 0.0], [T_CONVULSAO, 1.0], [T_RUGIDO + 1.5, 0.35]])
 	_valor("atores/DonaNice:dissolver", [[0.0, 0.0], [T_CONVULSAO + 1.2, 0.0],
@@ -740,7 +806,17 @@ func _montar_chegada() -> void:
 	_cam("cam_rugido", [
 		[T_RUGIDO, DN + Vector3(0.35, 0.85, -2.6), DN + Vector3(0, 1.45, 0), 42.0],
 		[T_RUGIDO + 0.7, DN + Vector3(0.30, 0.80, -2.2), DN + Vector3(0, 1.55, 0), 48.0],
-		[T_FIM, DN + Vector3(0.25, 0.95, -3.4), DN + Vector3(0, 1.4, 0), 40.0]])
+		[T_BANCOS, DN + Vector3(0.25, 0.95, -3.4), DN + Vector3(0, 1.4, 0), 40.0]])
+
+	# ---------------------------------------------------------------- os bancos
+	# A camera sai de perto dela, sobe e recua pro lado do altar, vendo a
+	# nave inteira ate' a porta: os bancos voam pras naves laterais e o meio
+	# fica livre pra luta (`bancos_igreja.gd`).
+	_metodo([[T_BANCOS + 0.6, "afastar_bancos", []], [T_BANCOS + 0.8, "vibrar", [0.9, 2.0]]])
+	_cam("cam_bancos", [
+		[T_BANCOS, DN + Vector3(0.6, 1.9, 2.6), DN + Vector3(0, 1.3, 0), 46.0],
+		[T_BANCOS + 1.2, DN + Vector3(0.4, 3.6, 5.0), DN + Vector3(0, 0.9, -3.0), 52.0],
+		[T_FIM, Vector3(0.3, 7.6, DN.z + 8.5), Vector3(0.0, 0.2, DN.z - 9.0), 58.0]])
 
 
 ## A ponta da faca no mundo, pela mao e pelo pivo (o BoneAttachment so' anda
@@ -989,11 +1065,11 @@ func _montar_pega_jonny() -> void:
 	_rot("atores/Maycow", [[0.0, Quaternion()], [T_LEVANTA + 0.1, Quaternion()],
 		[T_VIRA, de_costas]])
 	# Jonny: preso as maos do Maycow pelo `seguir` do AtorIgreja. Fica no chao
-	# ate' os bracos dele passarem por baixo (1,7 s) e vai pro colo ate' ele
-	# levantar; dai' em diante gira e corre junto, sem chave nenhuma de posicao.
+	# ate' as maos dele chegarem nele (1,7 s, debrucado) e cola nelas ate' 2,3 s;
+	# dai' em diante sobe, gira e corre junto, sem chave nenhuma de posicao.
 	jo.seguir = NodePath("../Maycow")
 	jo.seguir_giro_y = JONNY_GIRO
-	_valor("atores/Jonny:seguir_peso", [[0.0, 0.0], [1.7, 0.0], [T_LEVANTA, 1.0]])
+	_valor("atores/Jonny:seguir_peso", [[0.0, 0.0], [1.7, 0.0], [2.3, 1.0]])
 	_som("gemido", [[1.2]])
 	_som("batimento_rapido", [[T_CORRE]])
 	_cam("cam_pj_a", [[0.0, inicio + Vector3(1.4, 0.9, 1.4), inicio + Vector3(0, 0.6, 0.5), 42.0],

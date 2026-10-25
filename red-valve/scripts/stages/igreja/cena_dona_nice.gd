@@ -10,8 +10,9 @@ extends Node3D
 ##
 ## Animacoes do diretor:
 ##   chegada         a primeira entrada: o Maycow, parado na porta, estica a
-##                   mao pro ritual; ela levanta, gira a cabeca, ele saca a
-##                   arma, ela vira monstro
+##                   mao pro ritual; ela levanta, gira a cabeca (o pescoco
+##                   espirra sangue), ele saca a arma, ela vira monstro e
+##                   joga os bancos da nave pros lados
 ##   vira_fase_2     a fase 1 morre e cresce na gigante que flutua
 ##   morte_final     a fase 2 morre e cai perto do Jonny
 ##   pega_jonny      o Maycow pega o Jonny no colo e sai correndo pela igreja
@@ -28,6 +29,8 @@ extends Node3D
 ## enquadrar cada plano). Dali em diante a fonte e' ESTE .tscn.
 
 signal terminou(animacao: StringName)
+
+const BANCOS := preload("res://scripts/stages/igreja/bancos_igreja.gd")
 
 ## Nome da camera ativa (filha de `cameras`). Vazio = nenhuma desta cena.
 @export var plano: String = "":
@@ -78,6 +81,13 @@ signal terminou(animacao: StringName)
 	set(v):
 		foco = v
 		_lente("foco", v)
+## Fade pro preto (o fim da chegada fecha no preto e o jogo abre clareando).
+@export_range(0.0, 1.0) var preto: float = 0.0:
+	set(v):
+		preto = v
+		var r := get_node_or_null("lente/preto") as ColorRect
+		if r:
+			r.color.a = v
 ## Tremor da camera ativa (0 parado, 1 terremoto).
 @export_range(0.0, 1.0) var tremor: float = 0.0
 ## Energia do pulso vermelho da transformacao (luz `efeitos/luz_pulso`).
@@ -93,6 +103,7 @@ signal terminou(animacao: StringName)
 
 var _offset_base := Vector2.ZERO
 var _legenda_tween: Tween
+var _bancos: Node3D
 
 
 func _ready() -> void:
@@ -105,6 +116,11 @@ func _ready() -> void:
 		var previa := get_node_or_null("previa_igreja")
 		if previa:
 			previa.queue_free()
+		# os bancos da nave, soltos do modelo pra ela poder joga-los
+		_bancos = BANCOS.new()
+		_bancos.name = "bancos_igreja"
+		_bancos.modelo = get_parent().get_node("modelo")
+		get_parent().add_child.call_deferred(_bancos)
 	if diretor and not diretor.animation_finished.is_connected(_ao_terminar):
 		diretor.animation_finished.connect(_ao_terminar)
 	var lente := get_node_or_null("lente") as CanvasLayer
@@ -143,6 +159,24 @@ func encerrar_lente() -> void:
 	foco = 0.0
 	flash = 0.0
 	tremor = 0.0
+
+
+## Volta do preto do fim de uma cena, ja' com a camera do jogador.
+func clarear(duracao: float = 0.9) -> void:
+	create_tween().tween_property(self, "preto", 0.0, duracao)
+
+
+## Trilha de metodo do diretor: ela joga os bancos pros lados.
+func afastar_bancos() -> void:
+	if is_instance_valid(_bancos):
+		_bancos.afastar()
+
+
+## Os bancos ja' nas naves laterais, sem voo (recomeco da luta, cutscene
+## pulada, visitas depois do evento).
+func bancos_no_canto() -> void:
+	if is_instance_valid(_bancos):
+		_bancos.no_canto()
 
 
 func esconder_lente() -> void:
