@@ -67,6 +67,9 @@ var _anim_atual: StringName = &""
 var _fov_padrao: float = 75.0
 var _lente_tween: Tween
 
+## Energia autorada da luz das maos (lida na primeira vez que `luz_das_maos` mexe nela).
+var _luz_padrao: float = -1.0
+
 var _borrao_forca: float = 0.0
 var _borrao_tween: Tween
 
@@ -320,6 +323,18 @@ func piscar(cor: Color, forca: float = 0.7, subida: float = 0.04, descida: float
 	var t := create_tween()
 	t.tween_property(flash_tela, "modulate:a", forca, subida)
 	t.tween_property(flash_tela, "modulate:a", 0.0, descida).set_trans(Tween.TRANS_CUBIC)
+
+
+## Escurece (fator < 1) ou devolve (1) a luz que acompanha as maos. Ela foi
+## acertada pra iluminar as MAOS a meio metro; um rosto a um palmo da camera
+## (o agarrao pelo pescoco) estoura em branco com ela inteira.
+func luz_das_maos(fator: float, duracao: float = 0.3) -> void:
+	if not is_instance_valid(luz_maos):
+		return
+	if _luz_padrao < 0.0:
+		_luz_padrao = luz_maos.light_energy
+	var t := create_tween()
+	t.tween_property(luz_maos, "light_energy", _luz_padrao * fator, duracao)
 
 
 ## Vinheta de sangue. A `softness` e' menor que a do HUD de proposito: a do HUD

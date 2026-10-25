@@ -1,10 +1,12 @@
 extends Node3D
 
 ## A cusparada da Dona Nice gigante: uma bola de gosma em arco ate' onde o
-## Maycow estava. Acertou ele: dano e a tela suja de verde. Bateu no chao:
+## Maycow estava. Acertou ele: dano e a tela suja de bile. Bateu no chao:
 ## vira poca.
 
-const DANO := 9
+const DANO := 4
+## A cor da cusparada que suja a tela (a da baba da fase 1 e' mais verde).
+const COR_NA_TELA := Color(0.33, 0.31, 0.15)
 const GRAVIDADE := 9.0
 const RAIO := 0.55
 
@@ -49,6 +51,7 @@ func _sujar_tela() -> void:
 	var cena := get_tree().get_first_node_in_group("cena_dona_nice")
 	if cena == null:
 		return
+	cena.cor_gosma = COR_NA_TELA
 	cena.gosma_na_tela = 0.7
 	var t := cena.create_tween()
 	t.tween_interval(0.4)

@@ -44,6 +44,8 @@ const COR_TIPO := {
 	# andar só). Um tom apagado, para o nome ser legível sem que trinta
 	# losangos acesos briguem com o desenho que eles deviam explicar.
 	"sala": Color(0.80, 0.77, 0.64),
+	# mesmo vermelho do minimapa: o Jonny deixado no hospital
+	"pessoa": Color(0.95, 0.38, 0.36),
 }
 const COR_PADRAO := Color(0.85, 0.85, 0.85)
 ## Mesmo amarelo do minimapa: "tem coisa aqui e o jogo não vai dizer o quê".
@@ -154,7 +156,7 @@ func _do_perfil(perfil: Node, prop: String, padrao: float) -> float:
 
 
 func _criar_marcadores() -> void:
-	for p in _dados.pontos:
+	for p in _dados.pontos + MapaDados.pontos_vivos(get_tree(), _fonte):
 		var tipo := String(p.get("tipo", ""))
 		if tipo == "interrogacao":
 			_marcas.add_child(_interrogacao(p))

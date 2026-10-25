@@ -56,6 +56,18 @@ const ESPERA_ENTRE_AGARROES := 5.0
 ## E logo depois de ser solto ele ainda tem um respiro sem levar dano.
 const INVULNERAVEL_DEPOIS := 1.6
 
+## O agarrao PELO PESCOCO (a Dona Nice da igreja): os olhos do Maycow ficam
+## logo acima das maos do inimigo — o pescoco dele esta' entre elas — e um
+## palmo pra tras, do lado dele. Mais perto que isso os dedos dela (garras que
+## fecham pra cima, em volta do pescoco) cobrem a lente.
+const OLHO_ACIMA_DAS_MAOS := 0.26
+const OLHO_ATRAS_DAS_MAOS := 0.24
+## A camera so' vai pras maos dela depois que elas FECHAM no pescoco: no
+## comeco do bote as maos passam na frente do peito dela, e seguir ali era
+## atravessar o corpo. Daí, quanto leva pra chegar.
+const MAOS_FECHADAS := 0.45
+const ENTRADA_NO_PESCOCO := 0.35
+
 ## Tempo maximo da cena. O watchdog em GlobalUtils destrava o input se a
 ## sequencia morrer no meio (troca de cena, jogador morreu, inimigo sumiu).
 const TETO_DA_CENA := 14.0
@@ -188,6 +200,13 @@ func _sequencia(inimigo: Node3D) -> void:
 		_sair(fp, inimigo)
 		return
 
+	# A Dona Nice da igreja agarra PELO PESCOCO: a cena e' outra, presa nas
+	# maos dela do bote ate' ela soltar (ver `_ramo_pescoco`).
+	if tipo == "pescoco":
+		await _ramo_pescoco(fp, inimigo)
+		_sair(fp, inimigo)
+		return
+
 	# --- o inimigo chega ---
 	_congelar_inimigo(inimigo, true)
 	fp.tocar(&"defesa")
@@ -263,6 +282,78 @@ func _ramo_mordida(fp: Node3D, inimigo: Node3D, preso: Vector3, frente: Vector3)
 	fp.tocar(&"idle", 1.0, 0.55)
 	fp.mirar(_olho(), _cabeca(inimigo), 4.0, 4.0, 0.0)
 	await _esperar(0.65)
+
+
+# ------------------------------------------------------------------ pescoco
+
+## O inimigo segura o Maycow pelo pescoco e morde. A camera (os olhos dele)
+## fica PRESA entre as maos do inimigo o agarrao inteiro, e so' volta pro olho
+## depois que ele solta — quem diz onde estao as maos, onde esta' o rosto,
+## quanto dura e quando cada mordida cai e' o proprio inimigo
+## (`ponto_do_agarrao`, `cabeca_do_agarrao`, `duracao_do_agarrao`,
+## `mordidas_do_agarrao`, `distancia_do_agarrao`).
+func _ramo_pescoco(fp: Node3D, inimigo: Node3D) -> void:
+	_congelar_inimigo(inimigo, true)
+	fp.tocar(&"defesa")
+	_rosnar(inimigo)
+	var dist: float = float(inimigo.get("distancia_do_agarrao"))
+	var duracao: float = float(inimigo.get("duracao_do_agarrao"))
+	var mordidas: Array = inimigo.get("mordidas_do_agarrao")
+	_mover_inimigo(inimigo, _ponto_na_frente(inimigo, dist), 0.3)
+	_atacar_inimigo(inimigo)
+	GlobalUtils.vibrate_controller(null, 0.7, 0.7, 0.4)
+
+	var t := 0.0
+	var proxima := 0
+	var agarrou := false
+	while t < duracao:
+		await get_tree().process_frame
+		if not _vale_continuar(fp) or not is_instance_valid(inimigo):
+			return
+		t += get_process_delta_time()
+		var peso := smoothstep(MAOS_FECHADAS, MAOS_FECHADAS + ENTRADA_NO_PESCOCO, t)
+		var para_ele := -_direcao_ate(inimigo)
+		var olhos: Vector3 = inimigo.ponto_do_agarrao() + Vector3.UP * OLHO_ACIMA_DAS_MAOS \
+			+ para_ele * OLHO_ATRAS_DAS_MAOS
+		fp.mirar(_olho().lerp(olhos, peso), inimigo.cabeca_do_agarrao(), 18.0, 12.0, 0.05 * peso)
+		if not agarrou and peso >= 1.0:
+			agarrou = true
+			fp.luz_das_maos(0.3)
+			fp.tocar(&"agarrado")
+			fp.tremer(0.016, 0.6)
+		if proxima < mordidas.size() and t >= float(mordidas[proxima]):
+			_mordida_no_pescoco(fp, proxima)
+			proxima += 1
+			if player.current_health <= 0:
+				return
+
+	# Solta: ela cambaleia pra tras e os olhos voltam pro lugar deles.
+	if inimigo.has_method("agarrao_soltou"):
+		inimigo.agarrao_soltou()
+	fp.tocar(&"idle", 1.0, 0.55)
+	fp.luz_das_maos(1.0)
+	fp.mirar(_olho(), _cabeca(inimigo), 7.0, 6.0, 0.0)
+	await _esperar(0.45)
+
+
+## Cada mordida: tranco, flash vermelho e sangue nas bordas. So' a primeira
+## tira vida (a mesma fracao da mordida dos outros inimigos) e puxa a camera
+## lenta — quatro mordidas cobrando cada uma matariam em um agarrao. As maos
+## dele tomam o tranco na primeira e voltam a segurar os bracos dela na segunda.
+func _mordida_no_pescoco(fp: Node3D, indice: int) -> void:
+	var primeira := indice == 0
+	if primeira:
+		fp.tocar(&"mordida")
+	elif indice == 1:
+		fp.tocar(&"agarrado", 1.0, 0.4)
+	fp.tremer(0.05 if primeira else 0.03, 0.35)
+	fp.piscar(Color(0.85, 0.05, 0.05), 0.34 if primeira else 0.1, 0.02, 0.3)
+	fp.sangrar(0.55 if primeira else 0.22, 1.0)
+	GlobalUtils.vibrate_controller(null, 1.0 if primeira else 0.6, 1.0 if primeira else 0.6, 0.35)
+	if primeira:
+		_aplicar_dano(DANO_MORDIDA)
+		if player.current_health > 0:
+			_camera_lenta_curta(0.35, 0.25)
 
 
 # ----------------------------------------------------------------- arremesso

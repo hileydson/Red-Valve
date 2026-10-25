@@ -102,7 +102,7 @@ ANCORA_CASA_JIMMY = (83.63, 216.87)
 # ultimo e ganha do valor calculado.
 #
 # Ao mover qualquer um deles de novo na cena, e so trazer o `origin` do no
-# para ca. casa_nice segue saindo do layout, porque ainda nao foi movida.
+# para ca. A casa da Nice agora e lida da propria instancia em stage_1.
 POIS_MANUAIS = {
     "oficina_jimmy": (460.04, -142.51),
     "casa_jimmy":    (552.14, -340.51),
@@ -150,6 +150,7 @@ def build():
     # depende de onde eles estão.
     hosp = _hospital()
     esc = _escola()
+    nice = _casa_nice()
     X0, Z0, TAM = _recorte(lay, (hosp, esc))
     N = RES * SS
     ppm = N / TAM                      # pixels por metro
@@ -209,6 +210,9 @@ def build():
     for c in casas["casas"]:
         cantos = _casa(P, ox, oz, c)
         dr.polygon(cantos, fill=C_CASA, outline=C_CASA_BRD)
+    if nice:
+        dr.polygon([P(*q) for q in _quad(nice, (-4.6, -5.2, 4.6, 5.2))],
+                   fill=C_CASA, outline=C_CASA_BRD, width=max(1, int(0.7 * ppm)))
 
     # ---- acentos dos marcos, por cima de tudo
     pr = lay["landmarks"]["praca_obelisco"]
@@ -250,12 +254,12 @@ def build():
                     "gerado por tools/blender/citygen/textures/make_minimap.py",
             "mundo_x0": round(X0, 2), "mundo_z0": round(Z0, 2),
             "tamanho_m": round(TAM, 2), "resolucao": RES,
-            "pontos": _pontos(lay, casas, ox, oz, hosp, esc)}
+            "pontos": _pontos(lay, casas, ox, oz, hosp, esc, nice)}
     json.dump(meta, open(OUT_JSON, "w", encoding="utf-8"), indent=1)
     return meta
 
 
-def _pontos(lay, casas, ox, oz, hosp=None, esc=None):
+def _pontos(lay, casas, ox, oz, hosp=None, esc=None, nice=None):
     """Pontos de interesse, em coordenadas de MUNDO.
 
     Tudo derivado dos mesmos dados que desenham o mapa — nada digitado à mão
@@ -293,7 +297,8 @@ def _pontos(lay, casas, ox, oz, hosp=None, esc=None):
          media("oficina_jimmy")),
         ("casa_jimmy", "MAP_POI_CASA_JIMMY", "casa",
          mais_perto(*ANCORA_CASA_JIMMY)),
-        ("casa_nice", "MAP_POI_CASA_NICE", "casa", media("casa_nice")),
+        ("casa_nice", "MAP_POI_CASA_NICE", "casa",
+         nice["origem"] if nice else media("casa_nice")),
         ("casa_maycow", "MAP_POI_CASA_MAYCOW", "casa", media("casa_maycow")),
     ]
     # O ponto do hospital fica na PORTA, e nao no meio do predio como os
@@ -364,6 +369,14 @@ def _hospital():
 def _escola():
     return _predio_solto("escola", ESCOLA_JSON, NO_ESCOLA, ESCALA_ESCOLA,
                          ("lote", "patio", "predio"))
+
+
+def _casa_nice():
+    t = _transform_do_no(CENA_STAGE, "casa_nice")
+    if t is None:
+        return None
+    return {"origem": (t[9], t[11]), "base": (t[0], t[6], t[2], t[8]),
+            "escala": 1.0}
 
 
 def _transform_do_no(caminho, nome):

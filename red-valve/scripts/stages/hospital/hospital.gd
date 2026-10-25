@@ -17,7 +17,6 @@ extends Node3D
 ## atravessaria o predio em queda livre — daí a varredura de conferencia.
 const LAYER_CHAO := 2
 const CENA_MAPA := "res://scenes/stages/stage_1/stage_1.tscn"
-const CENA_JONNY := "res://scenes/npcs/igreja/jonny.tscn"
 const CARREGAR_JONNY := "res://scripts/player/player_carregar_jonny.gd"
 
 @onready var fade: ColorRect = $fade
@@ -54,24 +53,22 @@ func _ready() -> void:
 
 ## O Jonny chegou da igreja no colo do Maycow (evento da Dona Nice).
 ##   4 = ainda no colo: o jogador so' anda ate' largar ele (B / G)
-##   5 = ja' foi deixado: fica deitado onde ficou
-## Nos dois casos a porta da rua fica trancada (ver `sair_do_hospital`).
+##   5 = ja' foi deixado: fica deitado onde ficou, marcado no mapa, e da' pra
+##       pegar ele de volta
+## Os dois sao o mesmo componente (`player_carregar_jonny.gd`), que passa de um
+## pro outro. Nos dois a porta da rua fica trancada (ver `sair_do_hospital`).
 func _jonny_no_hospital() -> void:
 	var jogador := get_node_or_null("Player")
 	if jogador == null:
 		jogador = get_tree().get_first_node_in_group("player")
-	if SaveManager.evento_dona_nice == 4 and jogador:
-		var c: Node = load(CARREGAR_JONNY).new()
-		c.name = "CarregarJonny"
-		jogador.add_child.call_deferred(c)
-	elif SaveManager.evento_dona_nice == 5 and SaveManager.jonny_no_hospital.size() == 4:
-		var p: Array = SaveManager.jonny_no_hospital
-		var jonny: Node3D = load(CENA_JONNY).instantiate()
-		jonny.clipe_inicial = &"deitado"
-		jonny.sangue = 0.45
-		add_child(jonny)
-		jonny.global_position = Vector3(p[0], p[1], p[2])
-		jonny.rotation.y = p[3]
+	if jogador == null:
+		return
+	if SaveManager.evento_dona_nice == 5 and SaveManager.jonny_no_hospital.size() != 4:
+		return
+	var c: Node = load(CARREGAR_JONNY).new()
+	c.name = "CarregarJonny"
+	c.comecar_no_chao = SaveManager.evento_dona_nice == 5
+	jogador.add_child.call_deferred(c)
 
 
 ## A lente e' exclusiva desta instancia do player; o FOV continua sob controle

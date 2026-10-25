@@ -63,6 +63,8 @@ func _ready() -> void:
 		return
 	if GlobalEvents.voltando_da_casa_jimmy:
 		return
+	if GlobalEvents.voltando_da_casa_nice:
+		return
 	if GlobalEvents.voltando_da_casa_maycow:
 		return
 	# A igreja é um caminho de volta como os outros: sem esta guarda, sair de

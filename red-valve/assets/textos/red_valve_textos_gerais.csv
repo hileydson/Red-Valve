@@ -11,6 +11,10 @@ PROMPT_TURN_ON_TV,Turn on TV,Ligar Tv
 PROMPT_TURN_OFF_TV,Turn off TV,Desligar Tv
 PROMPT_ENTER_WORKSHOP,Enter Jimmy's workshop?,Entrar na oficina do Jimmy?
 PROMPT_ENTER_JIMMY_HOUSE,Enter Jimmy's house?,Entrar na casa do Jimmy?
+PROMPT_ENTER_NICE_HOUSE,Enter Ms. Nice's house?,Entrar na casa da Dona Nice?
+NICE_HOUSE_SIGN,Ms. Nice,Sra. Nice
+NICE_HOUSE_INSCRIPTION,ANTI-LOPES / THE PATH DEMANDS A LIFE,ANTI-LOPES / O CAMINHO EXIGE UMA VIDA
+NICE_HOUSE_NOTE,JONNY - the final offering,JONNY - a última oferenda
 PROMPT_ENTER_MAYCOW_HOUSE,Enter Maycow's house?,Entrar na casa do Maycow?
 PROMPT_ENTER_CHURCH,Enter the church?,Entrar na igreja?
 PROMPT_TAKE_FLASHLIGHT,Take the flashlight?,Pegar a lanterna?
@@ -133,6 +137,7 @@ MAP_POI_CASA_MAYCOW,Maycow's House,Casa do Maycow
 MAP_POI_HOSPITAL,Hospital,Hospital
 MAP_POI_HOSP_ELEVADOR,Elevator,Elevador
 MAP_POI_HOSP_SAIDA,Exit to the street,Saída para a rua
+MAP_POI_JONNY,Jonny,Jonny
 MAP_FLOOR_HOSP_1,1st floor,1º andar
 MAP_FLOOR_HOSP_2,2nd floor,2º andar
 MAP_RECENTER,Recenter,Centralizar

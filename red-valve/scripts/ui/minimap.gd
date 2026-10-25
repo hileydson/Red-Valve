@@ -67,6 +67,9 @@ const COR_TIPO := {
 	"local": Color(0.95, 0.62, 0.30),
 	"casa": Color(0.62, 0.80, 0.96),
 	"sala": Color(0.80, 0.77, 0.64),
+	# gente que ficou num lugar (o Jonny deixado no hospital): vermelho de
+	# ferido, que nenhum outro tipo usa
+	"pessoa": Color(0.95, 0.38, 0.36),
 }
 const COR_PADRAO := Color(0.85, 0.85, 0.85)
 ## Amarelo de interrogação: nenhum tipo de ponto usa esta cor, então "amarelo"
@@ -147,11 +150,16 @@ func _ligar_nevoa() -> void:
 ## Losango sem rótulo: nome escrito não cabe em 190 px. A exceção é a
 ## interrogação, que é um caractere só e cabe — e que, aliás, É o rótulo: o
 ## ponto existe justamente para não dizer o que tem lá.
+##
+## Os pontos VIVOS (`ponto_no_mapa.gd` — o Jonny deixado no hospital) entram
+## mesmo com `pontos_no_minimapa` desligado: sao poucos e sao exatamente o que
+## o jogador precisa achar de volta.
 func _criar_marcadores() -> void:
-	if not pontos_no_minimapa:
-		_marcas.visible = false
-		return
-	for p in _dados.pontos:
+	var pontos: Array = MapaDados.pontos_vivos(get_tree(), dados_json)
+	if pontos_no_minimapa:
+		pontos = _dados.pontos + pontos
+	_marcas.visible = not pontos.is_empty()
+	for p in pontos:
 		var no := Control.new()
 		no.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		no.set_meta("mundo", Vector2(float(p["x"]), float(p["z"])))
@@ -162,19 +170,32 @@ func _criar_marcadores() -> void:
 			_marcas.add_child(no)
 			continue
 		var cor: Color = COR_TIPO.get(tipo, COR_PADRAO)
+		# gente (o Jonny) um pouco maior: e' o ponto que se vem buscar
+		var r := 5.0 if tipo == "pessoa" else 3.5
 		var losango := Polygon2D.new()
 		losango.polygon = PackedVector2Array([
-			Vector2(0, -3.5), Vector2(3.5, 0), Vector2(0, 3.5), Vector2(-3.5, 0)])
+			Vector2(0, -r), Vector2(r, 0), Vector2(0, r), Vector2(-r, 0)])
 		losango.color = cor
 		no.add_child(losango)
 		var borda := Line2D.new()
 		borda.points = PackedVector2Array([
-			Vector2(0, -3.5), Vector2(3.5, 0), Vector2(0, 3.5),
-			Vector2(-3.5, 0), Vector2(0, -3.5)])
+			Vector2(0, -r), Vector2(r, 0), Vector2(0, r),
+			Vector2(-r, 0), Vector2(0, -r)])
 		borda.width = 1.4
 		borda.default_color = Color(0.05, 0.05, 0.05, 0.85)
 		no.add_child(borda)
 		_marcas.add_child(no)
+
+
+## Um ponto vivo entrou ou saiu (o Jonny deixado no chao, pego de volta):
+## refaz os marcadores desta prancha na hora.
+func atualizar_pontos_vivos() -> void:
+	if _dados == null or not is_instance_valid(_marcas):
+		return
+	for velho in _marcas.get_children():
+		_marcas.remove_child(velho)
+		velho.queue_free()
+	_criar_marcadores()
 
 
 ## O "?" propriamente dito. Label e não Polygon2D: o contorno grosso é o que
@@ -268,7 +289,7 @@ func _trocar_prancha(caminho: String, textura: Texture2D) -> void:
 
 
 func _pos_marcas(centro: Vector2) -> void:
-	if not pontos_no_minimapa:
+	if _marcas.get_child_count() == 0:
 		return
 	var raio_uv: float = (alcance_m * 0.5) / _dados.tam
 	var meio := _raiz.size * 0.5

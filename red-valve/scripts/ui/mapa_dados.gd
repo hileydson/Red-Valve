@@ -90,6 +90,32 @@ static func caminho_da_cena(arvore: SceneTree) -> String:
 	return String(c)
 
 
+## Os pontos que NAO moram no JSON: os nos do grupo "ponto_no_mapa"
+## (`ponto_no_mapa.gd` — o Jonny deixado no chao do hospital). Num predio de
+## dois andares cada um vai so' pra prancha do andar em que esta', pela mesma
+## regra de altura com que o minimapa troca de prancha (`altura_andar_2`).
+static func pontos_vivos(arvore: SceneTree, caminho: String) -> Array:
+	var saida := []
+	var andar_2 := ""
+	var altura := 0.0
+	var no_perfil := perfil(arvore)
+	if no_perfil != null:
+		var a2 = no_perfil.get("dados_json_andar_2")
+		if typeof(a2) == TYPE_STRING:
+			andar_2 = String(a2)
+		var h = no_perfil.get("altura_andar_2")
+		if typeof(h) == TYPE_FLOAT or typeof(h) == TYPE_INT:
+			altura = float(h)
+	for no in arvore.get_nodes_in_group("ponto_no_mapa"):
+		if not no.has_method("dados"):
+			continue
+		var d: Dictionary = no.dados()
+		if andar_2 != "" and (float(d.get("y", 0.0)) >= altura) != (caminho == andar_2):
+			continue
+		saida.append(d)
+	return saida
+
+
 ## Este ponto deve aparecer agora?
 ##
 ## `oculto_com_item` some quando o jogador tem o item no inventário — é assim

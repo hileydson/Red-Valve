@@ -3,7 +3,7 @@ extends CharacterBody3D
 ## A DONA NICE GIGANTE — fase 2 da luta da igreja (5 m, flutua).
 ##
 ## Paira em volta do Maycow, sempre de frente pra ele, e alterna:
-##   - deixa POCAS de baba verde por onde passa (queimam e deixam lento);
+##   - deixa POCAS de baba por onde passa (queimam e deixam lento, e somem em 2 s);
 ##   - CUSPE: recolhe a cabeca e cospe uma bola de gosma em arco;
 ##   - INVESTIDA + TAPA: vem rapido ate' perto dele, PARA um instante (o
 ##     aviso: as veias acendem) e bate de cima pra baixo com a mao enorme.

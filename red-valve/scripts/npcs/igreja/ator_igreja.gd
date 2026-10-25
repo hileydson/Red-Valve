@@ -87,11 +87,20 @@ func _process(_delta: float) -> void:
 	var outro := get_node_or_null(seguir) as Node3D
 	if outro == null or not outro.has_method("posicao_do_osso"):
 		return
+	var alvo := alvo_nas_maos(outro)
+	global_transform = _base_seguir.interpolate_with(alvo, seguir_peso) if seguir_peso < 1.0 else alvo
+
+
+## Onde este ator fica no colo de `outro`: entre as maos dele, com o
+## deslocamento e o giro de `seguir_*`. Publico porque o colo do jogador
+## (`player_carregar_jonny.gd`) chama isto no MESMO quadro em que move as
+## maos, em vez de depender da ordem dos `_process`.
+func alvo_nas_maos(outro: Node3D) -> Transform3D:
 	var md: Vector3 = outro.posicao_do_osso(osso_mao_direita)
 	var me: Vector3 = outro.posicao_do_osso(osso_mao_esquerda)
-	var b := outro.global_basis.orthonormalized() * Basis(Vector3.UP, deg_to_rad(seguir_giro_y))
-	var alvo := Transform3D(b, (md + me) * 0.5 + outro.global_basis.orthonormalized() * seguir_offset)
-	global_transform = _base_seguir.interpolate_with(alvo, seguir_peso) if seguir_peso < 1.0 else alvo
+	var base := outro.global_basis.orthonormalized()
+	var b := base * Basis(Vector3.UP, deg_to_rad(seguir_giro_y))
+	return Transform3D(b, (md + me) * 0.5 + base * seguir_offset)
 
 
 ## Toca um clipe com mistura (segundos) a partir do que estiver tocando.

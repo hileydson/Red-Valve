@@ -4,13 +4,13 @@
 [ext_resource type="AudioStream" path="res://assets/sounds/igreja/gosma_cai.ogg" id="2_som"]
 
 [sub_resource type="StandardMaterial3D" id="gosma_mat"]
-albedo_color = Color(0.32, 0.68, 0.08, 1)
+albedo_color = Color(0.34, 0.32, 0.17, 1)
 roughness = 0.04
 emission_enabled = true
-emission = Color(0.18, 0.45, 0.02, 1)
-emission_energy_multiplier = 1.4
+emission = Color(0.09, 0.085, 0.03, 1)
+emission_energy_multiplier = 0.5
 rim_enabled = true
-rim = 0.6
+rim = 0.25
 
 [sub_resource type="SphereMesh" id="bola"]
 material = SubResource("gosma_mat")

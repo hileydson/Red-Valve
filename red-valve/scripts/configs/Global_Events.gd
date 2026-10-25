@@ -81,6 +81,8 @@ var arena_retorno_pendente: bool = false
 ## sai pela porta. O stage_1 consome (e zera) isto no spawn para devolver o
 ## jogador à soleira da casa em vez do ponto de entrada padrão do mapa.
 var voltando_da_casa_jimmy: bool = false
+## Usado para devolver o jogador à porta da Dona Nice ao sair do interior.
+var voltando_da_casa_nice: bool = false
 ## Ligado pela the_house ao sair pela porta de volta à stage_1.
 var voltando_da_casa_maycow: bool = false
 ## Ligado pela stage_1 ao interagir para entrar de volta na casa do Maycow.

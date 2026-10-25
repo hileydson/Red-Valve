@@ -3,13 +3,14 @@ extends Node3D
 ## Poca de baba verde que a Dona Nice gigante (fase 2) vai largando no chao.
 ##
 ## Queima quem pisa: dano pequeno a cada `INTERVALO` e o jogador fica lento
-## enquanto estiver em cima. Some sozinha depois de `DURACAO` (encolhe antes,
-## pra nao sumir de uma vez). Quem cria e' o boss_dona_nice_fase_2.gd.
+## enquanto estiver em cima. Dura so' `DURACAO` e encolhe (ja' sem queimar)
+## em `SUMINDO`. Quem cria e' o boss_dona_nice_fase_2.gd.
 
-const DANO := 4
-const INTERVALO := 0.6
-const DURACAO := 13.0
-const LENTIDAO := 0.55
+const DANO := 2
+const INTERVALO := 0.8
+const DURACAO := 2.0
+const SUMINDO := 0.5
+const LENTIDAO := 0.6
 
 var _jogador_dentro: Node3D = null
 var _proximo := 0.0
@@ -48,7 +49,7 @@ func _physics_process(delta: float) -> void:
 		set_physics_process(false)
 		bolhas.emitting = false
 		var t := create_tween()
-		t.tween_property(self, "scale", Vector3(0.02, 1.0, 0.02), 1.2)
+		t.tween_property(self, "scale", Vector3(0.02, 1.0, 0.02), SUMINDO)
 		t.tween_callback(queue_free)
 		return
 	if _jogador_dentro == null or GlobalEvents.in_cutscene or GlobalEvents.agarrao_rodando:

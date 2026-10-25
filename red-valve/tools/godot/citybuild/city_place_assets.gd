@@ -1,8 +1,8 @@
 @tool
 extends Node3D
-## Posiciona os assets do usuário na cidade e cria as placas das casas nomeadas.
+## Posiciona os assets do usuário na cidade e cria a placa da casa do Maycow.
 ##
-## As casas nomeadas e a oficina caem em **vagas reservadas**: o gerador de
+## A casa do Maycow e a oficina caem em **vagas reservadas**: o gerador de
 ## casas não constrói proxy naquele ponto e devolve a posição, o ângulo e o
 ## tamanho do lote em `houses.json`. Assim o modelo entra exatamente onde a
 ## casa estaria, voltado para a rua certa.
@@ -144,7 +144,8 @@ func _posicionar() -> void:
 			oficina_escala, giro)
 		linhas.append("Oficina: %d vagas, centro (%.1f, %.1f)" % [lote.size(), c.x, c.z])
 
-	for par in [["casa_nice", "CasaSraNice", 10], ["casa_maycow", "CasaSrMaycow", 11]]:
+	# Dona Nice tem cena propria em stage_1, perto da igreja; nao recriar o proxy antigo.
+	for par in [["casa_maycow", "CasaSrMaycow", 11]]:
 		var tag: String = par[0]
 		var no: String = par[1]
 		var celula: int = par[2]

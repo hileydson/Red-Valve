@@ -9,7 +9,7 @@ Salva em red-valve/assets/images/textures/igreja/:
   sangue_respingo.png    respingos e gotas espalhados (impacto, faca)
   sangue_rastro.png      rastro escorrido (onde o corpo foi arrastado)
   simbolo_culto.png      circulo com runas, pintado a dedo em sangue seco
-  gosma_verde.png        poca de baba verde da fase 2 (com bolhas)
+  gosma_verde.png        poca de baba da fase 2, cor de bile (com bolhas)
   *_orm.png              rugosidade dos mesmos: sangue fresco e gosma brilham
 
 Tudo com alfa (Decal do Godot usa o alfa do albedo). Sem palavra nenhuma na
@@ -170,9 +170,11 @@ def gosma():
         ImageFilter.GaussianBlur(6)), np.float32) / 255
     v = ruido(N, 5)
     rgb = np.zeros((N, N, 3), np.float32)
-    rgb[..., 0] = 0.18 + 0.15 * v
-    rgb[..., 1] = 0.45 + 0.35 * v
-    rgb[..., 2] = 0.05 + 0.08 * v
+    # bile: oliva sujo puxado pro marrom, so' um fundo de verde (o verde
+    # vivo de antes parecia tinta, nao coisa que saiu de dentro dela)
+    rgb[..., 0] = 0.25 + 0.12 * v
+    rgb[..., 1] = 0.235 + 0.12 * v
+    rgb[..., 2] = 0.10 + 0.05 * v
     # bolhas
     img = Image.new("L", (N, N), 0)
     d = ImageDraw.Draw(img)

@@ -61,6 +61,12 @@ signal terminou(animacao: StringName)
 	set(v):
 		gosma_na_tela = v
 		_lente("gosma", v)
+## Cor da gosma que escorre na tela: a baba da fase 1 e' verde; a cusparada
+## da fase 2 troca pra cor de bile.
+@export var cor_gosma: Color = Color(0.22, 0.55, 0.08):
+	set(v):
+		cor_gosma = v
+		_lente("cor_gosma", Vector3(v.r, v.g, v.b))
 @export_range(0.0, 1.0) var sangue_na_tela: float = 0.0:
 	set(v):
 		sangue_na_tela = v

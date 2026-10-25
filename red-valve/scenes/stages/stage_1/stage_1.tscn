@@ -37,6 +37,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/minimap.tscn" id="35_58jrl"]
 [ext_resource type="AudioStream" path="res://assets/sounds/episodios/capitulo_1/intro/arvore_passando.mp3" id="39_3b2v7"]
 [ext_resource type="PackedScene" path="res://scenes/stages/jimmy_house/casa_jimmy_exterior.tscn" id="40_casajimmy"]
+[ext_resource type="PackedScene" path="res://scenes/stages/nice_house/casa_nice_exterior.tscn" id="40_casanice"]
 [ext_resource type="AudioStream" path="res://assets/sounds/episodios/capitulo_1/intro/relogio.mp3" id="40_mchwq"]
 [ext_resource type="AudioStream" path="res://assets/sounds/episodios/capitulo_1/intro/som_theme.mp3" id="41_gwpga"]
 [ext_resource type="Script" path="res://tools/godot/citybuild/city_props_extra.gd" id="42_0imvl"]
@@ -7208,6 +7209,9 @@ shape = SubResource("BoxShape3D_wfumn")
 
 [node name="casa_jimmy" parent="itens_caminho_jimmy" unique_id=1589314243 instance=ExtResource("40_casajimmy")]
 transform = Transform3D(-4.3711385e-08, 0.03489949, -0.99939084, 0, 0.9993908, 0.034899496, 0.99999994, 1.5255053e-09, -4.368476e-08, 552.1364, 12.560703, -340.50687)
+
+[node name="casa_nice" parent="." instance=ExtResource("40_casanice")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 568, 12.25, -343)
 
 [node name="casa_maycow" parent="itens_caminho_jimmy" unique_id=161605872 instance=ExtResource("27_3817s")]
 transform = Transform3D(-0.7512893, 0.014736648, -7.640639, 0.21571541, 8.322733, 0.0032492871, -10.942177, 0.16306359, 0.5246695, 647.3723, 10.230516, -150.44713)

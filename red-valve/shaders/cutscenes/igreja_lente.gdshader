@@ -26,6 +26,7 @@ uniform vec4 flash_color : source_color = vec4(1.0, 0.85, 0.7, 1.0);
 uniform float flash : hint_range(0.0, 1.0) = 0.0;
 uniform float vermelho : hint_range(0.0, 1.0) = 0.0;       // possessao
 uniform float gosma : hint_range(0.0, 1.0) = 0.0;          // baba na tela
+uniform vec3 cor_gosma = vec3(0.22, 0.55, 0.08);            // verde da baba; bile na fase 2
 uniform float sangue_tela : hint_range(0.0, 1.0) = 0.0;    // respingo
 
 float hash12(vec2 p) {
@@ -106,11 +107,11 @@ void fragment() {
 		col += vec3(0.35, 0.0, 0.02) * vermelho * pulso * smoothstep(0.15, 0.6, length(c));
 	}
 
-	// gosma verde por cima (mais densa embaixo, brilho molhado)
+	// gosma por cima (mais densa embaixo, brilho molhado)
 	if (g_mask > 0.0) {
-		vec3 verde = vec3(0.22, 0.55, 0.08) * (0.6 + 0.6 * fbm(uv * 18.0));
+		vec3 baba = cor_gosma * (0.6 + 0.6 * fbm(uv * 18.0));
 		float brilho = pow(vnoise(uv * 60.0 + TIME), 8.0) * 1.5;
-		col = mix(col, verde + brilho, g_mask * 0.82);
+		col = mix(col, baba + brilho, g_mask * 0.82);
 	}
 
 	if (sangue_tela > 0.001) {

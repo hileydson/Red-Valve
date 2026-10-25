@@ -337,7 +337,7 @@ const SENSITIVITY = 0.003 # Sensibilidade do mouse
 ## fora de proposito: la' a corrida e' a de sempre.
 const CENAS_INTERIOR: PackedStringArray = [
 	"hospital", "escola", "porao", "igreja_interior",
-	"casa_jimmy_interior", "oficina_jimmy", "the_house",
+	"casa_jimmy_interior", "casa_nice_interior", "oficina_jimmy", "the_house",
 ]
 ## Onde mora o componente do braco que empurra porta. Ele PRECISA ser filho do
 ## Skeleton3D — SkeletonModifier3D so' funciona ali.
@@ -569,6 +569,9 @@ func _fator_anim_corrida(correndo: bool) -> float:
 ## Sem o componente (Maycow com poderes, que tem outro rig) isto simplesmente
 ## nao faz nada — a porta abre do mesmo jeito, so' sem o gesto.
 func esticar_mao_para(ponto: Vector3, tempo: float) -> void:
+	# com o Jonny no colo as duas maos estao ocupadas: a porta abre no empurrao
+	if carregando_jonny:
+		return
 	var mao = get_node_or_null(CAMINHO_MAO_PORTA)
 	if mao and mao.has_method("estica"):
 		mao.estica(ponto, tempo)
@@ -612,6 +615,9 @@ var _modelo_escondido_por_cena: bool = false
 ## anda: nada de mirar, atirar, recarregar, correr, dash, lanterna ou atalho.
 ## Quem liga e desliga e' o `player_carregar_jonny.gd`.
 var carregando_jonny: bool = false
+## Teto do andar com o Jonny no colo (m/s): o passo de quem carrega alguem, e o
+## ritmo em que o clipe `andar_carregando` nao patina no chao.
+const VELOCIDADE_NO_COLO := 1.3
 
 
 # HAND ADJUSTMENTS
@@ -1238,13 +1244,13 @@ func are_cutscene_inputs_blocked() -> bool:
 func _input(event):
 	if are_cutscene_inputs_blocked():
 		return
-	if carregando_jonny:
-		return
 
 	# Lanterna antes de qualquer outra trava: acender não é ação de combate, e
 	# ficar sem luz porque se está mirando ou no bullet time seria absurdo.
+	# Com o Jonny no colo nao ha' mao livre pra ela — mas olhar em volta, sim.
 	if event.is_action_pressed("ui_lanterna"):
-		alternar_lanterna()
+		if not carregando_jonny:
+			alternar_lanterna()
 		return
 		
 	# A ação "ui_cogblade_power" (C / L1) agora é tratada pelo componente
@@ -1628,6 +1634,8 @@ func _physics_process(delta: float) -> void:
 			if input_dir.y > 0.1:
 				velocidade_atual *= 0.65
 			velocidade_atual *= speed_multiplier
+			if carregando_jonny:
+				velocidade_atual = minf(velocidade_atual, VELOCIDADE_NO_COLO)
 				
 			var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 			var velocity_Y_zero: bool = velocity.y <= 0
@@ -1863,6 +1871,8 @@ func _physics_process(delta: float) -> void:
 		if input_dir.y > 0.1:
 			velocidade_atual *= 0.65
 		velocidade_atual *= speed_multiplier
+		if carregando_jonny:
+			velocidade_atual = minf(velocidade_atual, VELOCIDADE_NO_COLO)
 		var velocity_Y_zero: bool = velocity.y <= 0
 		var target_fov: float = 75.0
 		if is_aiming:

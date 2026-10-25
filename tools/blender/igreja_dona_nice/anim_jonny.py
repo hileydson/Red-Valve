@@ -7,7 +7,7 @@
   no_colo          mole nos bracos do Maycow: cabeca pendendo pra tras,
                    pernas dobradas sobre o braco dele (laco)
   sendo_largado    do colo pro chao (junto com o `largar_jonny`)
-  deitado          no chao, respirando fraco, parado (laco)
+  deitado          no chao, respirando fraco (o peito sobe e desce, laco)
 
 Deitado de costas, o "frente" do corpo vira CIMA: a coluna aponta pra tras do
 personagem (D(0,-1,..)) e as pernas pra frente dele.
@@ -99,7 +99,17 @@ def clipes(rig, fontes):
         (3.2, q_ch, p_ch)], passo=2)
 
     def fraco(t, q, pos):
-        A.girar(rig, q, "chest", A.em_torno((1, 0, 0), 1.2 * math.sin(t * math.tau / 2.2)))
+        # respiracao fraca mas que se VE: a coluna e o peito sobem, o alto do
+        # peito devolve o giro (o peito estufa ~1 cm) e o pescoco e os bracos
+        # desfazem o resto — a cabeca e as maos ficam no chao. Valores achados
+        # por busca (cabeca < 2 mm, maos < 1 cm).
+        r = math.sin(t * math.tau / 2.2)
+        A.girar(rig, q, "spine", A.em_torno((1, 0, 0), 1.4 * r))
+        A.girar(rig, q, "chest", A.em_torno((1, 0, 0), 2.8 * r))
+        A.girar(rig, q, "upper_chest", A.em_torno((1, 0, 0), -8.4 * r))
+        A.girar(rig, q, "neck", A.em_torno((1, 0, 0), 4.2 * r))
+        A.girar(rig, q, "upper_arm.L", A.em_torno((1, 0, 0), 4.2 * r))
+        A.girar(rig, q, "upper_arm.R", A.em_torno((1, 0, 0), 4.2 * r))
         return pos
     A.sequencia(rig, "deitado", [(0.0, q_ch, p_ch), (4.4, q_ch, p_ch)],
-                laco=True, passo=3, extra=fraco)
+                laco=True, passo=1, extra=fraco)

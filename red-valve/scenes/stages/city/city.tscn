@@ -3109,7 +3109,6 @@ script = ExtResource("86_shr21")
 last_result = "Igreja: escala 15, topo ~28.5 m
 Pracinha: escala 20, ~38 m de largura
 Oficina: 3 vagas, centro (50.8, 193.8)
-CasaSraNice: vaga (62.3, 187.2), placa célula 10
 CasaSrMaycow: vaga (6.5, 76.1), placa célula 11"
 
 [node name="Igreja" parent="Marcos" unique_id=1898502413 instance=ExtResource("87_oft1q")]
@@ -3126,17 +3125,6 @@ shape = SubResource("BoxShape3D_igreja")
 [node name="Pracinha" parent="Marcos" unique_id=1150023158 instance=ExtResource("88_djoxf")]
 transform = Transform3D(20, 0, 0, 0, 20, 0, 0, 0, 20, -13.270223, 19.75, 10.444345)
 
-[node name="CasaSraNice" parent="Marcos" unique_id=939067544 instance=ExtResource("90_y1c4q")]
-transform = Transform3D(0.25537023, 0, -4.9934745, 0, 5, 0, 4.9934745, 0, 0.25537023, 61.53776, 8.7, 187.23)
-
-[node name="colisao_casa_nice_city" type="StaticBody3D" parent="Marcos" unique_id=939067545]
-transform = Transform3D(0.05107405, 0, -0.9986949, 0, 1, 0, 0.9986949, 0, 0.05107405, 61.53776, 8.7, 187.23)
-collision_layer = 2
-collision_mask = 0
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Marcos/colisao_casa_nice_city" unique_id=939067546]
-shape = SubResource("BoxShape3D_casa_maycow_city")
-
 [node name="CasaSrMaycow" parent="Marcos" unique_id=1758518956 instance=ExtResource("90_y1c4q")]
 transform = Transform3D(0.37961614, 0, -4.985568, 0, 5, 0, 4.985568, 0, 0.37961614, 6.51, 12.34, 76.11)
 
@@ -3147,18 +3135,6 @@ collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Marcos/colisao_casa_maycow_city" unique_id=1758518958]
 shape = SubResource("BoxShape3D_casa_maycow_city")
-
-[node name="CasaSraNice_Placa" type="Node3D" parent="Marcos" unique_id=263447389]
-transform = Transform3D(0.051074047, 0, -0.9986949, 0, 1, 0, 0.9986949, 0, 0.051074047, 62.68165, 4.75, 194.10602)
-
-[node name="poste" type="MeshInstance3D" parent="Marcos/CasaSraNice_Placa" unique_id=1685914550]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.925, 0)
-mesh = SubResource("BoxMesh_htm2q")
-
-[node name="chapa" type="MeshInstance3D" parent="Marcos/CasaSraNice_Placa" unique_id=1622337424]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.85, 0.02)
-material_override = SubResource("StandardMaterial3D_vng20")
-mesh = SubResource("QuadMesh_mpwpf")
 
 [node name="CasaSrMaycow_Placa" type="Node3D" parent="Marcos" unique_id=2057094377]
 transform = Transform3D(0.07592323, 0, -0.99711365, 0, 1, 0, 0.99711365, 0, 0.07592323, 6.9427624, 8.39, 81.79355)

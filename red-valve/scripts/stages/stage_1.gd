@@ -61,6 +61,8 @@ const CENA_CORRIDA_JONNY := "res://scenes/stages/stage_1/corrida_jonny.tscn"
 # primeiro ajuste.
 const NO_ESCOLA := "locais_importantes/escola_exterior"
 const CENA_ESCOLA := "res://scenes/stages/escola/escola.tscn"
+const NO_CASA_NICE := "casa_nice"
+const CENA_CASA_NICE := "res://scenes/stages/nice_house/casa_nice_interior.tscn"
 
 @onready var navigation_region_3d: NavigationRegion3D = $NavigationRegion3D
 @onready var real_time_label: Label = $real_time_label
@@ -68,6 +70,7 @@ const CENA_ESCOLA := "res://scenes/stages/escola/escola.tscn"
 
 var player_na_oficina: bool = false
 var player_na_casa_jimmy: bool = false
+var player_na_casa_nice: bool = false
 var player_na_casa_maycow: bool = false
 var player_na_igreja: bool = false
 var player_no_hospital: bool = false
@@ -179,6 +182,13 @@ func setup_player_spawn() -> void:
 		if jogador and saida:
 			jogador.global_position = saida.global_position
 			jogador.global_rotation.y = saida.global_rotation.y
+	elif GlobalEvents.voltando_da_casa_nice:
+		GlobalEvents.voltando_da_casa_nice = false
+		var saida_nice := get_node_or_null(NO_CASA_NICE + "/ponto_de_saida") as Marker3D
+		var jogador_nice := get_node_or_null("Player") as Node3D
+		if jogador_nice and saida_nice:
+			jogador_nice.global_position = saida_nice.global_position
+			jogador_nice.global_rotation.y = saida_nice.global_rotation.y
 	elif GlobalEvents.corrida_com_jonny:
 		_corrida_com_jonny()
 	elif GlobalEvents.voltando_da_igreja:
@@ -291,6 +301,12 @@ func _process(delta: float) -> void:
 		$fade.fade_out()
 		await get_tree().create_timer(2.0).timeout
 		LoadingScreen.load_scene("res://scenes/stages/jimmy_house/casa_jimmy_interior.tscn")
+	elif player_na_casa_nice:
+		player_na_casa_nice = false
+		_esconder_prompt()
+		$fade.fade_out()
+		await get_tree().create_timer(2.0).timeout
+		LoadingScreen.load_scene(CENA_CASA_NICE)
 	elif player_na_casa_maycow:
 		player_na_casa_maycow = false
 		GlobalEvents.entrando_na_casa_maycow = true
@@ -340,7 +356,7 @@ func _mostrar_prompt(texto: String) -> void:
 func _esconder_prompt(forcado: bool = false) -> void:
 	if not is_instance_valid(prompt_label):
 		return
-	if not forcado and (player_na_oficina or player_na_casa_jimmy
+	if not forcado and (player_na_oficina or player_na_casa_jimmy or player_na_casa_nice
 			or player_na_casa_maycow or player_na_igreja or player_no_hospital
 			or player_na_escola):
 		return
@@ -369,7 +385,27 @@ func _ao_sair_area_casa_jimmy(body: Node3D) -> void:
 	_esconder_prompt()
 
 
+func _ao_entrar_area_casa_nice(body: Node3D) -> void:
+	if not _eh_o_player(body):
+		return
+	player_na_casa_nice = true
+	_mostrar_prompt(tr("PROMPT_ENTER_NICE_HOUSE"))
+
+
+func _ao_sair_area_casa_nice(body: Node3D) -> void:
+	if not _eh_o_player(body):
+		return
+	player_na_casa_nice = false
+	_esconder_prompt()
+
+
 func _setup_areas_casas() -> void:
+	var casa_nice_area := get_node_or_null(NO_CASA_NICE + "/area_entrada") as Area3D
+	if casa_nice_area:
+		if not casa_nice_area.body_entered.is_connected(_ao_entrar_area_casa_nice):
+			casa_nice_area.body_entered.connect(_ao_entrar_area_casa_nice)
+		if not casa_nice_area.body_exited.is_connected(_ao_sair_area_casa_nice):
+			casa_nice_area.body_exited.connect(_ao_sair_area_casa_nice)
 	var casa_jimmy_area = get_node_or_null("itens_caminho_jimmy/casa_jimmy/area_entrada")
 	if not casa_jimmy_area:
 		casa_jimmy_area = find_child("area_entrada", true, false)
