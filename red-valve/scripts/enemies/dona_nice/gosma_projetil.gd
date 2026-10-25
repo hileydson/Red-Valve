@@ -62,5 +62,5 @@ func _estourar(no_chao: bool) -> void:
 	som.play()
 	if no_chao and dono and dono.has_method("criar_poca"):
 		dono.criar_poca(Vector3(global_position.x, 0.0, global_position.z))
-	await get_tree().create_timer(1.6).timeout
+	await get_tree().create_timer(1.6, false).timeout
 	queue_free()

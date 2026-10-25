@@ -59,7 +59,7 @@ func _pegar() -> void:
 	GlobalUtils.show_center_message("pegou_municao_igreja",
 		tr("PICKUP_AMMO_AGAIN") % [QUANTIDADE, nome], 18, 2.0)
 	modelo.visible = false
-	await get_tree().create_timer(REAPARECE).timeout
+	await get_tree().create_timer(REAPARECE, false).timeout
 	if not is_instance_valid(self):
 		return
 	modelo.visible = true

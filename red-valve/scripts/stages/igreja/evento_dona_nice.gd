@@ -166,7 +166,7 @@ func _luta_1(recomeco: bool) -> void:
 		_por_maycow_na_porta()
 		boss.visual.tocar(&"rugido", 0.0)
 		cena.get_node("sons/rugido").play()
-		await get_tree().create_timer(2.6).timeout
+		await get_tree().create_timer(2.6, false).timeout
 	else:
 		cena.encerrar_lente()
 		_travar(false)
@@ -267,7 +267,7 @@ func _levar_jonny() -> void:
 	_levando = true
 	_jonny_esperando = false
 	GlobalUtils.hide_center_message("levar_jonny")
-	await get_tree().create_timer(0.55).timeout
+	await get_tree().create_timer(0.55, false).timeout
 	_travar(true)
 	_esconder_atores([])
 	cena.get_node("atores/Maycow").visible = true

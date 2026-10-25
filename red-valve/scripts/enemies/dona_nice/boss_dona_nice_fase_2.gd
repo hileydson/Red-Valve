@@ -150,7 +150,7 @@ func _cuspir(j: Node3D) -> void:
 	_ocupada = true
 	_prox_cuspe = _tempo + randf_range(INTERVALO_CUSPE.x, INTERVALO_CUSPE.y)
 	visual.tocar(&"cuspir", 0.15)
-	await get_tree().create_timer(0.62).timeout
+	await get_tree().create_timer(0.62, false).timeout
 	if dead:
 		return
 	som_cuspe.play()
@@ -161,7 +161,7 @@ func _cuspir(j: Node3D) -> void:
 	proj.dono = self
 	proj.lancar(boca, alvo, clampf(boca.distance_to(alvo) / 13.0, 0.45, 1.1))
 	_projeteis.append(proj)
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	if dead:
 		return
 	visual.tocar(&"flutuar", 0.4)
@@ -187,15 +187,15 @@ func _investir_e_bater(j: Node3D) -> void:
 	# o aviso: para e acende
 	var aviso := create_tween()
 	aviso.tween_property(visual, "veias", 1.0, AVISO_DO_TAPA)
-	await get_tree().create_timer(AVISO_DO_TAPA).timeout
+	await get_tree().create_timer(AVISO_DO_TAPA, false).timeout
 	if dead:
 		return
 	visual.tocar(&"tapa", 0.1)
-	await get_tree().create_timer(IMPACTO_DO_TAPA).timeout
+	await get_tree().create_timer(IMPACTO_DO_TAPA, false).timeout
 	if dead:
 		return
 	_impacto_do_tapa()
-	await get_tree().create_timer(1.0).timeout
+	await get_tree().create_timer(1.0, false).timeout
 	if dead:
 		return
 	var volta := create_tween()
@@ -258,7 +258,7 @@ func take_damage(amount: int) -> void:
 		return
 	if _tiros % 8 == 0 and not _ocupada:
 		visual.tocar(&"dano", 0.05)
-		await get_tree().create_timer(0.6).timeout
+		await get_tree().create_timer(0.6, false).timeout
 		if not dead and not _ocupada:
 			visual.tocar(&"flutuar", 0.3)
 

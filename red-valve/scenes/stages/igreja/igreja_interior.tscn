@@ -357,7 +357,7 @@ autoplay = true
 
 [node name="fade" parent="." unique_id=887412593 instance=ExtResource("4_fade")]
 
-[node name="pause" parent="." unique_id=1628832291 instance=ExtResource("3_pause")]
+[node name="Pause" parent="." unique_id=1628832291 instance=ExtResource("3_pause")]
 
 [node name="item_secreto" type="Marker3D" parent="." unique_id=2001930263]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.886559, 10.087212, 5.7525587)

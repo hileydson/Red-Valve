@@ -142,7 +142,7 @@ func _tentar_agarrar(jogador: Node3D) -> void:
 func agarrao_atacar() -> void:
 	_agarrada = true
 	_tocar(&"agarrar", 0.12)
-	await get_tree().create_timer(0.35).timeout
+	await get_tree().create_timer(0.35, false).timeout
 	if dead:
 		return
 	_tocar(&"mordendo", 0.2)
@@ -152,7 +152,7 @@ func agarrao_atacar() -> void:
 	for i in 3:
 		som_mordida.stream = load(SONS_MORDIDA[i % SONS_MORDIDA.size()])
 		som_mordida.play()
-		await get_tree().create_timer(0.5).timeout
+		await get_tree().create_timer(0.5, false).timeout
 		if not _agarrada:
 			break
 

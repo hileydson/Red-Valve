@@ -489,7 +489,7 @@ def gerar():
         ("autoplay", "true"),
     ])
     no("fade", pai=".", instancia="4_fade")
-    no("pause", pai=".", instancia="3_pause")
+    no("Pause", pai=".", instancia="3_pause")
     no("minimapa", pai=".", instancia="9_minimapa")
 
     os.makedirs(os.path.dirname(SAIDA), exist_ok=True)
