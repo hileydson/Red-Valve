@@ -592,7 +592,7 @@ func _montar_chegada() -> void:
 	# saiu). O giro da cabeca dela e' lento e escuro; quando o olhar chega
 	# nele, a camera dispara ate' o Maycow e gira de volta pra ela.
 	const T_MAO := 0.0          # esticar_mao (2,6 s)
-	const T_ROSTO := 1.2
+	const T_ROSTO := 2.6        # o plano aberto segura ate' a mao esticar
 	const T_OMBRO := 4.2
 	const T_FACA := 8.6
 	const T_GOTA := 12.6
@@ -662,9 +662,10 @@ func _montar_chegada() -> void:
 		[[0.0, false], [T_SACA + 0.45, true]], true)
 
 	var olho := func(z): return Vector3(0.0, 1.62, z)
+	# aberto o bastante pra caber o corpo inteiro e a mao (que estica pro -X)
 	_cam("cam_entrada", [
-		[0.0, Vector3(0.42, 1.46, 9.3), olho.call(MAYCOW_FIM.z), 27.0],
-		[T_ROSTO, Vector3(0.40, 1.47, 9.0), olho.call(MAYCOW_FIM.z), 28.0]])
+		[0.0, Vector3(0.75, 1.5, 9.6), Vector3(-0.25, 1.35, MAYCOW_FIM.z), 40.0],
+		[T_ROSTO, Vector3(0.65, 1.5, 9.0), Vector3(-0.25, 1.38, MAYCOW_FIM.z), 37.0]])
 	_cam("cam_rosto", [
 		[T_ROSTO, Vector3(-0.35, 1.66, 5.35), Vector3(0.0, 1.6, 4.25), 34.0],
 		[T_OMBRO, Vector3(-0.30, 1.65, 5.05), Vector3(0.0, 1.6, 4.25), 32.0]])
@@ -777,7 +778,11 @@ func _montar_chegada() -> void:
 	_pos("atores/Monstro", [[0.0, DN]])
 	_rot("atores/Monstro", [[0.0, de_frente]])
 	_valor("atores/Monstro:visible", [[0.0, false], [T_CONVULSAO, true]], true)
-	_clipe("Monstro", [[T_CONVULSAO, "convulsao"], [T_RUGIDO, "rugido"], [T_RUGIDO + 2.9, "parado"]])
+	_clipe("Monstro", [[T_CONVULSAO, "convulsao"], [T_RUGIDO, "rugido"]])
+	# ela fica arqueada de bracos erguidos (o meio do rugido, 0,8-2,0 s) ate' o
+	# fim, enquanto os bancos voam: o clipe quase para nesse trecho
+	_valor("atores/Monstro/anim:speed_scale", [[0.0, 1.0], [T_RUGIDO + 1.3, 0.07],
+		[T_FIM, 1.0]], true)
 	_valor("atores/DonaNice:veias", [[0.0, 0.0], [T_CONVULSAO, 0.0], [T_CONVULSAO + 1.2, 1.0]])
 	_valor("atores/Monstro:veias", [[0.0, 0.0], [T_CONVULSAO, 1.0], [T_RUGIDO + 1.5, 0.35]])
 	_valor("atores/DonaNice:dissolver", [[0.0, 0.0], [T_CONVULSAO + 1.2, 0.0],
@@ -852,15 +857,16 @@ func _cam_cabeca(t0: float, t_dispara: float, t_chega: float, t_volta: float,
 		if t > 2.5:
 			alvo = alvo.lerp(rosto - Vector3(0, 0.2, 0), (t - 2.5) / 0.4)
 		chaves.append([t0 + t / VEL_CABECA, p, alvo, 50.0])
-	# o disparo: da cabeca dela ate' ~1 m do rosto dele, acelerando (do lado
+	# o disparo: da cabeca dela ate' ~1,4 m do rosto dele, acelerando (do lado
 	# oposto ao da mao esticada, que fica no -X)
 	var ini: Vector3 = chaves[-1][1]
-	var perto := rosto + Vector3(0.3, 0.02, 0.95)
+	var perto := rosto + Vector3(0.45, 0.04, 1.3)
 	for i in range(1, 6):
 		var u := i / 5.0
 		var p := ini.lerp(perto, u * u)
 		chaves.append([lerpf(t_dispara, t_chega, u), p, rosto, lerpf(50.0, 36.0, u)])
-	# e o giro de volta, no lugar, ate' olhar pra ela
+	# e o giro de volta, no lugar, ate' olhar pra ela — pelo +X: pelo outro
+	# lado a camera atravessava o braco esticado dele
 	_posar(dn, "olhando_parada", 0.0)
 	var dela: Vector3 = dn.posicao_do_osso("head")
 	var giro0 := Basis.looking_at(rosto - perto, Vector3.UP)
@@ -868,7 +874,7 @@ func _cam_cabeca(t0: float, t_dispara: float, t_chega: float, t_volta: float,
 	for i in range(1, 5):
 		var u := i / 4.0
 		var k := u * u * (3.0 - 2.0 * u)
-		var ang := lerpf(0.0, PI, k)
+		var ang := lerpf(0.0, -PI, k)
 		var b := giro0.rotated(Vector3.UP, ang)
 		var alvo := perto + (-b.z) * 6.0
 		if i == 4:
@@ -1046,11 +1052,16 @@ func _montar_pega_jonny() -> void:
 	var corrida := inicio.distance_to(Vector3(inicio.x, 0, porta.z))
 	const VEL := 4.2                            # m/s do correr_carregando
 	var t_porta := T_CORRE + corrida / VEL
-	a.length = t_porta + 1.2
+	# assim que ele sai correndo pra porta a tela vai pro preto, e fica preta
+	# ate' a cidade carregar (o evento troca de cena no fim)
+	a.length = T_CORRE + 1.0
+	var no_fim := inicio.lerp(Vector3(inicio.x, 0, porta.z),
+		(a.length - T_CORRE) / (t_porta - T_CORRE))
 
 	_valor(".:barras", [[0.0, 1.0], [a.length, 1.0]])
+	_valor(".:preto", [[0.0, 0.0], [T_CORRE, 0.0], [T_CORRE + 0.7, 1.0]])
 	_valor(".:plano", [[0.0, "cam_pj_a"], [T_LEVANTA - 0.4, "cam_pj_b"],
-		[T_CORRE + 0.8, "cam_pj_c"], [a.length - 0.05, ""]], true)
+		[a.length - 0.05, ""]], true)
 	_valor(".:saturacao", [[0.0, 0.8], [a.length, 0.7]])
 	_valor("atores/Maycow:visible", [[0.0, true]], true)
 	_valor("atores/Maycow/modelo/Armature/Skeleton3D/mao_arma/pivo_arma:visible",
@@ -1060,8 +1071,7 @@ func _montar_pega_jonny() -> void:
 	_clipe("Jonny", [[0.0, "sendo_erguido"], [T_LEVANTA, "no_colo"]])
 	# Maycow: parado ajoelhando, vira pra porta, corre
 	var de_costas := Quaternion(Vector3.UP, PI)
-	_pos("atores/Maycow", [[0.0, inicio], [T_CORRE, inicio],
-		[t_porta, Vector3(inicio.x, 0, porta.z)]])
+	_pos("atores/Maycow", [[0.0, inicio], [T_CORRE, inicio], [a.length, no_fim]])
 	_rot("atores/Maycow", [[0.0, Quaternion()], [T_LEVANTA + 0.1, Quaternion()],
 		[T_VIRA, de_costas]])
 	# Jonny: preso as maos do Maycow pelo `seguir` do AtorIgreja. Fica no chao
@@ -1075,15 +1085,7 @@ func _montar_pega_jonny() -> void:
 	_cam("cam_pj_a", [[0.0, inicio + Vector3(1.4, 0.9, 1.4), inicio + Vector3(0, 0.6, 0.5), 42.0],
 		[T_LEVANTA - 0.4, inicio + Vector3(1.2, 0.95, 1.2), inicio + Vector3(0, 0.8, 0.5), 40.0]])
 	_cam("cam_pj_b", [[T_LEVANTA - 0.4, inicio + Vector3(-1.6, 1.3, -0.6), colo, 40.0],
-		[T_CORRE + 0.8, inicio + Vector3(-1.4, 1.5, -1.6), inicio + Vector3(0, 1.2, -1.6), 44.0]])
-	# a ultima: a camera vai na frente dele, de costas pra porta, recuando
-	var cc := []
-	for i in 6:
-		var u := i / 5.0
-		var t := lerpf(T_CORRE + 0.8, a.length, u)
-		var z := lerpf(inicio.z - (T_CORRE + 0.8 - T_CORRE) * VEL, porta.z, clampf((t - T_CORRE) / (t_porta - T_CORRE), 0.0, 1.0))
-		cc.append([t, Vector3(0.3, 1.5, z - 3.2 + u * 1.2), Vector3(0, 1.2, z), 46.0])
-	_cam("cam_pj_c", cc)
+		[a.length, inicio + Vector3(-1.4, 1.5, -1.4), inicio + Vector3(0, 1.2, -1.5), 44.0]])
 
 
 # ==============================================================================

@@ -108,6 +108,8 @@ PAR_INT = 12.6        # face interna da parede lateral
 PAR_EXT = 14.0
 Z_OESTE = 0.0         # face interna da fachada
 Z_OESTE_EXT = -1.7
+FOLHA_L = 1.6         # largura de cada folha do portal (o vao tem duas)
+FOLHA_A = 4.0         # altura da folha = arranque do arco do portal
 PILAR_Z = [5.0, 12.0, 19.0, 26.0, 33.0]
 BAIAS = [(0.0, 5.0), (5.0, 12.0), (12.0, 19.0), (19.0, 26.0), (26.0, 33.0)]
 Z_CRUZ = 33.0         # arco triunfal
@@ -486,15 +488,15 @@ class Igreja:
     def fachada(self):
         mp = mapa_z(Z_OESTE)
         w0, w1 = Z_OESTE_EXT - Z_OESTE, 0.0
-        vaos = [{"u": 0.0, "larg": 3.8, "peitoril": 0.0, "arranque": 4.4,
-                 "flecha": 2.9}]
+        vaos = [{"u": 0.0, "larg": 2 * FOLHA_L, "peitoril": 0.0,
+                 "arranque": FOLHA_A, "flecha": 2.6}]
         for s in (-1, 1):
             vaos.append({"u": s * 9.9, "larg": 2.2, "peitoril": 2.0,
                          "arranque": 3.9, "flecha": 1.76})
         for p in painel(mp, -PAR_EXT, PAR_EXT, 0.0, 11.6, w0, w1, vaos):
             self.por("pedra", p, z_ref=1.0)
-        self.por("pedra", arquivolta(0.0, 4.3, 4.4, 3.1, 0.35, w0 - 0.2, w1, mp),
-                 z_ref=1.0)
+        self.por("pedra", arquivolta(0.0, 2 * FOLHA_L + 0.5, FOLHA_A, 2.8, 0.35,
+                                     w0 - 0.2, w1, mp), z_ref=1.0)
         for s in (-1, 1):
             self.vitral(mp, vaos[1 if s < 0 else 2], "larga", w0 * 0.5, 1,
                         roto=True, eixo_z=True)
@@ -511,14 +513,28 @@ class Igreja:
                                            w0, w1)], z_ref=1)
         self.colide([caixa((-PAR_EXT, 0.0, Z_OESTE_EXT), (PAR_EXT, 24.0, Z_OESTE))])
 
-        # portal: as duas folhas arrancadas, uma pendurada e uma no chao
-        self.solido("madeira", [caixa_girada(-1.3, 1.75, 0.35, 1.75, 3.5, 0.16,
-                                             0.0, 0.0)], z_ref=0.4)
-        self.por("madeira", [caixa_girada(2.6, 0.09, 2.4, 1.8, 0.16, 3.4, 0.6, 0.0)],
-                 z_ref=2.4)
+        # portal: as duas folhas DENTRO do vao, presas no batente junto da face
+        # de fora e abertas pra dentro. A folha cabe na espessura da parede
+        # (FOLHA_L < 1,7), entao a do norte fica rente a' ombreira; a do sul
+        # ficou entreaberta, meio caida da dobradica de cima. O vao e' o
+        # das duas folhas. A colisao da fachada ja' fecha o portal inteiro.
+        z_dob = Z_OESTE_EXT + 0.06
+        esp = 0.12
+        self.por("madeira", [caixa((-FOLHA_L, 0.0, z_dob),
+                                   (-FOLHA_L + esp, FOLHA_A - 0.04, z_dob + FOLHA_L))],
+                 z_ref=0.4)
         for k in range(3):
-            self.por("metal", [caixa((-2.1, 0.6 + k * 1.2, 0.28),
-                                     (-0.45, 0.78 + k * 1.2, 0.44))], z_ref=0.4)
+            y = 0.5 + k * 1.4
+            self.por("metal", [caixa((-FOLHA_L + esp, y, z_dob + 0.1),
+                                     (-FOLHA_L + esp + 0.04, y + 0.16, z_dob + FOLHA_L - 0.12))],
+                     z_ref=0.4)
+        aberta = math.radians(72.0)
+        giro = math.atan2(-math.sin(aberta), -math.cos(aberta))
+        meio = (FOLHA_L - (FOLHA_L / 2.0) * math.cos(aberta) - esp / 2.0,
+                z_dob + (FOLHA_L / 2.0) * math.sin(aberta))
+        self.por("madeira", [caixa_girada(meio[0], FOLHA_A / 2.0 - 0.05, meio[1],
+                                          FOLHA_L, FOLHA_A - 0.1, esp, giro, 0.03)],
+                 z_ref=0.4)
 
     def roseta(self, cy, r, w0, w1):
         mp = mapa_z(Z_OESTE)

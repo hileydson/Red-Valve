@@ -60,6 +60,15 @@ func _roteiro() -> void:
 	if e == null:
 		print("ERRO sem evento")
 		return
+	# IGREJA_TEMPOS="35,36.2": so' fotografa a chegada nesses instantes, no jogo
+	var tempos := OS.get_environment("IGREJA_TEMPOS").split(",", false)
+	if SaveManager.evento_dona_nice == 0 and not tempos.is_empty():
+		var diretor: AnimationPlayer = e.cena.get_node("diretor")
+		for s in tempos:
+			while diretor.is_playing() and diretor.current_animation_position < float(s):
+				await get_tree().process_frame
+			await _foto("chegada_" + s)
+		return
 	if SaveManager.evento_dona_nice == 0:
 		await _foto("chegada")
 		await _esperar(20.0)
