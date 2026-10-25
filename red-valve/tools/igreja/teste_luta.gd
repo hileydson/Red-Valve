@@ -152,7 +152,7 @@ func _jonny() -> void:
 	await _foto("pega_jonny")
 	await _esperar(6.0)
 	await _foto("saindo")
-	print("cena atual ", get_tree().current_scene.scene_file_path, " corrida=", GlobalEvents.corrida_com_jonny)
+	print("cena atual ", get_tree().current_scene.scene_file_path, " igreja=", GlobalEvents.voltando_da_igreja)
 	# a corrida pela cidade e a chegada no hospital
 	for i in 14:
 		await _esperar(2.5)

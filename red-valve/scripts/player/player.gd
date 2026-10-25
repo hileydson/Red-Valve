@@ -611,13 +611,17 @@ var modelo_visual: MeshInstance3D # resolvido em _ready() conforme a variante at
 ## reaparecer no quadro seguinte, e o Maycow ficava visível ao lado da câmera
 ## durante o agarrão. Quem esconde por cutscene liga isto (`cutscene_set_model_hidden`).
 var _modelo_escondido_por_cena: bool = false
-## O Maycow esta' com o Jonny no colo (evento da Dona Nice, no hospital). So'
-## anda: nada de mirar, atirar, recarregar, correr, dash, lanterna ou atalho.
-## Quem liga e desliga e' o `player_carregar_jonny.gd`.
+## O Maycow esta' com o Jonny no colo (evento da Dona Nice: da igreja ao
+## hospital, pela cidade). So' anda e corre: nada de mirar, atirar, recarregar,
+## dash, lanterna, atalho ou agarrao. Quem liga e desliga e' o
+## `player_carregar_jonny.gd`.
 var carregando_jonny: bool = false
 ## Teto do andar com o Jonny no colo (m/s): o passo de quem carrega alguem, e o
 ## ritmo em que o clipe `andar_carregando` nao patina no chao.
 const VELOCIDADE_NO_COLO := 1.3
+## Teto da corrida com ele no colo: o `correr_carregando` (4,2 m/s no clipe)
+## toca um pouco mais devagar, e a cidade nao vira uma caminhada de 4 minutos.
+const VELOCIDADE_NO_COLO_CORRENDO := 3.4
 
 
 # HAND ADJUSTMENTS
@@ -1365,7 +1369,7 @@ func _physics_process(delta: float) -> void:
 	last_rotation_y = rotation.y
 	last_camera_rot_x = current_camera_rot_x
 	
-	if not are_cutscene_inputs_blocked() and not carregando_jonny:
+	if not are_cutscene_inputs_blocked():
 		if SaveManager.config.get("run_mode", "hold") == "toggle":
 			if Input.is_action_just_pressed("ui_run"):
 				_run_toggle_active = not _run_toggle_active
@@ -1623,19 +1627,22 @@ func _physics_process(delta: float) -> void:
 		else:
 			# MOVIMENTO NORMAL (WALK/RUN)
 			var velocidade_atual = WALK_SPEED
+			var correndo_agora := false
 			if GlobalEvents.in_cutscene and _cutscene_auto_walk:
 				velocidade_atual = WALK_SPEED * 0.45
 			elif is_aiming:
 				velocidade_atual = WALK_SPEED * 0.4
 			elif _run_toggle_active and (current_stamina > 0 or _stamina_infinita()) and not is_exhausted:
 				velocidade_atual = RUN_SPEED
+				correndo_agora = true
 			
 			# Mais lento ao andar para trás
 			if input_dir.y > 0.1:
 				velocidade_atual *= 0.65
 			velocidade_atual *= speed_multiplier
 			if carregando_jonny:
-				velocidade_atual = minf(velocidade_atual, VELOCIDADE_NO_COLO)
+				velocidade_atual = minf(velocidade_atual,
+					VELOCIDADE_NO_COLO_CORRENDO if correndo_agora else VELOCIDADE_NO_COLO)
 				
 			var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 			var velocity_Y_zero: bool = velocity.y <= 0
@@ -1872,7 +1879,8 @@ func _physics_process(delta: float) -> void:
 			velocidade_atual *= 0.65
 		velocidade_atual *= speed_multiplier
 		if carregando_jonny:
-			velocidade_atual = minf(velocidade_atual, VELOCIDADE_NO_COLO)
+			velocidade_atual = minf(velocidade_atual,
+				VELOCIDADE_NO_COLO_CORRENDO if is_running else VELOCIDADE_NO_COLO)
 		var velocity_Y_zero: bool = velocity.y <= 0
 		var target_fov: float = 75.0
 		if is_aiming:
@@ -2506,6 +2514,9 @@ func _on_amulet_magic_released() -> void:
 ## primeira pessoa roda a partir daí. true = o toque foi consumido e o inimigo
 ## não deve aplicar o dano normal dele.
 func grab_from_touch(enemy: Node3D) -> bool:
+	# com o Jonny no colo nao ha' agarrao (nem ida pra arena): ele so' carrega
+	if carregando_jonny:
+		return false
 	var comp = get_node_or_null("PlayerGrab")
 	if comp: return comp.grab_from_touch(enemy)
 	return false

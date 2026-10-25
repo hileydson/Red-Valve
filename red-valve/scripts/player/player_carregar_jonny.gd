@@ -1,14 +1,15 @@
 extends Node
 
-## O Jonny no hospital (evento da Dona Nice): no colo do Maycow
-## (`SaveManager.evento_dona_nice == 4`) ou deitado onde foi deixado (5).
+## O Jonny depois da igreja (evento da Dona Nice): no colo do Maycow
+## (`SaveManager.evento_dona_nice == 4`), da porta da igreja ate' o hospital
+## pela cidade e dentro dele, ou deitado onde foi deixado (5).
 ##
-## NO COLO ele so' ANDA: o `player.carregando_jonny` trava mira, tiro, recarga,
-## corrida, dash, lanterna e atalho, e segura o passo no de quem carrega
-## alguem. O corpo INTEIRO do Maycow sai da AnimationTree e toca os clipes da
-## cutscene da igreja (`parado_carregando` / `andar_carregando`, biblioteca
-## `maycow_clipes.tres`): e' a mesma pose do colo da cutscene, e pra mudar ela
-## se mexe no clipe, nao aqui.
+## NO COLO ele so' ANDA e CORRE: o `player.carregando_jonny` trava mira, tiro,
+## recarga, dash, lanterna, atalho e agarrao, e segura o passo no de quem
+## carrega alguem. O corpo INTEIRO do Maycow sai da AnimationTree e toca os
+## clipes da cutscene da igreja (`parado_carregando` / `andar_carregando` /
+## `correr_carregando`, biblioteca `maycow_clipes.tres`): e' a mesma pose do
+## colo da cutscene, e pra mudar ela se mexe no clipe, nao aqui.
 ##
 ## O Jonny vai SOBRE AS DUAS MAOS (`AtorIgreja.alvo_nas_maos`, a mesma conta da
 ## cutscene). Pra mao e menino nunca se descolarem, o AnimationPlayer daqui
@@ -18,15 +19,18 @@ extends Node
 ## `ui_largar` (B no controle, G no teclado) poe o Jonny no chao (clipe
 ## `largar_jonny`). Deitado, ele vira um ponto no mapa (`ponto_no_mapa.gd`) e
 ## ganha o prompt "Pegar Jonny no colo": aceitando, o Maycow se encaixa atras
-## dele e o ergue (`pegar_jonny`), e volta tudo pro colo. Onde ele ficou vai
-## pro save (estado 5).
+## dele e o ergue (`pegar_jonny`), e volta tudo pro colo. Onde ele ficou (e em
+## que cena) vai pro save (estado 5).
 ##
-## Quem cria este no' e' o `hospital.gd`, como filho do player.
+## Quem cria este no' e' o `preparar`, chamado pelo hospital e pela stage_1.
 
 signal largou
 signal pegou
 
+const ESTE := "res://scripts/player/player_carregar_jonny.gd"
 const CENA_JONNY := "res://scenes/npcs/igreja/jonny.tscn"
+const CENA_HOSPITAL := "res://scenes/stages/hospital/hospital.tscn"
+const CENA_CIDADE := "res://scenes/stages/stage_1/stage_1.tscn"
 const CLIPES_MAYCOW := "res://assets/3d_model/npc/igreja/maycow_clipes.tres"
 const SUPORTE := "res://scripts/player/suporte_colo.gd"
 const PONTO_NO_MAPA := "res://scripts/ui/ponto_no_mapa.gd"
@@ -36,11 +40,16 @@ const MALHA := "maycow_lopes_normal/Armature/Skeleton3D/char1"
 
 const PARADO := &"parado_carregando"
 const ANDANDO := &"andar_carregando"
+const CORRENDO := &"correr_carregando"
 const LARGAR := &"largar_jonny"
 const PEGAR := &"pegar_jonny"
 ## Velocidade (m/s) em que o `andar_carregando` casa o passo com o chao (medida
 ## nos pes do clipe). Andando mais rapido ou mais devagar, o clipe acompanha.
 const PASSO_DO_CLIPE := 0.95
+## O mesmo pro `correr_carregando` (a velocidade do duble na cutscene), e a
+## partir de que rapidez ele troca o andar pela corrida.
+const PASSO_CORRENDO := 4.2
+const VIRA_CORRIDA := 2.0
 ## `largar_jonny` (3,2 s): o Jonny encosta no chao em 1,6 s.
 const DURACAO_LARGAR := 3.2
 const NO_CHAO := 1.6
@@ -71,6 +80,30 @@ var _modo := ""
 var _peso_maos := 1.0
 var _base := Transform3D.IDENTITY
 var _perto := false
+
+
+## O Jonny esta' nesta cena? No colo (4) ele vai aonde o Maycow for; deitado
+## (5), so' na cena em que ficou (save antigo, sem cena: o hospital).
+static func jonny_esta_em(cena: String) -> bool:
+	match SaveManager.evento_dona_nice:
+		4:
+			return true
+		5:
+			var onde := SaveManager.jonny_deixado_em
+			if onde.is_empty():
+				onde = CENA_HOSPITAL
+			return onde == cena and SaveManager.jonny_no_hospital.size() == 4
+	return false
+
+
+## Pendura este componente no jogador se o Jonny estiver nesta cena.
+static func preparar(jogador: Node, cena: String) -> void:
+	if jogador == null or not jonny_esta_em(cena):
+		return
+	var c: Node = load(ESTE).new()
+	c.name = "CarregarJonny"
+	c.comecar_no_chao = SaveManager.evento_dona_nice == 5
+	jogador.add_child.call_deferred(c)
 
 
 func _ready() -> void:
@@ -146,16 +179,23 @@ func _no_colo() -> void:
 	_modo = "colo"
 
 
-## Parado ou andando, no ritmo do chao. De costas o passo roda ao contrario.
+## Parado, andando ou correndo, no ritmo do chao. De costas o passo roda ao
+## contrario.
 func _escolher_passo() -> void:
 	var v := Vector3(player.velocity.x, 0.0, player.velocity.z)
 	var rapidez := v.length()
-	var clipe := ANDANDO if rapidez > 0.15 else PARADO
+	var clipe := PARADO
+	if rapidez > VIRA_CORRIDA:
+		clipe = CORRENDO
+	elif rapidez > 0.15:
+		clipe = ANDANDO
 	if _ap.current_animation != String(clipe):
 		_ap.play(clipe, 0.3)
 	if clipe == ANDANDO:
 		var de_costas := v.dot(-player.global_basis.z) < -0.3 * rapidez
 		_ap.speed_scale = clampf(rapidez / PASSO_DO_CLIPE, 0.6, 1.6) * (-1.0 if de_costas else 1.0)
+	elif clipe == CORRENDO:
+		_ap.speed_scale = clampf(rapidez / PASSO_CORRENDO, 0.6, 1.3)
 	else:
 		_ap.speed_scale = 1.0
 
@@ -212,9 +252,19 @@ func _largar() -> void:
 	SaveManager.evento_dona_nice = 5
 	SaveManager.jonny_no_hospital = [jonny.global_position.x, jonny.global_position.y,
 		jonny.global_position.z, jonny.global_rotation.y]
-	SaveManager.save_game()
+	SaveManager.jonny_deixado_em = get_tree().current_scene.scene_file_path
+	_gravar()
 	_no_chao()
 	largou.emit()
+
+
+## Na cidade o save guarda tambem onde o Maycow esta': carregar volta do lado
+## do Jonny, e nao no comeco do capitulo, do outro lado do mapa.
+func _gravar() -> void:
+	if get_tree().current_scene.scene_file_path == CENA_CIDADE:
+		SaveManager.save_player_position(player.global_position, player.global_rotation.y)
+	else:
+		SaveManager.save_game()
 
 
 func _chao_em(p: Vector3) -> Vector3:
@@ -300,7 +350,7 @@ func _pegar() -> void:
 	await get_tree().create_timer(DURACAO_PEGAR, false).timeout
 
 	SaveManager.evento_dona_nice = 4
-	SaveManager.save_game()
+	_gravar()
 	_no_colo()
 	player.cutscene_set_player_control(true)
 	_mostrar_dica()

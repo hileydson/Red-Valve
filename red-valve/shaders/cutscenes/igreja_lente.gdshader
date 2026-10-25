@@ -28,6 +28,7 @@ uniform float vermelho : hint_range(0.0, 1.0) = 0.0;       // possessao
 uniform float gosma : hint_range(0.0, 1.0) = 0.0;          // baba na tela
 uniform vec3 cor_gosma = vec3(0.22, 0.55, 0.08);            // verde da baba; bile na fase 2
 uniform float sangue_tela : hint_range(0.0, 1.0) = 0.0;    // respingo
+uniform float foco : hint_range(0.0, 1.0) = 0.0;           // tunel: borda borrada e escura, centro nitido
 
 float hash12(vec2 p) {
 	vec3 p3 = fract(vec3(p.xyx) * 0.1031);
@@ -93,12 +94,25 @@ void fragment() {
 		col.b = textureLod(tela, clamp(uv - dir, vec2(0.001), vec2(0.999)), 0.0).b;
 	}
 
+	// foco: so' o meio fica nitido; em volta, os mipmaps da tela borram
+	float borda_foco = smoothstep(0.09, 0.44, length(c * vec2(1.25, 1.0)));
+	if (foco > 0.001) {
+		vec3 borrado = textureLod(tela, clamp(uv, vec2(0.001), vec2(0.999)),
+				4.5 * foco * borda_foco).rgb;
+		col = mix(col, borrado, clamp(borda_foco * foco * 1.4, 0.0, 1.0));
+	}
+
 	col *= exposure;
 	float luma = dot(col, vec3(0.2126, 0.7152, 0.0722));
 	vec3 graded = mix(grade_shadows.rgb * 2.0, grade_highlights.rgb, smoothstep(0.0, 0.85, luma));
 	col = mix(col, col * graded, grade_amount);
 	luma = dot(col, vec3(0.2126, 0.7152, 0.0722));
 	col = mix(vec3(luma), col, saturation);
+	// ...e o resto escurece: o mundo some em volta do que ela olha
+	if (foco > 0.001) {
+		col = mix(vec3(luma), col, 1.0 - 0.35 * foco);
+		col *= 1.0 - foco * (0.1 + 0.45 * borda_foco);
+	}
 
 	// possessao: as sombras puxam pro vermelho e a borda pulsa
 	if (vermelho > 0.001) {

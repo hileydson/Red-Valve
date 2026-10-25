@@ -44,7 +44,7 @@ func _ready() -> void:
 	# Jimmy e a' igreja.
 	SaveManager.save_game()
 
-	if SaveManager.evento_dona_nice >= 4:
+	if _jonny_aqui():
 		_jonny_no_hospital()
 		GlobalUtils.mostrar_objetivo(tr("OBJ_HOSPITAL_AJUDA_JONNY"))
 	else:
@@ -53,22 +53,20 @@ func _ready() -> void:
 
 ## O Jonny chegou da igreja no colo do Maycow (evento da Dona Nice).
 ##   4 = ainda no colo: o jogador so' anda ate' largar ele (B / G)
-##   5 = ja' foi deixado: fica deitado onde ficou, marcado no mapa, e da' pra
-##       pegar ele de volta
+##   5 = ja' foi deixado aqui: fica deitado onde ficou, marcado no mapa, e da'
+##       pra pegar ele de volta
 ## Os dois sao o mesmo componente (`player_carregar_jonny.gd`), que passa de um
 ## pro outro. Nos dois a porta da rua fica trancada (ver `sair_do_hospital`).
+## Deixado na cidade, ele nao esta' aqui: o hospital fica como sempre.
 func _jonny_no_hospital() -> void:
 	var jogador := get_node_or_null("Player")
 	if jogador == null:
 		jogador = get_tree().get_first_node_in_group("player")
-	if jogador == null:
-		return
-	if SaveManager.evento_dona_nice == 5 and SaveManager.jonny_no_hospital.size() != 4:
-		return
-	var c: Node = load(CARREGAR_JONNY).new()
-	c.name = "CarregarJonny"
-	c.comecar_no_chao = SaveManager.evento_dona_nice == 5
-	jogador.add_child.call_deferred(c)
+	load(CARREGAR_JONNY).preparar(jogador, scene_file_path)
+
+
+func _jonny_aqui() -> bool:
+	return load(CARREGAR_JONNY).jonny_esta_em(scene_file_path)
 
 
 ## A lente e' exclusiva desta instancia do player; o FOV continua sob controle
@@ -135,7 +133,7 @@ func sair_do_hospital() -> void:
 		return
 	# Com o Jonny aqui dentro a porta nao abre — a saida vem com a chave, que e'
 	# outra parte da historia.
-	if SaveManager.evento_dona_nice >= 4:
+	if _jonny_aqui():
 		GlobalUtils.show_center_message("hospital_trancado", tr("AVISO_HOSPITAL_TRANCADO"), 16, 2.2)
 		return
 	_saindo = true

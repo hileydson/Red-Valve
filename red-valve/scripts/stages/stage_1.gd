@@ -50,7 +50,9 @@ const CENA_IGREJA := "res://scenes/stages/igreja/igreja_interior.tscn"
 # INSTÂNCIA: giram e andam junto com ela, de graça.
 const NO_HOSPITAL := "locais_importantes/hospital_exterior"
 const CENA_HOSPITAL := "res://scenes/stages/hospital/hospital.tscn"
-const CENA_CORRIDA_JONNY := "res://scenes/stages/stage_1/corrida_jonny.tscn"
+## O Jonny no colo (evento da Dona Nice): da porta da igreja ao hospital e'
+## gameplay, pela cidade.
+const CARREGAR_JONNY := "res://scripts/player/player_carregar_jonny.gd"
 
 # --- Escola ------------------------------------------------------------------
 # Mesmíssimo arranjo do hospital, e pelo mesmo motivo: a escola é uma instância
@@ -102,9 +104,7 @@ func _ready() -> void:
 	GlobalEvents.in_cutscene = false
 	if is_instance_valid(real_time_label):
 		real_time_label.queue_free()
-	# Na corrida com o Jonny o checkpoint continua sendo o hospital (a igreja ja'
-	# gravou assim): fechar o jogo no meio da corrida volta com ele no colo.
-	SaveManager.save_game(CENA_HOSPITAL if GlobalEvents.corrida_com_jonny else "")
+	SaveManager.save_game()
 	GlobalEvents.set_low_nevoa()
 	GlobalEvents.is_maycow_normal = true
 	#$cameras/camera_1.make_current()
@@ -134,6 +134,7 @@ func _ready() -> void:
 	_garantir_amuleto_no_inventario()
 	_setup_areas_casas()
 	setup_player_spawn()
+	_jonny_na_cidade()
 
 ## Rede de segurança do amuleto.
 ##
@@ -189,8 +190,6 @@ func setup_player_spawn() -> void:
 		if jogador_nice and saida_nice:
 			jogador_nice.global_position = saida_nice.global_position
 			jogador_nice.global_rotation.y = saida_nice.global_rotation.y
-	elif GlobalEvents.corrida_com_jonny:
-		_corrida_com_jonny()
 	elif GlobalEvents.voltando_da_igreja:
 		GlobalEvents.voltando_da_igreja = false
 		_devolver_ao_adro_da_igreja()
@@ -225,6 +224,10 @@ func setup_player_spawn() -> void:
 		if player and usa_posicao_salva:
 			player.global_position = SaveManager.get_saved_position()
 			player.global_rotation.y = SaveManager.get_saved_rotation_y()
+		elif player and SaveManager.evento_dona_nice == 4:
+			# save com o Jonny no colo e sem posicao (a igreja zera a dela):
+			# volta pra porta da igreja, de onde ele saiu
+			_devolver_ao_adro_da_igreja()
 		elif player and spawn_point:
 			player.global_position = spawn_point.global_position
 			player.global_rotation.y = spawn_point.global_rotation.y + PI
@@ -286,6 +289,9 @@ func _process(delta: float) -> void:
 	
 	if not Input.is_action_just_pressed("ui_accept"):
 		return
+	# com o Jonny no colo o unico lugar pra entrar e' o hospital
+	if _jonny_no_colo() and not player_no_hospital:
+		return
 
 	if player_na_oficina:
 		player_na_oficina = false
@@ -336,6 +342,8 @@ func _process(delta: float) -> void:
 
 func _mostrar_prompt(texto: String) -> void:
 	if not is_instance_valid(prompt_label):
+		return
+	if _jonny_no_colo() and texto != tr("PROMPT_ENTER_HOSPITAL"):
 		return
 	prompt_label.text = texto
 	if prompt_label.has_meta("container"):
@@ -674,38 +682,21 @@ func _devolver_ao_adro_da_igreja() -> void:
 	_pousar_no_chao.call_deferred(jogador, IGREJA_PORTA)
 
 
-## A corrida da igreja pro hospital com o Jonny no colo (evento da Dona Nice).
-## A cidade so' serve de cenario: o jogador fica escondido e parado, quem
-## aparece e' o duble da cena `corrida_jonny.tscn`. No fim, o hospital.
-func _corrida_com_jonny() -> void:
-	var jogador = get_node_or_null("Player")
-	if not jogador:
-		jogador = find_child("Player", true, false)
-	GlobalEvents.in_cutscene = true
-	if jogador:
-		jogador.cutscene_set_hud_enabled(false)
-		jogador.cutscene_set_player_control(false)
-		jogador.cutscene_set_camera_current(false)
-		jogador.cutscene_set_model_hidden(true)
-	var corrida: Node = load(CENA_CORRIDA_JONNY).instantiate()
-	add_child(corrida)
-	# Parado e sem fisica: escondido, ele nao precisa de chao — e solto ele cai
-	# no vazio (a colisao do Terrain3D so' existe em volta dele) e a morte por
-	# queda nao respeita `in_cutscene`. O _ready do player religa a propria
-	# fisica dois quadros depois de nascer: congelar antes disso nao pega.
-	for _i in 3:
-		await get_tree().process_frame
-	if jogador:
-		jogador.velocity = Vector3.ZERO
-		jogador.set_physics_process(false)
-		# longe de toda area de porta (nascia dentro da da casa do Maycow, e o
-		# "Entrar na casa?" aparecia por cima da corrida)
-		jogador.global_position += Vector3(0.0, 300.0, 0.0)
-	_esconder_prompt(true)
-	corrida.comecar(self)
-	await corrida.terminou
-	GlobalEvents.corrida_com_jonny = false
-	LoadingScreen.load_scene(CENA_HOSPITAL)
+## O Jonny depois da igreja (evento da Dona Nice). Saindo de la' com ele no
+## colo, o Maycow aparece no adro (`voltando_da_igreja`) e vai a pe' ate' o
+## hospital — a cidade e' gameplay, nao cutscene. Deixado no chao aqui, ele
+## fica onde ficou (e no mapa) ate' o Maycow voltar pra pegar.
+func _jonny_na_cidade() -> void:
+	var carregar = load(CARREGAR_JONNY)
+	if not carregar.jonny_esta_em(scene_file_path):
+		return
+	carregar.preparar(get_node_or_null("Player"), scene_file_path)
+	GlobalUtils.mostrar_objetivo(tr("OBJ_LEVAR_JONNY_HOSPITAL"))
+
+
+func _jonny_no_colo() -> bool:
+	var jogador := get_node_or_null("Player")
+	return jogador != null and jogador.get("carregando_jonny") == true
 
 
 ## Acha o chão sob `alvo` e põe o nó em pé nele.

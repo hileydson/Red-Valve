@@ -11,6 +11,8 @@ OpenGameArt. Compostos por tools/audio/gerar_sons_igreja.py a partir de:
   "Heartbeat sounds"  https://opengameart.org/content/heartbeat-sounds
   "Ambient Horror"  https://opengameart.org/content/ambient-horror
   "Squish sounds effects"  https://opengameart.org/content/squish-sounds-effects
+  "Evil Screech 1"  https://opengameart.org/content/evil-screech-1
+  "High pitch scream sounds(2)"  https://opengameart.org/content/high-pitch-scream-sounds2
 
 O canto do culto (sussurro_culto.ogg) foi montado silaba a silaba a
 partir das amostras sussurradas do "Dialog vocal samples": nao e' uma

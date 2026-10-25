@@ -396,5 +396,6 @@ AVISO_LARGAR_JONNY_TECLADO,G: put Jonny down,G: deixar Jonny no chão
 PROMPT_PICK_JONNY_UP,Pick Jonny up,Pegar Jonny no colo
 AVISO_HOSPITAL_TRANCADO,The door is locked. There's no way out.,A porta está trancada. Não tem como sair.
 OBJ_HOSPITAL_AJUDA_JONNY,Find help for Jonny,Encontre ajuda para o Jonny
+OBJ_LEVAR_JONNY_HOSPITAL,Take Jonny to the hospital,Leve o Jonny ao hospital
 AVISO_SEM_MUNICAO_IGREJA,Out of ammo — look for ammo boxes around the church,Sem munição — procure caixas de munição pela igreja
 DEBUG_EVENT_DONA_NICE,Dona Nice event (0-5),Evento Dona Nice (0-5)

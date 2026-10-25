@@ -9,8 +9,9 @@ extends Node3D
 ## escolha a animacao e edite as chaves — nao ha' tempo escrito em codigo.
 ##
 ## Animacoes do diretor:
-##   chegada         a primeira entrada: o Maycow entra, ve o ritual, ela
-##                   levanta, gira a cabeca, ele saca a arma, ela vira monstro
+##   chegada         a primeira entrada: o Maycow, parado na porta, estica a
+##                   mao pro ritual; ela levanta, gira a cabeca, ele saca a
+##                   arma, ela vira monstro
 ##   vira_fase_2     a fase 1 morre e cresce na gigante que flutua
 ##   morte_final     a fase 2 morre e cai perto do Jonny
 ##   pega_jonny      o Maycow pega o Jonny no colo e sai correndo pela igreja
@@ -71,6 +72,12 @@ signal terminou(animacao: StringName)
 	set(v):
 		sangue_na_tela = v
 		_lente("sangue_tela", v)
+## Tunel escuro: so' o meio da tela fica nitido, o resto borra e escurece
+## (o giro da cabeca dela).
+@export_range(0.0, 1.0) var foco: float = 0.0:
+	set(v):
+		foco = v
+		_lente("foco", v)
 ## Tremor da camera ativa (0 parado, 1 terremoto).
 @export_range(0.0, 1.0) var tremor: float = 0.0
 ## Energia do pulso vermelho da transformacao (luz `efeitos/luz_pulso`).
@@ -133,6 +140,7 @@ func encerrar_lente() -> void:
 	plano = ""
 	barras = 0.0
 	borrao = 0.0
+	foco = 0.0
 	flash = 0.0
 	tremor = 0.0
 

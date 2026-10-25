@@ -5,7 +5,8 @@
                    barriga, peito arfando curto, cabeca rolando (laco)
   sendo_erguido    do chao pro colo (toca junto com o `pegar_jonny` do Maycow)
   no_colo          mole nos bracos do Maycow: cabeca pendendo pra tras,
-                   pernas dobradas sobre o braco dele (laco)
+                   os dois bracos caidos balancando, pernas dobradas
+                   sobre o braco dele (laco)
   sendo_largado    do colo pro chao (junto com o `largar_jonny`)
   deitado          no chao, respirando fraco (o peito sobe e desce, laco)
 
@@ -43,8 +44,9 @@ NO_COLO = {
     "neck": (0, -1, -0.1), "head": (0.1, -0.6, -0.8),
     "upper_arm.L": (0.15, 0.1, -1), "forearm.L": (0.05, 0.15, -1),
     "hand.L": (0.02, 0.1, -1), "fingers.L": (0, 0.1, -1),
-    "upper_arm.R": DR(0.2, 0.6, 0.5), "forearm.R": DR(-0.8, 0.35, 0.3),
-    "hand.R": DR(-0.9, 0.3, -0.2),
+    # a direita cai igual a esquerda (espelhada), balancando junto
+    "upper_arm.R": DR(0.15, 0.1, -1), "forearm.R": DR(0.05, 0.15, -1),
+    "hand.R": DR(0.02, 0.1, -1), "fingers.R": DR(0, 0.1, -1),
     "thigh.L": (0.08, 1, 0.35), "shin.L": (0.0, 0.55, -0.85),
     "foot.L": (0.0, 0.3, -0.95), "toe.L": (0, 0.6, -0.8),
 }
@@ -84,6 +86,8 @@ def clipes(rig, fontes):
     def mole(t, q, pos):
         A.girar(rig, q, "head", A.em_torno((0, 1, 0), 9 * math.sin(t * math.tau / 1.1)))
         A.girar(rig, q, "upper_arm.L", A.em_torno((0, 1, 0), 7 * math.sin(t * math.tau / 1.1 + 0.6)))
+        # o mesmo giro no braco espelhado: os dois pendem pro mesmo lado
+        A.girar(rig, q, "upper_arm.R", A.em_torno((0, 1, 0), 7 * math.sin(t * math.tau / 1.1 + 0.6)))
         A.girar(rig, q, "chest", A.em_torno((1, 0, 0), 1.5 * math.sin(t * math.tau / 1.6)))
         return pos
 

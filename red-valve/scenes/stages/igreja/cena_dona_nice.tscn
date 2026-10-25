@@ -1,55 +1,56 @@
 [gd_scene format=4]
 
-[ext_resource type="Script" path="res://scripts/stages/igreja/cena_dona_nice.gd" id="1_xgdbb"]
-[ext_resource type="PackedScene" path="res://assets/3d_model/stages/igreja/igreja_interior.glb" id="2_cwpg8"]
-[ext_resource type="PackedScene" path="res://scenes/npcs/igreja/maycow_cena.tscn" id="3_u7s2l"]
-[ext_resource type="Script" path="res://scripts/npcs/igreja/ator_igreja.gd" id="4_nfmjr"]
-[ext_resource type="Texture2D" path="res://assets/3d_model/npc/igreja/maycow_texture_0_1.png" id="5_fswqi"]
-[ext_resource type="Texture2D" path="res://assets/3d_model/npc/igreja/maycow_texture_0.png" id="6_0mlea"]
-[ext_resource type="PackedScene" path="res://assets/3d_model/player/the_negotiator_V1/the_negotiator_v1.glb" id="7_d6q5d"]
-[ext_resource type="AnimationLibrary" path="res://assets/3d_model/npc/igreja/maycow_clipes.tres" id="8_onvtm"]
-[ext_resource type="PackedScene" path="res://scenes/npcs/igreja/jonny.tscn" id="9_lc1ni"]
-[ext_resource type="PackedScene" path="res://scenes/npcs/igreja/dona_nice.tscn" id="10_f2o3d"]
-[ext_resource type="Texture2D" path="res://assets/3d_model/npc/igreja/dona_nice_base_color.jpg" id="11_5rxqv"]
-[ext_resource type="Texture2D" path="res://assets/3d_model/npc/igreja/dona_nice_metallic_roughness.jpg" id="12_oup2f"]
-[ext_resource type="Texture2D" path="res://assets/3d_model/npc/igreja/dona_nice_normal.jpg" id="13_ca35b"]
-[ext_resource type="PackedScene" path="res://assets/3d_model/npc/igreja/faca_ritual.glb" id="14_cuycq"]
-[ext_resource type="AnimationLibrary" path="res://assets/3d_model/npc/igreja/dona_nice_clipes.tres" id="15_m825m"]
-[ext_resource type="PackedScene" path="res://scenes/npcs/igreja/dona_nice_monster.tscn" id="16_i801b"]
-[ext_resource type="Texture2D" path="res://assets/images/textures/igreja/sangue_poca.png" id="17_tl4c6"]
-[ext_resource type="Texture2D" path="res://assets/images/textures/igreja/sangue_poca_orm.png" id="18_nj3ib"]
-[ext_resource type="Texture2D" path="res://assets/images/textures/igreja/simbolo_culto.png" id="19_xi8l0"]
-[ext_resource type="Texture2D" path="res://assets/images/textures/igreja/simbolo_culto_orm.png" id="20_bj5ip"]
-[ext_resource type="Texture2D" path="res://assets/images/textures/igreja/sangue_respingo.png" id="21_tning"]
-[ext_resource type="Texture2D" path="res://assets/images/textures/igreja/sangue_respingo_orm.png" id="22_tet4g"]
-[ext_resource type="Texture2D" path="res://assets/images/textures/igreja/sangue_rastro.png" id="23_g4ix0"]
-[ext_resource type="Texture2D" path="res://assets/images/textures/igreja/sangue_rastro_orm.png" id="24_4s6x7"]
-[ext_resource type="PackedScene" path="res://scenes/npcs/igreja/dona_nice_monster_fase_2.tscn" id="25_0mxta"]
-[ext_resource type="AudioStream" path="res://assets/sounds/igreja/sussurro_culto.ogg" id="26_88fh7"]
-[ext_resource type="AudioStream" path="res://assets/sounds/igreja/batimento_lento.ogg" id="27_f0ukj"]
-[ext_resource type="AudioStream" path="res://assets/sounds/igreja/batimento_rapido.ogg" id="28_4ybjc"]
-[ext_resource type="AudioStream" path="res://assets/sounds/igreja/gota_sangue.ogg" id="29_ultr8"]
-[ext_resource type="AudioStream" path="res://assets/sounds/igreja/gota_impacto.ogg" id="30_x1ga6"]
-[ext_resource type="AudioStream" path="res://assets/sounds/igreja/transformacao_ossos.ogg" id="31_no0lp"]
-[ext_resource type="AudioStream" path="res://assets/sounds/igreja/grito_transformacao.ogg" id="32_5nept"]
-[ext_resource type="AudioStream" path="res://assets/sounds/igreja/rugido_monstro.ogg" id="33_o5hn7"]
-[ext_resource type="AudioStream" path="res://assets/sounds/igreja/ambiente_ritual.ogg" id="34_aywj8"]
-[ext_resource type="AudioStream" path="res://assets/sounds/igreja/gemido_jonny.ogg" id="35_led6c"]
-[ext_resource type="AudioStream" path="res://assets/sounds/player/load_gun.mp3" id="36_vyafg"]
-[ext_resource type="Shader" path="res://shaders/cutscenes/igreja_lente.gdshader" id="37_2td5d"]
-[ext_resource type="FontFile" path="res://assets/fonts/SpecialElite-Regular.ttf" id="38_yge4t"]
+[ext_resource type="Script" path="res://scripts/stages/igreja/cena_dona_nice.gd" id="1_cwpg8"]
+[ext_resource type="PackedScene" path="res://assets/3d_model/stages/igreja/igreja_interior.glb" id="2_u7s2l"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/igreja/maycow_cena.tscn" id="3_nfmjr"]
+[ext_resource type="Script" path="res://scripts/npcs/igreja/ator_igreja.gd" id="4_fswqi"]
+[ext_resource type="Texture2D" path="res://assets/3d_model/npc/igreja/maycow_texture_0_1.png" id="5_0mlea"]
+[ext_resource type="Texture2D" path="res://assets/3d_model/npc/igreja/maycow_texture_0.png" id="6_d6q5d"]
+[ext_resource type="PackedScene" path="res://assets/3d_model/player/the_negotiator_V1/the_negotiator_v1.glb" id="7_onvtm"]
+[ext_resource type="AnimationLibrary" path="res://assets/3d_model/npc/igreja/maycow_clipes.tres" id="8_lc1ni"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/igreja/jonny.tscn" id="9_f2o3d"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/igreja/dona_nice.tscn" id="10_5rxqv"]
+[ext_resource type="Texture2D" path="res://assets/3d_model/npc/igreja/dona_nice_base_color.jpg" id="11_oup2f"]
+[ext_resource type="Texture2D" path="res://assets/3d_model/npc/igreja/dona_nice_metallic_roughness.jpg" id="12_ca35b"]
+[ext_resource type="Texture2D" path="res://assets/3d_model/npc/igreja/dona_nice_normal.jpg" id="13_cuycq"]
+[ext_resource type="PackedScene" path="res://assets/3d_model/npc/igreja/faca_ritual.glb" id="14_m825m"]
+[ext_resource type="AnimationLibrary" path="res://assets/3d_model/npc/igreja/dona_nice_clipes.tres" id="15_i801b"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/igreja/dona_nice_monster.tscn" id="16_tl4c6"]
+[ext_resource type="Texture2D" path="res://assets/images/textures/igreja/sangue_poca.png" id="17_nj3ib"]
+[ext_resource type="Texture2D" path="res://assets/images/textures/igreja/sangue_poca_orm.png" id="18_xi8l0"]
+[ext_resource type="Texture2D" path="res://assets/images/textures/igreja/simbolo_culto.png" id="19_bj5ip"]
+[ext_resource type="Texture2D" path="res://assets/images/textures/igreja/simbolo_culto_orm.png" id="20_tning"]
+[ext_resource type="Texture2D" path="res://assets/images/textures/igreja/sangue_respingo.png" id="21_tet4g"]
+[ext_resource type="Texture2D" path="res://assets/images/textures/igreja/sangue_respingo_orm.png" id="22_g4ix0"]
+[ext_resource type="Texture2D" path="res://assets/images/textures/igreja/sangue_rastro.png" id="23_4s6x7"]
+[ext_resource type="Texture2D" path="res://assets/images/textures/igreja/sangue_rastro_orm.png" id="24_0mxta"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/igreja/dona_nice_monster_fase_2.tscn" id="25_88fh7"]
+[ext_resource type="AudioStream" path="res://assets/sounds/igreja/sussurro_culto.ogg" id="26_f0ukj"]
+[ext_resource type="AudioStream" path="res://assets/sounds/igreja/batimento_lento.ogg" id="27_4ybjc"]
+[ext_resource type="AudioStream" path="res://assets/sounds/igreja/batimento_rapido.ogg" id="28_ultr8"]
+[ext_resource type="AudioStream" path="res://assets/sounds/igreja/gota_sangue.ogg" id="29_x1ga6"]
+[ext_resource type="AudioStream" path="res://assets/sounds/igreja/gota_impacto.ogg" id="30_no0lp"]
+[ext_resource type="AudioStream" path="res://assets/sounds/igreja/transformacao_ossos.ogg" id="31_5nept"]
+[ext_resource type="AudioStream" path="res://assets/sounds/igreja/grito_transformacao.ogg" id="32_o5hn7"]
+[ext_resource type="AudioStream" path="res://assets/sounds/igreja/rugido_monstro.ogg" id="33_aywj8"]
+[ext_resource type="AudioStream" path="res://assets/sounds/igreja/grito_monstro.ogg" id="34_led6c"]
+[ext_resource type="AudioStream" path="res://assets/sounds/igreja/ambiente_ritual.ogg" id="35_vyafg"]
+[ext_resource type="AudioStream" path="res://assets/sounds/igreja/gemido_jonny.ogg" id="36_2td5d"]
+[ext_resource type="AudioStream" path="res://assets/sounds/player/load_gun.mp3" id="37_yge4t"]
+[ext_resource type="Shader" path="res://shaders/cutscenes/igreja_lente.gdshader" id="38_0h3f6"]
+[ext_resource type="FontFile" path="res://assets/fonts/SpecialElite-Regular.ttf" id="39_gfojn"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6vpdv"]
 resource_name = "Material_1"
 transparency = 4
 cull_mode = 2
-albedo_texture = ExtResource("5_fswqi")
+albedo_texture = ExtResource("5_0mlea")
 metallic = 1.0
 roughness = 0.41008475
 emission_enabled = true
 emission = Color(1, 1, 1, 1)
 emission_operator = 1
-emission_texture = ExtResource("6_0mlea")
+emission_texture = ExtResource("6_d6q5d")
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_x0wcp"]
 resource_name = "maycow_char1"
@@ -2885,14 +2886,14 @@ shadow_mesh = SubResource("ArrayMesh_qbp12")
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fl85d"]
 resource_name = "material"
 cull_mode = 2
-albedo_texture = ExtResource("11_5rxqv")
+albedo_texture = ExtResource("11_oup2f")
 metallic = 1.0
-metallic_texture = ExtResource("12_oup2f")
+metallic_texture = ExtResource("12_ca35b")
 metallic_texture_channel = 2
-roughness_texture = ExtResource("12_oup2f")
+roughness_texture = ExtResource("12_ca35b")
 roughness_texture_channel = 1
 normal_enabled = true
-normal_texture = ExtResource("13_ca35b")
+normal_texture = ExtResource("13_cuycq")
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_isha3"]
 resource_name = "dona_nice_lid_L"
@@ -3143,22 +3144,22 @@ _surfaces = [{
 }]
 blend_shape_mode = 0
 
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_0h3f6"]
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_kdh87"]
 direction = Vector3(0, -1, 0)
 spread = 2.0
 initial_velocity_max = 0.05
 gravity = Vector3(0, -4, 0)
 scale_min = 0.6
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gfojn"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8c54c"]
 albedo_color = Color(0.11, 0, 0.004, 1)
 metallic_specular = 0.8
 roughness = 0.05
 clearcoat_enabled = true
 clearcoat_roughness = 0.02
 
-[sub_resource type="SphereMesh" id="SphereMesh_kdh87"]
-material = SubResource("StandardMaterial3D_gfojn")
+[sub_resource type="SphereMesh" id="SphereMesh_ant25"]
+material = SubResource("StandardMaterial3D_8c54c")
 radius = 0.0028
 height = 0.009
 radial_segments = 8
@@ -5617,173 +5618,173 @@ _data = {
 &"virar_corpo": SubResource("Animation_fkics")
 }
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8c54c"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dnbl4"]
 albedo_color = Color(0.78, 0.74, 0.66, 1)
 roughness = 0.6
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_ant25"]
-material = SubResource("StandardMaterial3D_8c54c")
+[sub_resource type="CylinderMesh" id="CylinderMesh_hx6g1"]
+material = SubResource("StandardMaterial3D_dnbl4")
 top_radius = 0.022
 bottom_radius = 0.025
 height = 0.1
 radial_segments = 10
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dnbl4"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_60dxt"]
 transparency = 1
 blend_mode = 1
 shading_mode = 0
 albedo_color = Color(1, 0.6, 0.2, 0.9)
 billboard_mode = 2
 
-[sub_resource type="QuadMesh" id="QuadMesh_hx6g1"]
-material = SubResource("StandardMaterial3D_dnbl4")
+[sub_resource type="QuadMesh" id="QuadMesh_rskb1"]
+material = SubResource("StandardMaterial3D_60dxt")
 size = Vector2(0.025, 0.05)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_60dxt"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bb11a"]
 albedo_color = Color(0.78, 0.74, 0.66, 1)
 roughness = 0.6
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_rskb1"]
-material = SubResource("StandardMaterial3D_60dxt")
+[sub_resource type="CylinderMesh" id="CylinderMesh_mou7a"]
+material = SubResource("StandardMaterial3D_bb11a")
 top_radius = 0.022
 bottom_radius = 0.025
 height = 0.1296
 radial_segments = 10
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bb11a"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qnhs4"]
 transparency = 1
 blend_mode = 1
 shading_mode = 0
 albedo_color = Color(1, 0.6, 0.2, 0.9)
 billboard_mode = 2
 
-[sub_resource type="QuadMesh" id="QuadMesh_mou7a"]
-material = SubResource("StandardMaterial3D_bb11a")
+[sub_resource type="QuadMesh" id="QuadMesh_c3qyx"]
+material = SubResource("StandardMaterial3D_qnhs4")
 size = Vector2(0.025, 0.05)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qnhs4"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ma1hw"]
 albedo_color = Color(0.78, 0.74, 0.66, 1)
 roughness = 0.6
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_c3qyx"]
-material = SubResource("StandardMaterial3D_qnhs4")
+[sub_resource type="CylinderMesh" id="CylinderMesh_werfg"]
+material = SubResource("StandardMaterial3D_ma1hw")
 top_radius = 0.022
 bottom_radius = 0.025
 height = 0.1592
 radial_segments = 10
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ma1hw"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ej1il"]
 transparency = 1
 blend_mode = 1
 shading_mode = 0
 albedo_color = Color(1, 0.6, 0.2, 0.9)
 billboard_mode = 2
 
-[sub_resource type="QuadMesh" id="QuadMesh_werfg"]
-material = SubResource("StandardMaterial3D_ma1hw")
+[sub_resource type="QuadMesh" id="QuadMesh_tod6q"]
+material = SubResource("StandardMaterial3D_ej1il")
 size = Vector2(0.025, 0.05)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ej1il"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bt44s"]
 albedo_color = Color(0.78, 0.74, 0.66, 1)
 roughness = 0.6
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_tod6q"]
-material = SubResource("StandardMaterial3D_ej1il")
+[sub_resource type="CylinderMesh" id="CylinderMesh_xc868"]
+material = SubResource("StandardMaterial3D_bt44s")
 top_radius = 0.022
 bottom_radius = 0.025
 height = 0.1088
 radial_segments = 10
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bt44s"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4fvu1"]
 transparency = 1
 blend_mode = 1
 shading_mode = 0
 albedo_color = Color(1, 0.6, 0.2, 0.9)
 billboard_mode = 2
 
-[sub_resource type="QuadMesh" id="QuadMesh_xc868"]
-material = SubResource("StandardMaterial3D_bt44s")
+[sub_resource type="QuadMesh" id="QuadMesh_k4g51"]
+material = SubResource("StandardMaterial3D_4fvu1")
 size = Vector2(0.025, 0.05)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4fvu1"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7t6ri"]
 albedo_color = Color(0.78, 0.74, 0.66, 1)
 roughness = 0.6
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_k4g51"]
-material = SubResource("StandardMaterial3D_4fvu1")
+[sub_resource type="CylinderMesh" id="CylinderMesh_nr0gw"]
+material = SubResource("StandardMaterial3D_7t6ri")
 top_radius = 0.022
 bottom_radius = 0.025
 height = 0.1384
 radial_segments = 10
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7t6ri"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_31waa"]
 transparency = 1
 blend_mode = 1
 shading_mode = 0
 albedo_color = Color(1, 0.6, 0.2, 0.9)
 billboard_mode = 2
 
-[sub_resource type="QuadMesh" id="QuadMesh_nr0gw"]
-material = SubResource("StandardMaterial3D_7t6ri")
+[sub_resource type="QuadMesh" id="QuadMesh_nb36b"]
+material = SubResource("StandardMaterial3D_31waa")
 size = Vector2(0.025, 0.05)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_31waa"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_w5dg2"]
 albedo_color = Color(0.78, 0.74, 0.66, 1)
 roughness = 0.6
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_nb36b"]
-material = SubResource("StandardMaterial3D_31waa")
+[sub_resource type="CylinderMesh" id="CylinderMesh_htt7k"]
+material = SubResource("StandardMaterial3D_w5dg2")
 top_radius = 0.022
 bottom_radius = 0.025
 height = 0.168
 radial_segments = 10
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_w5dg2"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_altwn"]
 transparency = 1
 blend_mode = 1
 shading_mode = 0
 albedo_color = Color(1, 0.6, 0.2, 0.9)
 billboard_mode = 2
 
-[sub_resource type="QuadMesh" id="QuadMesh_htt7k"]
-material = SubResource("StandardMaterial3D_w5dg2")
+[sub_resource type="QuadMesh" id="QuadMesh_gkcpr"]
+material = SubResource("StandardMaterial3D_altwn")
 size = Vector2(0.025, 0.05)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_altwn"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vba8b"]
 albedo_color = Color(0.78, 0.74, 0.66, 1)
 roughness = 0.6
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_gkcpr"]
-material = SubResource("StandardMaterial3D_altwn")
+[sub_resource type="CylinderMesh" id="CylinderMesh_qhn5g"]
+material = SubResource("StandardMaterial3D_vba8b")
 top_radius = 0.022
 bottom_radius = 0.025
 height = 0.1176
 radial_segments = 10
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vba8b"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wjl0o"]
 transparency = 1
 blend_mode = 1
 shading_mode = 0
 albedo_color = Color(1, 0.6, 0.2, 0.9)
 billboard_mode = 2
 
-[sub_resource type="QuadMesh" id="QuadMesh_qhn5g"]
-material = SubResource("StandardMaterial3D_vba8b")
+[sub_resource type="QuadMesh" id="QuadMesh_monry"]
+material = SubResource("StandardMaterial3D_wjl0o")
 size = Vector2(0.025, 0.05)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wjl0o"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_b04lw"]
 albedo_color = Color(0.11, 0, 0.004, 1)
 metallic_specular = 0.8
 roughness = 0.05
 clearcoat_enabled = true
 clearcoat_roughness = 0.02
 
-[sub_resource type="SphereMesh" id="SphereMesh_monry"]
-material = SubResource("StandardMaterial3D_wjl0o")
+[sub_resource type="SphereMesh" id="SphereMesh_sa27n"]
+material = SubResource("StandardMaterial3D_b04lw")
 radius = 0.0045
 height = 0.013
 
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_b04lw"]
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ecbus"]
 direction = Vector3(0, 1, 0)
 spread = 70.0
 initial_velocity_min = 0.25
@@ -5792,21 +5793,21 @@ gravity = Vector3(0, -6, 0)
 scale_min = 0.3
 scale_max = 0.9
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sa27n"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_j3fyg"]
 albedo_color = Color(0.11, 0, 0.004, 1)
 metallic_specular = 0.8
 roughness = 0.05
 clearcoat_enabled = true
 clearcoat_roughness = 0.02
 
-[sub_resource type="SphereMesh" id="SphereMesh_ecbus"]
-material = SubResource("StandardMaterial3D_sa27n")
+[sub_resource type="SphereMesh" id="SphereMesh_ls2iu"]
+material = SubResource("StandardMaterial3D_j3fyg")
 radius = 0.004
 height = 0.008
 radial_segments = 6
 rings = 3
 
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_j3fyg"]
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_r2evn"]
 emission_shape = 1
 emission_sphere_radius = 0.45
 direction = Vector3(0, 1, 0)
@@ -5819,22 +5820,22 @@ damping_max = 1.2
 scale_min = 0.4
 scale_max = 1.6
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ls2iu"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jubqv"]
 albedo_color = Color(0.11, 0, 0.004, 1)
 metallic_specular = 0.8
 roughness = 0.05
 clearcoat_enabled = true
 clearcoat_roughness = 0.02
 
-[sub_resource type="SphereMesh" id="SphereMesh_r2evn"]
-material = SubResource("StandardMaterial3D_ls2iu")
+[sub_resource type="SphereMesh" id="SphereMesh_3dmdp"]
+material = SubResource("StandardMaterial3D_jubqv")
 radius = 0.012
 height = 0.02
 radial_segments = 6
 rings = 3
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_jubqv"]
-shader = ExtResource("37_2td5d")
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_c6b0p"]
+shader = ExtResource("38_0h3f6")
 shader_parameter/barras = null
 shader_parameter/aberration = null
 shader_parameter/radial_blur = null
@@ -5842,7 +5843,7 @@ shader_parameter/barrel = null
 shader_parameter/vignette_strength = null
 shader_parameter/vignette_softness = null
 shader_parameter/grain = null
-shader_parameter/exposure = null
+shader_parameter/exposure = 1.18
 shader_parameter/saturation = null
 shader_parameter/grade_shadows = null
 shader_parameter/grade_highlights = null
@@ -5851,10 +5852,12 @@ shader_parameter/flash_color = null
 shader_parameter/flash = null
 shader_parameter/vermelho = null
 shader_parameter/gosma = null
+shader_parameter/cor_gosma = null
 shader_parameter/sangue_tela = null
+shader_parameter/foco = null
 
-[sub_resource type="Animation" id="Animation_3dmdp"]
-length = 57.0
+[sub_resource type="Animation" id="Animation_q1u35"]
+length = 52.066666
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -5862,7 +5865,7 @@ tracks/0/path = NodePath(".:barras")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 1.2, 55.6, 56.8),
+"times": PackedFloat32Array(0, 1.2, 50.666668, 51.866665),
 "transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 0,
 "values": [0.0, 1.0, 1.0, 0.0]
@@ -5870,458 +5873,482 @@ tracks/0/keys = {
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath(".:saturacao")
+tracks/1/path = NodePath(".:foco")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0, 18, 18.6, 23, 47.6, 49.6, 57),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
+"times": PackedFloat32Array(0, 29.2, 29.9, 33.916668, 34.266666),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
 "update": 0,
-"values": [0.85, 0.85, 0.55, 0.85, 0.85, 0.6, 0.85]
+"values": [0.0, 0.0, 1.0, 1.0, 0.0]
 }
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath(".:vermelho")
+tracks/2/path = NodePath(".:saturacao")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0, 47.6, 50.1, 53.7, 57),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"times": PackedFloat32Array(0, 12.6, 13.2, 17.6, 42.666668, 44.666668, 52.066666),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
 "update": 0,
-"values": [0.0, 0.0, 0.45, 0.35, 0.0]
+"values": [0.85, 0.85, 0.55, 0.85, 0.85, 0.6, 0.85]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
 tracks/3/enabled = true
-tracks/3/path = NodePath(".:tremor")
+tracks/3/path = NodePath(".:vermelho")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"times": PackedFloat32Array(0, 43.5, 43.6, 46, 47.6, 50.6, 52.7, 53.2, 54.9, 57),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"times": PackedFloat32Array(0, 42.666668, 45.166668, 48.766666, 52.066666),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
 "update": 0,
-"values": [0.0, 0.0, 0.05, 0.05, 0.15, 0.5, 0.3, 1.0, 0.25, 0.0]
+"values": [0.0, 0.0, 0.45, 0.35, 0.0]
 }
 tracks/4/type = "value"
 tracks/4/imported = false
 tracks/4/enabled = true
-tracks/4/path = NodePath(".:flash")
+tracks/4/path = NodePath(".:tremor")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
-"times": PackedFloat32Array(0, 53.3, 53.4, 54),
-"transitions": PackedFloat32Array(1, 1, 1, 1),
+"times": PackedFloat32Array(0, 38.566666, 38.666668, 41.066666, 42.666668, 45.666668, 47.766666, 48.266666, 49.966667, 52.066666),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
 "update": 0,
-"values": [0.0, 0.0, 0.55, 0.0]
+"values": [0.0, 0.0, 0.05, 0.05, 0.15, 0.5, 0.3, 1.0, 0.25, 0.0]
 }
 tracks/5/type = "value"
 tracks/5/imported = false
 tracks/5/enabled = true
-tracks/5/path = NodePath(".:borrao")
+tracks/5/path = NodePath(".:flash")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/keys = {
-"times": PackedFloat32Array(0, 53.3, 53.4, 54.3),
+"times": PackedFloat32Array(0, 48.366665, 48.466667, 49.066666),
 "transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 0,
-"values": [0.0, 0.0, 0.7, 0.0]
+"values": [0.0, 0.0, 0.55, 0.0]
 }
 tracks/6/type = "value"
 tracks/6/imported = false
 tracks/6/enabled = true
-tracks/6/path = NodePath(".:pulso")
+tracks/6/path = NodePath(".:borrao")
 tracks/6/interp = 1
 tracks/6/loop_wrap = true
 tracks/6/keys = {
-"times": PackedFloat32Array(0, 47.6, 48, 48.4, 48.9, 49.3, 49.8, 50.6, 53.4, 57),
+"times": PackedFloat32Array(0, 33.066666, 33.366665, 33.516666, 44.666668, 44.866665, 45.766666, 48.366665, 48.466667, 49.366665),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
 "update": 0,
-"values": [0.0, 0.0, 0.8, 0.2, 1.0, 0.3, 1.0, 0.6, 1.0, 0.15]
+"values": [0.0, 0.0, 0.35, 0.0, 0.0, 0.85, 0.0, 0.0, 0.7, 0.0]
 }
 tracks/7/type = "value"
 tracks/7/imported = false
 tracks/7/enabled = true
-tracks/7/path = NodePath(".:plano")
+tracks/7/path = NodePath(".:pulso")
 tracks/7/interp = 1
 tracks/7/loop_wrap = true
 tracks/7/keys = {
-"times": PackedFloat32Array(0, 6.6, 9.6, 14, 18, 23, 30, 34.6, 39.4, 41, 43.5, 46, 47.6, 52.7, 56.95),
+"times": PackedFloat32Array(0, 42.666668, 43.066666, 43.466667, 43.966667, 44.366665, 44.866665, 45.666668, 48.466667, 52.066666),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [0.0, 0.0, 0.8, 0.2, 1.0, 0.3, 1.0, 0.6, 1.0, 0.15]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath(".:plano")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0, 1.2, 4.2, 8.6, 12.6, 17.6, 24.6, 29.2, 34.466667, 36.066666, 38.566666, 41.066666, 42.666668, 47.766666, 52.016666),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
 "update": 1,
 "values": ["cam_entrada", "cam_rosto", "cam_ombro", "cam_faca", "cam_gota", "cam_longe", "cam_levanta", "cam_cabeca", "cam_sacar", "cam_olhos", "cam_mira", "cam_lateral", "cam_transforma", "cam_rugido", ""]
 }
-tracks/8/type = "position_3d"
-tracks/8/imported = false
-tracks/8/enabled = true
-tracks/8/path = NodePath("atores/Maycow")
-tracks/8/interp = 1
-tracks/8/loop_wrap = true
-tracks/8/keys = PackedFloat32Array(0, 1, 0, 0, -0.9600002, 6, 1, 0, 0, 4.2)
-tracks/9/type = "rotation_3d"
+tracks/9/type = "position_3d"
 tracks/9/imported = false
 tracks/9/enabled = true
 tracks/9/path = NodePath("atores/Maycow")
 tracks/9/interp = 1
 tracks/9/loop_wrap = true
-tracks/9/keys = PackedFloat32Array(0, 1, 0, 0, 0, 1)
-tracks/10/type = "animation"
+tracks/9/keys = PackedFloat32Array(0, 1, 0, 0, 4.2)
+tracks/10/type = "rotation_3d"
 tracks/10/imported = false
 tracks/10/enabled = true
-tracks/10/path = NodePath("atores/Maycow/anim")
+tracks/10/path = NodePath("atores/Maycow")
 tracks/10/interp = 1
 tracks/10/loop_wrap = true
-tracks/10/keys = {
-"clips": PackedStringArray("andar_lento", "esticar_mao", "mao_esticada", "sacar_arma", "mirando"),
-"times": PackedFloat32Array(0, 6, 8.6, 39.4, 40.9)
-}
-tracks/11/type = "value"
+tracks/10/keys = PackedFloat32Array(0, 1, 0, 0, 0, 1)
+tracks/11/type = "animation"
 tracks/11/imported = false
 tracks/11/enabled = true
-tracks/11/path = NodePath("atores/Maycow/modelo/Armature/Skeleton3D/mao_arma/pivo_arma:visible")
+tracks/11/path = NodePath("atores/Maycow/anim")
 tracks/11/interp = 1
 tracks/11/loop_wrap = true
 tracks/11/keys = {
-"times": PackedFloat32Array(0, 39.85),
+"clips": PackedStringArray("esticar_mao", "mao_esticada", "sacar_arma", "mirando"),
+"times": PackedFloat32Array(0, 2.6, 34.466667, 35.966667)
+}
+tracks/12/type = "value"
+tracks/12/imported = false
+tracks/12/enabled = true
+tracks/12/path = NodePath("atores/Maycow/modelo/Armature/Skeleton3D/mao_arma/pivo_arma:visible")
+tracks/12/interp = 1
+tracks/12/loop_wrap = true
+tracks/12/keys = {
+"times": PackedFloat32Array(0, 34.916668),
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [false, true]
 }
-tracks/12/type = "position_3d"
-tracks/12/imported = false
-tracks/12/enabled = true
-tracks/12/path = NodePath("cameras/cam_entrada")
-tracks/12/interp = 1
-tracks/12/loop_wrap = true
-tracks/12/keys = PackedFloat32Array(0, 1, 0.45, 1.45, 9.4, 2, 1, 0.45, 1.45, 9.3, 4, 1, 0.42, 1.46, 9.15, 6, 1, 0.4, 1.47, 9, 6.6, 1, 0.4, 1.47, 9)
-tracks/13/type = "rotation_3d"
+tracks/13/type = "position_3d"
 tracks/13/imported = false
 tracks/13/enabled = true
 tracks/13/path = NodePath("cameras/cam_entrada")
 tracks/13/interp = 1
 tracks/13/loop_wrap = true
-tracks/13/keys = PackedFloat32Array(0, 1, 0.008194147, 0.021702072, -0.0001778778, 0.9997309, 2, 1, 0.009934455, 0.026317922, -0.00026155775, 0.9996042, 4, 1, 0.011961806, 0.031435307, -0.00037623598, 0.9994341, 6, 1, 0.015551918, 0.041553613, -0.0006468756, 0.99901503, 6.6, 1, 0.015551918, 0.041553613, -0.0006468756, 0.99901503)
-tracks/14/type = "value"
+tracks/13/keys = PackedFloat32Array(0, 1, 0.42, 1.46, 9.3, 1.2, 1, 0.4, 1.47, 9)
+tracks/14/type = "rotation_3d"
 tracks/14/imported = false
 tracks/14/enabled = true
-tracks/14/path = NodePath("cameras/cam_entrada:fov")
+tracks/14/path = NodePath("cameras/cam_entrada")
 tracks/14/interp = 1
 tracks/14/loop_wrap = true
-tracks/14/keys = {
-"times": PackedFloat32Array(0, 2, 4, 6, 6.6),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
-"update": 0,
-"values": [26.0, 26.0, 27.0, 28.0, 28.0]
-}
-tracks/15/type = "position_3d"
+tracks/14/keys = PackedFloat32Array(0, 1, 0.015614432, 0.041067183, -0.0006418607, 0.99903417, 1.2, 1, 0.015551918, 0.041553613, -0.0006468756, 0.99901503)
+tracks/15/type = "value"
 tracks/15/imported = false
 tracks/15/enabled = true
-tracks/15/path = NodePath("cameras/cam_rosto")
+tracks/15/path = NodePath("cameras/cam_entrada:fov")
 tracks/15/interp = 1
 tracks/15/loop_wrap = true
-tracks/15/keys = PackedFloat32Array(6.6, 1, -0.35, 1.66, 5.35, 9.6, 1, -0.3, 1.65, 5.05)
-tracks/16/type = "rotation_3d"
+tracks/15/keys = {
+"times": PackedFloat32Array(0, 1.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [27.0, 28.0]
+}
+tracks/16/type = "position_3d"
 tracks/16/imported = false
 tracks/16/enabled = true
 tracks/16/path = NodePath("cameras/cam_rosto")
 tracks/16/interp = 1
 tracks/16/loop_wrap = true
-tracks/16/keys = PackedFloat32Array(6.6, 1, -0.025655217, -0.15336639, -0.0039831293, 0.98782825, 9.6, 1, -0.028753838, -0.17834857, -0.0052140644, 0.9835333)
-tracks/17/type = "value"
+tracks/16/keys = PackedFloat32Array(1.2, 1, -0.35, 1.66, 5.35, 4.2, 1, -0.3, 1.65, 5.05)
+tracks/17/type = "rotation_3d"
 tracks/17/imported = false
 tracks/17/enabled = true
-tracks/17/path = NodePath("cameras/cam_rosto:fov")
+tracks/17/path = NodePath("cameras/cam_rosto")
 tracks/17/interp = 1
 tracks/17/loop_wrap = true
-tracks/17/keys = {
-"times": PackedFloat32Array(6.6, 9.6),
+tracks/17/keys = PackedFloat32Array(1.2, 1, -0.025655217, -0.15336639, -0.0039831293, 0.98782825, 4.2, 1, -0.028753838, -0.17834857, -0.0052140644, 0.9835333)
+tracks/18/type = "value"
+tracks/18/imported = false
+tracks/18/enabled = true
+tracks/18/path = NodePath("cameras/cam_rosto:fov")
+tracks/18/interp = 1
+tracks/18/loop_wrap = true
+tracks/18/keys = {
+"times": PackedFloat32Array(1.2, 4.2),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [34.0, 32.0]
 }
-tracks/18/type = "position_3d"
-tracks/18/imported = false
-tracks/18/enabled = true
-tracks/18/path = NodePath("cameras/cam_ombro")
-tracks/18/interp = 1
-tracks/18/loop_wrap = true
-tracks/18/keys = PackedFloat32Array(9.6, 1, -0.42, 1.74, 3.35, 14, 1, -0.36, 1.71, 3.85)
-tracks/19/type = "rotation_3d"
+tracks/19/type = "position_3d"
 tracks/19/imported = false
 tracks/19/enabled = true
 tracks/19/path = NodePath("cameras/cam_ombro")
 tracks/19/interp = 1
 tracks/19/loop_wrap = true
-tracks/19/keys = PackedFloat32Array(9.6, 1, 0.0003928809, 0.99945414, 0.03040658, -0.012913865, 14, 1, 0.00036570948, 0.99942243, 0.03200376, -0.01142048)
-tracks/20/type = "value"
+tracks/19/keys = PackedFloat32Array(4.2, 1, -0.42, 1.74, 3.35, 8.6, 1, -0.36, 1.71, 3.85)
+tracks/20/type = "rotation_3d"
 tracks/20/imported = false
 tracks/20/enabled = true
-tracks/20/path = NodePath("cameras/cam_ombro:fov")
+tracks/20/path = NodePath("cameras/cam_ombro")
 tracks/20/interp = 1
 tracks/20/loop_wrap = true
-tracks/20/keys = {
-"times": PackedFloat32Array(9.6, 14),
+tracks/20/keys = PackedFloat32Array(4.2, 1, 0.0003928809, 0.99945414, 0.03040658, -0.012913865, 8.6, 1, 0.00036570948, 0.99942243, 0.03200376, -0.01142048)
+tracks/21/type = "value"
+tracks/21/imported = false
+tracks/21/enabled = true
+tracks/21/path = NodePath("cameras/cam_ombro:fov")
+tracks/21/interp = 1
+tracks/21/loop_wrap = true
+tracks/21/keys = {
+"times": PackedFloat32Array(4.2, 8.6),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [40.0, 36.0]
 }
-tracks/21/type = "animation"
-tracks/21/imported = false
-tracks/21/enabled = true
-tracks/21/path = NodePath("atores/Jonny/anim")
-tracks/21/interp = 1
-tracks/21/loop_wrap = true
-tracks/21/keys = {
-"clips": PackedStringArray("caido_agonia"),
-"times": PackedFloat32Array(0)
-}
-tracks/22/type = "audio"
+tracks/22/type = "animation"
 tracks/22/imported = false
 tracks/22/enabled = true
-tracks/22/path = NodePath("sons/gemido")
+tracks/22/path = NodePath("atores/Jonny/anim")
 tracks/22/interp = 1
 tracks/22/loop_wrap = true
 tracks/22/keys = {
+"clips": PackedStringArray("caido_agonia"),
+"times": PackedFloat32Array(0)
+}
+tracks/23/type = "audio"
+tracks/23/imported = false
+tracks/23/enabled = true
+tracks/23/path = NodePath("sons/gemido")
+tracks/23/interp = 1
+tracks/23/loop_wrap = true
+tracks/23/keys = {
 "clips": [{
 "end_offset": 0.0,
 "start_offset": 0.0,
-"stream": ExtResource("35_led6c")
+"stream": ExtResource("36_2td5d")
 }, {
 "end_offset": 0.0,
 "start_offset": 0.0,
-"stream": ExtResource("35_led6c")
+"stream": ExtResource("36_2td5d")
 }],
-"times": PackedFloat32Array(25, 33)
+"times": PackedFloat32Array(19.6, 27.6)
 }
-tracks/22/use_blend = true
-tracks/23/type = "position_3d"
-tracks/23/imported = false
-tracks/23/enabled = true
-tracks/23/path = NodePath("cameras/cam_faca")
-tracks/23/interp = 1
-tracks/23/loop_wrap = true
-tracks/23/keys = PackedFloat32Array(14, 1, 0.2835499, 0.5723586, 19.230265, 18, 1, 0.16354991, 0.49235862, 19.330263)
-tracks/24/type = "rotation_3d"
+tracks/23/use_blend = true
+tracks/24/type = "position_3d"
 tracks/24/imported = false
 tracks/24/enabled = true
 tracks/24/path = NodePath("cameras/cam_faca")
 tracks/24/interp = 1
 tracks/24/loop_wrap = true
-tracks/24/keys = PackedFloat32Array(14, 1, -0.068515986, 0.87914306, 0.13313933, 0.45242348, 18, 1, -0.07547548, 0.870323, 0.14102751, 0.46578175)
-tracks/25/type = "value"
+tracks/24/keys = PackedFloat32Array(8.6, 1, 0.28354663, 0.57242477, 19.230267, 12.6, 1, 0.16354665, 0.49242476, 19.330265)
+tracks/25/type = "rotation_3d"
 tracks/25/imported = false
 tracks/25/enabled = true
-tracks/25/path = NodePath("cameras/cam_faca:fov")
+tracks/25/path = NodePath("cameras/cam_faca")
 tracks/25/interp = 1
 tracks/25/loop_wrap = true
-tracks/25/keys = {
-"times": PackedFloat32Array(14, 18),
+tracks/25/keys = PackedFloat32Array(8.6, 1, -0.068516, 0.87914306, 0.13313937, 0.45242342, 12.6, 1, -0.07547548, 0.870323, 0.14102751, 0.46578175)
+tracks/26/type = "value"
+tracks/26/imported = false
+tracks/26/enabled = true
+tracks/26/path = NodePath("cameras/cam_faca:fov")
+tracks/26/interp = 1
+tracks/26/loop_wrap = true
+tracks/26/keys = {
+"times": PackedFloat32Array(8.6, 12.6),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [30.0, 24.0]
 }
-tracks/26/type = "value"
-tracks/26/imported = false
-tracks/26/enabled = true
-tracks/26/path = NodePath("efeitos/gota:visible")
-tracks/26/interp = 1
-tracks/26/loop_wrap = true
-tracks/26/keys = {
-"times": PackedFloat32Array(0, 18, 21.8),
+tracks/27/type = "value"
+tracks/27/imported = false
+tracks/27/enabled = true
+tracks/27/path = NodePath("efeitos/gota:visible")
+tracks/27/interp = 1
+tracks/27/loop_wrap = true
+tracks/27/keys = {
+"times": PackedFloat32Array(0, 12.6, 16.4),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 1,
 "values": [false, true, false]
 }
-tracks/27/type = "position_3d"
-tracks/27/imported = false
-tracks/27/enabled = true
-tracks/27/path = NodePath("efeitos/gota")
-tracks/27/interp = 1
-tracks/27/loop_wrap = true
-tracks/27/keys = PackedFloat32Array(18, 1, -0.1364501, 0.3683586, 19.530264, 19.4, 1, -0.1364501, 0.37235862, 19.530264, 19.6, 1, -0.1364501, 0.37159893, 19.530264, 19.8, 1, -0.1364501, 0.36931983, 19.530264, 20, 1, -0.1364501, 0.3655213, 19.530264, 20.2, 1, -0.1364501, 0.36020342, 19.530264, 20.4, 1, -0.1364501, 0.35336614, 19.530264, 20.6, 1, -0.1364501, 0.34500945, 19.530264, 20.8, 1, -0.1364501, 0.33513334, 19.530264, 21, 1, -0.1364501, 0.32373786, 19.530264, 21.2, 1, -0.1364501, 0.31082296, 19.530264, 21.4, 1, -0.1364501, 0.2963887, 19.530264, 21.6, 1, -0.1364501, 0.28043497, 19.530264, 21.8, 1, -0.1364501, 0.2629619, 19.530264)
-tracks/28/type = "value"
+tracks/28/type = "position_3d"
 tracks/28/imported = false
 tracks/28/enabled = true
-tracks/28/path = NodePath("efeitos/gota:scale")
+tracks/28/path = NodePath("efeitos/gota")
 tracks/28/interp = 1
 tracks/28/loop_wrap = true
-tracks/28/keys = {
-"times": PackedFloat32Array(18, 19.2, 19.4, 19.8, 21.8),
+tracks/28/keys = PackedFloat32Array(12.6, 1, -0.13645336, 0.36842474, 19.530266, 14, 1, -0.13645336, 0.37242475, 19.530266, 14.2, 1, -0.13645336, 0.37166446, 19.530266, 14.4, 1, -0.13645336, 0.3693836, 19.530266, 14.6, 1, -0.13645336, 0.3655822, 19.530266, 14.8, 1, -0.13645336, 0.3602602, 19.530266, 15, 1, -0.13645336, 0.35341763, 19.530266, 15.2, 1, -0.13645336, 0.3450545, 19.530266, 15.4, 1, -0.13645336, 0.3351708, 19.530266, 15.6, 1, -0.13645336, 0.32376653, 19.530266, 15.8, 1, -0.13645336, 0.3108417, 19.530266, 16, 1, -0.13645336, 0.29639632, 19.530266, 16.2, 1, -0.13645336, 0.28043032, 19.530266, 16.4, 1, -0.13645336, 0.26294377, 19.530266)
+tracks/29/type = "value"
+tracks/29/imported = false
+tracks/29/enabled = true
+tracks/29/path = NodePath("efeitos/gota:scale")
+tracks/29/interp = 1
+tracks/29/loop_wrap = true
+tracks/29/keys = {
+"times": PackedFloat32Array(12.6, 13.8, 14, 14.4, 16.4),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1),
 "update": 0,
 "values": [Vector3(0.3, 0.3, 0.3), Vector3(1, 1.15, 1), Vector3(0.9, 1.4, 0.9), Vector3(1, 1, 1), Vector3(1, 1.25, 1)]
 }
-tracks/29/type = "position_3d"
-tracks/29/imported = false
-tracks/29/enabled = true
-tracks/29/path = NodePath("efeitos/respingo")
-tracks/29/interp = 1
-tracks/29/loop_wrap = true
-tracks/29/keys = PackedFloat32Array(0, 1, -0.1364501, 0.2629619, 19.530264)
 tracks/30/type = "position_3d"
 tracks/30/imported = false
 tracks/30/enabled = true
-tracks/30/path = NodePath("efeitos/respingo_gota")
+tracks/30/path = NodePath("efeitos/respingo")
 tracks/30/interp = 1
 tracks/30/loop_wrap = true
-tracks/30/keys = PackedFloat32Array(0, 1, -0.1364501, 0.2629619, 19.530264)
-tracks/31/type = "value"
+tracks/30/keys = PackedFloat32Array(0, 1, -0.13645336, 0.26294377, 19.530266)
+tracks/31/type = "position_3d"
 tracks/31/imported = false
 tracks/31/enabled = true
-tracks/31/path = NodePath("efeitos/respingo_gota:scale")
+tracks/31/path = NodePath("efeitos/respingo_gota")
 tracks/31/interp = 1
 tracks/31/loop_wrap = true
-tracks/31/keys = {
-"times": PackedFloat32Array(0, 21.8, 22.05),
+tracks/31/keys = PackedFloat32Array(0, 1, -0.13645336, 0.26294377, 19.530266)
+tracks/32/type = "value"
+tracks/32/imported = false
+tracks/32/enabled = true
+tracks/32/path = NodePath("efeitos/respingo_gota:scale")
+tracks/32/interp = 1
+tracks/32/loop_wrap = true
+tracks/32/keys = {
+"times": PackedFloat32Array(0, 16.4, 16.65),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
 "values": [Vector3(0.01, 1, 0.01), Vector3(0.01, 1, 0.01), Vector3(1, 1, 1)]
 }
-tracks/32/type = "method"
-tracks/32/imported = false
-tracks/32/enabled = true
-tracks/32/path = NodePath(".")
-tracks/32/interp = 1
-tracks/32/loop_wrap = true
-tracks/32/keys = {
-"times": PackedFloat32Array(21.8),
+tracks/33/type = "method"
+tracks/33/imported = false
+tracks/33/enabled = true
+tracks/33/path = NodePath(".")
+tracks/33/interp = 1
+tracks/33/loop_wrap = true
+tracks/33/keys = {
+"times": PackedFloat32Array(16.4),
 "transitions": PackedFloat32Array(1),
 "values": [{
 "args": [0.25, 0.15],
 "method": &"vibrar"
 }]
 }
-tracks/33/type = "position_3d"
-tracks/33/imported = false
-tracks/33/enabled = true
-tracks/33/path = NodePath("cameras/cam_gota")
-tracks/33/interp = 1
-tracks/33/loop_wrap = true
-tracks/33/keys = PackedFloat32Array(18, 1, 0.1035499, 0.39235863, 19.370264, 19.4, 1, 0.1035499, 0.37235862, 19.370264, 20.6, 1, 0.12354989, 0.3595396, 19.350264, 21.8, 1, 0.16354991, 0.3629619, 19.290264, 23, 1, 0.22354992, 0.4229619, 19.230265)
-tracks/34/type = "rotation_3d"
+tracks/34/type = "position_3d"
 tracks/34/imported = false
 tracks/34/enabled = true
 tracks/34/path = NodePath("cameras/cam_gota")
 tracks/34/interp = 1
 tracks/34/loop_wrap = true
-tracks/34/keys = PackedFloat32Array(18, 1, -0.024439268, 0.88049114, 0.045665164, 0.47122478, 19.4, 1, -0.024439268, 0.88049114, 0.045665164, 0.47122478, 20.6, 1, -0.018644901, 0.8850644, 0.0355851, 0.46373165, 21.8, 1, -0.055004593, 0.8940078, 0.11444386, 0.4296826, 23, 1, -0.069463916, 0.8933624, 0.14830811, 0.41842926)
-tracks/35/type = "value"
+tracks/34/keys = PackedFloat32Array(12.6, 1, 0.103546634, 0.39242476, 19.370266, 14, 1, 0.103546634, 0.37242475, 19.370266, 15.2, 1, 0.12354663, 0.35958046, 19.350266, 16.4, 1, 0.16354665, 0.36294377, 19.290266, 17.6, 1, 0.22354665, 0.42294377, 19.230267)
+tracks/35/type = "rotation_3d"
 tracks/35/imported = false
 tracks/35/enabled = true
-tracks/35/path = NodePath("cameras/cam_gota:fov")
+tracks/35/path = NodePath("cameras/cam_gota")
 tracks/35/interp = 1
 tracks/35/loop_wrap = true
-tracks/35/keys = {
-"times": PackedFloat32Array(18, 19.4, 20.6, 21.8, 23),
+tracks/35/keys = PackedFloat32Array(12.6, 1, -0.024439268, 0.88049114, 0.045665164, 0.47122478, 14, 1, -0.024439268, 0.88049114, 0.045665164, 0.47122478, 15.2, 1, -0.018647963, 0.88506424, 0.035590943, 0.4637315, 16.4, 1, -0.055004593, 0.8940078, 0.11444386, 0.4296826, 17.6, 1, -0.069463916, 0.8933624, 0.14830811, 0.41842926)
+tracks/36/type = "value"
+tracks/36/imported = false
+tracks/36/enabled = true
+tracks/36/path = NodePath("cameras/cam_gota:fov")
+tracks/36/interp = 1
+tracks/36/loop_wrap = true
+tracks/36/keys = {
+"times": PackedFloat32Array(12.6, 14, 15.2, 16.4, 17.6),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1),
 "update": 0,
 "values": [22.0, 22.0, 24.0, 26.0, 28.0]
 }
-tracks/36/type = "audio"
-tracks/36/imported = false
-tracks/36/enabled = true
-tracks/36/path = NodePath("sons/gota")
-tracks/36/interp = 1
-tracks/36/loop_wrap = true
-tracks/36/keys = {
-"clips": [{
-"end_offset": 0.0,
-"start_offset": 0.0,
-"stream": ExtResource("29_ultr8")
-}],
-"times": PackedFloat32Array(19.3)
-}
-tracks/36/use_blend = true
 tracks/37/type = "audio"
 tracks/37/imported = false
 tracks/37/enabled = true
-tracks/37/path = NodePath("sons/gota_impacto")
+tracks/37/path = NodePath("sons/gota")
 tracks/37/interp = 1
 tracks/37/loop_wrap = true
 tracks/37/keys = {
 "clips": [{
 "end_offset": 0.0,
 "start_offset": 0.0,
-"stream": ExtResource("30_x1ga6")
+"stream": ExtResource("29_x1ga6")
 }],
-"times": PackedFloat32Array(21.8)
+"times": PackedFloat32Array(13.9)
 }
 tracks/37/use_blend = true
 tracks/38/type = "audio"
 tracks/38/imported = false
 tracks/38/enabled = true
-tracks/38/path = NodePath("sons/batimento")
+tracks/38/path = NodePath("sons/gota_impacto")
 tracks/38/interp = 1
 tracks/38/loop_wrap = true
 tracks/38/keys = {
 "clips": [{
 "end_offset": 0.0,
 "start_offset": 0.0,
-"stream": ExtResource("27_f0ukj")
+"stream": ExtResource("30_no0lp")
 }],
-"times": PackedFloat32Array(18)
+"times": PackedFloat32Array(16.4)
 }
 tracks/38/use_blend = true
-tracks/39/type = "animation"
+tracks/39/type = "audio"
 tracks/39/imported = false
 tracks/39/enabled = true
-tracks/39/path = NodePath("atores/DonaNice/anim")
+tracks/39/path = NodePath("sons/batimento")
 tracks/39/interp = 1
 tracks/39/loop_wrap = true
 tracks/39/keys = {
-"clips": PackedStringArray("ajoelhada_sussurro", "levantar", "girar_cabeca", "olhando_parada", "virar_corpo", "convulsao"),
-"times": PackedFloat32Array(0, 30, 34.6, 38.1, 46, 47.6)
-}
-tracks/40/type = "audio"
-tracks/40/imported = false
-tracks/40/enabled = true
-tracks/40/path = NodePath("sons/sussurro")
-tracks/40/interp = 1
-tracks/40/loop_wrap = true
-tracks/40/keys = {
 "clips": [{
 "end_offset": 0.0,
 "start_offset": 0.0,
-"stream": ExtResource("26_88fh7")
+"stream": ExtResource("27_4ybjc")
 }],
-"times": PackedFloat32Array(0)
+"times": PackedFloat32Array(12.6)
 }
-tracks/40/use_blend = true
+tracks/39/use_blend = true
+tracks/40/type = "animation"
+tracks/40/imported = false
+tracks/40/enabled = true
+tracks/40/path = NodePath("atores/DonaNice/anim")
+tracks/40/interp = 1
+tracks/40/loop_wrap = true
+tracks/40/keys = {
+"clips": PackedStringArray("ajoelhada_sussurro", "levantar", "girar_cabeca", "olhando_parada", "virar_corpo", "convulsao"),
+"times": PackedFloat32Array(0, 24.6, 29.2, 33.866665, 41.066666, 42.666668)
+}
 tracks/41/type = "value"
 tracks/41/imported = false
 tracks/41/enabled = true
-tracks/41/path = NodePath("sons/sussurro:volume_db")
+tracks/41/path = NodePath("atores/DonaNice/anim:speed_scale")
 tracks/41/interp = 1
 tracks/41/loop_wrap = true
 tracks/41/keys = {
-"times": PackedFloat32Array(0, 9.6, 14, 23, 32, 34.6),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
-"update": 0,
-"values": [-20.0, -12.0, -6.0, -2.0, -4.0, -30.0]
+"times": PackedFloat32Array(0, 29.2, 33.866665),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [1.0, 0.75, 1.0]
 }
 tracks/42/type = "audio"
 tracks/42/imported = false
 tracks/42/enabled = true
-tracks/42/path = NodePath("sons/ambiente")
+tracks/42/path = NodePath("sons/sussurro")
 tracks/42/interp = 1
 tracks/42/loop_wrap = true
 tracks/42/keys = {
 "clips": [{
 "end_offset": 0.0,
 "start_offset": 0.0,
-"stream": ExtResource("34_aywj8")
+"stream": ExtResource("26_f0ukj")
 }],
 "times": PackedFloat32Array(0)
 }
 tracks/42/use_blend = true
-tracks/43/type = "method"
+tracks/43/type = "value"
 tracks/43/imported = false
 tracks/43/enabled = true
-tracks/43/path = NodePath(".")
+tracks/43/path = NodePath("sons/sussurro:volume_db")
 tracks/43/interp = 1
 tracks/43/loop_wrap = true
 tracks/43/keys = {
-"times": PackedFloat32Array(23.6, 26.6, 29.4, 32.6, 41.4),
+"times": PackedFloat32Array(0, 4.2, 8.6, 17.6, 26.6, 29.2),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [-20.0, -12.0, -6.0, -2.0, -4.0, -30.0]
+}
+tracks/44/type = "audio"
+tracks/44/imported = false
+tracks/44/enabled = true
+tracks/44/path = NodePath("sons/ambiente")
+tracks/44/interp = 1
+tracks/44/loop_wrap = true
+tracks/44/keys = {
+"clips": [{
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": ExtResource("35_vyafg")
+}],
+"times": PackedFloat32Array(0)
+}
+tracks/44/use_blend = true
+tracks/45/type = "method"
+tracks/45/imported = false
+tracks/45/enabled = true
+tracks/45/path = NodePath(".")
+tracks/45/interp = 1
+tracks/45/loop_wrap = true
+tracks/45/keys = {
+"times": PackedFloat32Array(18.2, 21.2, 24, 27.2, 36.466667),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1),
 "values": [{
 "args": ["IGR_SUSSURRO_1", 3.0],
@@ -6340,293 +6367,269 @@ tracks/43/keys = {
 "method": &"legenda"
 }]
 }
-tracks/44/type = "position_3d"
-tracks/44/imported = false
-tracks/44/enabled = true
-tracks/44/path = NodePath("cameras/cam_longe")
-tracks/44/interp = 1
-tracks/44/loop_wrap = true
-tracks/44/keys = PackedFloat32Array(23, 1, 1.3, 1.75, 27.6, 30, 1, 1, 1.65, 26.2)
-tracks/45/type = "rotation_3d"
-tracks/45/imported = false
-tracks/45/enabled = true
-tracks/45/path = NodePath("cameras/cam_longe")
-tracks/45/interp = 1
-tracks/45/loop_wrap = true
-tracks/45/keys = PackedFloat32Array(23, 1, -0.0735628, 0.077392496, 0.0057260375, 0.9942666, 30, 1, -0.081433505, 0.0716606, 0.0058703143, 0.9940819)
-tracks/46/type = "value"
+tracks/46/type = "position_3d"
 tracks/46/imported = false
 tracks/46/enabled = true
-tracks/46/path = NodePath("cameras/cam_longe:fov")
+tracks/46/path = NodePath("cameras/cam_longe")
 tracks/46/interp = 1
 tracks/46/loop_wrap = true
-tracks/46/keys = {
-"times": PackedFloat32Array(23, 30),
+tracks/46/keys = PackedFloat32Array(17.6, 1, 1.3, 1.75, 27.6, 24.6, 1, 1, 1.65, 26.2)
+tracks/47/type = "rotation_3d"
+tracks/47/imported = false
+tracks/47/enabled = true
+tracks/47/path = NodePath("cameras/cam_longe")
+tracks/47/interp = 1
+tracks/47/loop_wrap = true
+tracks/47/keys = PackedFloat32Array(17.6, 1, -0.0735628, 0.077392496, 0.0057260375, 0.9942666, 24.6, 1, -0.081433505, 0.0716606, 0.0058703143, 0.9940819)
+tracks/48/type = "value"
+tracks/48/imported = false
+tracks/48/enabled = true
+tracks/48/path = NodePath("cameras/cam_longe:fov")
+tracks/48/interp = 1
+tracks/48/loop_wrap = true
+tracks/48/keys = {
+"times": PackedFloat32Array(17.6, 24.6),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [30.0, 30.0]
 }
-tracks/47/type = "position_3d"
-tracks/47/imported = false
-tracks/47/enabled = true
-tracks/47/path = NodePath("cameras/cam_levanta")
-tracks/47/interp = 1
-tracks/47/loop_wrap = true
-tracks/47/keys = PackedFloat32Array(30, 1, 0.75, 0.55, 21.9, 32.2, 1, 0.7, 0.58, 21.7, 34.6, 1, 0.65, 0.62, 21.5)
-tracks/48/type = "rotation_3d"
-tracks/48/imported = false
-tracks/48/enabled = true
-tracks/48/path = NodePath("cameras/cam_levanta")
-tracks/48/interp = 1
-tracks/48/loop_wrap = true
-tracks/48/keys = PackedFloat32Array(30, 1, 0.04012784, 0.119290195, -0.0048252842, 0.99203646, 32.2, 1, 0.071851134, 0.11887498, -0.008625238, 0.9902685, 34.6, 1, 0.13196768, 0.11790103, -0.015810665, 0.9840904)
-tracks/49/type = "value"
+tracks/49/type = "position_3d"
 tracks/49/imported = false
 tracks/49/enabled = true
-tracks/49/path = NodePath("cameras/cam_levanta:fov")
+tracks/49/path = NodePath("cameras/cam_levanta")
 tracks/49/interp = 1
 tracks/49/loop_wrap = true
-tracks/49/keys = {
-"times": PackedFloat32Array(30, 32.2, 34.6),
+tracks/49/keys = PackedFloat32Array(24.6, 1, 0.75, 0.55, 21.9, 26.8, 1, 0.7, 0.58, 21.7, 29.2, 1, 0.65, 0.62, 21.5)
+tracks/50/type = "rotation_3d"
+tracks/50/imported = false
+tracks/50/enabled = true
+tracks/50/path = NodePath("cameras/cam_levanta")
+tracks/50/interp = 1
+tracks/50/loop_wrap = true
+tracks/50/keys = PackedFloat32Array(24.6, 1, 0.04012784, 0.119290195, -0.0048252842, 0.99203646, 26.8, 1, 0.071851134, 0.11887498, -0.008625238, 0.9902685, 29.2, 1, 0.13196768, 0.11790103, -0.015810665, 0.9840904)
+tracks/51/type = "value"
+tracks/51/imported = false
+tracks/51/enabled = true
+tracks/51/path = NodePath("cameras/cam_levanta:fov")
+tracks/51/interp = 1
+tracks/51/loop_wrap = true
+tracks/51/keys = {
+"times": PackedFloat32Array(24.6, 26.8, 29.2),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
 "values": [40.0, 40.0, 42.0]
 }
-tracks/50/type = "position_3d"
-tracks/50/imported = false
-tracks/50/enabled = true
-tracks/50/path = NodePath("cameras/cam_cabeca")
-tracks/50/interp = 1
-tracks/50/loop_wrap = true
-tracks/50/keys = PackedFloat32Array(34.6, 1, -0.2813968, 1.3647587, 18.217196, 34.7, 1, -0.30201662, 1.3647635, 18.223953, 34.8, 1, -0.35055506, 1.3647635, 18.241869, 34.9, 1, -0.4071737, 1.3647635, 18.266518, 35, 1, -0.45336038, 1.3647635, 18.289839, 35.1, 1, -0.47235718, 1.3647635, 18.300327, 35.2, 1, -0.4864749, 1.3647635, 18.308475, 35.3, 1, -0.51705265, 1.3647635, 18.32721, 35.4, 1, -0.5469364, 1.3647635, 18.34703, 35.5, 1, -0.56027985, 1.3647635, 18.356394, 35.6, 1, -0.7533295, 1.3647635, 18.537415, 35.7, 1, -0.9684682, 1.3647635, 19.032322, 35.8, 1, -0.92747194, 1.3647635, 19.47935, 35.9, 1, -0.9050609, 1.3647635, 19.540482, 36, 1, -0.92173475, 1.3647635, 19.496227, 36.1, 1, -0.9313968, 1.3647635, 19.467192, 36.2, 1, -0.92286336, 1.3647635, 19.492985, 36.3, 1, -0.90163505, 1.3647635, 19.54885, 36.4, 1, -0.8770953, 1.3647635, 19.60334, 36.5, 1, -0.86486965, 1.3647635, 19.627602, 36.6, 1, -0.79733586, 1.3647635, 19.738808, 36.7, 1, -0.5827604, 1.3647635, 19.961462, 36.8, 1, -0.2529624, 1.3647635, 20.125708, 36.9, 1, 0.054024413, 1.3647635, 20.162806, 37, 1, 0.1834692, 1.3647635, 20.149698, 37.1, 1, 0.31860322, 1.3647635, 20.117193, 37.2, 1, 0.4478981, 1.3647635, 20.066195, 37.3, 1, 0.3918922, 1.3647635, 20.090857, 37.4, 1, 0.30264446, 1.3647635, 20.122086, 37.5, 1, 0.2858302, 1.3647635, 20.126926, 37.6, 1, 0.28979254, 1.3647635, 20.125814, 37.7, 1, 0.29630503, 1.3647635, 20.123947, 37.8, 1, 0.30389678, 1.3647635, 20.121712, 37.9, 1, 0.31110743, 1.3647635, 20.119526, 38, 1, 0.31648934, 1.3647635, 20.117857, 38.1, 1, 0.34585407, 1.7348733, 19.929113, 38.2, 1, 0.34585407, 1.7348733, 19.929113, 39.2, 1, 0.34585407, 1.7348733, 19.929113)
-tracks/51/type = "rotation_3d"
-tracks/51/imported = false
-tracks/51/enabled = true
-tracks/51/path = NodePath("cameras/cam_cabeca")
-tracks/51/interp = 1
-tracks/51/loop_wrap = true
-tracks/51/keys = PackedFloat32Array(34.6, 1, 0.0004857844, 0.99943924, 0.028993273, -0.016745675, 34.7, 1, 0.00080151105, 0.9991976, 0.028986266, -0.027629217, 34.8, 1, 0.0015539435, 0.9981432, 0.028955674, -0.05356664, 34.9, 1, 0.0024505935, 0.99600357, 0.028893603, -0.08447544, 35, 1, 0.0032000653, 0.99347407, 0.028820232, -0.110310785, 35.1, 1, 0.0035137462, 0.9922138, 0.02878367, -0.1211238, 35.2, 1, 0.003749112, 0.99118966, 0.028753959, -0.12923719, 35.3, 1, 0.0042660106, 0.98870313, 0.028681828, -0.14705542, 35.4, 1, 0.0047815265, 0.98589635, 0.028600397, -0.164826, 35.5, 1, 0.0050153513, 0.98451483, 0.028560327, -0.17288625, 35.6, 1, 0.008764332, 0.9528291, 0.027641132, -0.30211896, 35.7, 1, -0.0159231, -0.8353904, -0.024234293, 0.5488917, 35.8, 1, -0.020973653, -0.6902482, -0.020023784, 0.72299147, 35.9, 1, -0.021616792, -0.6662534, -0.019327706, 0.7451614, 36, 1, -0.021151975, -0.6837516, -0.019835321, 0.7291385, 36.1, 1, -0.020844843, -0.69486934, -0.020157842, 0.7185512, 36.2, 1, -0.021117756, -0.6850073, -0.019871745, 0.727959, 36.3, 1, -0.021704275, -0.66286504, -0.019229412, 0.7481772, 36.4, 1, -0.022271262, -0.6401266, -0.018569779, 0.7677221, 36.5, 1, -0.02252239, -0.6295992, -0.018264381, 0.77637875, 36.6, 1, -0.023666965, -0.57755893, -0.016754722, 0.8158338, 36.7, 1, -0.025980435, -0.4439495, -0.01287877, 0.8955825, 36.8, 1, -0.027913844, -0.27068982, -0.007852586, 0.9622298, 36.9, 1, -0.028794311, -0.11807864, -0.0034254072, 0.9925808, 37, 1, -0.028956536, -0.053012483, -0.0015378679, 0.99817276, 37.1, 1, -0.028993273, 0.016745675, 0.0004857844, 0.99943924, 37.2, 1, -0.028888764, 0.086422265, 0.0025070705, 0.99583656, 37.3, 1, -0.028952135, 0.05579638, 0.0016186277, 0.998021, 37.4, 1, -0.028996328, 0.008372304, 0.00024287675, 0.99954444, 37.5, 1, -0.022126075, 0.0017382046, 3.846912e-05, 0.99975365, 37.6, 1, -0.016497891, 0.004750842, 7.8390425e-05, 0.9998526, 37.7, 1, -0.011805235, 0.007484115, 8.836037e-05, 0.9999023, 37.8, 1, -0.007833516, 0.009390444, 7.356568e-05, 0.9999252, 37.9, 1, -0.0044284393, 0.010328608, 4.574249e-05, 0.9999369, 38, 1, -0.0014766547, 0.01042847, 1.5400099e-05, 0.9999445, 38.1, 1, -0.010639993, 0.01099146, 0.00011696274, 0.999883, 38.2, 1, -0.013815704, 0.010991033, 0.0001518725, 0.99984413, 39.2, 1, -0.013815704, 0.010991033, 0.0001518725, 0.99984413)
-tracks/52/type = "value"
+tracks/52/type = "position_3d"
 tracks/52/imported = false
 tracks/52/enabled = true
-tracks/52/path = NodePath("cameras/cam_cabeca:fov")
+tracks/52/path = NodePath("cameras/cam_cabeca")
 tracks/52/interp = 1
 tracks/52/loop_wrap = true
-tracks/52/keys = {
-"times": PackedFloat32Array(34.6, 34.7, 34.8, 34.9, 35, 35.1, 35.2, 35.3, 35.4, 35.5, 35.6, 35.7, 35.8, 35.9, 36, 36.1, 36.2, 36.3, 36.4, 36.5, 36.6, 36.7, 36.8, 36.9, 37, 37.1, 37.2, 37.3, 37.4, 37.5, 37.6, 37.7, 37.8, 37.9, 38, 38.1, 38.2, 39.2),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-"update": 0,
-"values": [50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 20.0]
-}
-tracks/53/type = "audio"
+tracks/52/keys = PackedFloat32Array(29.2, 1, -0.2813968, 1.3647869, 18.217142, 29.333334, 1, -0.30201662, 1.3647916, 18.2239, 29.466667, 1, -0.35055506, 1.3647916, 18.241816, 29.6, 1, -0.4071737, 1.3647916, 18.266464, 29.733334, 1, -0.45336038, 1.3647916, 18.289785, 29.866667, 1, -0.47235718, 1.3647916, 18.300274, 30, 1, -0.4864749, 1.3647916, 18.308422, 30.133333, 1, -0.51705265, 1.3647916, 18.327156, 30.266666, 1, -0.5469364, 1.3647916, 18.346977, 30.4, 1, -0.56027985, 1.3647916, 18.35634, 30.533333, 1, -0.7533295, 1.3647916, 18.537361, 30.666666, 1, -0.9684682, 1.3647916, 19.032269, 30.8, 1, -0.92747194, 1.3647916, 19.479296, 30.933332, 1, -0.9050609, 1.3647916, 19.540428, 31.066668, 1, -0.92173475, 1.3647916, 19.496174, 31.2, 1, -0.9313968, 1.3647916, 19.467138, 31.333334, 1, -0.92286336, 1.3647916, 19.492931, 31.466667, 1, -0.90163505, 1.3647916, 19.548796, 31.6, 1, -0.8770953, 1.3647916, 19.603287, 31.733334, 1, -0.86486965, 1.3647916, 19.627548, 31.866667, 1, -0.79733586, 1.3647916, 19.738754, 32, 1, -0.5827604, 1.3647916, 19.961409, 32.133335, 1, -0.2529624, 1.3647916, 20.125654, 32.266666, 1, 0.054024413, 1.3647916, 20.162752, 32.4, 1, 0.1834692, 1.3647916, 20.149645, 32.533333, 1, 0.31860322, 1.3647916, 20.11714, 32.666668, 1, 0.4478981, 1.3647916, 20.066141, 32.8, 1, 0.3918922, 1.3647916, 20.090803, 32.933334, 1, 0.30264446, 1.3647916, 20.122032, 33.066666, 1, 0.2858302, 1.3647916, 20.126873, 33.156666, 1, 0.28639698, 1.375, 19.527798, 33.246666, 1, 0.28809738, 1.405625, 17.730574, 33.336666, 1, 0.29093134, 1.4566667, 14.735199, 33.426666, 1, 0.29489887, 1.528125, 10.541675, 33.516666, 1, 0.3, 1.62, 5.1499996, 33.616665, 1, 0.3, 1.62, 5.1499996, 33.716667, 1, 0.3, 1.62, 5.1499996, 33.816666, 1, 0.3, 1.62, 5.1499996, 33.916668, 1, 0.3, 1.62, 5.1499996, 34.466667, 1, 0.3, 1.62, 5.2699995)
+tracks/53/type = "rotation_3d"
 tracks/53/imported = false
 tracks/53/enabled = true
-tracks/53/path = NodePath("sons/batimento_rapido")
+tracks/53/path = NodePath("cameras/cam_cabeca")
 tracks/53/interp = 1
 tracks/53/loop_wrap = true
-tracks/53/keys = {
-"clips": [{
-"end_offset": 0.0,
-"start_offset": 0.0,
-"stream": ExtResource("28_4ybjc")
-}],
-"times": PackedFloat32Array(40.7)
-}
-tracks/53/use_blend = true
-tracks/54/type = "audio"
+tracks/53/keys = PackedFloat32Array(29.2, 1, 0.0004857844, 0.99943924, 0.028993273, -0.016745675, 29.333334, 1, 0.00080151105, 0.9991976, 0.028986266, -0.027629217, 29.466667, 1, 0.0015539435, 0.9981432, 0.028955674, -0.05356664, 29.6, 1, 0.0024505935, 0.99600357, 0.028893603, -0.08447544, 29.733334, 1, 0.0032000653, 0.99347407, 0.028820232, -0.110310785, 29.866667, 1, 0.0035137462, 0.9922138, 0.02878367, -0.1211238, 30, 1, 0.003749112, 0.99118966, 0.028753959, -0.12923719, 30.133333, 1, 0.0042660106, 0.98870313, 0.028681828, -0.14705542, 30.266666, 1, 0.0047815265, 0.98589635, 0.028600397, -0.164826, 30.4, 1, 0.0050153513, 0.98451483, 0.028560327, -0.17288625, 30.533333, 1, 0.008764332, 0.9528291, 0.027641132, -0.30211896, 30.666666, 1, -0.0159231, -0.8353904, -0.024234293, 0.5488917, 30.8, 1, -0.020973653, -0.6902482, -0.020023784, 0.72299147, 30.933332, 1, -0.021616792, -0.6662534, -0.019327706, 0.7451614, 31.066668, 1, -0.021151975, -0.6837516, -0.019835321, 0.7291385, 31.2, 1, -0.020844843, -0.69486934, -0.020157842, 0.7185512, 31.333334, 1, -0.021117756, -0.6850073, -0.019871745, 0.727959, 31.466667, 1, -0.021704275, -0.66286504, -0.019229412, 0.7481772, 31.6, 1, -0.022271262, -0.6401266, -0.018569779, 0.7677221, 31.733334, 1, -0.02252239, -0.6295992, -0.018264381, 0.77637875, 31.866667, 1, -0.023666965, -0.57755893, -0.016754722, 0.8158338, 32, 1, -0.025980435, -0.4439495, -0.01287877, 0.8955825, 32.133335, 1, -0.027913844, -0.27068982, -0.007852586, 0.9622298, 32.266666, 1, -0.028794311, -0.11807864, -0.0034254072, 0.9925808, 32.4, 1, -0.028956536, -0.053012483, -0.0015378679, 0.99817276, 32.533333, 1, -0.028993273, 0.016745675, 0.0004857844, 0.99943924, 32.666668, 1, -0.017842451, 0.059627466, 0.0010659674, 0.99806064, 32.8, 1, -0.009757401, 0.028002558, 0.00027335243, 0.9995602, 32.933334, 1, -0.0036519563, 0.009324726, 3.40552e-05, 0.9999499, 33.066666, 1, 0.001105088, 0.008972118, -9.915384e-06, 0.9999591, 33.156666, 1, 0.0073374137, 0.009340932, -6.854311e-05, 0.9999295, 33.246666, 1, 0.0071802195, 0.01064408, -7.643312e-05, 0.99991757, 33.336666, 1, 0.00679888, 0.013803321, -9.385824e-05, 0.9998816, 33.426666, 1, 0.005658959, 0.023231667, -0.00013150465, 0.9997141, 33.516666, 1, -0.009919041, 0.15233625, 0.0015289523, 0.9882778, 33.616665, 1, -0.009250274, 0.38790283, 0.0038932613, 0.92164564, 33.716667, 1, -0.005932688, 0.8065359, 0.008094953, 0.59109986, 33.816666, 1, -0.0009269993, 0.995675, 0.009993286, 0.09236102, 33.916668, 1, -0.00024860227, 0.9996428, 0.02476961, 0.010033, 34.466667, 1, -0.00025290844, 0.99963665, 0.02498298, 0.010119552)
+tracks/54/type = "value"
 tracks/54/imported = false
 tracks/54/enabled = true
-tracks/54/path = NodePath("sons/arma")
+tracks/54/path = NodePath("cameras/cam_cabeca:fov")
 tracks/54/interp = 1
 tracks/54/loop_wrap = true
 tracks/54/keys = {
+"times": PackedFloat32Array(29.2, 29.333334, 29.466667, 29.6, 29.733334, 29.866667, 30, 30.133333, 30.266666, 30.4, 30.533333, 30.666666, 30.8, 30.933332, 31.066668, 31.2, 31.333334, 31.466667, 31.6, 31.733334, 31.866667, 32, 32.133335, 32.266666, 32.4, 32.533333, 32.666668, 32.8, 32.933334, 33.066666, 33.156666, 33.246666, 33.336666, 33.426666, 33.516666, 33.616665, 33.716667, 33.816666, 33.916668, 34.466667),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 47.2, 44.4, 41.6, 38.8, 36.0, 34.5, 33.0, 31.5, 30.0, 27.0]
+}
+tracks/55/type = "audio"
+tracks/55/imported = false
+tracks/55/enabled = true
+tracks/55/path = NodePath("sons/batimento_rapido")
+tracks/55/interp = 1
+tracks/55/loop_wrap = true
+tracks/55/keys = {
 "clips": [{
 "end_offset": 0.0,
 "start_offset": 0.0,
-"stream": ExtResource("36_vyafg")
+"stream": ExtResource("28_ultr8")
 }],
-"times": PackedFloat32Array(39.9)
+"times": PackedFloat32Array(35.766666)
 }
-tracks/54/use_blend = true
-tracks/55/type = "position_3d"
-tracks/55/imported = false
-tracks/55/enabled = true
-tracks/55/path = NodePath("cameras/cam_sacar")
-tracks/55/interp = 1
-tracks/55/loop_wrap = true
-tracks/55/keys = PackedFloat32Array(39.4, 1, 0.95, 1.45, 6.7, 41, 1, 0.85, 1.48, 6.5)
-tracks/56/type = "rotation_3d"
+tracks/55/use_blend = true
+tracks/56/type = "audio"
 tracks/56/imported = false
 tracks/56/enabled = true
-tracks/56/path = NodePath("cameras/cam_sacar")
+tracks/56/path = NodePath("sons/arma")
 tracks/56/interp = 1
 tracks/56/loop_wrap = true
-tracks/56/keys = PackedFloat32Array(39.4, 1, -0.018378703, 0.18054591, 0.0033742485, 0.983389, 41, 1, -0.011822547, 0.19458619, 0.0023455115, 0.98081136)
-tracks/57/type = "value"
+tracks/56/keys = {
+"clips": [{
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": ExtResource("37_yge4t")
+}],
+"times": PackedFloat32Array(34.966667)
+}
+tracks/56/use_blend = true
+tracks/57/type = "position_3d"
 tracks/57/imported = false
 tracks/57/enabled = true
-tracks/57/path = NodePath("cameras/cam_sacar:fov")
+tracks/57/path = NodePath("cameras/cam_sacar")
 tracks/57/interp = 1
 tracks/57/loop_wrap = true
-tracks/57/keys = {
-"times": PackedFloat32Array(39.4, 41),
+tracks/57/keys = PackedFloat32Array(34.466667, 1, 0.95, 1.45, 6.7, 36.066666, 1, 0.85, 1.48, 6.5)
+tracks/58/type = "rotation_3d"
+tracks/58/imported = false
+tracks/58/enabled = true
+tracks/58/path = NodePath("cameras/cam_sacar")
+tracks/58/interp = 1
+tracks/58/loop_wrap = true
+tracks/58/keys = PackedFloat32Array(34.466667, 1, -0.018378703, 0.18054591, 0.0033742485, 0.983389, 36.066666, 1, -0.011822547, 0.19458619, 0.0023455115, 0.98081136)
+tracks/59/type = "value"
+tracks/59/imported = false
+tracks/59/enabled = true
+tracks/59/path = NodePath("cameras/cam_sacar:fov")
+tracks/59/interp = 1
+tracks/59/loop_wrap = true
+tracks/59/keys = {
+"times": PackedFloat32Array(34.466667, 36.066666),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [34.0, 32.0]
 }
-tracks/58/type = "position_3d"
-tracks/58/imported = false
-tracks/58/enabled = true
-tracks/58/path = NodePath("cameras/cam_olhos")
-tracks/58/interp = 1
-tracks/58/loop_wrap = true
-tracks/58/keys = PackedFloat32Array(41, 1, 0.14585407, 1.3948733, 18.359112, 43.5, 1, 0.11585407, 1.3848733, 18.499113)
-tracks/59/type = "rotation_3d"
-tracks/59/imported = false
-tracks/59/enabled = true
-tracks/59/path = NodePath("cameras/cam_olhos")
-tracks/59/interp = 1
-tracks/59/loop_wrap = true
-tracks/59/keys = PackedFloat32Array(41, 1, -0.0012713238, 0.9966789, 0.015866304, 0.07986117, 43.5, 1, -0.00074556714, 0.99732685, 0.01027899, 0.07233922)
-tracks/60/type = "value"
+tracks/60/type = "position_3d"
 tracks/60/imported = false
 tracks/60/enabled = true
-tracks/60/path = NodePath("cameras/cam_olhos:fov")
+tracks/60/path = NodePath("cameras/cam_olhos")
 tracks/60/interp = 1
 tracks/60/loop_wrap = true
-tracks/60/keys = {
-"times": PackedFloat32Array(41, 43.5),
+tracks/60/keys = PackedFloat32Array(36.066666, 1, 0.11860322, 1.0247868, 18.547142, 38.566666, 1, 0.08860322, 1.0147868, 18.687143)
+tracks/61/type = "rotation_3d"
+tracks/61/imported = false
+tracks/61/enabled = true
+tracks/61/path = NodePath("cameras/cam_olhos")
+tracks/61/interp = 1
+tracks/61/loop_wrap = true
+tracks/61/keys = PackedFloat32Array(36.066666, 1, -0.0012713238, 0.9966789, 0.015866304, 0.07986117, 38.566666, 1, -0.0007455672, 0.99732685, 0.01027899, 0.07233922)
+tracks/62/type = "value"
+tracks/62/imported = false
+tracks/62/enabled = true
+tracks/62/path = NodePath("cameras/cam_olhos:fov")
+tracks/62/interp = 1
+tracks/62/loop_wrap = true
+tracks/62/keys = {
+"times": PackedFloat32Array(36.066666, 38.566666),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [30.0, 28.0]
 }
-tracks/61/type = "position_3d"
-tracks/61/imported = false
-tracks/61/enabled = true
-tracks/61/path = NodePath("cameras/cam_mira")
-tracks/61/interp = 1
-tracks/61/loop_wrap = true
-tracks/61/keys = PackedFloat32Array(43.5, 1, -0.32, 1.68, 3.9499998, 46, 1, -0.3, 1.67, 4.1)
-tracks/62/type = "rotation_3d"
-tracks/62/imported = false
-tracks/62/enabled = true
-tracks/62/path = NodePath("cameras/cam_mira")
-tracks/62/interp = 1
-tracks/62/loop_wrap = true
-tracks/62/keys = PackedFloat32Array(43.5, 1, 0.000345669, 0.99952245, 0.028404046, -0.012163899, 46, 1, 0.00031005993, 0.99957645, 0.026682004, -0.011615642)
-tracks/63/type = "value"
+tracks/63/type = "position_3d"
 tracks/63/imported = false
 tracks/63/enabled = true
-tracks/63/path = NodePath("cameras/cam_mira:fov")
+tracks/63/path = NodePath("cameras/cam_mira")
 tracks/63/interp = 1
 tracks/63/loop_wrap = true
-tracks/63/keys = {
-"times": PackedFloat32Array(43.5, 46),
+tracks/63/keys = PackedFloat32Array(38.566666, 1, -0.32, 1.68, 3.9499998, 41.066666, 1, -0.3, 1.67, 4.1)
+tracks/64/type = "rotation_3d"
+tracks/64/imported = false
+tracks/64/enabled = true
+tracks/64/path = NodePath("cameras/cam_mira")
+tracks/64/interp = 1
+tracks/64/loop_wrap = true
+tracks/64/keys = PackedFloat32Array(38.566666, 1, 0.00044661798, 0.99913186, 0.040147822, -0.01111468, 41.066666, 1, 0.00040774903, 0.9992, 0.03857023, -0.010563142)
+tracks/65/type = "value"
+tracks/65/imported = false
+tracks/65/enabled = true
+tracks/65/path = NodePath("cameras/cam_mira:fov")
+tracks/65/interp = 1
+tracks/65/loop_wrap = true
+tracks/65/keys = {
+"times": PackedFloat32Array(38.566666, 41.066666),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [30.0, 26.0]
 }
-tracks/64/type = "position_3d"
-tracks/64/imported = false
-tracks/64/enabled = true
-tracks/64/path = NodePath("cameras/cam_lateral")
-tracks/64/interp = 1
-tracks/64/loop_wrap = true
-tracks/64/keys = PackedFloat32Array(46, 1, -4.3, 1.4, 14.902767, 47.6, 1, -4, 1.35, 15.302767)
-tracks/65/type = "rotation_3d"
-tracks/65/imported = false
-tracks/65/enabled = true
-tracks/65/path = NodePath("cameras/cam_lateral")
-tracks/65/interp = 1
-tracks/65/loop_wrap = true
-tracks/65/keys = PackedFloat32Array(46, 1, 0.00849462, 0.91617954, 0.019446487, -0.40020585, 47.6, 1, 0.0075562536, 0.91287357, 0.016914014, -0.40782186)
-tracks/66/type = "value"
+tracks/66/type = "position_3d"
 tracks/66/imported = false
 tracks/66/enabled = true
-tracks/66/path = NodePath("cameras/cam_lateral:fov")
+tracks/66/path = NodePath("cameras/cam_lateral")
 tracks/66/interp = 1
 tracks/66/loop_wrap = true
-tracks/66/keys = {
-"times": PackedFloat32Array(46, 47.6),
+tracks/66/keys = PackedFloat32Array(41.066666, 1, -4.3, 1.4, 14.902767, 42.666668, 1, -4, 1.35, 15.302767)
+tracks/67/type = "rotation_3d"
+tracks/67/imported = false
+tracks/67/enabled = true
+tracks/67/path = NodePath("cameras/cam_lateral")
+tracks/67/interp = 1
+tracks/67/loop_wrap = true
+tracks/67/keys = PackedFloat32Array(41.066666, 1, 0.00849462, 0.91617954, 0.019446487, -0.40020585, 42.666668, 1, 0.0075562536, 0.91287357, 0.016914014, -0.40782186)
+tracks/68/type = "value"
+tracks/68/imported = false
+tracks/68/enabled = true
+tracks/68/path = NodePath("cameras/cam_lateral:fov")
+tracks/68/interp = 1
+tracks/68/loop_wrap = true
+tracks/68/keys = {
+"times": PackedFloat32Array(41.066666, 42.666668),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [36.0, 36.0]
 }
-tracks/67/type = "rotation_3d"
-tracks/67/imported = false
-tracks/67/enabled = true
-tracks/67/path = NodePath("atores/DonaNice")
-tracks/67/interp = 1
-tracks/67/loop_wrap = true
-tracks/67/keys = PackedFloat32Array(0, 1, 0, 0, 0, 1, 47.599, 1, 0, 0, 0, 1, 47.6, 1, 0, 1, 0, -4.371139e-08)
-tracks/68/type = "position_3d"
-tracks/68/imported = false
-tracks/68/enabled = true
-tracks/68/path = NodePath("atores/Monstro")
-tracks/68/interp = 1
-tracks/68/loop_wrap = true
-tracks/68/keys = PackedFloat32Array(0, 1, 0.01860322, 0, 18.902767)
 tracks/69/type = "rotation_3d"
 tracks/69/imported = false
 tracks/69/enabled = true
-tracks/69/path = NodePath("atores/Monstro")
+tracks/69/path = NodePath("atores/DonaNice")
 tracks/69/interp = 1
 tracks/69/loop_wrap = true
-tracks/69/keys = PackedFloat32Array(0, 1, 0, 1, 0, -4.371139e-08)
-tracks/70/type = "value"
+tracks/69/keys = PackedFloat32Array(0, 1, 0, 0, 0, 1, 42.66567, 1, 0, 0, 0, 1, 42.666668, 1, 0, 1, 0, -4.371139e-08)
+tracks/70/type = "position_3d"
 tracks/70/imported = false
 tracks/70/enabled = true
-tracks/70/path = NodePath("atores/Monstro:visible")
+tracks/70/path = NodePath("atores/Monstro")
 tracks/70/interp = 1
 tracks/70/loop_wrap = true
-tracks/70/keys = {
-"times": PackedFloat32Array(0, 47.6),
+tracks/70/keys = PackedFloat32Array(0, 1, 0.01860322, 0, 18.902767)
+tracks/71/type = "rotation_3d"
+tracks/71/imported = false
+tracks/71/enabled = true
+tracks/71/path = NodePath("atores/Monstro")
+tracks/71/interp = 1
+tracks/71/loop_wrap = true
+tracks/71/keys = PackedFloat32Array(0, 1, 0, 1, 0, -4.371139e-08)
+tracks/72/type = "value"
+tracks/72/imported = false
+tracks/72/enabled = true
+tracks/72/path = NodePath("atores/Monstro:visible")
+tracks/72/interp = 1
+tracks/72/loop_wrap = true
+tracks/72/keys = {
+"times": PackedFloat32Array(0, 42.666668),
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [false, true]
 }
-tracks/71/type = "animation"
-tracks/71/imported = false
-tracks/71/enabled = true
-tracks/71/path = NodePath("atores/Monstro/anim")
-tracks/71/interp = 1
-tracks/71/loop_wrap = true
-tracks/71/keys = {
-"clips": PackedStringArray("convulsao", "rugido"),
-"times": PackedFloat32Array(47.6, 52.7)
-}
-tracks/72/type = "value"
-tracks/72/imported = false
-tracks/72/enabled = true
-tracks/72/path = NodePath("atores/DonaNice:veias")
-tracks/72/interp = 1
-tracks/72/loop_wrap = true
-tracks/72/keys = {
-"times": PackedFloat32Array(0, 47.6, 48.8),
-"transitions": PackedFloat32Array(1, 1, 1),
-"update": 0,
-"values": [0.0, 0.0, 1.0]
-}
-tracks/73/type = "value"
+tracks/73/type = "animation"
 tracks/73/imported = false
 tracks/73/enabled = true
-tracks/73/path = NodePath("atores/Monstro:veias")
+tracks/73/path = NodePath("atores/Monstro/anim")
 tracks/73/interp = 1
 tracks/73/loop_wrap = true
 tracks/73/keys = {
-"times": PackedFloat32Array(0, 47.6, 54.2),
-"transitions": PackedFloat32Array(1, 1, 1),
-"update": 0,
-"values": [0.0, 1.0, 0.35]
+"clips": PackedStringArray("convulsao", "rugido"),
+"times": PackedFloat32Array(42.666668, 47.766666)
 }
 tracks/74/type = "value"
 tracks/74/imported = false
 tracks/74/enabled = true
-tracks/74/path = NodePath("atores/DonaNice:dissolver")
+tracks/74/path = NodePath("atores/DonaNice:veias")
 tracks/74/interp = 1
 tracks/74/loop_wrap = true
 tracks/74/keys = {
-"times": PackedFloat32Array(0, 48.8, 51.8),
+"times": PackedFloat32Array(0, 42.666668, 43.866665),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
 "values": [0.0, 0.0, 1.0]
@@ -6634,54 +6637,78 @@ tracks/74/keys = {
 tracks/75/type = "value"
 tracks/75/imported = false
 tracks/75/enabled = true
-tracks/75/path = NodePath("atores/Monstro:dissolver")
+tracks/75/path = NodePath("atores/Monstro:veias")
 tracks/75/interp = 1
 tracks/75/loop_wrap = true
 tracks/75/keys = {
-"times": PackedFloat32Array(0, 49.1, 52.1),
+"times": PackedFloat32Array(0, 42.666668, 49.266666),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
-"values": [1.0, 1.0, 0.0]
+"values": [0.0, 1.0, 0.35]
 }
 tracks/76/type = "value"
 tracks/76/imported = false
 tracks/76/enabled = true
-tracks/76/path = NodePath("atores/DonaNice:visible")
+tracks/76/path = NodePath("atores/DonaNice:dissolver")
 tracks/76/interp = 1
 tracks/76/loop_wrap = true
 tracks/76/keys = {
-"times": PackedFloat32Array(0, 51.9),
+"times": PackedFloat32Array(0, 43.866665, 46.866665),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [0.0, 0.0, 1.0]
+}
+tracks/77/type = "value"
+tracks/77/imported = false
+tracks/77/enabled = true
+tracks/77/path = NodePath("atores/Monstro:dissolver")
+tracks/77/interp = 1
+tracks/77/loop_wrap = true
+tracks/77/keys = {
+"times": PackedFloat32Array(0, 44.166668, 47.166668),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [1.0, 1.0, 0.0]
+}
+tracks/78/type = "value"
+tracks/78/imported = false
+tracks/78/enabled = true
+tracks/78/path = NodePath("atores/DonaNice:visible")
+tracks/78/interp = 1
+tracks/78/loop_wrap = true
+tracks/78/keys = {
+"times": PackedFloat32Array(0, 46.966667),
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [true, false]
 }
-tracks/77/type = "position_3d"
-tracks/77/imported = false
-tracks/77/enabled = true
-tracks/77/path = NodePath("efeitos/nevoa_sangue")
-tracks/77/interp = 1
-tracks/77/loop_wrap = true
-tracks/77/keys = PackedFloat32Array(0, 1, 0.01860322, 1, 18.902767)
-tracks/78/type = "value"
-tracks/78/imported = false
-tracks/78/enabled = true
-tracks/78/path = NodePath("efeitos/nevoa_sangue:emitting")
-tracks/78/interp = 1
-tracks/78/loop_wrap = true
-tracks/78/keys = {
-"times": PackedFloat32Array(0, 48.6, 52),
+tracks/79/type = "position_3d"
+tracks/79/imported = false
+tracks/79/enabled = true
+tracks/79/path = NodePath("efeitos/nevoa_sangue")
+tracks/79/interp = 1
+tracks/79/loop_wrap = true
+tracks/79/keys = PackedFloat32Array(0, 1, 0.01860322, 1, 18.902767)
+tracks/80/type = "value"
+tracks/80/imported = false
+tracks/80/enabled = true
+tracks/80/path = NodePath("efeitos/nevoa_sangue:emitting")
+tracks/80/interp = 1
+tracks/80/loop_wrap = true
+tracks/80/keys = {
+"times": PackedFloat32Array(0, 43.666668, 47.066666),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 1,
 "values": [false, true, false]
 }
-tracks/79/type = "method"
-tracks/79/imported = false
-tracks/79/enabled = true
-tracks/79/path = NodePath(".")
-tracks/79/interp = 1
-tracks/79/loop_wrap = true
-tracks/79/keys = {
-"times": PackedFloat32Array(47.8, 49.8, 53.4),
+tracks/81/type = "method"
+tracks/81/imported = false
+tracks/81/enabled = true
+tracks/81/path = NodePath(".")
+tracks/81/interp = 1
+tracks/81/loop_wrap = true
+tracks/81/keys = {
+"times": PackedFloat32Array(42.866665, 44.866665, 48.466667),
 "transitions": PackedFloat32Array(1, 1, 1),
 "values": [{
 "args": [0.4, 0.5],
@@ -6694,105 +6721,134 @@ tracks/79/keys = {
 "method": &"vibrar"
 }]
 }
-tracks/80/type = "audio"
-tracks/80/imported = false
-tracks/80/enabled = true
-tracks/80/path = NodePath("sons/ossos")
-tracks/80/interp = 1
-tracks/80/loop_wrap = true
-tracks/80/keys = {
-"clips": [{
-"end_offset": 0.0,
-"start_offset": 0.0,
-"stream": ExtResource("31_no0lp")
-}],
-"times": PackedFloat32Array(47.6)
-}
-tracks/80/use_blend = true
-tracks/81/type = "audio"
-tracks/81/imported = false
-tracks/81/enabled = true
-tracks/81/path = NodePath("sons/grito")
-tracks/81/interp = 1
-tracks/81/loop_wrap = true
-tracks/81/keys = {
-"clips": [{
-"end_offset": 0.0,
-"start_offset": 0.0,
-"stream": ExtResource("32_5nept")
-}],
-"times": PackedFloat32Array(48.1)
-}
-tracks/81/use_blend = true
 tracks/82/type = "audio"
 tracks/82/imported = false
 tracks/82/enabled = true
-tracks/82/path = NodePath("sons/rugido")
+tracks/82/path = NodePath("sons/ossos")
 tracks/82/interp = 1
 tracks/82/loop_wrap = true
 tracks/82/keys = {
 "clips": [{
 "end_offset": 0.0,
 "start_offset": 0.0,
-"stream": ExtResource("33_o5hn7")
+"stream": ExtResource("31_5nept")
 }],
-"times": PackedFloat32Array(53.1)
+"times": PackedFloat32Array(42.666668)
 }
 tracks/82/use_blend = true
-tracks/83/type = "position_3d"
+tracks/83/type = "audio"
 tracks/83/imported = false
 tracks/83/enabled = true
-tracks/83/path = NodePath("cameras/cam_transforma")
+tracks/83/path = NodePath("sons/grito")
 tracks/83/interp = 1
 tracks/83/loop_wrap = true
-tracks/83/keys = PackedFloat32Array(47.6, 1, -1.2915134, 1.25, 16.093212, 48.11, 1, -0.80983573, 1.225, 15.915513, 48.62, 1, -0.305435, 1.2, 15.81975, 49.13, 1, 0.20785369, 1.175, 15.80855, 49.64, 1, 0.7159515, 1.15, 15.88222, 50.15, 1, 1.2049218, 1.125, 16.03874, 50.66, 1, 1.6613529, 1.1, 16.273819, 51.17, 1, 2.0727255, 1.075, 16.581005, 51.68, 1, 2.4277558, 1.05, 16.951874, 52.19, 1, 2.716706, 1.025, 17.376255, 52.7, 1, 2.9316504, 1, 17.842505)
-tracks/84/type = "rotation_3d"
+tracks/83/keys = {
+"clips": [{
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": ExtResource("32_o5hn7")
+}],
+"times": PackedFloat32Array(43.166668)
+}
+tracks/83/use_blend = true
+tracks/84/type = "audio"
 tracks/84/imported = false
 tracks/84/enabled = true
-tracks/84/path = NodePath("cameras/cam_transforma")
+tracks/84/path = NodePath("sons/grito_monstro")
 tracks/84/interp = 1
 tracks/84/loop_wrap = true
-tracks/84/keys = PackedFloat32Array(47.6, 1, 0.008706204, 0.9755058, 0.039271154, -0.2162644, 48.11, 1, 0.00488415, 0.9902158, 0.035888053, -0.13476245, 48.62, 1, 0.0016856295, 0.9981114, 0.032163724, -0.052308805, 49.13, 1, -0.0008609462, 0.9991363, 0.028178992, 0.030526381, 49.64, 1, -0.0027363868, 0.99328154, 0.024016954, 0.11317016, 50.15, 1, -0.0039308756, 0.9805862, 0.01976185, 0.19505067, 50.66, 1, -0.0044440334, 0.96113676, 0.015498182, 0.2756016, 51.17, 1, -0.004284843, 0.9350668, 0.011309647, 0.35426518, 51.68, 1, -0.0034715217, 0.90255594, 0.007278197, 0.43049708, 52.19, 1, -0.0020312956, 0.8638284, 0.0034831197, 0.50377, 52.7, 1, 0, 0.8191521, 0, 0.5735764)
-tracks/85/type = "value"
+tracks/84/keys = {
+"clips": [{
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": ExtResource("34_led6c")
+}],
+"times": PackedFloat32Array(44.066666)
+}
+tracks/84/use_blend = true
+tracks/85/type = "method"
 tracks/85/imported = false
 tracks/85/enabled = true
-tracks/85/path = NodePath("cameras/cam_transforma:fov")
+tracks/85/path = NodePath(".")
 tracks/85/interp = 1
 tracks/85/loop_wrap = true
 tracks/85/keys = {
-"times": PackedFloat32Array(47.6, 48.11, 48.62, 49.13, 49.64, 50.15, 50.66, 51.17, 51.68, 52.19, 52.7),
+"times": PackedFloat32Array(44.766666),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.8, 0.9],
+"method": &"vibrar"
+}]
+}
+tracks/86/type = "audio"
+tracks/86/imported = false
+tracks/86/enabled = true
+tracks/86/path = NodePath("sons/rugido")
+tracks/86/interp = 1
+tracks/86/loop_wrap = true
+tracks/86/keys = {
+"clips": [{
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": ExtResource("33_aywj8")
+}],
+"times": PackedFloat32Array(48.166668)
+}
+tracks/86/use_blend = true
+tracks/87/type = "position_3d"
+tracks/87/imported = false
+tracks/87/enabled = true
+tracks/87/path = NodePath("cameras/cam_transforma")
+tracks/87/interp = 1
+tracks/87/loop_wrap = true
+tracks/87/keys = PackedFloat32Array(42.666668, 1, -1.2915134, 1.25, 16.093212, 43.176666, 1, -0.80983573, 1.225, 15.915513, 43.68667, 1, -0.305435, 1.2, 15.81975, 44.196667, 1, 0.20785369, 1.175, 15.80855, 44.706665, 1, 0.7159515, 1.15, 15.88222, 45.216667, 1, 1.2049218, 1.125, 16.03874, 45.726665, 1, 1.6613529, 1.1, 16.273819, 46.236668, 1, 2.0727255, 1.075, 16.581005, 46.746666, 1, 2.4277558, 1.05, 16.951874, 47.256668, 1, 2.716706, 1.025, 17.376255, 47.766666, 1, 2.9316504, 1, 17.842505)
+tracks/88/type = "rotation_3d"
+tracks/88/imported = false
+tracks/88/enabled = true
+tracks/88/path = NodePath("cameras/cam_transforma")
+tracks/88/interp = 1
+tracks/88/loop_wrap = true
+tracks/88/keys = PackedFloat32Array(42.666668, 1, 0.008706204, 0.9755058, 0.039271154, -0.2162644, 43.176666, 1, 0.00488415, 0.9902158, 0.035888053, -0.13476245, 43.68667, 1, 0.0016856295, 0.9981114, 0.032163724, -0.052308805, 44.196667, 1, -0.0008609462, 0.9991363, 0.028178992, 0.030526381, 44.706665, 1, -0.0027363868, 0.99328154, 0.024016954, 0.11317016, 45.216667, 1, -0.0039308756, 0.9805862, 0.01976185, 0.19505067, 45.726665, 1, -0.0044440334, 0.96113676, 0.015498182, 0.2756016, 46.236668, 1, -0.004284843, 0.9350668, 0.011309647, 0.35426518, 46.746666, 1, -0.0034715217, 0.90255594, 0.007278197, 0.43049708, 47.256668, 1, -0.0020312956, 0.8638284, 0.0034831197, 0.50377, 47.766666, 1, 0, 0.8191521, 0, 0.5735764)
+tracks/89/type = "value"
+tracks/89/imported = false
+tracks/89/enabled = true
+tracks/89/path = NodePath("cameras/cam_transforma:fov")
+tracks/89/interp = 1
+tracks/89/loop_wrap = true
+tracks/89/keys = {
+"times": PackedFloat32Array(42.666668, 43.176666, 43.68667, 44.196667, 44.706665, 45.216667, 45.726665, 46.236668, 46.746666, 47.256668, 47.766666),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
 "update": 0,
 "values": [36.0, 35.4, 34.8, 34.2, 33.6, 33.0, 32.4, 31.8, 31.2, 30.6, 30.0]
 }
-tracks/86/type = "position_3d"
-tracks/86/imported = false
-tracks/86/enabled = true
-tracks/86/path = NodePath("cameras/cam_rugido")
-tracks/86/interp = 1
-tracks/86/loop_wrap = true
-tracks/86/keys = PackedFloat32Array(52.7, 1, 0.36860323, 0.85, 16.302767, 53.4, 1, 0.31860322, 0.8, 16.702766, 57, 1, 0.2686032, 0.95, 15.502768)
-tracks/87/type = "rotation_3d"
-tracks/87/imported = false
-tracks/87/enabled = true
-tracks/87/path = NodePath("cameras/cam_rugido")
-tracks/87/interp = 1
-tracks/87/loop_wrap = true
-tracks/87/keys = PackedFloat32Array(52.7, 1, 0.00750006, 0.9914644, -0.11193201, 0.06643355, 53.4, 1, 0.010979884, 0.98450047, -0.16178355, 0.06681583, 57, 1, 0.0024058607, 0.997176, -0.06552774, 0.036611468)
-tracks/88/type = "value"
-tracks/88/imported = false
-tracks/88/enabled = true
-tracks/88/path = NodePath("cameras/cam_rugido:fov")
-tracks/88/interp = 1
-tracks/88/loop_wrap = true
-tracks/88/keys = {
-"times": PackedFloat32Array(52.7, 53.4, 57),
+tracks/90/type = "position_3d"
+tracks/90/imported = false
+tracks/90/enabled = true
+tracks/90/path = NodePath("cameras/cam_rugido")
+tracks/90/interp = 1
+tracks/90/loop_wrap = true
+tracks/90/keys = PackedFloat32Array(47.766666, 1, 0.36860323, 0.85, 16.302767, 48.466667, 1, 0.31860322, 0.8, 16.702766, 52.066666, 1, 0.2686032, 0.95, 15.502768)
+tracks/91/type = "rotation_3d"
+tracks/91/imported = false
+tracks/91/enabled = true
+tracks/91/path = NodePath("cameras/cam_rugido")
+tracks/91/interp = 1
+tracks/91/loop_wrap = true
+tracks/91/keys = PackedFloat32Array(47.766666, 1, 0.00750006, 0.9914644, -0.11193201, 0.06643355, 48.466667, 1, 0.010979884, 0.98450047, -0.16178355, 0.06681583, 52.066666, 1, 0.0024058607, 0.997176, -0.06552774, 0.036611468)
+tracks/92/type = "value"
+tracks/92/imported = false
+tracks/92/enabled = true
+tracks/92/path = NodePath("cameras/cam_rugido:fov")
+tracks/92/interp = 1
+tracks/92/loop_wrap = true
+tracks/92/keys = {
+"times": PackedFloat32Array(47.766666, 48.466667, 52.066666),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
 "values": [42.0, 48.0, 40.0]
 }
 
-[sub_resource type="Animation" id="Animation_c6b0p"]
+[sub_resource type="Animation" id="Animation_ltdg7"]
 length = 11.0
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -6982,7 +7038,7 @@ tracks/16/keys = {
 "clips": [{
 "end_offset": 0.0,
 "start_offset": 0.0,
-"stream": ExtResource("33_o5hn7")
+"stream": ExtResource("33_aywj8")
 }],
 "times": PackedFloat32Array(0)
 }
@@ -6997,7 +7053,7 @@ tracks/17/keys = {
 "clips": [{
 "end_offset": 0.0,
 "start_offset": 0.0,
-"stream": ExtResource("31_no0lp")
+"stream": ExtResource("31_5nept")
 }],
 "times": PackedFloat32Array(2.6)
 }
@@ -7039,7 +7095,7 @@ tracks/20/keys = {
 "clips": [{
 "end_offset": 0.0,
 "start_offset": 0.0,
-"stream": ExtResource("35_led6c")
+"stream": ExtResource("36_2td5d")
 }],
 "times": PackedFloat32Array(8)
 }
@@ -7123,7 +7179,7 @@ tracks/29/keys = {
 "values": [40.0, 46.0]
 }
 
-[sub_resource type="Animation" id="Animation_q1u35"]
+[sub_resource type="Animation" id="Animation_wsa21"]
 length = 10.5
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -7241,7 +7297,7 @@ tracks/10/keys = {
 "clips": [{
 "end_offset": 0.0,
 "start_offset": 0.0,
-"stream": ExtResource("35_led6c")
+"stream": ExtResource("36_2td5d")
 }],
 "times": PackedFloat32Array(1.2)
 }
@@ -7256,7 +7312,7 @@ tracks/11/keys = {
 "clips": [{
 "end_offset": 0.0,
 "start_offset": 0.0,
-"stream": ExtResource("28_4ybjc")
+"stream": ExtResource("28_ultr8")
 }],
 "times": PackedFloat32Array(4.4)
 }
@@ -7300,7 +7356,7 @@ tracks/16/enabled = true
 tracks/16/path = NodePath("cameras/cam_pj_b")
 tracks/16/interp = 1
 tracks/16/loop_wrap = true
-tracks/16/keys = PackedFloat32Array(2.9, 1, -0.007985649, 0.88998526, -0.0155976545, -0.45565245, 5.2, 1, -0.074494265, -0.70317185, -0.074494265, 0.7031718)
+tracks/16/keys = PackedFloat32Array(2.9, 1, -0.007987739, 0.88998485, -0.015601706, -0.45565313, 5.2, 1, -0.074494265, -0.70317185, -0.074494265, 0.7031718)
 tracks/17/type = "value"
 tracks/17/imported = false
 tracks/17/enabled = true
@@ -7340,7 +7396,7 @@ tracks/20/keys = {
 "values": [46.0, 46.0, 46.0, 46.0, 46.0, 46.0]
 }
 
-[sub_resource type="Animation" id="Animation_ltdg7"]
+[sub_resource type="Animation" id="Animation_77vnl"]
 length = 9.0
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -7409,10 +7465,10 @@ tracks/5/path = NodePath(".:borrao")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/keys = {
-"times": PackedFloat32Array(0, 5.3, 5.4, 6.4),
-"transitions": PackedFloat32Array(1, 1, 1, 1),
+"times": PackedFloat32Array(0, 2.5, 2.7, 3.6, 5.3, 5.4, 6.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
 "update": 0,
-"values": [0.0, 0.0, 0.7, 0.0]
+"values": [0.0, 0.0, 0.85, 0.0, 0.0, 0.7, 0.0]
 }
 tracks/6/type = "value"
 tracks/6/imported = false
@@ -7527,14 +7583,17 @@ tracks/16/path = NodePath(".")
 tracks/16/interp = 1
 tracks/16/loop_wrap = true
 tracks/16/keys = {
-"times": PackedFloat32Array(0.2, 2.2, 5.4),
-"transitions": PackedFloat32Array(1, 1, 1),
+"times": PackedFloat32Array(0.2, 2.2, 2.6, 5.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
 "values": [{
 "args": [0.5, 0.6],
 "method": &"vibrar"
 }, {
 "args": [NodePath("palco_fase_2/efeitos_f2/nevoa")],
 "method": &"estourar"
+}, {
+"args": [0.8, 0.9],
+"method": &"vibrar"
 }, {
 "args": [1.0, 1.2],
 "method": &"vibrar"
@@ -7550,7 +7609,7 @@ tracks/17/keys = {
 "clips": [{
 "end_offset": 0.0,
 "start_offset": 0.0,
-"stream": ExtResource("31_no0lp")
+"stream": ExtResource("31_5nept")
 }],
 "times": PackedFloat32Array(0)
 }
@@ -7565,7 +7624,7 @@ tracks/18/keys = {
 "clips": [{
 "end_offset": 0.0,
 "start_offset": 0.0,
-"stream": ExtResource("32_5nept")
+"stream": ExtResource("32_o5hn7")
 }],
 "times": PackedFloat32Array(1.6)
 }
@@ -7573,117 +7632,132 @@ tracks/18/use_blend = true
 tracks/19/type = "audio"
 tracks/19/imported = false
 tracks/19/enabled = true
-tracks/19/path = NodePath("sons/rugido")
+tracks/19/path = NodePath("sons/grito_monstro")
 tracks/19/interp = 1
 tracks/19/loop_wrap = true
 tracks/19/keys = {
 "clips": [{
 "end_offset": 0.0,
 "start_offset": 0.0,
-"stream": ExtResource("33_o5hn7")
+"stream": ExtResource("34_led6c")
+}],
+"times": PackedFloat32Array(1.8)
+}
+tracks/19/use_blend = true
+tracks/20/type = "audio"
+tracks/20/imported = false
+tracks/20/enabled = true
+tracks/20/path = NodePath("sons/rugido")
+tracks/20/interp = 1
+tracks/20/loop_wrap = true
+tracks/20/keys = {
+"clips": [{
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": ExtResource("33_aywj8")
 }],
 "times": PackedFloat32Array(5)
 }
-tracks/19/use_blend = true
-tracks/20/type = "position_3d"
-tracks/20/imported = false
-tracks/20/enabled = true
-tracks/20/path = NodePath("palco_fase_2/cam_f2_a")
-tracks/20/interp = 1
-tracks/20/loop_wrap = true
-tracks/20/keys = PackedFloat32Array(0, 1, 0.6, 0.9, 2.6, 2, 1, 0.5, 0.85, 2.2)
-tracks/21/type = "rotation_3d"
+tracks/20/use_blend = true
+tracks/21/type = "position_3d"
 tracks/21/imported = false
 tracks/21/enabled = true
 tracks/21/path = NodePath("palco_fase_2/cam_f2_a")
 tracks/21/interp = 1
 tracks/21/loop_wrap = true
-tracks/21/keys = PackedFloat32Array(0, 1, 0, 0.11315656, 0, 0.9935772, 2, 1, 0.022007689, 0.111478575, -0.0024693876, 0.9935201)
-tracks/22/type = "value"
+tracks/21/keys = PackedFloat32Array(0, 1, 0.6, 0.9, 2.6, 2, 1, 0.5, 0.85, 2.2)
+tracks/22/type = "rotation_3d"
 tracks/22/imported = false
 tracks/22/enabled = true
-tracks/22/path = NodePath("palco_fase_2/cam_f2_a:fov")
+tracks/22/path = NodePath("palco_fase_2/cam_f2_a")
 tracks/22/interp = 1
 tracks/22/loop_wrap = true
-tracks/22/keys = {
+tracks/22/keys = PackedFloat32Array(0, 1, 0, 0.11315656, 0, 0.9935772, 2, 1, 0.022007689, 0.111478575, -0.0024693876, 0.9935201)
+tracks/23/type = "value"
+tracks/23/imported = false
+tracks/23/enabled = true
+tracks/23/path = NodePath("palco_fase_2/cam_f2_a:fov")
+tracks/23/interp = 1
+tracks/23/loop_wrap = true
+tracks/23/keys = {
 "times": PackedFloat32Array(0, 2),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [40.0, 38.0]
 }
-tracks/23/type = "position_3d"
-tracks/23/imported = false
-tracks/23/enabled = true
-tracks/23/path = NodePath("palco_fase_2/cam_f2_b")
-tracks/23/interp = 1
-tracks/23/loop_wrap = true
-tracks/23/keys = PackedFloat32Array(2, 1, -1.2, 1.2, 4.2, 5.2, 1, -2.2, 1, 8.4)
-tracks/24/type = "rotation_3d"
+tracks/24/type = "position_3d"
 tracks/24/imported = false
 tracks/24/enabled = true
 tracks/24/path = NodePath("palco_fase_2/cam_f2_b")
 tracks/24/interp = 1
 tracks/24/loop_wrap = true
-tracks/24/keys = PackedFloat32Array(2, 1, 0, -0.13870122, 0, 0.9903343, 5.2, 1, 0.1120227, -0.12690853, 0.014426353, 0.98546284)
-tracks/25/type = "value"
+tracks/24/keys = PackedFloat32Array(2, 1, -1.2, 1.2, 4.2, 5.2, 1, -2.2, 1, 8.4)
+tracks/25/type = "rotation_3d"
 tracks/25/imported = false
 tracks/25/enabled = true
-tracks/25/path = NodePath("palco_fase_2/cam_f2_b:fov")
+tracks/25/path = NodePath("palco_fase_2/cam_f2_b")
 tracks/25/interp = 1
 tracks/25/loop_wrap = true
-tracks/25/keys = {
+tracks/25/keys = PackedFloat32Array(2, 1, 0, -0.13870122, 0, 0.9903343, 5.2, 1, 0.1120227, -0.12690853, 0.014426353, 0.98546284)
+tracks/26/type = "value"
+tracks/26/imported = false
+tracks/26/enabled = true
+tracks/26/path = NodePath("palco_fase_2/cam_f2_b:fov")
+tracks/26/interp = 1
+tracks/26/loop_wrap = true
+tracks/26/keys = {
 "times": PackedFloat32Array(2, 5.2),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [40.0, 46.0]
 }
-tracks/26/type = "position_3d"
-tracks/26/imported = false
-tracks/26/enabled = true
-tracks/26/path = NodePath("palco_fase_2/cam_f2_c")
-tracks/26/interp = 1
-tracks/26/loop_wrap = true
-tracks/26/keys = PackedFloat32Array(5.2, 1, 1, 0.45, 6.6, 9, 1, 1.4, 0.55, 8)
-tracks/27/type = "rotation_3d"
+tracks/27/type = "position_3d"
 tracks/27/imported = false
 tracks/27/enabled = true
 tracks/27/path = NodePath("palco_fase_2/cam_f2_c")
 tracks/27/interp = 1
 tracks/27/loop_wrap = true
-tracks/27/keys = PackedFloat32Array(5.2, 1, 0.20597821, 0.07349493, -0.015515866, 0.9756694, 9, 1, 0.15645805, 0.085440986, -0.013586839, 0.98388827)
-tracks/28/type = "value"
+tracks/27/keys = PackedFloat32Array(5.2, 1, 1, 0.45, 6.6, 9, 1, 1.4, 0.55, 8)
+tracks/28/type = "rotation_3d"
 tracks/28/imported = false
 tracks/28/enabled = true
-tracks/28/path = NodePath("palco_fase_2/cam_f2_c:fov")
+tracks/28/path = NodePath("palco_fase_2/cam_f2_c")
 tracks/28/interp = 1
 tracks/28/loop_wrap = true
-tracks/28/keys = {
+tracks/28/keys = PackedFloat32Array(5.2, 1, 0.20597821, 0.07349493, -0.015515866, 0.9756694, 9, 1, 0.15645805, 0.085440986, -0.013586839, 0.98388827)
+tracks/29/type = "value"
+tracks/29/imported = false
+tracks/29/enabled = true
+tracks/29/path = NodePath("palco_fase_2/cam_f2_c:fov")
+tracks/29/interp = 1
+tracks/29/loop_wrap = true
+tracks/29/keys = {
 "times": PackedFloat32Array(5.2, 9),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [52.0, 50.0]
 }
 
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_wsa21"]
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_kn4qr"]
 _data = {
-&"chegada": SubResource("Animation_3dmdp"),
-&"morte_final": SubResource("Animation_c6b0p"),
-&"pega_jonny": SubResource("Animation_q1u35"),
-&"vira_fase_2": SubResource("Animation_ltdg7")
+&"chegada": SubResource("Animation_q1u35"),
+&"morte_final": SubResource("Animation_ltdg7"),
+&"pega_jonny": SubResource("Animation_wsa21"),
+&"vira_fase_2": SubResource("Animation_77vnl")
 }
 
-[node name="cena_dona_nice" type="Node3D" unique_id=1041843460]
-script = ExtResource("1_xgdbb")
+[node name="cena_dona_nice" type="Node3D" unique_id=1630329940]
+script = ExtResource("1_cwpg8")
 
-[node name="previa_igreja" type="Node3D" parent="." unique_id=738730165 instance=ExtResource("2_cwpg8")]
+[node name="previa_igreja" type="Node3D" parent="." unique_id=738730165 instance=ExtResource("2_u7s2l")]
 editor_description = "So' pra ver a igreja no editor. Some no jogo."
 
-[node name="atores" type="Node3D" parent="." unique_id=533232593]
+[node name="atores" type="Node3D" parent="." unique_id=1650730374]
 
-[node name="Maycow" parent="atores" unique_id=927501674 instance=ExtResource("3_u7s2l")]
+[node name="Maycow" parent="atores" unique_id=153970181 instance=ExtResource("3_nfmjr")]
 editor_description = "Duble do Maycow normal pras cutscenes (o jogador fica escondido). Os clipes estao em anim (biblioteca maycow_clipes.tres): abra o AnimationPlayer pra mexer. Dissolver/sangue/veias so aparecem com o jogo rodando."
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.05, 0, 18.98)
-script = ExtResource("4_nfmjr")
+script = ExtResource("4_fswqi")
 
 [node name="Armature" parent="atores/Maycow/modelo" index="0" unique_id=537086159]
 transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 0, 0, 0)
@@ -7864,38 +7938,38 @@ skin = SubResource("Skin_vur2p")
 blend_shapes/punho_d = 0.0
 blend_shapes/punho_e = 0.0
 
-[node name="mao_arma" type="BoneAttachment3D" parent="atores/Maycow/modelo/Armature/Skeleton3D" index="1" unique_id=789141684]
-transform = Transform3D(0.8713522, 0.25632334, 0.41838077, 0.3791845, 0.18936743, -0.905736, -0.31138912, 0.9478589, 0.0678118, -10.391402, 131.25314, 48.7269)
+[node name="mao_arma" type="BoneAttachment3D" parent="atores/Maycow/modelo/Armature/Skeleton3D" index="1" unique_id=715343398]
+transform = Transform3D(0.871362, 0.25625473, 0.41840225, 0.37921453, 0.1893596, -0.90572506, -0.31132498, 0.9478791, 0.067825146, -10.392, 131.25491, 48.726086)
 bone_name = "RightHand"
 bone_idx = 23
 
-[node name="pivo_arma" type="Node3D" parent="atores/Maycow/modelo/Armature/Skeleton3D/mao_arma" unique_id=964694214]
+[node name="pivo_arma" type="Node3D" parent="atores/Maycow/modelo/Armature/Skeleton3D/mao_arma" unique_id=921641111]
 editor_description = "Gire/mova este pivo pra acertar a pistola na mao."
 transform = Transform3D(3.5442405, 4.359869, 10.033948, -10.9069605, 2.2300346, 2.883634, -0.85250455, -10.405225, 4.822318, -1.1977615, 11.570709, -4.4267807)
 visible = false
 
-[node name="pistola" type="Node3D" parent="atores/Maycow/modelo/Armature/Skeleton3D/mao_arma/pivo_arma" unique_id=1457731839 instance=ExtResource("7_d6q5d")]
+[node name="pistola" type="Node3D" parent="atores/Maycow/modelo/Armature/Skeleton3D/mao_arma/pivo_arma" unique_id=1457731839 instance=ExtResource("7_onvtm")]
 
 [node name="AnimationPlayer" parent="atores/Maycow/modelo" index="1" unique_id=2010220083]
 libraries/ = SubResource("AnimationLibrary_gllaf")
 
 [node name="anim" parent="atores/Maycow" index="1"]
 root_node = NodePath("../modelo")
-libraries/ = ExtResource("8_onvtm")
+libraries/ = ExtResource("8_lc1ni")
 playback_default_blend_time = 0.35
 
-[node name="Jonny" type="Node3D" parent="atores" unique_id=1706711489 instance=ExtResource("9_lc1ni")]
+[node name="Jonny" type="Node3D" parent="atores" unique_id=1245241749 instance=ExtResource("9_f2o3d")]
 editor_description = "O Jonny. Os clipes estao em anim (biblioteca jonny_clipes.tres): abra o AnimationPlayer pra mexer. Dissolver/sangue/veias so aparecem com o jogo rodando."
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 19.6)
-script = ExtResource("4_nfmjr")
+script = ExtResource("4_fswqi")
 clipe_inicial = &"caido_agonia"
 sangue = 0.45
 seguir = NodePath("../Maycow")
 
-[node name="DonaNice" parent="atores" unique_id=1755360897 instance=ExtResource("10_f2o3d")]
+[node name="DonaNice" parent="atores" unique_id=1293680912 instance=ExtResource("10_5rxqv")]
 editor_description = "A Dona Nice possuida, antes de virar monstro. Os clipes estao em anim (biblioteca dona_nice_clipes.tres): abra o AnimationPlayer pra mexer. Dissolver/sangue/veias so aparecem com o jogo rodando."
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.01860322, 0, 18.902767)
-script = ExtResource("4_nfmjr")
+script = ExtResource("4_fswqi")
 clipe_inicial = &"ajoelhada_sussurro"
 sangue = 0.55
 
@@ -8168,7 +8242,7 @@ bones/37/rotation = Quaternion(-0.19597071, -0.3567681, 0.10955111, 0.9068135)
 bones/37/scale = Vector3(1, 0.99999994, 1)
 
 [node name="jaw" parent="atores/DonaNice/modelo/dona_nice_rig/Skeleton3D" index="0" unique_id=524814690]
-transform = Transform3D(1, 0, 0, 0, -0.9512657, -0.30837294, 0, 0.30837268, -0.9512657, 0, 1.0056094, 0.34427693)
+transform = Transform3D(1, 0, 0, 0, -0.9511997, -0.30857638, 0, 0.30857608, -0.95119965, 0, 1.0056546, 0.3442063)
 bone_name = "jaw"
 bone_idx = 11
 
@@ -8183,7 +8257,7 @@ mesh = SubResource("ArrayMesh_qkdti")
 skeleton = NodePath("")
 
 [node name="head" parent="atores/DonaNice/modelo/dona_nice_rig/Skeleton3D" index="1" unique_id=1278001485]
-transform = Transform3D(1, 0, 0, 0, 0.74975437, -0.6617164, 0, 0.66171646, 0.74975413, 0, 0.9247587, 0.26442844)
+transform = Transform3D(1, 0, 0, 0, 0.7498959, -0.661556, 0, 0.6615561, 0.74989563, 0, 0.92478675, 0.2643751)
 bone_name = "head"
 bone_idx = 6
 
@@ -8217,269 +8291,269 @@ skin = SubResource("Skin_ws5ql")
 mesh = SubResource("ArrayMesh_xcsn7")
 skin = SubResource("Skin_ws5ql")
 
-[node name="mao_faca" type="BoneAttachment3D" parent="atores/DonaNice/modelo/dona_nice_rig/Skeleton3D" index="7" unique_id=2080518727]
-transform = Transform3D(-0.8980214, 0.029814743, -0.4389405, -0.3962079, -0.48851657, 0.77741313, -0.19125152, 0.8720451, 0.4505111, -0.14684957, 0.60931885, 0.4816836)
+[node name="mao_faca" type="BoneAttachment3D" parent="atores/DonaNice/modelo/dona_nice_rig/Skeleton3D" index="7" unique_id=1723771545]
+transform = Transform3D(-0.8980277, 0.029809251, -0.43892774, -0.3962141, -0.4884262, 0.77746654, -0.19120833, 0.87209576, 0.4504312, -0.14684957, 0.6093697, 0.48166314)
 bone_name = "hand.R"
 bone_idx = 27
 
-[node name="pivo_faca" type="Node3D" parent="atores/DonaNice/modelo/dona_nice_rig/Skeleton3D/mao_faca" unique_id=2058216927]
+[node name="pivo_faca" type="Node3D" parent="atores/DonaNice/modelo/dona_nice_rig/Skeleton3D/mao_faca" unique_id=1960851094]
 editor_description = "Gire/mova este pivo pra acertar a faca na mao."
 transform = Transform3D(0.8789474, 0.30465317, -0.36693048, -0.05190394, 0.82591313, 0.5614035, 0.47408605, -0.4743987, 0.74174684, 0, 0.049999237, 0)
 
-[node name="faca" type="Node3D" parent="atores/DonaNice/modelo/dona_nice_rig/Skeleton3D/mao_faca/pivo_faca" unique_id=2103276757 instance=ExtResource("14_cuycq")]
+[node name="faca" type="Node3D" parent="atores/DonaNice/modelo/dona_nice_rig/Skeleton3D/mao_faca/pivo_faca" unique_id=2103276757 instance=ExtResource("14_m825m")]
 
-[node name="pingos" type="GPUParticles3D" parent="atores/DonaNice/modelo/dona_nice_rig/Skeleton3D/mao_faca/pivo_faca" unique_id=675494923]
+[node name="pingos" type="GPUParticles3D" parent="atores/DonaNice/modelo/dona_nice_rig/Skeleton3D/mao_faca/pivo_faca" unique_id=1335888282]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.236, -0.004)
 amount = 4
 lifetime = 1.4
 visibility_aabb = AABB(-0.3, -1.5, -0.3, 0.6, 1.6, 0.6)
-process_material = SubResource("ParticleProcessMaterial_0h3f6")
-draw_pass_1 = SubResource("SphereMesh_kdh87")
+process_material = SubResource("ParticleProcessMaterial_kdh87")
+draw_pass_1 = SubResource("SphereMesh_ant25")
 
 [node name="AnimationPlayer" parent="atores/DonaNice/modelo" index="1" unique_id=1528068224]
 libraries/ = SubResource("AnimationLibrary_brq4e")
 
 [node name="anim" parent="atores/DonaNice" index="1"]
 root_node = NodePath("../modelo")
-libraries/ = ExtResource("15_m825m")
+libraries/ = ExtResource("15_i801b")
 playback_default_blend_time = 0.35
 
-[node name="Monstro" type="Node3D" parent="atores" unique_id=146074988 instance=ExtResource("16_i801b")]
+[node name="Monstro" type="Node3D" parent="atores" unique_id=1743594056 instance=ExtResource("16_tl4c6")]
 editor_description = "A Dona Nice monstro (fase 1). Os clipes estao em anim (biblioteca dona_nice_monster_clipes.tres): abra o AnimationPlayer pra mexer. Dissolver/sangue/veias so aparecem com o jogo rodando."
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.01860322, 0, 18.902767)
 visible = false
-script = ExtResource("4_nfmjr")
+script = ExtResource("4_fswqi")
 dissolver = 1.0
 sangue = 0.3
 
-[node name="cameras" type="Node3D" parent="." unique_id=396416607]
+[node name="cameras" type="Node3D" parent="." unique_id=866078394]
 
-[node name="cam_entrada" type="Camera3D" parent="cameras" unique_id=566061056]
-transform = Transform3D(0.99905795, 0.00071131974, 0.043389544, 8.731149e-11, 0.99986565, -0.016391603, -0.043395378, 0.016376162, 0.9989238, 0.45, 1.45, 9.4)
+[node name="cam_entrada" type="Camera3D" parent="cameras" unique_id=1516359860]
+transform = Transform3D(0.99662614, 0.002564963, 0.082035, -1.1641532e-10, 0.99951154, -0.031251423, -0.08207508, 0.031145984, 0.99613935, 0.42, 1.46, 9.3)
 current = true
-fov = 26.0
+fov = 27.0
 near = 0.02
 far = 120.0
 
-[node name="cam_rosto" type="Camera3D" parent="cameras" unique_id=1464867852]
+[node name="cam_rosto" type="Camera3D" parent="cameras" unique_id=1956704135]
 transform = Transform3D(0.9529258, 0.015738592, -0.3027949, 9.313226e-10, 0.99865186, 0.051907655, 0.30320367, -0.04946414, 0.95164114, -0.35, 1.66, 5.35)
 fov = 34.0
 near = 0.02
 far = 120.0
 
-[node name="cam_ombro" type="Camera3D" parent="cameras" unique_id=565580120]
+[node name="cam_ombro" type="Camera3D" parent="cameras" unique_id=1233780001]
 transform = Transform3D(-0.9996661, 0.0015706656, -0.025789736, 0, 0.9981506, 0.060790103, 0.02583752, 0.060769808, -0.9978173, -0.42, 1.74, 3.35)
 fov = 40.0
 near = 0.02
 far = 120.0
 
-[node name="cam_faca" type="Camera3D" parent="cameras" unique_id=1846353982]
-transform = Transform3D(-0.58123696, -0.24094139, 0.7772455, 1.4901161e-08, 0.95515895, 0.29609346, -0.8137342, 0.17210053, -0.55517375, 0.2835499, 0.5723586, 19.230265)
+[node name="cam_faca" type="Camera3D" parent="cameras" unique_id=424458593]
+transform = Transform3D(-0.5812372, -0.24094146, 0.7772455, 7.450581e-09, 0.95515895, 0.29609358, -0.8137342, 0.17210062, -0.555174, 0.28354663, 0.57242477, 19.230267)
 fov = 30.0
 near = 0.02
 far = 120.0
 
-[node name="cam_gota" type="Camera3D" parent="cameras" unique_id=928024989]
-transform = Transform3D(-0.5546999, -0.08607423, 0.8275864, -3.7252903e-09, 0.9946348, 0.103448324, -0.83205056, 0.05738277, -0.55172384, 0.1035499, 0.39235863, 19.370264)
+[node name="cam_gota" type="Camera3D" parent="cameras" unique_id=583591873]
+transform = Transform3D(-0.5546999, -0.08607423, 0.8275864, -3.7252903e-09, 0.9946348, 0.103448324, -0.83205056, 0.05738277, -0.55172384, 0.103546634, 0.39242476, 19.370266)
 fov = 22.0
 near = 0.02
 far = 120.0
 
-[node name="cam_longe" type="Camera3D" parent="cameras" unique_id=1257647520]
+[node name="cam_longe" type="Camera3D" parent="cameras" unique_id=138338462]
 transform = Transform3D(0.9879552, -0.022772834, 0.1530551, -1.8626451e-09, 0.9891114, 0.14716838, -0.15474, -0.14539577, 0.9771978, 1.3, 1.75, 27.6)
 fov = 30.0
 near = 0.02
 far = 120.0
 
-[node name="cam_levanta" type="Camera3D" parent="cameras" unique_id=448652492]
+[node name="cam_levanta" type="Camera3D" parent="cameras" unique_id=2055031113]
 transform = Transform3D(0.9714931, 0.019147431, 0.2362932, 0, 0.99673295, -0.08076778, -0.2370677, 0.07846534, 0.96831924, 0.75, 0.55, 21.9)
 fov = 40.0
 near = 0.02
 far = 120.0
 
-[node name="cam_cabeca" type="Camera3D" parent="cameras" unique_id=1374892160]
-transform = Transform3D(-0.99943876, 0.0019420478, -0.0334444, 1.1641532e-10, 0.9983183, 0.057970297, 0.033500742, 0.05793776, -0.99775803, -0.2813968, 1.3647587, 18.217196)
+[node name="cam_cabeca" type="Camera3D" parent="cameras" unique_id=665894351]
+transform = Transform3D(-0.99943876, 0.0019420478, -0.0334444, 1.1641532e-10, 0.9983183, 0.057970297, 0.033500742, 0.05793776, -0.99775803, -0.2813968, 1.3647869, 18.217142)
 fov = 50.0
 near = 0.02
 far = 120.0
 
-[node name="cam_sacar" type="Camera3D" parent="cameras" unique_id=935161592]
+[node name="cam_sacar" type="Camera3D" parent="cameras" unique_id=2032723850]
 transform = Transform3D(0.9347836, -0.013272799, 0.35496974, -9.313226e-10, 0.9993017, 0.037365247, -0.3552178, -0.034928422, 0.9341308, 0.95, 1.45, 6.7)
 fov = 34.0
 near = 0.02
 far = 120.0
 
-[node name="cam_olhos" type="Camera3D" parent="cameras" unique_id=1656888842]
-transform = Transform3D(-0.98724127, -0.005068407, 0.15915157, 0, 0.9994933, 0.03183028, -0.15923224, 0.031424165, -0.98674107, 0.14585407, 1.3948733, 18.359112)
+[node name="cam_olhos" type="Camera3D" parent="cameras" unique_id=542291360]
+transform = Transform3D(-0.98724127, -0.005068407, 0.15915157, 0, 0.9994933, 0.03183028, -0.15923224, 0.031424165, -0.98674107, 0.11860322, 1.0247868, 18.547142)
 fov = 30.0
 near = 0.02
 far = 120.0
 
-[node name="cam_mira" type="Camera3D" parent="cameras" unique_id=1529162746]
-transform = Transform3D(-0.9997039, 0.0013820156, -0.024296544, -5.820766e-11, 0.9983862, 0.056789372, 0.024335817, 0.056772556, -0.9980905, -0.32, 1.68, 3.9499998)
+[node name="cam_mira" type="Camera3D" parent="cameras" unique_id=1952678153]
+transform = Transform3D(-0.99975264, 0.0017849209, -0.0221742, 1.1641532e-10, 0.9967759, 0.08023587, 0.022245923, 0.080216005, -0.99652934, -0.32, 1.68, 3.9499998)
 fov = 30.0
 near = 0.02
 far = 120.0
 
-[node name="cam_lateral" type="Camera3D" parent="cameras" unique_id=1237086457]
+[node name="cam_lateral" type="Camera3D" parent="cameras" unique_id=1002556468]
 transform = Transform3D(-0.6795261, 0.031130387, -0.7329903, -1.8626451e-09, 0.9990994, 0.042432133, 0.7336511, 0.028833749, -0.67891407, -4.3, 1.4, 14.902767)
 fov = 36.0
 near = 0.02
 far = 120.0
 
-[node name="cam_transforma" type="Camera3D" parent="cameras" unique_id=1018589308]
+[node name="cam_transforma" type="Camera3D" parent="cameras" unique_id=367221677]
 transform = Transform3D(-0.90630794, 0.033971813, -0.4212506, 0, 0.99676394, 0.08038417, 0.42261824, 0.0728528, -0.90337515, -1.2915134, 1.25, 16.093212)
 fov = 36.0
 near = 0.02
 far = 120.0
 
-[node name="cam_rugido" type="Camera3D" parent="cameras" unique_id=1490875380]
+[node name="cam_rugido" type="Camera3D" parent="cameras" unique_id=267216382]
 transform = Transform3D(-0.99106073, 0.029744167, 0.13005401, 2.7939677e-09, 0.97483, -0.22294971, -0.13341199, -0.22095668, -0.9661157, 0.36860323, 0.85, 16.302767)
 fov = 42.0
 near = 0.02
 far = 120.0
 
-[node name="cam_m_c" type="Camera3D" parent="cameras" unique_id=793284769]
+[node name="cam_m_c" type="Camera3D" parent="cameras" unique_id=1949384470]
 transform = Transform3D(-0.7071066, 0.05663567, -0.70483524, -1.8626451e-09, 0.99678725, 0.08009492, 0.707107, 0.056635648, -0.7048348, -1.2, 0.5, 17.800001)
 fov = 40.0
 near = 0.02
 far = 120.0
 
-[node name="cam_pj_a" type="Camera3D" parent="cameras" unique_id=1321105044]
+[node name="cam_pj_a" type="Camera3D" parent="cameras" unique_id=786483116]
 transform = Transform3D(0.54075754, -0.14921978, 0.8278374, 7.450581e-09, 0.98414, 0.1773937, -0.8411785, -0.09592697, 0.5321811, 1.4499999, 0.9, 20.38)
 fov = 42.0
 near = 0.02
 far = 120.0
 
-[node name="cam_pj_b" type="Camera3D" parent="cameras" unique_id=596972932]
-transform = Transform3D(-0.5846342, -0.028428439, -0.8107988, -9.313226e-10, 0.9993859, -0.035040725, 0.811297, -0.020486005, -0.5842751, -1.5500001, 1.3, 18.38)
+[node name="cam_pj_b" type="Camera3D" parent="cameras" unique_id=662352097]
+transform = Transform3D(-0.5846329, -0.028435864, -0.8107995, -9.313226e-10, 0.9993856, -0.03504984, 0.811298, -0.020491287, -0.5842736, -1.5500001, 1.3, 18.38)
 fov = 40.0
 near = 0.02
 far = 120.0
 
-[node name="cam_pj_c" type="Camera3D" parent="cameras" unique_id=951787844]
+[node name="cam_pj_c" type="Camera3D" parent="cameras" unique_id=1716279884]
 transform = Transform3D(-0.9956343, -0.008674783, 0.092936754, 0, 0.995672, 0.09293673, -0.093340725, 0.09253099, -0.99132514, 0.3, 1.5, 9.608571)
 fov = 46.0
 near = 0.02
 far = 120.0
 
-[node name="efeitos" type="Node3D" parent="." unique_id=2117367828]
+[node name="efeitos" type="Node3D" parent="." unique_id=1232089769]
 
-[node name="poca_jonny" type="Decal" parent="efeitos" unique_id=379197904]
+[node name="poca_jonny" type="Decal" parent="efeitos" unique_id=1955849810]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 19.65)
 size = Vector3(2.2, 0.6, 1.8)
-texture_albedo = ExtResource("17_tl4c6")
-texture_orm = ExtResource("18_nj3ib")
+texture_albedo = ExtResource("17_nj3ib")
+texture_orm = ExtResource("18_xi8l0")
 upper_fade = 0.2
 lower_fade = 0.2
 cull_mask = 1
 
-[node name="simbolo" type="Decal" parent="efeitos" unique_id=877502439]
+[node name="simbolo" type="Decal" parent="efeitos" unique_id=165092065]
 transform = Transform3D(0.9781476, 0, 0.2079117, 0, 1, 0, -0.2079117, 0, 0.9781476, 0, 0, 19.6)
 size = Vector3(4.2, 0.6, 4.2)
-texture_albedo = ExtResource("19_xi8l0")
-texture_orm = ExtResource("20_bj5ip")
+texture_albedo = ExtResource("19_bj5ip")
+texture_orm = ExtResource("20_tning")
 albedo_mix = 0.85
 upper_fade = 0.2
 lower_fade = 0.2
 cull_mask = 1
 
-[node name="respingo_1" type="Decal" parent="efeitos" unique_id=1104903772]
+[node name="respingo_1" type="Decal" parent="efeitos" unique_id=1832093784]
 transform = Transform3D(0.76604444, 0, 0.6427876, 0, 1, 0, -0.6427876, 0, 0.76604444, -1.4, 0, 18.9)
 size = Vector3(1.4, 0.6, 1.4)
-texture_albedo = ExtResource("21_tning")
-texture_orm = ExtResource("22_tet4g")
+texture_albedo = ExtResource("21_tet4g")
+texture_orm = ExtResource("22_g4ix0")
 upper_fade = 0.2
 lower_fade = 0.2
 cull_mask = 1
 
-[node name="respingo_2" type="Decal" parent="efeitos" unique_id=734647516]
+[node name="respingo_2" type="Decal" parent="efeitos" unique_id=1792803409]
 transform = Transform3D(-0.9396926, 0, -0.34202015, 0, 1, 0, 0.34202015, 0, -0.9396926, 1.6, 0, 20.5)
 size = Vector3(1.1, 0.6, 1.1)
-texture_albedo = ExtResource("21_tning")
-texture_orm = ExtResource("22_tet4g")
+texture_albedo = ExtResource("21_tet4g")
+texture_orm = ExtResource("22_g4ix0")
 upper_fade = 0.2
 lower_fade = 0.2
 cull_mask = 1
 
-[node name="rastro" type="Decal" parent="efeitos" unique_id=389062079]
+[node name="rastro" type="Decal" parent="efeitos" unique_id=512402665]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 17)
 size = Vector3(1.2, 0.6, 3.4)
-texture_albedo = ExtResource("23_g4ix0")
-texture_orm = ExtResource("24_4s6x7")
+texture_albedo = ExtResource("23_4s6x7")
+texture_orm = ExtResource("24_0mxta")
 albedo_mix = 0.7
 upper_fade = 0.2
 lower_fade = 0.2
 cull_mask = 1
 
-[node name="respingo_gota" type="Decal" parent="efeitos" unique_id=1006524526]
+[node name="respingo_gota" type="Decal" parent="efeitos" unique_id=1198013090]
 transform = Transform3D(0.01, 0, 0, 0, 1, 0, 0, 0, 0.01, 0, 0, 0)
 size = Vector3(0.35, 0.4, 0.35)
-texture_albedo = ExtResource("21_tning")
-texture_orm = ExtResource("22_tet4g")
+texture_albedo = ExtResource("21_tet4g")
+texture_orm = ExtResource("22_g4ix0")
 upper_fade = 0.2
 lower_fade = 0.2
 cull_mask = 1
 
-[node name="velas" type="Node3D" parent="efeitos" unique_id=533224623]
+[node name="velas" type="Node3D" parent="efeitos" unique_id=943293548]
 
-[node name="vela_0" type="MeshInstance3D" parent="efeitos/velas" unique_id=477106771]
+[node name="vela_0" type="MeshInstance3D" parent="efeitos/velas" unique_id=1111313743]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7151165, 0.05, 19.947672)
-mesh = SubResource("CylinderMesh_ant25")
+mesh = SubResource("CylinderMesh_hx6g1")
 
-[node name="chama" type="MeshInstance3D" parent="efeitos/velas/vela_0" unique_id=475595748]
+[node name="chama" type="MeshInstance3D" parent="efeitos/velas/vela_0" unique_id=1478607977]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.08, 0)
-mesh = SubResource("QuadMesh_hx6g1")
+mesh = SubResource("QuadMesh_rskb1")
 
-[node name="vela_1" type="MeshInstance3D" parent="efeitos/velas" unique_id=556012256]
+[node name="vela_1" type="MeshInstance3D" parent="efeitos/velas" unique_id=1862312416]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.79753727, 0.0648, 21.157701)
-mesh = SubResource("CylinderMesh_rskb1")
+mesh = SubResource("CylinderMesh_mou7a")
 
-[node name="chama" type="MeshInstance3D" parent="efeitos/velas/vela_1" unique_id=1706989191]
+[node name="chama" type="MeshInstance3D" parent="efeitos/velas/vela_1" unique_id=1710322833]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0948, 0)
-mesh = SubResource("QuadMesh_mou7a")
+mesh = SubResource("QuadMesh_c3qyx")
 
-[node name="vela_2" type="MeshInstance3D" parent="efeitos/velas" unique_id=109642423]
+[node name="vela_2" type="MeshInstance3D" parent="efeitos/velas" unique_id=765578717]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.7206038, 0.0796, 21.194752)
-mesh = SubResource("CylinderMesh_c3qyx")
+mesh = SubResource("CylinderMesh_werfg")
 
-[node name="chama" type="MeshInstance3D" parent="efeitos/velas/vela_2" unique_id=1644188606]
+[node name="chama" type="MeshInstance3D" parent="efeitos/velas/vela_2" unique_id=1551077949]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1096, 0)
-mesh = SubResource("QuadMesh_werfg")
+mesh = SubResource("QuadMesh_tod6q")
 
-[node name="vela_3" type="MeshInstance3D" parent="efeitos/velas" unique_id=1877825045]
+[node name="vela_3" type="MeshInstance3D" parent="efeitos/velas" unique_id=735371092]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6961155, 0.0544, 20.03092)
-mesh = SubResource("CylinderMesh_tod6q")
+mesh = SubResource("CylinderMesh_xc868")
 
-[node name="chama" type="MeshInstance3D" parent="efeitos/velas/vela_3" unique_id=555155529]
+[node name="chama" type="MeshInstance3D" parent="efeitos/velas/vela_3" unique_id=1775525172]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0844, 0)
-mesh = SubResource("QuadMesh_xc868")
+mesh = SubResource("QuadMesh_k4g51")
 
-[node name="vela_4" type="MeshInstance3D" parent="efeitos/velas" unique_id=1493481804]
+[node name="vela_4" type="MeshInstance3D" parent="efeitos/velas" unique_id=1306511196]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3944176, 0.0692, 18.542599)
-mesh = SubResource("CylinderMesh_k4g51")
+mesh = SubResource("CylinderMesh_nr0gw")
 
-[node name="chama" type="MeshInstance3D" parent="efeitos/velas/vela_4" unique_id=1633219765]
+[node name="chama" type="MeshInstance3D" parent="efeitos/velas/vela_4" unique_id=717269628]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0992, 0)
-mesh = SubResource("QuadMesh_nr0gw")
+mesh = SubResource("QuadMesh_nb36b")
 
-[node name="vela_5" type="MeshInstance3D" parent="efeitos/velas" unique_id=1942081511]
+[node name="vela_5" type="MeshInstance3D" parent="efeitos/velas" unique_id=1024867026]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.042694844, 0.084, 17.850521)
-mesh = SubResource("CylinderMesh_nb36b")
+mesh = SubResource("CylinderMesh_htt7k")
 
-[node name="chama" type="MeshInstance3D" parent="efeitos/velas/vela_5" unique_id=1351620207]
+[node name="chama" type="MeshInstance3D" parent="efeitos/velas/vela_5" unique_id=2128799085]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.114, 0)
-mesh = SubResource("QuadMesh_htt7k")
+mesh = SubResource("QuadMesh_gkcpr")
 
-[node name="vela_6" type="MeshInstance3D" parent="efeitos/velas" unique_id=1162601340]
+[node name="vela_6" type="MeshInstance3D" parent="efeitos/velas" unique_id=1887711640]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.341178, 0.0588, 18.475838)
-mesh = SubResource("CylinderMesh_gkcpr")
+mesh = SubResource("CylinderMesh_qhn5g")
 
-[node name="chama" type="MeshInstance3D" parent="efeitos/velas/vela_6" unique_id=704952095]
+[node name="chama" type="MeshInstance3D" parent="efeitos/velas/vela_6" unique_id=2069373173]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0888, 0)
-mesh = SubResource("QuadMesh_qhn5g")
+mesh = SubResource("QuadMesh_monry")
 
-[node name="luz_velas" type="OmniLight3D" parent="efeitos" unique_id=1924929759]
+[node name="luz_velas" type="OmniLight3D" parent="efeitos" unique_id=108982992]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 19.6)
 light_color = Color(1, 0.62, 0.32, 1)
 light_energy = 2.2
@@ -8487,14 +8561,14 @@ shadow_enabled = true
 omni_range = 4.5
 metadata/piscar = "nervoso"
 
-[node name="luz_pulso" type="OmniLight3D" parent="efeitos" unique_id=1224288742]
+[node name="luz_pulso" type="OmniLight3D" parent="efeitos" unique_id=1814856506]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 18.4)
 visible = false
 light_color = Color(1, 0.08, 0.04, 1)
 light_energy = 0.0
 omni_range = 8.0
 
-[node name="luz_porta" type="SpotLight3D" parent="efeitos" unique_id=717635711]
+[node name="luz_porta" type="SpotLight3D" parent="efeitos" unique_id=1762078993]
 transform = Transform3D(-1, 3.2042593e-08, -8.133888e-08, 0, 0.93040836, 0.36652455, 8.742278e-08, 0.36652455, -0.93040836, 0, 3.4, -2.6)
 light_color = Color(0.62, 0.72, 1, 1)
 light_energy = 6.0
@@ -8502,7 +8576,7 @@ shadow_enabled = true
 spot_range = 12.0
 spot_angle = 28.0
 
-[node name="luz_chave_maycow" type="SpotLight3D" parent="efeitos" unique_id=1490296276]
+[node name="luz_chave_maycow" type="SpotLight3D" parent="efeitos" unique_id=2079829520]
 transform = Transform3D(0.98248655, -0.05708742, 0.17737325, 0, 0.95191187, 0.306372, -0.18633369, -0.30100635, 0.9352406, 1.1, 3.2, 8.8)
 light_color = Color(0.85, 0.82, 0.95, 1)
 light_energy = 11.0
@@ -8511,156 +8585,157 @@ spot_range = 12.0
 spot_angle = 30.0
 spot_angle_attenuation = 1.6
 
-[node name="gota" type="MeshInstance3D" parent="efeitos" unique_id=615387556]
+[node name="gota" type="MeshInstance3D" parent="efeitos" unique_id=970310771]
 visible = false
-mesh = SubResource("SphereMesh_monry")
+mesh = SubResource("SphereMesh_sa27n")
 
-[node name="respingo" type="GPUParticles3D" parent="efeitos" unique_id=880472231]
+[node name="respingo" type="GPUParticles3D" parent="efeitos" unique_id=1872447426]
 emitting = false
 amount = 28
 lifetime = 1.2
 one_shot = true
 explosiveness = 0.95
-process_material = SubResource("ParticleProcessMaterial_b04lw")
-draw_pass_1 = SubResource("SphereMesh_ecbus")
+process_material = SubResource("ParticleProcessMaterial_ecbus")
+draw_pass_1 = SubResource("SphereMesh_ls2iu")
 
-[node name="nevoa_sangue" type="GPUParticles3D" parent="efeitos" unique_id=960621566]
+[node name="nevoa_sangue" type="GPUParticles3D" parent="efeitos" unique_id=407637409]
 emitting = false
 amount = 220
 lifetime = 2.2
 visibility_aabb = AABB(-4, -1, -4, 8, 5, 8)
-process_material = SubResource("ParticleProcessMaterial_j3fyg")
-draw_pass_1 = SubResource("SphereMesh_r2evn")
+process_material = SubResource("ParticleProcessMaterial_r2evn")
+draw_pass_1 = SubResource("SphereMesh_3dmdp")
 
-[node name="corpo_da_monstro" type="Marker3D" parent="efeitos" unique_id=1419030430]
+[node name="corpo_da_monstro" type="Marker3D" parent="efeitos" unique_id=93618314]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 2.35, 0, 20.15)
 
-[node name="palco_fase_2" type="Node3D" parent="." unique_id=260790816]
+[node name="palco_fase_2" type="Node3D" parent="." unique_id=1601815863]
 editor_description = "Posto no jogo onde a fase 1 morreu. Atores e cameras daqui andam junto."
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 14)
 
-[node name="Morrendo" type="Node3D" parent="palco_fase_2" unique_id=669738137 instance=ExtResource("16_i801b")]
+[node name="Morrendo" type="Node3D" parent="palco_fase_2" unique_id=471077418 instance=ExtResource("16_tl4c6")]
 editor_description = "A Dona Nice monstro (fase 1). Os clipes estao em anim (biblioteca dona_nice_monster_clipes.tres): abra o AnimationPlayer pra mexer. Dissolver/sangue/veias so aparecem com o jogo rodando."
 visible = false
-script = ExtResource("4_nfmjr")
+script = ExtResource("4_fswqi")
 sangue = 0.35
 veias = 1.0
 
-[node name="Gigante" type="Node3D" parent="palco_fase_2" unique_id=1692055356 instance=ExtResource("25_0mxta")]
+[node name="Gigante" type="Node3D" parent="palco_fase_2" unique_id=2090328568 instance=ExtResource("25_88fh7")]
 editor_description = "A Dona Nice monstro fase 2: 5 m, flutua. Os clipes estao em anim (biblioteca dona_nice_monster_fase_2_clipes.tres): abra o AnimationPlayer pra mexer. Dissolver/sangue/veias so aparecem com o jogo rodando."
 visible = false
-script = ExtResource("4_nfmjr")
+script = ExtResource("4_fswqi")
 dissolver = 1.0
 veias = 0.6
 escala_ruido = 1.6
 
-[node name="efeitos_f2" type="Node3D" parent="palco_fase_2" unique_id=769798545]
+[node name="efeitos_f2" type="Node3D" parent="palco_fase_2" unique_id=1794786057]
 
-[node name="nevoa" type="GPUParticles3D" parent="palco_fase_2/efeitos_f2" unique_id=204254577]
+[node name="nevoa" type="GPUParticles3D" parent="palco_fase_2/efeitos_f2" unique_id=3539422]
 emitting = false
 amount = 220
 lifetime = 2.2
 visibility_aabb = AABB(-4, -1, -4, 8, 5, 8)
-process_material = SubResource("ParticleProcessMaterial_j3fyg")
-draw_pass_1 = SubResource("SphereMesh_r2evn")
+process_material = SubResource("ParticleProcessMaterial_r2evn")
+draw_pass_1 = SubResource("SphereMesh_3dmdp")
 
-[node name="cam_f2_a" type="Camera3D" parent="palco_fase_2" unique_id=1021735935]
+[node name="cam_f2_a" type="Camera3D" parent="palco_fase_2" unique_id=807210516]
 transform = Transform3D(0.97439116, 0, 0.22485955, 0, 1, 0, -0.22485955, 0, 0.97439116, 0.6, 0.9, 2.6)
 fov = 40.0
 near = 0.02
 far = 120.0
 
-[node name="cam_f2_b" type="Camera3D" parent="palco_fase_2" unique_id=1534788551]
+[node name="cam_f2_b" type="Camera3D" parent="palco_fase_2" unique_id=1755252743]
 transform = Transform3D(0.96152395, 0, -0.27472115, 0, 1, 0, 0.27472115, 0, 0.96152395, -1.2, 1.2, 4.2)
 fov = 40.0
 near = 0.02
 far = 120.0
 
-[node name="cam_f2_c" type="Camera3D" parent="palco_fase_2" unique_id=1976125637]
+[node name="cam_f2_c" type="Camera3D" parent="palco_fase_2" unique_id=769762464]
 transform = Transform3D(0.9887155, 0.06055342, 0.13702166, 0, 0.91466445, -0.40421396, -0.14980537, 0.3996526, 0.90434295, 1, 0.45, 6.6)
 fov = 52.0
 near = 0.02
 far = 120.0
 
-[node name="palco_morte" type="Node3D" parent="." unique_id=2011672207]
+[node name="palco_morte" type="Node3D" parent="." unique_id=1578894078]
 transform = Transform3D(-0.76604444, 0, -0.64278764, 0, 1, 0, 0.64278764, 0, -0.76604444, 2.6, 0, 21.800001)
 
-[node name="GiganteMorre" type="Node3D" parent="palco_morte" unique_id=1172594599 instance=ExtResource("25_0mxta")]
+[node name="GiganteMorre" type="Node3D" parent="palco_morte" unique_id=2127192332 instance=ExtResource("25_88fh7")]
 editor_description = "A Dona Nice monstro fase 2: 5 m, flutua. Os clipes estao em anim (biblioteca dona_nice_monster_fase_2_clipes.tres): abra o AnimationPlayer pra mexer. Dissolver/sangue/veias so aparecem com o jogo rodando."
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, 0)
 visible = false
-script = ExtResource("4_nfmjr")
+script = ExtResource("4_fswqi")
 escala_ruido = 1.6
 
-[node name="cam_m_a" type="Camera3D" parent="palco_morte" unique_id=838145774]
+[node name="cam_m_a" type="Camera3D" parent="palco_morte" unique_id=1684124606]
 transform = Transform3D(0.97101486, 0.08066727, 0.22499536, 3.7252903e-09, 0.94132805, -0.33749303, -0.23901908, 0.32771078, 0.9140435, 1.6, 0.6, 6.5)
 fov = 50.0
 near = 0.02
 far = 120.0
 
-[node name="cam_m_b" type="Camera3D" parent="palco_morte" unique_id=690561320]
+[node name="cam_m_b" type="Camera3D" parent="palco_morte" unique_id=1328929106]
 transform = Transform3D(0.9230769, 0.014781962, -0.38433123, -9.313226e-10, 0.9992612, 0.0384331, 0.38461536, -0.03547671, 0.92239493, -2, 1.4, 4.8)
 fov = 42.0
 near = 0.02
 far = 120.0
 
-[node name="sons" type="Node3D" parent="." unique_id=2087755684]
+[node name="sons" type="Node3D" parent="." unique_id=12009096]
 
-[node name="sussurro" type="AudioStreamPlayer" parent="sons" unique_id=859441524]
-stream = ExtResource("26_88fh7")
+[node name="sussurro" type="AudioStreamPlayer" parent="sons" unique_id=1175146674]
+stream = ExtResource("26_f0ukj")
 volume_db = -6.0
 
-[node name="batimento" type="AudioStreamPlayer" parent="sons" unique_id=1435985470]
-stream = ExtResource("27_f0ukj")
+[node name="batimento" type="AudioStreamPlayer" parent="sons" unique_id=23801013]
+stream = ExtResource("27_4ybjc")
 volume_db = -4.0
 
-[node name="batimento_rapido" type="AudioStreamPlayer" parent="sons" unique_id=492204239]
-stream = ExtResource("28_4ybjc")
+[node name="batimento_rapido" type="AudioStreamPlayer" parent="sons" unique_id=1346727948]
+stream = ExtResource("28_ultr8")
 volume_db = -3.0
 
-[node name="gota" type="AudioStreamPlayer" parent="sons" unique_id=955532455]
-stream = ExtResource("29_ultr8")
+[node name="gota" type="AudioStreamPlayer" parent="sons" unique_id=257184741]
+stream = ExtResource("29_x1ga6")
 volume_db = -2.0
 
-[node name="gota_impacto" type="AudioStreamPlayer" parent="sons" unique_id=1065457003]
-stream = ExtResource("30_x1ga6")
+[node name="gota_impacto" type="AudioStreamPlayer" parent="sons" unique_id=1900497304]
+stream = ExtResource("30_no0lp")
 volume_db = -4.0
 
-[node name="ossos" type="AudioStreamPlayer" parent="sons" unique_id=1582057832]
-stream = ExtResource("31_no0lp")
+[node name="ossos" type="AudioStreamPlayer" parent="sons" unique_id=2081688837]
+stream = ExtResource("31_5nept")
 
-[node name="grito" type="AudioStreamPlayer" parent="sons" unique_id=886628905]
-stream = ExtResource("32_5nept")
+[node name="grito" type="AudioStreamPlayer" parent="sons" unique_id=397828979]
+stream = ExtResource("32_o5hn7")
 volume_db = -3.0
 
-[node name="rugido" type="AudioStreamPlayer" parent="sons" unique_id=1110164737]
-stream = ExtResource("33_o5hn7")
+[node name="rugido" type="AudioStreamPlayer" parent="sons" unique_id=1159739120]
+stream = ExtResource("33_aywj8")
 volume_db = 1.0
 
-[node name="ambiente" type="AudioStreamPlayer" parent="sons" unique_id=2008106124]
-stream = ExtResource("34_aywj8")
+[node name="grito_monstro" type="AudioStreamPlayer" parent="sons" unique_id=1883374655]
+stream = ExtResource("34_led6c")
+
+[node name="ambiente" type="AudioStreamPlayer" parent="sons" unique_id=881588807]
+stream = ExtResource("35_vyafg")
 volume_db = -10.0
 
-[node name="gemido" type="AudioStreamPlayer" parent="sons" unique_id=1651312102]
-stream = ExtResource("35_led6c")
+[node name="gemido" type="AudioStreamPlayer" parent="sons" unique_id=861803527]
+stream = ExtResource("36_2td5d")
 volume_db = -6.0
 
-[node name="arma" type="AudioStreamPlayer" parent="sons" unique_id=281062024]
-stream = ExtResource("36_vyafg")
+[node name="arma" type="AudioStreamPlayer" parent="sons" unique_id=2019611617]
+stream = ExtResource("37_yge4t")
 
-[node name="lente" type="CanvasLayer" parent="." unique_id=529795000]
+[node name="lente" type="CanvasLayer" parent="." unique_id=726787286]
 layer = 80
 
-[node name="tela" type="ColorRect" parent="lente" unique_id=710668083]
-material = SubResource("ShaderMaterial_jubqv")
+[node name="tela" type="ColorRect" parent="lente" unique_id=994072079]
+material = SubResource("ShaderMaterial_c6b0p")
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_right = -1920.0
-offset_bottom = -1080.0
 mouse_filter = 2
 
-[node name="legenda" type="Label" parent="lente" unique_id=77405136]
+[node name="legenda" type="Label" parent="lente" unique_id=1909890754]
 modulate = Color(1, 1, 1, 0)
 anchors_preset = 12
 anchor_top = 1.0
@@ -8672,12 +8747,12 @@ offset_bottom = -100.0
 theme_override_colors/font_color = Color(0.86, 0.8, 0.78, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 6
-theme_override_fonts/font = ExtResource("38_yge4t")
+theme_override_fonts/font = ExtResource("39_gfojn")
 theme_override_font_sizes/font_size = 34
 horizontal_alignment = 1
 
-[node name="diretor" type="AnimationPlayer" parent="." unique_id=1731414399]
-libraries/ = SubResource("AnimationLibrary_wsa21")
+[node name="diretor" type="AnimationPlayer" parent="." unique_id=135025525]
+libraries/ = SubResource("AnimationLibrary_kn4qr")
 
 [editable path="atores/Maycow"]
 [editable path="atores/Maycow/modelo"]

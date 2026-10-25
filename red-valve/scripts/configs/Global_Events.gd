@@ -98,11 +98,6 @@ var voltando_do_hospital: bool = false
 ## Mesma coisa para a escola: ligado quando ele sai pelo portão da rua, e
 ## consumido pelo stage_1 para devolvê-lo à calçada diante do portão.
 var voltando_da_escola: bool = false
-## Ligado pela igreja quando o Maycow sai correndo com o Jonny no colo: a
-## stage_1 consome isto no spawn e, em vez do jogo, toca a corrida pela cidade
-## ate' o hospital (ver stage_1/corrida_jonny.gd). O hospital sabe do resto
-## pelo `SaveManager.evento_dona_nice == 4`.
-var corrida_com_jonny: bool = false
 
 # --- escola <-> porão ---------------------------------------------------------
 # A escola e o porão são duas cenas, e o jogador vai e volta entre elas pelos

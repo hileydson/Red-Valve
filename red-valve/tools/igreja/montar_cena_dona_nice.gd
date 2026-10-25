@@ -27,10 +27,10 @@ const TEX := "res://assets/images/textures/igreja/"
 ## do facho de lua do rombo (que cai em z 15,5 com ~7 m de raio no chao).
 const JONNY_POS := Vector3(0.0, 0.0, 19.6)
 const JONNY_GIRO := 90.0
-## Onde o Maycow para depois de entrar (e onde o jogador volta a ter controle).
+## Onde o Maycow fica na chegada (e onde o jogador volta a ter controle).
 const MAYCOW_FIM := Vector3(0.0, 0.0, 4.2)
-## Passada do andar_lento (m/s) — o no' anda junto com o pe', senao o pe' patina.
-const MAYCOW_VELOCIDADE := 0.86
+## O girar_cabeca dela toca mais devagar na chegada (3,5 s viram ~4,7 s).
+const VEL_CABECA := 0.75
 
 var raiz: Node3D
 var lib: AnimationLibrary
@@ -413,6 +413,7 @@ func _sons() -> void:
 			["batimento_rapido", "batimento_rapido.ogg", -3.0], ["gota", "gota_sangue.ogg", -2.0],
 			["gota_impacto", "gota_impacto.ogg", -4.0], ["ossos", "transformacao_ossos.ogg", 0.0],
 			["grito", "grito_transformacao.ogg", -3.0], ["rugido", "rugido_monstro.ogg", 1.0],
+			["grito_monstro", "grito_monstro.ogg", 0.0],
 			["ambiente", "ambiente_ritual.ogg", -10.0], ["gemido", "gemido_jonny.ogg", -6.0]]:
 		var p := _no(AudioStreamPlayer, d[0], s) as AudioStreamPlayer
 		p.stream = load(SONS + d[1])
@@ -425,10 +426,14 @@ func _lente() -> void:
 	var cl := _no(CanvasLayer, "lente", raiz) as CanvasLayer
 	cl.layer = 80
 	var tela := _no(ColorRect, "tela", cl) as ColorRect
-	tela.set_anchors_preset(Control.PRESET_FULL_RECT)
+	# com os offsets: so' a ancora deixava a tela com tamanho zero (sem lente)
+	tela.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	tela.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var m := ShaderMaterial.new()
 	m.shader = load("res://shaders/cutscenes/igreja_lente.gdshader")
+	# a vinheta e a cor da lente escurecem ~18%: a exposicao devolve o brilho
+	# que a cena tinha sem ela
+	m.set_shader_parameter("exposure", 1.18)
 	tela.material = m
 	var leg := _no(Label, "legenda", cl) as Label
 	leg.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
@@ -530,28 +535,41 @@ func _montar_chegada() -> void:
 	var J := JONNY_POS
 
 	# ---------------------------------------------------------------- tempos
-	const T_ENTRA := 0.0
-	const T_PARA := 6.0
-	const T_MAO := 6.0          # esticar_mao (2,6 s)
-	const T_OMBRO := 9.6
-	const T_FACA := 14.0
-	const T_GOTA := 18.0
-	const T_GOTA_CAI := 19.4
-	const T_GOTA_BATE := 21.8
-	const T_LONGE := 23.0
-	const T_LEVANTA := 30.0     # levantar (4,6 s)
-	const T_CABECA := 34.6      # girar_cabeca (3,5 s)
-	const T_SACA := 39.4        # sacar_arma (1,5 s)
-	const T_OLHOS := 41.0
-	const T_MIRA := 43.5
-	const T_VIRA := 46.0        # virar_corpo (1,6 s)
-	const T_CONVULSAO := 47.6   # convulsao (5,1 s)
-	const T_RUGIDO := 52.7      # rugido (2,9 s)
-	const T_FIM := 57.0
+	# Abre com ele ja' parado na porta, esticando a mao (a entrada andando
+	# saiu). O giro da cabeca dela e' lento e escuro; quando o olhar chega
+	# nele, a camera dispara ate' o Maycow e gira de volta pra ela.
+	const T_MAO := 0.0          # esticar_mao (2,6 s)
+	const T_ROSTO := 1.2
+	const T_OMBRO := 4.2
+	const T_FACA := 8.6
+	const T_GOTA := 12.6
+	const T_GOTA_CAI := 14.0
+	const T_GOTA_BATE := 16.4
+	const T_LONGE := 17.6
+	const T_LEVANTA := 24.6     # levantar (4,6 s)
+	const T_CABECA := 29.2      # girar_cabeca (3,5 s / VEL_CABECA)
+	var dur_cabeca := 3.5 / VEL_CABECA
+	# o olhar dela trava no Maycow aos 2,9 s do clipe; dai' a camera dispara
+	var t_dispara := T_CABECA + 2.9 / VEL_CABECA
+	var t_chega := t_dispara + 0.45
+	var t_volta := t_chega + 0.4
+	var T_SACA := t_volta + 0.55       # sacar_arma (1,5 s)
+	var T_OLHOS := T_SACA + 1.6
+	var T_MIRA := T_SACA + 4.1
+	var T_VIRA := T_SACA + 6.6         # virar_corpo (1,6 s)
+	var T_CONVULSAO := T_SACA + 8.2    # convulsao (5,1 s)
+	var T_RUGIDO := T_SACA + 13.3      # rugido (2,9 s)
+	var T_FIM := T_SACA + 17.6
+	# o grito de monstro, no meio da transformacao (o pico vem ~1 s depois)
+	var t_grito := T_CONVULSAO + 1.4
 	a.length = T_FIM
 
 	# ---------------------------------------------------------------- lente
-	_valor(".:barras", [[0.0, 0.0], [1.2, 1.0], [55.6, 1.0], [56.8, 0.0]])
+	_valor(".:barras", [[0.0, 0.0], [1.2, 1.0], [T_FIM - 1.4, 1.0], [T_FIM - 0.2, 0.0]])
+	# o giro da cabeca: tunel escuro, so' o meio nitido, ate' a camera
+	# terminar de voltar pra ela
+	_valor(".:foco", [[0.0, 0.0], [T_CABECA, 0.0], [T_CABECA + 0.7, 1.0],
+		[t_volta, 1.0], [t_volta + 0.35, 0.0]])
 	_valor(".:saturacao", [[0.0, 0.85], [T_GOTA, 0.85], [T_GOTA + 0.6, 0.55],
 		[T_LONGE, 0.85], [T_CONVULSAO, 0.85], [T_CONVULSAO + 2.0, 0.6], [T_FIM, 0.85]])
 	_valor(".:vermelho", [[0.0, 0.0], [T_CONVULSAO, 0.0], [T_CONVULSAO + 2.5, 0.45],
@@ -561,15 +579,16 @@ func _montar_chegada() -> void:
 		[T_RUGIDO + 2.2, 0.25], [T_FIM, 0.0]])
 	_valor(".:flash", [[0.0, 0.0], [T_RUGIDO + 0.6, 0.0], [T_RUGIDO + 0.7, 0.55],
 		[T_RUGIDO + 1.3, 0.0]])
-	_valor(".:borrao", [[0.0, 0.0], [T_RUGIDO + 0.6, 0.0], [T_RUGIDO + 0.7, 0.7],
-		[T_RUGIDO + 1.6, 0.0]])
+	_valor(".:borrao", [[0.0, 0.0], [t_dispara, 0.0], [t_dispara + 0.3, 0.35],
+		[t_chega, 0.0], [t_grito + 0.6, 0.0], [t_grito + 0.8, 0.85], [t_grito + 1.7, 0.0],
+		[T_RUGIDO + 0.6, 0.0], [T_RUGIDO + 0.7, 0.7], [T_RUGIDO + 1.6, 0.0]])
 	_valor(".:pulso", [[0.0, 0.0], [T_CONVULSAO, 0.0], [T_CONVULSAO + 0.4, 0.8],
 		[T_CONVULSAO + 0.8, 0.2], [T_CONVULSAO + 1.3, 1.0], [T_CONVULSAO + 1.7, 0.3],
 		[T_CONVULSAO + 2.2, 1.0], [T_CONVULSAO + 3.0, 0.6], [T_RUGIDO + 0.7, 1.0],
 		[T_FIM, 0.15]])
 
 	# ---------------------------------------------------------------- planos
-	_valor(".:plano", [[0.0, "cam_entrada"], [T_MAO + 0.6, "cam_rosto"],
+	_valor(".:plano", [[0.0, "cam_entrada"], [T_ROSTO, "cam_rosto"],
 		[T_OMBRO, "cam_ombro"], [T_FACA, "cam_faca"], [T_GOTA, "cam_gota"],
 		[T_LONGE, "cam_longe"], [T_LEVANTA, "cam_levanta"], [T_CABECA, "cam_cabeca"],
 		[T_SACA, "cam_sacar"], [T_OLHOS, "cam_olhos"], [T_MIRA, "cam_mira"],
@@ -577,23 +596,19 @@ func _montar_chegada() -> void:
 		[T_RUGIDO, "cam_rugido"], [T_FIM - 0.05, ""]], true)
 
 	# ---------------------------------------------------------------- Maycow
-	var z0 := MAYCOW_FIM.z - MAYCOW_VELOCIDADE * (T_PARA - T_ENTRA)
-	_pos("atores/Maycow", [[0.0, Vector3(0, 0, z0)], [T_PARA, MAYCOW_FIM]])
+	_pos("atores/Maycow", [[0.0, MAYCOW_FIM]])
 	_rot("atores/Maycow", [[0.0, Quaternion()]])
-	_clipe("Maycow", [[0.0, "andar_lento"], [T_MAO, "esticar_mao"],
+	_clipe("Maycow", [[T_MAO, "esticar_mao"],
 		[T_MAO + 2.6, "mao_esticada"], [T_SACA, "sacar_arma"], [T_SACA + 1.5, "mirando"]])
 	_valor("atores/Maycow/modelo/Armature/Skeleton3D/mao_arma/pivo_arma:visible",
 		[[0.0, false], [T_SACA + 0.45, true]], true)
 
 	var olho := func(z): return Vector3(0.0, 1.62, z)
 	_cam("cam_entrada", [
-		[0.0, Vector3(0.45, 1.45, 9.4), olho.call(z0), 26.0],
-		[2.0, Vector3(0.45, 1.45, 9.3), olho.call(z0 + 1.72), 26.0],
-		[4.0, Vector3(0.42, 1.46, 9.15), olho.call(z0 + 3.44), 27.0],
-		[T_PARA, Vector3(0.40, 1.47, 9.0), olho.call(MAYCOW_FIM.z), 28.0],
-		[T_MAO + 0.6, Vector3(0.40, 1.47, 9.0), olho.call(MAYCOW_FIM.z), 28.0]])
+		[0.0, Vector3(0.42, 1.46, 9.3), olho.call(MAYCOW_FIM.z), 27.0],
+		[T_ROSTO, Vector3(0.40, 1.47, 9.0), olho.call(MAYCOW_FIM.z), 28.0]])
 	_cam("cam_rosto", [
-		[T_MAO + 0.6, Vector3(-0.35, 1.66, 5.35), Vector3(0.0, 1.6, 4.25), 34.0],
+		[T_ROSTO, Vector3(-0.35, 1.66, 5.35), Vector3(0.0, 1.6, 4.25), 34.0],
 		[T_OMBRO, Vector3(-0.30, 1.65, 5.05), Vector3(0.0, 1.6, 4.25), 32.0]])
 	_cam("cam_ombro", [
 		[T_OMBRO, Vector3(-0.42, 1.74, 3.35), Vector3(0.0, 0.75, J.z), 40.0],
@@ -641,8 +656,10 @@ func _montar_chegada() -> void:
 
 	# ---------------------------------------------------------------- o sussurro
 	_clipe("DonaNice", [[0.0, "ajoelhada_sussurro"], [T_LEVANTA, "levantar"],
-		[T_CABECA, "girar_cabeca"], [T_CABECA + 3.5, "olhando_parada"],
+		[T_CABECA, "girar_cabeca"], [T_CABECA + dur_cabeca, "olhando_parada"],
 		[T_VIRA, "virar_corpo"], [T_CONVULSAO, "convulsao"]])
+	_valor("atores/DonaNice/anim:speed_scale", [[0.0, 1.0], [T_CABECA, VEL_CABECA],
+		[T_CABECA + dur_cabeca, 1.0]], true)
 	_som("sussurro", [[0.0]])
 	_valor("sons/sussurro:volume_db", [[0.0, -20.0], [T_OMBRO, -12.0], [T_FACA, -6.0],
 		[T_LONGE, -2.0], [T_LEVANTA + 2.0, -4.0], [T_CABECA, -30.0]])
@@ -661,7 +678,7 @@ func _montar_chegada() -> void:
 		[T_CABECA, Vector3(0.65, 0.62, J.z + 1.9), Vector3(DN.x, 1.35, DN.z), 42.0]])
 
 	# ---------------------------------------------------------------- a cabeca
-	_cam_cabeca(T_CABECA, DN)
+	_cam_cabeca(T_CABECA, t_dispara, t_chega, t_volta, T_SACA)
 	_som("batimento_rapido", [[T_OLHOS - 0.3]])
 
 	# ---------------------------------------------------------------- a arma
@@ -709,6 +726,8 @@ func _montar_chegada() -> void:
 		[T_RUGIDO + 0.7, "vibrar", [1.0, 1.2]]])
 	_som("ossos", [[T_CONVULSAO]])
 	_som("grito", [[T_CONVULSAO + 0.5]])
+	_som("grito_monstro", [[t_grito]])
+	_metodo([[t_grito + 0.7, "vibrar", [0.8, 0.9]]])
 	_som("rugido", [[T_RUGIDO + 0.4]])
 	var cam_t := []
 	for i in 11:
@@ -735,14 +754,18 @@ func _ponta_da_faca() -> Vector3:
 
 ## A camera que gira com a cabeca dela. Fica atras da cabeca, olhando pra
 ## onde ela olha: comeca vendo o altar por cima do ombro dela, e conforme a
-## cabeca gira 180 graus a camera gira junto — e termina vendo o que ela ve',
-## o Maycow la' na porta, com a mao esticada. Ai' a lente fecha nele.
-func _cam_cabeca(t0: float, DN: Vector3) -> void:
+## cabeca gira 180 graus (devagar: VEL_CABECA) a camera gira junto — e
+## termina vendo o que ela ve', o Maycow la' na porta, com a mao esticada.
+## Ai' ela DISPARA ate' ele (`t_dispara` -> `t_chega`, acelerando), para na
+## frente do rosto dele e gira no lugar de volta pra ela (`t_volta`).
+func _cam_cabeca(t0: float, t_dispara: float, t_chega: float, t_volta: float,
+		t_fim: float) -> void:
 	var dn: Node3D = atores["DonaNice"]
 	var chaves := []
 	var marcos := [[0.0, 0.0], [0.5, 12.0], [0.9, 18.0], [1.25, 95.0], [1.5, 90.0],
 		[1.9, 100.0], [2.4, 172.0], [2.6, 188.0], [2.85, 178.0], [3.5, 180.0]]
-	for i in 36:
+	var rosto := MAYCOW_FIM + Vector3(0, 1.6, 0)
+	for i in 30:
 		var t := i * 0.1
 		_posar(dn, "girar_cabeca", t)
 		var cab: Vector3 = dn.posicao_do_osso("head") + Vector3(0, 0.12, 0)
@@ -750,12 +773,32 @@ func _cam_cabeca(t0: float, DN: Vector3) -> void:
 		var olha := Vector3(sin(g), 0.0, cos(g))
 		var p := cab - olha * 0.95 + Vector3(0, 0.32, 0) + olha.cross(Vector3.UP) * 0.30
 		var alvo := cab + olha * 8.0 + Vector3(0, -0.2, 0)
-		if t > 2.8:
-			alvo = alvo.lerp(MAYCOW_FIM + Vector3(0, 1.4, 0), (t - 2.8) / 0.7)
-		chaves.append([t0 + t, p, alvo, 50.0])
-	var ult: Array = chaves[-1]
-	chaves.append([t0 + 3.6, ult[1], MAYCOW_FIM + Vector3(0, 1.3, 0), 50.0])
-	chaves.append([t0 + 4.6, ult[1], MAYCOW_FIM + Vector3(0, 1.3, 0), 20.0])
+		if t > 2.5:
+			alvo = alvo.lerp(rosto - Vector3(0, 0.2, 0), (t - 2.5) / 0.4)
+		chaves.append([t0 + t / VEL_CABECA, p, alvo, 50.0])
+	# o disparo: da cabeca dela ate' ~1 m do rosto dele, acelerando (do lado
+	# oposto ao da mao esticada, que fica no -X)
+	var ini: Vector3 = chaves[-1][1]
+	var perto := rosto + Vector3(0.3, 0.02, 0.95)
+	for i in range(1, 6):
+		var u := i / 5.0
+		var p := ini.lerp(perto, u * u)
+		chaves.append([lerpf(t_dispara, t_chega, u), p, rosto, lerpf(50.0, 36.0, u)])
+	# e o giro de volta, no lugar, ate' olhar pra ela
+	_posar(dn, "olhando_parada", 0.0)
+	var dela: Vector3 = dn.posicao_do_osso("head")
+	var giro0 := Basis.looking_at(rosto - perto, Vector3.UP)
+	var giro1 := Basis.looking_at(dela - perto, Vector3.UP)
+	for i in range(1, 5):
+		var u := i / 4.0
+		var k := u * u * (3.0 - 2.0 * u)
+		var ang := lerpf(0.0, PI, k)
+		var b := giro0.rotated(Vector3.UP, ang)
+		var alvo := perto + (-b.z) * 6.0
+		if i == 4:
+			alvo = dela
+		chaves.append([lerpf(t_chega, t_volta, u), perto, alvo, lerpf(36.0, 30.0, u)])
+	chaves.append([t_fim, perto + Vector3(0, 0, 0.12), dela, 27.0])
 	_cam("cam_cabeca", chaves)
 
 
@@ -827,7 +870,8 @@ func _montar_vira_fase_2() -> void:
 	_valor(".:vermelho", [[0.0, 0.2], [2.0, 0.55], [6.0, 0.4], [9.0, 0.0]])
 	_valor(".:tremor", [[0.0, 0.2], [1.8, 0.5], [5.3, 1.0], [7.0, 0.3], [9.0, 0.0]])
 	_valor(".:flash", [[0.0, 0.0], [5.3, 0.0], [5.4, 0.6], [6.0, 0.0]])
-	_valor(".:borrao", [[0.0, 0.0], [5.3, 0.0], [5.4, 0.7], [6.4, 0.0]])
+	_valor(".:borrao", [[0.0, 0.0], [2.5, 0.0], [2.7, 0.85], [3.6, 0.0],
+		[5.3, 0.0], [5.4, 0.7], [6.4, 0.0]])
 	_valor(".:pulso", [[0.0, 0.3], [1.0, 1.0], [1.6, 0.3], [2.4, 1.0], [3.4, 0.4],
 		[5.4, 1.0], [9.0, 0.2]])
 	# a monstro: de joelhos, convulsiona, e a carne sai em brasa
@@ -843,9 +887,11 @@ func _montar_vira_fase_2() -> void:
 		[5.2, Vector3.ONE * 1.0]])
 	_pos(P + "Gigante", [[0.0, Vector3.ZERO], [2.0, Vector3.ZERO], [5.2, Vector3(0, 0.55, 0)]])
 	_metodo([[0.2, "vibrar", [0.5, 0.6]], [2.2, "estourar", [NodePath(P + "efeitos_f2/nevoa")]],
-		[5.4, "vibrar", [1.0, 1.2]]])
+		[2.6, "vibrar", [0.8, 0.9]], [5.4, "vibrar", [1.0, 1.2]]])
 	_som("ossos", [[0.0]])
 	_som("grito", [[1.6]])
+	# o grito de monstro quando a gigante rompe (o pico vem ~1 s depois)
+	_som("grito_monstro", [[1.8]])
 	_som("rugido", [[5.0]])
 	# cameras do palco (coordenadas do palco: +Z e' pra onde ela olhava)
 	_cam(P + "cam_f2_a", [[0.0, Vector3(0.6, 0.9, 2.6), Vector3(0, 0.9, 0), 40.0],

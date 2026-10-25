@@ -14,6 +14,9 @@ O que nao existia pronto foi COMPOSTO aqui:
   culto bizarro".
 - a transformacao (ossos + carne): estalos de osso e gosma em camadas, com
   densidade crescendo.
+- o grito da transformacao (grito_monstro): o guincho e o grito agudo
+  puxados pra baixo, por cima do rugido grave, saturados e com reverb — o
+  momento em que ela deixa de ser gente, nas duas fases.
 Tudo deterministico (semente fixa): rodar de novo da' o mesmo arquivo.
 
 Precisa de ffmpeg (decodifica e codifica) e numpy.
@@ -48,6 +51,8 @@ PACOTES = {
     "squish_01_0.mp3": ("squish-sounds-effects", "Squish sounds effects"),
     "squish_03.mp3": ("squish-sounds-effects", "Squish sounds effects"),
     "squish_05.mp3": ("squish-sounds-effects", "Squish sounds effects"),
+    "evil_screech_1.ogg": ("evil-screech-1", "Evil Screech 1"),
+    "high_pitch_scream_gverb.mp3": ("high-pitch-scream-sounds2", "High pitch scream sounds(2)"),
 }
 
 rng = np.random.default_rng(1983)
@@ -238,6 +243,20 @@ def rugido():
     gravar("rugido_monstro.ogg", fade(reverb(x, 3.0, 0.35), 0.01, 0.8))
 
 
+def grito_monstro():
+    gu = normal(ler("evil_screech_1.ogg"))[int(1.6 * SR): int(3.3 * SR)]
+    ag = normal(ler("high_pitch_scream_gverb.mp3"))
+    ro = normal(ler("monster_roar.wav"))
+    de = normal(ler("vocal_samples/demon_2.ogg"))
+    x = silencio(4.6)
+    por(x, tom(ro, 0.55), 0.0, 0.75)
+    por(x, tom(gu, 0.78), 0.18, 1.0)
+    por(x, tom(ag, 0.62), 0.32, 0.55)
+    por(x, tom(de, 0.6), 0.05, 0.45)
+    x = np.tanh(normal(x) * 2.2).astype(np.float32)
+    gravar("grito_monstro.ogg", fade(reverb(x, 3.2, 0.42), 0.005, 1.4))
+
+
 def boca():
     crunch = [normal(ler("crunch_-_tito/crunch.%d.ogg" % i)) for i in (1, 2, 3)]
     eat = [normal(ler("80-CC0-creature-SFX_0/eat_%02d.ogg" % i)) for i in (1, 2, 4)]
@@ -331,4 +350,6 @@ if __name__ == "__main__":
     pancadas()
     vozes()
     ambiente()
+    # por ultimo: a semente e' uma so', e os sons de antes nao mudam
+    grito_monstro()
     creditos()

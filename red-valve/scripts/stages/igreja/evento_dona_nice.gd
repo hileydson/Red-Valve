@@ -13,6 +13,8 @@ extends Node
 ##   0 -> roda a chegada          1 -> luta, fase 1
 ##   2 -> luta, fase 2            3 -> ela morreu, o Jonny espera no chao
 ##   4/5 -> o Jonny ja' foi levado: a igreja fica so' com o que sobrou
+## Pegando o Jonny, o Maycow sai pro adro com ele no colo e vai a pe' ate' o
+## hospital (ver `stage_1.gd` e `player_carregar_jonny.gd`).
 ## Morrer na luta volta pro CHECKPOINT, que e' gravado no comeco de cada fase
 ## — o jogador recomeca a fase em que estava, sem rever a cutscene.
 
@@ -24,7 +26,6 @@ const CENA_BOSS_1 := "res://scenes/enemies/dona_nice/boss_dona_nice.tscn"
 const CENA_BOSS_2 := "res://scenes/enemies/dona_nice/boss_dona_nice_fase_2.tscn"
 const CENA_MUNICAO := "res://scenes/stages/igreja/municao_igreja.tscn"
 const CENA_MAPA := "res://scenes/stages/stage_1/stage_1.tscn"
-const CENA_HOSPITAL := "res://scenes/stages/hospital/hospital.tscn"
 
 ## As tochas da galeria apagam enquanto o evento existir: as fatias do meio da
 ## nave ja' estao no teto de 8 omni por malha, e a luz das velas do ritual e o
@@ -273,11 +274,13 @@ func _levar_jonny() -> void:
 	cena.get_node("atores/Maycow").visible = true
 	cena.tocar(&"pega_jonny")
 	await cena.terminou
-	# Daqui ele so' para no hospital. O save ja' aponta pra la': quem fechar o
-	# jogo no meio da corrida volta direto com o Jonny no colo.
+	# Daqui ele sai pro adro com o Jonny no colo e vai a pe' ate' o hospital.
+	# O save aponta pra cidade sem posicao: quem carregar volta pra porta da
+	# igreja, com ele no colo.
 	SaveManager.evento_dona_nice = 4
-	SaveManager.save_game(CENA_HOSPITAL)
-	GlobalEvents.corrida_com_jonny = true
+	SaveManager.stage_1_saved_position = {}
+	SaveManager.save_game(CENA_MAPA)
+	GlobalEvents.voltando_da_igreja = true
 	LoadingScreen.load_scene(CENA_MAPA)
 
 
