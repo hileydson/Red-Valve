@@ -88,6 +88,15 @@ const BANCOS := preload("res://scripts/stages/igreja/bancos_igreja.gd")
 		var r := get_node_or_null("lente/preto") as ColorRect
 		if r:
 			r.color.a = v
+## Camera lenta (a gota de sangue caindo da faca): a escala do tempo do jogo
+## inteiro — atores, chamas, particulas e o proprio diretor. O som fica de
+## fora (`Engine.time_scale` nao mexe no audio). Volta a 1 no fim da
+## animacao, ao pular e ao sair da cena.
+@export_range(0.05, 1.0) var lento: float = 1.0:
+	set(v):
+		lento = v
+		if not Engine.is_editor_hint() and is_inside_tree():
+			Engine.time_scale = v
 ## Tremor da camera ativa (0 parado, 1 terremoto).
 @export_range(0.0, 1.0) var tremor: float = 0.0
 ## Energia do pulso vermelho da transformacao (luz `efeitos/luz_pulso`).
@@ -146,7 +155,26 @@ func pular() -> void:
 
 
 func _ao_terminar(animacao: StringName) -> void:
+	if lento != 1.0:
+		lento = 1.0
+	_jonny_respirando()
 	terminou.emit(animacao)
+
+
+func _exit_tree() -> void:
+	if not Engine.is_editor_hint() and lento != 1.0:
+		Engine.time_scale = 1.0
+
+
+## O Jonny esta' vivo: o clipe dele (que arfa) nunca fica parado. Quando o
+## diretor termina uma animacao ele PARA os clipes que tocou nos atores, e o
+## Jonny congelava ate' a proxima cutscene.
+func _jonny_respirando() -> void:
+	var jonny := get_node_or_null("atores/Jonny") as AtorIgreja
+	if jonny == null or jonny.anim == null or jonny.anim.is_playing():
+		return
+	var clipe := jonny.anim.assigned_animation
+	jonny.tocar(clipe if clipe != &"" else &"caido_agonia", 0.3)
 
 
 ## Fim de uma cutscene: devolve a camera ao jogador. A LENTE FICA: durante a

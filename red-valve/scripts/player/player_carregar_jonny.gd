@@ -46,9 +46,9 @@ const PEGAR := &"pegar_jonny"
 ## Velocidade (m/s) em que o `andar_carregando` casa o passo com o chao (medida
 ## nos pes do clipe). Andando mais rapido ou mais devagar, o clipe acompanha.
 const PASSO_DO_CLIPE := 0.95
-## O mesmo pro `correr_carregando` (a velocidade do duble na cutscene), e a
-## partir de que rapidez ele troca o andar pela corrida.
-const PASSO_CORRENDO := 4.2
+## O mesmo pro `correr_carregando` (medido igual: passada curta, ~1,3 m/s), e
+## a partir de que rapidez o passo vira o da corrida.
+const PASSO_CORRENDO := 1.3
 const VIRA_CORRIDA := 2.0
 ## `largar_jonny` (3,2 s): o Jonny encosta no chao em 1,6 s.
 const DURACAO_LARGAR := 3.2
@@ -187,17 +187,20 @@ func _escolher_passo() -> void:
 	var v := Vector3(player.velocity.x, 0.0, player.velocity.z)
 	var rapidez := v.length()
 	var clipe := PARADO
+	# Os dois clipes vao TROCADOS: no jogo o `correr_carregando` (passada curta,
+	# corpo quieto) e' que parece andar, e o `andar_carregando` acelerado e' que
+	# parece a corrida aflita com ele no colo.
 	if rapidez > VIRA_CORRIDA:
-		clipe = CORRENDO
-	elif rapidez > 0.15:
 		clipe = ANDANDO
+	elif rapidez > 0.15:
+		clipe = CORRENDO
 	if _ap.current_animation != String(clipe):
 		_ap.play(clipe, 0.3)
-	if clipe == ANDANDO:
+	if clipe == CORRENDO:
 		var de_costas := v.dot(-player.global_basis.z) < -0.3 * rapidez
-		_ap.speed_scale = clampf(rapidez / PASSO_DO_CLIPE, 0.6, 1.6) * (-1.0 if de_costas else 1.0)
-	elif clipe == CORRENDO:
-		_ap.speed_scale = clampf(rapidez / PASSO_CORRENDO, 0.6, 1.3)
+		_ap.speed_scale = clampf(rapidez / PASSO_CORRENDO, 0.6, 1.6) * (-1.0 if de_costas else 1.0)
+	elif clipe == ANDANDO:
+		_ap.speed_scale = clampf(rapidez / PASSO_DO_CLIPE, 0.6, 2.0)
 	else:
 		_ap.speed_scale = 1.0
 

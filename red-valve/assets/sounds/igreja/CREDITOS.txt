@@ -13,6 +13,7 @@ OpenGameArt. Compostos por tools/audio/gerar_sons_igreja.py a partir de:
   "Squish sounds effects"  https://opengameart.org/content/squish-sounds-effects
   "Evil Screech 1"  https://opengameart.org/content/evil-screech-1
   "High pitch scream sounds(2)"  https://opengameart.org/content/high-pitch-scream-sounds2
+  "breathing tired"  https://opengameart.org/content/breathing-tired
 
 O canto do culto (sussurro_culto.ogg) foi montado silaba a silaba a
 partir das amostras sussurradas do "Dialog vocal samples": nao e' uma

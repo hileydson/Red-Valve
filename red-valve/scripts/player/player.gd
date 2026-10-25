@@ -53,7 +53,7 @@ var _passo_pe_alternado: bool = false # alterna a cada passo p/ dar sensação d
 @onready var dash_effect_particles: GPUParticles3D = $dash_effect_particles
 # @onready var screen_shader: MeshInstance3D = $camera_third_person/screen_shader
 
-var blood_effect = preload("res://scenes/enemies/blood.tscn")
+var blood_effect = preload("res://scenes/effects/sangue_tiro.tscn")
 var capsula_scene = preload("res://scenes/effects/capsula.tscn")
 var capsula_shotgun_scene = preload("res://scenes/effects/capsula_shotgun.tscn")
 

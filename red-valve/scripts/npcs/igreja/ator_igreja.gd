@@ -79,6 +79,15 @@ func _ready() -> void:
 	_trocar_materiais()
 	if clipe_inicial != &"" and anim and anim.has_animation(clipe_inicial):
 		anim.play(clipe_inicial)
+	visibility_changed.connect(_sons_do_corpo)
+	_sons_do_corpo()
+
+
+## Os sons em laco do proprio ator (a respiracao do Jonny) param quando ele
+## some de cena e voltam quando ele aparece.
+func _sons_do_corpo() -> void:
+	for som in find_children("*", "AudioStreamPlayer3D", false, false):
+		(som as AudioStreamPlayer3D).stream_paused = not is_visible_in_tree()
 
 
 func _process(_delta: float) -> void:

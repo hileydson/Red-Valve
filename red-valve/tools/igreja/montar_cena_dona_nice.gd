@@ -597,10 +597,13 @@ func _montar_chegada() -> void:
 	const T_FACA := 8.6
 	const T_GOTA := 12.6
 	const T_GOTA_CAI := 14.0
-	const T_GOTA_BATE := 16.4
-	const T_LONGE := 17.6
-	const T_LEVANTA := 24.6     # levantar (4,6 s)
-	const T_CABECA := 29.2      # girar_cabeca (3,5 s / VEL_CABECA)
+	# a queda da gota e' em camera lenta: o jogo inteiro a LENTO (menos o
+	# som), entao 0,8 s de animacao duram 3,2 s na tela
+	const T_GOTA_BATE := 14.8
+	const LENTO := 0.25
+	const T_LONGE := 16.0
+	const T_LEVANTA := 23.0     # levantar (4,6 s)
+	const T_CABECA := 27.6      # girar_cabeca (3,5 s / VEL_CABECA)
 	var dur_cabeca := 3.5 / VEL_CABECA
 	# o olhar dela trava no Maycow aos 2,9 s do clipe; dai' a camera dispara
 	var t_dispara := T_CABECA + 2.9 / VEL_CABECA
@@ -625,7 +628,11 @@ func _montar_chegada() -> void:
 	_valor(".:preto", [[0.0, 0.0], [T_FIM - 0.7, 0.0], [T_FIM, 1.0]])
 	# o giro da cabeca: tunel escuro, so' o meio nitido, ate' a camera
 	# terminar de voltar pra ela
-	_valor(".:foco", [[0.0, 0.0], [T_CABECA, 0.0], [T_CABECA + 0.7, 1.0],
+	_valor(".:lento", [[0.0, 1.0], [T_GOTA_CAI - 0.12, 1.0], [T_GOTA_CAI, LENTO],
+		[T_GOTA_BATE - 0.001, LENTO], [T_GOTA_BATE, 1.0]])
+	# na gota tambem: so' ela nitida, o resto borrado (tunel + borrao radial)
+	_valor(".:foco", [[0.0, 0.0], [T_GOTA_CAI - 0.1, 0.0], [T_GOTA_CAI + 0.08, 0.9],
+		[T_GOTA_BATE, 0.9], [T_GOTA_BATE + 0.25, 0.0], [T_CABECA, 0.0], [T_CABECA + 0.7, 1.0],
 		[t_volta, 1.0], [t_volta + 0.35, 0.0]])
 	_valor(".:saturacao", [[0.0, 0.85], [T_GOTA, 0.85], [T_GOTA + 0.6, 0.55],
 		[T_LONGE, 0.85], [T_CONVULSAO, 0.85], [T_CONVULSAO + 2.0, 0.6], [T_FIM, 0.85]])
@@ -637,7 +644,8 @@ func _montar_chegada() -> void:
 		[T_BANCOS + 3.0, 0.15], [T_FIM, 0.0]])
 	_valor(".:flash", [[0.0, 0.0], [T_RUGIDO + 0.6, 0.0], [T_RUGIDO + 0.7, 0.55],
 		[T_RUGIDO + 1.3, 0.0]])
-	_valor(".:borrao", [[0.0, 0.0], [t_dispara, 0.0], [t_dispara + 0.3, 0.35],
+	_valor(".:borrao", [[0.0, 0.0], [T_GOTA_CAI - 0.1, 0.0], [T_GOTA_CAI + 0.08, 0.3],
+		[T_GOTA_BATE, 0.3], [T_GOTA_BATE + 0.2, 0.0], [t_dispara, 0.0], [t_dispara + 0.3, 0.35],
 		[t_chega, 0.0], [t_grito + 0.6, 0.0], [t_grito + 0.8, 0.85], [t_grito + 1.7, 0.0],
 		[T_RUGIDO + 0.6, 0.0], [T_RUGIDO + 0.7, 0.7], [T_RUGIDO + 1.6, 0.0]])
 	_valor(".:pulso", [[0.0, 0.0], [T_CONVULSAO, 0.0], [T_CONVULSAO + 0.4, 0.8],
@@ -695,23 +703,32 @@ func _montar_chegada() -> void:
 	_pos("efeitos/gota", [[T_GOTA, ponta + Vector3(0, -0.004, 0)]] + gp)
 	_valor("efeitos/gota:scale", [[T_GOTA, Vector3(0.3, 0.3, 0.3)],
 		[T_GOTA_CAI - 0.2, Vector3(1.0, 1.15, 1.0)], [T_GOTA_CAI, Vector3(0.9, 1.4, 0.9)],
-		[T_GOTA_CAI + 0.4, Vector3(1.0, 1.0, 1.0)], [T_GOTA_BATE, Vector3(1.0, 1.25, 1.0)]])
+		[T_GOTA_CAI + 0.15, Vector3(1.0, 1.0, 1.0)], [T_GOTA_BATE, Vector3(1.0, 1.25, 1.0)]])
 	_pos("efeitos/respingo", [[0.0, chao_gota]])
 	_pos("efeitos/respingo_gota", [[0.0, chao_gota]])
 	_valor("efeitos/respingo_gota:scale", [[0.0, Vector3(0.01, 1, 0.01)],
 		[T_GOTA_BATE, Vector3(0.01, 1, 0.01)], [T_GOTA_BATE + 0.25, Vector3(1, 1, 1)]])
 	_metodo([[T_GOTA_BATE, "estourar", [NodePath("efeitos/respingo")]],
 		[T_GOTA_BATE, "vibrar", [0.25, 0.15]]])
-	_cam("cam_gota", [
-		[T_GOTA, ponta + Vector3(0.24, 0.02, -0.16), ponta + Vector3(0, -0.01, 0), 22.0],
-		[T_GOTA_CAI, ponta + Vector3(0.24, 0.0, -0.16), ponta + Vector3(0, -0.03, 0), 22.0],
-		[T_GOTA_CAI + 1.2, ponta.lerp(chao_gota, 0.3) + Vector3(0.26, 0.02, -0.18),
-			ponta.lerp(chao_gota, 0.35), 24.0],
-		[T_GOTA_BATE, chao_gota + Vector3(0.30, 0.10, -0.24), chao_gota, 26.0],
-		[T_LONGE, chao_gota + Vector3(0.36, 0.16, -0.30), chao_gota, 28.0]])
+	# na queda a camera desce JUNTO com a gota, mirando nela: a gota fica no
+	# meio da tela (o meio nitido do `foco`) e o resto passa borrado
+	var cg := [[T_GOTA, ponta + Vector3(0.24, 0.02, -0.16), ponta + Vector3(0, -0.01, 0), 22.0],
+		[T_GOTA_CAI, ponta + Vector3(0.24, 0.0, -0.16), ponta + Vector3(0, -0.03, 0), 22.0]]
+	for i in range(1, 12):
+		var u := i / 12.0
+		var g := ponta.lerp(chao_gota, u * u)
+		cg.append([T_GOTA_CAI + u * (T_GOTA_BATE - T_GOTA_CAI),
+			g + Vector3(0.24, 0.0, -0.16).lerp(Vector3(0.30, 0.10, -0.24), u), g,
+			lerpf(22.0, 26.0, u)])
+	cg.append([T_GOTA_BATE, chao_gota + Vector3(0.30, 0.10, -0.24), chao_gota, 26.0])
+	cg.append([T_LONGE, chao_gota + Vector3(0.36, 0.16, -0.30), chao_gota, 28.0])
+	_cam("cam_gota", cg)
 	_som("gota", [[T_GOTA_CAI - 0.1]])
 	_som("gota_impacto", [[T_GOTA_BATE]])
-	_som("batimento", [[T_GOTA]])
+	# o coracao batendo na queda, em primeiro plano, e some depois do pingo
+	_som("batimento", [[T_GOTA_CAI - 0.15]])
+	_valor("sons/batimento:volume_db", [[0.0, 3.0], [T_GOTA_BATE + 0.4, 3.0],
+		[T_LONGE + 1.5, -30.0]])
 
 	# ---------------------------------------------------------------- o sussurro
 	_clipe("DonaNice", [[0.0, "ajoelhada_sussurro"], [T_LEVANTA, "levantar"],
@@ -755,9 +772,17 @@ func _montar_chegada() -> void:
 		[T_OLHOS, Vector3(0.85, 1.48, MAYCOW_FIM.z + 2.3), Vector3(-0.1, 1.42, MAYCOW_FIM.z), 32.0]])
 	_posar(dn, "girar_cabeca", 3.49)
 	var cabeca: Vector3 = dn.posicao_do_osso("head") + Vector3(0, 0.08, 0)
+	# O rosto dela de perto, na fala. O `_posar` troca de clipe MISTURANDO e,
+	# sem o tempo andar, a pose fica a de antes (ajoelhada): a cabeca saia
+	# 37 cm abaixo e a camera ficava dentro das costas dela. Aqui o clipe
+	# entra sem mistura, com ela de pe'.
+	var ap_dn := dn.get_node("anim") as AnimationPlayer
+	ap_dn.play("olhando_parada", 0.0)
+	ap_dn.seek(0.0, true)
+	var rosto_dela: Vector3 = dn.posicao_do_osso("head") + Vector3(0, 0.08, 0)
 	_cam("cam_olhos", [
-		[T_OLHOS, cabeca + Vector3(0.10, 0.02, -0.62), cabeca, 30.0],
-		[T_MIRA, cabeca + Vector3(0.07, 0.01, -0.48), cabeca, 28.0]])
+		[T_OLHOS, rosto_dela + Vector3(0.10, 0.02, -0.62), rosto_dela, 30.0],
+		[T_MIRA, rosto_dela + Vector3(0.07, 0.01, -0.48), rosto_dela, 28.0]])
 	_cam("cam_mira", [
 		[T_MIRA, Vector3(-0.32, 1.68, MAYCOW_FIM.z - 0.25), cabeca - Vector3(0, 0.55, 0), 30.0],
 		[T_VIRA, Vector3(-0.30, 1.67, MAYCOW_FIM.z - 0.1), cabeca - Vector3(0, 0.50, 0), 26.0]])

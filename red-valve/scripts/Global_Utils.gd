@@ -452,7 +452,7 @@ func cleanup_gameplay_leftovers() -> void:
 	# Nós soltos pendurados direto na root sobrevivem à troca de cena
 	for child in tree.root.get_children():
 		if child == tree.current_scene: continue
-		if child.scene_file_path == "res://scenes/enemies/blood.tscn":
+		if child.scene_file_path in ["res://scenes/enemies/blood.tscn", "res://scenes/effects/sangue_tiro.tscn"]:
 			child.queue_free()
 
 	force_clear_all_screen_messages()

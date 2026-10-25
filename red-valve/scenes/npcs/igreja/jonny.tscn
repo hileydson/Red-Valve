@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://scripts/npcs/igreja/ator_igreja.gd" id="1_ator"]
 [ext_resource type="PackedScene" path="res://assets/3d_model/npc/igreja/jonny.glb" id="2_modelo"]
 [ext_resource type="AnimationLibrary" path="res://assets/3d_model/npc/igreja/jonny_clipes.tres" id="3_clipes"]
+[ext_resource type="AudioStream" path="res://assets/sounds/igreja/respiracao_jonny.ogg" id="4_respiracao"]
 
 [node name="jonny" type="Node3D"]
 editor_description = "O Jonny. Os clipes estao em anim (biblioteca jonny_clipes.tres): abra o AnimationPlayer pra mexer. Dissolver/sangue/veias so aparecem com o jogo rodando."
@@ -17,3 +18,12 @@ root_node = NodePath("../modelo")
 libraries = {
 &"": ExtResource("3_clipes")
 }
+
+[node name="respiracao" type="AudioStreamPlayer3D" parent="."]
+editor_description = "Ele esta' vivo: respira o tempo todo, ferido (laco). Pausa sozinho quando o ator some."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
+stream = ExtResource("4_respiracao")
+volume_db = -3.0
+unit_size = 2.0
+max_distance = 16.0
+autoplay = true

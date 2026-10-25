@@ -31,7 +31,7 @@ func _ready() -> void:
 	await _foto("jogo")
 	Input.action_press("ui_mover_cima")
 	await get_tree().create_timer(1.6).timeout
-	print("velocidade no colo=", Vector2(p.velocity.x, p.velocity.z).length())
+	print("velocidade no colo=", Vector2(p.velocity.x, p.velocity.z).length(), " ", _passo(p))
 	await _de_lado(p, "andando")
 	await get_tree().create_timer(0.27).timeout
 	await _de_lado(p, "andando_b")
@@ -70,12 +70,28 @@ func _ready() -> void:
 	Input.action_press("ui_mover_cima")
 	await get_tree().create_timer(1.2).timeout
 	await _de_lado(p, "andando_de_novo")
+	# correndo com ele no colo (de volta, pro lado de onde veio)
 	Input.action_release("ui_mover_cima")
+	Input.action_press("ui_mover_baixo")
+	p._run_toggle_active = true
+	await get_tree().create_timer(1.2).timeout
+	print("correndo no colo=", Vector2(p.velocity.x, p.velocity.z).length(), " ", _passo(p))
+	await _de_lado(p, "correndo")
+	p._run_toggle_active = false
+	Input.action_release("ui_mover_baixo")
 	get_tree().current_scene.sair_do_hospital()
 	await get_tree().create_timer(0.5).timeout
 	print("cena depois de tentar sair: ", get_tree().current_scene.scene_file_path)
 	await _foto("porta_trancada")
 	get_tree().quit()
+
+
+## O clipe que o colo esta' tocando, e em que velocidade.
+func _passo(p: Node) -> String:
+	for c in p.get_children():
+		if c.get_script() and c.get_script().resource_path.ends_with("player_carregar_jonny.gd"):
+			return "clipe=%s x%.2f" % [c._ap.current_animation, c._ap.speed_scale]
+	return "sem colo"
 
 
 func _apertar(acao: String) -> void:

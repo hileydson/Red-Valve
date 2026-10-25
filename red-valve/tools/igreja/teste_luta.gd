@@ -73,12 +73,13 @@ func _roteiro() -> void:
 		await _foto("chegada")
 		await _esperar(20.0)
 		await _foto("chegada_20s")
-		await _esperar(38.0)
+		await _esperar(40.0)
 		var j := _jogador()
 		print("CHEGADA acabou: estado=", SaveManager.evento_dona_nice, " in_cutscene=",
 			GlobalEvents.in_cutscene, " controle_travado=", j._cutscene_inputs_disabled,
 			" pistola=", SaveManager.is_equipped("pistol"), " boss=", _boss() != null)
 		await _foto("luta_comeca")
+		_jonny_respira()
 		if OS.get_environment("IGREJA_SO_CHEGADA") == "1":
 			return
 	await _esperar(3.5)
@@ -88,6 +89,15 @@ func _roteiro() -> void:
 		await _fase_2()
 	if SaveManager.evento_dona_nice == 3:
 		await _jonny()
+
+
+## O Jonny esta' vivo: o clipe dele nunca pode estar parado.
+func _jonny_respira() -> void:
+	var j: Node = _evento().cena.get_node_or_null("atores/Jonny")
+	if j:
+		print("JONNY visivel=", j.visible, " clipe=", j.anim.current_animation,
+			" tocando=", j.anim.is_playing(), " respiracao=", j.get_node("respiracao").playing,
+			" pausada=", j.get_node("respiracao").stream_paused)
 
 
 func _fase_1() -> void:
@@ -147,6 +157,7 @@ func _jonny() -> void:
 	var jonny := get_tree().current_scene.find_child("Jonny", true, false) as Node3D
 	j.global_position = jonny.global_position + Vector3(0, 1.05, -1.4)
 	await _esperar(1.0)
+	_jonny_respira()
 	await _foto("jonny_prompt")
 	var ev := InputEventAction.new()
 	ev.action = "ui_accept"

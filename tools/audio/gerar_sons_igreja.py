@@ -53,6 +53,7 @@ PACOTES = {
     "squish_05.mp3": ("squish-sounds-effects", "Squish sounds effects"),
     "evil_screech_1.ogg": ("evil-screech-1", "Evil Screech 1"),
     "high_pitch_scream_gverb.mp3": ("high-pitch-scream-sounds2", "High pitch scream sounds(2)"),
+    "breathing%20tired.wav": ("breathing-tired", "breathing tired"),
 }
 
 rng = np.random.default_rng(1983)
@@ -318,6 +319,51 @@ def vozes():
     gravar("respiracao_monstro.ogg", fade(reverb(x, 1.6, 0.3), 0.05, 0.2))
 
 
+def respiracao_jonny():
+    """O Jonny respirando, ferido: curto, rapido, falhando, com gemido baixo.
+
+    A fonte e' um adulto ofegante; afinado pra cima vira a voz de um menino.
+    Laco de 12 s (o rabo do reverb volta pro comeco, sem emenda). Semente
+    propria: nao mexe nos outros sons.
+    """
+    sorte = np.random.default_rng(2011)
+    x = normal(ler("breathing%20tired.wav"))
+    # tira o chiado de fundo entre um folego e outro
+    env = np.convolve(np.abs(x), np.ones(int(0.03 * SR)) / int(0.03 * SR), "same")
+    x = x * np.clip((env - 0.06) / 0.08, 0.0, 1.0)
+    # os tres folegos da gravacao, separados pelo envelope
+    folegos = []
+    for a, b in ((0.05, 0.75), (1.15, 1.85), (2.3, 3.05)):
+        folegos.append(fade(tom(x[int(a * SR):int(b * SR)], 1.32), 0.01, 0.08))
+    oh = normal(ler("80-CC0-creature-SFX_0/ooh.ogg"))
+    dor = normal(ler("80-CC0-creature-SFX_0/hurt_04.ogg"))
+    laco = 12.0
+    y = silencio(laco + 3.0)
+    t = 0.15
+    n = 0
+    while t < laco - 1.0:
+        f = folegos[sorte.integers(0, 3)]
+        g = sorte.uniform(0.55, 0.9)
+        if n % 3 == 2:
+            # o folego falha: duas puxadas curtas antes de soltar
+            meio = f[: len(f) // 2]
+            por(y, fade(meio, 0.005, 0.03), t, g * 0.8)
+            t += len(meio) / SR + 0.07
+        por(y, f, t, g)
+        if n % 4 == 3:
+            # o gemido sai junto com o ar
+            por(y, fade(tom(oh, 1.55), 0.02, 0.15), t + 0.12, 0.22)
+        if n == 6:
+            por(y, fade(tom(dor, 1.45), 0.005, 0.1), t + 0.05, 0.18)
+        t += len(f) / SR + sorte.uniform(0.35, 0.7)
+        n += 1
+    y = reverb(passa_baixa(y, 5200), 0.9, 0.15)
+    corpo = y[: int(laco * SR)].copy()
+    rabo = y[int(laco * SR):]
+    corpo[: len(rabo)] += rabo[: len(corpo)]
+    gravar("respiracao_jonny.ogg", corpo)
+
+
 def ambiente():
     x = normal(ler("ambient_horror_0.ogg"))
     gravar("ambiente_ritual.ogg", fade(x, 0.5, 0.5))
@@ -352,4 +398,5 @@ if __name__ == "__main__":
     ambiente()
     # por ultimo: a semente e' uma so', e os sons de antes nao mudam
     grito_monstro()
+    respiracao_jonny()
     creditos()
