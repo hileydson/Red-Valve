@@ -201,8 +201,15 @@ func _hide_amulet_magic() -> void:
 		if player.is_first_person:
 			player.is_first_person = false
 			if is_instance_valid(player.camera_third_person):
-				player.camera_third_person.fov = 40.0
-				player.camera_third_person.make_current()
+				if player._cutscene_camera_disabled:
+					# Uma cinematica (o agarrao, que comeca no meio da mira) ja'
+					# tomou a tela com a camera dela: roubar aqui deixava a 3a
+					# pessoa atual e as maos da cena vistas de longe. So' deixa
+					# a 3a pessoa pronta pra quando a cena devolver.
+					player.camera_third_person.fov = 75.0
+				else:
+					player.camera_third_person.fov = 40.0
+					player.camera_third_person.make_current()
 			if player.hand_with_magic:
 				player.hand_with_magic.visible = false
 			player.control_weapons.visible = false

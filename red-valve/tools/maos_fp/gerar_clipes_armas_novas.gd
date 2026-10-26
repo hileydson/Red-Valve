@@ -206,7 +206,7 @@ func _granola() -> void:
 	# a arma sobe, o cano vira pra cima e pra esquerda (a boca vem pra mao) e
 	# recua pro peito, pra boca ficar ao alcance e o foguete entrar sem o braco
 	# esticado
-	var erguida := _pose(Vector3(0.03, -0.12, 0.09), Vector3(32, 12, -10))
+	var erguida := _pose(Vector3(-0.03, -0.24, 0.19), Vector3(28, 24, -10))
 	_chaves(a, Animation.TYPE_POSITION_3D, "Armas/Granola/Movimento", [
 		[0.0, Vector3.ZERO], [0.35, erguida.origin], [2.35, erguida.origin], [2.7, Vector3.ZERO]])
 	_chaves(a, Animation.TYPE_ROTATION_3D, "Armas/Granola/Movimento", [
