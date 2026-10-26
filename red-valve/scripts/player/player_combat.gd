@@ -357,12 +357,16 @@ const TEMPO_ENTRE_TIROS := 0.62
 ## Quanto tempo o clarão da boca do cano fica aceso.
 const TEMPO_CLARAO := 0.06
 
-## Recarga em terceira pessoa. O gesto é do `player_gun_hold.gd` (a arma recolhe
-## pro peito, a mão esquerda desce ao cinto, busca o pente e encaixa), e este é
-## o tempo que ele tem pra acontecer.
-const TEMPO_RECARGA_3P := 1.5
-## Em que ponto do gesto o pente entra — é onde o som de encaixe toca.
-const RECARGA_MOMENTO_ENCAIXE := 0.72
+## Recarga em terceira pessoa. O gesto é do `player_pistol_hold.gd` (o pente
+## vazio cai, a mão esquerda busca outro no cinto, encaixa por baixo e puxa o
+## ferrolho), e este é o tempo que ele tem pra acontecer.
+const TEMPO_RECARGA_3P := 2.1
+## Os momentos do gesto (cópias dos M_* de lá): o pente sai, o novo entra e o
+## ferrolho bate pra frente. Som fora do quadro do gesto é o que mais denuncia.
+const PISTOLA_MOMENTO_SAI := 0.10
+const RECARGA_MOMENTO_ENCAIXE := 0.62
+const PISTOLA_MOMENTO_FERROLHO := 0.80
+const SOM_FERROLHO_PISTOLA := "res://assets/sounds/player/guns/mk3/mk3_ferrolho.ogg"
 
 ## Até onde a bala vai, em metros. É irmão do `ALCANCE_MIRA_ARMA` do player.gd,
 ## mas não é o mesmo número por acaso: lá é a distância em que o BRAÇO aponta,
@@ -394,6 +398,8 @@ func atirar_terceira_pessoa() -> void:
 	if gun_hold and gun_hold.tem_arma_na_mao():
 		_piscar_clarao(gun_hold.boca_do_cano())
 		_soltar_capsula(gun_hold.boca_do_cano())
+		if gun_hold.has_method("coice"):
+			gun_hold.coice()
 
 	_raio_do_tiro_3p()
 
@@ -424,11 +430,14 @@ func recarregar_terceira_pessoa() -> void:
 	if gun_hold:
 		gun_hold.recarregar(TEMPO_RECARGA_3P)
 
+	var decorrido := 0.0
+	decorrido = await _esperar_fracao(PISTOLA_MOMENTO_SAI, decorrido, TEMPO_RECARGA_3P)
 	player.load_gun.play()   # o pente saindo
-	await get_tree().create_timer(TEMPO_RECARGA_3P * RECARGA_MOMENTO_ENCAIXE).timeout
+	decorrido = await _esperar_fracao(RECARGA_MOMENTO_ENCAIXE, decorrido, TEMPO_RECARGA_3P)
 	player.gun_load.play()   # o pente entrando, no quadro em que a mão encaixa
-	await get_tree().create_timer(
-		TEMPO_RECARGA_3P * (1.0 - RECARGA_MOMENTO_ENCAIXE)).timeout
+	decorrido = await _esperar_fracao(PISTOLA_MOMENTO_FERROLHO, decorrido, TEMPO_RECARGA_3P)
+	_tocar_solto(SOM_FERROLHO_PISTOLA, -3.0, 1.2)
+	await _esperar_fracao(1.0, decorrido, TEMPO_RECARGA_3P)
 
 	# O pente só enche no FIM: interromper a cena no meio (morte, cutscene) não
 	# pode devolver balas que a animação ainda não tinha terminado de pôr.
@@ -1555,10 +1564,11 @@ func _esperar_fracao(fracao: float, decorrido: float, total: float) -> float:
 
 
 ## Som de uma vez so', sem no' fixo no player (some quando acaba).
-func _tocar_solto(caminho: String, volume: float = 0.0) -> void:
+func _tocar_solto(caminho: String, volume: float = 0.0, tom: float = 1.0) -> void:
 	var som := AudioStreamPlayer.new()
 	som.stream = load(caminho)
 	som.volume_db = volume
+	som.pitch_scale = tom
 	add_child(som)
 	som.play()
 	som.finished.connect(som.queue_free)

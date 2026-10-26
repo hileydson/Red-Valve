@@ -422,33 +422,45 @@ func _montar_contexto(sk: Skeleton3D, alvo: Vector3, peso: float,
 	var mao_d := ancora + dir * MAOS_FRENTE + direita * MAOS_LADO + cima * MAOS_ALTURA
 	var mao_e := mao_d - direita * APOIO_LADO + cima * APOIO_ALTURA
 
-	var rolagem := 0.0
-	var levanta := 0.0
-	var solta := 0.0
-	if _recarregando:
-		var r := _recarga
-		# Quanto a arma esta' recolhida (sobe no comeco, desce no fim).
-		var recolhe := smoothstep(0.0, 0.18, r) - smoothstep(0.80, 1.0, r)
-		# A mao esquerda larga a arma, desce ao cinto e volta com o pente.
-		solta = smoothstep(0.04, 0.28, r) - smoothstep(0.44, 0.68, r)
-		# Empurrao curto do pente pra dentro.
-		var encaixa := smoothstep(0.66, 0.74, r) - smoothstep(0.78, 0.90, r)
-
-		mao_d += (-dir * RECARGA_RECOLHE - cima * RECARGA_DESCE) * recolhe
-		mao_e = mao_d - direita * APOIO_LADO + cima * APOIO_ALTURA
-		mao_e += (-direita * CINTO_LADO - cima * CINTO_ALTURA
-			- dir * CINTO_FRENTE) * solta
-		mao_e += cima * 3.5 * encaixa
-		rolagem = RECARGA_ROLAGEM * recolhe
-		levanta = RECARGA_LEVANTA * recolhe
-
-	return {
+	var ctx := {
 		"dir": dir, "direita": direita, "cima": cima,
 		"mao_d": mao_d, "mao_e": mao_e,
-		"polo_d": mao_d - Vector3.UP * COTOVELO_BAIXO + direita * COTOVELO_FORA,
-		"polo_e": mao_e - Vector3.UP * COTOVELO_BAIXO - direita * COTOVELO_FORA,
-		"rolagem": rolagem, "levanta": levanta, "alvo": mira, "solta": solta,
+		"rolagem": 0.0, "levanta": 0.0, "alvo": mira, "solta": 0.0,
 	}
+	if _recarregando:
+		_gesto_da_recarga(ctx, _recarga)
+	mao_d = ctx["mao_d"]
+	mao_e = ctx["mao_e"]
+	ctx["polo_d"] = mao_d - Vector3.UP * COTOVELO_BAIXO + direita * COTOVELO_FORA
+	ctx["polo_e"] = mao_e - Vector3.UP * COTOVELO_BAIXO - direita * COTOVELO_FORA
+	return ctx
+
+
+## O gesto da recarga no instante `r` (0 a 1): mexe nos destinos das maos
+## (`mao_d`, `mao_e`) e diz quanto a arma rola, quanto levanta e quanto a mao
+## esquerda esta' fora dela (`solta`). E' o gesto da MK3; a pistola tem o dela
+## (`player_pistol_hold.gd`).
+func _gesto_da_recarga(ctx: Dictionary, r: float) -> void:
+	var dir: Vector3 = ctx["dir"]
+	var direita: Vector3 = ctx["direita"]
+	var cima: Vector3 = ctx["cima"]
+	# Quanto a arma esta' recolhida (sobe no comeco, desce no fim).
+	var recolhe := smoothstep(0.0, 0.18, r) - smoothstep(0.80, 1.0, r)
+	# A mao esquerda larga a arma, desce ao cinto e volta com o pente.
+	var solta := smoothstep(0.04, 0.28, r) - smoothstep(0.44, 0.68, r)
+	# Empurrao curto do pente pra dentro.
+	var encaixa := smoothstep(0.66, 0.74, r) - smoothstep(0.78, 0.90, r)
+
+	var mao_d: Vector3 = ctx["mao_d"] + (-dir * RECARGA_RECOLHE - cima * RECARGA_DESCE) * recolhe
+	var mao_e := mao_d - direita * APOIO_LADO + cima * APOIO_ALTURA
+	mao_e += (-direita * CINTO_LADO - cima * CINTO_ALTURA
+		- dir * CINTO_FRENTE) * solta
+	mao_e += cima * 3.5 * encaixa
+	ctx["mao_d"] = mao_d
+	ctx["mao_e"] = mao_e
+	ctx["solta"] = solta
+	ctx["rolagem"] = RECARGA_ROLAGEM * recolhe
+	ctx["levanta"] = RECARGA_LEVANTA * recolhe
 
 
 ## A raiz do braco com ORIENTACAO de repouso e POSICAO da animacao.
@@ -621,8 +633,11 @@ func _pousar_arma(sk: Skeleton3D, ctx: Dictionary, peso: float) -> void:
 	# cano acima do alvo justo quando ele tem de estar certo.
 	base = base.rotated(eixo_z, deg_to_rad(_inclinacao * (1.0 - peso)))
 	# Recarga: a arma rola pro lado (mostrando o poco do carregador) e levanta.
-	if _recarregando:
+	# Fora dela os dois valem zero — a nao ser o coice da pistola, que levanta
+	# o cano no tiro (`player_pistol_hold.gd`).
+	if not is_zero_approx(float(ctx["rolagem"])):
 		base = base.rotated(eixo_x, deg_to_rad(float(ctx["rolagem"])))
+	if not is_zero_approx(float(ctx["levanta"])):
 		base = base.rotated(eixo_z, deg_to_rad(float(ctx["levanta"])))
 
 	# O CABO e' que vai pra mao, nao a origem do modelo.

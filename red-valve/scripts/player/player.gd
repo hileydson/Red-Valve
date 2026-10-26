@@ -1225,7 +1225,7 @@ func _ready():
 		# A arma na mao direita e a pose de mira com ela. Mesmo lugar e mesmo
 		# motivo do braco da porta: SkeletonModifier3D so' roda como filho
 		# direto do esqueleto.
-		var arma_na_mao = load("res://scripts/player/player_gun_hold.gd").new()
+		var arma_na_mao = load("res://scripts/player/player_pistol_hold.gd").new()
 		arma_na_mao.name = "PlayerGunHold"
 		esqueleto.add_child(arma_na_mao)
 		# A cacadeira, no mesmo lugar e pelo mesmo motivo. Vai DEPOIS da
