@@ -48,6 +48,7 @@ const ROTULOS_ATALHO := {
 
 var atalho_panel: PanelContainer
 var atalho_vbox: VBoxContainer
+var atalho_dica: Label
 var atalho_options = []
 var atalho_open = false
 var atalho_index = 0
@@ -333,11 +334,11 @@ func _create_atalho_menu() -> void:
 	titulo.add_theme_color_override("font_color", Color(1.0, 0.85, 0.3))
 	atalho_vbox.add_child(titulo)
 
-	var dica = Label.new()
-	dica.text = tr("SHORTCUT_HINT")
-	dica.add_theme_font_size_override("font_size", 13)
-	dica.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7))
-	atalho_vbox.add_child(dica)
+	# o texto sai no _render_atalho_menu: depende do dispositivo em uso
+	atalho_dica = Label.new()
+	atalho_dica.add_theme_font_size_override("font_size", 13)
+	atalho_dica.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7))
+	atalho_vbox.add_child(atalho_dica)
 
 	for i in range(DIRECOES_ATALHO.size() + 1):
 		var opt_idx = i
@@ -547,6 +548,7 @@ func _render_atalho_menu() -> void:
 	action_menu_panel.visible = false
 	var slot = slot_panels[current_slot]
 	atalho_panel.global_position = slot.global_position + Vector2(slot.size.x / 2, slot.size.y / 2)
+	atalho_dica.text = tr("SHORTCUT_HINT_PAD" if GlobalEvents.usando_controle else "SHORTCUT_HINT")
 
 	for i in range(atalho_options.size()):
 		var btn = atalho_options[i] as Button

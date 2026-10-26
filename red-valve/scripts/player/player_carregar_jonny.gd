@@ -85,6 +85,8 @@ var _base := Transform3D.IDENTITY
 ## `_base` virou relativa as maos (pegando, depois que elas sairam do chao).
 var _base_nas_maos := false
 var _perto := false
+## Dispositivo com que a dica de largar foi escrita: trocou, reescreve.
+var _dica_no_controle := false
 
 
 ## O Jonny esta' nesta cena? No colo (4) ele vai aonde o Maycow for; deitado
@@ -148,7 +150,8 @@ func _ready() -> void:
 
 
 func _mostrar_dica() -> void:
-	var chave := "AVISO_LARGAR_JONNY_CONTROLE" if GlobalEvents.usando_controle \
+	_dica_no_controle = GlobalEvents.usando_controle
+	var chave := "AVISO_LARGAR_JONNY_CONTROLE" if _dica_no_controle \
 		else "AVISO_LARGAR_JONNY_TECLADO"
 	GlobalUtils.show_center_message("largar_jonny", tr(chave), 16)
 
@@ -164,6 +167,11 @@ func _process(delta: float) -> void:
 	_suspender_armas(true)
 	if _modo == "colo":
 		_escolher_passo()
+		# a dica fica na tela o trajeto todo: largou o teclado e pegou o
+		# controle no meio do caminho, ela tem que trocar junto
+		if GlobalEvents.usando_controle != _dica_no_controle \
+				and GlobalUtils.active_messages.has("largar_jonny"):
+			_mostrar_dica()
 	_ap.advance(delta)
 	_jonny_nas_maos()
 	if _modo == "colo" and not GlobalEvents.in_cutscene \

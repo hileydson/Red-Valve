@@ -39,6 +39,8 @@ var sens_aim_slider: HSlider
 var commands_label: Label
 var controls_text: RichTextLabel
 var controls_scroll: ScrollContainer
+## Dispositivo com que a lista de comandos foi escrita.
+var _controls_text_controle := false
 
 # Video Tab
 var tab_video: MarginContainer
@@ -192,6 +194,9 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 func _process(delta: float) -> void:
+	# trocou de dispositivo com o menu aberto: a lista de comandos acompanha
+	if is_instance_valid(controls_text) and GlobalEvents.usando_controle != _controls_text_controle:
+		_update_controls_text()
 	if _popup_open: return
 	
 	var active_target := _get_active_spin_or_slider()
@@ -473,43 +478,46 @@ func _build_controls_tab():
 
 func _update_controls_text():
 	var is_pt = (SaveManager.config["language"] == "pt")
+	# só o dispositivo em uso: quem está no controle não lê tecla nenhuma
+	_controls_text_controle = GlobalEvents.usando_controle
+	var pad = _controls_text_controle
 	var txt = ""
 	if is_pt:
 		txt += "[b]Maycow Normal[/b]\n"
-		txt += "- Movimento: Analógico Esquerdo / WASD\n"
-		txt += "- Câmera: Analógico Direito / Mouse\n"
-		txt += "- Correr: RB / Shift\n"
-		txt += "- Pular, Interagir e Confirmar: A / Espaço\n"
-		txt += "- Esquiva (Dash): B / Botão do Meio do Mouse\n"
-		txt += "- Lanterna: LS (clique do analógico esquerdo) / tecla Y\n"
-		txt += "- Menu do Jogo (itens, arquivos, mapa): Back / tecla T\n"
-		txt += "- Trocar de aba no Menu: LB e RB / teclas 2 e 1\n"
-		txt += "- Voltar / Fechar: B / Esc\n"
-		txt += "- Pausar: Start / Esc\n"
+		txt += "- Movimento: " + ("Analógico Esquerdo" if pad else "WASD") + "\n"
+		txt += "- Câmera: " + ("Analógico Direito" if pad else "Mouse") + "\n"
+		txt += "- Correr: " + ("RB" if pad else "Shift") + "\n"
+		txt += "- Pular, Interagir e Confirmar: " + ("A" if pad else "Espaço") + "\n"
+		txt += "- Esquiva (Dash): " + ("B" if pad else "Botão do Meio do Mouse") + "\n"
+		txt += "- Lanterna: " + ("LS (clique do analógico esquerdo)" if pad else "tecla Y") + "\n"
+		txt += "- Menu do Jogo (itens, arquivos, mapa): " + ("Back" if pad else "tecla T") + "\n"
+		txt += "- Trocar de aba no Menu: " + ("LB e RB" if pad else "teclas 2 e 1") + "\n"
+		txt += "- Voltar / Fechar: " + ("B" if pad else "Esc") + "\n"
+		txt += "- Pausar: " + ("Start" if pad else "Esc") + "\n"
 		txt += "\n[b]Maycow Combate (Adicionais)[/b]\n"
-		txt += "- Mirar: LT / Botão Direito do Mouse\n"
-		txt += "- Atirar: RT / Botão Esquerdo do Mouse\n"
-		txt += "- Recarregar: X / tecla R\n"
-		txt += "- Golpe da Cogblade: aperte LB / tecla C\n"
-		txt += "- Poderes da Cogblade: SEGURE LB / tecla C e escolha com o Analógico Esquerdo / Mouse\n"
+		txt += "- Mirar: " + ("LT" if pad else "Botão Direito do Mouse") + "\n"
+		txt += "- Atirar: " + ("RT" if pad else "Botão Esquerdo do Mouse") + "\n"
+		txt += "- Recarregar: " + ("X" if pad else "tecla R") + "\n"
+		txt += "- Golpe da Cogblade: " + ("aperte LB" if pad else "tecla C") + "\n"
+		txt += "- Poderes da Cogblade: " + ("SEGURE LB e escolha com o Analógico Esquerdo" if pad else "SEGURE a tecla C e escolha com o Mouse") + "\n"
 	else:
 		txt += "[b]Normal Maycow[/b]\n"
-		txt += "- Movement: Left Stick / WASD\n"
-		txt += "- Camera: Right Stick / Mouse\n"
-		txt += "- Run: RB / Shift\n"
-		txt += "- Jump, Interact and Confirm: A / Space\n"
-		txt += "- Dodge (Dash): B / Middle Mouse Button\n"
-		txt += "- Flashlight: LS (left stick click) / Y key\n"
-		txt += "- Game Menu (items, files, map): Back / T key\n"
-		txt += "- Switch Menu Tab: LB and RB / keys 2 and 1\n"
-		txt += "- Back / Close: B / Esc\n"
-		txt += "- Pause: Start / Esc\n"
+		txt += "- Movement: " + ("Left Stick" if pad else "WASD") + "\n"
+		txt += "- Camera: " + ("Right Stick" if pad else "Mouse") + "\n"
+		txt += "- Run: " + ("RB" if pad else "Shift") + "\n"
+		txt += "- Jump, Interact and Confirm: " + ("A" if pad else "Space") + "\n"
+		txt += "- Dodge (Dash): " + ("B" if pad else "Middle Mouse Button") + "\n"
+		txt += "- Flashlight: " + ("LS (left stick click)" if pad else "Y key") + "\n"
+		txt += "- Game Menu (items, files, map): " + ("Back" if pad else "T key") + "\n"
+		txt += "- Switch Menu Tab: " + ("LB and RB" if pad else "keys 2 and 1") + "\n"
+		txt += "- Back / Close: " + ("B" if pad else "Esc") + "\n"
+		txt += "- Pause: " + ("Start" if pad else "Esc") + "\n"
 		txt += "\n[b]Combat Maycow (Additional)[/b]\n"
-		txt += "- Aim: LT / Right Mouse Button\n"
-		txt += "- Shoot: RT / Left Mouse Button\n"
-		txt += "- Reload: X / R key\n"
-		txt += "- Cogblade Slash: tap LB / C key\n"
-		txt += "- Cogblade Powers: HOLD LB / C key and pick with the Left Stick / Mouse\n"
+		txt += "- Aim: " + ("LT" if pad else "Right Mouse Button") + "\n"
+		txt += "- Shoot: " + ("RT" if pad else "Left Mouse Button") + "\n"
+		txt += "- Reload: " + ("X" if pad else "R key") + "\n"
+		txt += "- Cogblade Slash: " + ("tap LB" if pad else "C key") + "\n"
+		txt += "- Cogblade Powers: " + ("HOLD LB and pick with the Left Stick" if pad else "HOLD the C key and pick with the Mouse") + "\n"
 	controls_text.text = txt
 
 func _build_video_tab():

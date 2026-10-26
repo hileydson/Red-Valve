@@ -53,7 +53,7 @@ var _fileira: HBoxContainer = null
 var _trilho: Control = null
 var _barra: ColorRect = null
 var _flash: TextureRect = null  # mancha vermelha do erro, cobre a tela inteira
-var _slots: Array = []        # um Dictionary por botão: {raiz, painel, rotulo, legenda, estilo}
+var _slots: Array = []        # um Dictionary por botão: {raiz, painel, rotulo, estilo, nome, tecla_nome, ombro}
 
 var _sequencia: Array = []    # índices em BOTOES, sorteados no começo da rodada
 var _indice: int = -1
@@ -173,19 +173,25 @@ func _process(_delta: float) -> void:
 		var raiz: Control = _slots[_indice]["raiz"]
 		if is_instance_valid(raiz):
 			raiz.scale = Vector2(pulso, pulso) * 1.18
-	# O jogador pode largar o teclado e pegar o controle no meio da rodada: a
-	# legenda com a tecla equivalente some (e volta) junto.
+	# O jogador pode largar o teclado e pegar o controle no meio da rodada: os
+	# botões viram teclas (e voltam) junto.
 	_atualizar_legendas()
 	if restante <= 0.0:
 		_resolver(false)
 
 
+## No controle cada slot é o botão (A/B/X/Y redondos, LB/RB achatados); no
+## teclado é a tecla equivalente, com cara de tecla, e nada do controle aparece.
 func _atualizar_legendas() -> void:
 	var no_controle: bool = GlobalEvents.usando_controle
 	for slot in _slots:
-		var legenda: Label = slot["legenda"]
-		if is_instance_valid(legenda):
-			legenda.visible = not no_controle
+		var rotulo: Label = slot["rotulo"]
+		if not is_instance_valid(rotulo):
+			continue
+		rotulo.text = slot["nome"] if no_controle else slot["tecla_nome"]
+		var estilo: StyleBoxFlat = slot["estilo"]
+		var raio: int = 12 if slot["ombro"] or not no_controle else int(TAM_SLOT * 0.5)
+		estilo.set_corner_radius_all(raio)
 
 
 func _resolver(acertou: bool) -> void:
@@ -281,7 +287,6 @@ func _construir_slots() -> void:
 			r.queue_free()
 	_slots.clear()
 
-	var no_controle: bool = GlobalEvents.usando_controle
 	for indice in _sequencia:
 		var dados: Dictionary = BOTOES[indice]
 
@@ -291,13 +296,12 @@ func _construir_slots() -> void:
 		slot.pivot_offset = Vector2(TAM_SLOT, TAM_SLOT + 22.0) * 0.5
 		_fileira.add_child(slot)
 
-		# O "botão": círculo para A/B/X/Y, retângulo achatado para LB/RB.
+		# O "botão": círculo para A/B/X/Y, retângulo achatado para LB/RB. O raio
+		# (e o texto) saem do _atualizar_legendas, conforme o dispositivo.
 		var estilo := StyleBoxFlat.new()
 		estilo.bg_color = Color(0.05, 0.05, 0.07, 0.85)
 		estilo.border_color = dados["cor"]
 		estilo.set_border_width_all(5)
-		var raio: int = 12 if dados["ombro"] else int(TAM_SLOT * 0.5)
-		estilo.set_corner_radius_all(raio)
 
 		var painel := Panel.new()
 		painel.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -308,7 +312,6 @@ func _construir_slots() -> void:
 
 		var rotulo := Label.new()
 		rotulo.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		rotulo.text = dados["nome"]
 		rotulo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		rotulo.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		rotulo.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -319,22 +322,10 @@ func _construir_slots() -> void:
 			rotulo.add_theme_font_override("font", fonte)
 		painel.add_child(rotulo)
 
-		# No teclado o glifo do controle sozinho não diz nada: a tecla
-		# equivalente vai logo abaixo, e some quando há controle na mão.
-		var legenda := Label.new()
-		legenda.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		legenda.text = dados["tecla_nome"]
-		legenda.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		legenda.position = Vector2(0, TAM_SLOT + 1.0)
-		legenda.size = Vector2(TAM_SLOT, 20)
-		legenda.add_theme_font_size_override("font_size", 17)
-		legenda.add_theme_color_override("font_color", Color(1, 1, 1, 0.85))
-		if fonte:
-			legenda.add_theme_font_override("font", fonte)
-		legenda.visible = not no_controle
-		slot.add_child(legenda)
+		_slots.append({"raiz": slot, "painel": painel, "rotulo": rotulo, "estilo": estilo, "cor": dados["cor"],
+			"nome": dados["nome"], "tecla_nome": dados["tecla_nome"], "ombro": dados["ombro"]})
 
-		_slots.append({"raiz": slot, "painel": painel, "rotulo": rotulo, "legenda": legenda, "estilo": estilo, "cor": dados["cor"]})
+	_atualizar_legendas()
 
 	_realcar()
 

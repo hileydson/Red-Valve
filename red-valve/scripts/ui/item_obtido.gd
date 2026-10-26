@@ -47,7 +47,7 @@ func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
 	rotulo.text = texto
-	dica.text = tr("PICKUP_CONTINUE")
+	_atualizar_dica()
 	_montar_modelo()
 
 	# Entra por fade: a tela nasce preta por cima de tudo e abre. Aparecer de
@@ -109,6 +109,12 @@ func _process(delta: float) -> void:
 	pivot.rotate_y(GIRO_POR_SEGUNDO * delta)
 	_piscar += delta
 	seta.modulate.a = 0.35 + 0.65 * (0.5 + 0.5 * sin(_piscar * 4.0))
+	_atualizar_dica()
+
+
+## "Qualquer botão" no controle, "qualquer tecla" no teclado.
+func _atualizar_dica() -> void:
+	dica.text = tr("PICKUP_CONTINUE" if GlobalEvents.usando_controle else "PICKUP_CONTINUE_KEY")
 
 
 func _input(event: InputEvent) -> void:
