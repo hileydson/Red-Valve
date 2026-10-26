@@ -620,8 +620,8 @@ var carregando_jonny: bool = false
 ## `correr_carregando` casa com o chao a 1,3; aqui toca um pouco mais devagar).
 const VELOCIDADE_NO_COLO := 1.15
 ## Teto da corrida com ele no colo: o mesmo clipe acelerado, e a cidade nao
-## vira uma caminhada de 4 minutos.
-const VELOCIDADE_NO_COLO_CORRENDO := 3.4
+## vira uma caminhada de 4 minutos (3,4 ficou rapido demais pra quem carrega).
+const VELOCIDADE_NO_COLO_CORRENDO := 2.6
 
 
 # HAND ADJUSTMENTS

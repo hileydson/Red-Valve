@@ -14,7 +14,10 @@ extends CharacterBody3D
 ##   - CUSPE: recolhe a cabeca e cospe uma bola de gosma em arco;
 ##   - INVESTIDA + TAPA (so' caçando): vem rapido ate' o ponto em que a mao
 ##     cai em cima dele, PARA um instante (o aviso: as veias acendem) e bate
-##     de cima pra baixo com a mao enorme. So' pega quem ficou perto da mao.
+##     de cima pra baixo com a mao enorme. So' pega quem ficou perto da mao —
+##     e quem ela pega, ela AGARRA pela cabeca (`player_grab.gd`, ramo
+##     "cabeca"): primeira pessoa, ele empurrando com as maos enquanto ela o
+##     ergue ate' o rosto e cospe na cara dele 3 vezes (3 danos pequenos).
 ## Morre com ~30 tiros de pistola (medido no dano da pistola, como a fase 1).
 ##
 ## Movimento sem fisica de chao: ela flutua, entao a posicao e' escrita direto
@@ -42,6 +45,7 @@ const RAIO_DO_TAPA := 1.3
 ## Onde a mao do `tapa` bate, em relacao ao corpo dela (medido no clipe, no
 ## IMPACTO_DO_TAPA): a investida para com esse ponto em cima dele.
 const MAO_DO_TAPA := Vector3(-1.0, 0.0, 1.87)
+## So' quando o agarrao nao pode rodar (o tapa que pega vira o agarrao).
 const DANO_TAPA := 24
 ## o quadro do clipe `tapa` em que a mao bate no chao
 const IMPACTO_DO_TAPA := 1.05
@@ -64,11 +68,35 @@ const RAIO_PERTO := Vector2(4.2, 5.5)
 const TEMPO_SUMINDO := 0.75
 const TEMPO_SURGINDO := 0.7
 const TELEPORTE := preload("res://scripts/effects/teleporte_dona_nice.gd")
+## O instante do `cuspir` em que a gosma sai da boca.
+const CUSPE_SAI := 0.62
+
+## --- o agarrao pela cabeca (o tapa que pega) ---
+## Onde ela segura os olhos dele, no espaco do corpo dela: na altura dos
+## olhos dela, a `distancia` do rosto — que vai de x (quando chega la' em
+## cima) a y (no fim, colado).
+const OLHOS_DELE_NO_ALTO := Vector3(0.12, 4.0, 0.42)
+const DISTANCIA_DO_ROSTO := Vector2(1.7, 1.0)
+## A mao dela fecha na cabeca dele: um palmo acima e atras dos olhos (do lado
+## de quem olha pra ela), pra so' o antebraco entrar na tela. E o cotovelo
+## abre pro lado dela (espaco do corpo).
+const MAO_NA_CABECA := Vector3(-0.12, 0.3, 0.32)
+const COTOVELO := Vector3(-2.6, 3.0, 0.6)
+## Quanto o cuspe leva da boca ate' a lente.
+const VOO_DO_CUSPE_NA_CARA := 0.14
 
 const CENA_POCA := "res://scenes/enemies/dona_nice/gosma_poca.tscn"
 const CENA_PROJETIL := "res://scenes/enemies/dona_nice/gosma_projetil.tscn"
 
 @export var enemy_name: String = "IGR_BOSS_NOME_2"
+## Lidos pelo agarrao (player_grab.gd, ramo "cabeca"): quanto dura, em quanto
+## tempo a mao dela o ergue ate' o rosto, quando cada cuspe bate na lente e
+## quanto cada um tira.
+var tipo_agarrao := "cabeca"
+var duracao_do_agarrao := 5.4
+var subida_do_agarrao := 1.1
+var cuspes_do_agarrao := [2.0, 3.15, 4.3]
+var dano_do_cuspe_no_rosto := 5
 var dead := false
 var max_health := 300
 var current_health := 300
@@ -93,6 +121,12 @@ var _prox_teleporte := 0.0
 var _sumida := false
 ## Durante o tapa ela fica no angulo da investida (NAN = olha pra ele).
 var _giro_fixo := NAN
+## Segurando ele pela cabeca (o agarrao).
+var _agarrada := false
+## O braco direito estica ate' a cabeca dele por IK enquanto ela segura.
+var _ik: TwoBoneIK3D
+var _mao_alvo: Node3D
+var _gosma_tween: Tween
 
 @onready var visual: Node3D = $visual
 @onready var som_respira: AudioStreamPlayer3D = $sons/respira
@@ -115,6 +149,7 @@ func _ready() -> void:
 	max_health = TIROS_PARA_MORRER * dano
 	current_health = max_health
 	visual.tocar(&"flutuar", 0.0)
+	_montar_mao_na_cabeca()
 
 
 func comecar() -> void:
@@ -132,6 +167,15 @@ func comecar() -> void:
 
 func _jogador() -> Node3D:
 	return get_tree().get_first_node_in_group("player") as Node3D
+
+
+func _process(_delta: float) -> void:
+	if not _agarrada:
+		return
+	# a mao acompanha a cabeca dele (a camera do agarrao)
+	var cam := get_viewport().get_camera_3d()
+	if cam:
+		_mao_alvo.global_position = cam.global_position + global_basis * MAO_NA_CABECA
 
 
 func _physics_process(delta: float) -> void:
@@ -240,11 +284,11 @@ func _cuspir(j: Node3D) -> void:
 	var intervalo := INTERVALO_CUSPE_LONGE if _jeito == "longe" else INTERVALO_CUSPE
 	_prox_cuspe = _tempo + randf_range(intervalo.x, intervalo.y)
 	visual.tocar(&"cuspir", 0.15)
-	await get_tree().create_timer(0.62, false).timeout
+	await get_tree().create_timer(CUSPE_SAI, false).timeout
 	if dead:
 		return
 	som_cuspe.play()
-	var boca: Vector3 = visual.posicao_do_osso("head") + global_basis.z * 0.5 + Vector3(0, -0.35, 0)
+	var boca := _boca()
 	var alvo := j.global_position + Vector3(0, -0.6, 0)
 	var proj: Node3D = load(CENA_PROJETIL).instantiate()
 	get_parent().add_child(proj)
@@ -289,8 +333,13 @@ func _investir_e_bater(j: Node3D) -> void:
 	if dead:
 		_giro_fixo = NAN
 		return
-	_impacto_do_tapa()
-	await get_tree().create_timer(1.0, false).timeout
+	if _impacto_do_tapa():
+		# pegou: segura ele ate' o agarrao (player_grab) acabar
+		while GlobalEvents.agarrao_rodando and not dead:
+			await get_tree().process_frame
+		_prox_cuspe = maxf(_prox_cuspe, _tempo + 2.5)
+	else:
+		await get_tree().create_timer(1.0, false).timeout
 	_giro_fixo = NAN
 	if dead:
 		return
@@ -300,7 +349,8 @@ func _investir_e_bater(j: Node3D) -> void:
 	_ocupada = false
 
 
-func _impacto_do_tapa() -> void:
+## true = pegou ele, e virou o agarrao pela cabeca.
+func _impacto_do_tapa() -> bool:
 	som_tapa.play()
 	var mao: Vector3 = visual.posicao_do_osso("hand.R")
 	var chao := Vector3(mao.x, 0.0, mao.z)
@@ -309,10 +359,126 @@ func _impacto_do_tapa() -> void:
 	criar_poca(chao)
 	var j := _jogador()
 	if j == null or GlobalEvents.in_cutscene or GlobalEvents.agarrao_rodando:
-		return
+		return false
 	var dist := Vector2(j.global_position.x - chao.x, j.global_position.z - chao.z).length()
-	if dist < RAIO_DO_TAPA and j.has_method("take_damage"):
+	if dist >= RAIO_DO_TAPA:
+		return false
+	# a mao fecha na cabeca dele; o dano vem dos cuspes na cara
+	if j.has_method("grab_from_touch") and j.grab_from_touch(self):
+		return true
+	if j.has_method("take_damage"):
 		j.take_damage(DANO_TAPA)
+	return false
+
+
+func _boca() -> Vector3:
+	return visual.posicao_do_osso("head") + global_basis.z * 0.5 + Vector3(0, -0.35, 0)
+
+
+# ------------------------------------------------------------------ agarrao
+## O braco direito dela vai ate' a cabeca dele por IK (upper_arm -> forearm ->
+## hand), por cima do clipe que estiver tocando. Desligado fora do agarrao.
+func _montar_mao_na_cabeca() -> void:
+	_mao_alvo = Node3D.new()
+	_mao_alvo.name = "mao_alvo"
+	_mao_alvo.top_level = true
+	add_child(_mao_alvo)
+	var cotovelo := Node3D.new()
+	cotovelo.name = "cotovelo"
+	cotovelo.position = COTOVELO
+	add_child(cotovelo)
+	_ik = TwoBoneIK3D.new()
+	_ik.name = "mao_na_cabeca"
+	_ik.influence = 0.0
+	_ik.active = false
+	visual.esqueleto().add_child(_ik)
+	_ik.set_setting_count(1)
+	_ik.set_root_bone_name(0, "upper_arm.R")
+	_ik.set_middle_bone_name(0, "forearm.R")
+	_ik.set_end_bone_name(0, "hand.R")
+	_ik.set_target_node(0, _ik.get_path_to(_mao_alvo))
+	_ik.set_pole_node(0, _ik.get_path_to(cotovelo))
+
+
+## Gancho do player_grab: ela segura a cabeca dele e cospe na cara nos
+## instantes de `cuspes_do_agarrao` (o agarrao usa os mesmos pro dano).
+func agarrao_atacar() -> void:
+	_agarrada = true
+	_process(0.0)
+	_ik.active = true
+	var t := create_tween()
+	t.tween_property(_ik, "influence", 1.0, 0.25)
+	visual.tocar(&"flutuar", 0.35)
+	var antes := 0.0
+	for i in cuspes_do_agarrao.size():
+		var sai: float = float(cuspes_do_agarrao[i]) - VOO_DO_CUSPE_NA_CARA - CUSPE_SAI
+		await get_tree().create_timer(sai - antes, false).timeout
+		antes = sai
+		if dead or not _agarrada:
+			return
+		visual.tocar(&"cuspir", 0.15)
+		await get_tree().create_timer(CUSPE_SAI, false).timeout
+		antes += CUSPE_SAI
+		if dead or not _agarrada:
+			return
+		som_cuspe.play()
+		_cuspe_na_cara(i)
+	await get_tree().create_timer(0.8, false).timeout
+	if not dead and _agarrada:
+		visual.tocar(&"flutuar", 0.4)
+
+
+## Onde ficam os olhos dele (a camera do agarrao) la' em cima: na frente do
+## rosto dela, mais perto conforme `perto` vai de 0 a 1.
+func olhos_no_agarrao(perto: float) -> Vector3:
+	var p := OLHOS_DELE_NO_ALTO
+	p.z += lerpf(DISTANCIA_DO_ROSTO.x, DISTANCIA_DO_ROSTO.y, perto)
+	return global_transform * p
+
+
+## Pra onde ele olha: o rosto dela (o osso da cabeca fica atras dos olhos).
+func cabeca_do_agarrao() -> Vector3:
+	return visual.posicao_do_osso("head") + global_basis.z * 0.4 + Vector3(0, -0.1, 0)
+
+
+## Ela solta: o braco volta pro clipe e a gosma escorre da lente devagar.
+func agarrao_soltou() -> void:
+	if not _agarrada:
+		return
+	_agarrada = false
+	var t := create_tween()
+	t.tween_property(_ik, "influence", 0.0, 0.3)
+	t.tween_callback(func(): _ik.active = false)
+	visual.tocar(&"flutuar", 0.4)
+	var cena := get_tree().get_first_node_in_group("cena_dona_nice")
+	if cena:
+		if _gosma_tween:
+			_gosma_tween.kill()
+		_gosma_tween = create_tween()
+		_gosma_tween.tween_property(cena, "gosma_na_tela", 0.0, 3.5)
+
+
+## A bola de gosma sai da boca e vem direto na lente; la' ela estoura e a
+## tela suja mais a cada cuspe.
+func _cuspe_na_cara(indice: int) -> void:
+	var cam := get_viewport().get_camera_3d()
+	if cam == null:
+		return
+	var proj: Node3D = load(CENA_PROJETIL).instantiate()
+	get_parent().add_child(proj)
+	proj.set_physics_process(false)
+	proj.global_position = _boca()
+	var voo := proj.create_tween()
+	voo.tween_property(proj, "global_position", cam.global_position - cam.global_basis.z * 0.3,
+		VOO_DO_CUSPE_NA_CARA)
+	voo.tween_callback(func():
+		var cena := get_tree().get_first_node_in_group("cena_dona_nice")
+		if cena:
+			if _gosma_tween:
+				_gosma_tween.kill()
+			cena.cor_gosma = proj.COR_NA_TELA
+			cena.gosma_na_tela = 0.3 + 0.15 * indice
+		proj._estourar(false))
 
 
 func criar_poca(p: Vector3) -> void:

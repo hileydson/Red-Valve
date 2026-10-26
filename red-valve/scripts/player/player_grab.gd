@@ -206,6 +206,11 @@ func _sequencia(inimigo: Node3D) -> void:
 		await _ramo_pescoco(fp, inimigo)
 		_sair(fp, inimigo)
 		return
+	# A Dona Nice gigante (fase 2) pega PELA CABECA e ergue ate' o rosto.
+	if tipo == "cabeca":
+		await _ramo_cabeca(fp, inimigo)
+		_sair(fp, inimigo)
+		return
 
 	# --- o inimigo chega ---
 	_congelar_inimigo(inimigo, true)
@@ -354,6 +359,81 @@ func _mordida_no_pescoco(fp: Node3D, indice: int) -> void:
 		_aplicar_dano(DANO_MORDIDA)
 		if player.current_health > 0:
 			_camera_lenta_curta(0.35, 0.25)
+
+
+# ------------------------------------------------------------------ cabeca
+
+## O inimigo GIGANTE pega o Maycow pela cabeca e o ergue ate' o rosto (a Dona
+## Nice da fase 2, no tapa que acerta): a camera sobe do chao ate' a frente do
+## rosto dela e vai sendo puxada mais perto, as maos dele empurrando, e ela
+## cospe na cara dele — cada cuspe suja a lente e tira um pouco de vida. No
+## fim ela solta e ele cai de volta no chao. Quem diz onde ficam os olhos
+## dele, onde esta' o rosto dela, quanto dura, quando cada cuspe bate e quanto
+## tira e' o proprio inimigo (`olhos_no_agarrao`, `cabeca_do_agarrao`,
+## `duracao_do_agarrao`, `subida_do_agarrao`, `cuspes_do_agarrao`,
+## `dano_do_cuspe_no_rosto`).
+func _ramo_cabeca(fp: Node3D, inimigo: Node3D) -> void:
+	_congelar_inimigo(inimigo, true)
+	fp.tocar(&"defesa")
+	fp.tremer(0.035, 0.45)
+	fp.piscar(Color(0.85, 0.05, 0.05), 0.3, 0.02, 0.3)
+	GlobalUtils.vibrate_controller(null, 0.9, 0.9, 0.4)
+	var duracao: float = float(inimigo.get("duracao_do_agarrao"))
+	var subida: float = float(inimigo.get("subida_do_agarrao"))
+	var cuspes: Array = inimigo.get("cuspes_do_agarrao")
+	var dano: int = int(inimigo.get("dano_do_cuspe_no_rosto"))
+	var no_chao := _olho()
+	_atacar_inimigo(inimigo)
+
+	var t := 0.0
+	var proximo := 0
+	var no_alto := false
+	while t < duracao:
+		await get_tree().process_frame
+		if not _vale_continuar(fp) or not is_instance_valid(inimigo):
+			return
+		t += get_process_delta_time()
+		var peso := smoothstep(0.0, subida, t)
+		var perto := clampf((t - subida) / maxf(duracao - subida, 0.01), 0.0, 1.0)
+		var olhos: Vector3 = no_chao.lerp(inimigo.olhos_no_agarrao(perto), peso)
+		# pendurado pela cabeca, o corpo balanca
+		fp.mirar(olhos, inimigo.cabeca_do_agarrao(), 10.0, 9.0, sin(t * 2.3) * 0.06 * peso)
+		if not no_alto and t >= subida:
+			no_alto = true
+			fp.tocar(&"agarrado")
+			fp.tremer(0.016, 0.6)
+		if proximo < cuspes.size() and t >= float(cuspes[proximo]):
+			_cuspe_no_rosto(fp, proximo, dano)
+			proximo += 1
+			if player.current_health <= 0:
+				return
+
+	# Solta: ele despenca de volta no chao, de olho nela.
+	if inimigo.has_method("agarrao_soltou"):
+		inimigo.agarrao_soltou()
+	fp.tocar(&"queda")
+	fp.mirar(_olho(), inimigo.cabeca_do_agarrao(), 16.0, 8.0, 0.12)
+	await _esperar(0.3)
+	if not _vale_continuar(fp):
+		return
+	fp.tremer(0.05, 0.3)
+	GlobalUtils.vibrate_controller(null, 0.8, 0.8, 0.3)
+	fp.tocar(&"idle", 1.0, 0.45)
+	fp.mirar(_olho(), _cabeca(inimigo), 6.0, 5.0, 0.0)
+	await _esperar(0.5)
+
+
+## Cada cuspe na cara: tranco, um clarao da cor da gosma e o dano pequeno.
+## As maos dele tomam o tranco no primeiro e voltam a empurrar no segundo.
+func _cuspe_no_rosto(fp: Node3D, indice: int, dano: int) -> void:
+	if indice == 0:
+		fp.tocar(&"mordida")
+	elif indice == 1:
+		fp.tocar(&"agarrado", 1.0, 0.4)
+	fp.tremer(0.045, 0.35)
+	fp.piscar(Color(0.42, 0.4, 0.12), 0.35, 0.02, 0.35)
+	GlobalUtils.vibrate_controller(null, 0.8, 0.8, 0.3)
+	_tirar_vida(dano)
 
 
 # ----------------------------------------------------------------- arremesso
@@ -644,7 +724,12 @@ func _plantar_jogador(chao: Vector3) -> void:
 func _aplicar_dano(fracao: float) -> void:
 	if not is_instance_valid(player):
 		return
-	var dano := maxi(int(floor(player.current_health * fracao)), DANO_MINIMO)
+	_tirar_vida(maxi(int(floor(player.current_health * fracao)), DANO_MINIMO))
+
+
+func _tirar_vida(dano: int) -> void:
+	if not is_instance_valid(player):
+		return
 	# `take_damage` sai fora quando `in_cutscene` esta ligado — e' o que impede
 	# dano de cutscene em todo o resto do jogo. Aqui o dano E' a cutscene, entao
 	# a trava cai e volta na MESMA chamada: nada de `await` no meio, nenhum

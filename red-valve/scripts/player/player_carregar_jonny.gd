@@ -48,9 +48,9 @@ const PEGAR := &"pegar_jonny"
 ## (medida nos pes do clipe: passada curta, ~1,3 m/s). O clipe acompanha a
 ## rapidez de verdade, ate' este teto.
 const PASSO_DO_CLIPE := 1.3
-## Correndo (3,4 m/s) o pe' casaria com o chao so' a 2,6x, e as pernas giram
+## Correndo (2,6 m/s) o pe' casaria com o chao so' a 2x, e as pernas giram
 ## rapido demais: a corrida fica nesse teto.
-const PASSADA_MAX := 1.8
+const PASSADA_MAX := 1.45
 ## `largar_jonny` (3,2 s): o Jonny encosta no chao em 1,6 s.
 const DURACAO_LARGAR := 3.2
 const NO_CHAO := 1.6

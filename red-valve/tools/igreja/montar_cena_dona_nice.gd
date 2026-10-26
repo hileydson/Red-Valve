@@ -29,10 +29,13 @@ const JONNY_POS := Vector3(0.0, 0.0, 19.6)
 const JONNY_GIRO := 90.0
 ## Onde o Maycow fica na chegada (e onde o jogador volta a ter controle).
 const MAYCOW_FIM := Vector3(0.0, 0.0, 4.2)
-## Passada do andar_lento (m/s) — o no' anda junto com o pe', senao o pe' patina.
-const MAYCOW_VELOCIDADE := 0.86
+## Na entrada as pernas sao as do `correr_carregando` (a passada do colo), que
+## casa com o chao a PASSO_DO_COLO m/s; ele entra no ritmo do andar do colo no
+## jogo (`VELOCIDADE_NO_COLO`) — o no' anda junto com o pe', senao o pe' patina.
+const PASSO_DO_COLO := 1.3
+const MAYCOW_VELOCIDADE := 1.15
 ## No `andar_esticando` as pernas andam ate' x e param de vez em y (segundos
-## do clipe); o braco sobe do 0 ao 2,6.
+## depois de a mao comecar a subir); o braco sobe do 0 ao 2,6.
 const ANDA_ESTICANDO_FREIA := Vector2(1.9, 2.7)
 ## Os dois olhos dela (as pupilas) no espaco do osso `head`, medidos em duas
 ## fotos do plano (zoom aberto e fechado, que batem na mesma conta). A camera
@@ -646,7 +649,7 @@ func _montar_chegada() -> void:
 	# ritual (`andar_esticando`) e so' para um pouco depois, com a mao ja'
 	# erguida. O giro da cabeca dela e' lento e escuro; quando o olhar chega
 	# nele, a camera dispara ate' o Maycow e gira de volta pra ela.
-	const T_MAO := 2.2          # andar_esticando (3,2 s), andando desde o 0
+	const T_MAO := 2.2          # a mao sobe aqui no `andar_esticando`, que comeca no 0
 	const T_ROSTO := 5.6        # o plano aberto segura ate' ele parar
 	# tudo dali em diante e' o que era, 3 s depois (a entrada andando)
 	const E := 3.0
@@ -727,8 +730,8 @@ func _montar_chegada() -> void:
 		[T_RUGIDO, "cam_rugido"], [T_BANCOS, "cam_bancos"], [T_FIM - 0.05, ""]], true)
 
 	# ---------------------------------------------------------------- Maycow
-	# o no' anda no ritmo do pe' (o `andar_lento` e' no lugar) e freia junto
-	# com as pernas do `andar_esticando`
+	# o no' anda no ritmo do pe' (o clipe e' no lugar) e freia junto com as
+	# pernas do `andar_esticando`
 	var entrada := []
 	var t_para := T_MAO + ANDA_ESTICANDO_FREIA.y
 	var t_freia := T_MAO + ANDA_ESTICANDO_FREIA.x
@@ -743,9 +746,8 @@ func _montar_chegada() -> void:
 		entrada.append([t, Vector3(MAYCOW_FIM.x, 0.0, z0 + andou)])
 	_pos("atores/Maycow", entrada)
 	_rot("atores/Maycow", [[0.0, Quaternion()]])
-	_andar_esticando(fmod(T_MAO, (atores["Maycow"].get_node("anim") as AnimationPlayer) \
-		.get_animation("andar_lento").length))
-	_clipe("Maycow", [[0.0, "andar_lento"], [T_MAO, "cena/andar_esticando"],
+	_andar_esticando(T_MAO)
+	_clipe("Maycow", [[0.0, "cena/andar_esticando"],
 		[T_MAO + 3.2, "mao_esticada"], [T_SACA, "sacar_arma"], [T_SACA + 1.5, "mirando"]])
 	_valor("atores/Maycow/modelo/Armature/Skeleton3D/mao_arma/pivo_arma:visible",
 		[[0.0, false], [T_SACA + 0.45, true]], true)
@@ -930,40 +932,47 @@ func _montar_chegada() -> void:
 
 
 ## O clipe da entrada: o Maycow ANDANDO enquanto estica a mao. Nao existe no
-## Blender — e' montado aqui, osso a osso, das duas capturas: as pernas e o
-## quadril do `andar_lento` (continuando do passo em que ele estava, `fase`)
-## ate' frear e assentar na base do `esticar_mao`; o tronco, os bracos e a
-## cabeca do `esticar_mao`, entrando aos poucos no primeiro meio segundo.
+## Blender — e' montado aqui, osso a osso, de tres capturas: o quadril, a
+## coluna e as pernas do `correr_carregando` (a passada de quem carrega o
+## Jonny, bem melhor que a do `andar_lento`), no ritmo de MAYCOW_VELOCIDADE,
+## ate' frear e assentar na base do `esticar_mao`; os bracos e a cabeca do
+## `andar_lento` (os do colo seguram o Jonny) ate' `t_mao`, quando o
+## `esticar_mao` entra em meio segundo.
 ## Vai numa biblioteca propria do duble ("cena"), gravada nesta cena: a
 ## `maycow_clipes.tres` nao muda.
-func _andar_esticando(fase: float) -> void:
+func _andar_esticando(t_mao: float) -> void:
 	var ap := atores["Maycow"].get_node("anim") as AnimationPlayer
-	var anda := ap.get_animation("andar_lento")
+	var passo := ap.get_animation("correr_carregando")
+	var bracos := ap.get_animation("andar_lento")
 	var estica := ap.get_animation("esticar_mao")
 	var novo := Animation.new()
-	novo.length = 3.2
+	novo.length = t_mao + 3.2
 	const PERNAS := ["Hips", "LeftUpLeg", "LeftLeg", "LeftFoot", "LeftToeBase",
 		"RightUpLeg", "RightLeg", "RightFoot", "RightToeBase"]
+	const COLUNA := ["Spine", "Spine01", "Spine02"]
+	var passada := MAYCOW_VELOCIDADE / PASSO_DO_COLO
 	for i in estica.get_track_count():
 		var caminho := estica.track_get_path(i)
 		var tipo := estica.track_get_type(i)
-		var j := anda.find_track(caminho, tipo)
-		var perna := String(caminho.get_concatenated_subnames()) in PERNAS
+		var osso := String(caminho.get_concatenated_subnames())
+		var perna := osso in PERNAS
+		var de := passo if perna or osso in COLUNA else bracos
+		var j := de.find_track(caminho, tipo)
 		var n := novo.add_track(tipo)
 		novo.track_set_path(n, caminho)
-		for q in 97:
+		for q in int(novo.length * 30.0) + 1:
 			var t := q / 30.0
-			var te := minf(t, estica.length)
-			var ta := fmod(fase + t, anda.length)
+			var te := clampf(t - t_mao, 0.0, estica.length)
+			var td := fmod(t * (passada if de == passo else 1.0), de.length)
 			# peso do `esticar_mao`: o tronco entra de cara, as pernas so' freando
-			var w := smoothstep(ANDA_ESTICANDO_FREIA.x, ANDA_ESTICANDO_FREIA.y, t) if perna \
-				else smoothstep(0.0, 0.5, t)
+			var w := smoothstep(t_mao + ANDA_ESTICANDO_FREIA.x, t_mao + ANDA_ESTICANDO_FREIA.y, t) \
+				if perna else smoothstep(t_mao, t_mao + 0.5, t)
 			if tipo == Animation.TYPE_POSITION_3D:
-				var a0: Vector3 = anda.position_track_interpolate(j, ta) if j >= 0 \
+				var a0: Vector3 = de.position_track_interpolate(j, td) if j >= 0 \
 					else estica.position_track_interpolate(i, te)
 				novo.position_track_insert_key(n, t, a0.lerp(estica.position_track_interpolate(i, te), w))
 			elif tipo == Animation.TYPE_ROTATION_3D:
-				var q0: Quaternion = anda.rotation_track_interpolate(j, ta) if j >= 0 \
+				var q0: Quaternion = de.rotation_track_interpolate(j, td) if j >= 0 \
 					else estica.rotation_track_interpolate(i, te)
 				novo.rotation_track_insert_key(n, t, q0.slerp(estica.rotation_track_interpolate(i, te), w))
 	var cena_lib := AnimationLibrary.new()
