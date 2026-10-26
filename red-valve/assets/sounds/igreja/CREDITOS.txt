@@ -20,3 +20,7 @@ OpenGameArt. Compostos por tools/audio/gerar_sons_igreja.py a partir de:
 O canto do culto (sussurro_culto.ogg) foi montado silaba a silaba a
 partir das amostras sussurradas do "Dialog vocal samples": nao e' uma
 lingua, e sim silabas em sequencia, invertidas e graves, com reverb.
+
+A chave na porta da igreja (destrancar_porta.ogg) junta dois sons do
+"RPG Sound Pack" de artisticdude (CC0), inventory/metal-small2.wav e
+world/door.wav: https://opengameart.org/content/rpg-sound-pack

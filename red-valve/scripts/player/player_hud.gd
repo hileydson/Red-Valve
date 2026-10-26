@@ -18,6 +18,10 @@ func _setup_cel_shading() -> void:
 
 func _setup_health_hud() -> void:
 	player.current_health = player.max_health
+	# Vindo de outra cena, continua com o sangue que tinha (ver
+	# `SaveManager.sangue_entre_cenas`).
+	if SaveManager.sangue_entre_cenas > 0:
+		player.current_health = clampi(SaveManager.sangue_entre_cenas, 1, player.max_health)
 
 	# Batalha forçada pelo toque: o Maycow de combate da arena é um player.tscn
 	# recém instanciado, então nasceria com a vida cheia. Aqui ele recebe o

@@ -51,9 +51,16 @@ const PASSO_DO_CLIPE := 1.3
 ## Correndo (2,6 m/s) o pe' casaria com o chao so' a 2x, e as pernas giram
 ## rapido demais: a corrida fica nesse teto (o usuario pediu mais devagar).
 const PASSADA_MAX := 1.2
-## `largar_jonny` (3,2 s): o Jonny encosta no chao em 1,6 s.
+## `largar_jonny` (3,2 s): as maos descem com o Jonny e chegam la' embaixo em
+## ~1,6 s (medido nos ossos: 27 cm do chao, e ficam ate' 2,2 s). Ate' SOLTA ele
+## vai NAS MAOS; dali ate' NO_CHAO assenta no chao, exatamente embaixo delas.
+##
+## O chao era um ponto fixo 72 cm a frente, e o Jonny ia pra la' desde o
+## primeiro quadro: chegava no chao com as maos ainda a 67 cm de altura e
+## terminava a 1 m delas — parecia flutuar pra longe do Maycow.
 const DURACAO_LARGAR := 3.2
-const NO_CHAO := 1.6
+const SOLTA := 1.15
+const NO_CHAO := 1.65
 ## `pegar_jonny` (3,3 s): as maos chegam nele em 1,7 s (debrucado), ele cola
 ## nelas ate' 2,3 s e sobe junto ate' o colo em 3,3 s — os tempos da cutscene
 ## da igreja.
@@ -82,6 +89,9 @@ var _modo := ""
 ## 1 = Jonny nas maos, 0 = no `_base` (o chao). No meio, misturado.
 var _peso_maos := 1.0
 var _base := Transform3D.IDENTITY
+## Largando: o giro do Jonny deitado e o ponto do chao embaixo das maos.
+var _giro_largar := Basis.IDENTITY
+var _chao_largar := Vector3.ZERO
 ## `_base` virou relativa as maos (pegando, depois que elas sairam do chao).
 var _base_nas_maos := false
 var _perto := false
@@ -210,6 +220,11 @@ func _escolher_passo() -> void:
 
 func _jonny_nas_maos() -> void:
 	var alvo: Transform3D = jonny.alvo_nas_maos(_suporte)
+	# Largando, o chao de destino e' o que esta' embaixo das maos AGORA — ate'
+	# ele encostar (peso 0), quando fica onde estiver.
+	if _modo == "largando" and _peso_maos > 0.0:
+		_chao_largar = _chao_em(alvo.origin)
+		_base = jonny.no_chao(Transform3D(_giro_largar, _chao_largar))
 	# Pegando, ele sobe JUNTO com as maos desde o instante em que elas saem do
 	# chao (como estava encostado nelas) e vai se acomodando no colo — como o
 	# `seguir_peso` do AtorIgreja na cutscene.
@@ -245,18 +260,20 @@ func _largar() -> void:
 	player.cutscene_set_player_control(false)
 	player.velocity = Vector3.ZERO
 
-	# o chao em frente a ele, onde o Jonny fica deitado (atravessado)
+	# deitado atravessado na frente dele, no chao embaixo das maos (o ponto
+	# acompanha as maos ate' ele encostar — ver `_jonny_nas_maos`)
 	var frente := (_suporte.global_basis.z * Vector3(1, 0, 1)).normalized()
-	var chao := _chao_em(player.global_position + frente * 0.72)
-	var giro := Basis.looking_at(-frente, Vector3.UP) * Basis(Vector3.UP, deg_to_rad(90.0))
-	_base = jonny.no_chao(Transform3D(giro, chao))
+	_giro_largar = Basis.looking_at(-frente, Vector3.UP) * Basis(Vector3.UP, deg_to_rad(90.0))
+	_chao_largar = _chao_em(jonny.alvo_nas_maos(_suporte).origin)
+	_base = jonny.no_chao(Transform3D(_giro_largar, _chao_largar))
 	_base_nas_maos = false
 	_peso_maos = 1.0
 	_ap.speed_scale = 1.0
 	_ap.play(LARGAR, 0.2)
 	jonny.tocar(&"sendo_largado", 0.2)
 	var t := create_tween()
-	t.tween_property(self, "_peso_maos", 0.0, NO_CHAO).set_trans(Tween.TRANS_SINE)
+	t.tween_interval(SOLTA)
+	t.tween_property(self, "_peso_maos", 0.0, NO_CHAO - SOLTA).set_trans(Tween.TRANS_SINE)
 	await get_tree().create_timer(DURACAO_LARGAR, false).timeout
 
 	jonny.global_transform = _base
@@ -266,7 +283,7 @@ func _largar() -> void:
 	player.carregando_jonny = false
 	player.cutscene_set_player_control(true)
 	SaveManager.evento_dona_nice = 5
-	SaveManager.jonny_no_hospital = [chao.x, chao.y, chao.z, giro.get_euler().y]
+	SaveManager.jonny_no_hospital = [_chao_largar.x, _chao_largar.y, _chao_largar.z, _giro_largar.get_euler().y]
 	SaveManager.jonny_deixado_em = get_tree().current_scene.scene_file_path
 	_gravar()
 	_no_chao()

@@ -40,43 +40,16 @@ func _gerar() -> void:
 		guarda,
 	])
 
-	var tempos := [0.0, 0.22, 0.34, 0.48, 0.64, 0.80, 1.05]
-	_golpe("ataque_1", tempos, [
-		_pose(base_pos, base_rot),
-		_pose(Vector3(0.08, -0.60, -0.54), Vector3(-4, 24, -18)),
-		_pose(Vector3(0.03, -0.53, -0.62), Vector3(-14, 26, -28)),
-		_pose(Vector3(-0.28, -0.36, -0.84), Vector3(-72, 24, -55)),
-		_pose(Vector3(-0.52, -0.51, -0.66), Vector3(-108, 16, -70)),
-		_pose(Vector3(-0.41, -0.48, -0.72), Vector3(-70, 28, -64)),
-		_pose(base_pos, base_rot),
-	])
-	_golpe("ataque_2", tempos, [
-		_pose(base_pos, base_rot),
-		_pose(Vector3(0.38, -0.45, -0.56), Vector3(-16, 55, -88)),
-		_pose(Vector3(0.22, -0.39, -0.66), Vector3(-21, 46, -76)),
-		_pose(Vector3(-0.34, -0.34, -0.84), Vector3(-34, 22, -49)),
-		_pose(Vector3(-1.12, -0.49, -0.58), Vector3(-49, -8, -20)),
-		_pose(Vector3(-0.70, -0.47, -0.68), Vector3(-38, 12, -36)),
-		_pose(base_pos, base_rot),
-	])
-	_golpe("ataque_3", tempos, [
-		_pose(base_pos, base_rot),
-		_pose(Vector3(-1.02, -0.49, -0.57), Vector3(-18, -12, -18)),
-		_pose(Vector3(-0.78, -0.42, -0.67), Vector3(-24, 0, -30)),
-		_pose(Vector3(-0.31, -0.34, -0.84), Vector3(-35, 22, -50)),
-		_pose(Vector3(0.52, -0.42, -0.58), Vector3(-49, 58, -98)),
-		_pose(Vector3(0.14, -0.43, -0.68), Vector3(-39, 44, -80)),
-		_pose(base_pos, base_rot),
-	])
-	_golpe("ataque_4", tempos, [
-		_pose(base_pos, base_rot),
-		_pose(Vector3(-0.67, -0.82, -0.50), Vector3(-106, 0, -42)),
-		_pose(Vector3(-0.54, -0.68, -0.62), Vector3(-82, 8, -48)),
-		_pose(Vector3(-0.24, -0.35, -0.84), Vector3(-39, 28, -56)),
-		_pose(Vector3(0.34, -0.14, -0.57), Vector3(16, 48, -78)),
-		_pose(Vector3(0.03, -0.24, -0.70), Vector3(-10, 40, -70)),
-		_pose(base_pos, base_rot),
-	])
+	# Os golpes sao CORTES de um lado pro outro, sorteados entre quatro: o
+	# horizontal da direita pra esquerda, o de volta (esquerda pra direita), e
+	# as duas diagonais descendo. Os antigos tinham pose escrita a mao e dois
+	# deles vinham DE TRAS PRA FRENTE: a lamina subia colada na camera e
+	# descia em cima do alvo, ou subia de baixo pro rosto.
+	_cogblade_no_rig = _transform_da_cogblade()
+	_corte("ataque_1", -8.0, true)
+	_corte("ataque_2", 8.0, false)
+	_corte("ataque_3", 35.0, true)
+	_corte("ataque_4", -35.0, false)
 	print("CLIPES_COGBLADE ", ResourceSaver.save(biblioteca, SAIDA))
 	quit()
 
@@ -103,20 +76,85 @@ func _clipe(nome: String, duracao: float, tempos: Array, poses: Array, loop := f
 	biblioteca.add_animation("cogblade_" + nome, animacao)
 	return animacao
 
-func _golpe(nome: String, tempos: Array, poses: Array) -> void:
-	# Mantem arcos maiores que os anteriores sem deixar a arma tempo demais fora da tela.
-	var poses_moderadas: Array[Transform3D] = []
-	var rotacao_base := base.get_rotation_quaternion()
-	for quadro: Transform3D in poses:
-		var posicao := base_pos.lerp(quadro.origin, 0.75)
-		var rotacao := rotacao_base.slerp(quadro.basis.get_rotation_quaternion(), 0.78)
-		poses_moderadas.append(Transform3D(Basis(rotacao), posicao))
-	var animacao := _clipe(nome, 1.05, tempos, poses_moderadas)
+# ------------------------------------------------------------------ cortes
+## Onde o `Movimento` da cogblade fica em repouso, no espaco do rig (camera):
+## a transformacao do no' `Cogblade` da mao_armada. Os cortes sao escritos no
+## espaco da CAMERA e convertidos pra este no' na hora de virar chave.
+var _cogblade_no_rig := Transform3D.IDENTITY
+
+## No modelo, o cabo vai pro +Y (a lamina na ponta, ate' 1,16) e a largura da
+## lamina e' o Z: o plano da lamina e' o YZ. No corte esse plano contem o
+## movimento — o fio vai na frente, e nao a face chapada.
+const LADO_DO_FIO := -1.0
+## O meio do corte (onde as maos passam), quanto elas correm pro lado e quanto
+## avancam no meio, em metros no espaco da camera.
+const CORTE_CENTRO := Vector3(-0.05, -0.30, -0.60)
+const CORTE_LADO := 0.32
+const CORTE_AVANCO := 0.08
+## O plano do corte sobe da frente pra cima nesta proporcao (1 = 45 graus):
+## a lamina cruza a tela por cima das maos, grande, de um lado pro outro.
+const CORTE_ERGUE := 0.9
+## O arco do corte (graus a partir da frente) e o recuo antes dele.
+const CORTE_ARCO := 75.0
+const CORTE_ARMAR := 18.0
+
+func _transform_da_cogblade() -> Transform3D:
+	var cena: Node = load("res://scenes/player/first_person_view/mao_armada.tscn").instantiate()
+	var t := (cena.get_node("rig/Armas/Cogblade") as Node3D).transform
+	cena.free()
+	return t
+
+## Um corte num plano de frente pra camera, inclinado `inclinacao` graus
+## (positivo: o lado direito mais alto). `pra_esquerda`: da direita pra
+## esquerda; senao o contrario.
+func _corte(nome: String, inclinacao: float, pra_esquerda: bool) -> void:
+	var frente := Vector3(0, 0, -1)
+	var fi := deg_to_rad(inclinacao)
+	var lado := Vector3(cos(fi), sin(fi), 0.0)
+	var cima := lado.cross(frente).normalized()
+	# No meio do corte a lamina aponta pra frente E pra cima: so' pra frente
+	# ela some no fundo da tela (parece estocada); so' pra cima, nao alcanca.
+	var meio := (frente + cima * CORTE_ERGUE).normalized()
+	var sentido := -1.0 if pra_esquerda else 1.0
+	var a0 := -sentido * CORTE_ARCO
+	# armar (alem do comeco), o corte em cinco quadros, o fim e o assentar
+	var angulos := [a0 - sentido * CORTE_ARMAR, a0, a0 + sentido * CORTE_ARCO * 0.5, 0.0,
+		-a0 * 0.5, -a0, -a0 - sentido * 12.0]
+	var tempos := [0.0, 0.20, 0.34, 0.41, 0.48, 0.56, 0.64, 0.80, 1.05]
+	var poses: Array[Transform3D] = [_cogblade_no_rig]
+	for k in angulos.size():
+		var a := deg_to_rad(float(angulos[k]))
+		var dir := (meio * cos(a) + lado * sin(a)).normalized()
+		# pra onde a lamina anda (a derivada do arco), que o fio acompanha
+		var anda := (-meio * sin(a) + lado * cos(a)) * sentido
+		var fio := (anda * LADO_DO_FIO - dir * dir.dot(anda * LADO_DO_FIO)).normalized()
+		var x := dir.cross(fio).normalized()
+		var mao := CORTE_CENTRO + lado * (CORTE_LADO * sin(a)) + frente * (CORTE_AVANCO * cos(a))
+		# armando, as maos recuam e sobem um pouco
+		if k == 0:
+			mao += -frente * 0.06 + cima * 0.04
+		poses.append(Transform3D(Basis(x, dir, fio), mao))
+	poses.append(_cogblade_no_rig)
+
+	var animacao := Animation.new()
+	animacao.resource_name = "cogblade_" + nome
+	animacao.length = 1.05
+	var posicao := animacao.add_track(Animation.TYPE_POSITION_3D)
+	var rotacao := animacao.add_track(Animation.TYPE_ROTATION_3D)
+	for trilha in [posicao, rotacao]:
+		animacao.track_set_path(trilha, NodePath("Armas/Cogblade/Movimento"))
+		animacao.track_set_interpolation_type(trilha, Animation.INTERPOLATION_CUBIC)
+	var no_movimento := _cogblade_no_rig.affine_inverse()
+	for indice in tempos.size():
+		var local: Transform3D = no_movimento * poses[indice]
+		animacao.track_insert_key(posicao, tempos[indice], local.origin)
+		animacao.track_insert_key(rotacao, tempos[indice], local.basis.orthonormalized().get_rotation_quaternion())
+	biblioteca.add_animation("cogblade_" + nome, animacao)
 	var apoio := animacao.add_track(Animation.TYPE_POSITION_3D)
 	animacao.track_set_path(apoio, NodePath("Armas/Cogblade/Movimento/Articulacao/ApoioEsquerdo"))
 	animacao.track_set_interpolation_type(apoio, Animation.INTERPOLATION_CUBIC)
 	for indice in tempos.size():
-		var y := 0.16 if indice == 1 else (0.14 if indice == 2 else 0.12)
+		var y := 0.16 if indice == 1 else 0.12
 		animacao.track_insert_key(apoio, tempos[indice], Vector3(APOIO_ESQUERDO.x, y, APOIO_ESQUERDO.z))
 	var eventos := animacao.add_track(Animation.TYPE_METHOD)
 	animacao.track_set_path(eventos, NodePath("."))

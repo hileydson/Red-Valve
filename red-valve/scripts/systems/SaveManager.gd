@@ -22,6 +22,14 @@ var ultima_arma_equipada: String = ""
 ## O que o Maycow NORMAL estava com a mao na ida pra arena. Vazio fora dela;
 ## `MAOS_VAZIAS` quando ele foi sem nada na mao.
 var equipado_na_cidade: String = ""
+
+## O sangue do Maycow de uma cena pra outra (-1 = cheio).
+##
+## Cada cena tem o seu `player.tscn`, que nasce com a vida cheia: sem isto,
+## sair da igreja depois da luta devolvia todo o sangue perdido. O jogador
+## grava aqui ao sair da arvore e o proximo le' ao nascer. Nao vai pro arquivo
+## de save: carregar um jogo (ou morrer, que carrega) comeca de vida cheia.
+var sangue_entre_cenas: int = -1
 const MAOS_VAZIAS := "-"
 
 ## Ids dos itens de cenario que ja' foram recolhidos ("hospital_municao_1"...).
@@ -74,6 +82,9 @@ var mapas_descobertos: Dictionary = {}
 ## jogador volta pro comeco da fase em que ele estava) ou so' mostra o
 ## resultado final.
 var evento_dona_nice: int = 0
+## A igreja vive TRANCADA ate' o Maycow usar a chave reserva que a Dona Nice
+## guarda no quarto dela (ver `igreja_aberta()`).
+var igreja_destrancada: bool = false
 ## Onde o Jonny foi deixado (estado 5): [x, y, z, giro_y]. O nome ficou do
 ## tempo em que so' dava pra deixar ele no hospital; a cena vai em
 ## `jonny_deixado_em` (vazio = save antigo = hospital).
@@ -117,6 +128,25 @@ var inventory: Array:
 			inventory_combat = val
 
 var item_db = {
+	# A chave reserva da igreja: no quarto da Dona Nice, em cima da comoda. Some
+	# do menu quando abre a porta da igreja (`stage_1.gd`).
+	"chave_igreja": {
+		"name_key": "ITEM_CHAVE_IGREJA_NAME",
+		"desc_key": "ITEM_CHAVE_IGREJA_DESC",
+		"icon_path": "res://assets/images/menu/itens/red_valve/chave_igreja.png",
+		"model_path": "res://assets/3d_model/objects/chave_igreja/chave_igreja.glb",
+		"stackable": false,
+		"type": "inspectable"
+	},
+	# A seringa de adrenalina: usada pelo menu, devolve CURA_SERINGA do sangue.
+	"seringa_adrenalina": {
+		"name_key": "ITEM_SERINGA_NAME",
+		"desc_key": "ITEM_SERINGA_DESC",
+		"icon_path": "res://assets/images/menu/itens/red_valve/seringa_adrenalina.png",
+		"model_path": "res://assets/3d_model/objects/seringa_adrenalina/seringa_adrenalina.glb",
+		"stackable": true,
+		"type": "usable"
+	},
 	"maycow_watch": {
 		"name_key": "ITEM_MAYCOW_WATCH_NAME",
 		"desc_key": "ITEM_MAYCOW_WATCH_DESC",
@@ -237,7 +267,7 @@ var item_db = {
 ## quando o item e' um destes — senao o pente esvaziado na arena voltaria cheio
 ## do outro lado, e a arma pega no hospital so' apareceria no menu de um deles.
 const ITENS_COMPARTILHADOS := ["pistol", "pistol_ammo", "shotgun", "shotgun_ammo",
-	"mk3", "mk3_ammo", "granola", "granola_ammo"]
+	"mk3", "mk3_ammo", "granola", "granola_ammo", "seringa_adrenalina"]
 
 ## So' UM destes fica equipado por vez.
 ##
@@ -484,6 +514,7 @@ func save_game(scene_path: String = ""):
 		"mapas_descobertos": mapas_descobertos,
 		"cogblade_arma_ativa": cogblade_arma_ativa,
 		"evento_dona_nice": evento_dona_nice,
+		"igreja_destrancada": igreja_destrancada,
 		"jonny_no_hospital": jonny_no_hospital,
 		"jonny_deixado_em": jonny_deixado_em
 	}
@@ -505,6 +536,7 @@ func delete_save(slot_id: int) -> void:
 			print("Game save deleted from slot ", slot_id)
 
 func load_game(slot_id: int = -1) -> bool:
+	sangue_entre_cenas = -1
 	if slot_id != -1:
 		current_slot = slot_id
 		
@@ -546,6 +578,7 @@ func load_game(slot_id: int = -1) -> bool:
 				mapas_descobertos = data.get("mapas_descobertos", {})
 				cogblade_arma_ativa = data.get("cogblade_arma_ativa", false)
 				evento_dona_nice = int(data.get("evento_dona_nice", 0))
+				igreja_destrancada = bool(data.get("igreja_destrancada", false))
 				jonny_no_hospital = data.get("jonny_no_hospital", [])
 				jonny_deixado_em = data.get("jonny_deixado_em", "")
 				# As mascaras vivas sao do save ANTERIOR: sem isto, a escola
@@ -626,6 +659,7 @@ func load_slot_data_only(slot_id: int = 1) -> bool:
 	mapas_descobertos = data.get("mapas_descobertos", {})
 	cogblade_arma_ativa = data.get("cogblade_arma_ativa", false)
 	evento_dona_nice = int(data.get("evento_dona_nice", 0))
+	igreja_destrancada = bool(data.get("igreja_destrancada", false))
 	jonny_no_hospital = data.get("jonny_no_hospital", [])
 	jonny_deixado_em = data.get("jonny_deixado_em", "")
 	print("Game data loaded into memory from slot ", slot_id, " (no scene change)")
@@ -633,6 +667,7 @@ func load_slot_data_only(slot_id: int = 1) -> bool:
 
 
 func reset_progress() -> void:
+	sangue_entre_cenas = -1
 	current_stage = ""
 	prolog_finished = false
 	battlefield_1_intro_played = false
@@ -655,6 +690,7 @@ func reset_progress() -> void:
 	spawn_from_saved_position = false
 	mapas_descobertos = {}
 	evento_dona_nice = 0
+	igreja_destrancada = false
 	jonny_no_hospital = []
 	jonny_deixado_em = ""
 	MapaNevoa.esquecer_tudo()
@@ -880,6 +916,59 @@ func unequip_item(item_id: String) -> void:
 		return
 	if item_id in equipped_items:
 		equipped_items.erase(item_id)
+
+
+## A porta da igreja abre? So' depois de usar a chave — ou em save antigo em
+## que o evento da Dona Nice ja' comecou (ele entrou quando a porta nao tinha
+## tranca, e trancar agora o prenderia do lado de fora no meio da historia).
+func igreja_aberta() -> bool:
+	return igreja_destrancada or evento_dona_nice > 0
+
+
+## A chave entra na fechadura: some do menu e a igreja fica aberta pra sempre.
+func usar_chave_da_igreja() -> void:
+	igreja_destrancada = true
+	consumir_item("chave_igreja", 1)
+	save_game()
+
+
+## Quanto do sangue maximo a seringa de adrenalina devolve.
+const CURA_SERINGA := 0.30
+
+## Usa um item pelo menu ("Usar"). Devolve false quando nao da' — a seringa
+## com o sangue cheio nao se gasta.
+func usar_item(item_id: String) -> bool:
+	match item_id:
+		"seringa_adrenalina":
+			var jogador := _jogador_da_cena()
+			if jogador == null or jogador.current_health >= jogador.max_health:
+				return false
+			var cura := int(ceil(jogador.max_health * CURA_SERINGA))
+			jogador.current_health = mini(jogador.max_health, jogador.current_health + cura)
+			consumir_item(item_id, 1)
+			return true
+	consumir_item(item_id, 1)
+	return true
+
+
+## Tira do inventario e, se acabou, some com a linha do item (a seringa e a
+## chave nao ficam no menu com zero, como a caixa de bala vazia fica).
+func consumir_item(item_id: String, quantidade: int) -> void:
+	remove_item_amount(item_id, quantidade)
+	for lista in _listas_do_item(item_id):
+		for i in range(lista.size() - 1, -1, -1):
+			if lista[i]["id"] == item_id and int(lista[i]["amount"]) <= 0:
+				lista.remove_at(i)
+
+
+## O Maycow da cena atual. Na arena a cidade continua na arvore (escondida),
+## com o Maycow dela no grupo "player": o que vale e' o da cena que esta' em uso.
+func _jogador_da_cena() -> Node:
+	var cena := get_tree().current_scene if is_inside_tree() else null
+	for p in get_tree().get_nodes_in_group("player"):
+		if cena != null and (cena == p or cena.is_ancestor_of(p)) and "current_health" in p:
+			return p
+	return null
 
 
 ## Limpa o amuleto "equipado a mao" de save antigo.

@@ -221,10 +221,10 @@ func _start_final_sequence() -> void:
 
 	if is_instance_valid(player):
 		player.invulnerable = true
-		if "hand_with_magic" in player and is_instance_valid(player.hand_with_magic):
-			player.hand_with_magic.visible = false
-		if "hand_with_pistol" in player and is_instance_valid(player.hand_with_pistol):
-			player.hand_with_pistol.visible = false
+		# As maos e a arma ficam ate' a troca: e' so' quando ele volta a ser o
+		# Maycow normal que elas somem (antes sumiam no quadro do ultimo golpe).
+		if "maos_na_vitoria" in player:
+			player.maos_na_vitoria = true
 	
 	# 1. Ultra Câmera Lenta
 	Engine.time_scale = 0.15

@@ -10833,27 +10833,6 @@ monitorable = false
 [node name="forma" type="CollisionShape3D" parent="elevador/pavimento_2/area_chamar"]
 shape = SubResource("f189")
 
-[node name="pistola_no_balcao" type="Node3D" parent="."]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 11.97500, 1.12000, 34.17500)
-script = ExtResource("e91")
-metadata/id = "hospital_pistola_no_balcao"
-metadata/item = "pistol"
-metadata/quantidade = 1
-metadata/prompt = "PROMPT_TAKE_PISTOL"
-metadata/texto = "PICKUP_PISTOL"
-metadata/repetido = ""
-
-[node name="modelo" parent="pistola_no_balcao" instance=ExtResource("e92")]
-transform = Transform3D(-0.03554, 0.10937, 0.00000, 0.00000, 0.00000, 0.11500, 0.10937, 0.03554, 0.00000, 0.00000, 0.02100, 0.00000)
-
-[node name="area" type="Area3D" parent="pistola_no_balcao"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.90000, 0.25000, -0.00000)
-collision_layer = 0
-monitorable = false
-
-[node name="forma" type="CollisionShape3D" parent="pistola_no_balcao/area"]
-shape = SubResource("f190")
-
 [node name="municao_no_balcao" type="Node3D" parent="."]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 12.00238, 1.12000, 33.75732)
 script = ExtResource("e91")

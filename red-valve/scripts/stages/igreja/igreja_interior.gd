@@ -18,6 +18,10 @@ extends Node3D
 
 const CENA_MAPA := "res://scenes/stages/stage_1/stage_1.tscn"
 const EVENTO := preload("res://scripts/stages/igreja/evento_dona_nice.gd")
+## A seringa de adrenalina da igreja, no `item_secreto` da galeria (a
+## interrogacao do mapa). Posta por codigo: a cena da igreja e' regerada por
+## script, e no' colocado a mao no .tscn some na proxima geracao.
+const SERINGA := preload("res://scenes/stages/igreja/seringa_igreja.tscn")
 
 ## A layer em que o chão do jogo vive. O player é `CharacterBody3D` com
 ## `collision_mask = 2`: ele SÓ enxerga a layer 2. O importador de .glb cria o
@@ -45,6 +49,7 @@ func _ready() -> void:
 
 	_corrigir_colisao()
 	_preparar_lampadas()
+	_por_seringa()
 
 	# save_game() toma o caminho da cena atual como checkpoint — igual à casa
 	# do Jimmy, a igreja vale como ponto de retorno.
@@ -62,6 +67,23 @@ func _ready() -> void:
 		_evento = EVENTO.new()
 		_evento.name = "evento_dona_nice"
 		add_child(_evento)
+
+
+## A seringa vai no marcador; ja' pega, ela mesma se apaga (`item_de_balcao`).
+func _por_seringa() -> void:
+	var marca := get_node_or_null("item_secreto") as Node3D
+	if marca == null:
+		return
+	var seringa := SERINGA.instantiate() as Node3D
+	add_child(seringa)
+	# o marcador fica uns 18 cm acima do piso da galeria: a seringa desce ate'
+	# o chao que tiver embaixo dele
+	var pos := marca.global_position
+	var q := PhysicsRayQueryParameters3D.create(pos + Vector3.UP * 0.5, pos + Vector3.DOWN * 2.0)
+	var chao: Dictionary = get_world_3d().direct_space_state.intersect_ray(q)
+	if not chao.is_empty():
+		pos = chao["position"]
+	seringa.global_position = pos
 
 
 ## Põe todo corpo estático vindo do .glb na layer do chão.

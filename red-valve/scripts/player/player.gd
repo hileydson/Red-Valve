@@ -394,6 +394,11 @@ var _slow_timer: float = 0.0
 var current_weapon #: AnimatedSprite2D
 var can_shoot_again:bool = true
 var is_falling_dead: bool = false
+## A arena acabou de ser vencida: a camera lenta do ultimo inimigo caindo ainda
+## e' gameplay pra quem olha, entao as maos e a arma ficam na tela mesmo com o
+## input travado. Quem liga e' o `battlefield.gd`; este Maycow sai junto com a
+## arena, entao ninguem precisa desligar.
+var maos_na_vitoria: bool = false
 var invulnerable: bool = false
 var fall_cam: Camera3D = null
 
@@ -1153,6 +1158,12 @@ func recarregar_granola() -> void:
 	if combat: combat.recarregar_granola()
 
 
+## Saindo da cena: o proximo Maycow nasce com este sangue (ver
+## `SaveManager.sangue_entre_cenas`). Morto, o proximo nasce cheio.
+func _exit_tree() -> void:
+	SaveManager.sangue_entre_cenas = current_health if current_health > 0 and not is_falling_dead else -1
+
+
 func _ready():
 	_sincroniza_flags_de_teste()
 	_configurar_lanterna()
@@ -1526,7 +1537,7 @@ func _physics_process(delta: float) -> void:
 		if not _pedir_resgate_da_arena():
 			_trigger_fall_death()
 
-	if are_cutscene_inputs_blocked():
+	if are_cutscene_inputs_blocked() and not maos_na_vitoria:
 		if is_instance_valid(hand_with_pistol) and hand_with_pistol.visible:
 			hand_with_pistol.visible = false
 		if is_instance_valid(hand_with_magic) and hand_with_magic.visible:
@@ -1566,9 +1577,9 @@ func _physics_process(delta: float) -> void:
 			if is_instance_valid(gun_load): gun_load.play()
 
 		if cutscene_blocked:
-			if hand_with_pistol and hand_with_pistol.visible:
+			if hand_with_pistol and hand_with_pistol.visible and not maos_na_vitoria:
 				hand_with_pistol.visible = false
-			if hand_with_magic and hand_with_magic.visible:
+			if hand_with_magic and hand_with_magic.visible and not maos_na_vitoria:
 				hand_with_magic.visible = false
 			if control_weapons and control_weapons.visible:
 				control_weapons.visible = false
@@ -1601,7 +1612,8 @@ func _physics_process(delta: float) -> void:
 				AudioServer.playback_speed_scale = 0.5
 				
 			if is_instance_valid(amulet_crosshair): amulet_crosshair.visible = false
-			if point: point.visible = not GlobalEvents.in_cutscene and not _cutscene_hud_hidden
+			# recarregando nao ha' o que mirar: a mira some e volta no fim
+			if point: point.visible = not GlobalEvents.in_cutscene and not _cutscene_hud_hidden and not is_reloading
 			
 			# Ativa o Motion Blur forte
 			if is_instance_valid(hud_layer):
@@ -1614,7 +1626,8 @@ func _physics_process(delta: float) -> void:
 			_process_amulet_targeting()
 		else:
 			if is_instance_valid(amulet_crosshair): amulet_crosshair.visible = false
-			if point: point.visible = not GlobalEvents.in_cutscene and not _cutscene_hud_hidden
+			# recarregando nao ha' o que mirar: a mira some e volta no fim
+			if point: point.visible = not GlobalEvents.in_cutscene and not _cutscene_hud_hidden and not is_reloading
 			
 			# Desativa o Motion Blur
 			if is_instance_valid(hud_layer) and not is_playing_return_effect and not is_dashing and damage_blur_timer <= 0.0:

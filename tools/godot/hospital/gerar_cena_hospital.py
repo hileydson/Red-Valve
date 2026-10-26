@@ -1058,12 +1058,13 @@ def _emitir_porta(no, peca, forma, d, id_script):
 # ==========================================================================
 # O QUE ESTA' EM CIMA DO BALCAO DA RECEPCAO
 # ==========================================================================
-# A pistola (The Negotiator) e as duas caixas de municao dela ficam no tampo do
-# balcao redondo do hall, TODAS NA MESMA FACE: a oeste, que e' a que o jogador
-# encara ao entrar pela porta da rua. Ficam a meio palmo uma da outra, e e' de
-# proposito: e' o caso que o seletor de item existe pra resolver (ver
+# As duas caixas de municao da pistola ficam no tampo do balcao redondo do
+# hall, NA MESMA FACE: a oeste, que e' a que o jogador encara ao entrar pela
+# porta da rua. Ficam a meio palmo uma da outra, e e' de proposito: e' o caso
+# que o seletor de item existe pra resolver (ver
 # `scripts/stages/hospital/item_de_balcao.gd`) — chegando ali, o jogador escolhe
-# com o OLHAR qual dos tres vai pegar.
+# com o OLHAR qual vai pegar. A PISTOLA nao fica mais aqui: ela esta' no altar
+# do comodo do ritual, na casa da Dona Nice (`tools/godot/nice/gerar_casa_nice.py`).
 #
 # Os tres nascem aqui, e nao a mao no .tscn, porque esta cena e' regerada por
 # script: o que for arrastado no editor some na proxima geracao.
@@ -1081,28 +1082,6 @@ def _emitir_porta(no, peca, forma, d, id_script):
 ## duas. 7,5 graus da' 42 cm de afastamento — perto o bastante pra uma area
 ## alcancar a outra, que e' o que poe o seletor pra trabalhar.
 ITENS_BALCAO = [
-    {
-        "nome": "pistola_no_balcao",
-        "item": "pistol",
-        "quantidade": 1,
-        "prompt": "PROMPT_TAKE_PISTOL",
-        "texto": "PICKUP_PISTOL",
-        "repetido": "",
-        "modelo": "res://assets/3d_model/player/the_negotiator_V1/"
-                  "the_negotiator_v1.glb",
-        "angulo": 270.0,
-        # O .glb vem com 1,92 unidade de cano: 0,115 devolve os 22 cm de uma
-        # pistola de verdade.
-        "escala": 0.115,
-        # Deitada de lado no tampo, cano acompanhando a curva do balcao — assim
-        # o jogador que chega pela porta ve' a silhueta inteira dela, e nao a
-        # boca do cano.
-        "deitada": True,
-        "giro": -18.0,
-        # Meia espessura do modelo ja' escalado: e' o que tira a arma de dentro
-        # do tampo.
-        "apoio": 0.021,
-    },
     {
         "nome": "municao_no_balcao",
         "item": "pistol_ammo",

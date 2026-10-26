@@ -160,6 +160,12 @@
 
 [ext_resource type="PackedScene" path="res://assets/3d_model/player/the_negotiator_V1/cartridge/scene.gltf" id="modelo_34"]
 
+[ext_resource type="PackedScene" path="res://assets/3d_model/player/the_negotiator_V1/the_negotiator_v1.glb" id="modelo_35"]
+
+[ext_resource type="PackedScene" path="res://assets/3d_model/objects/chave_igreja/chave_igreja.glb" id="modelo_36"]
+
+[ext_resource type="PackedScene" path="res://assets/3d_model/objects/seringa_adrenalina/seringa_adrenalina.glb" id="modelo_37"]
+
 [sub_resource type="StandardMaterial3D" id="chao"]
 albedo_color = Color(0.40, 0.34, 0.29, 1)
 roughness = 0.92
@@ -1989,6 +1995,90 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="municao_quarto/area"]
+shape = SubResource("shape41")
+
+[node name="pistola_altar" type="Node3D" parent="."]
+transform = Transform3D(0.98877, 0, 0.14944, 0, 1.00000, 0, -0.14944, 0, 0.98877, 1.7200, 0.8300, 4.3800)
+script = ExtResource("item_script")
+metadata/id = "casa_nice_pistola_altar"
+metadata/item = "pistol"
+metadata/quantidade = 1
+metadata/prompt = "PROMPT_TAKE_PISTOL"
+metadata/texto = "PICKUP_PISTOL"
+metadata/repetido = ""
+
+[node name="modelo" parent="pistola_altar" instance=ExtResource("modelo_35")]
+transform = Transform3D(0.115, 0, 0, 0, 0, 0.115, 0, -0.115, 0, 0, 0.021, 0)
+
+[node name="area" type="Area3D" parent="pistola_altar"]
+transform = Transform3D(1.00000, 0, 0.00000, 0, 1.00000, 0, -0.00000, 0, 1.00000, 0.0000, 0.2500, 0.0000)
+collision_layer = 0
+monitorable = false
+
+[node name="forma" type="CollisionShape3D" parent="pistola_altar/area"]
+shape = SubResource("shape41")
+
+[node name="municao_altar" type="Node3D" parent="."]
+transform = Transform3D(1.00000, 0, 0.00000, 0, 1.00000, 0, -0.00000, 0, 1.00000, 2.1500, 0.8300, 4.3700)
+script = ExtResource("item_script")
+metadata/id = "casa_nice_municao_altar"
+metadata/item = "pistol_ammo"
+metadata/quantidade = 16
+metadata/prompt = "PROMPT_TAKE_AMMO"
+metadata/texto = "PICKUP_AMMO"
+metadata/repetido = "PICKUP_AMMO_AGAIN"
+
+[node name="modelo" parent="municao_altar" instance=ExtResource("modelo_34")]
+transform = Transform3D(1.00000, 0, 0.00000, 0, 1.00000, 0, -0.00000, 0, 1.00000, 0.0000, 0.0360, 0.0000)
+
+[node name="area" type="Area3D" parent="municao_altar"]
+transform = Transform3D(1.00000, 0, 0.00000, 0, 1.00000, 0, -0.00000, 0, 1.00000, 0.0000, 0.2500, 0.0000)
+collision_layer = 0
+monitorable = false
+
+[node name="forma" type="CollisionShape3D" parent="municao_altar/area"]
+shape = SubResource("shape41")
+
+[node name="chave_igreja" type="Node3D" parent="."]
+transform = Transform3D(0.87758, 0, 0.47943, 0, 1.00000, 0, -0.47943, 0, 0.87758, -1.3300, 1.1800, 3.0500)
+script = ExtResource("item_script")
+metadata/id = "casa_nice_chave_igreja"
+metadata/item = "chave_igreja"
+metadata/quantidade = 1
+metadata/prompt = "PROMPT_TAKE_KEY"
+metadata/texto = "PICKUP_CHAVE_IGREJA"
+metadata/repetido = "PICKUP_AMMO_AGAIN"
+
+[node name="modelo" parent="chave_igreja" instance=ExtResource("modelo_36")]
+transform = Transform3D(1.40000, 0, 0.00000, 0, 1.40000, 0, -0.00000, 0, 1.40000, 0.0000, 0.0000, 0.0000)
+
+[node name="area" type="Area3D" parent="chave_igreja"]
+transform = Transform3D(1.00000, 0, 0.00000, 0, 1.00000, 0, -0.00000, 0, 1.00000, 0.0000, 0.2500, 0.0000)
+collision_layer = 0
+monitorable = false
+
+[node name="forma" type="CollisionShape3D" parent="chave_igreja/area"]
+shape = SubResource("shape41")
+
+[node name="seringa_ritual" type="Node3D" parent="."]
+transform = Transform3D(0.95534, 0, 0.29552, 0, 1.00000, 0, -0.29552, 0, 0.95534, 4.1200, 0.5300, 3.2200)
+script = ExtResource("item_script")
+metadata/id = "casa_nice_seringa_ritual"
+metadata/item = "seringa_adrenalina"
+metadata/quantidade = 1
+metadata/prompt = "PROMPT_TAKE_SYRINGE"
+metadata/texto = "PICKUP_SERINGA"
+metadata/repetido = "PICKUP_AMMO_AGAIN"
+
+[node name="modelo" parent="seringa_ritual" instance=ExtResource("modelo_37")]
+transform = Transform3D(1.30000, 0, 0.00000, 0, 1.30000, 0, -0.00000, 0, 1.30000, 0.0000, 0.0000, 0.0000)
+
+[node name="area" type="Area3D" parent="seringa_ritual"]
+transform = Transform3D(1.00000, 0, 0.00000, 0, 1.00000, 0, -0.00000, 0, 1.00000, 0.0000, 0.2500, 0.0000)
+collision_layer = 0
+monitorable = false
+
+[node name="forma" type="CollisionShape3D" parent="seringa_ritual/area"]
 shape = SubResource("shape41")
 
 [node name="luz_sala" type="OmniLight3D" parent="luzes"]

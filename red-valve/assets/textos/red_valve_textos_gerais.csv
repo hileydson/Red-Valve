@@ -84,7 +84,7 @@ WITH_POWER_7_8,In his hand was the Cogblade.,Em sua mão estava a Cogblade.
 WITH_POWER_7_9,It bleeds...,Ela sangra...
 UI_HOLD,HOLD,SEGURE
 ITEM_PISTOL_NAME,Pistol,Pistola
-ITEM_PISTOL_DESC,"The Negotiator — heavy pistol left behind on the hospital reception desk. Eight in the magazine.","A Negotiator — pistola pesada largada no balcão da recepção do hospital. Oito no pente."
+ITEM_PISTOL_DESC,"The Negotiator — heavy pistol left on the altar in Dona Nice's ritual room. Eight in the magazine.","A Negotiator — pistola pesada largada no altar do cômodo do ritual da Dona Nice. Oito no pente."
 ITEM_COGBLADE_NAME,Crescent Cogblade,Crescent Cogblade
 ITEM_COGBLADE_DESC,A gear-powered blade.,Uma lâmina de engrenagem.
 ITEM_AMMO_NAME,Pistol Ammo,Balas de Pistola
@@ -388,7 +388,7 @@ DEBUG_EVENT_ESCOLA_PORTAO,School Gate Unbolted,Portão da Escola Destrancado
 DEBUG_EVENT_FILE_APOS_TRABALHO,File: After a Day of Work,Arquivo: Após um Dia de Trabalho
 DEBUG_EVENT_FILE_TELEFONE,File: Nice's Phone Call,Arquivo: Telefonema Dona Nice
 DEBUG_EVENT_FILE_CADERNO,File: Jimmy's Notebook,Arquivo: Caderno do Jimmy
-DEBUG_EVENT_PICKUP_PISTOL,Pickup: Pistol on Counter,Pickup: Pistola no Balcão
+DEBUG_EVENT_PICKUP_PISTOL,Pickup: Pistol on Dona Nice's Altar,Pickup: Pistola no Altar da Dona Nice
 DEBUG_EVENT_PICKUP_AMMO1,Pickup: Pistol Ammo 1,Pickup: Munição Pistola 1
 DEBUG_EVENT_PICKUP_AMMO2,Pickup: Pistol Ammo 2,Pickup: Munição Pistola 2
 DEBUG_EVENT_PICKUP_SHOTGUN,Pickup: Shotgun on Counter,Pickup: Espingarda no Balcão
@@ -435,3 +435,16 @@ OBJ_HOSPITAL_AJUDA_JONNY,Find help for Jonny,Encontre ajuda para o Jonny
 OBJ_LEVAR_JONNY_HOSPITAL,Take Jonny to the hospital,Leve o Jonny ao hospital
 AVISO_SEM_MUNICAO_IGREJA,Out of ammo — look for ammo boxes around the church,Sem munição — procure caixas de munição pela igreja
 DEBUG_EVENT_DONA_NICE,Dona Nice event (0-5),Evento Dona Nice (0-5)
+ITEM_CHAVE_IGREJA_NAME,Church Key,Chave da Igreja
+ITEM_CHAVE_IGREJA_DESC,"The church's spare key, rusted through. Dona Nice kept it in her bedroom.","A chave reserva da igreja, toda enferrujada. A Dona Nice guardava no quarto dela."
+ITEM_SERINGA_NAME,Adrenaline Syringe,Seringa de Adrenalina
+ITEM_SERINGA_DESC,"A shot of adrenaline straight into the vein. Restores 30% of your blood.","Uma dose de adrenalina direto na veia. Recupera 30% do sangue."
+PROMPT_TAKE_KEY,Take the key?,Pegar a chave?
+PROMPT_TAKE_SYRINGE,Take the syringe?,Pegar a seringa?
+PICKUP_CHAVE_IGREJA,"You picked up the church's spare key. Use it on the church door.","Você pegou a chave reserva da igreja. Use na porta da igreja."
+PICKUP_SERINGA,"You picked up an adrenaline syringe. Use it from the menu to restore 30% of your blood.","Você pegou uma seringa de adrenalina. Use pelo menu para recuperar 30% do sangue."
+PROMPT_CHURCH_LOCKED,The church is locked.,A igreja está trancada.
+PROMPT_USE_CHURCH_KEY,Use the church key?,Usar a chave da igreja?
+DEBUG_ITEM_CHAVE_IGREJA,Church Key,Chave da Igreja
+DEBUG_ITEM_SERINGA,Adrenaline Syringe,Seringa de Adrenalina
+DEBUG_EVENT_IGREJA_DESTRANCADA,Church unlocked,Igreja destrancada

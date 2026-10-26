@@ -762,7 +762,11 @@ func execute_action() -> void:
 	
 	# Usar [0]
 	if action_menu_index == 0 and type == "usable":
-		SaveManager.remove_item_amount(item_id, 1)
+		if not SaveManager.usar_item(item_id):
+			# a seringa com o sangue cheio: nada a fazer, nada se gasta
+			GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/negacao.mp3")
+			return
+		SaveManager.save_game()
 		close_action_menu()
 		
 	# Equipar [1]

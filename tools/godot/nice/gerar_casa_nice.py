@@ -607,6 +607,28 @@ def interior():
     c.pegavel('municao_quarto', 'pistol_ammo', 10, (-3.22, 0.62, 4.55), -0.4, 'PROMPT_TAKE_AMMO',
               'PICKUP_AMMO', 'PICKUP_AMMO_AGAIN', cartucho, _giro((0, 0.036, 0)))
 
+    # A PISTOLA, no altar do comodo do ritual (era no balcao do hospital), com
+    # uma caixa de bala do lado. Deitada de lado, como estava no balcao: o .glb
+    # tem 1,92 unidade de cano, 0,115 devolve os 22 cm, e 0,021 e' a meia
+    # espessura que tira a arma de dentro do tampo. As velas ficam atras.
+    pistola = 'res://assets/3d_model/player/the_negotiator_V1/the_negotiator_v1.glb'
+    deitada = 'Transform3D(0.115, 0, 0, 0, 0, 0.115, 0, -0.115, 0, 0, 0.021, 0)'
+    c.pegavel('pistola_altar', 'pistol', 1, (cx - 0.03, 0.83, 4.38), 0.15, 'PROMPT_TAKE_PISTOL',
+              'PICKUP_PISTOL', '', pistola, deitada)
+    c.pegavel('municao_altar', 'pistol_ammo', 16, (cx + 0.40, 0.83, 4.37), 0.0, 'PROMPT_TAKE_AMMO',
+              'PICKUP_AMMO', 'PICKUP_AMMO_AGAIN', cartucho, _giro((0, 0.036, 0)))
+
+    # A chave reserva da igreja, no quarto dela: em cima da comoda, debaixo do
+    # espelho. Um pouco maior que a real (7,5 cm) pra se ver de pe'.
+    c.pegavel('chave_igreja', 'chave_igreja', 1, (-1.33, 1.18, 3.05), 0.5, 'PROMPT_TAKE_KEY',
+              'PICKUP_CHAVE_IGREJA', 'PICKUP_AMMO_AGAIN',
+              'res://assets/3d_model/objects/chave_igreja/chave_igreja.glb', _giro((0, 0, 0), 0.0, 1.4))
+
+    # A seringa de adrenalina, entre os frascos da mesa do ritual.
+    c.pegavel('seringa_ritual', 'seringa_adrenalina', 1, (4.12, 0.53, 3.22), 0.3, 'PROMPT_TAKE_SYRINGE',
+              'PICKUP_SERINGA', 'PICKUP_AMMO_AGAIN',
+              'res://assets/3d_model/objects/seringa_adrenalina/seringa_adrenalina.glb', _giro((0, 0, 0), 0.0, 1.3))
+
     # ---------------------------------------------------------------- luz
     # Sete luzes ao todo (o renderer mobile aguenta 8 por malha): a lamparina
     # da sala, a lampada fria da cozinha, a da entrada, a do criado-mudo, e no

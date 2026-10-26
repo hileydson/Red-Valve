@@ -121,6 +121,10 @@ func _deve_aparecer() -> bool:
 	if player.has_method("are_cutscene_inputs_blocked") and player.are_cutscene_inputs_blocked():
 		return false
 	if player.is_first_person:
+		# Recarregando, a mira some inteira — e com ela a busca de alvo e o
+		# bipe. Quando o foguete entra, ela volta procurando do zero.
+		if player.is_reloading:
+			return false
 		var maos = player._maos_fp()
 		return maos != null and maos.is_visible_in_tree() and maos.tem_arma_na_mao() \
 			and maos.arma_na_mao() == "granola"

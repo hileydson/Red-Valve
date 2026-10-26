@@ -767,6 +767,16 @@ func _build_debug_tab():
 	_add_event_checkbox(vbox, "item_cogblade", tr("DEBUG_ITEM_COGBLADE"), SaveManager.tem_item("cogblade"), func(val):
 		_debug_set_item("cogblade", val, 1)
 	)
+	_add_event_checkbox(vbox, "item_chave_igreja", tr("DEBUG_ITEM_CHAVE_IGREJA"), SaveManager.tem_item("chave_igreja"), func(val):
+		_debug_set_item("chave_igreja", val, 1)
+	)
+	_add_event_checkbox(vbox, "item_seringa", tr("DEBUG_ITEM_SERINGA"), SaveManager.tem_item("seringa_adrenalina"), func(val):
+		_debug_set_item("seringa_adrenalina", val, 1)
+	)
+	_add_event_checkbox(vbox, "igreja_destrancada", tr("DEBUG_EVENT_IGREJA_DESTRANCADA"), SaveManager.igreja_destrancada, func(val):
+		SaveManager.igreja_destrancada = val
+		SaveManager.save_game()
+	)
 
 	# Arquivos desbloqueados
 	var section_files = Label.new()
@@ -794,8 +804,8 @@ func _build_debug_tab():
 	section_pickups.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
 	vbox.add_child(section_pickups)
 
-	_add_event_checkbox(vbox, "pickup_pistol", tr("DEBUG_EVENT_PICKUP_PISTOL"), SaveManager.pickups_pegos.has("hospital_pistola_no_balcao"), func(val):
-		_debug_set_array_entry(SaveManager.pickups_pegos, "hospital_pistola_no_balcao", val)
+	_add_event_checkbox(vbox, "pickup_pistol", tr("DEBUG_EVENT_PICKUP_PISTOL"), SaveManager.pickups_pegos.has("casa_nice_pistola_altar"), func(val):
+		_debug_set_array_entry(SaveManager.pickups_pegos, "casa_nice_pistola_altar", val)
 	)
 	_add_event_checkbox(vbox, "pickup_ammo1", tr("DEBUG_EVENT_PICKUP_AMMO1"), SaveManager.pickups_pegos.has("hospital_municao_no_balcao"), func(val):
 		_debug_set_array_entry(SaveManager.pickups_pegos, "hospital_municao_no_balcao", val)

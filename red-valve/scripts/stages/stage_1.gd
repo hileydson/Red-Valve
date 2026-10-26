@@ -37,6 +37,8 @@ const IGREJA_PORTA := Vector3(577.6, 11.6, -317.5)
 # a direcao da praca aqui.
 const IGREJA_OLHAR_Y := PI * 0.5
 const CENA_IGREJA := "res://scenes/stages/igreja/igreja_interior.tscn"
+## A chave girando na fechadura da igreja.
+const SOM_DESTRANCAR := "res://assets/sounds/igreja/destrancar_porta.ogg"
 
 # --- Hospital ----------------------------------------------------------------
 # Ao contrário da igreja, aqui NÃO há coordenada escrita no código. O hospital
@@ -320,6 +322,13 @@ func _process(delta: float) -> void:
 		await get_tree().create_timer(2.0).timeout
 		LoadingScreen.load_scene("res://scenes/stages/prolog/the_house.tscn")
 	elif player_na_igreja:
+		# Trancada: sem a chave o "a igreja esta' trancada" ja' esta' na tela
+		# e o botao nao faz nada; com ela, a chave entra e some do menu.
+		if not SaveManager.igreja_aberta():
+			if not SaveManager.tem_item("chave_igreja"):
+				return
+			SaveManager.usar_chave_da_igreja()
+			GlobalUtils.play_ui_sound(SOM_DESTRANCAR)
 		player_na_igreja = false
 		_esconder_prompt()
 		$fade.fade_out()
@@ -492,7 +501,17 @@ func _ao_entrar_area_igreja(body: Node3D) -> void:
 		_ignorar_prompt_igreja = false
 		_esconder_prompt(true)
 		return
-	_mostrar_prompt(tr("PROMPT_ENTER_CHURCH"))
+	_mostrar_prompt(tr(_prompt_da_igreja()))
+
+
+## A igreja vive trancada ate' a chave reserva (no quarto da Dona Nice) ser
+## usada nela — ver `SaveManager.igreja_aberta()`.
+func _prompt_da_igreja() -> String:
+	if SaveManager.igreja_aberta():
+		return "PROMPT_ENTER_CHURCH"
+	if SaveManager.tem_item("chave_igreja"):
+		return "PROMPT_USE_CHURCH_KEY"
+	return "PROMPT_CHURCH_LOCKED"
 
 
 func _ao_sair_area_igreja(body: Node3D) -> void:
