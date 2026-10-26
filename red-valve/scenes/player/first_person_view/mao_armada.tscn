@@ -16,6 +16,10 @@
 [ext_resource type="PackedScene" path="res://assets/3d_model/player/the_negotiator_V1/pente_pistola_fp.tscn" id="21_pente"]
 [ext_resource type="PackedScene" path="res://scenes/player/first_person_view/cogblade_fp.tscn" id="22_cogblade"]
 [ext_resource type="AnimationLibrary" uid="uid://bpbqwby8evlbj" path="res://assets/3d_model/player/hands/maos_fp/cogblade_fp_clipes.tres" id="23_cogblade_clipes"]
+[ext_resource type="PackedScene" path="res://assets/3d_model/player/the_negotiator_V2/mk3_fp.tscn" id="40_mk3"]
+[ext_resource type="PackedScene" path="res://assets/3d_model/player/the_negotiator_V2/pente_mk3.tscn" id="41_pente_mk3"]
+[ext_resource type="PackedScene" path="res://assets/3d_model/player/the_negotiator_V4/the_negotiator_V4.glb" id="42_granola"]
+[ext_resource type="PackedScene" path="res://assets/3d_model/player/the_negotiator_V4/cartridge/the_negotiator_V4_bullet.glb" id="43_foguete"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_aro_camara"]
 albedo_color = Color(0.18, 0.16, 0.12, 1)
@@ -359,6 +363,107 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.1994, 0.8, -0.093)
 [node name="RastroPonta" parent="rig/Armas/Cogblade/Movimento" index="5"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.1813, 1.23, -0.0845)
 
+[node name="Mk3" type="Node3D" parent="rig/Armas"]
+editor_description = "MK3 (the_negotiator_V2): pistola de rajada. Mesmo porte da Pistola. Modelo = mk3_fp.tscn (Corpo + Pente); CarregadorSolto e o pente jogado fora, CarregadorNaMao o pente na mao esquerda (velho ate jogar, novo depois do bolso)."
+transform = Transform3D(0.98020625, 0.059100006, 0.18895206, -0.08630754, 0.9864998, 0.1391731, -0.17817603, -0.15272634, 0.97207403, 0.19, -0.28, -0.515)
+visible = false
+script = ExtResource("9_e1ntg")
+item_id = "mk3"
+prefixo = "mk3"
+
+[node name="Movimento" type="Node3D" parent="rig/Armas/Mk3"]
+
+[node name="Modelo" parent="rig/Armas/Mk3/Movimento" instance=ExtResource("40_mk3")]
+transform = Transform3D(0, 0, -0.189, 0, 0.189, 0, 0.189, 0, 0, 0, 0.04, -0.12)
+
+[node name="PegadaDireita" type="Marker3D" parent="rig/Armas/Mk3/Movimento"]
+editor_description = "Pulso direito. Mover ou girar ajusta a pegada no editor e no jogo. -Z segue os dedos; +Y aponta para a palma. As componentes dos dedos sao as tres falanges em graus."
+transform = Transform3D(0, -1, 0, 0.9563048, 0, -0.2923717, 0.2923717, 0, 0.9563048, 0.05, 0.025, 0.075)
+gizmo_extents = 0.02
+script = ExtResource("11_qrhw1")
+indicador = Vector3(5, 16, 8)
+medio = Vector3(40, 50, 10)
+anelar = Vector3(45, 45, 15)
+mindinho = Vector3(55, 20, 10)
+polegar = Vector3(65, 5, 5)
+avanco_indicador = 0.015
+abertura = Vector3(0, -8, -3)
+abertura_mindinho = 5.0
+abertura_polegar = 20.0
+
+[node name="Cabo" type="Marker3D" parent="rig/Armas/Mk3/Movimento"]
+gizmo_extents = 0.02
+
+[node name="BocaDoCano" type="Marker3D" parent="rig/Armas/Mk3/Movimento"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.129, -0.296)
+gizmo_extents = 0.02
+
+[node name="Ejecao" type="Marker3D" parent="rig/Armas/Mk3/Movimento"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.02, 0.125, -0.02)
+gizmo_extents = 0.02
+
+[node name="CarregadorSolto" parent="rig/Armas/Mk3/Movimento" instance=ExtResource("41_pente_mk3")]
+transform = Transform3D(0, 0, -0.189, 0, 0.189, 0, 0.189, 0, 0, 0, 0.049, -0.188)
+visible = false
+
+[node name="ControleRecargaEsquerdo" type="Marker3D" parent="rig/Armas/Mk3"]
+editor_description = "Pulso esquerdo da recarga, relativo a MK3. As trilhas no AnimationPlayer acompanham este no."
+transform = Transform3D(0.23461126, 0.9195742, -0.31518346, -0.9710085, 0.20640728, -0.1205735, -0.04582011, 0.33433387, 0.94134, -0.3997826, -0.14189841, -0.088099554)
+gizmo_extents = 0.02
+script = ExtResource("11_qrhw1")
+indicador = Vector3(18, 24, 16)
+medio = Vector3(18, 24, 16)
+anelar = Vector3(18, 24, 16)
+mindinho = Vector3(18, 24, 16)
+
+[node name="CarregadorNaMao" parent="rig/Armas/Mk3/ControleRecargaEsquerdo" instance=ExtResource("41_pente_mk3")]
+transform = Transform3D(0, 0, -0.189, 0, 0.189, 0, 0.189, 0, 0, 0, 0.025, -0.07)
+visible = false
+
+[node name="Granola" type="Node3D" parent="rig/Armas"]
+editor_description = "Granola (the_negotiator_V4): lancador de mini-foguete, carregado pela boca. Mesmo porte da Shotgun (duas maos). MunicaoNaArma e o foguete no tubo (o codigo liga conforme a municao); FogueteNaMao (no ControleEsquerdo) e o que a mao traz do cinto."
+transform = Transform3D(0.92616785, 0.16762465, 0.3378093, -0.120368935, 0.9803263, -0.15643448, -0.35738558, 0.104222834, 0.9281235, 0.22, -0.22, -0.42)
+visible = false
+script = ExtResource("9_e1ntg")
+item_id = "granola"
+prefixo = "granola"
+usa_apoio = true
+
+[node name="Movimento" type="Node3D" parent="rig/Armas/Granola"]
+
+[node name="Modelo" parent="rig/Armas/Granola/Movimento" instance=ExtResource("42_granola")]
+transform = Transform3D(0, 0, -0.3, 0, 0.3, 0, 0.3, 0, 0, 0, 0.009, -0.15)
+
+[node name="PegadaDireita" type="Marker3D" parent="rig/Armas/Granola/Movimento"]
+editor_description = "Pulso direito. Mover ou girar ajusta a pegada no editor e no jogo. -Z segue os dedos; +Y aponta para a palma. As componentes dos dedos sao as tres falanges em graus."
+transform = Transform3D(0, -1, -4.024467e-08, 0.92069083, -1.5707204e-08, 0.39029282, -0.39029282, -3.7052896e-08, 0.92069083, 0.036, 0.0281, 0.0563)
+gizmo_extents = 0.02
+script = ExtResource("11_qrhw1")
+indicador = Vector3(12, 55, 35)
+medio = Vector3(80, 20, 25)
+anelar = Vector3(82, 18, 25)
+mindinho = Vector3(85, 15, 20)
+abertura = Vector3(30, 0, -3)
+
+[node name="Cabo" type="Marker3D" parent="rig/Armas/Granola/Movimento"]
+gizmo_extents = 0.02
+
+[node name="BocaDoCano" type="Marker3D" parent="rig/Armas/Granola/Movimento"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0075, 0.0699, -0.438)
+gizmo_extents = 0.02
+
+[node name="Articulacao" type="Node3D" parent="rig/Armas/Granola/Movimento"]
+
+[node name="ApoioEsquerdo" type="Marker3D" parent="rig/Armas/Granola/Movimento/Articulacao"]
+editor_description = "Pulso esquerdo por baixo do tubo. Durante a recarga, apoio_esquerdo=0 entrega a mao ao ControleEsquerdo."
+transform = Transform3D(0.117469646, -0.19146778, -0.97444385, -0.07459323, 0.976763, -0.20091626, 0.990269, 0.09628854, 0.10045814, -0.084, -0.064, -0.196)
+gizmo_extents = 0.02
+script = ExtResource("11_qrhw1")
+indicador = Vector3(48, 35, 20)
+
+[node name="MunicaoNaArma" parent="rig/Armas/Granola/Movimento" instance=ExtResource("43_foguete")]
+transform = Transform3D(0, 0, -0.192, 0, 0.192, 0, 0.192, 0, 0, -0.0078, 0.0699, -0.3516)
+
 [node name="AjusteEsquerdo" type="Node3D" parent="rig" unique_id=713055753]
 
 [node name="ControleEsquerdo" type="Marker3D" parent="rig/AjusteEsquerdo" unique_id=307727323]
@@ -372,6 +477,10 @@ mindinho = Vector3(18, 24, 16)
 
 [node name="CartuchoNaMao" parent="rig/AjusteEsquerdo/ControleEsquerdo" unique_id=5016126 instance=ExtResource("13_as1tx")]
 transform = Transform3D(-1.5998367e-09, 0, -0.036599997, 0, 0.036599997, 0, 0.036599997, 0, -1.5998367e-09, -0.033, 0.032, -0.108)
+visible = false
+
+[node name="FogueteNaMao" parent="rig/AjusteEsquerdo/ControleEsquerdo" instance=ExtResource("43_foguete")]
+transform = Transform3D(0, 0, -0.192, 0, 0.192, 0, 0.192, 0, 0, -0.03, 0.03, -0.1)
 visible = false
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="rig" unique_id=169355755]

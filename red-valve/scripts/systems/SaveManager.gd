@@ -187,6 +187,41 @@ var item_db = {
 		"model_path": "res://assets/3d_model/player/the_negotiator_V3/cartridge/the_negotiator_V3_bullet_x2.glb",
 		"stackable": true,
 		"type": "inspectable"
+	},
+	# A MK3 (the_negotiator_V2) e a Granola (the_negotiator_V4), com as
+	# municoes. Tambem no balcao do hospital. A MK3 atira em rajadas de 3 e
+	# troca de pente; a Granola leva um mini-foguete por vez, pela boca.
+	"mk3": {
+		"name_key": "ITEM_MK3_NAME",
+		"desc_key": "ITEM_MK3_DESC",
+		"icon_path": "res://assets/images/menu/itens/red_valve/mk3.png",
+		"model_path": "res://assets/3d_model/player/the_negotiator_V2/the_negotiator_V2.glb",
+		"stackable": false,
+		"type": "equippable"
+	},
+	"mk3_ammo": {
+		"name_key": "ITEM_MK3_AMMO_NAME",
+		"desc_key": "ITEM_MK3_AMMO_DESC",
+		"icon_path": "res://assets/images/menu/itens/red_valve/mk3_bala.png",
+		"model_path": "res://assets/3d_model/player/the_negotiator_V2/cartridge/the_negotiator_V2_bullet.glb",
+		"stackable": true,
+		"type": "inspectable"
+	},
+	"granola": {
+		"name_key": "ITEM_GRANOLA_NAME",
+		"desc_key": "ITEM_GRANOLA_DESC",
+		"icon_path": "res://assets/images/menu/itens/red_valve/granola.png",
+		"model_path": "res://assets/3d_model/player/the_negotiator_V4/the_negotiator_V4.glb",
+		"stackable": false,
+		"type": "equippable"
+	},
+	"granola_ammo": {
+		"name_key": "ITEM_GRANOLA_AMMO_NAME",
+		"desc_key": "ITEM_GRANOLA_AMMO_DESC",
+		"icon_path": "res://assets/images/menu/itens/red_valve/granola_bala.png",
+		"model_path": "res://assets/3d_model/player/the_negotiator_V4/cartridge/the_negotiator_V4_bullet.glb",
+		"stackable": true,
+		"type": "inspectable"
 	}
 }
 
@@ -198,7 +233,8 @@ var item_db = {
 ## na arena. Por isso `add_item` e `remove_item_amount` mexem nas duas listas
 ## quando o item e' um destes — senao o pente esvaziado na arena voltaria cheio
 ## do outro lado, e a arma pega no hospital so' apareceria no menu de um deles.
-const ITENS_COMPARTILHADOS := ["pistol", "pistol_ammo", "shotgun", "shotgun_ammo"]
+const ITENS_COMPARTILHADOS := ["pistol", "pistol_ammo", "shotgun", "shotgun_ammo",
+	"mk3", "mk3_ammo", "granola", "granola_ammo"]
 
 ## So' UM destes fica equipado por vez.
 ##
@@ -212,10 +248,11 @@ const ITENS_COMPARTILHADOS := ["pistol", "pistol_ammo", "shotgun", "shotgun_ammo
 ## A CACADEIRA entra pela mesma porta da pistola: as duas sao arma de fogo do
 ## Maycow normal, usam o mesmo botao de mira e so' uma cabe na mao. Trocar de
 ## uma pra outra e' equipar a outra — no menu ou pelo atalho do direcional.
-const EQUIPAMENTO_EXCLUSIVO := ["amuleto", "pistol", "shotgun"]
+## A MK3 e a Granola tambem: toda arma de fogo disputa a mesma mao.
+const EQUIPAMENTO_EXCLUSIVO := ["amuleto", "pistol", "shotgun", "mk3", "granola"]
 
 ## Quais dos exclusivos sao ARMA (e nao poder). E' o que a arena devolve.
-const ARMAS_DE_FOGO := ["pistol", "shotgun"]
+const ARMAS_DE_FOGO := ["pistol", "shotgun", "mk3", "granola"]
 
 ## A cogblade esta empunhada como arma corpo a corpo (duas maos)?
 ## Quando ativo, substitui a arma de fogo na primeira pessoa e libera os

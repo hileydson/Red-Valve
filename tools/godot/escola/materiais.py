@@ -162,8 +162,10 @@ MOVEIS = [
     Material("mat_papel", (0.66, 0.62, 0.52), 0.0, 0.94),
     Material("mat_tela", (0.03, 0.04, 0.05), 0.0, 0.25),
     Material("mat_placa", (0.58, 0.60, 0.58), 0.0, 0.58),
+    # So' um resto de emissao: com mais, a faixa da placa pendurada no meio
+    # do corredor parecia acesa (o usuario reclamou do brilho).
     Material("mat_seta", (0.08, 0.32, 0.20), 0.0, 0.50,
-             emissivo=(0.05, 0.42, 0.22)),
+             emissivo=(0.01, 0.08, 0.04)),
     Material("mat_rede", (0.58, 0.58, 0.54), 0.0, 0.90, dupla_face=True),
     Material("mat_trave", (0.70, 0.70, 0.66), 0.10, 0.52),
     # Lombadas de livro. Cor de capa dura velha: nada saturado, que a
@@ -179,7 +181,7 @@ MOVEIS = [
     # Emissao CONTIDA: o texto branco por cima tem de ser mais claro que o
     # fundo. Com o verde a 0,95 a placa saturava no glow e a palavra sumia.
     Material("mat_placa_saida", (0.02, 0.20, 0.08), 0.0, 0.40,
-             emissivo=(0.02, 0.30, 0.10)),
+             emissivo=(0.01, 0.18, 0.06)),
 ]
 
 # ==========================================================================

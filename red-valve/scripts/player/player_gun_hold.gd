@@ -250,6 +250,22 @@ var _incl_punho := PUNHO_INCLINACAO
 var _desvio := PUNHO_DESVIO
 var _deslize := PUNHO_DESLIZE
 
+## Qual item este componente segura, o modelo e a escala (centimetros por
+## unidade do .glb). Sao variaveis, com as constantes da pistola como valor,
+## porque a MK3 usa este mesmo componente com outro modelo
+## (`player_mk3_hold.gd`).
+var item_id := ITEM_PISTOLA
+var modelo := MODELO_PISTOLA
+var escala_arma := ESCALA_ARMA
+var nome_do_no := "PistolaNaMao"
+## A boca do cano no .glb (a pistola tem o furo na linha y = 0).
+var boca_no_modelo := Vector3(-0.96, 0.0, 0.0)
+## So' o PRIMEIRO componente de arma do esqueleto abre a mao quando a arma dele
+## esta' guardada. Os modificadores rodam na ordem da arvore; um segundo
+## componente abrindo a mao desfaria o punho que a arma EQUIPADA acabou de
+## fechar (ver a criacao deles no player.gd).
+var abre_a_mao_guardada := true
+
 
 # ==============================================================================
 # O QUE O PLAYER CHAMA
@@ -294,7 +310,7 @@ func boca_do_cano() -> Vector3:
 	if not is_instance_valid(_malha) or not is_instance_valid(_arma):
 		return Vector3.ZERO
 	# O modelo tem 0,96 unidade da origem ate' a boca, e o cano e' o -X dele.
-	return _malha.global_transform * (_pose_arma * Vector3(-0.96 * ESCALA_ARMA, 0.0, 0.0))
+	return _malha.global_transform * (_pose_arma * (boca_no_modelo * escala_arma))
 
 
 ## Pra onde o cano aponta, em coordenadas de MUNDO (vetor unitario).
@@ -322,12 +338,13 @@ func _process_modification_with_delta(delta: float) -> void:
 	if _i_braco_d < 0 and not _procurar_ossos(sk):
 		return
 
-	var equipada: bool = SaveManager.is_equipped(ITEM_PISTOLA) and not suspensa
+	var equipada: bool = SaveManager.is_equipped(item_id) and not suspensa
 	_garantir_arma(equipada)
 	if not equipada:
 		_peso = 0.0
 		_recarregando = false
-		_fechar_maos(0.0, 0.0, delta)
+		if abre_a_mao_guardada:
+			_fechar_maos(0.0, 0.0, delta)
 		return
 
 	if _recarregando:
@@ -367,6 +384,13 @@ func _process_modification_with_delta(delta: float) -> void:
 	_alinhar_punho(sk, _i_mao_d, -1.0, 1.0)
 	_alinhar_punho(sk, _i_mao_e, 1.0, apoio)
 	_fechar_maos(1.0, maxf(apoio, PUNHO_NO_PENTE * solta), delta)
+	_depois_da_pose(sk, ctx, delta)
+
+
+## Gancho das subclasses: roda depois que a arma e as maos tem pose neste
+## quadro (a MK3 poe aqui o pente na mao e o que cai no chao).
+func _depois_da_pose(_sk: Skeleton3D, _ctx: Dictionary, _delta: float) -> void:
+	pass
 
 
 ## Onde tudo e' medido neste quadro: a ancora no tronco, os eixos da mira e o
@@ -602,10 +626,10 @@ func _pousar_arma(sk: Skeleton3D, ctx: Dictionary, peso: float) -> void:
 		base = base.rotated(eixo_z, deg_to_rad(float(ctx["levanta"])))
 
 	# O CABO e' que vai pra mao, nao a origem do modelo.
-	var cabo := base * ((_cabo + _offset) * ESCALA_ARMA)
+	var cabo := base * ((_cabo + _offset) * escala_arma)
 	var pose := Transform3D(base, g_mao.origin - cabo)
 	_pose_arma = pose
-	_arma.transform = Transform3D(pose.basis.scaled(Vector3.ONE * ESCALA_ARMA),
+	_arma.transform = Transform3D(pose.basis.scaled(Vector3.ONE * escala_arma),
 		pose.origin)
 
 
@@ -721,13 +745,13 @@ func _garantir_arma(equipada: bool) -> void:
 	if not is_instance_valid(_arma):
 		if not equipada or not is_instance_valid(_malha):
 			return
-		var pacote: PackedScene = load(MODELO_PISTOLA)
+		var pacote: PackedScene = load(modelo)
 		if pacote == null:
-			push_warning("player_gun_hold: nao achei %s" % MODELO_PISTOLA)
+			push_warning("player_gun_hold: nao achei %s" % modelo)
 			_i_braco_d = -2
 			return
 		_arma = pacote.instantiate()
-		_arma.name = "PistolaNaMao"
+		_arma.name = nome_do_no
 		# Nada de colisao vinda do .glb: a arma anda colada no corpo e um corpo
 		# fisico ali dentro brigaria com a capsula do jogador.
 		for col in _arma.find_children("*", "CollisionObject3D", true, false):
@@ -798,7 +822,7 @@ func _input(event: InputEvent) -> void:
 	# mesmas teclas, e os dois modificadores vivem no mesmo esqueleto ouvindo o
 	# mesmo teclado. Sem esta linha, um F9 liga os dois e cada tecla imprime
 	# dois blocos — o da arma que esta' na mao e o da que esta' guardada.
-	if not SaveManager.is_equipped(ITEM_PISTOLA):
+	if not SaveManager.is_equipped(item_id):
 		return
 	var tecla := event as InputEventKey
 	if not tecla.pressed:
@@ -824,7 +848,7 @@ func _input(event: InputEvent) -> void:
 
 	if _ajustando_arma:
 		# O passo entra no OFFSET, que e' o retoque por cima do cabo medido.
-		var passo := AJUSTE_PASSO / ESCALA_ARMA
+		var passo := AJUSTE_PASSO / escala_arma
 		match tecla.keycode:
 			KEY_I: _offset.x -= passo
 			KEY_K: _offset.x += passo

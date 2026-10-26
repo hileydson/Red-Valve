@@ -115,9 +115,10 @@ MOVEIS = [
     Material("mat_tela", (0.03, 0.04, 0.05), 0.0, 0.25),
     Material("mat_formica", (0.64, 0.60, 0.52), 0.0, 0.60),
     Material("mat_placa", (0.62, 0.64, 0.62), 0.0, 0.58),
-    # seta verde de saida, com um tico de emissao pra se ler no escuro
+    # seta verde de saida, com um tico de emissao pra se ler no escuro (so'
+    # um tico: mais que isso a placa pendurada parecia acesa)
     Material("mat_seta", (0.08, 0.32, 0.20), 0.0, 0.50,
-             emissivo=(0.05, 0.42, 0.22)),
+             emissivo=(0.01, 0.08, 0.04)),
     Material("mat_lampada", (0.92, 0.94, 0.90), 0.0, 0.20,
              emissivo=(0.90, 0.94, 0.98)),
     Material("mat_botao", (0.80, 0.74, 0.40), 0.30, 0.40,

@@ -15,6 +15,9 @@ PROMPT_ENTER_NICE_HOUSE,Enter Ms. Nice's house?,Entrar na casa da Dona Nice?
 NICE_HOUSE_SIGN,Ms. Nice,Sra. Nice
 NICE_HOUSE_INSCRIPTION,ANTI-LOPES / THE PATH DEMANDS A LIFE,ANTI-LOPES / O CAMINHO EXIGE UMA VIDA
 NICE_HOUSE_NOTE,JONNY - the final offering,JONNY - a última oferenda
+NICE_HOUSE_WALL_RITUAL,SEVEN INNOCENTS OPEN THE VEIL,SETE INOCENTES ABREM O VÉU
+NICE_HOUSE_WALL_MIRROR,THE OTHER SIDE IS WATCHING,O OUTRO LADO ESTÁ OLHANDO
+NICE_HOUSE_WALL_BEDROOM,THEY CALL ME IN MY SLEEP,ELES ME CHAMAM ENQUANTO DURMO
 PROMPT_ENTER_MAYCOW_HOUSE,Enter Maycow's house?,Entrar na casa do Maycow?
 PROMPT_ENTER_CHURCH,Enter the church?,Entrar na igreja?
 PROMPT_TAKE_FLASHLIGHT,Take the flashlight?,Pegar a lanterna?
@@ -87,6 +90,14 @@ ITEM_SHOTGUN_NAME,Shotgun,Espingarda
 ITEM_SHOTGUN_DESC,"The Negotiator Mk. III — a break-action double barrel left on the hospital desk. Two shots, then it folds open to be fed by hand.","A Negotiator Mk. III — caçadeira de dois canos largada no balcão do hospital. Dois tiros, e então ela dobra para ser alimentada na mão."
 ITEM_SHOTGUN_AMMO_NAME,Shotgun Shells,Cartuchos de Espingarda
 ITEM_SHOTGUN_AMMO_DESC,"Twelve-gauge shells. They come in pairs, which is exactly what the gun holds.","Cartuchos calibre 12. Vêm aos pares, que é exatamente o que a arma comporta."
+ITEM_MK3_NAME,MK3,MK3
+ITEM_MK3_DESC,"The Negotiator V2 — a machine pistol that fires in three-round bursts. The magazine goes in front of the trigger guard.","A Negotiator V2 — uma pistola-metralhadora que dispara em rajadas de três tiros. O pente fica na frente do guarda-mato."
+ITEM_MK3_AMMO_NAME,MK3 Ammunition,Munição da MK3
+ITEM_MK3_AMMO_DESC,"A box of 18 rounds for the MK3 — exactly one full magazine, six bursts.","Uma caixa com 18 balas da MK3 — exatamente um pente cheio, seis rajadas."
+ITEM_GRANOLA_NAME,Granola,Granola
+ITEM_GRANOLA_DESC,"The Negotiator V4 — a short launcher that fires its own mini rocket. Loaded through the muzzle, one rocket at a time. It explodes on contact.","A Negotiator V4 — um lançador curto que dispara o próprio mini-foguete. Carregado pela boca, um foguete por vez. Explode ao tocar no alvo."
+ITEM_GRANOLA_AMMO_NAME,Granola Rockets,Foguetes da Granola
+ITEM_GRANOLA_AMMO_DESC,"Mini rockets for the Granola. The thin end goes into the muzzle first; the warhead stays outside.","Mini-foguetes da Granola. A ponta fina entra primeiro pela boca do cano; a ogiva fica do lado de fora."
 MENU_CONFIG,Configuration,Configurações
 CONFIG_AIM_MODE,Aim Mode,Modo de Mira
 CONFIG_AIM_HOLD,Hold,Segurar
@@ -338,6 +349,14 @@ PROMPT_TAKE_SHOTGUN,Take the shotgun?,Pegar a espingarda?
 PROMPT_TAKE_SHOTGUN_AMMO,Take the shells?,Pegar os cartuchos?
 PICKUP_SHOTGUN,"You picked up The Negotiator Mk. III. Two shots loaded. Equip it in the menu to carry it in your hand.","Você pegou a The Negotiator Mk. III. Dois tiros carregados. Equipe ela no menu para levá-la na mão."
 PICKUP_SHOTGUN_AMMO,"Two shells. The gun only reloads when both barrels are empty.","Dois cartuchos. A arma só recarrega quando os dois canos estão vazios."
+PROMPT_TAKE_MK3,Take the MK3?,Pegar a MK3?
+PROMPT_TAKE_MK3_AMMO,Take the MK3 ammunition?,Pegar a munição da MK3?
+PICKUP_MK3,"You picked up the MK3. It fires three-round bursts — one pull, three shots. Equip it in the menu to carry it in your hand.","Você pegou a MK3. Ela dispara rajadas de três tiros — um aperto, três disparos. Equipe ela no menu para levá-la na mão."
+PICKUP_MK3_AMMO,"18 rounds for the MK3. One full magazine.","18 balas da MK3. Um pente cheio."
+PROMPT_TAKE_GRANOLA,Take the Granola?,Pegar a Granola?
+PROMPT_TAKE_GRANOLA_AMMO,Take the rockets?,Pegar os foguetes?
+PICKUP_GRANOLA,"You picked up the Granola. One rocket loaded — it explodes on whatever it touches. Equip it in the menu to carry it in your hand.","Você pegou a Granola. Um foguete carregado — ele explode no que tocar. Equipe ela no menu para levá-la na mão."
+PICKUP_GRANOLA_AMMO,"Mini rockets for the Granola. It holds one at a time, loaded through the muzzle.","Mini-foguetes da Granola. Ela leva um por vez, carregado pela boca do cano."
 ACTION_SHORTCUT,Shortcut,Atalho
 SHORTCUT_TITLE,Assign to a direction,Atribuir a um direcional
 SHORTCUT_HINT,D-pad on the controller / numeric keypad,Direcional do controle / teclado numérico
@@ -371,6 +390,14 @@ DEBUG_EVENT_PICKUP_AMMO2,Pickup: Pistol Ammo 2,Pickup: Munição Pistola 2
 DEBUG_EVENT_PICKUP_SHOTGUN,Pickup: Shotgun on Counter,Pickup: Espingarda no Balcão
 DEBUG_EVENT_PICKUP_SHOTGUN_AMMO1,Pickup: Shotgun Ammo 1,Pickup: Munição Espingarda 1
 DEBUG_EVENT_PICKUP_SHOTGUN_AMMO2,Pickup: Shotgun Ammo 2,Pickup: Munição Espingarda 2
+DEBUG_EVENT_PICKUP_MK3,Pickup: MK3 on Counter,Pickup: MK3 no Balcão
+DEBUG_EVENT_PICKUP_MK3_AMMO1,Pickup: MK3 Ammo 1,Pickup: Munição MK3 1
+DEBUG_EVENT_PICKUP_MK3_AMMO2,Pickup: MK3 Ammo 2,Pickup: Munição MK3 2
+DEBUG_EVENT_PICKUP_GRANOLA,Pickup: Granola on Counter,Pickup: Granola no Balcão
+DEBUG_EVENT_PICKUP_GRANOLA_AMMO1,Pickup: Granola Rockets 1,Pickup: Foguetes Granola 1
+DEBUG_EVENT_PICKUP_GRANOLA_AMMO2,Pickup: Granola Rockets 2,Pickup: Foguetes Granola 2
+DEBUG_EVENT_PICKUP_NICE_AMMO1,Pickup: Pistol Ammo (Nice's Kitchen),Pickup: Munição Pistola (Cozinha da Nice)
+DEBUG_EVENT_PICKUP_NICE_AMMO2,Pickup: Pistol Ammo (Nice's Bedroom),Pickup: Munição Pistola (Quarto da Nice)
 DEBUG_EVENT_IRON_RUSKS,Iron Rusks,Iron Rusks
 DEBUG_EVENT_MAX_MP,Max MP,MP Máximo
 DEBUG_EVENT_CURRENT_MP,Current MP,MP Atual
@@ -381,9 +408,13 @@ DEBUG_ITEM_AMULETO,Gear Amulet,Amuleto da Engrenagem
 DEBUG_ITEM_LANTERNA,Flashlight,Lanterna
 DEBUG_ITEM_PISTOL,Pistol (The Negotiator V1),Pistola (The Negotiator V1)
 DEBUG_ITEM_SHOTGUN,Shotgun (The Negotiator Mk.III),Espingarda (The Negotiator Mk.III)
+DEBUG_ITEM_MK3,MK3 (The Negotiator V2),MK3 (The Negotiator V2)
+DEBUG_ITEM_GRANOLA,Granola (The Negotiator V4),Granola (The Negotiator V4)
 DEBUG_ITEM_COGBLADE,Cogblade,Cogblade
 DEBUG_ITEM_PISTOL_AMMO,Pistol Ammo,Munição de Pistola
 DEBUG_ITEM_SHOTGUN_AMMO,Shotgun Shells,Cartuchos de Espingarda
+DEBUG_ITEM_MK3_AMMO,MK3 Ammunition,Munição da MK3
+DEBUG_ITEM_GRANOLA_AMMO,Granola Rockets,Foguetes da Granola
 IGR_SUSSURRO_1,Rubra valva... aperi te... vel'nara oth sumé...,Rubra valva... aperi te... vel'nara oth sumé...
 IGR_SUSSURRO_2,Sanguis pueri... clavis mundi... nhar'eth... nhar'eth...,Sanguis pueri... clavis mundi... nhar'eth... nhar'eth...
 IGR_SUSSURRO_3,Take me to the other side... take me home...,Me leva pro outro lado... me leva pra casa...

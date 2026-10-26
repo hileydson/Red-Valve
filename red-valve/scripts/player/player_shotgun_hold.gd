@@ -395,6 +395,17 @@ var _rolagem_e := PUNHO_ROLAGEM_E
 var _desvio_d := PUNHO_DESVIO_D
 var _desvio_e := PUNHO_DESVIO_E
 
+## Qual item este componente segura, o modelo, o eixo do furo e o quanto a arma
+## abre. Variaveis, com as constantes da cacadeira como valor, porque a Granola
+## usa este mesmo componente (`player_granola_hold.gd`): arma longa, duas maos,
+## mas sem dobra — ela carrega pela boca.
+var item_id := ITEM_SHOTGUN
+var modelo := MODELO_SHOTGUN
+var nome_do_no := "ShotgunNaMao"
+var boca_no_modelo := BOCA_NO_MODELO
+var culatra_no_modelo := CULATRA_NO_MODELO
+var abertura := ABERTURA
+
 
 # ==============================================================================
 # O QUE O PLAYER CHAMA
@@ -444,7 +455,7 @@ func tem_arma_na_mao() -> bool:
 
 ## Onde fica a boca do cano, em coordenadas de MUNDO.
 func boca_do_cano() -> Vector3:
-	return _no_mundo(BOCA_NO_MODELO)
+	return _no_mundo(boca_no_modelo)
 
 
 ## Pra onde o cano aponta, em coordenadas de MUNDO (vetor unitario).
@@ -452,8 +463,8 @@ func boca_do_cano() -> Vector3:
 ## Sai dos DOIS pontos medidos do furo, e nao de um eixo do modelo: a arma esta'
 ## desenhada inclinada (item 3 do cabecalho).
 func direcao_do_cano() -> Vector3:
-	var boca := _no_mundo(BOCA_NO_MODELO)
-	var culatra := _no_mundo(CULATRA_NO_MODELO)
+	var boca := _no_mundo(boca_no_modelo)
+	var culatra := _no_mundo(culatra_no_modelo)
 	var v := boca - culatra
 	return v.normalized() if v.length_squared() > 0.0001 else Vector3.FORWARD
 
@@ -469,7 +480,7 @@ func bocas_das_camaras() -> Array[Vector3]:
 
 ## Quanto a arma esta' aberta, de 0 (fechada) a 1 (escancarada).
 func quanto_aberta() -> float:
-	return _dobra / deg_to_rad(ABERTURA) if ABERTURA > 0.0 else 0.0
+	return _dobra / deg_to_rad(abertura) if abertura > 0.0 else 0.0
 
 
 # ==============================================================================
@@ -491,7 +502,7 @@ func _process_modification_with_delta(delta: float) -> void:
 	if _i_braco_d < 0 and not _procurar_ossos(sk):
 		return
 
-	var equipada: bool = SaveManager.is_equipped(ITEM_SHOTGUN) and not suspensa
+	var equipada: bool = SaveManager.is_equipped(item_id) and not suspensa
 	_garantir_arma(equipada)
 
 	# O peso e' 1 enquanto ela estiver EQUIPADA: com uma arma longa nao existe
@@ -559,6 +570,25 @@ func _process_modification_with_delta(delta: float) -> void:
 	_alinhar_punho(sk, _i_mao_e, 1.0, punho_e,
 		_rolagem_e + _giro_do_punho(float(ctx["r"]), solta), _desvio_e)
 	_fechar_maos(peso, maxf(na_arma, PUNHO_NO_CARTUCHO * solta * peso), delta)
+	_depois_da_pose(sk, ctx, delta)
+
+
+## Gancho das subclasses: roda depois que a arma e as maos tem pose neste
+## quadro (a Granola poe aqui o foguete na mao e o carregado na boca).
+func _depois_da_pose(_sk: Skeleton3D, _ctx: Dictionary, _delta: float) -> void:
+	pass
+
+
+## Os envelopes da recarga, de 0 a 1, no instante `r`: quanto a arma recolhe,
+## quanto dobra, quanto vira e quanto a mao esquerda esta' fora do fore-end.
+## A Granola troca isto (nao dobra nem vira).
+func _envelopes(r: float) -> Dictionary:
+	return {
+		"recolhe": smoothstep(0.0, M_RECOLHE_FIM, r) - smoothstep(M_SOLTA_INICIO, 1.0, r),
+		"dobra": smoothstep(M_ABRE_INICIO, M_ABRE_FIM, r) - smoothstep(M_FECHA_INICIO, M_FECHA_FIM, r),
+		"vira": smoothstep(M_VIRA_INICIO, M_VIRA_FIM, r) - smoothstep(M_DESVIRA_INICIO, M_DESVIRA_FIM, r),
+		"solta": smoothstep(M_LARGA, M_BALA1_PEGA, r) - smoothstep(M_BALA2_ENTRA, M_VOLTA, r),
+	}
 
 
 ## Onde tudo e' medido neste quadro: a ancora no tronco, os eixos da mira, o
@@ -586,13 +616,11 @@ func _montar_contexto(sk: Skeleton3D, alvo: Vector3, peso: float,
 	var vira := 0.0
 	var solta := 0.0
 	if _recarregando:
-		recolhe = smoothstep(0.0, M_RECOLHE_FIM, r) - smoothstep(M_SOLTA_INICIO, 1.0, r)
-		dobra = smoothstep(M_ABRE_INICIO, M_ABRE_FIM, r) \
-			- smoothstep(M_FECHA_INICIO, M_FECHA_FIM, r)
-		vira = smoothstep(M_VIRA_INICIO, M_VIRA_FIM, r) \
-			- smoothstep(M_DESVIRA_INICIO, M_DESVIRA_FIM, r)
-		solta = smoothstep(M_LARGA, M_BALA1_PEGA, r) \
-			- smoothstep(M_BALA2_ENTRA, M_VOLTA, r)
+		var env := _envelopes(r)
+		recolhe = env["recolhe"]
+		dobra = env["dobra"]
+		vira = env["vira"]
+		solta = env["solta"]
 
 	# ---- onde a mao DIREITA para ------------------------------------------
 	# A mira e' o lugar alto; o porte e' ele mesmo, puxado pra tras, pra baixo
@@ -607,7 +635,7 @@ func _montar_contexto(sk: Skeleton3D, alvo: Vector3, peso: float,
 	return {
 		"dir": dir, "direita": direita, "cima": cima, "ancora": ancora,
 		"apontando": apontando, "recolhe": recolhe, "vira": vira,
-		"dobra": deg_to_rad(ABERTURA) * dobra, "solta": solta, "r": r,
+		"dobra": deg_to_rad(abertura) * dobra, "solta": solta, "r": r,
 		"mao_d": mao_d,
 		"polo_d": mao_d - Vector3.UP * COTOVELO_BAIXO_D + direita * COTOVELO_FORA_D,
 	}
@@ -658,7 +686,7 @@ func _base_da_arma(ctx: Dictionary) -> Basis:
 	var eixo_y := eixo_z.cross(eixo_x).normalized()
 	var base := Basis(eixo_x, eixo_y, eixo_z)
 
-	var furo := (BOCA_NO_MODELO - CULATRA_NO_MODELO).normalized()
+	var furo := (boca_no_modelo - culatra_no_modelo).normalized()
 	var apontado := (base * furo).normalized()
 	base = Basis(Quaternion(apontado, aponta_pra)) * base
 
@@ -870,13 +898,13 @@ func _garantir_arma(equipada: bool) -> void:
 	if not is_instance_valid(_arma):
 		if not equipada or not is_instance_valid(_malha):
 			return
-		var pacote: PackedScene = load(MODELO_SHOTGUN)
+		var pacote: PackedScene = load(modelo)
 		if pacote == null:
-			push_warning("player_shotgun_hold: nao achei %s" % MODELO_SHOTGUN)
+			push_warning("player_shotgun_hold: nao achei %s" % modelo)
 			_i_braco_d = -2
 			return
 		_arma = pacote.instantiate()
-		_arma.name = "ShotgunNaMao"
+		_arma.name = nome_do_no
 		# Nada de colisao vinda do .glb: a arma anda colada no corpo e um corpo
 		# fisico ali dentro brigaria com a capsula do jogador.
 		for col in _arma.find_children("*", "CollisionObject3D", true, false):
@@ -884,7 +912,8 @@ func _garantir_arma(equipada: bool) -> void:
 			col.collision_mask = 0
 		_malha.add_child(_arma)
 		_charneira = _arma.find_child(NO_CHARNEIRA, true, false) as Node3D
-		if _charneira == null:
+		# arma que nao abre (a Granola) nao tem charneira, e nem precisa
+		if _charneira == null and abertura > 0.0:
 			push_warning("player_shotgun_hold: o .glb nao tem o no' '%s' — a "
 				% NO_CHARNEIRA + "arma nao vai dobrar. Rode "
 				+ "tools/blender/shotgun/gerar_shotgun.py")
@@ -956,7 +985,7 @@ var _ajustando_o_que := 0
 func _input(event: InputEvent) -> void:
 	if not OS.is_debug_build() or not (event is InputEventKey):
 		return
-	if not SaveManager.is_equipped(ITEM_SHOTGUN):
+	if not SaveManager.is_equipped(item_id):
 		return
 	var tecla := event as InputEventKey
 	if not tecla.pressed:

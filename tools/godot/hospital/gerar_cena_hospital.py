@@ -1207,6 +1207,130 @@ ITENS_BALCAO = [
         "giro": -14.0,
         "apoio": 0.011,
     },
+    # ----------------------------------------------------------------------
+    # A MK3 E A GRANOLA, NAS FAIXAS LIVRES DO TAMPO
+    #
+    # Perto de 180 graus o tampo ja' tem o bloco, a pasta e os papeis da
+    # recepcao (`hospital_detalhes`), e perto de 28 um papel solto: a MK3 fica
+    # em 315 (entre a pistola e a porta) e a Granola em 135 (do lado da
+    # cacadeira, que tambem e' arma longa).
+    {
+        "nome": "mk3_no_balcao",
+        "item": "mk3",
+        "quantidade": 1,
+        "prompt": "PROMPT_TAKE_MK3",
+        "texto": "PICKUP_MK3",
+        "repetido": "",
+        "modelo": "res://assets/3d_model/player/the_negotiator_V2/"
+                  "the_negotiator_V2.glb",
+        "angulo": 315.0,
+        # 1,914 unidade de ponta a ponta: 0,157 da' os 30 cm da MK3.
+        "escala": 0.157,
+        "deitada": True,
+        "giro": -12.0,
+        # meia espessura (0,208 x 0,157 / 2)
+        "apoio": 0.017,
+    },
+    # A caixa de 18 balas (um pente cheio). Duas, pelo mesmo motivo das da
+    # pistola.
+    {
+        "nome": "mk3_municao_no_balcao",
+        "item": "mk3_ammo",
+        "quantidade": 18,
+        "prompt": "PROMPT_TAKE_MK3_AMMO",
+        "texto": "PICKUP_MK3_AMMO",
+        "repetido": "PICKUP_AMMO_AGAIN",
+        "modelo": "res://assets/3d_model/player/the_negotiator_V2/"
+                  "cartridge/the_negotiator_V2_bullet.glb",
+        "angulo": 307.5,
+        # caixa de 12 cm (o .glb tem 1,916 de largura)
+        "escala": 0.0626,
+        "deitada": False,
+        "giro": 18.0,
+        # a caixa tem a origem no meio da altura (0,947 x 0,0626 / 2)
+        "apoio": 0.030,
+    },
+    {
+        "nome": "mk3_municao_no_balcao_2",
+        "item": "mk3_ammo",
+        "quantidade": 18,
+        "prompt": "PROMPT_TAKE_MK3_AMMO",
+        "texto": "PICKUP_MK3_AMMO",
+        "repetido": "PICKUP_AMMO_AGAIN",
+        "modelo": "res://assets/3d_model/player/the_negotiator_V2/"
+                  "cartridge/the_negotiator_V2_bullet.glb",
+        "angulo": 322.5,
+        "escala": 0.0626,
+        "deitada": False,
+        "giro": -22.0,
+        "apoio": 0.030,
+    },
+    {
+        "nome": "granola_no_balcao",
+        "item": "granola",
+        "quantidade": 1,
+        "prompt": "PROMPT_TAKE_GRANOLA",
+        "texto": "PICKUP_GRANOLA",
+        "repetido": "",
+        "modelo": "res://assets/3d_model/player/the_negotiator_V4/"
+                  "the_negotiator_V4.glb",
+        "angulo": 135.0,
+        # 1,913 unidade: 0,40 da' 77 cm de lancador.
+        "escala": 0.40,
+        "deitada": True,
+        "giro": 6.0,
+        # meia espessura (0,270 x 0,40 / 2)
+        "apoio": 0.054,
+    },
+    # Os foguetes, um por pickup (ela carrega um por vez). Tres, espalhados em
+    # volta dela.
+    {
+        "nome": "granola_foguete_no_balcao",
+        "item": "granola_ammo",
+        "quantidade": 1,
+        "prompt": "PROMPT_TAKE_GRANOLA_AMMO",
+        "texto": "PICKUP_GRANOLA_AMMO",
+        "repetido": "PICKUP_AMMO_AGAIN",
+        "modelo": "res://assets/3d_model/player/the_negotiator_V4/"
+                  "cartridge/the_negotiator_V4_bullet.glb",
+        "angulo": 118.0,
+        # 48 cm de foguete; ja' vem deitado (o eixo dele e' o X)
+        "escala": 0.25,
+        "deitada": False,
+        "giro": 70.0,
+        # raio da ogiva (0,139 x 0,25)
+        "apoio": 0.035,
+    },
+    {
+        "nome": "granola_foguete_no_balcao_2",
+        "item": "granola_ammo",
+        "quantidade": 1,
+        "prompt": "PROMPT_TAKE_GRANOLA_AMMO",
+        "texto": "PICKUP_GRANOLA_AMMO",
+        "repetido": "PICKUP_AMMO_AGAIN",
+        "modelo": "res://assets/3d_model/player/the_negotiator_V4/"
+                  "cartridge/the_negotiator_V4_bullet.glb",
+        "angulo": 152.0,
+        "escala": 0.25,
+        "deitada": False,
+        "giro": 105.0,
+        "apoio": 0.035,
+    },
+    {
+        "nome": "granola_foguete_no_balcao_3",
+        "item": "granola_ammo",
+        "quantidade": 1,
+        "prompt": "PROMPT_TAKE_GRANOLA_AMMO",
+        "texto": "PICKUP_GRANOLA_AMMO",
+        "repetido": "PICKUP_AMMO_AGAIN",
+        "modelo": "res://assets/3d_model/player/the_negotiator_V4/"
+                  "cartridge/the_negotiator_V4_bullet.glb",
+        "angulo": 157.5,
+        "escala": 0.25,
+        "deitada": False,
+        "giro": 96.0,
+        "apoio": 0.035,
+    },
 ]
 
 

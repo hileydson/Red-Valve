@@ -613,6 +613,15 @@ def gerar():
 # corredor
 # --------------------------------------------------------------------------
 
+def _textos_do_csv():
+    """chave -> (en, pt), do CSV do jogo (os nomes das salas nao estao no
+    textos.py: vieram antes dele)."""
+    import csv
+    caminho = os.path.join(C.BASE, "assets", "textos", "red_valve_textos_gerais.csv")
+    with open(caminho, encoding="utf-8") as f:
+        return {l["keys"]: (l["en"], l["pt"]) for l in csv.DictReader(f)}
+
+
 def _placas(det, props):
     """Converte as placas que `detalhes.py` posicionou em pecas de caixa — e
     escreve o TEXTO de cada uma na lista de textos do `det`."""
@@ -620,14 +629,17 @@ def _placas(det, props):
     falso = {"ident": "placas"}
     for (i, pp) in enumerate(det.placas_porta):
         x, y, z = pp["pos"]
-        pecas = [(0.0, 0.0, 0.0, 0.90, 0.22, 0.022, "mat_placa"),
-                 (0.0, 0.0, -0.008, 0.95, 0.27, 0.010, "mat_metal_escuro")]
+        # plaquinha do tamanho do nome (o mais comprido entre EN e PT)
+        letras = max(len(t) for t in _textos_do_csv().get(pp["chave"], ("x" * 12,)))
+        larg = max(0.34, letras * 48 * 0.0012 * 0.56 + 0.10)
+        pecas = [(0.0, 0.0, 0.0, larg, 0.13, 0.018, "mat_placa"),
+                 (0.0, 0.0, -0.006, larg + 0.03, 0.16, 0.008, "mat_metal_escuro")]
         p = MOB.caixas_solto(falso, pecas, x, z, pp["giro"], "porta_%d" % i,
                              dy=y - P.cota())
         saida.append(p)
         nx, nz = math.sin(pp["giro"]), math.cos(pp["giro"])
-        det.texto(pp["chave"], "placa", (x + nx * 0.013, y, z + nz * 0.013),
-                  pp["giro"], 64, (0.10, 0.12, 0.11, 0.95), px=0.0017)
+        det.texto(pp["chave"], "placa", (x + nx * 0.011, y, z + nz * 0.011),
+                  pp["giro"], 48, (0.10, 0.12, 0.11, 0.95), px=0.0012)
     for (i, sd) in enumerate(det.saidas):
         x, y, z = sd["pos"]
         p = MOB.caixas_solto(falso, [(0.0, 0.0, 0.0, 0.66, 0.26, 0.07,
@@ -636,7 +648,7 @@ def _placas(det, props):
         saida.append(p)
         nx, nz = math.sin(sd["giro"]), math.cos(sd["giro"])
         det.texto("ESC_PLACA_SAIDA", "placa", (x + nx * 0.037, y, z + nz * 0.037),
-                  sd["giro"], 96, (0.92, 1.0, 0.94, 1.0), px=0.0019, aceso=True)
+                  sd["giro"], 96, (0.62, 0.80, 0.66, 1.0), px=0.0019, aceso=True)
     # A chapa de aviso presa na grade (`pecas_da_grade`: 0,52 x 0,36 m, a
     # 1,70 m, deslocada 5 cm pro leste do eixo das barras). Escrita nas duas
     # faces: quem chega pelo corredor e quem chega pelo almoxarifado le' o

@@ -13,8 +13,10 @@ func _ready() -> void:
 	GlobalEvents.in_cutscene = false
 	GlobalEvents.is_maycow_normal = true
 	GlobalEvents.set_minimum_nevoa()
-	$inscricao.text = tr("NICE_HOUSE_INSCRIPTION")
-	$anotacao.text = tr("NICE_HOUSE_NOTE")
+	# as escritas dela (paredes, bilhete) dizem a chave do CSV na metadata
+	for escrita in find_children("*", "Label3D", false, false):
+		if escrita.has_meta("chave"):
+			escrita.text = tr(String(escrita.get_meta("chave")))
 	SaveManager.save_game()
 	for luz in $luzes.get_children():
 		if luz is OmniLight3D and luz.has_meta("piscar"):

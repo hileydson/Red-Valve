@@ -66,6 +66,8 @@ var debug_max_mp_spin: SpinBox
 var debug_curr_mp_spin: SpinBox
 var debug_ammo_pistol_spin: SpinBox
 var debug_ammo_shotgun_spin: SpinBox
+var debug_ammo_mk3_spin: SpinBox
+var debug_ammo_granola_spin: SpinBox
 var debug_save_btn: Button
 
 # Debug Travel Tab (só visível após sequência)
@@ -746,6 +748,12 @@ func _build_debug_tab():
 	_add_event_checkbox(vbox, "item_shotgun", tr("DEBUG_ITEM_SHOTGUN"), SaveManager.tem_item("shotgun"), func(val):
 		_debug_set_item("shotgun", val, 1)
 	)
+	_add_event_checkbox(vbox, "item_mk3", tr("DEBUG_ITEM_MK3"), SaveManager.tem_item("mk3"), func(val):
+		_debug_set_item("mk3", val, 1)
+	)
+	_add_event_checkbox(vbox, "item_granola", tr("DEBUG_ITEM_GRANOLA"), SaveManager.tem_item("granola"), func(val):
+		_debug_set_item("granola", val, 1)
+	)
 	_add_event_checkbox(vbox, "item_cogblade", tr("DEBUG_ITEM_COGBLADE"), SaveManager.tem_item("cogblade"), func(val):
 		_debug_set_item("cogblade", val, 1)
 	)
@@ -794,6 +802,19 @@ func _build_debug_tab():
 	_add_event_checkbox(vbox, "pickup_shotgun_ammo2", tr("DEBUG_EVENT_PICKUP_SHOTGUN_AMMO2"), SaveManager.pickups_pegos.has("hospital_shotgun_municao_no_balcao_2"), func(val):
 		_debug_set_array_entry(SaveManager.pickups_pegos, "hospital_shotgun_municao_no_balcao_2", val)
 	)
+	# A MK3 e a Granola no balcao, e as balas da casa da Dona Nice.
+	for pickup in [["pickup_mk3", "DEBUG_EVENT_PICKUP_MK3", "hospital_mk3_no_balcao"],
+			["pickup_mk3_ammo1", "DEBUG_EVENT_PICKUP_MK3_AMMO1", "hospital_mk3_municao_no_balcao"],
+			["pickup_mk3_ammo2", "DEBUG_EVENT_PICKUP_MK3_AMMO2", "hospital_mk3_municao_no_balcao_2"],
+			["pickup_granola", "DEBUG_EVENT_PICKUP_GRANOLA", "hospital_granola_no_balcao"],
+			["pickup_granola_ammo1", "DEBUG_EVENT_PICKUP_GRANOLA_AMMO1", "hospital_granola_foguete_no_balcao"],
+			["pickup_granola_ammo2", "DEBUG_EVENT_PICKUP_GRANOLA_AMMO2", "hospital_granola_foguete_no_balcao_2"],
+			["pickup_nice_ammo1", "DEBUG_EVENT_PICKUP_NICE_AMMO1", "casa_nice_municao_cozinha"],
+			["pickup_nice_ammo2", "DEBUG_EVENT_PICKUP_NICE_AMMO2", "casa_nice_municao_quarto"]]:
+		var id_pickup: String = pickup[2]
+		_add_event_checkbox(vbox, pickup[0], tr(pickup[1]), SaveManager.pickups_pegos.has(id_pickup), func(val):
+			_debug_set_array_entry(SaveManager.pickups_pegos, id_pickup, val)
+		)
 
 	# Recursos Numéricos e Munições
 	var section_numeric = Label.new()
@@ -881,8 +902,30 @@ func _build_debug_tab():
 	hbox_ammo_s.add_child(debug_ammo_shotgun_spin)
 	vbox.add_child(hbox_ammo_s)
 
+	# Munição da MK3 e foguetes da Granola
+	debug_ammo_mk3_spin = _debug_spin_de_municao(vbox, "DEBUG_ITEM_MK3_AMMO", "mk3_ammo")
+	debug_ammo_granola_spin = _debug_spin_de_municao(vbox, "DEBUG_ITEM_GRANOLA_AMMO", "granola_ammo")
+
 
 	tab_container.add_child(tab_debug)
+
+## Uma linha "nome da munição + quantidade", igual às da pistola e da espingarda.
+func _debug_spin_de_municao(vbox: Node, chave: String, item: String) -> SpinBox:
+	var hbox = HBoxContainer.new()
+	hbox.add_theme_constant_override("separation", 20)
+	var lbl = Label.new()
+	lbl.text = tr(chave)
+	lbl.add_theme_font_size_override("font_size", 18)
+	hbox.add_child(lbl)
+	var spin = SpinBox.new()
+	_setup_debug_spinbox(spin, 0, 999, _debug_get_item_amount(item))
+	spin.value_changed.connect(func(v):
+		_debug_set_item_amount(item, int(v))
+	)
+	hbox.add_child(spin)
+	vbox.add_child(hbox)
+	return spin
+
 
 func _add_event_checkbox(parent: Node, id: String, title: String, current_state: bool, on_toggled: Callable) -> void:
 	var check = CheckButton.new()

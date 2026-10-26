@@ -6,6 +6,10 @@ func _ready() -> void:
 	player = get_parent()
 
 func process_combat(delta: float) -> void:
+	# O foguete na boca da Granola segue a municao em qualquer momento — nao
+	# so' no tiro e na recarga (equipar a arma vazia, trocar de pessoa).
+	if SaveManager.is_equipped("granola"):
+		_avisar_carga_granola()
 	# GIRO DA COGBLADE (só durante o arremesso normal, não durante a cinemática do ultimate)
 	if is_instance_valid(player.crescent_cogblade) and player.crescent_cogblade.top_level and not player.is_using_ultimate and not player.cogblade_melee_active:
 		player.crescent_cogblade.global_rotate(Vector3.UP, -15.0 * delta)
@@ -49,6 +53,14 @@ func reload() -> void:
 	if SaveManager.is_equipped("shotgun"):
 		recarregar_shotgun()
 		return
+	# A MK3 e a Granola tambem sao caminhos proprios (pente trocado inteiro, um
+	# foguete pela boca), nas duas pessoas.
+	if SaveManager.is_equipped("mk3"):
+		recarregar_mk3()
+		return
+	if SaveManager.is_equipped("granola"):
+		recarregar_granola()
+		return
 	if player.is_first_person:
 		_iniciar_recarga_fp("pistol")
 
@@ -62,6 +74,12 @@ func _iniciar_recarga_fp(item: String) -> void:
 		return
 	if item == "pistol":
 		if player.clip_pistol_ammo >= player.max_clip_pistol or SaveManager.get_item_amount("pistol_ammo") <= 0:
+			return
+	elif item == "mk3":
+		if player.clip_mk3_ammo >= player.max_clip_mk3 or SaveManager.get_item_amount("mk3_ammo") <= 0:
+			return
+	elif item == "granola":
+		if player.clip_granola_ammo >= player.max_clip_granola or SaveManager.get_item_amount("granola_ammo") <= 0:
 			return
 	elif player.clip_shotgun_ammo > 0 or SaveManager.get_item_amount("shotgun_ammo") <= 0:
 		return
@@ -96,6 +114,16 @@ func _evento_recarga_fp(evento: String) -> void:
 			player.update_ammo_ui()
 			player.gun_load.play()
 		"fecha": player.shotgun_close.play()
+		"mk3_pente_sai": player.mk3_mag_out.play()
+		"mk3_pente_cai": _tocar_solto(SOM_PENTE_MK3_CAI, -6.0)
+		"mk3_pente":
+			_encher_pente_mk3()
+			player.mk3_mag_in.play()
+		"mk3_ferrolho": player.mk3_bolt.play()
+		"granola_foguete":
+			_carregar_foguete()
+			player.granola_load.play()
+		"granola_trava": player.granola_lock.play()
 		"fim", "cancelada":
 			player.is_reloading = false
 			_recarregando_shotgun = false
@@ -250,6 +278,12 @@ func shoot(input: Variant) -> void:
 	# chumbo, e o caminho dele já existe (é o do Maycow normal).
 	if SaveManager.is_equipped("shotgun"):
 		atirar_shotgun()
+		return
+	if SaveManager.is_equipped("mk3"):
+		atirar_mk3()
+		return
+	if SaveManager.is_equipped("granola"):
+		atirar_granola()
 		return
 	if not SaveManager.is_equipped("pistol"): return
 	if player.is_reloading: return
@@ -649,12 +683,18 @@ func _raio_do_tiro_shotgun() -> void:
 ## mirar. O cano aponta para o mesmo ponto (o braço inteiro aponta para ele), só
 ## que de um palmo ao lado — usar o cano como origem faria o tiro passar raspando
 ## em quinas que na tela estavam livres.
-func _raio_do_tiro_3p() -> void:
+func _raio_do_tiro_3p(dano: int = -1, desvio_graus: float = 0.0) -> Dictionary:
 	var cam = player.get_viewport().get_camera_3d()
-	if cam == null: return
+	if cam == null: return {}
 
 	var origem: Vector3 = cam.global_position
 	var frente: Vector3 = -cam.global_transform.basis.z
+	# A MK3 abre um pouco a cada tiro da rajada: o cano sobe com o coice.
+	if desvio_graus > 0.0:
+		var angulo := randf() * TAU
+		var raio := sqrt(randf()) * deg_to_rad(desvio_graus)
+		frente = (frente + (cam.global_transform.basis.x * cos(angulo)
+			+ cam.global_transform.basis.y * sin(angulo)) * tan(raio)).normalized()
 	var consulta := PhysicsRayQueryParameters3D.create(origem,
 		origem + frente * ALCANCE_TIRO_3P)
 	consulta.collision_mask = 12
@@ -662,14 +702,15 @@ func _raio_do_tiro_3p() -> void:
 	consulta.exclude = [player.get_rid()]
 
 	var toque := player.get_world_3d().direct_space_state.intersect_ray(consulta)
-	if toque.is_empty(): return
+	if toque.is_empty(): return {}
 
 	var alvo = toque.get("collider")
-	if alvo == null or not alvo.has_method("take_damage"): return
+	if alvo == null or not alvo.has_method("take_damage"): return {}
 
-	alvo.take_damage(player.damage_pistol)
+	alvo.take_damage(player.damage_pistol if dano < 0 else dano)
 	if alvo.is_in_group("enemies"):
 		spawn_blood_raycast(toque["position"], toque["normal"])
+	return toque
 
 
 ## Clarão curto na boca do cano. É uma luz só, com alcance pequeno e vida de
@@ -1254,3 +1295,262 @@ func _on_area_3d_body_exited(body: Node3D) -> void:
 func _on_bullet_touch_body_entered(body: Node3D) -> void:
 	player.bullet.visible = false
 	spawn_blood_effect(body)
+
+
+# =========================================================================
+# A MK3 (the_negotiator_V2)
+# =========================================================================
+# Uma pistola que atira em RAJADA: um aperto, tres tiros colados, e uma pausa
+# antes da proxima. A recarga troca o pente inteiro — o vazio e' puxado e jogado
+# fora, e outro sai do bolso (o gesto e' do `player_mk3_hold.gd` em terceira
+# pessoa e do clipe `mk3_recarga` em primeira). Os MK3_MOMENTO_* espelham os M_*
+# do hold: e' neles que os sons tocam e o pente enche.
+
+const SOM_PENTE_MK3_CAI := "res://assets/sounds/player/guns/mk3/mk3_pente_cai.ogg"
+const MK3_RAJADA := 3
+## Entre os tiros da rajada, e entre uma rajada e a proxima.
+const MK3_INTERVALO := 0.075
+const MK3_ENTRE_RAJADAS := 0.38
+## Quanto a rajada abre: o primeiro tiro vai no centro, os outros sobem.
+const MK3_DESVIO := [0.0, 0.9, 1.6]
+const MK3_TEMPO_RECARGA := 2.4
+const MK3_MOMENTO_PEGA := 0.08
+const MK3_MOMENTO_ENCAIXA := 0.72
+const MK3_MOMENTO_FERROLHO := 0.84
+
+var _recarregando_mk3: bool = false
+
+
+func atirar_mk3() -> void:
+	if not SaveManager.is_equipped("mk3"): return
+	if not player.can_shoot_again or player.is_reloading: return
+	if player.clip_mk3_ammo <= 0: return
+	var hold = player._mk3_hold()
+	if player.is_first_person and hold != null and hold.has_method("em_troca"):
+		if hold.em_troca() or hold.arma_na_mao() != "mk3":
+			return
+	player.can_shoot_again = false
+	for i in MK3_RAJADA:
+		if not is_instance_valid(player) or player.clip_mk3_ammo <= 0 or player.is_reloading:
+			break
+		if not SaveManager.is_equipped("mk3"):
+			break
+		_tiro_da_rajada(hold, i)
+		await get_tree().create_timer(MK3_INTERVALO).timeout
+	await get_tree().create_timer(MK3_ENTRE_RAJADAS).timeout
+	if is_instance_valid(player):
+		player.can_shoot_again = true
+
+
+func _tiro_da_rajada(hold, i: int) -> void:
+	player.clip_mk3_ammo -= 1
+	player.update_ammo_ui()
+	player.mk3_shot.pitch_scale = randf_range(0.95, 1.06)
+	player.mk3_shot.play()
+	GlobalUtils.shake_camera(0.035, 0.05)
+	GlobalUtils.vibrate_controller(Input, 0.45, 0.2, 0.06)
+	if hold and hold.tem_arma_na_mao():
+		_piscar_clarao(hold.boca_do_cano(), 5.0, 3.5)
+		if player.is_first_person and hold.has_method("ponto_de_ejecao"):
+			_soltar_capsula(hold.ponto_de_ejecao())
+		else:
+			_soltar_capsula(hold.boca_do_cano())
+		# o coice da MAO so' existe em primeira pessoa (o clipe `mk3_tiro`)
+		if hold.has_method("atirar"):
+			hold.atirar()
+	var toque := _raio_do_tiro_3p(player.damage_mk3, MK3_DESVIO[mini(i, MK3_DESVIO.size() - 1)])
+	if player.is_first_person and not toque.is_empty():
+		var alvo = toque.get("collider")
+		if alvo != null and alvo.is_in_group("enemies"):
+			add_cogblade_power(4.0, toque["position"])
+
+
+func recarregar_mk3() -> void:
+	if player.is_first_person:
+		_iniciar_recarga_fp("mk3")
+		return
+	if _recarregando_mk3 or player.is_reloading: return
+	if not SaveManager.is_equipped("mk3"): return
+	if player.clip_mk3_ammo >= player.max_clip_mk3: return
+	if SaveManager.get_item_amount("mk3_ammo") <= 0: return
+
+	_recarregando_mk3 = true
+	player.is_reloading = true
+	var hold = player._mk3_hold()
+	if hold:
+		hold.recarregar(MK3_TEMPO_RECARGA)
+	var decorrido := 0.0
+	decorrido = await _esperar_fracao(MK3_MOMENTO_PEGA, decorrido, MK3_TEMPO_RECARGA)
+	player.mk3_mag_out.play()
+	# o pente que cai tem som proprio, no chao (ver `player_mk3_hold.gd`)
+	decorrido = await _esperar_fracao(MK3_MOMENTO_ENCAIXA, decorrido, MK3_TEMPO_RECARGA)
+	_encher_pente_mk3()
+	player.mk3_mag_in.play()
+	decorrido = await _esperar_fracao(MK3_MOMENTO_FERROLHO, decorrido, MK3_TEMPO_RECARGA)
+	player.mk3_bolt.play()
+	await _esperar_fracao(1.0, decorrido, MK3_TEMPO_RECARGA)
+	player.is_reloading = false
+	_recarregando_mk3 = false
+
+
+## O pente novo. O pente velho vai embora, mas as balas que ainda tinham nele
+## NAO: elas voltam pra conta (o Maycow nao joga fora municao boa). Na pratica
+## e' "completar o pente", como a pistola.
+func _encher_pente_mk3() -> void:
+	var faltam: int = player.max_clip_mk3 - player.clip_mk3_ammo
+	var tiradas: int = mini(faltam, SaveManager.get_item_amount("mk3_ammo"))
+	if tiradas <= 0:
+		return
+	SaveManager.remove_item_amount("mk3_ammo", tiradas)
+	player.clip_mk3_ammo += tiradas
+	player.update_ammo_ui()
+
+
+# =========================================================================
+# A GRANOLA (the_negotiator_V4)
+# =========================================================================
+# Um lancador de mini-foguete, carregado PELA BOCA, um por vez. O foguete
+# (`foguete_granola.gd`) explode no que tocar. Recarregar e' por um foguete no
+# tubo: a mao vai ao cinto, traz o foguete e enfia a cauda fina pela boca — a
+# ogiva fica pra fora, encaixada. Os GRANOLA_MOMENTO_* espelham os
+# M_GRANOLA_* do `player_granola_hold.gd`.
+
+const FOGUETE_GRANOLA := preload("res://scripts/effects/foguete_granola.gd")
+const GRANOLA_ENTRE_TIROS := 1.0
+const GRANOLA_TEMPO_RECARGA := 2.6
+const GRANOLA_MOMENTO_ENTRA := 0.60
+const GRANOLA_MOMENTO_TRAVA := 0.80
+const TEMPO_CLARAO_GRANOLA := 0.14
+
+var _recarregando_granola: bool = false
+
+
+func atirar_granola() -> void:
+	if not SaveManager.is_equipped("granola"): return
+	if not player.can_shoot_again or player.is_reloading: return
+	if player.clip_granola_ammo <= 0: return
+	var hold = player._granola_hold()
+	if player.is_first_person and hold != null and hold.has_method("em_troca"):
+		if hold.em_troca() or hold.arma_na_mao() != "granola":
+			return
+
+	player.clip_granola_ammo -= 1
+	player.update_ammo_ui()
+	player.can_shoot_again = false
+	_avisar_carga_granola()
+
+	player.granola_shot.play()
+	GlobalUtils.shake_camera(0.16, 0.22)
+	GlobalUtils.vibrate_controller(Input, 1.0, 0.5, 0.25)
+
+	var cam = player.get_viewport().get_camera_3d()
+	var origem: Vector3 = cam.global_position if cam else player.global_position + Vector3.UP
+	if hold and hold.tem_arma_na_mao():
+		origem = hold.boca_do_cano()
+		_piscar_clarao(origem, 10.0, 6.0, TEMPO_CLARAO_GRANOLA)
+		_fumaca_do_cano(hold)
+		if hold.has_method("atirar"):
+			hold.atirar()
+	# vai pro que esta' no centro da tela, saindo da boca do cano
+	var alvo := _ponto_no_centro_da_tela(cam)
+	var direcao := alvo - origem
+	if direcao.length_squared() < 0.04 and cam:
+		direcao = -cam.global_transform.basis.z
+	var foguete = FOGUETE_GRANOLA.new()
+	foguete.dono = player
+	foguete.dano_direto = player.damage_granola_direto
+	foguete.dano_area = player.damage_granola_area
+	get_tree().current_scene.add_child(foguete)
+	foguete.global_position = origem
+	foguete.lancar(direcao)
+
+	await get_tree().create_timer(GRANOLA_ENTRE_TIROS).timeout
+	if is_instance_valid(player):
+		player.can_shoot_again = true
+
+
+## O ponto que o jogador esta' mirando: o primeiro obstaculo no centro da tela
+## (cenario, inimigo, chao), ou longe na frente dele.
+func _ponto_no_centro_da_tela(cam: Camera3D) -> Vector3:
+	if cam == null:
+		return player.global_position - player.global_transform.basis.z * 30.0
+	var origem := cam.global_position
+	var frente := -cam.global_transform.basis.z
+	var consulta := PhysicsRayQueryParameters3D.create(origem, origem + frente * ALCANCE_TIRO_3P)
+	consulta.collision_mask = 15
+	consulta.collide_with_areas = true
+	consulta.exclude = [player.get_rid()]
+	var toque := player.get_world_3d().direct_space_state.intersect_ray(consulta)
+	if toque.is_empty():
+		return origem + frente * ALCANCE_TIRO_3P
+	# perto demais (a camera de 3a pessoa atras de uma quina): mira na frente
+	if origem.distance_to(toque["position"]) < 2.5:
+		return origem + frente * 12.0
+	return toque["position"]
+
+
+func recarregar_granola() -> void:
+	if player.is_first_person:
+		_iniciar_recarga_fp("granola")
+		return
+	if _recarregando_granola or player.is_reloading: return
+	if not SaveManager.is_equipped("granola"): return
+	if player.clip_granola_ammo >= player.max_clip_granola: return
+	if SaveManager.get_item_amount("granola_ammo") <= 0: return
+
+	_recarregando_granola = true
+	player.is_reloading = true
+	var hold = player._granola_hold()
+	if hold:
+		hold.recarregar(GRANOLA_TEMPO_RECARGA)
+	var decorrido := 0.0
+	decorrido = await _esperar_fracao(GRANOLA_MOMENTO_ENTRA, decorrido, GRANOLA_TEMPO_RECARGA)
+	_carregar_foguete()
+	player.granola_load.play()
+	decorrido = await _esperar_fracao(GRANOLA_MOMENTO_TRAVA, decorrido, GRANOLA_TEMPO_RECARGA)
+	player.granola_lock.play()
+	await _esperar_fracao(1.0, decorrido, GRANOLA_TEMPO_RECARGA)
+	player.is_reloading = false
+	_recarregando_granola = false
+
+
+## Um foguete sai da caixa e entra no tubo.
+func _carregar_foguete() -> void:
+	if SaveManager.get_item_amount("granola_ammo") <= 0:
+		return
+	if player.clip_granola_ammo >= player.max_clip_granola:
+		return
+	SaveManager.remove_item_amount("granola_ammo", 1)
+	player.clip_granola_ammo += 1
+	player.update_ammo_ui()
+	_avisar_carga_granola()
+
+
+## O foguete na boca do cano aparece se houver um no tubo — nas duas pessoas.
+func _avisar_carga_granola() -> void:
+	var carregada: bool = player.clip_granola_ammo > 0
+	var na_terceira = player.get_node_or_null("maycow_lopes_normal/Armature/Skeleton3D/PlayerGranolaHold")
+	if na_terceira:
+		na_terceira.carregada = carregada
+	var maos = player._maos_fp()
+	if maos and maos.has_method("municao_visivel"):
+		maos.municao_visivel("granola", carregada)
+
+
+## Espera ate' a fracao `fracao` de um gesto de `total` segundos, sabendo que
+## ja' se passou `decorrido` (fracao). Devolve o novo `decorrido`.
+func _esperar_fracao(fracao: float, decorrido: float, total: float) -> float:
+	var falta := (fracao - decorrido) * total
+	if falta > 0.0:
+		await get_tree().create_timer(falta).timeout
+	return fracao
+
+
+## Som de uma vez so', sem no' fixo no player (some quando acaba).
+func _tocar_solto(caminho: String, volume: float = 0.0) -> void:
+	var som := AudioStreamPlayer.new()
+	som.stream = load(caminho)
+	som.volume_db = volume
+	add_child(som)
+	som.play()
+	som.finished.connect(som.queue_free)

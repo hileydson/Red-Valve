@@ -4,12 +4,24 @@ Execute da raiz red-valve: python3 tools/hospital/gerar_detalhes_hospital.py
 As coordenadas seguem as portas e salas de scenes/stages/hospital/hospital.tscn.
 """
 
+import csv
 import json
+import math
+import sys
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
 DESTINO = ROOT / "scenes/stages/hospital/hospital_detalhes.tscn"
+
+# A planta do hospital: as placas de porta saem das PORTAS dela, e os avisos
+# encostam na face da parede que ela diz que existe.
+sys.dont_write_bytecode = True
+sys.path.insert(0, str(ROOT.parent / "tools/godot/hospital"))
+import planta as P  # noqa: E402
+
+with open(ROOT / "assets/textos/red_valve_textos_gerais.csv", encoding="utf-8") as f:
+    TEXTOS = {linha["keys"]: linha for linha in csv.DictReader(f)}
 
 
 def q(value):
@@ -136,80 +148,131 @@ def modelo(nome, tipo, x, y, z, rot=0, escala=1, fisico=False):
     ), str(indice))
 
 
-def placa(nome, chave, texto, x, y, z, rot=0, largura=2.7, alerta=False):
+def _largura_do_texto(chave, texto, font_size, pixel_size):
+    """Quanto o texto ocupa (m), pelo mais comprido entre o PT e o EN."""
+    linha = TEXTOS.get(chave, {})
+    letras = max(len(texto), len(linha.get("en", "")), len(linha.get("pt", "")))
+    return letras * font_size * pixel_size * 0.56
+
+
+def placa(nome, chave, texto, x, y, z, rot=0, alerta=False, font_size=34,
+          pixel_size=0.0022, altura=.20):
+    """Placa de parede: o tamanho segue o texto. O texto e' SOMBREADO (recebe a
+    luz da cena como a chapa): sem isso o Label3D desenha sem luz nenhuma e
+    a palavra parece acesa no corredor escuro."""
+    largura = _largura_do_texto(chave, texto, font_size, pixel_size) + .16
     node(nome, "Node3D", ".", (
         f'position = {v(x, y, z)}',
         f'rotation = {v(0, rot, 0)}',
     ))
-    caixa("base", nome, 0, 0, 0, largura, .43, .045, "borda")
-    caixa("face", nome, 0, 0, .026, largura - .055, .38, .008, "placa")
-    caixa("faixa", nome, -largura / 2 + .085, 0, .034, .09, .32, .012,
+    caixa("base", nome, 0, 0, 0, largura, altura, .024, "borda")
+    caixa("face", nome, 0, 0, .014, largura - .03, altura - .03, .005, "placa")
+    caixa("faixa", nome, -largura / 2 + .045, 0, .018, .03, altura - .06, .005,
           "vermelho" if alerta else "amarelo")
     node("texto", "Label3D", nome, (
         f'text = {q(texto)}',
         f'metadata/chave_traducao = {q(chave)}',
-        f'position = {v(.08, -.015, .042)}',
-        'font_size = 40',
-        'pixel_size = 0.0034',
-        'outline_size = 7',
-        'modulate = Color(0.86, 0.91, 0.82, 1)',
-        'outline_modulate = Color(0.015, 0.025, 0.022, 1)',
+        f'position = {v(.02, -.004, .0185)}',
+        f'font_size = {font_size}',
+        f'pixel_size = {pixel_size}',
+        'shaded = true',
+        'outline_size = 0',
+        'modulate = Color(0.80, 0.84, 0.76, 1)',
     ))
 
 
-# Placas acima das portas: ficam fora do vão e da colisão, visíveis dos corredores.
-portas = [
-    ("101", "HOSP_SALA_101", "Quarto 101", 5.6, 0, 10.32, 0),
-    ("102", "HOSP_SALA_102", "Quarto 102", 16.6, 0, 10.32, 0),
-    ("103", "HOSP_SALA_103", "Quarto 103", 27.6, 0, 10.32, 0),
-    ("raiox", "HOSP_SALA_RAIOX", "Radiologia", 38.6, 0, 10.32, 0),
-    ("lab", "HOSP_SALA_LAB", "Laboratório", 50.0, 0, 10.32, 0),
-    ("104", "HOSP_SALA_104", "Quarto 104", 5.2, 0, 15.39, 3.14159),
-    ("105", "HOSP_SALA_105", "Quarto 105", 15.2, 0, 15.39, 3.14159),
-    ("cirurgia", "HOSP_SALA_CIRURGIA", "Centro Cirúrgico", 30.2, 0, 15.39, 3.14159),
-    ("uti", "HOSP_SALA_UTI", "UTI", 42.8, 0, 15.39, 3.14159),
-    ("ps", "HOSP_SALA_PS", "Pronto-Socorro", 40.3, 0, 35.69, 0),
-    ("106", "HOSP_SALA_106", "Quarto 106", 5.2, 0, 52.96, 0),
-    ("107", "HOSP_SALA_107", "Quarto 107", 15.2, 0, 52.96, 0),
-    ("refeitorio", "HOSP_SALA_REFEITORIO", "Refeitório", 30.6, 0, 52.96, 0),
-    ("necroterio", "HOSP_SALA_NECROTERIO", "Necrotério", 43.3, 0, 52.96, 0),
-    ("108", "HOSP_SALA_108", "Quarto 108", 5.6, 0, 58.04, 3.14159),
-    ("109", "HOSP_SALA_109", "Quarto 109", 16.6, 0, 58.04, 3.14159),
-    ("farmacia", "HOSP_SALA_FARMACIA", "Farmácia", 27.6, 0, 58.04, 3.14159),
-    ("esteril", "HOSP_SALA_ESTERIL", "Central de Esterilização", 38.6, 0, 58.04, 3.14159),
-    ("maquinas", "HOSP_SALA_MAQUINAS", "Casa de Máquinas", 50.0, 0, 58.04, 3.14159),
-    ("arquivo", "HOSP_SALA_ARQUIVO", "Arquivo Médico", 16.175, 4.2, 6.32, 0),
-    ("201", "HOSP_SALA_201", "Quarto 201", 6.5, 4.2, 28.31, 0),
-    ("202", "HOSP_SALA_202", "Quarto 202", 19.3, 4.2, 28.31, 0),
-    ("203", "HOSP_SALA_203", "Quarto 203", 31.9, 4.2, 28.31, 0),
-    ("psiq", "HOSP_SALA_PSIQ", "Ala Psiquiátrica", 8.2, 4.2, 33.64, 3.14159),
-    ("terapia", "HOSP_SALA_TERAPIA", "Sala de Terapia", 24.2, 4.2, 33.64, 3.14159),
-    ("204", "HOSP_SALA_204", "Quarto 204", 5.6, 4.2, 53.96, 0),
-    ("205", "HOSP_SALA_205", "Quarto 205", 16.6, 4.2, 53.96, 0),
-    ("cirurgia2", "HOSP_SALA_CIRURGIA2", "Centro Cirúrgico 2", 27.6, 4.2, 53.96, 0),
-    ("observacao", "HOSP_SALA_OBSERVACAO", "Sala de Observação", 38.6, 4.2, 53.96, 0),
-]
-for nome, chave, texto, x, piso, z, rot in portas:
-    placa("porta_" + nome, chave, texto, x, piso + 2.88, z, rot)
+def _frente(rot):
+    """Pra onde a placa olha (o +Z dela, girado)."""
+    return math.sin(rot), math.cos(rot)
+
+
+def _na_face_da_parede(x, y, z, rot):
+    """Encosta a placa (dada mais ou menos no lugar) na face da parede mais
+    proxima atras dela. As coordenadas antigas eram do eixo da parede: a chapa
+    ficava DENTRO dela e so' o texto aparecia."""
+    fx, fz = _frente(rot)
+    andar = 2 if y >= P.ANDAR_2 - .1 else 1
+    melhor = None
+    for m in P.muros(andar):
+        if abs(fz) > .5 and m["eixo"] == "x":
+            perto, ao_longo, sinal = abs(m["coord"] - z), x, fz
+        elif abs(fx) > .5 and m["eixo"] == "z":
+            perto, ao_longo, sinal = abs(m["coord"] - x), z, fx
+        else:
+            continue
+        if perto < .6 and min(m["a"], m["b"]) - .1 <= ao_longo <= max(m["a"], m["b"]) + .1:
+            if melhor is None or perto < melhor[0]:
+                melhor = (perto, m, sinal)
+    if melhor is None:
+        return x, y, z
+    _, m, sinal = melhor
+    face = m["coord"] + sinal * (m["esp"] * .5 + .013)
+    return (x, y, face) if m["eixo"] == "x" else (face, y, z)
+
+
+def _espaco_em(x, z, andar):
+    for e in P.espacos(andar):
+        if e["x0"] <= x <= e["x1"] and e["z0"] <= z <= e["z1"]:
+            return e
+    return None
+
+
+# Placas acima das portas, tiradas das portas da planta: do lado de FORA da
+# sala, coladas na face da parede, centradas no vao e logo acima do batente.
+def _placas_de_porta():
+    lista = []
+    for m in P.muros():
+        for vao in m["vaos"]:
+            if vao.get("tipo") != "porta" or not vao.get("sala"):
+                continue
+            sala = P.por_ident(vao["sala"])
+            if not sala or not sala.get("chave"):
+                continue
+            for lado in (1.0, -1.0):
+                if m["eixo"] == "x":
+                    px, pz = vao["c"], m["coord"] + lado * .6
+                else:
+                    px, pz = m["coord"] + lado * .6, vao["c"]
+                e = _espaco_em(px, pz, m["andar"])
+                if e is None or e["ident"] == sala["ident"]:
+                    continue
+                face = m["coord"] + lado * (m["esp"] * .5 + .013)
+                y = P.cota(m["andar"]) + P.PORTA_H + .16
+                if m["eixo"] == "x":
+                    pos, rot = (vao["c"], y, face), (0.0 if lado > 0 else math.pi)
+                else:
+                    pos, rot = (face, y, vao["c"]), (math.pi * .5 if lado > 0 else -math.pi * .5)
+                lista.append((sala["ident"], sala["chave"], pos, rot))
+                break
+    return lista
+
+
+portas = _placas_de_porta()
+vistos = {}
+for ident, chave, (x, y, z), rot in portas:
+    vistos[ident] = vistos.get(ident, 0) + 1
+    nome = "porta_" + ident + ("" if vistos[ident] == 1 else "_%d" % vistos[ident])
+    placa(nome, chave, TEXTOS[chave]["pt"], x, y, z, rot,
+          font_size=30, pixel_size=0.0019, altura=.17)
 
 
 # Sinalização institucional e avisos clínicos perto do fluxo natural do jogador.
 avisos = [
-    ("recepcao", "HOSP_SIGN_RECEPCAO", "RECEPÇÃO / TRIAGEM", 15.2, 2.75, 25.58, 0, 3.5, False),
-    ("emergencia", "HOSP_SIGN_EMERGENCIA", "EMERGÊNCIA", 40.3, 2.55, 42.52, 3.14159, 3.3, True),
-    ("higiene", "HOSP_SIGN_HIGIENE", "HIGIENIZE AS MÃOS", 34.8, 1.8, 25.58, 0, 2.5, False),
-    ("silencio", "HOSP_SIGN_SILENCIO", "SILÊNCIO / PACIENTES", 20.6, 1.8, 10.32, 0, 2.7, False),
-    ("restrito", "HOSP_SIGN_RESTRITO", "ACESSO RESTRITO", 38.6, 1.85, 58.04, 3.14159, 2.7, True),
-    ("isolamento", "HOSP_SIGN_ISOLAMENTO", "ISOLAMENTO", 42.8, 1.8, 15.39, 3.14159, 2.6, True),
-    ("elevador_1", "HOSP_SIGN_ELEVADOR", "ELEVADOR", 51.0, 2.85, 36.0, -1.5708, 2.6, False),
-    ("elevador_2", "HOSP_SIGN_ELEVADOR", "ELEVADOR", 51.0, 7.05, 36.0, -1.5708, 2.6, False),
-    ("saida", "HOSP_SIGN_SAIDA", "SAÍDA", 1.1, 2.8, 34.2, 1.5708, 2.5, False),
-    ("ala_1", "HOSP_SIGN_ALA_1", "ALA CLÍNICA / 1º ANDAR", 24.2, 2.78, 10.32, 0, 3.2, False),
-    ("ala_2", "HOSP_SIGN_ALA_2", "ALA CLÍNICA / 2º ANDAR", 24.2, 6.98, 28.31, 0, 3.2, False),
-    ("residuos", "HOSP_SIGN_RESIDUOS", "RESÍDUOS INFECTANTES", 49.8, 1.8, 67.52, 3.14159, 2.8, True),
+    ("recepcao", "HOSP_SIGN_RECEPCAO", "RECEPÇÃO / TRIAGEM", 15.2, 2.75, 25.58, 0, False),
+    ("emergencia", "HOSP_SIGN_EMERGENCIA", "EMERGÊNCIA", 40.3, 2.55, 42.52, 3.14159, True),
+    ("higiene", "HOSP_SIGN_HIGIENE", "HIGIENIZE AS MÃOS", 34.8, 1.8, 25.58, 0, False),
+    ("silencio", "HOSP_SIGN_SILENCIO", "SILÊNCIO / PACIENTES", 20.6, 1.8, 10.32, 0, False),
+    ("restrito", "HOSP_SIGN_RESTRITO", "ACESSO RESTRITO", 38.6, 1.85, 58.04, 3.14159, True),
+    ("isolamento", "HOSP_SIGN_ISOLAMENTO", "ISOLAMENTO", 42.8, 1.8, 15.39, 3.14159, True),
+    ("elevador_1", "HOSP_SIGN_ELEVADOR", "ELEVADOR", 51.0, 2.85, 36.0, -1.5708, False),
+    ("elevador_2", "HOSP_SIGN_ELEVADOR", "ELEVADOR", 51.0, 7.05, 36.0, -1.5708, False),
+    ("saida", "HOSP_SIGN_SAIDA", "SAÍDA", 1.1, 2.8, 34.2, 1.5708, False),
+    ("ala_1", "HOSP_SIGN_ALA_1", "ALA CLÍNICA / 1º ANDAR", 24.2, 2.78, 10.32, 0, False),
+    ("ala_2", "HOSP_SIGN_ALA_2", "ALA CLÍNICA / 2º ANDAR", 24.2, 6.98, 28.31, 0, False),
+    ("residuos", "HOSP_SIGN_RESIDUOS", "RESÍDUOS INFECTANTES", 49.8, 1.8, 67.52, 3.14159, True),
 ]
-for args in avisos:
-    placa(*args)
+for nome, chave, texto, x, y, z, rot, alerta in avisos:
+    placa(nome, chave, texto, *_na_face_da_parede(x, y, z, rot), rot, alerta)
 
 
 # Quadros de procedimento amarelados. O miolo usa marcas gráficas em vez de
@@ -224,8 +287,10 @@ cartazes = [
 ]
 for nome, chave, texto, x, y, z, rot in cartazes:
     pai = "quadro_" + nome
+    x, y, z = _na_face_da_parede(x, y, z, rot)
     node(pai, "Node3D", ".", (
-        f'position = {v(x, y, z)}', f'rotation = {v(0, rot, 0)}',
+        f'position = {v(x + _frente(rot)[0] * .008, y, z + _frente(rot)[1] * .008)}',
+        f'rotation = {v(0, rot, 0)}',
     ))
     caixa("moldura", pai, 0, 0, 0, .95, 1.28, .04, "borda")
     caixa("papel", pai, 0, 0, .027, .85, 1.17, .009, "papel")
@@ -235,7 +300,7 @@ for nome, chave, texto, x, y, z, rot in cartazes:
     node("titulo", "Label3D", pai, (
         f'text = {q(texto)}', f'metadata/chave_traducao = {q(chave)}',
         f'position = {v(0, .41, .046)}', 'font_size = 38',
-        'pixel_size = 0.0026', 'modulate = Color(0.93, 0.90, 0.80, 1)',
+        'pixel_size = 0.0026', 'shaded = true', 'modulate = Color(0.93, 0.90, 0.80, 1)',
     ))
     for i in range(6):
         caixa(f"linha_{i}", pai, .06, .18 - i * .12, .038,
@@ -275,7 +340,7 @@ for nome, x, y, z in lixeiras:
     caixa("etiqueta", pai, 0, .38, .232, .32, .18, .012, "papel")
     node("texto", "Label3D", pai, (
         'text = "INFECTANTE"', 'metadata/chave_traducao = "HOSP_SIGN_LIXO"',
-        f'position = {v(0, .38, .243)}', 'font_size = 26', 'pixel_size = 0.0019',
+        f'position = {v(0, .38, .243)}', 'font_size = 26', 'pixel_size = 0.0019', 'shaded = true',
         'modulate = Color(0.24, 0.045, 0.040, 1)',
     ))
 

@@ -496,12 +496,11 @@ func _setup_iron_rusks_hud() -> void:
 func update_ammo_ui() -> void:
 	if not is_instance_valid(player.ammo_label): return
 
-	var is_pistol_equipped = SaveManager.is_equipped("pistol")
-	var is_shotgun_equipped = SaveManager.is_equipped("shotgun")
-	# O contador é o MESMO para as duas armas: elas nunca estão equipadas juntas
-	# (SaveManager.EQUIPAMENTO_EXCLUSIVO), então o que muda é só de qual pente e
-	# de qual caixa os dois números saem.
-	var tem_arma = is_pistol_equipped or is_shotgun_equipped
+	# O contador é o MESMO para todas as armas: elas nunca estão equipadas
+	# juntas (SaveManager.EQUIPAMENTO_EXCLUSIVO), então o que muda é só de qual
+	# pente e de qual caixa os dois números saem.
+	var arma: String = player._arma_de_fogo_equipada()
+	var tem_arma = arma != ""
 
 	if not tem_arma:
 		player.ammo_label.visible = false
@@ -509,8 +508,12 @@ func update_ammo_ui() -> void:
 	else:
 		player.ammo_label.visible = true
 		if is_instance_valid(player.ammo_icon): player.ammo_icon.visible = true
-		var no_pente = player.clip_shotgun_ammo if is_shotgun_equipped else player.clip_pistol_ammo
-		var id_municao = "shotgun_ammo" if is_shotgun_equipped else "pistol_ammo"
+		var no_pente: int = player.clip_pistol_ammo
+		match arma:
+			"shotgun": no_pente = player.clip_shotgun_ammo
+			"mk3": no_pente = player.clip_mk3_ammo
+			"granola": no_pente = player.clip_granola_ammo
+		var id_municao = arma + "_ammo"
 		var total = SaveManager.get_item_amount(id_municao)
 		player.ammo_label.text = str(no_pente) + " / " + str(total)
 

@@ -16,6 +16,13 @@ extends CharacterBody3D
 @onready var shotgun_break: AudioStreamPlayer = $sounds/ShotgunBreak
 @onready var shotgun_load_shell: AudioStreamPlayer = $sounds/ShotgunLoadShell
 @onready var shotgun_close: AudioStreamPlayer = $sounds/ShotgunClose
+@onready var mk3_shot: AudioStreamPlayer = $sounds/Mk3Shot
+@onready var mk3_mag_out: AudioStreamPlayer = $sounds/Mk3MagOut
+@onready var mk3_mag_in: AudioStreamPlayer = $sounds/Mk3MagIn
+@onready var mk3_bolt: AudioStreamPlayer = $sounds/Mk3Bolt
+@onready var granola_shot: AudioStreamPlayer = $sounds/GranolaShot
+@onready var granola_load: AudioStreamPlayer = $sounds/GranolaLoad
+@onready var granola_lock: AudioStreamPlayer = $sounds/GranolaLock
 @onready var passos: AudioStreamPlayer3D = $sounds_3d/Passos
 var _passo_pe_alternado: bool = false # alterna a cada passo p/ dar sensação de pé esq/dir
 @onready var pistola: AnimatedSprite2D = $Camera3D/CanvasLayer/control_weapons/pistola
@@ -377,6 +384,12 @@ var _slow_timer: float = 0.0
 ## vez (ver player_combat), então colado no inimigo o estrago é a soma e de
 ## longe a carga se abre e só uma parte acerta — que é o que uma caçadeira faz.
 @export var damage_shotgun_pelota:int = 9
+## Cada bala da rajada da MK3. Um pouco menos que a pistola: sao tres.
+@export var damage_mk3:int = 8
+## O foguete da Granola: no alvo que ele toca, e no raio da explosao (cai com
+## a distancia ate' a borda).
+@export var damage_granola_direto:int = 140
+@export var damage_granola_area:int = 80
 @export var damage_headshoot:int = 100
 var current_weapon #: AnimatedSprite2D
 var can_shoot_again:bool = true
@@ -510,6 +523,14 @@ var max_clip_pistol: int = 8
 ## com dois tiros, sem ninguém precisar carregá-la antes do primeiro uso.
 var clip_shotgun_ammo: int = 2
 var max_clip_shotgun: int = 2
+
+## O pente da MK3: 18 balas, seis rajadas de 3 — o mesmo tanto que vem numa
+## caixa. Nasce cheio pelo mesmo motivo da cacadeira.
+var clip_mk3_ammo: int = 18
+var max_clip_mk3: int = 18
+## A Granola leva UM foguete, no tubo. Nasce carregada.
+var clip_granola_ammo: int = 1
+var max_clip_granola: int = 1
 var ammo_label: Label
 var ammo_icon: TextureRect
 var amulet_hud_icon: TextureRect
@@ -927,11 +948,13 @@ func _processar_mira_de_arma() -> void:
 	_hide_amulet_magic()
 	_clear_amulet_hover()
 
-	# Duas armas passam por aqui, e a escolha é uma só: qual está equipada.
-	# Tudo o que muda entre elas está nestas três linhas — a mira que acende, o
-	# componente que levanta a arma, e o par atirar/recarregar.
-	var com_shotgun: bool = SaveManager.is_equipped("shotgun")
-	var arma_hold := _shotgun_hold() if com_shotgun else _gun_hold()
+	# Quatro armas passam por aqui, e a escolha é uma só: qual está equipada.
+	# Tudo o que muda entre elas está nestas linhas — a mira que acende, o
+	# componente que levanta a arma, e o par atirar/recarregar. A mira de
+	# chumbo é só da caçadeira; a MK3 e a Granola usam a da pistola (um ponto).
+	var arma := _arma_de_fogo_equipada()
+	var com_shotgun: bool = arma == "shotgun"
+	var arma_hold := _arma_na_mao()
 	var mira: Control = shotgun_crosshair if com_shotgun else gun_crosshair
 
 	if is_instance_valid(gun_crosshair):
@@ -944,18 +967,20 @@ func _processar_mira_de_arma() -> void:
 		arma_hold.mirar(is_aiming, _ponto_de_mira_da_arma() if is_aiming else Vector3.ZERO)
 
 	if is_aiming and Input.is_action_just_pressed("ui_shoot"):
-		if com_shotgun:
-			atirar_shotgun()
-		else:
-			atirar_terceira_pessoa()
+		match arma:
+			"shotgun": atirar_shotgun()
+			"mk3": atirar_mk3()
+			"granola": atirar_granola()
+			_: atirar_terceira_pessoa()
 
 	# Recarregar NÃO exige estar mirando: ele guarda a arma, põe o pente e
 	# levanta de novo. Exigir mira aqui seria só uma regra a mais para decorar.
 	if Input.is_action_just_pressed("ui_reload"):
-		if com_shotgun:
-			recarregar_shotgun()
-		else:
-			recarregar_terceira_pessoa()
+		match arma:
+			"shotgun": recarregar_shotgun()
+			"mk3": recarregar_mk3()
+			"granola": recarregar_granola()
+			_: recarregar_terceira_pessoa()
 
 
 ## Desliga tudo o que a mira de arma acende. Chamado quando a mira não pode
@@ -974,6 +999,9 @@ func _encerrar_mira_de_arma() -> void:
 	var shotgun_hold := _shotgun_hold()
 	if shotgun_hold:
 		shotgun_hold.mirar(false)
+	for outro in [_mk3_hold(), _granola_hold()]:
+		if outro:
+			outro.mirar(false)
 
 
 ## O componente que segura a arma. Só existe no Maycow normal — no parasita o
@@ -998,6 +1026,26 @@ func _shotgun_hold() -> Node:
 	return _maos_fp()
 
 
+## A MK3 e a Granola. Mesmas regras da caçadeira: no parasita caem no rig de
+## primeira pessoa, que tem a mesma API.
+func _mk3_hold() -> Node:
+	var na_terceira := get_node_or_null("maycow_lopes_normal/Armature/Skeleton3D/PlayerMk3Hold")
+	return na_terceira if na_terceira != null else _maos_fp()
+
+
+func _granola_hold() -> Node:
+	var na_terceira := get_node_or_null("maycow_lopes_normal/Armature/Skeleton3D/PlayerGranolaHold")
+	return na_terceira if na_terceira != null else _maos_fp()
+
+
+## Qual arma de fogo está equipada ("" se nenhuma).
+func _arma_de_fogo_equipada() -> String:
+	for arma in SaveManager.ARMAS_DE_FOGO:
+		if SaveManager.is_equipped(arma):
+			return arma
+	return ""
+
+
 ## O rig de primeira pessoa (as duas mãos com arma do parasita).
 func _maos_fp() -> Node:
 	return get_node_or_null("Camera3D/hand_with_pistol/rig")
@@ -1016,10 +1064,11 @@ func _deve_mostrar_maos_fp() -> bool:
 ## onde sai o clarão. Sem isto, cada um desses lugares precisaria de um `if`
 ## repetindo a mesma escolha.
 func _arma_na_mao() -> Node:
-	if SaveManager.is_equipped("shotgun"):
-		return _shotgun_hold()
-	if SaveManager.is_equipped("pistol"):
-		return _gun_hold()
+	match _arma_de_fogo_equipada():
+		"shotgun": return _shotgun_hold()
+		"mk3": return _mk3_hold()
+		"granola": return _granola_hold()
+		"pistol": return _gun_hold()
 	return null
 
 
@@ -1081,6 +1130,26 @@ func recarregar_shotgun() -> void:
 func recarregar_terceira_pessoa() -> void:
 	var combat = get_node_or_null("PlayerCombat")
 	if combat: combat.recarregar_terceira_pessoa()
+
+
+func atirar_mk3() -> void:
+	var combat = get_node_or_null("PlayerCombat")
+	if combat: combat.atirar_mk3()
+
+
+func recarregar_mk3() -> void:
+	var combat = get_node_or_null("PlayerCombat")
+	if combat: combat.recarregar_mk3()
+
+
+func atirar_granola() -> void:
+	var combat = get_node_or_null("PlayerCombat")
+	if combat: combat.atirar_granola()
+
+
+func recarregar_granola() -> void:
+	var combat = get_node_or_null("PlayerCombat")
+	if combat: combat.recarregar_granola()
 
 
 func _ready():
@@ -1165,9 +1234,20 @@ func _ready():
 		# (SaveManager.EQUIPAMENTO_EXCLUSIVO), a que esta' guardada nao escreve
 		# pose nenhuma; o que nao pode e' a guardada ABRIR a mao depois que a
 		# outra ja' fechou, e a ordem resolve isso.
+		# A MK3 usa o componente da pistola, e por isso vem logo depois dele e
+		# ANTES da caçadeira: só o primeiro abre a mão com a arma guardada
+		# (`abre_a_mao_guardada`), e a ordem tem de deixar a equipada por
+		# último na mão que ela fecha.
+		var mk3_na_mao = load("res://scripts/player/player_mk3_hold.gd").new()
+		mk3_na_mao.name = "PlayerMk3Hold"
+		esqueleto.add_child(mk3_na_mao)
 		var cacadeira_na_mao = load("res://scripts/player/player_shotgun_hold.gd").new()
 		cacadeira_na_mao.name = "PlayerShotgunHold"
 		esqueleto.add_child(cacadeira_na_mao)
+		# A Granola, no componente da caçadeira (arma longa, duas mãos).
+		var granola_na_mao = load("res://scripts/player/player_granola_hold.gd").new()
+		granola_na_mao.name = "PlayerGranolaHold"
+		esqueleto.add_child(granola_na_mao)
 		# A lanterna pendurada no cinto. Mesmo lugar e mesmo motivo dos dois de
 		# cima — e e' dela que o facho passa a sair em terceira pessoa.
 		var lanterna_cinto = load("res://scripts/player/player_flashlight_hold.gd").new()
@@ -1758,8 +1838,7 @@ func _physics_process(delta: float) -> void:
 		# ela levanta a arma em terceira pessoa e o gatilho vira tiro. Os dois
 		# nunca estao equipados juntos (SaveManager.EQUIPAMENTO_EXCLUSIVO), entao
 		# a escolha feita no menu chega aqui como um `if`.
-		var mira_de_arma: bool = SaveManager.is_equipped("pistol") \
-			or SaveManager.is_equipped("shotgun")
+		var mira_de_arma: bool = SaveManager.arma_de_fogo_equipada()
 
 		if normal_can_aim and mira_de_arma:
 			_processar_mira_de_arma()
@@ -1870,9 +1949,9 @@ func _physics_process(delta: float) -> void:
 		# A caçadeira recolhe a ponta do cano quando ele corre. Quem sabe que
 		# ele está correndo é aqui, então é daqui que o componente fica sabendo
 		# — mesmo caminho do `mirar`, que também é empurrado, não lido.
-		var correndo_hold := _shotgun_hold()
-		if correndo_hold:
-			correndo_hold.correr(is_running)
+		for correndo_hold in [_shotgun_hold(), _granola_hold()]:
+			if correndo_hold and correndo_hold.has_method("correr"):
+				correndo_hold.correr(is_running)
 
 		var velocidade_atual = _velocidade_corrida() if is_running else _velocidade_caminhada()
 		if input_dir.y > 0.1:
@@ -2001,7 +2080,7 @@ func _physics_process(delta: float) -> void:
 			# (negativo) intacto, e o pivô do corpo parado também: aquele não é
 			# o modelo girando, é o modelo ficando PLANTADO enquanto a câmera
 			# orbita — quem revela as costas lá é a câmera, não isto.
-			if SaveManager.is_equipped("shotgun"):
+			if SaveManager.is_equipped("shotgun") or SaveManager.is_equipped("granola"):
 				alvo_y = minf(alvo_y, 0.0)
 			# Mirando com a arma, o tronco quase não acompanha (ver
 			# `giro_strafe_mirando`). Só com a arma: na mira do amuleto não há

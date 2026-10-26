@@ -1067,12 +1067,13 @@ def _placas_de_porta(saida):
                 if e is None or e["ident"] == sala["ident"]:
                     continue
                 # do lado de fora da sala
+                # logo acima do batente (a placa tem 16 cm de altura)
                 desloc = m["esp"] * 0.5 + 0.012
                 if m["eixo"] == "x":
-                    pos = (v["c"], P.cota() + P.PORTA_H + 0.30, m["coord"] + lado_ * desloc)
+                    pos = (v["c"], P.cota() + P.PORTA_H + 0.17, m["coord"] + lado_ * desloc)
                     giro = 0.0 if lado_ > 0 else math.pi
                 else:
-                    pos = (m["coord"] + lado_ * desloc, P.cota() + P.PORTA_H + 0.30, v["c"])
+                    pos = (m["coord"] + lado_ * desloc, P.cota() + P.PORTA_H + 0.17, v["c"])
                     giro = math.pi * 0.5 if lado_ > 0 else -math.pi * 0.5
                 saida.placas_porta.append({"pos": pos, "giro": giro, "chave": sala["chave"]})
                 break

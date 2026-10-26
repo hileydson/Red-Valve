@@ -1,4 +1,4 @@
-[gd_scene load_steps=267 format=4 uid="uid://cluvbknxfjx2k"]
+[gd_scene load_steps=274 format=4 uid="uid://cluvbknxfjx2k"]
 
 [ext_resource type="Script" uid="uid://deirdushqeh74" path="res://scripts/player/player.gd" id="1_uniwh"]
 [ext_resource type="PackedScene" uid="uid://hqa6gm8vhbtr" path="res://shaders/post_process/shader_ps1_ps2_graphics.tscn" id="2_cnsyf"]
@@ -30,6 +30,13 @@
 [ext_resource type="AudioStream" uid="uid://c82igkydwe130" path="res://assets/sounds/player/guns/shotgun/shotgun_reload.mp3" id="27_sgbreak"]
 [ext_resource type="AudioStream" uid="uid://b7odbsh75diai" path="res://assets/sounds/player/guns/shotgun/shotgun_load_bullet.mp3" id="28_sgload"]
 [ext_resource type="AudioStream" uid="uid://dte380ugseafi" path="res://assets/sounds/player/guns/shotgun/shotgun_final_reload_sound.mp3" id="29_sgclose"]
+[ext_resource type="AudioStream" uid="uid://b2uyqwyimpsjn" path="res://assets/sounds/player/guns/mk3/mk3_tiro.ogg" id="30_mk3tiro"]
+[ext_resource type="AudioStream" uid="uid://be3a455s8um6r" path="res://assets/sounds/player/guns/mk3/mk3_pente_sai.ogg" id="31_mk3sai"]
+[ext_resource type="AudioStream" uid="uid://b2lf5jqmh4s46" path="res://assets/sounds/player/guns/mk3/mk3_pente_entra.ogg" id="32_mk3entra"]
+[ext_resource type="AudioStream" uid="uid://bg0qk331jc0yh" path="res://assets/sounds/player/guns/mk3/mk3_ferrolho.ogg" id="33_mk3ferro"]
+[ext_resource type="AudioStream" uid="uid://bqv5t1dj6lxbg" path="res://assets/sounds/player/guns/granola/granola_disparo.ogg" id="34_grdisp"]
+[ext_resource type="AudioStream" uid="uid://fnpypv4m7rco" path="res://assets/sounds/player/guns/granola/granola_foguete_entra.ogg" id="35_grentra"]
+[ext_resource type="AudioStream" uid="uid://dtyb50xxqi1lm" path="res://assets/sounds/player/guns/granola/granola_trava.ogg" id="36_grtrava"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_28m0y"]
 albedo_texture = ExtResource("5_j4nxn")
@@ -8113,6 +8120,35 @@ max_polyphony = 2
 [node name="ShotgunClose" type="AudioStreamPlayer" parent="sounds"]
 stream = ExtResource("27_sgbreak")
 volume_db = -4.5
+
+[node name="Mk3Shot" type="AudioStreamPlayer" parent="sounds"]
+stream = ExtResource("30_mk3tiro")
+volume_db = -5.0
+max_polyphony = 3
+
+[node name="Mk3MagOut" type="AudioStreamPlayer" parent="sounds"]
+stream = ExtResource("31_mk3sai")
+volume_db = -5.0
+
+[node name="Mk3MagIn" type="AudioStreamPlayer" parent="sounds"]
+stream = ExtResource("32_mk3entra")
+volume_db = -4.0
+
+[node name="Mk3Bolt" type="AudioStreamPlayer" parent="sounds"]
+stream = ExtResource("33_mk3ferro")
+volume_db = -6.0
+
+[node name="GranolaShot" type="AudioStreamPlayer" parent="sounds"]
+stream = ExtResource("34_grdisp")
+volume_db = -2.5
+
+[node name="GranolaLoad" type="AudioStreamPlayer" parent="sounds"]
+stream = ExtResource("35_grentra")
+volume_db = -4.0
+
+[node name="GranolaLock" type="AudioStreamPlayer" parent="sounds"]
+stream = ExtResource("36_grtrava")
+volume_db = -5.0
 
 [node name="maycow_lopes_normal" parent="." unique_id=1097582912 instance=ExtResource("4_6cv16")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.39953053)

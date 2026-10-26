@@ -331,7 +331,8 @@ func atirar() -> void:
 			animar_cogblade("ataque_%d" % variante)
 		return
 	_animador.play(_clipe(_na_mao, "tiro"), 0.025)
-	if _na_mao == "pistol":
+	# a MK3 cospe o mesmo clarao da pistola (o fogo de sprite e as faiscas)
+	if _na_mao == "pistol" or _na_mao == "mk3":
 		get_parent().get_node("fire").play("shoot")
 		var faisca := get_parent().get_node("faisca") as GPUParticles3D
 		faisca.restart()
@@ -340,6 +341,16 @@ func atirar() -> void:
 		var fx = load("res://scenes/effects/fogo_shotgun.tscn").instantiate()
 		fx.arma = self
 		get_tree().current_scene.add_child(fx)
+
+## A municao que aparece NA arma e nao e' animada pelos clipes: o foguete da
+## Granola no tubo. Quem sabe se tem um carregado e' o combate.
+func municao_visivel(item: String, visivel: bool) -> void:
+	if not _armas.has(item):
+		return
+	var municao := _armas[item].find_child("MunicaoNaArma", true, false) as Node3D
+	if municao != null:
+		municao.visible = visivel
+
 
 func recarregar(tempo: float, quantidade: int = 2) -> bool:
 	if not tem_arma_na_mao() or _trocando or _recarregando or _na_mao == "cogblade":
@@ -387,7 +398,7 @@ func bocas_das_camaras() -> Array:
 		return []
 	return [_armas[_na_mao].ponto("Camara1"), _armas[_na_mao].ponto("Camara2")]
 
-## F6: F1 pistola, F2 shotgun, F3 cogblade. Clique ataca; direito defende a cogblade.
+## F6: F1 pistola, F2 shotgun, F3 cogblade, F4 MK3, F5 Granola. Clique ataca; direito defende a cogblade.
 func _unhandled_input(event: InputEvent) -> void:
 	if Engine.is_editor_hint() or not _modo_previa:
 		return
@@ -396,6 +407,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			KEY_F1: arma_previa = "pistol"
 			KEY_F2: arma_previa = "shotgun"
 			KEY_F3: arma_previa = "cogblade"
+			KEY_F4: arma_previa = "mk3"
+			KEY_F5: arma_previa = "granola"
 			KEY_R:
 				if tem_arma_na_mao(): recarregar(duracao_recarga())
 	if event is InputEventMouseButton:

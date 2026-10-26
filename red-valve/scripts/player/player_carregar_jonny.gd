@@ -222,7 +222,7 @@ func _corpo_nos_clipes(sim: bool) -> void:
 
 
 func _suspender_armas(sim: bool) -> void:
-	for caminho in ["PlayerGunHold", "PlayerShotgunHold"]:
+	for caminho in ["PlayerGunHold", "PlayerMk3Hold", "PlayerShotgunHold", "PlayerGranolaHold"]:
 		var h := player.get_node_or_null(ESQUELETO + "/" + caminho)
 		if h and "suspensa" in h:
 			h.suspensa = sim
