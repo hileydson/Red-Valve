@@ -115,6 +115,34 @@ func _pulso(palma: Vector3, dedos: Vector3, normal_palma: Vector3, recuo := 0.09
 	return Transform3D(b, palma - dedos.normalized() * recuo - normal_palma.normalized() * afasta)
 
 
+## A dobra maxima do punho esquerdo nas recargas, em graus: o angulo entre os
+## dedos e a linha do antebraco (do cotovelo ao pulso). As poses da mao saem
+## da geometria da arma e, cruas, dobravam o punho ate' 150 graus.
+const LIMITE_PULSO := 55.0
+
+
+## Desentorta o punho: gira a pose da mao em volta da PALMA ate' os dedos
+## ficarem a no maximo LIMITE_PULSO da linha do antebraco. E' a conta do
+## `_assentar_pulso` da mao_armada, mas feita na pose: o braco continua saindo
+## do mesmo cotovelo, e o que esta' na mao (pente, foguete) e' recalculado a
+## partir da pose nova, entao continua encaixando exato.
+func _desentortar(pose: Transform3D, pai: Node3D) -> Transform3D:
+	var rig := raiz.get_node("rig") as Node3D
+	var cotovelo := rig.to_global(rig.get("cotovelo_esquerdo"))
+	var limite := deg_to_rad(LIMITE_PULSO)
+	var g := pai.global_transform * pose
+	for _i in 4:
+		var dedos := -g.basis.z.normalized()
+		var antebraco := (g.origin - cotovelo).normalized()
+		var angulo := dedos.angle_to(antebraco)
+		if angulo <= limite + 0.001:
+			break
+		var palma := g.origin + dedos * 0.09 + g.basis.y.normalized() * 0.035
+		var giro := Basis(dedos.cross(antebraco).normalized(), angulo - limite)
+		g = Transform3D(giro * g.basis, palma + giro * (g.origin - palma))
+	return pai.global_transform.affine_inverse() * g
+
+
 # ------------------------------------------------------------------ MK3
 func _mk3() -> void:
 	var trocas := [["Armas/Pistola", "Armas/Mk3"], ["Movimento/Carregador:visible", "Movimento/Modelo/Pente:visible"]]
@@ -141,14 +169,15 @@ func _mk3() -> void:
 	var cima := erguida.basis * Vector3.UP
 	var frente := erguida.basis * Vector3.FORWARD
 	# a palma por baixo do pente, os dedos fechando pra direita em volta dele
-	var pega := _pulso(base_do_pente - cima * 0.01, direita, cima)
-	var puxado := Transform3D(pega.basis, pega.origin - cima * 0.07)
-	var jogando := Transform3D(pega.basis.rotated(frente, 0.6), pega.origin - cima * 0.13 - direita * 0.22)
-	var bolso := _pose(Vector3(-0.388, -0.389, -0.008), Vector3(49.079, -138.0, 136.124))
-	var embaixo := Transform3D(pega.basis, pega.origin - cima * 0.10)
-	var tapa := Transform3D(pega.basis, pega.origin + cima * 0.012)
+	var mk3 := _no("Armas/Mk3")
+	var pega := _desentortar(_pulso(base_do_pente - cima * 0.01, direita, cima), mk3)
+	var puxado := _desentortar(Transform3D(pega.basis, pega.origin - cima * 0.07), mk3)
+	var jogando := _desentortar(Transform3D(pega.basis.rotated(frente, 0.6), pega.origin - cima * 0.13 - direita * 0.22), mk3)
+	var bolso := _desentortar(_pose(Vector3(-0.388, -0.389, -0.008), Vector3(49.079, -138.0, 136.124)), mk3)
+	var embaixo := _desentortar(Transform3D(pega.basis, pega.origin - cima * 0.10), mk3)
+	var tapa := _desentortar(Transform3D(pega.basis, pega.origin + cima * 0.012), mk3)
 	var repouso := _no("Armas/Mk3/ControleRecargaEsquerdo").transform
-	var ferrolho := _pose(Vector3(-0.089, 0.223, -0.033), Vector3(49.079, -138.0, 136.124))
+	var ferrolho := _desentortar(_pose(Vector3(-0.089, 0.223, -0.033), Vector3(49.079, -138.0, 136.124)), mk3)
 	var c := "Armas/Mk3/ControleRecargaEsquerdo"
 	var poses := [[0.0, repouso], [0.35, pega], [0.55, puxado], [0.72, jogando], [1.12, bolso],
 		[1.65, embaixo], [2.04, pega], [2.12, tapa], [2.24, pega], [2.45, ferrolho],
@@ -222,13 +251,17 @@ func _granola() -> void:
 	# a ogiva do foguete carregado (x -0,6 do .glb dele) e a mao segurando-a
 	# pela esquerda, os dedos correndo pro lado da culatra
 	var ogiva := carregado * Vector3(-0.6, 0.0, 0.0)
-	var empurra := _pulso(ogiva, tras, dir_da_arma, 0.075, 0.04)
+	var ajuste := _no("AjusteEsquerdo")
+	var empurra := _desentortar(_pulso(ogiva, tras, dir_da_arma, 0.075, 0.04), ajuste)
+	# na frente da boca a mao tem a MESMA orientacao do empurrao: o foguete
+	# chega alinhado com o cano e so' desliza pra dentro
 	var na_frente := Transform3D(empurra.basis, empurra.origin - tras * 0.24)
 	var afasta := Transform3D(empurra.basis, empurra.origin - tras * 0.08 - dir_da_arma * 0.05)
 	var repouso := _pose(Vector3(-0.23, -0.19, -0.32), Vector3(21.582, -8.531, -88.977))
-	var cinto := _pose(Vector3(-0.406, -0.569, -0.217), Vector3(43.875, -91.901, 157.469))
+	var cinto := _desentortar(_pose(Vector3(-0.406, -0.569, -0.217), Vector3(43.875, -91.901, 157.469)), ajuste)
+	var descendo := _desentortar(_pose(Vector3(-0.30, -0.45, -0.20), Vector3(43.875, -91.901, 157.469)), ajuste)
 	var c := "AjusteEsquerdo/ControleEsquerdo"
-	var poses := [[0.0, repouso], [0.45, _pose(Vector3(-0.30, -0.45, -0.20), Vector3(43.875, -91.901, 157.469))],
+	var poses := [[0.0, repouso], [0.45, descendo],
 		[0.7, cinto], [0.85, cinto], [1.3, na_frente], [1.62, empurra], [1.8, afasta], [2.3, repouso], [2.9, repouso]]
 	_chaves(a, Animation.TYPE_POSITION_3D, c, poses.map(func(k): return [k[0], (k[1] as Transform3D).origin]))
 	_chaves(a, Animation.TYPE_ROTATION_3D, c, poses.map(func(k): return [k[0], (k[1] as Transform3D).basis.get_rotation_quaternion()]))
