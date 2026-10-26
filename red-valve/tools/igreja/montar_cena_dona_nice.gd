@@ -531,7 +531,7 @@ func _sons() -> void:
 			["grito", "grito_transformacao.ogg", -3.0], ["rugido", "rugido_monstro.ogg", 1.0],
 			["grito_monstro", "grito_monstro.ogg", 0.0],
 			["ambiente", "ambiente_ritual.ogg", -10.0], ["gemido", "gemido_jonny.ogg", -6.0],
-			["pescoco", "pescoco_torcendo.ogg", 6.0]]:
+			["pescoco", "pescoco_torcendo.ogg", 0.0]]:
 		var p := _no(AudioStreamPlayer, d[0], s) as AudioStreamPlayer
 		p.stream = load(SONS + d[1])
 		p.volume_db = d[2]

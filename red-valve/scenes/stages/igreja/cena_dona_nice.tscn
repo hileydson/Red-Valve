@@ -6445,14 +6445,14 @@ tracks/27/enabled = true
 tracks/27/path = NodePath("cameras/cam_faca")
 tracks/27/interp = 1
 tracks/27/loop_wrap = true
-tracks/27/keys = PackedFloat32Array(11.6, 1, 0.26684564, 0.5723722, 19.25664, 15.6, 1, 0.14684565, 0.4923722, 19.356638)
+tracks/27/keys = PackedFloat32Array(11.6, 1, 0.2668283, 0.5727232, 19.256662, 15.6, 1, 0.14682832, 0.49272323, 19.35666)
 tracks/28/type = "rotation_3d"
 tracks/28/imported = false
 tracks/28/enabled = true
 tracks/28/path = NodePath("cameras/cam_faca")
 tracks/28/interp = 1
 tracks/28/loop_wrap = true
-tracks/28/keys = PackedFloat32Array(11.6, 1, -0.068515986, 0.87914306, 0.13313933, 0.45242348, 15.6, 1, -0.07547548, 0.870323, 0.14102751, 0.46578175)
+tracks/28/keys = PackedFloat32Array(11.6, 1, -0.068515986, 0.87914306, 0.13313934, 0.45242342, 15.6, 1, -0.07547548, 0.870323, 0.14102751, 0.46578175)
 tracks/29/type = "value"
 tracks/29/imported = false
 tracks/29/enabled = true
@@ -6483,7 +6483,7 @@ tracks/31/enabled = true
 tracks/31/path = NodePath("efeitos/gota")
 tracks/31/interp = 1
 tracks/31/loop_wrap = true
-tracks/31/keys = PackedFloat32Array(15.6, 1, -0.15315436, 0.3683722, 19.556639, 17, 1, -0.15315436, 0.3723722, 19.556639, 17.066668, 1, -0.15315436, 0.37133133, 19.556639, 17.133333, 1, -0.15315436, 0.36820874, 19.556639, 17.2, 1, -0.15315436, 0.36300442, 19.556639, 17.266666, 1, -0.15315436, 0.35571834, 19.556639, 17.333334, 1, -0.15315436, 0.34635055, 19.556639, 17.4, 1, -0.15315436, 0.33490103, 19.556639, 17.466667, 1, -0.15315436, 0.32136977, 19.556639, 17.533333, 1, -0.15315436, 0.30575678, 19.556639, 17.6, 1, -0.15315436, 0.28806204, 19.556639, 17.666666, 1, -0.15315436, 0.2682856, 19.556639, 17.733334, 1, -0.15315436, 0.2464274, 19.556639, 17.8, 1, -0.15315436, 0.22248748, 19.556639)
+tracks/31/keys = PackedFloat32Array(15.6, 1, -0.15317169, 0.3687232, 19.556662, 17, 1, -0.15317169, 0.37272322, 19.556662, 17.066668, 1, -0.15317169, 0.37167925, 19.556662, 17.133333, 1, -0.15317169, 0.36854738, 19.556662, 17.2, 1, -0.15317169, 0.36332756, 19.556662, 17.266666, 1, -0.15317169, 0.35601982, 19.556662, 17.333334, 1, -0.15317169, 0.34662417, 19.556662, 17.4, 1, -0.15317169, 0.3351406, 19.556662, 17.466667, 1, -0.15317169, 0.3215691, 19.556662, 17.533333, 1, -0.15317169, 0.30590966, 19.556662, 17.6, 1, -0.15317169, 0.28816232, 19.556662, 17.666666, 1, -0.15317169, 0.26832706, 19.556662, 17.733334, 1, -0.15317169, 0.24640384, 19.556662, 17.8, 1, -0.15317169, 0.22239272, 19.556662)
 tracks/32/type = "value"
 tracks/32/imported = false
 tracks/32/enabled = true
@@ -6502,14 +6502,14 @@ tracks/33/enabled = true
 tracks/33/path = NodePath("efeitos/respingo")
 tracks/33/interp = 1
 tracks/33/loop_wrap = true
-tracks/33/keys = PackedFloat32Array(0, 1, -0.15315436, 0.22248748, 19.556639)
+tracks/33/keys = PackedFloat32Array(0, 1, -0.15317169, 0.22239272, 19.556662)
 tracks/34/type = "position_3d"
 tracks/34/imported = false
 tracks/34/enabled = true
 tracks/34/path = NodePath("efeitos/respingo_gota")
 tracks/34/interp = 1
 tracks/34/loop_wrap = true
-tracks/34/keys = PackedFloat32Array(0, 1, -0.15315436, 0.22248748, 19.556639)
+tracks/34/keys = PackedFloat32Array(0, 1, -0.15317169, 0.22239272, 19.556662)
 tracks/35/type = "value"
 tracks/35/imported = false
 tracks/35/enabled = true
@@ -6542,14 +6542,14 @@ tracks/37/enabled = true
 tracks/37/path = NodePath("cameras/cam_gota")
 tracks/37/interp = 1
 tracks/37/loop_wrap = true
-tracks/37/keys = PackedFloat32Array(15.6, 1, 0.08684564, 0.39237222, 19.396639, 17, 1, 0.08684564, 0.3723722, 19.396639, 17.066668, 1, 0.09184563, 0.37966466, 19.389973, 17.133333, 1, 0.09684564, 0.38487542, 19.383305, 17.2, 1, 0.10184564, 0.38800442, 19.376638, 17.266666, 1, 0.10684563, 0.38905168, 19.369972, 17.333334, 1, 0.11184563, 0.3880172, 19.363306, 17.4, 1, 0.11684565, 0.38490105, 19.356638, 17.466667, 1, 0.12184565, 0.3797031, 19.349972, 17.533333, 1, 0.12684564, 0.37242344, 19.343306, 17.6, 1, 0.13184564, 0.36306202, 19.33664, 17.666666, 1, 0.13684566, 0.35161895, 19.329971, 17.733334, 1, 0.14184566, 0.33809406, 19.323305, 17.8, 1, 0.14684565, 0.32248747, 19.316639, 19, 1, 0.20684566, 0.38248748, 19.25664)
+tracks/37/keys = PackedFloat32Array(15.6, 1, 0.08682831, 0.39272323, 19.396662, 17, 1, 0.08682831, 0.37272322, 19.396662, 17.066668, 1, 0.0918283, 0.38001257, 19.389996, 17.133333, 1, 0.09682831, 0.38521406, 19.383327, 17.2, 1, 0.10182831, 0.38832757, 19.376661, 17.266666, 1, 0.1068283, 0.38935316, 19.369995, 17.333334, 1, 0.1118283, 0.38829082, 19.363329, 17.4, 1, 0.11682832, 0.3851406, 19.35666, 17.466667, 1, 0.12182832, 0.37990242, 19.349995, 17.533333, 1, 0.12682831, 0.37257633, 19.343328, 17.6, 1, 0.13182831, 0.36316234, 19.336662, 17.666666, 1, 0.13682833, 0.3516604, 19.329994, 17.733334, 1, 0.14182833, 0.3380705, 19.323328, 17.8, 1, 0.14682832, 0.32239273, 19.316662, 19, 1, 0.20682833, 0.3823927, 19.256662)
 tracks/38/type = "rotation_3d"
 tracks/38/imported = false
 tracks/38/enabled = true
 tracks/38/path = NodePath("cameras/cam_gota")
 tracks/38/interp = 1
 tracks/38/loop_wrap = true
-tracks/38/keys = PackedFloat32Array(15.6, 1, -0.024439268, 0.88049114, 0.045665164, 0.47122478, 17, 1, -0.024439268, 0.88049114, 0.045665164, 0.47122478, 17.066668, 1, -0.0065750447, 0.8837855, 0.012424983, 0.46768108, 17.133333, 1, -0.012690677, 0.88560885, 0.024241515, 0.46362516, 17.2, 1, -0.018380206, 0.88717735, 0.035472374, 0.45969582, 17.266666, 1, -0.023675138, 0.8885236, 0.046142463, 0.45589066, 17.333334, 1, -0.028605204, 0.88967514, 0.056277875, 0.45220867, 17.4, 1, -0.03319801, 0.89065766, 0.06590508, 0.4486462, 17.466667, 1, -0.037479963, 0.8914904, 0.07505087, 0.44520503, 17.533333, 1, -0.041474927, 0.89219326, 0.0837413, 0.44188055, 17.6, 1, -0.045205176, 0.8927828, 0.09200183, 0.4386696, 17.666666, 1, -0.048690923, 0.89327437, 0.09985683, 0.43556714, 17.733334, 1, -0.051951703, 0.8936787, 0.10733009, 0.4325733, 17.8, 1, -0.055004593, 0.8940078, 0.11444386, 0.4296826, 19, 1, -0.069463916, 0.8933624, 0.14830811, 0.41842926)
+tracks/38/keys = PackedFloat32Array(15.6, 1, -0.024439268, 0.88049114, 0.045665164, 0.47122478, 17, 1, -0.024439268, 0.88049114, 0.045665164, 0.47122478, 17.066668, 1, -0.0065750447, 0.8837855, 0.012424983, 0.46768108, 17.133333, 1, -0.012690677, 0.88560885, 0.024241515, 0.46362516, 17.2, 1, -0.018380206, 0.88717735, 0.035472374, 0.45969582, 17.266666, 1, -0.023675138, 0.8885236, 0.046142463, 0.45589066, 17.333334, 1, -0.028605204, 0.88967514, 0.056277875, 0.45220867, 17.4, 1, -0.03319801, 0.89065766, 0.06590508, 0.4486462, 17.466667, 1, -0.037479963, 0.8914904, 0.07505087, 0.44520503, 17.533333, 1, -0.041474927, 0.89219326, 0.0837413, 0.44188055, 17.6, 1, -0.0452052, 0.8927828, 0.09200188, 0.4386696, 17.666666, 1, -0.048690923, 0.89327437, 0.09985683, 0.43556714, 17.733334, 1, -0.05195171, 0.8936787, 0.10733012, 0.4325733, 17.8, 1, -0.055004604, 0.8940078, 0.11444388, 0.4296826, 19, 1, -0.06946391, 0.8933624, 0.14830811, 0.41842926)
 tracks/39/type = "value"
 tracks/39/imported = false
 tracks/39/enabled = true
@@ -6791,14 +6791,14 @@ tracks/58/enabled = true
 tracks/58/path = NodePath("cameras/cam_cabeca")
 tracks/58/interp = 1
 tracks/58/loop_wrap = true
-tracks/58/keys = PackedFloat32Array(30.6, 1, -0.29810002, 1.3647645, 18.243557, 30.781818, 1, -0.31871983, 1.3647692, 18.250315, 30.963636, 1, -0.36725828, 1.3647692, 18.26823, 31.145454, 1, -0.42387694, 1.3647692, 18.29288, 31.327272, 1, -0.4700636, 1.3647692, 18.3162, 31.50909, 1, -0.4890604, 1.3647692, 18.326687, 31.690908, 1, -0.5031781, 1.3647692, 18.334837, 31.872726, 1, -0.53375584, 1.3647692, 18.35357, 32.054546, 1, -0.5636396, 1.3647692, 18.373392, 32.236362, 1, -0.5769831, 1.3647692, 18.382755, 32.418182, 1, -0.7700327, 1.3647692, 18.563776, 32.6, 1, -0.9851714, 1.3647692, 19.058683, 32.78182, 1, -0.9441751, 1.3647692, 19.50571, 32.963634, 1, -0.92176414, 1.3647692, 19.566843, 33.145454, 1, -0.938438, 1.3647692, 19.522589, 33.327274, 1, -0.9481, 1.3647692, 19.493553, 33.50909, 1, -0.93956655, 1.3647692, 19.519346, 33.69091, 1, -0.91833824, 1.3647692, 19.57521, 33.872726, 1, -0.89379853, 1.3647692, 19.629702, 34.054546, 1, -0.88157284, 1.3647692, 19.653963, 34.236362, 1, -0.8140391, 1.3647692, 19.76517, 34.418182, 1, -0.5994636, 1.3647692, 19.987823, 34.6, 1, -0.26966566, 1.3647692, 20.15207, 34.78182, 1, 0.03732118, 1.3647692, 20.189167, 34.963634, 1, 0.16676597, 1.3647692, 20.17606, 35.145454, 1, 0.3019, 1.3647692, 20.143555, 35.327274, 1, 0.43119484, 1.3647692, 20.092556, 35.50909, 1, 0.37518895, 1.3647692, 20.117218, 35.69091, 1, 0.28594124, 1.3647692, 20.148447, 35.872726, 1, 0.26912698, 1.3647692, 20.153288, 35.962727, 1, 0.2763619, 1.3757784, 19.567156, 36.052727, 1, 0.29806668, 1.4088061, 17.808762, 36.142727, 1, 0.33424127, 1.4638523, 14.878104, 36.232727, 1, 0.3848857, 1.5409169, 10.775184, 36.322727, 1, 0.45, 1.64, 5.5, 36.422726, 1, 0.45, 1.64, 5.5, 36.522728, 1, 0.45, 1.64, 5.5, 36.622726, 1, 0.45, 1.64, 5.5, 36.72273, 1, 0.45, 1.64, 5.5, 37.272728, 1, 0.45, 1.64, 5.62)
+tracks/58/keys = PackedFloat32Array(30.6, 1, -0.29810002, 1.3649137, 18.243273, 30.781818, 1, -0.31871983, 1.3649185, 18.250032, 30.963636, 1, -0.36725828, 1.3649185, 18.267948, 31.145454, 1, -0.42387694, 1.3649185, 18.292597, 31.327272, 1, -0.4700636, 1.3649185, 18.315918, 31.50909, 1, -0.4890604, 1.3649185, 18.326405, 31.690908, 1, -0.5031781, 1.3649185, 18.334555, 31.872726, 1, -0.53375584, 1.3649185, 18.353289, 32.054546, 1, -0.5636396, 1.3649185, 18.37311, 32.236362, 1, -0.5769831, 1.3649185, 18.382473, 32.418182, 1, -0.7700327, 1.3649185, 18.563494, 32.6, 1, -0.9851714, 1.3649185, 19.058401, 32.78182, 1, -0.9441751, 1.3649185, 19.505428, 32.963634, 1, -0.92176414, 1.3649185, 19.56656, 33.145454, 1, -0.938438, 1.3649185, 19.522306, 33.327274, 1, -0.9481, 1.3649185, 19.49327, 33.50909, 1, -0.93956655, 1.3649185, 19.519064, 33.69091, 1, -0.91833824, 1.3649185, 19.574928, 33.872726, 1, -0.89379853, 1.3649185, 19.62942, 34.054546, 1, -0.88157284, 1.3649185, 19.65368, 34.236362, 1, -0.8140391, 1.3649185, 19.764887, 34.418182, 1, -0.5994636, 1.3649185, 19.987541, 34.6, 1, -0.26966566, 1.3649185, 20.151787, 34.78182, 1, 0.03732118, 1.3649185, 20.188885, 34.963634, 1, 0.16676597, 1.3649185, 20.175777, 35.145454, 1, 0.3019, 1.3649185, 20.143272, 35.327274, 1, 0.43119484, 1.3649185, 20.092274, 35.50909, 1, 0.37518895, 1.3649185, 20.116936, 35.69091, 1, 0.28594124, 1.3649185, 20.148165, 35.872726, 1, 0.26912698, 1.3649185, 20.153006, 35.962727, 1, 0.2763619, 1.3759217, 19.566885, 36.052727, 1, 0.29806668, 1.4089315, 17.808525, 36.142727, 1, 0.33424127, 1.4639478, 14.877924, 36.232727, 1, 0.3848857, 1.5409707, 10.775083, 36.322727, 1, 0.45, 1.64, 5.5, 36.422726, 1, 0.45, 1.64, 5.5, 36.522728, 1, 0.45, 1.64, 5.5, 36.622726, 1, 0.45, 1.64, 5.5, 36.72273, 1, 0.45, 1.64, 5.5, 37.272728, 1, 0.45, 1.64, 5.62)
 tracks/59/type = "rotation_3d"
 tracks/59/imported = false
 tracks/59/enabled = true
 tracks/59/path = NodePath("cameras/cam_cabeca")
 tracks/59/interp = 1
 tracks/59/loop_wrap = true
-tracks/59/keys = PackedFloat32Array(30.6, 1, 0.00048578432, 0.99943924, 0.028993268, -0.016745675, 30.781818, 1, 0.0008015109, 0.9991976, 0.02898626, -0.027629217, 30.963636, 1, 0.001553943, 0.9981432, 0.028955666, -0.05356664, 31.145454, 1, 0.002450593, 0.99600357, 0.0288936, -0.08447544, 31.327272, 1, 0.0032000642, 0.99347407, 0.028820224, -0.11031077, 31.50909, 1, 0.0035137453, 0.9922138, 0.028783662, -0.1211238, 31.690908, 1, 0.003749111, 0.99118966, 0.028753951, -0.12923719, 31.872726, 1, 0.004266011, 0.98870313, 0.028681828, -0.14705545, 32.054546, 1, 0.004781525, 0.98589635, 0.02860039, -0.16482599, 32.236362, 1, 0.00501535, 0.98451483, 0.02856032, -0.17288625, 32.418182, 1, 0.00876433, 0.9528291, 0.027641125, -0.302119, 32.6, 1, -0.015923092, -0.83539027, -0.024234282, 0.5488918, 32.78182, 1, -0.020973647, -0.6902482, -0.020023778, 0.72299147, 32.963634, 1, -0.021616789, -0.6662534, -0.0193277, 0.7451614, 33.145454, 1, -0.021151965, -0.6837516, -0.019835314, 0.7291385, 33.327274, 1, -0.02084484, -0.69486934, -0.020157838, 0.7185512, 33.50909, 1, -0.02111775, -0.6850073, -0.019871742, 0.727959, 33.69091, 1, -0.021704268, -0.66286504, -0.019229406, 0.7481772, 33.872726, 1, -0.022271259, -0.6401266, -0.018569775, 0.7677221, 34.054546, 1, -0.022522382, -0.6295992, -0.018264377, 0.77637875, 34.236362, 1, -0.023666957, -0.57755893, -0.016754718, 0.8158338, 34.418182, 1, -0.025980426, -0.4439495, -0.012878767, 0.8955825, 34.6, 1, -0.02791384, -0.27068982, -0.007852584, 0.9622298, 34.78182, 1, -0.028794304, -0.11807864, -0.0034254063, 0.9925808, 34.963634, 1, -0.028956532, -0.053012475, -0.0015378676, 0.99817276, 35.145454, 1, -0.028993268, 0.016745675, 0.00048578432, 0.99943924, 35.327274, 1, -0.017832302, 0.05939667, 0.0010612224, 0.9980746, 35.50909, 1, -0.009747058, 0.027637474, 0.0002694998, 0.9995704, 35.69091, 1, -0.0036463414, 0.008870775, 3.2347358e-05, 0.999954, 35.872726, 1, 0.0011039866, 0.00843394, -9.311292e-06, 0.9999638, 35.962727, 1, 0.007293424, 0.008990637, -6.557693e-05, 0.999933, 36.052727, 1, 0.007022039, 0.01094904, -7.689108e-05, 0.9999154, 36.142727, 1, 0.0063708005, 0.015644714, -9.9683566e-05, 0.9998573, 36.232727, 1, 0.0044831573, 0.02923024, -0.00013110109, 0.9995626, 36.322727, 1, -0.014332343, 0.16583468, 0.0024104337, 0.9860465, 36.422726, 1, -0.014488507, -0.078724906, -0.001144279, 0.99679047, 36.522728, 1, -0.011838932, -0.5799774, -0.008430064, 0.81450295, 36.622726, 1, 0.0058206706, 0.91620135, 0.013317132, -0.40045458, 36.72273, 1, -0.00042646303, 0.9995263, 0.026071675, 0.016349578, 37.272728, 1, -0.00043402181, 0.9995179, 0.026301382, 0.016493909)
+tracks/59/keys = PackedFloat32Array(30.6, 1, 0.00048578432, 0.99943924, 0.028993268, -0.016745675, 30.781818, 1, 0.0008015109, 0.9991976, 0.02898626, -0.027629217, 30.963636, 1, 0.001553943, 0.9981432, 0.028955666, -0.05356664, 31.145454, 1, 0.002450593, 0.99600357, 0.0288936, -0.08447544, 31.327272, 1, 0.0032000642, 0.99347407, 0.028820224, -0.11031077, 31.50909, 1, 0.0035137453, 0.9922138, 0.028783662, -0.1211238, 31.690908, 1, 0.003749111, 0.99118966, 0.028753951, -0.12923719, 31.872726, 1, 0.004266011, 0.98870313, 0.028681828, -0.14705545, 32.054546, 1, 0.004781525, 0.98589635, 0.02860039, -0.16482599, 32.236362, 1, 0.00501535, 0.98451483, 0.02856032, -0.17288625, 32.418182, 1, 0.00876433, 0.9528291, 0.027641125, -0.302119, 32.6, 1, -0.015923092, -0.83539027, -0.024234282, 0.5488918, 32.78182, 1, -0.020973647, -0.6902482, -0.020023778, 0.72299147, 32.963634, 1, -0.021616789, -0.6662534, -0.0193277, 0.7451614, 33.145454, 1, -0.021151965, -0.6837516, -0.019835314, 0.7291385, 33.327274, 1, -0.02084484, -0.69486934, -0.020157838, 0.7185512, 33.50909, 1, -0.02111775, -0.6850073, -0.019871742, 0.727959, 33.69091, 1, -0.021704268, -0.66286504, -0.019229406, 0.7481772, 33.872726, 1, -0.022271259, -0.6401266, -0.018569775, 0.7677221, 34.054546, 1, -0.022522382, -0.6295992, -0.018264377, 0.77637875, 34.236362, 1, -0.023666957, -0.57755893, -0.016754718, 0.8158338, 34.418182, 1, -0.025980426, -0.4439495, -0.012878767, 0.8955825, 34.6, 1, -0.02791384, -0.27068982, -0.007852584, 0.9622298, 34.78182, 1, -0.028794304, -0.11807864, -0.0034254063, 0.9925808, 34.963634, 1, -0.028956532, -0.053012475, -0.0015378676, 0.99817276, 35.145454, 1, -0.028993268, 0.016745675, 0.00048578432, 0.99943924, 35.327274, 1, -0.017834159, 0.059397053, 0.00106134, 0.99807453, 35.50909, 1, -0.009750169, 0.027637785, 0.00026958887, 0.9995704, 35.69091, 1, -0.0036503358, 0.008870906, 3.238328e-05, 0.999954, 35.872726, 1, 0.0010993292, 0.008434089, -9.272175e-06, 0.9999638, 35.962727, 1, 0.007288893, 0.008990796, -6.553734e-05, 0.999933, 36.052727, 1, 0.007017556, 0.010949231, -7.684334e-05, 0.9999154, 36.142727, 1, 0.006366441, 0.015644979, -9.9617035e-05, 0.99985737, 36.232727, 1, 0.0044791466, 0.02923069, -0.0001309858, 0.9995626, 36.322727, 1, -0.014332343, 0.16583468, 0.0024104337, 0.9860465, 36.422726, 1, -0.014488507, -0.078724906, -0.001144279, 0.99679047, 36.522728, 1, -0.011838932, -0.5799774, -0.008430064, 0.81450295, 36.622726, 1, 0.0058206706, 0.91620135, 0.013317132, -0.40045458, 36.72273, 1, -0.00042639193, 0.99952644, 0.026066788, 0.016349923, 37.272728, 1, -0.00043394958, 0.99951804, 0.026296455, 0.016494256)
 tracks/60/type = "value"
 tracks/60/imported = false
 tracks/60/enabled = true
@@ -6921,7 +6921,7 @@ tracks/71/enabled = true
 tracks/71/path = NodePath("cameras/cam_mira")
 tracks/71/interp = 1
 tracks/71/loop_wrap = true
-tracks/71/keys = PackedFloat32Array(43.97273, 1, 0.00042314563, 0.9991407, 0.04008055, -0.010548309, 46.47273, 1, 0.00038504717, 0.9992084, 0.038504884, -0.00999204)
+tracks/71/keys = PackedFloat32Array(43.97273, 1, 0.00042311003, 0.99914086, 0.040076427, -0.010548507, 46.47273, 1, 0.00038501254, 0.99920857, 0.038500696, -0.00999223)
 tracks/72/type = "value"
 tracks/72/imported = false
 tracks/72/enabled = true
@@ -7804,7 +7804,7 @@ tracks/17/enabled = true
 tracks/17/path = NodePath("cameras/cam_pj_b")
 tracks/17/interp = 1
 tracks/17/loop_wrap = true
-tracks/17/keys = PackedFloat32Array(2.9, 1, -0.007986092, 0.88998514, -0.015598512, -0.45565268, 5.4, 1, -0.07691287, -0.67767805, -0.07161503, 0.7278105)
+tracks/17/keys = PackedFloat32Array(2.9, 1, -0.007997153, 0.889983, -0.015619965, -0.45565593, 5.4, 1, -0.07691287, -0.67767805, -0.07161503, 0.7278105)
 tracks/18/type = "value"
 tracks/18/imported = false
 tracks/18/enabled = true
@@ -8168,16 +8168,16 @@ _data = {
 &"vira_fase_2": SubResource("Animation_ng2m8")
 }
 
-[node name="cena_dona_nice" type="Node3D" unique_id=2143409339]
+[node name="cena_dona_nice" type="Node3D" unique_id=542699877]
 script = ExtResource("1_u7s2l")
 olhos_no_osso = PackedVector3Array(-0.0356, 0.1382, 0.1172, 0.0207, 0.1395, 0.1211)
 
 [node name="previa_igreja" type="Node3D" parent="." unique_id=1625258765 instance=ExtResource("2_nfmjr")]
 editor_description = "So' pra ver a igreja no editor. Some no jogo."
 
-[node name="atores" type="Node3D" parent="." unique_id=1294838808]
+[node name="atores" type="Node3D" parent="." unique_id=2043381563]
 
-[node name="Maycow" parent="atores" unique_id=929678198 instance=ExtResource("3_fswqi")]
+[node name="Maycow" parent="atores" unique_id=521242763 instance=ExtResource("3_fswqi")]
 editor_description = "Duble do Maycow normal pras cutscenes (o jogador fica escondido). Os clipes estao em anim (biblioteca maycow_clipes.tres): abra o AnimationPlayer pra mexer. Dissolver/sangue/veias so aparecem com o jogo rodando."
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.05, 0, 18.98)
 script = ExtResource("4_0mlea")
@@ -8361,12 +8361,12 @@ skin = SubResource("Skin_vur2p")
 blend_shapes/punho_d = 0.0
 blend_shapes/punho_e = 0.0
 
-[node name="mao_arma" type="BoneAttachment3D" parent="atores/Maycow/modelo/Armature/Skeleton3D" index="1" unique_id=1128530333]
-transform = Transform3D(0.8713543, 0.2563091, 0.41838524, 0.37919074, 0.18936576, -0.9057337, -0.31137577, 0.94786316, 0.06781456, -10.391526, 131.25351, 48.72673)
+[node name="mao_arma" type="BoneAttachment3D" parent="atores/Maycow/modelo/Armature/Skeleton3D" index="1" unique_id=640981875]
+transform = Transform3D(0.8714064, 0.25594428, 0.41849974, 0.37935063, 0.18932393, -0.9056755, -0.31103465, 0.94797003, 0.06788536, -10.394709, 131.26294, 48.72239)
 bone_name = "RightHand"
 bone_idx = 23
 
-[node name="pivo_arma" type="Node3D" parent="atores/Maycow/modelo/Armature/Skeleton3D/mao_arma" unique_id=314219445]
+[node name="pivo_arma" type="Node3D" parent="atores/Maycow/modelo/Armature/Skeleton3D/mao_arma" unique_id=1433339786]
 editor_description = "Gire/mova este pivo pra acertar a pistola na mao."
 transform = Transform3D(3.5442405, 4.359869, 10.033948, -10.9069605, 2.2300346, 2.883634, -0.85250455, -10.405225, 4.822318, -1.1977615, 11.570709, -4.4267807)
 visible = false
@@ -8382,7 +8382,7 @@ libraries/ = ExtResource("8_f2o3d")
 libraries/cena = SubResource("AnimationLibrary_dnbl4")
 playback_default_blend_time = 0.35
 
-[node name="Jonny" type="Node3D" parent="atores" unique_id=456202313 instance=ExtResource("9_5rxqv")]
+[node name="Jonny" type="Node3D" parent="atores" unique_id=1970288571 instance=ExtResource("9_5rxqv")]
 editor_description = "O Jonny. Os clipes estao em anim (biblioteca jonny_clipes.tres): abra o AnimationPlayer pra mexer. Dissolver/sangue/veias so aparecem com o jogo rodando."
 transform = Transform3D(-0.0163519, -0.10324154, 0.9945219, 0.15557751, 0.98227775, 0.104528464, -0.98768836, 0.15643448, -4.3471935e-08, 0, -0.024, 19.6)
 script = ExtResource("4_0mlea")
@@ -8392,7 +8392,7 @@ deitado_giro = Vector3(-6, 0, 9)
 deitado_altura = -0.024
 seguir = NodePath("../Maycow")
 
-[node name="DonaNice" parent="atores" unique_id=611213602 instance=ExtResource("10_oup2f")]
+[node name="DonaNice" parent="atores" unique_id=1246693811 instance=ExtResource("10_oup2f")]
 editor_description = "A Dona Nice possuida, antes de virar monstro. Os clipes estao em anim (biblioteca dona_nice_clipes.tres): abra o AnimationPlayer pra mexer. Dissolver/sangue/veias so aparecem com o jogo rodando."
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0018999875, 0, 18.92914)
 script = ExtResource("4_0mlea")
@@ -8668,7 +8668,7 @@ bones/37/rotation = Quaternion(-0.19597071, -0.3567681, 0.10955111, 0.9068135)
 bones/37/scale = Vector3(1, 0.99999994, 1)
 
 [node name="jaw" parent="atores/DonaNice/modelo/dona_nice_rig/Skeleton3D" index="0" unique_id=524814690]
-transform = Transform3D(1, 0, 0, 0, -0.951252, -0.30841532, 0, 0.3084151, -0.951252, 0, 1.0056188, 0.34426218)
+transform = Transform3D(1, 0, 0, 0, -0.9509007, -0.30949658, 0, 0.30949637, -0.9509007, 0, 1.0058588, 0.3438868)
 bone_name = "jaw"
 bone_idx = 11
 
@@ -8683,7 +8683,7 @@ mesh = SubResource("ArrayMesh_qkdti")
 skeleton = NodePath("")
 
 [node name="head" parent="atores/DonaNice/modelo/dona_nice_rig/Skeleton3D" index="1" unique_id=1278001485]
-transform = Transform3D(1, 0, 0, 0, 0.7497839, -0.661683, 0, 0.6616831, 0.7497837, 0, 0.9247645, 0.2644173)
+transform = Transform3D(1, 0, 0, 0, 0.75053567, -0.66083014, 0, 0.6608302, 0.7505354, 0, 0.92491376, 0.2641339)
 bone_name = "head"
 bone_idx = 6
 
@@ -8717,18 +8717,18 @@ skin = SubResource("Skin_ws5ql")
 mesh = SubResource("ArrayMesh_xcsn7")
 skin = SubResource("Skin_ws5ql")
 
-[node name="mao_faca" type="BoneAttachment3D" parent="atores/DonaNice/modelo/dona_nice_rig/Skeleton3D" index="7" unique_id=1612770811]
-transform = Transform3D(-0.8980227, 0.029813603, -0.43893784, -0.3962092, -0.48849773, 0.7774242, -0.19124246, 0.87205577, 0.45049435, -0.14684957, 0.6093295, 0.48167938)
+[node name="mao_faca" type="BoneAttachment3D" parent="atores/DonaNice/modelo/dona_nice_rig/Skeleton3D" index="7" unique_id=1260642278]
+transform = Transform3D(-0.8980568, 0.029784784, -0.43887, -0.39624274, -0.4880178, 0.7777084, -0.1910126, 0.87232524, 0.4500696, -0.14684957, 0.60959923, 0.4815707)
 bone_name = "hand.R"
 bone_idx = 27
 
-[node name="pivo_faca" type="Node3D" parent="atores/DonaNice/modelo/dona_nice_rig/Skeleton3D/mao_faca" unique_id=1356483542]
+[node name="pivo_faca" type="Node3D" parent="atores/DonaNice/modelo/dona_nice_rig/Skeleton3D/mao_faca" unique_id=1674887101]
 editor_description = "Gire/mova este pivo pra acertar a faca na mao."
 transform = Transform3D(0.8789474, 0.30465317, -0.36693048, -0.05190394, 0.82591313, 0.5614035, 0.47408605, -0.4743987, 0.74174684, 0, 0.050001144, 9.536743e-07)
 
 [node name="faca" type="Node3D" parent="atores/DonaNice/modelo/dona_nice_rig/Skeleton3D/mao_faca/pivo_faca" unique_id=2103276757 instance=ExtResource("14_i801b")]
 
-[node name="pingos" type="GPUParticles3D" parent="atores/DonaNice/modelo/dona_nice_rig/Skeleton3D/mao_faca/pivo_faca" unique_id=936292253]
+[node name="pingos" type="GPUParticles3D" parent="atores/DonaNice/modelo/dona_nice_rig/Skeleton3D/mao_faca/pivo_faca" unique_id=1353201535]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.236, -0.004)
 amount = 4
 lifetime = 1.4
@@ -8736,12 +8736,12 @@ visibility_aabb = AABB(-0.3, -1.5, -0.3, 0.6, 1.6, 0.6)
 process_material = SubResource("ParticleProcessMaterial_hx6g1")
 draw_pass_1 = SubResource("SphereMesh_rskb1")
 
-[node name="pescoco" type="BoneAttachment3D" parent="atores/DonaNice/modelo/dona_nice_rig/Skeleton3D" index="8" unique_id=940667177]
-transform = Transform3D(1, 0, 0, 0, 0.74744785, -0.6643207, 0, 0.66432077, 0.74744767, 0, 0.8502319, 0.19817378)
+[node name="pescoco" type="BoneAttachment3D" parent="atores/DonaNice/modelo/dona_nice_rig/Skeleton3D" index="8" unique_id=720105010]
+transform = Transform3D(1, 0, 0, 0, 0.74781585, -0.66390646, 0, 0.6639065, 0.7478156, 0, 0.8503444, 0.19793168)
 bone_name = "neck"
 bone_idx = 5
 
-[node name="jorro" type="GPUParticles3D" parent="atores/DonaNice/modelo/dona_nice_rig/Skeleton3D/pescoco" unique_id=327350155]
+[node name="jorro" type="GPUParticles3D" parent="atores/DonaNice/modelo/dona_nice_rig/Skeleton3D/pescoco" unique_id=1574140637]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
 emitting = false
 amount = 260
@@ -8758,7 +8758,7 @@ root_node = NodePath("../modelo")
 libraries/ = ExtResource("15_tl4c6")
 playback_default_blend_time = 0.35
 
-[node name="Monstro" type="Node3D" parent="atores" unique_id=497572070 instance=ExtResource("16_nj3ib")]
+[node name="Monstro" type="Node3D" parent="atores" unique_id=304197567 instance=ExtResource("16_nj3ib")]
 editor_description = "A Dona Nice monstro (fase 1). Os clipes estao em anim (biblioteca dona_nice_monster_clipes.tres): abra o AnimationPlayer pra mexer. Dissolver/sangue/veias so aparecem com o jogo rodando."
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 2.35, 0, 20.15)
 visible = false
@@ -8768,120 +8768,120 @@ sangue = 0.3
 deitado_giro = Vector3(7, 0, 5)
 deitado_altura = -0.172
 
-[node name="cameras" type="Node3D" parent="." unique_id=595736933]
+[node name="cameras" type="Node3D" parent="." unique_id=1133129346]
 
-[node name="cam_entrada" type="Camera3D" parent="cameras" unique_id=470795810]
+[node name="cam_entrada" type="Camera3D" parent="cameras" unique_id=1639440334]
 transform = Transform3D(0.997088, -0.002179904, 0.07622797, -1.1641532e-10, 0.99959135, 0.028585484, -0.07625913, -0.028502243, 0.99668056, 0.8, 1.55, 9.9)
 current = true
 fov = 42.0
 near = 0.02
 far = 120.0
 
-[node name="cam_rosto" type="Camera3D" parent="cameras" unique_id=50653574]
+[node name="cam_rosto" type="Camera3D" parent="cameras" unique_id=427258139]
 transform = Transform3D(0.9529258, 0.015738592, -0.3027949, 9.313226e-10, 0.99865186, 0.051907655, 0.30320367, -0.04946414, 0.95164114, -0.35, 1.66, 5.35)
 fov = 34.0
 near = 0.02
 far = 120.0
 
-[node name="cam_ombro" type="Camera3D" parent="cameras" unique_id=151691728]
+[node name="cam_ombro" type="Camera3D" parent="cameras" unique_id=782986782]
 transform = Transform3D(-0.9996661, 0.0015706656, -0.025789736, 0, 0.9981506, 0.060790103, 0.02583752, 0.060769808, -0.9978173, -0.42, 1.74, 3.35)
 fov = 40.0
 near = 0.02
 far = 120.0
 
-[node name="cam_faca" type="Camera3D" parent="cameras" unique_id=304244243]
-transform = Transform3D(-0.58123696, -0.24094139, 0.7772455, 1.4901161e-08, 0.95515895, 0.29609346, -0.8137342, 0.17210053, -0.55517375, 0.26684564, 0.5723722, 19.25664)
+[node name="cam_faca" type="Camera3D" parent="cameras" unique_id=1913794299]
+transform = Transform3D(-0.5812372, -0.24094144, 0.7772455, 7.450581e-09, 0.95515895, 0.29609352, -0.8137342, 0.17210059, -0.555174, 0.2668283, 0.5727232, 19.256662)
 fov = 30.0
 near = 0.02
 far = 120.0
 
-[node name="cam_gota" type="Camera3D" parent="cameras" unique_id=988508877]
-transform = Transform3D(-0.5546999, -0.08607423, 0.8275864, -3.7252903e-09, 0.9946348, 0.103448324, -0.83205056, 0.05738277, -0.55172384, 0.08684564, 0.39237222, 19.396639)
+[node name="cam_gota" type="Camera3D" parent="cameras" unique_id=1183369698]
+transform = Transform3D(-0.5546999, -0.08607423, 0.8275864, -3.7252903e-09, 0.9946348, 0.103448324, -0.83205056, 0.05738277, -0.55172384, 0.08682831, 0.39272323, 19.396662)
 fov = 22.0
 near = 0.02
 far = 120.0
 
-[node name="cam_longe" type="Camera3D" parent="cameras" unique_id=2025705572]
+[node name="cam_longe" type="Camera3D" parent="cameras" unique_id=931161843]
 transform = Transform3D(0.9879552, -0.022772834, 0.1530551, -1.8626451e-09, 0.9891114, 0.14716838, -0.15474, -0.14539577, 0.9771978, 1.3, 1.75, 27.6)
 fov = 30.0
 near = 0.02
 far = 120.0
 
-[node name="cam_levanta" type="Camera3D" parent="cameras" unique_id=1310211454]
+[node name="cam_levanta" type="Camera3D" parent="cameras" unique_id=1329107483]
 transform = Transform3D(0.9697275, 0.01986066, 0.24338068, 0, 0.996687, -0.08133292, -0.2441897, 0.07887077, 0.96651477, 0.75, 0.55, 21.9)
 fov = 40.0
 near = 0.02
 far = 120.0
 
-[node name="cam_cabeca" type="Camera3D" parent="cameras" unique_id=538453568]
-transform = Transform3D(-0.99943876, 0.0019420475, -0.0334444, 1.1641532e-10, 0.9983183, 0.057970285, 0.033500742, 0.05793775, -0.99775803, -0.29810002, 1.3647645, 18.243557)
+[node name="cam_cabeca" type="Camera3D" parent="cameras" unique_id=1631950962]
+transform = Transform3D(-0.99943876, 0.0019420475, -0.0334444, 1.1641532e-10, 0.9983183, 0.057970285, 0.033500742, 0.05793775, -0.99775803, -0.29810002, 1.3649137, 18.243273)
 fov = 50.0
 near = 0.02
 far = 120.0
 
-[node name="cam_sacar" type="Camera3D" parent="cameras" unique_id=1807156107]
+[node name="cam_sacar" type="Camera3D" parent="cameras" unique_id=1084218957]
 transform = Transform3D(0.9347836, -0.013272799, 0.35496974, -9.313226e-10, 0.9993017, 0.037365247, -0.3552178, -0.034928422, 0.9341308, 0.95, 1.45, 6.7)
 fov = 34.0
 near = 0.02
 far = 120.0
 
-[node name="cam_olhos" type="Camera3D" parent="cameras" unique_id=388388604]
+[node name="cam_olhos" type="Camera3D" parent="cameras" unique_id=754734966]
 transform = Transform3D(-0.9844276, 0, 0.17579083, 0, 1, 0, -0.17579083, 0, -0.9844276, 0.18699342, 1.4042548, 18.313366)
 fov = 30.0
 near = 0.02
 far = 120.0
 
-[node name="cam_mira" type="Camera3D" parent="cameras" unique_id=1582496148]
-transform = Transform3D(-0.9997771, 0.0016911281, -0.02104457, -1.1641532e-10, 0.9967867, 0.08010115, 0.02111241, 0.080083296, -0.9965645, -0.32, 1.68, 3.9499998)
+[node name="cam_mira" type="Camera3D" parent="cameras" unique_id=2088629129]
+transform = Transform3D(-0.9997771, 0.001690986, -0.021044975, 1.1641532e-10, 0.9967874, 0.080092914, 0.021112802, 0.08007506, -0.9965652, -0.32, 1.68, 3.9499998)
 fov = 30.0
 near = 0.02
 far = 120.0
 
-[node name="cam_lateral" type="Camera3D" parent="cameras" unique_id=2012108971]
+[node name="cam_lateral" type="Camera3D" parent="cameras" unique_id=1094062117]
 transform = Transform3D(-0.68094265, 0.031139273, -0.73167455, 0, 0.9990956, 0.042520426, 0.7323369, 0.02895397, -0.6803268, -4.3, 1.4, 14.92914)
 fov = 36.0
 near = 0.02
 far = 120.0
 
-[node name="cam_transforma" type="Camera3D" parent="cameras" unique_id=482903937]
+[node name="cam_transforma" type="Camera3D" parent="cameras" unique_id=1806484605]
 transform = Transform3D(-0.9063077, 0.033971846, -0.4212508, 0, 0.99676394, 0.08038421, 0.42261842, 0.072852835, -0.9033749, -1.3082167, 1.25, 16.119587)
 fov = 36.0
 near = 0.02
 far = 120.0
 
-[node name="cam_rugido" type="Camera3D" parent="cameras" unique_id=1282481141]
+[node name="cam_rugido" type="Camera3D" parent="cameras" unique_id=940257184]
 transform = Transform3D(-0.99106073, 0.029744167, 0.13005401, 0, 0.9748299, -0.22294974, -0.13341199, -0.22095671, -0.9661157, 0.35189998, 0.85, 16.32914)
 fov = 42.0
 near = 0.02
 far = 120.0
 
-[node name="cam_bancos" type="Camera3D" parent="cameras" unique_id=936316585]
+[node name="cam_bancos" type="Camera3D" parent="cameras" unique_id=1910132887]
 transform = Transform3D(0.9743912, -0.049330063, 0.2193817, -1.8626451e-09, 0.9756391, 0.21938172, -0.22485949, -0.21376362, 0.95065415, 0.6019, 1.9, 21.52914)
 fov = 46.0
 near = 0.02
 far = 120.0
 
-[node name="cam_m_c" type="Camera3D" parent="cameras" unique_id=2027323610]
+[node name="cam_m_c" type="Camera3D" parent="cameras" unique_id=1065658407]
 transform = Transform3D(-0.7071066, 0.05663567, -0.70483524, -1.8626451e-09, 0.99678725, 0.08009492, 0.707107, 0.056635648, -0.7048348, -1.2, 0.5, 17.800001)
 fov = 40.0
 near = 0.02
 far = 120.0
 
-[node name="cam_pj_a" type="Camera3D" parent="cameras" unique_id=1495429001]
+[node name="cam_pj_a" type="Camera3D" parent="cameras" unique_id=700777431]
 transform = Transform3D(0.54075754, -0.14921978, 0.8278374, 7.450581e-09, 0.98414, 0.1773937, -0.8411785, -0.09592697, 0.5321811, 1.4499999, 0.9, 20.38)
 fov = 42.0
 near = 0.02
 far = 120.0
 
-[node name="cam_pj_b" type="Camera3D" parent="cameras" unique_id=561384493]
-transform = Transform3D(-0.5846337, -0.028430015, -0.81079906, 1.8626451e-09, 0.99938583, -0.03504266, 0.81129736, -0.02048712, -0.58427465, -1.5500001, 1.3, 18.38)
+[node name="cam_pj_b" type="Camera3D" parent="cameras" unique_id=474953865]
+transform = Transform3D(-0.5846274, -0.02846932, -0.8108023, -1.8626451e-09, 0.9993841, -0.03509091, 0.8113019, -0.020515107, -0.5842674, -1.5500001, 1.3, 18.38)
 fov = 40.0
 near = 0.02
 far = 120.0
 
-[node name="efeitos" type="Node3D" parent="." unique_id=365540089]
+[node name="efeitos" type="Node3D" parent="." unique_id=1051146924]
 
-[node name="poca_jonny" type="Decal" parent="efeitos" unique_id=1870880778]
+[node name="poca_jonny" type="Decal" parent="efeitos" unique_id=5665232]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 19.65)
 size = Vector3(2.2, 0.6, 1.8)
 texture_albedo = ExtResource("17_xi8l0")
@@ -8890,7 +8890,7 @@ upper_fade = 0.2
 lower_fade = 0.2
 cull_mask = 1
 
-[node name="simbolo" type="Decal" parent="efeitos" unique_id=1502750123]
+[node name="simbolo" type="Decal" parent="efeitos" unique_id=454174247]
 transform = Transform3D(0.9781476, 0, 0.2079117, 0, 1, 0, -0.2079117, 0, 0.9781476, 0, 0, 19.6)
 size = Vector3(4.2, 0.6, 4.2)
 texture_albedo = ExtResource("19_tning")
@@ -8900,7 +8900,7 @@ upper_fade = 0.2
 lower_fade = 0.2
 cull_mask = 1
 
-[node name="respingo_1" type="Decal" parent="efeitos" unique_id=207930093]
+[node name="respingo_1" type="Decal" parent="efeitos" unique_id=1221877480]
 transform = Transform3D(0.76604444, 0, 0.6427876, 0, 1, 0, -0.6427876, 0, 0.76604444, -1.4, 0, 18.9)
 size = Vector3(1.4, 0.6, 1.4)
 texture_albedo = ExtResource("21_g4ix0")
@@ -8909,7 +8909,7 @@ upper_fade = 0.2
 lower_fade = 0.2
 cull_mask = 1
 
-[node name="respingo_2" type="Decal" parent="efeitos" unique_id=2000064904]
+[node name="respingo_2" type="Decal" parent="efeitos" unique_id=1018796802]
 transform = Transform3D(-0.9396926, 0, -0.34202015, 0, 1, 0, 0.34202015, 0, -0.9396926, 1.6, 0, 20.5)
 size = Vector3(1.1, 0.6, 1.1)
 texture_albedo = ExtResource("21_g4ix0")
@@ -8918,7 +8918,7 @@ upper_fade = 0.2
 lower_fade = 0.2
 cull_mask = 1
 
-[node name="rastro" type="Decal" parent="efeitos" unique_id=2116821791]
+[node name="rastro" type="Decal" parent="efeitos" unique_id=467928060]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 17)
 size = Vector3(1.2, 0.6, 3.4)
 texture_albedo = ExtResource("23_0mxta")
@@ -8928,7 +8928,7 @@ upper_fade = 0.2
 lower_fade = 0.2
 cull_mask = 1
 
-[node name="respingo_gota" type="Decal" parent="efeitos" unique_id=415293660]
+[node name="respingo_gota" type="Decal" parent="efeitos" unique_id=813139256]
 transform = Transform3D(0.01, 0, 0, 0, 1, 0, 0, 0, 0.01, 0, 0, 0)
 size = Vector3(0.35, 0.4, 0.35)
 texture_albedo = ExtResource("21_g4ix0")
@@ -8937,65 +8937,65 @@ upper_fade = 0.2
 lower_fade = 0.2
 cull_mask = 1
 
-[node name="velas" type="Node3D" parent="efeitos" unique_id=2088276206]
+[node name="velas" type="Node3D" parent="efeitos" unique_id=1015284402]
 
-[node name="vela_0" type="MeshInstance3D" parent="efeitos/velas" unique_id=1530001417]
+[node name="vela_0" type="MeshInstance3D" parent="efeitos/velas" unique_id=1607877356]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7151165, 0.05, 19.947672)
 mesh = SubResource("CylinderMesh_ma1hw")
 
-[node name="chama" type="MeshInstance3D" parent="efeitos/velas/vela_0" unique_id=790566095]
+[node name="chama" type="MeshInstance3D" parent="efeitos/velas/vela_0" unique_id=1499384244]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.08, 0)
 mesh = SubResource("QuadMesh_ej1il")
 
-[node name="vela_1" type="MeshInstance3D" parent="efeitos/velas" unique_id=1922544624]
+[node name="vela_1" type="MeshInstance3D" parent="efeitos/velas" unique_id=725515330]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.79753727, 0.0648, 21.157701)
 mesh = SubResource("CylinderMesh_bt44s")
 
-[node name="chama" type="MeshInstance3D" parent="efeitos/velas/vela_1" unique_id=1117369032]
+[node name="chama" type="MeshInstance3D" parent="efeitos/velas/vela_1" unique_id=1424334338]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0948, 0)
 mesh = SubResource("QuadMesh_4fvu1")
 
-[node name="vela_2" type="MeshInstance3D" parent="efeitos/velas" unique_id=1965321159]
+[node name="vela_2" type="MeshInstance3D" parent="efeitos/velas" unique_id=262220829]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.7206038, 0.0796, 21.194752)
 mesh = SubResource("CylinderMesh_7t6ri")
 
-[node name="chama" type="MeshInstance3D" parent="efeitos/velas/vela_2" unique_id=2136015752]
+[node name="chama" type="MeshInstance3D" parent="efeitos/velas/vela_2" unique_id=690582451]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1096, 0)
 mesh = SubResource("QuadMesh_31waa")
 
-[node name="vela_3" type="MeshInstance3D" parent="efeitos/velas" unique_id=1357444876]
+[node name="vela_3" type="MeshInstance3D" parent="efeitos/velas" unique_id=289921377]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6961155, 0.0544, 20.03092)
 mesh = SubResource("CylinderMesh_w5dg2")
 
-[node name="chama" type="MeshInstance3D" parent="efeitos/velas/vela_3" unique_id=645863960]
+[node name="chama" type="MeshInstance3D" parent="efeitos/velas/vela_3" unique_id=622302190]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0844, 0)
 mesh = SubResource("QuadMesh_altwn")
 
-[node name="vela_4" type="MeshInstance3D" parent="efeitos/velas" unique_id=613124197]
+[node name="vela_4" type="MeshInstance3D" parent="efeitos/velas" unique_id=1646591334]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3944176, 0.0692, 18.542599)
 mesh = SubResource("CylinderMesh_vba8b")
 
-[node name="chama" type="MeshInstance3D" parent="efeitos/velas/vela_4" unique_id=697332544]
+[node name="chama" type="MeshInstance3D" parent="efeitos/velas/vela_4" unique_id=1186059170]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0992, 0)
 mesh = SubResource("QuadMesh_wjl0o")
 
-[node name="vela_5" type="MeshInstance3D" parent="efeitos/velas" unique_id=1727879819]
+[node name="vela_5" type="MeshInstance3D" parent="efeitos/velas" unique_id=890097589]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.042694844, 0.084, 17.850521)
 mesh = SubResource("CylinderMesh_b04lw")
 
-[node name="chama" type="MeshInstance3D" parent="efeitos/velas/vela_5" unique_id=2100518359]
+[node name="chama" type="MeshInstance3D" parent="efeitos/velas/vela_5" unique_id=857428722]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.114, 0)
 mesh = SubResource("QuadMesh_ecbus")
 
-[node name="vela_6" type="MeshInstance3D" parent="efeitos/velas" unique_id=430437762]
+[node name="vela_6" type="MeshInstance3D" parent="efeitos/velas" unique_id=990074172]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.341178, 0.0588, 18.475838)
 mesh = SubResource("CylinderMesh_ls2iu")
 
-[node name="chama" type="MeshInstance3D" parent="efeitos/velas/vela_6" unique_id=1817626422]
+[node name="chama" type="MeshInstance3D" parent="efeitos/velas/vela_6" unique_id=810155534]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0888, 0)
 mesh = SubResource("QuadMesh_jubqv")
 
-[node name="luz_velas" type="OmniLight3D" parent="efeitos" unique_id=944082067]
+[node name="luz_velas" type="OmniLight3D" parent="efeitos" unique_id=683411320]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 19.6)
 light_color = Color(1, 0.62, 0.32, 1)
 light_energy = 2.2
@@ -9003,14 +9003,14 @@ shadow_enabled = true
 omni_range = 4.5
 metadata/piscar = "nervoso"
 
-[node name="luz_pulso" type="OmniLight3D" parent="efeitos" unique_id=81659856]
+[node name="luz_pulso" type="OmniLight3D" parent="efeitos" unique_id=1615728221]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 18.4)
 visible = false
 light_color = Color(1, 0.08, 0.04, 1)
 light_energy = 0.0
 omni_range = 8.0
 
-[node name="luz_porta" type="SpotLight3D" parent="efeitos" unique_id=1842639003]
+[node name="luz_porta" type="SpotLight3D" parent="efeitos" unique_id=866635989]
 transform = Transform3D(-1, 3.2042593e-08, -8.133888e-08, 0, 0.93040836, 0.36652455, 8.742278e-08, 0.36652455, -0.93040836, 0, 3.4, -2.6)
 light_color = Color(0.62, 0.72, 1, 1)
 light_energy = 6.0
@@ -9018,7 +9018,7 @@ shadow_enabled = true
 spot_range = 12.0
 spot_angle = 28.0
 
-[node name="luz_chave_maycow" type="SpotLight3D" parent="efeitos" unique_id=605150865]
+[node name="luz_chave_maycow" type="SpotLight3D" parent="efeitos" unique_id=666512722]
 transform = Transform3D(0.98248655, -0.05708742, 0.17737325, 0, 0.95191187, 0.306372, -0.18633369, -0.30100635, 0.9352406, 1.1, 3.2, 8.8)
 light_color = Color(0.85, 0.82, 0.95, 1)
 light_energy = 11.0
@@ -9027,11 +9027,11 @@ spot_range = 12.0
 spot_angle = 30.0
 spot_angle_attenuation = 1.6
 
-[node name="gota" type="MeshInstance3D" parent="efeitos" unique_id=1626035539]
+[node name="gota" type="MeshInstance3D" parent="efeitos" unique_id=181963189]
 visible = false
 mesh = SubResource("SphereMesh_c6b0p")
 
-[node name="respingo" type="GPUParticles3D" parent="efeitos" unique_id=985166645]
+[node name="respingo" type="GPUParticles3D" parent="efeitos" unique_id=1735227472]
 emitting = false
 amount = 28
 lifetime = 1.2
@@ -9040,7 +9040,7 @@ explosiveness = 0.95
 process_material = SubResource("ParticleProcessMaterial_q1u35")
 draw_pass_1 = SubResource("SphereMesh_wsa21")
 
-[node name="nevoa_sangue" type="GPUParticles3D" parent="efeitos" unique_id=190069903]
+[node name="nevoa_sangue" type="GPUParticles3D" parent="efeitos" unique_id=1249164643]
 emitting = false
 amount = 220
 lifetime = 2.2
@@ -9048,14 +9048,14 @@ visibility_aabb = AABB(-4, -1, -4, 8, 5, 8)
 process_material = SubResource("ParticleProcessMaterial_77vnl")
 draw_pass_1 = SubResource("SphereMesh_r7j8i")
 
-[node name="corpo_da_monstro" type="Marker3D" parent="efeitos" unique_id=188568491]
+[node name="corpo_da_monstro" type="Marker3D" parent="efeitos" unique_id=490597543]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 2.35, 0, 20.15)
 
-[node name="palco_fase_2" type="Node3D" parent="." unique_id=861777541]
+[node name="palco_fase_2" type="Node3D" parent="." unique_id=1713933156]
 editor_description = "Posto no jogo onde a fase 1 morreu. Atores e cameras daqui andam junto."
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 14)
 
-[node name="Morrendo" type="Node3D" parent="palco_fase_2" unique_id=604216397 instance=ExtResource("16_nj3ib")]
+[node name="Morrendo" type="Node3D" parent="palco_fase_2" unique_id=484011328 instance=ExtResource("16_nj3ib")]
 editor_description = "A Dona Nice monstro (fase 1). Os clipes estao em anim (biblioteca dona_nice_monster_clipes.tres): abra o AnimationPlayer pra mexer. Dissolver/sangue/veias so aparecem com o jogo rodando."
 visible = false
 script = ExtResource("4_0mlea")
@@ -9064,7 +9064,7 @@ veias = 1.0
 deitado_giro = Vector3(7, 0, 5)
 deitado_altura = -0.172
 
-[node name="Gigante" type="Node3D" parent="palco_fase_2" unique_id=171864294 instance=ExtResource("25_f0ukj")]
+[node name="Gigante" type="Node3D" parent="palco_fase_2" unique_id=253390172 instance=ExtResource("25_f0ukj")]
 editor_description = "A Dona Nice monstro fase 2: 5 m, flutua. Os clipes estao em anim (biblioteca dona_nice_monster_fase_2_clipes.tres): abra o AnimationPlayer pra mexer. Dissolver/sangue/veias so aparecem com o jogo rodando."
 visible = false
 script = ExtResource("4_0mlea")
@@ -9072,9 +9072,9 @@ dissolver = 1.0
 veias = 0.6
 escala_ruido = 1.6
 
-[node name="efeitos_f2" type="Node3D" parent="palco_fase_2" unique_id=400938773]
+[node name="efeitos_f2" type="Node3D" parent="palco_fase_2" unique_id=872034830]
 
-[node name="nevoa" type="GPUParticles3D" parent="palco_fase_2/efeitos_f2" unique_id=1979734133]
+[node name="nevoa" type="GPUParticles3D" parent="palco_fase_2/efeitos_f2" unique_id=2057716840]
 emitting = false
 amount = 220
 lifetime = 2.2
@@ -9082,115 +9082,114 @@ visibility_aabb = AABB(-4, -1, -4, 8, 5, 8)
 process_material = SubResource("ParticleProcessMaterial_77vnl")
 draw_pass_1 = SubResource("SphereMesh_r7j8i")
 
-[node name="cam_f2_a" type="Camera3D" parent="palco_fase_2" unique_id=974054875]
+[node name="cam_f2_a" type="Camera3D" parent="palco_fase_2" unique_id=569161943]
 transform = Transform3D(0.97439116, 0, 0.22485955, 0, 1, 0, -0.22485955, 0, 0.97439116, 0.6, 0.9, 2.6)
 fov = 40.0
 near = 0.02
 far = 120.0
 
-[node name="cam_f2_b" type="Camera3D" parent="palco_fase_2" unique_id=1538244496]
+[node name="cam_f2_b" type="Camera3D" parent="palco_fase_2" unique_id=1026758743]
 transform = Transform3D(0.96152395, 0, -0.27472115, 0, 1, 0, 0.27472115, 0, 0.96152395, -1.2, 1.2, 4.2)
 fov = 40.0
 near = 0.02
 far = 120.0
 
-[node name="cam_f2_c" type="Camera3D" parent="palco_fase_2" unique_id=322056312]
+[node name="cam_f2_c" type="Camera3D" parent="palco_fase_2" unique_id=1277809122]
 transform = Transform3D(0.9887155, 0.06055342, 0.13702166, 0, 0.91466445, -0.40421396, -0.14980537, 0.3996526, 0.90434295, 1, 0.45, 6.6)
 fov = 52.0
 near = 0.02
 far = 120.0
 
-[node name="palco_morte" type="Node3D" parent="." unique_id=505244616]
+[node name="palco_morte" type="Node3D" parent="." unique_id=521922617]
 transform = Transform3D(-0.76604444, 0, -0.64278764, 0, 1, 0, 0.64278764, 0, -0.76604444, 2.6, 0, 21.800001)
 
-[node name="GiganteMorre" type="Node3D" parent="palco_morte" unique_id=1842413564 instance=ExtResource("25_f0ukj")]
+[node name="GiganteMorre" type="Node3D" parent="palco_morte" unique_id=367094384 instance=ExtResource("25_f0ukj")]
 editor_description = "A Dona Nice monstro fase 2: 5 m, flutua. Os clipes estao em anim (biblioteca dona_nice_monster_fase_2_clipes.tres): abra o AnimationPlayer pra mexer. Dissolver/sangue/veias so aparecem com o jogo rodando."
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, 0)
 visible = false
 script = ExtResource("4_0mlea")
 escala_ruido = 1.6
 
-[node name="cam_m_a" type="Camera3D" parent="palco_morte" unique_id=1849084297]
+[node name="cam_m_a" type="Camera3D" parent="palco_morte" unique_id=473030591]
 transform = Transform3D(0.97101486, 0.08066727, 0.22499536, 3.7252903e-09, 0.94132805, -0.33749303, -0.23901908, 0.32771078, 0.9140435, 1.6, 0.6, 6.5)
 fov = 50.0
 near = 0.02
 far = 120.0
 
-[node name="cam_m_b" type="Camera3D" parent="palco_morte" unique_id=1706076276]
+[node name="cam_m_b" type="Camera3D" parent="palco_morte" unique_id=1825528515]
 transform = Transform3D(0.9230769, 0.014781962, -0.38433123, -9.313226e-10, 0.9992612, 0.0384331, 0.38461536, -0.03547671, 0.92239493, -2, 1.4, 4.8)
 fov = 42.0
 near = 0.02
 far = 120.0
 
-[node name="sons" type="Node3D" parent="." unique_id=810366740]
+[node name="sons" type="Node3D" parent="." unique_id=1355470213]
 
-[node name="sussurro" type="AudioStreamPlayer" parent="sons" unique_id=1767364679]
+[node name="sussurro" type="AudioStreamPlayer" parent="sons" unique_id=1909035675]
 stream = ExtResource("26_4ybjc")
 volume_db = -6.0
 
-[node name="batimento" type="AudioStreamPlayer" parent="sons" unique_id=533971930]
+[node name="batimento" type="AudioStreamPlayer" parent="sons" unique_id=656577446]
 stream = ExtResource("27_ultr8")
 volume_db = -4.0
 
-[node name="batimento_rapido" type="AudioStreamPlayer" parent="sons" unique_id=1105388735]
+[node name="batimento_rapido" type="AudioStreamPlayer" parent="sons" unique_id=1905318181]
 stream = ExtResource("28_x1ga6")
 volume_db = -3.0
 
-[node name="gota" type="AudioStreamPlayer" parent="sons" unique_id=261580211]
+[node name="gota" type="AudioStreamPlayer" parent="sons" unique_id=1600144158]
 stream = ExtResource("29_no0lp")
 volume_db = -2.0
 
-[node name="gota_impacto" type="AudioStreamPlayer" parent="sons" unique_id=1792415672]
+[node name="gota_impacto" type="AudioStreamPlayer" parent="sons" unique_id=807254047]
 stream = ExtResource("30_5nept")
 volume_db = -4.0
 
-[node name="ossos" type="AudioStreamPlayer" parent="sons" unique_id=384446991]
+[node name="ossos" type="AudioStreamPlayer" parent="sons" unique_id=644387684]
 stream = ExtResource("31_o5hn7")
 
-[node name="grito" type="AudioStreamPlayer" parent="sons" unique_id=2122319419]
+[node name="grito" type="AudioStreamPlayer" parent="sons" unique_id=1467436221]
 stream = ExtResource("32_aywj8")
 volume_db = -3.0
 
-[node name="rugido" type="AudioStreamPlayer" parent="sons" unique_id=1533331702]
+[node name="rugido" type="AudioStreamPlayer" parent="sons" unique_id=690443678]
 stream = ExtResource("33_led6c")
 volume_db = 1.0
 
-[node name="grito_monstro" type="AudioStreamPlayer" parent="sons" unique_id=1094475884]
+[node name="grito_monstro" type="AudioStreamPlayer" parent="sons" unique_id=492525077]
 stream = ExtResource("34_vyafg")
 
-[node name="ambiente" type="AudioStreamPlayer" parent="sons" unique_id=831317199]
+[node name="ambiente" type="AudioStreamPlayer" parent="sons" unique_id=1415338359]
 stream = ExtResource("35_2td5d")
 volume_db = -10.0
 
-[node name="gemido" type="AudioStreamPlayer" parent="sons" unique_id=1194743699]
+[node name="gemido" type="AudioStreamPlayer" parent="sons" unique_id=1857916417]
 stream = ExtResource("36_yge4t")
 volume_db = -6.0
 
-[node name="pescoco" type="AudioStreamPlayer" parent="sons" unique_id=296771457]
+[node name="pescoco" type="AudioStreamPlayer" parent="sons" unique_id=183524967]
 stream = ExtResource("37_0h3f6")
-volume_db = 6.0
 
-[node name="arma" type="AudioStreamPlayer" parent="sons" unique_id=575635960]
+[node name="arma" type="AudioStreamPlayer" parent="sons" unique_id=297395698]
 stream = ExtResource("38_gfojn")
 
-[node name="lente" type="CanvasLayer" parent="." unique_id=12902033]
+[node name="lente" type="CanvasLayer" parent="." unique_id=1233696967]
 layer = 80
 
-[node name="tela" type="ColorRect" parent="lente" unique_id=1219689877]
+[node name="tela" type="ColorRect" parent="lente" unique_id=1853835952]
 material = SubResource("ShaderMaterial_12tpy")
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
 
-[node name="preto" type="ColorRect" parent="lente" unique_id=1379668689]
+[node name="preto" type="ColorRect" parent="lente" unique_id=1181988971]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
 color = Color(0, 0, 0, 0)
 
-[node name="legenda" type="Label" parent="lente" unique_id=2031349625]
+[node name="legenda" type="Label" parent="lente" unique_id=744576637]
 modulate = Color(1, 1, 1, 0)
 anchors_preset = 12
 anchor_top = 1.0
@@ -9206,7 +9205,7 @@ theme_override_fonts/font = ExtResource("40_8c54c")
 theme_override_font_sizes/font_size = 34
 horizontal_alignment = 1
 
-[node name="diretor" type="AnimationPlayer" parent="." unique_id=1316632270]
+[node name="diretor" type="AnimationPlayer" parent="." unique_id=1794751025]
 libraries/ = SubResource("AnimationLibrary_rla82")
 
 [editable path="atores/Maycow"]

@@ -98,11 +98,13 @@ const CENA_PROJETIL := "res://scenes/enemies/dona_nice/gosma_projetil.tscn"
 @export var enemy_name: String = "IGR_BOSS_NOME_2"
 ## Lidos pelo agarrao (player_grab.gd, ramo "cabeca"): quanto dura, em quanto
 ## tempo a mao dela o ergue ate' o rosto, quando cada cabecada bate e quanto
-## cada uma tira.
+## cada uma tira. As cabecadas ficam a 1,5 s uma da outra: o `cuspir` dura
+## 1,4 s, e pedir o mesmo clipe com ele ainda tocando nao recomeca nada (a
+## batida saia sem a cabeca vir pra frente).
 var tipo_agarrao := "cabeca"
-var duracao_do_agarrao := 5.4
+var duracao_do_agarrao := 6.0
 var subida_do_agarrao := 1.1
-var cabecadas_do_agarrao := [2.0, 3.15, 4.3]
+var cabecadas_do_agarrao := [2.0, 3.5, 5.0]
 var dano_da_cabecada := 5
 var dead := false
 var max_health := 300
