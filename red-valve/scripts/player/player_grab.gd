@@ -365,13 +365,13 @@ func _mordida_no_pescoco(fp: Node3D, indice: int) -> void:
 
 ## O inimigo GIGANTE pega o Maycow pela cabeca e o ergue ate' o rosto (a Dona
 ## Nice da fase 2, no tapa que acerta): a camera sobe do chao ate' a frente do
-## rosto dela e vai sendo puxada mais perto, as maos dele empurrando, e ela
-## cospe na cara dele — cada cuspe suja a lente e tira um pouco de vida. No
-## fim ela solta e ele cai de volta no chao. Quem diz onde ficam os olhos
-## dele, onde esta' o rosto dela, quanto dura, quando cada cuspe bate e quanto
-## tira e' o proprio inimigo (`olhos_no_agarrao`, `cabeca_do_agarrao`,
-## `duracao_do_agarrao`, `subida_do_agarrao`, `cuspes_do_agarrao`,
-## `dano_do_cuspe_no_rosto`).
+## rosto dela e vai sendo puxada mais perto, as maos dele empurrando, e ela da'
+## cabecadas nele — cada uma bate na lente (tranco, clarao, borrao, sangue) e
+## tira um pouco de vida. No fim ela solta e ele cai de volta no chao. Quem
+## diz onde ficam os olhos dele, onde esta' o rosto dela, quanto dura, quando
+## cada cabecada bate e quanto tira e' o proprio inimigo (`olhos_no_agarrao`,
+## `cabeca_do_agarrao`, `duracao_do_agarrao`, `subida_do_agarrao`,
+## `cabecadas_do_agarrao`, `dano_da_cabecada`).
 func _ramo_cabeca(fp: Node3D, inimigo: Node3D) -> void:
 	_congelar_inimigo(inimigo, true)
 	fp.tocar(&"defesa")
@@ -380,8 +380,8 @@ func _ramo_cabeca(fp: Node3D, inimigo: Node3D) -> void:
 	GlobalUtils.vibrate_controller(null, 0.9, 0.9, 0.4)
 	var duracao: float = float(inimigo.get("duracao_do_agarrao"))
 	var subida: float = float(inimigo.get("subida_do_agarrao"))
-	var cuspes: Array = inimigo.get("cuspes_do_agarrao")
-	var dano: int = int(inimigo.get("dano_do_cuspe_no_rosto"))
+	var cabecadas: Array = inimigo.get("cabecadas_do_agarrao")
+	var dano: int = int(inimigo.get("dano_da_cabecada"))
 	var no_chao := _olho()
 	_atacar_inimigo(inimigo)
 
@@ -402,8 +402,8 @@ func _ramo_cabeca(fp: Node3D, inimigo: Node3D) -> void:
 			no_alto = true
 			fp.tocar(&"agarrado")
 			fp.tremer(0.016, 0.6)
-		if proximo < cuspes.size() and t >= float(cuspes[proximo]):
-			_cuspe_no_rosto(fp, proximo, dano)
+		if proximo < cabecadas.size() and t >= float(cabecadas[proximo]):
+			_cabecada(fp, proximo, dano)
 			proximo += 1
 			if player.current_health <= 0:
 				return
@@ -423,17 +423,24 @@ func _ramo_cabeca(fp: Node3D, inimigo: Node3D) -> void:
 	await _esperar(0.5)
 
 
-## Cada cuspe na cara: tranco, um clarao da cor da gosma e o dano pequeno.
-## As maos dele tomam o tranco no primeiro e voltam a empurrar no segundo.
-func _cuspe_no_rosto(fp: Node3D, indice: int, dano: int) -> void:
+## Cada cabecada: o tranco forte, um clarao branco de pancada, o borrao de
+## quem levou na testa, sangue nas bordas (mais a cada uma) e o dano
+## pequeno. As maos dele tomam o tranco na primeira e voltam a empurrar na
+## segunda; a primeira ainda puxa um instante de camera lenta.
+func _cabecada(fp: Node3D, indice: int, dano: int) -> void:
 	if indice == 0:
 		fp.tocar(&"mordida")
 	elif indice == 1:
 		fp.tocar(&"agarrado", 1.0, 0.4)
-	fp.tremer(0.045, 0.35)
-	fp.piscar(Color(0.42, 0.4, 0.12), 0.35, 0.02, 0.35)
-	GlobalUtils.vibrate_controller(null, 0.8, 0.8, 0.3)
+	fp.tremer(0.07, 0.4)
+	fp.piscar(Color(1.0, 0.86, 0.8), 0.32, 0.01, 0.22)
+	fp.borrar(0.3)
+	fp.borrar(0.0, 0.3)
+	fp.sangrar(0.2 + 0.08 * indice, 1.0)
+	GlobalUtils.vibrate_controller(null, 1.0, 1.0, 0.35)
 	_tirar_vida(dano)
+	if indice == 0 and player.current_health > 0:
+		_camera_lenta_curta(0.35, 0.18)
 
 
 # ----------------------------------------------------------------- arremesso

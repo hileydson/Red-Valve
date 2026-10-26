@@ -468,6 +468,24 @@ def rajada():
     gravar("rajada_bancos.ogg", fade(x, 0.05, 1.0))
 
 
+def cabecada():
+    """A cabecada da monstro gigante no Maycow (o agarrao da fase 2): o baque
+    surdo de cranio contra cranio, um estalo de osso por cima e um grunhido
+    curto dela. Seco e comprimido — e' na cara dele. Semente propria."""
+    baque = normal(ler("sfx_breaking_and_falling/bfh1_hit_03.ogg"))
+    batida = normal(ler("sfx_breaking_and_falling/bfh1_wood_hit_02.ogg"))
+    osso = normal(ler("deep_breaks/Deep Break 5.wav"))
+    grunhido = normal(ler("80-CC0-creature-SFX_0/monster_04.ogg"))
+    x = silencio(1.4)
+    por(x, tom(baque, 0.62), 0.0, 1.0)
+    por(x, tom(batida, 0.5), 0.0, 0.8)
+    por(x, tom(osso, 0.85), 0.012, 0.7)
+    por(x, fade(tom(grunhido[: int(0.5 * SR)], 0.7), 0.01, 0.2), 0.03, 0.45)
+    x = reverb(x, 1.1, 0.18)
+    x = np.tanh(normal(x) * 2.6).astype(np.float32)
+    gravar("cabecada.ogg", fade(x, 0.001, 0.4))
+
+
 def ambiente():
     x = normal(ler("ambient_horror_0.ogg"))
     gravar("ambiente_ritual.ogg", fade(x, 0.5, 0.5))
@@ -506,4 +524,5 @@ if __name__ == "__main__":
     pescoco()
     teleporte()
     rajada()
+    cabecada()
     creditos()
