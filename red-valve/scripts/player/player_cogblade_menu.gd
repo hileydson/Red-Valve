@@ -7,8 +7,9 @@ extends Node
 #     plasmids do BioShock) com os poderes disponíveis. O jogador aponta o
 #     analógico ESQUERDO (ou o mouse) para a opção desejada e, ao SOLTAR, o
 #     poder apontado é executado.
-#   - TOQUE RÁPIDO: golpe melee — a cogblade passa uma vez de um lado para o
-#     outro, alternando o lado a cada golpe.
+#   - TOQUE RÁPIDO: empunha a cogblade (tira a arma de fogo da mão). Só isso:
+#     o golpe continua no gatilho (`ui_shoot`), e com ela já na mão o toque
+#     não faz nada.
 
 var player: CharacterBody3D
 
@@ -103,13 +104,19 @@ func _process(_delta: float) -> void:
 			# Só executa se o analógico/mouse estiver apontando para uma opção
 			_close_menu(true)
 		elif _pressing:
-			# Toque rápido: melee SÓ se a cogblade estiver empunhada como arma.
-			# Sem estar equipada como arma, o toque não faz nada — o melee agora
-			# depende de estar com a cogblade na mão (botão de tiro faz o melee,
-			# e o C também, mas só empunhando).
-			if SaveManager.cogblade_como_arma():
-				player.cogblade_melee_slash()
+			_empunhar_cogblade()
 		_pressing = false
+
+# Toque rápido: a cogblade volta pra mão. É o único jeito de empunhá-la — no
+# menu ela não se equipa (ver `item_db` no SaveManager) — e o mesmo caminho do
+# atalho do direcional: equipa, grava e redesenha as mãos.
+func _empunhar_cogblade() -> void:
+	if not SaveManager.tem_item("cogblade") or SaveManager.cogblade_como_arma():
+		return
+	SaveManager.equip_item("cogblade")
+	SaveManager.save_game()
+	player.update_ammo_ui()
+	player.update_equipment_visuals()
 
 # =========================================================================
 # CONDIÇÕES

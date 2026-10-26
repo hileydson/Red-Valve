@@ -499,7 +499,7 @@ func _update_controls_text():
 		txt += "- Mirar: " + ("LT" if pad else "Botão Direito do Mouse") + "\n"
 		txt += "- Atirar: " + ("RT" if pad else "Botão Esquerdo do Mouse") + "\n"
 		txt += "- Recarregar: " + ("X" if pad else "tecla R") + "\n"
-		txt += "- Golpe da Cogblade: " + ("aperte LB" if pad else "tecla C") + "\n"
+		txt += "- Empunhar a Cogblade: " + ("aperte LB" if pad else "tecla C") + "\n"
 		txt += "- Poderes da Cogblade: " + ("SEGURE LB e escolha com o Analógico Esquerdo" if pad else "SEGURE a tecla C e escolha com o Mouse") + "\n"
 	else:
 		txt += "[b]Normal Maycow[/b]\n"
@@ -518,7 +518,7 @@ func _update_controls_text():
 		txt += "- Aim: " + ("LT" if pad else "Right Mouse Button") + "\n"
 		txt += "- Shoot: " + ("RT" if pad else "Left Mouse Button") + "\n"
 		txt += "- Reload: " + ("X" if pad else "R key") + "\n"
-		txt += "- Cogblade Slash: " + ("tap LB" if pad else "C key") + "\n"
+		txt += "- Wield the Cogblade: " + ("tap LB" if pad else "C key") + "\n"
 		txt += "- Cogblade Powers: " + ("HOLD LB and pick with the Left Stick" if pad else "HOLD the C key and pick with the Mouse") + "\n"
 	controls_text.text = txt
 

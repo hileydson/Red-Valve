@@ -156,7 +156,10 @@ var item_db = {
 		"desc_key": "ITEM_COGBLADE_DESC",
 		"icon_path": "res://assets/images/menu/itens/red_valve/cogblade.png",
 		"stackable": false,
-		"type": "equippable"
+		"type": "equippable",
+		# Empunhar e' o toque no `ui_cogblade_power` (LB / C), nao o menu: la'
+		# ela aparece sempre equipada e sem "Equipar" nem "Atalho".
+		"equipavel": false
 	},
 	"pistol_ammo": {
 		"name_key": "ITEM_AMMO_NAME",
@@ -884,14 +887,16 @@ func unequip_item(item_id: String) -> void:
 ## Houve um tempo em que o amuleto se equipava no menu e disputava a mira com as
 ## armas. Agora ele tem botao proprio e vale sozinho na cidade, entao o id dele
 ## na lista de equipados — e um atalho do direcional apontando pra ele — so'
-## sobram de saves antigos e nao querem dizer mais nada.
+## sobram de saves antigos e nao querem dizer mais nada. A cogblade tambem
+## perdeu o atalho: ela se empunha pelo proprio botao (`ui_cogblade_power`).
 func garantir_equipamento_do_normal() -> void:
 	equipped_items.erase("amuleto")
 	# `atalhos.erase` direto, e nao `limpar_atalho`: aquele grava o jogo, e isto
 	# roda no meio do `load_game`.
-	var direcao := atalho_do_item("amuleto")
-	if direcao != "":
-		atalhos.erase(direcao)
+	for item in ["amuleto", "cogblade"]:
+		var direcao := atalho_do_item(item)
+		if direcao != "":
+			atalhos.erase(direcao)
 
 
 # ==============================================================================

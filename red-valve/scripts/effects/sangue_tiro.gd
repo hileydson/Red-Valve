@@ -33,6 +33,11 @@ const SUMIR_MANCHA := 3.0
 static var _rec := {}
 static var _manchas: Array = []
 
+## Acelera o jorro inteiro (particulas e as golfadas atrasadas). A cinematica
+## da ultimate deixa o mundo em camera lenta e sobe isto pra compensar; tem de
+## vir antes do primeiro quadro, junto com a posicao.
+var speed_scale: float = 1.0
+
 
 func _ready() -> void:
 	_disparar.call_deferred()
@@ -49,10 +54,11 @@ func _disparar() -> void:
 	_camada("pedacos", 8, 1.4, 1.0, Vector3(0, 0.45, 0.6), 75.0, 1.5, 4.0, 0.6, 1.8, "pedaco")
 	_camada("pingos", 10, 1.2, 0.0, Vector3(0, -1, 0), 10.0, 0.0, 0.3, 0.8, 1.4, "gota")
 	var arvore := get_tree()
+	var ritmo := maxf(speed_scale, 0.01)
 	for atraso in [0.16, 0.42]:
-		arvore.create_timer(atraso, false).timeout.connect(_pulso)
+		arvore.create_timer(atraso / ritmo, false).timeout.connect(_pulso)
 	_manchar()
-	arvore.create_timer(2.4, false).timeout.connect(queue_free)
+	arvore.create_timer(2.4 / ritmo, false).timeout.connect(queue_free)
 
 
 func _pulso() -> void:
@@ -72,6 +78,7 @@ func _camada(nome: String, quantas: int, vida: float, explosao: float, dir: Vect
 	p.explosiveness = explosao
 	p.randomness = 0.4
 	p.local_coords = false
+	p.speed_scale = speed_scale
 	p.visibility_aabb = AABB(Vector3(-4, -4, -4), Vector3(8, 8, 8))
 	var m := ParticleProcessMaterial.new()
 	m.direction = dir.normalized()
@@ -136,7 +143,7 @@ func _manchar() -> void:
 		var atraso: float = t[3]
 		if atraso < 0.0:
 			atraso = 0.05 + de.distance_to(toque["position"]) / 7.0
-		_mancha(toque["position"], toque["normal"], t[2], atraso)
+		_mancha(toque["position"], toque["normal"], t[2], atraso / maxf(speed_scale, 0.01))
 
 
 func _mancha(onde: Vector3, normal: Vector3, tam: float, atraso: float) -> void:

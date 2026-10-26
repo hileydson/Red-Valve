@@ -450,7 +450,7 @@ func _render_inventory() -> void:
 			if db_info["stackable"] and item_data["amount"] > 1:
 				slot.get_node("Qtd").text = str(int(item_data["amount"]))
 				
-			if SaveManager.is_equipped(item_data["id"]):
+			if _aparece_equipado(item_data["id"]):
 				slot.get_node("Equip").visible = true
 
 			var direcao_atalho: String = SaveManager.atalho_do_item(item_data["id"])
@@ -473,6 +473,12 @@ func _render_inventory() -> void:
 		item_icon_preview.texture = null
 		current_item_selected = null
 
+## A cogblade aparece sempre equipada: ela e' do parasita e nunca sai dele —
+## com a arma de fogo na mao ela so' esta guardada, e um toque no LB / C a traz
+## de volta. O menu nao a equipa nem desequipa.
+func _aparece_equipado(item_id: String) -> bool:
+	return item_id == "cogblade" or SaveManager.is_equipped(item_id)
+
 func _render_action_menu() -> void:
 	if not current_item_selected:
 		close_action_menu()
@@ -492,7 +498,7 @@ func _render_action_menu() -> void:
 	var equipavel: bool = SaveManager.pode_equipar(item_id)
 
 	var opts = [tr("ACTION_USE"), tr("ACTION_EQUIP"), tr("ACTION_INSPECT"), tr("ACTION_SHORTCUT")]
-	if SaveManager.is_equipped(item_id):
+	if _aparece_equipado(item_id):
 		opts[1] = tr("ACTION_UNEQUIP")
 	# O atalho já amarrado aparece no próprio nome da opção: sem isso o jogador
 	# tinha de entrar no submenu só para descobrir onde tinha posto o item.
