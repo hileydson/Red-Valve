@@ -48,8 +48,8 @@ func _gerar() -> void:
 	_cogblade_no_rig = _transform_da_cogblade()
 	_corte("ataque_1", -8.0, true)
 	_corte("ataque_2", 8.0, false)
-	_corte("ataque_3", 35.0, true)
-	_corte("ataque_4", -35.0, false)
+	_corte("ataque_3", 25.0, true)
+	_corte("ataque_4", -25.0, false)
 	print("CLIPES_COGBLADE ", ResourceSaver.save(biblioteca, SAIDA))
 	quit()
 
@@ -86,16 +86,26 @@ var _cogblade_no_rig := Transform3D.IDENTITY
 ## lamina e' o Z: o plano da lamina e' o YZ. No corte esse plano contem o
 ## movimento — o fio vai na frente, e nao a face chapada.
 const LADO_DO_FIO := -1.0
+##
+## O ANTEBRACO DA MAO DE PRIMEIRA PESSOA E' SO' UM PEDACO (32 cm), e ele segue
+## o cabo, pro lado do pomo. Se as maos sobem ao meio da tela, ou se a lamina
+## gira ate' apontar pro lado, o fim do braco aparece solto no ar. Por isso as
+## maos correm BAIXO e de um lado pro outro, e a lamina gira pouco: o cabo
+## fica sempre apontando pro corpo e o braco entra pela borda de baixo. Quem
+## varre a tela e' o deslocamento das maos, nao o giro.
 ## O meio do corte (onde as maos passam), quanto elas correm pro lado e quanto
 ## avancam no meio, em metros no espaco da camera.
-const CORTE_CENTRO := Vector3(-0.05, -0.30, -0.60)
-const CORTE_LADO := 0.32
+const CORTE_CENTRO := Vector3(0.01, -0.57, -0.60)
+const CORTE_LADO := 0.48
 const CORTE_AVANCO := 0.08
+## Quanto as maos descem a mais do lado esquerdo: ali a direita cruza o corpo e
+## o antebraco dela vem de atravessado.
+const CORTE_QUEDA_ESQUERDA := 0.16
 ## O plano do corte sobe da frente pra cima nesta proporcao (1 = 45 graus):
-## a lamina cruza a tela por cima das maos, grande, de um lado pro outro.
-const CORTE_ERGUE := 0.9
+## a lamina fica de pe' sobre as maos, cruzando a tela de um lado pro outro.
+const CORTE_ERGUE := 0.7
 ## O arco do corte (graus a partir da frente) e o recuo antes dele.
-const CORTE_ARCO := 75.0
+const CORTE_ARCO := 50.0
 const CORTE_ARMAR := 18.0
 
 func _transform_da_cogblade() -> Transform3D:
@@ -118,7 +128,7 @@ func _corte(nome: String, inclinacao: float, pra_esquerda: bool) -> void:
 	var sentido := -1.0 if pra_esquerda else 1.0
 	var a0 := -sentido * CORTE_ARCO
 	# armar (alem do comeco), o corte em cinco quadros, o fim e o assentar
-	var angulos := [a0 - sentido * CORTE_ARMAR, a0, a0 + sentido * CORTE_ARCO * 0.5, 0.0,
+	var angulos := [a0 - sentido * CORTE_ARMAR, a0, a0 * 0.5, 0.0,
 		-a0 * 0.5, -a0, -a0 - sentido * 12.0]
 	var tempos := [0.0, 0.20, 0.34, 0.41, 0.48, 0.56, 0.64, 0.80, 1.05]
 	var poses: Array[Transform3D] = [_cogblade_no_rig]
@@ -129,7 +139,8 @@ func _corte(nome: String, inclinacao: float, pra_esquerda: bool) -> void:
 		var anda := (-meio * sin(a) + lado * cos(a)) * sentido
 		var fio := (anda * LADO_DO_FIO - dir * dir.dot(anda * LADO_DO_FIO)).normalized()
 		var x := dir.cross(fio).normalized()
-		var mao := CORTE_CENTRO + lado * (CORTE_LADO * sin(a)) + frente * (CORTE_AVANCO * cos(a))
+		var mao := CORTE_CENTRO + lado * (CORTE_LADO * sin(a)) + frente * (CORTE_AVANCO * cos(a)) \
+			- cima * (CORTE_QUEDA_ESQUERDA * maxf(0.0, -sin(a)))
 		# armando, as maos recuam e sobem um pouco
 		if k == 0:
 			mao += -frente * 0.06 + cima * 0.04

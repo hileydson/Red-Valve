@@ -607,15 +607,17 @@ def interior():
     c.pegavel('municao_quarto', 'pistol_ammo', 10, (-3.22, 0.62, 4.55), -0.4, 'PROMPT_TAKE_AMMO',
               'PICKUP_AMMO', 'PICKUP_AMMO_AGAIN', cartucho, _giro((0, 0.036, 0)))
 
-    # A PISTOLA, no altar do comodo do ritual (era no balcao do hospital), com
-    # uma caixa de bala do lado. Deitada de lado, como estava no balcao: o .glb
-    # tem 1,92 unidade de cano, 0,115 devolve os 22 cm, e 0,021 e' a meia
-    # espessura que tira a arma de dentro do tampo. As velas ficam atras.
+    # A PISTOLA, na laje do meio do comodo do ritual (era no balcao do
+    # hospital), com uma caixa de bala do lado: entre a correia do meio e a
+    # dos pes, onde o tampo (0,88) esta' livre. Deitada de lado, como estava no
+    # balcao: o .glb tem 1,92 unidade de cano, 0,115 devolve os 22 cm, e 0,021
+    # e' a meia espessura que tira a arma de dentro do tampo.
+    # (Os ids continuam `_altar`: um save que ja' pegou nao ve' de novo.)
     pistola = 'res://assets/3d_model/player/the_negotiator_V1/the_negotiator_v1.glb'
     deitada = 'Transform3D(0.115, 0, 0, 0, 0, 0.115, 0, -0.115, 0, 0, 0.021, 0)'
-    c.pegavel('pistola_altar', 'pistol', 1, (cx - 0.03, 0.83, 4.38), 0.15, 'PROMPT_TAKE_PISTOL',
+    c.pegavel('pistola_altar', 'pistol', 1, (cx + 0.12, 0.88, cz + 0.31), 1.4, 'PROMPT_TAKE_PISTOL',
               'PICKUP_PISTOL', '', pistola, deitada)
-    c.pegavel('municao_altar', 'pistol_ammo', 16, (cx + 0.40, 0.83, 4.37), 0.0, 'PROMPT_TAKE_AMMO',
+    c.pegavel('municao_altar', 'pistol_ammo', 16, (cx - 0.2, 0.88, cz + 0.33), 0.3, 'PROMPT_TAKE_AMMO',
               'PICKUP_AMMO', 'PICKUP_AMMO_AGAIN', cartucho, _giro((0, 0.036, 0)))
 
     # A chave reserva da igreja, no quarto dela: em cima da comoda, debaixo do
@@ -624,8 +626,9 @@ def interior():
               'PICKUP_CHAVE_IGREJA', 'PICKUP_AMMO_AGAIN',
               'res://assets/3d_model/objects/chave_igreja/chave_igreja.glb', _giro((0, 0, 0), 0.0, 1.4))
 
-    # A seringa de adrenalina, entre os frascos da mesa do ritual.
-    c.pegavel('seringa_ritual', 'seringa_adrenalina', 1, (4.12, 0.53, 3.22), 0.3, 'PROMPT_TAKE_SYRINGE',
+    # A seringa de adrenalina, na mesma laje, entre a correia da cabeca e a do
+    # meio (do outro lado do bilhete).
+    c.pegavel('seringa_ritual', 'seringa_adrenalina', 1, (cx + 0.16, 0.88, cz - 0.3), 0.3, 'PROMPT_TAKE_SYRINGE',
               'PICKUP_SERINGA', 'PICKUP_AMMO_AGAIN',
               'res://assets/3d_model/objects/seringa_adrenalina/seringa_adrenalina.glb', _giro((0, 0, 0), 0.0, 1.3))
 

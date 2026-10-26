@@ -934,6 +934,9 @@ func _atualizar_mira_lanterna(delta: float) -> void:
 
 ## FOV da câmera de terceira pessoa enquanto mira com a arma.
 const FOV_MIRA_ARMA := 55.0
+## O FOV da 1a pessoa durante o golpe da cogblade (o normal e' 75). Ver
+## `tools/maos_fp/gerar_cogblade_clipes.gd`: os cortes foram medidos com ele.
+const FOV_GOLPE_COGBLADE := 68.0
 
 
 ## Alcance do raio que procura o que está no centro da tela, em metros.
@@ -1789,7 +1792,13 @@ func _physics_process(delta: float) -> void:
 			var alinhamento = direction_check.dot(visao_frente) if direction_check else 0.0
 			
 			var target_run_fov = 75.0
-			if is_aiming:
+			var golpe_fp := cogblade_melee_active and is_first_person
+			if golpe_fp:
+				# O golpe da cogblade fecha um pouco: alem do peso do corte, e'
+				# o que deixa o fim do antebraco (a mao de 1a pessoa e' so' um
+				# pedaco de braco) fora da borda nas pontas do corte.
+				target_run_fov = FOV_GOLPE_COGBLADE
+			elif is_aiming:
 				target_run_fov = 50.0
 			elif direction_check and alinhamento < -0.2:
 				target_run_fov = 73.0 if is_first_person else 70.0
@@ -1800,7 +1809,9 @@ func _physics_process(delta: float) -> void:
 				target_run_fov -= 12.0
 				
 			var cur_fov_speed = 5.0
-			if is_aiming:
+			if golpe_fp:
+				cur_fov_speed = 14.0
+			elif is_aiming:
 				cur_fov_speed = 8.0
 			elif not is_running and not is_first_person:
 				cur_fov_speed = 0.8
