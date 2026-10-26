@@ -951,7 +951,8 @@ func _processar_mira_de_arma() -> void:
 	# Quatro armas passam por aqui, e a escolha é uma só: qual está equipada.
 	# Tudo o que muda entre elas está nestas linhas — a mira que acende, o
 	# componente que levanta a arma, e o par atirar/recarregar. A mira de
-	# chumbo é só da caçadeira; a MK3 e a Granola usam a da pistola (um ponto).
+	# chumbo é só da caçadeira; a MK3 usa a da pistola, e a Granola tem a dela
+	# (`player_mira_granola.gd`, que trava no inimigo e apaga esta).
 	var arma := _arma_de_fogo_equipada()
 	var com_shotgun: bool = arma == "shotgun"
 	var arma_hold := _arma_na_mao()
@@ -1297,6 +1298,11 @@ func _ready():
 	var aim_assist_component = load("res://scripts/player/player_aim_assist.gd").new()
 	aim_assist_component.name = "PlayerAimAssist"
 	add_child(aim_assist_component)
+
+	# Instancia Componente da Mira da Granola (trava no inimigo do centro)
+	var mira_granola_component = load("res://scripts/player/player_mira_granola.gd").new()
+	mira_granola_component.name = "PlayerMiraGranola"
+	add_child(mira_granola_component)
 
 	# Instancia Componente do Menu Radial da Cogblade (segurar C / L1)
 	var cogblade_menu_component = load("res://scripts/player/player_cogblade_menu.gd").new()

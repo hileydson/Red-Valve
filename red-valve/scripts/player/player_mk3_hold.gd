@@ -39,7 +39,7 @@ const CABO_MK3 := Vector3(1.03, -0.02, 0.0)
 const BOCA_MK3 := Vector3(-0.93, 0.47, 0.0)
 ## O topo do pente no .glb (a origem do `pente_mk3.tscn`) e o ponto, perto da
 ## base, em que a mao o segura.
-const TOPO_DO_PENTE := Vector3(-0.358, 0.05, 0.0)
+const TOPO_DO_PENTE := Vector3(-0.329, 0.25, 0.0)
 const PEGA_NO_PENTE := Vector3(-0.50, -0.50, 0.0)
 ## Da palma ao pulso, ao longo dos dedos (cm): onde o pente fica na mao.
 const PALMA := 7.5
@@ -129,9 +129,9 @@ func _jogar_pente() -> void:
 	corpo.add_child(malha)
 	var forma := CollisionShape3D.new()
 	var caixa := BoxShape3D.new()
-	caixa.size = Vector3(0.41, 0.67, 0.14) * escala_mundo
+	caixa.size = Vector3(0.40, 0.86, 0.14) * escala_mundo
 	forma.shape = caixa
-	forma.position = Vector3(-0.1, -0.33, 0.0) * escala_mundo
+	forma.position = Vector3(-0.03, -0.43, 0.0) * escala_mundo
 	corpo.add_child(forma)
 	cena.add_child(corpo)
 	corpo.global_transform = Transform3D(mundo.basis.orthonormalized(), mundo.origin)

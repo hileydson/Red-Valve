@@ -30,6 +30,8 @@ const PECAS := [
 	"res://assets/sounds/player/guns/mk3/mk3_ferrolho.ogg",
 	"res://assets/sounds/player/guns/granola/granola_disparo.ogg",
 	"res://assets/sounds/player/guns/granola/granola_foguete_entra.ogg",
+	"res://assets/sounds/player/guns/granola/granola_mira_bip.ogg",
+	"res://assets/sounds/player/guns/granola/granola_mira_trava.ogg",
 	"res://assets/sounds/player/guns/granola/granola_trava.ogg",
 ]
 
@@ -42,6 +44,7 @@ const SCRIPTS := [
 	"res://scripts/player/player_hud.gd",
 	"res://scripts/player/maos_fp_armas.gd",
 	"res://scripts/effects/foguete_granola.gd",
+	"res://scripts/player/player_mira_granola.gd",
 	"res://scripts/player/player.gd",
 	"res://scripts/ui/config_menu.gd",
 ]
@@ -73,6 +76,7 @@ func _ready() -> void:
 	await _o_ciclo_da_mk3()
 	await _o_ciclo_da_granola()
 	await _a_explosao_machuca()
+	await _a_mira_trava_e_persegue()
 	print("")
 	if _falhas == 0:
 		print("== tudo certo ==")
@@ -262,3 +266,83 @@ func _a_explosao_machuca() -> void:
 	_ok(longe.levou == 0, "quem esta' a 12 m nao leva nada")
 	for a in [no_alvo, perto, longe]:
 		a.queue_free()
+
+
+## Inimigo de mentira com corpo (a linha de visada e o foguete batem nele).
+class AlvoComCorpo extends StaticBody3D:
+	var levou := 0
+	func _init() -> void:
+		collision_layer = 4
+		var forma := CollisionShape3D.new()
+		var caixa := BoxShape3D.new()
+		caixa.size = Vector3(0.8, 1.8, 0.8)
+		forma.shape = caixa
+		forma.position = Vector3(0, 0.9, 0)
+		add_child(forma)
+	func take_damage(n: int) -> void:
+		levou += n
+
+
+func _a_mira_trava_e_persegue() -> void:
+	print("-- a mira da Granola (trava, segue, solta, foguete persegue) --")
+	var p: Node = await _novo_player("granola")
+	var mira: Node = p.get_node_or_null("PlayerMiraGranola")
+	_ok(mira != null, "o componente da mira existe")
+	if mira == null:
+		p.queue_free()
+		return
+	var cam := Camera3D.new()
+	add_child(cam)
+	cam.global_position = Vector3(0, 1.6, 30)
+	cam.make_current()
+	var alvo := AlvoComCorpo.new()
+	alvo.add_to_group("enemies")
+	add_child(alvo)
+	alvo.global_position = Vector3(0.3, 0.7, 15)
+	p.is_aiming = true
+	await get_tree().process_frame
+	await get_tree().process_frame
+	_ok(mira.ativa, "com a Granola mirando a mira vermelha aparece")
+	_ok(not p.gun_crosshair.visible, "a mira da pistola some")
+	_ok(mira.alvo_travado() == alvo, "o inimigo no meio da tela fica marcado")
+	alvo.global_position = Vector3(2.0, 0.7, 15)
+	await get_tree().process_frame
+	_ok(mira.alvo_travado() == alvo, "andou um pouco de lado: a mira segue ele")
+	alvo.global_position = Vector3(9.0, 0.7, 15)
+	await get_tree().process_frame
+	_ok(mira.alvo_travado() == null, "saiu do campo: a mira solta")
+	alvo.global_position = Vector3(2.0, 0.7, 15)
+	await get_tree().process_frame
+	_ok(mira.alvo_travado() == null, "entrar pela borda nao marca (tem que passar pelo meio)")
+	alvo.global_position = Vector3(0.0, 0.7, 15)
+	await get_tree().process_frame
+	_ok(mira.alvo_travado() == alvo, "passou pelo meio: marcou de novo")
+
+	# o foguete: sai reto pra frente, o alvo foge de lado, e ainda assim acerta
+	var f = load("res://scripts/effects/foguete_granola.gd").new()
+	f.dono = p
+	f.alvo = alvo
+	f.altura_no_alvo = 0.9
+	add_child(f)
+	f.global_position = cam.global_position
+	f.lancar(Vector3(0, 0, -1))
+	alvo.global_position = Vector3(3.5, 0.7, 15)
+	await get_tree().create_timer(1.2).timeout
+	_ok(alvo.levou >= f.dano_direto, "o foguete fez a curva e acertou o alvo marcado (%d)" % alvo.levou)
+
+	var reto = load("res://scripts/effects/foguete_granola.gd").new()
+	var outro := AlvoComCorpo.new()
+	outro.add_to_group("enemies")
+	add_child(outro)
+	outro.global_position = Vector3(3.5, 0.7, 0)
+	reto.dono = p
+	p.global_position = Vector3(-20, 0, 0)
+	add_child(reto)
+	reto.global_position = cam.global_position
+	reto.lancar(Vector3(0, 0, -1))
+	await get_tree().create_timer(1.2).timeout
+	_ok(outro.levou == 0, "sem alvo marcado o foguete vai reto (nao persegue ninguem)")
+	p.is_aiming = false
+	p.queue_free()
+	for n in [alvo, outro, cam]:
+		n.queue_free()

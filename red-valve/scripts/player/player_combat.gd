@@ -1451,8 +1451,13 @@ func atirar_granola() -> void:
 		_fumaca_do_cano(hold)
 		if hold.has_method("atirar"):
 			hold.atirar()
-	# vai pro que esta' no centro da tela, saindo da boca do cano
+	# vai pro que esta' no centro da tela, saindo da boca do cano — ou, com um
+	# inimigo marcado pela mira da Granola, atras dele
+	var mira = player.get_node_or_null("PlayerMiraGranola")
+	var travado: Node3D = mira.alvo_travado() if mira else null
 	var alvo := _ponto_no_centro_da_tela(cam)
+	if travado:
+		alvo = mira.ponto_no_alvo(travado)
 	var direcao := alvo - origem
 	if direcao.length_squared() < 0.04 and cam:
 		direcao = -cam.global_transform.basis.z
@@ -1460,6 +1465,9 @@ func atirar_granola() -> void:
 	foguete.dono = player
 	foguete.dano_direto = player.damage_granola_direto
 	foguete.dano_area = player.damage_granola_area
+	if travado:
+		foguete.alvo = travado
+		foguete.altura_no_alvo = alvo.y - travado.global_position.y
 	get_tree().current_scene.add_child(foguete)
 	foguete.global_position = origem
 	foguete.lancar(direcao)

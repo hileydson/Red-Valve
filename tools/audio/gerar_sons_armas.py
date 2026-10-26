@@ -104,6 +104,20 @@ def granola():
     gravar("granola", "granola_trava.ogg", g.fade(g.tom(trava, 0.85), 0.0, 0.12))
 
 
+def mira():
+    # A mira da Granola: um bipe curto e seco a cada piscada enquanto o alvo
+    # esta' marcado, e dois tons subindo no instante em que ela trava nele.
+    def bipe(freq, seg):
+        t = np.arange(int(seg * SR)) / SR
+        onda = np.sin(2 * np.pi * freq * t) + 0.25 * np.sign(np.sin(2 * np.pi * freq * t))
+        return g.fade(g.normal(onda).astype(np.float32) * 0.8, 0.003, 0.02)
+    gravar("granola", "granola_mira_bip.ogg", bipe(1900.0, 0.06))
+    x = g.silencio(0.22)
+    g.por(x, bipe(1500.0, 0.07), 0.0, 1.0)
+    g.por(x, bipe(2250.0, 0.09), 0.1, 1.0)
+    gravar("granola", "granola_mira_trava.ogg", x)
+
+
 def creditos():
     texto = ("Sons da MK3 e da Granola, compostos por tools/audio/gerar_sons_armas.py a\n"
              "partir dos sons da pistola e da cacadeira do projeto e de:\n\n"
@@ -115,7 +129,13 @@ def creditos():
 
 
 if __name__ == "__main__":
-    g.baixar()
-    mk3()
-    granola()
-    creditos()
+    # sem argumento gera tudo; com nomes (ex.: `mira`) so' esses
+    if len(sys.argv) > 1:
+        for nome in sys.argv[1:]:
+            globals()[nome]()
+    else:
+        g.baixar()
+        mk3()
+        granola()
+        mira()
+        creditos()

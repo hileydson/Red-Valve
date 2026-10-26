@@ -8,13 +8,14 @@ extends SceneTree
 ##
 ## MK3: o pente e' tudo que fica na frente do guarda-mato e abaixo do corpo
 ## (x < PENTE_X e y < PENTE_Y no espaco do .glb, que tem o cano no -X e o alto
-## no +Y). Sai `mk3_corpo.res` + `mk3_pente.res`, o pente com a origem no TOPO
+## no +Y). O pente sobe ate' o poco, em y 0,24, e e' inclinado: o canto de tras
+## dele chega a x -0,10 (o guarda-mato comeca em -0,03). Sai `mk3_corpo.res` + `mk3_pente.res`, o pente com a origem no TOPO
 ## dele (o ponto que entra no poco) — e' por ali que a mao segura e encaixa.
 ## A cena `mk3_fp.tscn` monta os dois no lugar de origem (Corpo + Pente), e
 ## `pente_mk3.tscn` e' o pente sozinho (na mao, caindo no chao).
 const PASTA_MK3 := "res://assets/3d_model/player/the_negotiator_V2/"
-const PENTE_X := -0.17
-const PENTE_Y := 0.0
+const PENTE_X := -0.07
+const PENTE_Y := 0.235
 
 func _initialize():
 	var original: Node3D = load(PASTA_MK3 + "the_negotiator_V2.glb").instantiate()

@@ -11,6 +11,12 @@ extends Node3D
 ## a 34 m/s ele anda meio metro por quadro, e uma area de colisao atravessaria
 ## um inimigo magro sem nunca encostar.
 ##
+## Com um `alvo` (o inimigo marcado pela mira da Granola) ele o PERSEGUE:
+## a cada quadro o rumo gira na direcao do meio do corpo dele, no maximo
+## `curva` radianos por segundo — persegue, mas faz curva de foguete, e um
+## inimigo que desvia de lado no ultimo instante ainda escapa. Sem gravidade
+## enquanto persegue; alvo morto ou sumido, ele segue reto e volta a cair.
+##
 ## A explosao e' a mesma do Shadow Seraph (`seraph_fx.gd`): clarao, onda,
 ## faiscas, fumaca e o som de explosao do projeto.
 
@@ -31,6 +37,11 @@ var vida_maxima := 5.0
 ## Camadas que o foguete enxerga: cenario (1 e 2), corpos de inimigo (3) e
 ## hitboxes (4) — a mesma mascara do tiro da pistola mais o chao e as paredes.
 var mascara := 15
+## O inimigo perseguido (null: voo reto) e a altura, acima da origem dele, do
+## ponto em que o foguete mira.
+var alvo: Node3D = null
+var altura_no_alvo := 0.9
+var curva := 4.5
 
 var _vel := Vector3.ZERO
 var _vida := 0.0
@@ -77,7 +88,15 @@ func _physics_process(delta: float) -> void:
 	if _estourou:
 		return
 	_vida += delta
-	_vel.y -= gravidade * delta
+	if _perseguindo():
+		var quero := alvo.global_position + Vector3.UP * altura_no_alvo - global_position
+		var rumo := _vel.normalized()
+		var angulo := rumo.angle_to(quero.normalized())
+		if angulo > 0.0001:
+			rumo = rumo.slerp(quero.normalized(), minf(curva * delta / angulo, 1.0))
+		_vel = rumo * velocidade
+	else:
+		_vel.y -= gravidade * delta
 	var de := global_position
 	var para := de + _vel * delta
 	var consulta := PhysicsRayQueryParameters3D.create(de, para, mascara)
@@ -93,6 +112,12 @@ func _physics_process(delta: float) -> void:
 	_virar_para(_vel)
 	if _vida > vida_maxima:
 		_explodir(null, Vector3.UP)
+
+
+func _perseguindo() -> bool:
+	if not is_instance_valid(alvo) or not alvo.is_inside_tree():
+		return false
+	return not ("dead" in alvo and alvo.dead)
 
 
 func _virar_para(v: Vector3) -> void:

@@ -4,11 +4,11 @@
 [ext_resource type="ArrayMesh" path="res://assets/3d_model/player/the_negotiator_V2/mk3_pente.res" id="2_11ocr"]
 
 [node name="Mk3Articulada" type="Node3D" unique_id=1157021885]
-metadata/topo_do_pente = Vector3(-0.35794976, 0.049887, 0.00037208572)
+metadata/topo_do_pente = Vector3(-0.3290456, 0.24984503, 0.00037208572)
 
 [node name="Corpo" type="MeshInstance3D" parent="." unique_id=1540832235]
 mesh = ExtResource("1_hqixr")
 
 [node name="Pente" type="MeshInstance3D" parent="." unique_id=1671458699]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.35794976, 0.049887, 0.00037208572)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3290456, 0.24984503, 0.00037208572)
 mesh = ExtResource("2_11ocr")
