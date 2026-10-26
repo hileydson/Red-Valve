@@ -28,6 +28,9 @@ const CENA_PORAO := "res://scenes/stages/escola/porao.tscn"
 const CENA_ITEM_OBTIDO := "res://scenes/ui/item_obtido.tscn"
 const ITEM_LANTERNA := "lanterna"
 const MODELO_LANTERNA := "res://assets/3d_model/player/lanterna/lanterna.glb"
+## A selecao da lanterna (realce, prompt e sons), a mesma de todo item de
+## cenario. Ver `item_selecionavel.gd`.
+const ItemSelecionavel := preload("res://scripts/stages/hospital/item_selecionavel.gd")
 
 ## Quanto tempo o fade leva antes da troca de cena. O mesmo do hospital e da
 ## igreja, para a transição entre os prédios da cidade ter um ritmo só.
@@ -47,9 +50,6 @@ var _saindo: bool = false
 ## Pás dos ventiladores de teto que ainda giram (metadata "velocidade", em
 ## voltas por segundo). Os parados nem entram na lista.
 var _pas: Array[Dictionary] = []
-
-var player_na_lanterna: bool = false
-var _pegando_lanterna: bool = false
 
 
 func _ready() -> void:
@@ -205,12 +205,6 @@ func _process(delta: float) -> void:
 		if is_instance_valid(pas):
 			pas.rotate_y(TAU * float(item["velocidade"]) * delta)
 
-	if player_na_lanterna and not _pegando_lanterna and not _saindo \
-			and not GlobalEvents.in_cutscene \
-			and not GlobalUtils.in_cinematic_cutscene \
-			and Input.is_action_just_pressed("ui_accept"):
-		_pegar_lanterna()
-
 
 # ==============================================================================
 # A LANTERNA NA MESA DA SALA 103
@@ -230,33 +224,14 @@ func _preparar_lanterna() -> void:
 	if SaveManager.tem_item(ITEM_LANTERNA):
 		conjunto.queue_free()
 		return
-	var area := conjunto.get_node_or_null("area") as Area3D
-	if area:
-		if not area.body_entered.is_connected(_ao_entrar_na_lanterna):
-			area.body_entered.connect(_ao_entrar_na_lanterna)
-		if not area.body_exited.is_connected(_ao_sair_da_lanterna):
-			area.body_exited.connect(_ao_sair_da_lanterna)
-
-
-func _ao_entrar_na_lanterna(body: Node3D) -> void:
-	if not _eh_player(body):
-		return
-	player_na_lanterna = true
-	GlobalUtils.show_center_message("pegar_lanterna", tr("PROMPT_TAKE_FLASHLIGHT"), 16)
-
-
-func _ao_sair_da_lanterna(body: Node3D) -> void:
-	if not _eh_player(body):
-		return
-	player_na_lanterna = false
-	GlobalUtils.hide_center_message("pegar_lanterna")
+	var selecao := ItemSelecionavel.new()
+	conjunto.add_child(selecao)
+	selecao.configurar(conjunto, conjunto.get_node_or_null("area") as Area3D,
+		"PROMPT_TAKE_FLASHLIGHT")
+	selecao.pegar.connect(_pegar_lanterna)
 
 
 func _pegar_lanterna() -> void:
-	_pegando_lanterna = true
-	player_na_lanterna = false
-	GlobalUtils.hide_center_message("pegar_lanterna")
-
 	SaveManager.add_item(ITEM_LANTERNA, 1)
 	SaveManager.save_game()
 
@@ -286,11 +261,6 @@ func _pegar_lanterna() -> void:
 	var jogador := _jogador()
 	if jogador and jogador.has_method("acender_lanterna_agora"):
 		jogador.acender_lanterna_agora()
-	_pegando_lanterna = false
-
-
-func _eh_player(body: Node3D) -> bool:
-	return body.is_in_group("player") or body.name.to_lower() == "player"
 
 
 ## Duas falhas diferentes, as mesmas da casa do Jimmy, da igreja e do hospital:

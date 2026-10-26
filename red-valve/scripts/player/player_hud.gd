@@ -209,8 +209,8 @@ void fragment() {
 	player.ammo_icon.offset_bottom = -45
 	player.hud_layer.add_child(player.ammo_icon)
 
-	# Símbolo 2D do amuleto: mesmo canto do HUD da arma, já que os dois nunca
-	# ficam equipados juntos (EQUIPAMENTO_EXCLUSIVO em SaveManager.gd).
+	# Símbolo 2D do amuleto: mesmo canto do HUD da arma, e só aparece quando
+	# não há arma na mão — o contador de balas tem a preferência do canto.
 	player.amulet_hud_icon = TextureRect.new()
 	player.amulet_hud_icon.texture = load("res://assets/images/menu/itens/amuleto_2d.png")
 	player.amulet_hud_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE

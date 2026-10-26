@@ -1765,7 +1765,7 @@ func _physics_process(delta: float) -> void:
 				if is_on_floor() and velocity_Y_zero: playback.travel("idle")
 				velocity.x = move_toward(velocity.x, 0, velocidade_atual)
 				velocity.z = move_toward(velocity.z, 0, velocidade_atual)
-				if passos.playing: passos.stop()
+				# o último passo toca até o fim, como no Maycow normal
 		
 		# FX DURANTE CORRIDA (FOV e Blur leve - Diferenciado para 1ª Pessoa e 3ª Pessoa)
 		var camera = get_viewport().get_camera_3d()
@@ -1831,7 +1831,21 @@ func _physics_process(delta: float) -> void:
 			elif AudioServer.playback_speed_scale != 1.0 and amulet_selected_enemies.size() == 0:
 				AudioServer.playback_speed_scale = 1.0
 
-		is_aiming = normal_can_aim and Input.is_action_pressed("ui_hold_first_person_view")
+		# Dois botoes, duas mecanicas. `ui_amuleto` (LB / V) abre a visao do
+		# amuleto, que marca inimigos e os leva pra arena — so' na cidade, onde
+		# ele vale sozinho (SaveManager.amuleto_disponivel). A mira
+		# (`ui_hold_first_person_view`) e' das armas de fogo: levanta a arma em
+		# terceira pessoa e o gatilho vira tiro. Segurando os dois, o amuleto vence.
+		var usando_amuleto: bool = normal_can_aim and Input.is_action_pressed("ui_amuleto") \
+			and SaveManager.amuleto_disponivel()
+		var mira_de_arma: bool = SaveManager.arma_de_fogo_equipada() and not usando_amuleto
+		is_aiming = usando_amuleto or (normal_can_aim and mira_de_arma \
+			and Input.is_action_pressed("ui_hold_first_person_view"))
+
+		# Dentro de algum lugar o amuleto apaga: o botao avisa por que nao abriu.
+		if normal_can_aim and Input.is_action_just_pressed("ui_amuleto") \
+				and SaveManager.tem_item("amuleto") and not SaveManager.amuleto_disponivel():
+			GlobalUtils.mostrar_aviso_no_mapa(tr("AVISO_AMULETO_INDISPONIVEL"))
 
 		# A troca de câmera para 1ª pessoa é controlada pelo poder do amuleto
 		# (player_amulet.gd), que faz o zoom gradual da 3ª pessoa antes de trocar.
@@ -1839,28 +1853,24 @@ func _physics_process(delta: float) -> void:
 			if camera_third_person and not camera_third_person.current:
 				camera_third_person.make_current()
 
-		# O MESMO botao de mira, duas mecanicas. Quem escolhe e' o item equipado:
-		# com o AMULETO a mira marca inimigos e os leva pra arena; com a PISTOLA
-		# ela levanta a arma em terceira pessoa e o gatilho vira tiro. Os dois
-		# nunca estao equipados juntos (SaveManager.EQUIPAMENTO_EXCLUSIVO), entao
-		# a escolha feita no menu chega aqui como um `if`.
-		var mira_de_arma: bool = SaveManager.arma_de_fogo_equipada()
+		# Soltou o amuleto: leva quem foi marcado. Fica ANTES da escolha abaixo
+		# porque, com arma equipada, o quadro em que o botao sobe ja' cai na mira
+		# de arma — e ela apaga o amuleto junto com a lista de marcados.
+		if normal_can_aim and Input.is_action_just_released("ui_amuleto"):
+			if amulet_selected_enemies.size() == 0:
+				AudioServer.playback_speed_scale = 1.0
+			_on_amulet_magic_released()
 
 		if normal_can_aim and mira_de_arma:
 			_processar_mira_de_arma()
 		elif normal_can_aim:
-			# Trocar de item NO MEIO de uma mirada cai aqui: sem isto, a mira da
-			# arma ficaria acesa na tela enquanto o poder do amuleto abre por
-			# baixo dela.
+			# Abrir o amuleto NO MEIO de uma mirada de arma cai aqui: sem isto, a
+			# mira da arma ficaria acesa na tela enquanto o poder do amuleto abre
+			# por baixo dela.
 			_encerrar_mira_de_arma()
 
-			if Input.is_action_just_released("ui_hold_first_person_view"):
-				if amulet_selected_enemies.size() == 0:
-					AudioServer.playback_speed_scale = 1.0
-				_on_amulet_magic_released()
-
 			if is_aiming:
-				if Input.is_action_just_pressed("ui_hold_first_person_view"):
+				if Input.is_action_just_pressed("ui_amuleto"):
 					AudioServer.playback_speed_scale = 0.5
 
 				if is_instance_valid(amulet_crosshair): amulet_crosshair.visible = true
@@ -2042,8 +2052,9 @@ func _physics_process(delta: float) -> void:
 					playback.travel("idle")
 			velocity.x = move_toward(velocity.x, 0, velocidade_atual)
 			velocity.z = move_toward(velocity.z, 0, velocidade_atual)
-			if passos.playing:
-				passos.stop()
+			# O passo que já começou toca até o fim (é um passo só, meio
+			# segundo): cortar no quadro em que o botão solta deixava o andar
+			# morrendo seco, sem a última pisada.
 
 		var fov_lerp_speed = 5.0
 		if is_aiming:

@@ -11,46 +11,23 @@ extends Node3D
 const ITEM := "pistol_ammo"
 const QUANTIDADE := 12
 const REAPARECE := 22.0
+## Selecao (realce, prompt e sons) igual a de todo item de cenario.
+const ItemSelecionavel := preload("res://scripts/stages/hospital/item_selecionavel.gd")
 
-var _perto := false
-var _disponivel := true
+var _selecao: Node
 
 @onready var modelo: Node3D = $modelo
 @onready var area: Area3D = $area
 
 
 func _ready() -> void:
-	area.body_entered.connect(func(b): _ao_entrar(b))
-	area.body_exited.connect(func(b): _ao_sair(b))
-
-
-func _process(_delta: float) -> void:
-	if not _disponivel or not _perto:
-		return
-	if GlobalEvents.in_cutscene or GlobalEvents.agarrao_rodando:
-		return
-	if Input.is_action_just_pressed("ui_accept"):
-		_pegar()
-
-
-func _ao_entrar(b: Node3D) -> void:
-	if not b.is_in_group("player"):
-		return
-	_perto = true
-	if _disponivel:
-		GlobalUtils.show_center_message("municao_igreja_" + name, tr("PROMPT_TAKE_AMMO"), 16)
-
-
-func _ao_sair(b: Node3D) -> void:
-	if not b.is_in_group("player"):
-		return
-	_perto = false
-	GlobalUtils.hide_center_message("municao_igreja_" + name)
+	_selecao = ItemSelecionavel.new()
+	add_child(_selecao)
+	_selecao.configurar(modelo, area, "PROMPT_TAKE_AMMO")
+	_selecao.pegar.connect(_pegar)
 
 
 func _pegar() -> void:
-	_disponivel = false
-	GlobalUtils.hide_center_message("municao_igreja_" + name)
 	SaveManager.add_item(ITEM, QUANTIDADE)
 	var jogador := get_tree().get_first_node_in_group("player")
 	if jogador and jogador.has_method("update_ammo_ui"):
@@ -63,6 +40,4 @@ func _pegar() -> void:
 	if not is_instance_valid(self):
 		return
 	modelo.visible = true
-	_disponivel = true
-	if _perto:
-		GlobalUtils.show_center_message("municao_igreja_" + name, tr("PROMPT_TAKE_AMMO"), 16)
+	_selecao.disponivel = true

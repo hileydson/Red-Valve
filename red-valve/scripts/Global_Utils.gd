@@ -247,6 +247,48 @@ func _montar_objetivo() -> void:
 	_objetivo_layer.add_child(_objetivo_label)
 
 
+## Aviso curto logo abaixo do minimapa — a resposta a um botao que nao fez nada
+## (ex: o amuleto chamado dentro de um lugar). Mora na camada do objetivo, entao
+## some junto com ele na arena e nas cutscenes. Com um objetivo na tela, desce
+## uma linha pra nao cair em cima dele.
+const AVISO_MAPA_DURACAO := 3.0
+const AVISO_MAPA_FADE := 0.25
+
+var _aviso_mapa_label: Label
+## Mesmo truque do objetivo: apertar de novo antes de o aviso sair renova o
+## tempo, e o timer antigo nao apaga o novo.
+var _aviso_mapa_geracao: int = 0
+
+
+func mostrar_aviso_no_mapa(texto: String, duracao: float = AVISO_MAPA_DURACAO) -> void:
+	_montar_objetivo()
+	if not is_instance_valid(_aviso_mapa_label):
+		_aviso_mapa_label = Label.new()
+		_aviso_mapa_label.add_theme_font_size_override("font_size", 16)
+		_aviso_mapa_label.add_theme_color_override("font_color", Color(0.95, 0.78, 0.55))
+		_aviso_mapa_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.85))
+		_aviso_mapa_label.add_theme_constant_override("outline_size", 4)
+		_aviso_mapa_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_aviso_mapa_label.modulate.a = 0.0
+		_objetivo_layer.add_child(_aviso_mapa_label)
+
+	_aviso_mapa_geracao += 1
+	var geracao := _aviso_mapa_geracao
+	var abaixo_do_objetivo := 24.0 if _objetivo_label.modulate.a > 0.01 else 0.0
+	_aviso_mapa_label.position = Vector2(OBJETIVO_MARGEM_ESQ, OBJETIVO_MARGEM_TOPO + abaixo_do_objetivo)
+	_aviso_mapa_label.text = texto
+	var entrada := create_tween()
+	entrada.bind_node(_aviso_mapa_label)
+	entrada.tween_property(_aviso_mapa_label, "modulate:a", 1.0, AVISO_MAPA_FADE)
+
+	await get_tree().create_timer(duracao, false).timeout
+	if geracao != _aviso_mapa_geracao or not is_instance_valid(_aviso_mapa_label):
+		return
+	var saida := create_tween()
+	saida.bind_node(_aviso_mapa_label)
+	saida.tween_property(_aviso_mapa_label, "modulate:a", 0.0, AVISO_MAPA_FADE)
+
+
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	message_canvas_layer = CanvasLayer.new()
@@ -353,6 +395,9 @@ func force_clear_all_screen_messages() -> void:
 	_objetivo_geracao += 1
 	if is_instance_valid(_objetivo_label):
 		_objetivo_label.modulate.a = 0.0
+	_aviso_mapa_geracao += 1
+	if is_instance_valid(_aviso_mapa_label):
+		_aviso_mapa_label.modulate.a = 0.0
 
 	if is_instance_valid(_cutscene_skip_ui):
 		_cutscene_skip_ui.queue_free()

@@ -19,8 +19,10 @@ var equipped_items: Array = ["cogblade"] # Cogblade sempre equipada
 ## na batalha desarmado. Agora a arena devolve esta arma sozinha, e a volta
 ## devolve o que ele estava usando na cidade (`equipado_na_cidade`).
 var ultima_arma_equipada: String = ""
-## O que o Maycow NORMAL estava com a mao na ida pra arena. Vazio fora dela.
+## O que o Maycow NORMAL estava com a mao na ida pra arena. Vazio fora dela;
+## `MAOS_VAZIAS` quando ele foi sem nada na mao.
 var equipado_na_cidade: String = ""
+const MAOS_VAZIAS := "-"
 
 ## Ids dos itens de cenario que ja' foram recolhidos ("hospital_municao_1"...).
 ##
@@ -32,7 +34,7 @@ var pickups_pegos: Array = []
 ## Atalhos do direcional: "esquerda"/"cima"/"direita"/"baixo" -> id do item.
 ##
 ## Existe porque so' UM item equipavel cabe por vez (ver EQUIPAMENTO_EXCLUSIVO):
-## sem um jeito de trocar sem abrir o menu, mudar de amuleto pra pistola custaria
+## sem um jeito de trocar sem abrir o menu, mudar de pistola pra caçadeira custaria
 ## tres telas no meio da rua. Quem le' isto fora do menu e' `player_atalhos.gd`.
 var atalhos: Dictionary = {}
 var max_mp: float = 30.0
@@ -129,10 +131,8 @@ var item_db = {
 		"icon_path": "res://assets/images/menu/itens/amuleto_2d.png",
 		"model_path": "res://assets/3d_model/player/Maycow Lopes/amuleto_power.glb",
 		"stackable": false,
-		# Continua "inspectable" (o modelo dele e' bonito e o jogador gira ele no
-		# menu), mas passou a valer como equipavel tambem: e' ele que decide o que
-		# a mira do Maycow normal faz. Ver `pode_equipar()`.
-		"equipavel": true,
+		# So' "inspectable": o jogador nao equipa o amuleto. Ele vale sozinho na
+		# cidade e apaga dentro dos lugares — ver `amuleto_disponivel()`.
 		"type": "inspectable"
 	},
 	"lanterna": {
@@ -238,18 +238,14 @@ const ITENS_COMPARTILHADOS := ["pistol", "pistol_ammo", "shotgun", "shotgun_ammo
 
 ## So' UM destes fica equipado por vez.
 ##
-## E' o que decide o que a mira do Maycow normal faz: com o amuleto ela marca
-## inimigos e leva pra arena, com a pistola ela e' mira de tiro. Sao usos
-## diferentes do MESMO botao, entao equipar um tem de desequipar o outro.
+## Toda arma de fogo do Maycow normal usa o mesmo botao de mira e so' uma cabe
+## na mao. Trocar de uma pra outra e' equipar a outra — no menu ou pelo atalho
+## do direcional.
 ##
 ## A cogblade fica de fora: ela e' do Maycow parasita, nunca sai da mao dele e
-## nao disputa o gatilho com nada.
-##
-## A CACADEIRA entra pela mesma porta da pistola: as duas sao arma de fogo do
-## Maycow normal, usam o mesmo botao de mira e so' uma cabe na mao. Trocar de
-## uma pra outra e' equipar a outra — no menu ou pelo atalho do direcional.
-## A MK3 e a Granola tambem: toda arma de fogo disputa a mesma mao.
-const EQUIPAMENTO_EXCLUSIVO := ["amuleto", "pistol", "shotgun", "mk3", "granola"]
+## nao disputa o gatilho com nada. O AMULETO tambem: ele tem botao proprio
+## (`ui_amuleto`) e nao se equipa — ver `amuleto_disponivel()`.
+const EQUIPAMENTO_EXCLUSIVO := ["pistol", "shotgun", "mk3", "granola"]
 
 ## Quais dos exclusivos sao ARMA (e nao poder). E' o que a arena devolve.
 const ARMAS_DE_FOGO := ["pistol", "shotgun", "mk3", "granola"]
@@ -823,7 +819,23 @@ func remove_item_amount(item_id: String, amount: int) -> void:
 func is_equipped(item_id: String) -> bool:
 	if item_id == "cogblade":
 		return cogblade_arma_ativa and tem_item("cogblade")
+	if item_id == "amuleto":
+		return amuleto_disponivel()
 	return item_id in equipped_items and tem_item(item_id)
+
+
+## O amuleto esta "equipado" agora?
+##
+## Nao e' escolha do jogador: na cidade ele vale sempre (segurar `ui_amuleto`
+## abre a visao dele), e dentro de qualquer lugar — igreja, hospital, escola,
+## casas — ele apaga sozinho. A pergunta e' pela CENA atual, e nao por uma lista
+## de interiores: lugar novo ja' nasce sem amuleto. Na arena a cena atual e' a
+## battlefield, e na volta o `battlefield.gd` devolve a cidade como atual.
+func amuleto_disponivel() -> bool:
+	if not tem_item("amuleto"):
+		return false
+	var cena := get_tree().current_scene if is_inside_tree() else null
+	return cena != null and cena.scene_file_path == CENA_CIDADE
 
 
 ## Este item aceita ser equipado?
@@ -836,8 +848,8 @@ func pode_equipar(item_id: String) -> bool:
 
 
 func equip_item(item_id: String) -> void:
-	# Equipar a cogblade como arma corpo a corpo: desliga as armas de fogo e
-	# o amuleto do slot exclusivo, mas a cogblade continua em equipped_items
+	# Equipar a cogblade como arma corpo a corpo: desliga as armas de fogo
+	# do slot exclusivo, mas a cogblade continua em equipped_items
 	# (ela nunca sai de la').
 	if item_id == "cogblade":
 		for outro in EQUIPAMENTO_EXCLUSIVO:
@@ -867,18 +879,19 @@ func unequip_item(item_id: String) -> void:
 		equipped_items.erase(item_id)
 
 
-## O Maycow normal nunca fica de maos vazias por acidente.
+## Limpa o amuleto "equipado a mao" de save antigo.
 ##
-## Ate' aqui o poder do amuleto valia sempre que ele o tivesse no inventario;
-## agora ele e' um item EQUIPADO. Todo save gravado antes disso chegaria com a
-## mira morta — e o jogador nao teria como adivinhar que precisa abrir o menu e
-## equipar algo que sempre funcionou sozinho.
+## Houve um tempo em que o amuleto se equipava no menu e disputava a mira com as
+## armas. Agora ele tem botao proprio e vale sozinho na cidade, entao o id dele
+## na lista de equipados — e um atalho do direcional apontando pra ele — so'
+## sobram de saves antigos e nao querem dizer mais nada.
 func garantir_equipamento_do_normal() -> void:
-	for id in EQUIPAMENTO_EXCLUSIVO:
-		if is_equipped(id):
-			return
-	if tem_item("amuleto"):
-		equip_item("amuleto")
+	equipped_items.erase("amuleto")
+	# `atalhos.erase` direto, e nao `limpar_atalho`: aquele grava o jogo, e isto
+	# roda no meio do `load_game`.
+	var direcao := atalho_do_item("amuleto")
+	if direcao != "":
+		atalhos.erase(direcao)
 
 
 # ==============================================================================
@@ -886,12 +899,12 @@ func garantir_equipamento_do_normal() -> void:
 # ==============================================================================
 ## Chegou na arena: guarda o que o Maycow normal tinha na mao e devolve a ARMA.
 ##
-## O vaivem que isto conserta: pra ir pra arena o jogador PRECISA estar com o
-## amuleto (e' ele que leva os inimigos pra la'), entao ele desequipa a arma na
-## cidade e chegava desarmado na batalha — justo onde a arma serve pra alguma
-## coisa. Agora a troca e' automatica nos dois sentidos.
+## Na arena a arma serve pra alguma coisa, entao ele chega com a ultima que
+## usou mesmo tendo saido da cidade de maos vazias. A volta desfaz.
 func entrar_na_arena() -> void:
-	equipado_na_cidade = ""
+	# "Nada na mao" tambem e' lembrado: sem isto ele voltaria da arena com a
+	# arma que ela entregou, e nao como saiu da cidade.
+	equipado_na_cidade = MAOS_VAZIAS
 	if cogblade_arma_ativa:
 		equipado_na_cidade = "cogblade"
 	else:
@@ -905,12 +918,16 @@ func entrar_na_arena() -> void:
 
 ## Voltou pra cidade: devolve o que ele estava usando antes de partir.
 ##
-## Sem isto o jogador volta da arena com a pistola na mao e sem amuleto, e o
-## proximo inimigo da rua nao teria como ser levado pra lugar nenhum.
+## Sem isto o jogador volta da arena com a arma que ela entregou, e nao com o
+## que tinha na mao na cidade.
 func sair_da_arena() -> void:
 	if equipado_na_cidade == "":
 		return
-	if tem_item(equipado_na_cidade):
+	if equipado_na_cidade == MAOS_VAZIAS:
+		for arma in EQUIPAMENTO_EXCLUSIVO:
+			equipped_items.erase(arma)
+		cogblade_arma_ativa = false
+	elif tem_item(equipado_na_cidade):
 		equip_item(equipado_na_cidade)
 	equipado_na_cidade = ""
 

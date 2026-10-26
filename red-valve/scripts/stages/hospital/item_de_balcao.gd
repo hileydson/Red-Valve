@@ -78,6 +78,14 @@ const GRUPO := "item_de_balcao"
 
 const SHADER_REALCE := "res://shaders/effects/enemy_highlight.gdshader"
 
+## Os dois sons de todo item de cenario: um clique sutil quando ele fica
+## selecionado (a virada do prompt) e o do item indo pro bolso ao pegar. Os
+## outros pickups (`item_selecionavel.gd`) tocam os MESMOS, por estas constantes.
+const SOM_SELECIONAR := "res://assets/sounds/pickup/selecionar.ogg"
+const SOM_PEGAR := "res://assets/sounds/pickup/pegar.ogg"
+const VOLUME_SELECIONAR := -14.0
+const VOLUME_PEGAR := -4.0
+
 ## Vantagem de quem JA' esta' escolhido, na disputa do quadro seguinte. Dois
 ## itens quase empatados no centro da tela trocavam de dono a cada quadro, e o
 ## prompt — que entra e sai por tween de meio segundo — piscava sem parar.
@@ -275,6 +283,7 @@ func _mostrar_prompt(ligado: bool) -> void:
 		return
 	_prompt_ligado = ligado
 	if ligado:
+		tocar_som(get_tree(), SOM_SELECIONAR, VOLUME_SELECIONAR)
 		GlobalUtils.show_center_message(_chave_mensagem(),
 			tr(String(get_meta("prompt", ""))), 16)
 	else:
@@ -333,6 +342,7 @@ func _pegar() -> void:
 		_selecionado = null
 	_pintar(null)
 	_mostrar_prompt(false)
+	tocar_som(get_tree(), SOM_PEGAR, VOLUME_PEGAR)
 
 	var id := _id_do_item()
 	var quantidade := int(get_meta("quantidade", 1))
@@ -385,3 +395,18 @@ func _avisar_de_novo(id: String, quantidade: int) -> void:
 
 func _eh_player(body: Node3D) -> bool:
 	return body.is_in_group("player") or body.name.to_lower() == "player"
+
+
+## Som solto, sem posicao: e' resposta ao botao, nao algo do mundo. Mora na raiz
+## e com PROCESS_MODE_ALWAYS porque o item se apaga logo depois de tocar, e a
+## tela de item obtido pausa o jogo antes de o som de pegar terminar.
+static func tocar_som(arvore: SceneTree, caminho: String, volume_db: float) -> void:
+	if arvore == null or not ResourceLoader.exists(caminho):
+		return
+	var p := AudioStreamPlayer.new()
+	p.stream = load(caminho)
+	p.volume_db = volume_db
+	p.process_mode = Node.PROCESS_MODE_ALWAYS
+	arvore.root.add_child(p)
+	p.play()
+	p.finished.connect(p.queue_free)

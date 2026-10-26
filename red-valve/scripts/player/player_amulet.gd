@@ -49,14 +49,9 @@ func _process_amulet_magic(delta: float) -> void:
 		_hide_amulet_magic()
 		return
 
-	# O amuleto virou item EQUIPADO (ele divide o botao de mira com a pistola,
-	# ver SaveManager.EQUIPAMENTO_EXCLUSIVO). A guarda mora aqui, na ponta, e nao
-	# so' em quem chama: e' este o lugar por onde TODO uso do poder passa, e uma
-	# checagem so' no player.gd deixaria o poder ligado pra quem tirou o amuleto
-	# e nao pos nada no lugar.
-	#
-	# Save antigo nao fica sem poder: `SaveManager.garantir_equipamento_do_normal()`
-	# equipa o amuleto sozinho ao carregar e ao entrar no mapa da cidade.
+	# O amuleto so' vale na cidade (SaveManager.amuleto_disponivel). A guarda
+	# mora aqui, na ponta, e nao so' em quem chama: e' este o lugar por onde
+	# TODO uso do poder passa.
 	if not SaveManager.is_equipped("amuleto"):
 		_hide_amulet_magic()
 		return

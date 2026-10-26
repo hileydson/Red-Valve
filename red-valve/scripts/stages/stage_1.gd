@@ -155,9 +155,8 @@ func _garantir_amuleto_no_inventario() -> void:
 	# A volta pela arena não passa por este `_ready` — aquela cena fica escondida
 	# na árvore e é `play_return_from_arena_effect` quem desfaz.
 	SaveManager.sair_da_arena()
-	# Mesma rede, um degrau adiante: ter o amuleto nao basta mais, ele precisa
-	# estar EQUIPADO pra mira funcionar. So' equipa se nao houver nada equipado —
-	# quem trocou pela pistola de proposito continua com a pistola.
+	# Save antigo pode trazer o amuleto "equipado a mao" (de quando ele dividia
+	# a mira com as armas): limpa. Hoje ele vale sozinho aqui na cidade.
 	SaveManager.garantir_equipamento_do_normal()
 
 

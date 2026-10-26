@@ -3,8 +3,8 @@ extends Node
 ## OS ATALHOS DO DIRECIONAL — trocar o item equipado sem abrir o menu.
 ##
 ## Existe por causa de uma regra: o Maycow normal só carrega UM equipável por vez
-## (`SaveManager.EQUIPAMENTO_EXCLUSIVO`), porque amuleto e pistola disputam o
-## mesmo botão de mira. Sem um atalho, trocar de um para o outro no meio da rua
+## (`SaveManager.EQUIPAMENTO_EXCLUSIVO`), porque as armas disputam o mesmo
+## botão de mira. Sem um atalho, trocar de uma para a outra no meio da rua
 ## custaria abrir o menu, achar o item, abrir o menu de ação e equipar — quatro
 ## passos para uma decisão que o jogo pede no susto.
 ##

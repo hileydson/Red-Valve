@@ -303,14 +303,13 @@ func _entregar_amuleto() -> void:
 		return
 
 	SaveManager.add_item(ITEM_AMULETO, 1)
-	# Ja' equipado: o amuleto e' o unico equipavel que ele tem nesta altura, e a
-	# mira dele e' a mecanica que o Capitulo 1 acabou de ensinar.
-	SaveManager.equip_item(ITEM_AMULETO)
 	SaveManager.save_game()
 
+	# O amuleto nao se equipa: na cidade ele ja' vale, e a tela ensina o botao
+	# dele no dispositivo que o jogador esta' usando.
 	var tela: CanvasLayer = load(CENA_ITEM_OBTIDO).instantiate()
 	tela.model_path = MODELO_AMULETO
-	tela.texto = tr("PICKUP_AMULETO")
+	tela.texto = tr("PICKUP_AMULETO_PAD" if GlobalEvents.usando_controle else "PICKUP_AMULETO_KEY")
 	get_tree().root.add_child(tela)
 
 
