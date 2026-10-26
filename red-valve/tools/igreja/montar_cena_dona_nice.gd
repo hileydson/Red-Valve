@@ -34,9 +34,21 @@ const MAYCOW_FIM := Vector3(0.0, 0.0, 4.2)
 ## jogo (`VELOCIDADE_NO_COLO`) — o no' anda junto com o pe', senao o pe' patina.
 const PASSO_DO_COLO := 1.3
 const MAYCOW_VELOCIDADE := 1.15
-## No `andar_esticando` as pernas andam ate' x e param de vez em y (segundos
-## depois de a mao comecar a subir); o braco sobe do 0 ao 2,6.
-const ANDA_ESTICANDO_FREIA := Vector2(1.9, 2.7)
+## No `andar_esticando` ele comeca a frear em x e para em y (segundos depois
+## de a mao comecar a subir); o braco sobe do 0 ao 2,6.
+const ANDA_ESTICANDO_FREIA := Vector2(1.7, 2.7)
+## O instante do `correr_carregando` em que um pe' passa pelo outro (os dois
+## debaixo do corpo): a passada e' acertada pra ele parar exatamente ai'.
+const PES_JUNTOS := 0.53
+## Os bracos (do `andar_lento`, que tem outro ritmo) vao presos a fase das
+## pernas, com o braco esquerdo a frente quando o pe' direito esta' a frente:
+## esta e' a diferenca de fase (fracao do ciclo) entre os dois clipes.
+const BRACOS_NA_PASSADA := -0.051
+## No `andar_lento` a palma esquerda vem virada pra FRENTE (medido na malha da
+## mao: faltam 47-75 graus pra ela olhar pra coxa); o antebraco e a mao giram
+## isto no eixo do antebraco, metade cada, pra o pulso nao torcer. A direita
+## ja' vem virada pro corpo.
+const GIRO_PALMA_ESQUERDA := 60.0
 ## Os dois olhos dela (as pupilas) no espaco do osso `head`, medidos em duas
 ## fotos do plano (zoom aberto e fechado, que batem na mesma conta). A camera
 ## mira entre eles e a lente deixa nitido so' em volta de cada um.
@@ -734,16 +746,10 @@ func _montar_chegada() -> void:
 	# pernas do `andar_esticando`
 	var entrada := []
 	var t_para := T_MAO + ANDA_ESTICANDO_FREIA.y
-	var t_freia := T_MAO + ANDA_ESTICANDO_FREIA.x
-	var percurso := MAYCOW_VELOCIDADE * t_freia + MAYCOW_VELOCIDADE * (t_para - t_freia) * 0.5
-	var z0 := MAYCOW_FIM.z - percurso
-	for i in 31:
-		var t := t_para * i / 30.0
-		var andou := MAYCOW_VELOCIDADE * minf(t, t_freia)
-		if t > t_freia:
-			var u := (t - t_freia) / (t_para - t_freia)
-			andou += MAYCOW_VELOCIDADE * (t_para - t_freia) * (u - u * u * 0.5)
-		entrada.append([t, Vector3(MAYCOW_FIM.x, 0.0, z0 + andou)])
+	var z0 := MAYCOW_FIM.z - _andou(t_para, T_MAO)
+	for i in 61:
+		var t := t_para * i / 60.0
+		entrada.append([t, Vector3(MAYCOW_FIM.x, 0.0, z0 + _andou(t, T_MAO))])
 	_pos("atores/Maycow", entrada)
 	_rot("atores/Maycow", [[0.0, Quaternion()]])
 	_andar_esticando(T_MAO)
@@ -931,13 +937,33 @@ func _montar_chegada() -> void:
 		[T_FIM, Vector3(0.3, 7.6, DN.z + 8.5), Vector3(0.0, 0.2, DN.z - 9.0), 58.0]])
 
 
+## Quanto o Maycow ja' andou na entrada aos `t` s: MAYCOW_VELOCIDADE ate'
+## comecar a frear e freando reto ate' parar (ANDA_ESTICANDO_FREIA).
+func _andou(t: float, t_mao: float) -> float:
+	var t_freia := t_mao + ANDA_ESTICANDO_FREIA.x
+	var t_para := t_mao + ANDA_ESTICANDO_FREIA.y
+	var s := MAYCOW_VELOCIDADE * minf(t, t_freia)
+	if t > t_freia:
+		var u := minf((t - t_freia) / (t_para - t_freia), 1.0)
+		s += MAYCOW_VELOCIDADE * (t_para - t_freia) * (u - u * u * 0.5)
+	return s
+
+
 ## O clipe da entrada: o Maycow ANDANDO enquanto estica a mao. Nao existe no
-## Blender — e' montado aqui, osso a osso, de tres capturas: o quadril, a
-## coluna e as pernas do `correr_carregando` (a passada de quem carrega o
-## Jonny, bem melhor que a do `andar_lento`), no ritmo de MAYCOW_VELOCIDADE,
-## ate' frear e assentar na base do `esticar_mao`; os bracos e a cabeca do
-## `andar_lento` (os do colo seguram o Jonny) ate' `t_mao`, quando o
-## `esticar_mao` entra em meio segundo.
+## Blender — e' montado aqui, osso a osso, de tres capturas:
+##   - quadril e pernas do `correr_carregando` (a passada de quem carrega o
+##     Jonny, bem melhor que a do `andar_lento`). O clipe anda junto com o
+##     chao percorrido (`_andou`), entao a passada desacelera com o corpo, e e'
+##     acertado pra ele parar com os pes juntos (PES_JUNTOS) — dai' a pose
+##     parada do `esticar_mao` entra sem arrastar pe';
+##   - coluna, bracos e cabeca do `andar_lento` (os do colo seguram o Jonny),
+##     presos a fase das pernas (BRACOS_NA_PASSADA): braco oposto a perna, e
+##     a palma esquerda virada pro corpo (GIRO_PALMA_ESQUERDA). O
+##     quadril do colo inclina pra tras e pra frente a cada passo (o peso do
+##     Jonny); a base da coluna desfaz isso, senao a cabeca balanca 7 cm por
+##     passo — o tronco fica com a postura do `andar_lento`;
+##   - o braco direito e a cabeca passam pro `esticar_mao` a partir de
+##     `t_mao`; o resto do corpo so' quando ele para.
 ## Vai numa biblioteca propria do duble ("cena"), gravada nesta cena: a
 ## `maycow_clipes.tres` nao muda.
 func _andar_esticando(t_mao: float) -> void:
@@ -947,26 +973,37 @@ func _andar_esticando(t_mao: float) -> void:
 	var estica := ap.get_animation("esticar_mao")
 	var novo := Animation.new()
 	novo.length = t_mao + 3.2
+	var t_para := t_mao + ANDA_ESTICANDO_FREIA.y
 	const PERNAS := ["Hips", "LeftUpLeg", "LeftLeg", "LeftFoot", "LeftToeBase",
 		"RightUpLeg", "RightLeg", "RightFoot", "RightToeBase"]
-	const COLUNA := ["Spine", "Spine01", "Spine02"]
-	var passada := MAYCOW_VELOCIDADE / PASSO_DO_COLO
+	const MAO := ["RightShoulder", "RightArm", "RightForeArm", "RightHand", "neck",
+		"Head", "head_end", "headfront"]
+	# o tempo do passo em que ele chega parado com os pes juntos
+	var fase0 := PES_JUNTOS - _andou(t_para, t_mao) / PASSO_DO_COLO
+	var esq := String(estica.track_get_path(0).get_concatenated_names())
+	var quadril_passo := passo.find_track(NodePath(esq + ":Hips"), Animation.TYPE_ROTATION_3D)
+	var quadril_bracos := bracos.find_track(NodePath(esq + ":Hips"), Animation.TYPE_ROTATION_3D)
+	var sk: Skeleton3D = atores["Maycow"].esqueleto()
+	var antebraco := sk.get_bone_rest(sk.find_bone("LeftHand")).origin.normalized()
+	var meio_giro := Quaternion(antebraco, deg_to_rad(GIRO_PALMA_ESQUERDA) * 0.5)
 	for i in estica.get_track_count():
 		var caminho := estica.track_get_path(i)
 		var tipo := estica.track_get_type(i)
 		var osso := String(caminho.get_concatenated_subnames())
-		var perna := osso in PERNAS
-		var de := passo if perna or osso in COLUNA else bracos
+		var de := passo if osso in PERNAS else bracos
 		var j := de.find_track(caminho, tipo)
 		var n := novo.add_track(tipo)
 		novo.track_set_path(n, caminho)
 		for q in int(novo.length * 30.0) + 1:
 			var t := q / 30.0
 			var te := clampf(t - t_mao, 0.0, estica.length)
-			var td := fmod(t * (passada if de == passo else 1.0), de.length)
-			# peso do `esticar_mao`: o tronco entra de cara, as pernas so' freando
-			var w := smoothstep(t_mao + ANDA_ESTICANDO_FREIA.x, t_mao + ANDA_ESTICANDO_FREIA.y, t) \
-				if perna else smoothstep(t_mao, t_mao + 0.5, t)
+			var tp := fposmod(fase0 + _andou(t, t_mao) / PASSO_DO_COLO, passo.length)
+			var td := tp if de == passo \
+				else fposmod(tp / passo.length + BRACOS_NA_PASSADA, 1.0) * bracos.length
+			# peso do `esticar_mao`: o braco da mao entra de cara, o resto so'
+			# no fim, com ele parando
+			var w := smoothstep(t_mao, t_mao + 0.5, t) if osso in MAO \
+				else smoothstep(t_para - 0.45, t_para + 0.05, t)
 			if tipo == Animation.TYPE_POSITION_3D:
 				var a0: Vector3 = de.position_track_interpolate(j, td) if j >= 0 \
 					else estica.position_track_interpolate(i, te)
@@ -974,6 +1011,14 @@ func _andar_esticando(t_mao: float) -> void:
 			elif tipo == Animation.TYPE_ROTATION_3D:
 				var q0: Quaternion = de.rotation_track_interpolate(j, td) if j >= 0 \
 					else estica.rotation_track_interpolate(i, te)
+				# (no rig do Meshy a coluna e' invertida: o Spine02 e' o filho do quadril)
+				if osso == "Spine02" and j >= 0:
+					q0 = passo.rotation_track_interpolate(quadril_passo, tp).inverse() \
+						* bracos.rotation_track_interpolate(quadril_bracos, td) * q0
+				elif osso == "LeftForeArm" and j >= 0:
+					q0 = q0 * meio_giro
+				elif osso == "LeftHand" and j >= 0:
+					q0 = meio_giro * q0
 				novo.rotation_track_insert_key(n, t, q0.slerp(estica.rotation_track_interpolate(i, te), w))
 	var cena_lib := AnimationLibrary.new()
 	cena_lib.add_animation("andar_esticando", novo)
