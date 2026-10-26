@@ -45,6 +45,9 @@ const OGIVA_NO_FOGUETE := Vector3(-0.55, 0.0, 0.0)
 const EXTRA_LEVANTA := 58.0
 const RECARGA_RECUA := 20.0
 const RECARGA_SOBE_MAIS := 4.0
+## A dobra maxima do punho esquerdo, em graus, enquanto a mao vai ao cinto e
+## volta com o foguete (ver `_alinhar_punho`).
+const PUNHO_DOBRA_MAX := 35.0
 
 const M_GRANOLA_LARGA := 0.12
 const M_GRANOLA_PEGA := 0.32
@@ -124,6 +127,33 @@ func _base_da_arma(ctx: Dictionary) -> Basis:
 
 func _giro_do_punho(_r: float, solta: float) -> float:
 	return RECARGA_GIRO_BASE * solta if _recarregando else 0.0
+
+
+## O punho esquerdo e' conduzido pela ARMA (os dedos seguem o cano). Na
+## Granola, em pe' na recarga, isso manda os dedos pra cima justo quando a mao
+## desce ao cinto: o antebraco aponta pro chao, os dedos pro ceu, e a mao
+## chegava dobrada pra tras, as costas contra o antebraco (~107 graus). Do
+## largar o tubo ate' a frente da boca a mao gira em volta do PULSO ate' a
+## dobra caber em PUNHO_DOBRA_MAX — a rolagem e a pegada continuam as da arma.
+func _alinhar_punho(sk: Skeleton3D, i_mao: int, palma: float, peso: float,
+		rolagem: float, desvio: float) -> void:
+	super._alinhar_punho(sk, i_mao, palma, peso, rolagem, desvio)
+	if i_mao != _i_mao_e or not _recarregando or peso <= 0.001:
+		return
+	var no_cinto := smoothstep(M_GRANOLA_LARGA - 0.08, M_GRANOLA_LARGA + 0.04, _recarga) \
+		- smoothstep(M_GRANOLA_PEGA, M_GRANOLA_NA_BOCA, _recarga)
+	if no_cinto <= 0.001:
+		return
+	var g := sk.get_bone_global_pose(i_mao)
+	var antebraco := g.origin - sk.get_bone_global_pose(_i_ante_e).origin
+	var dedos := g.basis.y
+	var angulo := dedos.angle_to(antebraco)
+	var sobra := angulo - deg_to_rad(PUNHO_DOBRA_MAX)
+	var eixo := dedos.cross(antebraco)
+	if sobra <= 0.0 or eixo.length_squared() < 0.000001:
+		return
+	var giro := Basis(eixo.normalized(), sobra * no_cinto * peso)
+	sk.set_bone_global_pose(i_mao, Transform3D(giro * g.basis, g.origin))
 
 
 func _destino_da_esquerda(ctx: Dictionary) -> Vector3:

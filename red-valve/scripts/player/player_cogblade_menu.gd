@@ -17,6 +17,7 @@ const HOLD_MS: int = 220           # Tempo real de "segurar" até abrir o menu
 const MENU_TIME_SCALE: float = 0.02 # Tempo ultra lento enquanto escolhe
 const MENU_AUDIO_SCALE: float = 0.5
 const SELECT_DEADZONE: float = 0.35
+const SOM_EMPUNHAR := "res://assets/sounds/player/blade_in.mp3"
 
 # Poderes disponíveis, na ordem em que aparecem no círculo (começa no topo).
 # "cost_type" diz de onde sai o custo: "mp" gasta mana (o arremesso, que antes
@@ -109,7 +110,8 @@ func _process(_delta: float) -> void:
 
 # Toque rápido: a cogblade volta pra mão. É o único jeito de empunhá-la — no
 # menu ela não se equipa (ver `item_db` no SaveManager) — e o mesmo caminho do
-# atalho do direcional: equipa, grava e redesenha as mãos.
+# atalho do direcional: equipa, grava e redesenha as mãos. O tinido de metal é
+# o mesmo som de lâmina do combate da cogblade, um pouco mais agudo.
 func _empunhar_cogblade() -> void:
 	if not SaveManager.tem_item("cogblade") or SaveManager.cogblade_como_arma():
 		return
@@ -117,6 +119,16 @@ func _empunhar_cogblade() -> void:
 	SaveManager.save_game()
 	player.update_ammo_ui()
 	player.update_equipment_visuals()
+	_tocar_som(SOM_EMPUNHAR, randf_range(1.1, 1.2), -5.0)
+
+func _tocar_som(caminho: String, pitch: float, volume_db: float) -> void:
+	var p := AudioStreamPlayer.new()
+	p.stream = load(caminho)
+	p.pitch_scale = pitch
+	p.volume_db = volume_db
+	add_child(p)
+	p.play()
+	p.finished.connect(p.queue_free)
 
 # =========================================================================
 # CONDIÇÕES

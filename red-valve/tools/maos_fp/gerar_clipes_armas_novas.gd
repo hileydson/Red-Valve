@@ -249,10 +249,15 @@ func _granola() -> void:
 	var tras := (no_rig.basis * Vector3.BACK).normalized()      # do cano pra culatra
 	var dir_da_arma := (no_rig.basis * Vector3.RIGHT).normalized()
 	# a ogiva do foguete carregado (x -0,6 do .glb dele) e a mao segurando-a
-	# pela esquerda, os dedos correndo pro lado da culatra
+	# pela esquerda. Os dedos ATRAVESSAM o foguete no rumo do antebraco (a
+	# pegada de quem segura um bastao): correndo ao longo do cano, pro lado da
+	# culatra, eles apontavam de volta pro cotovelo, e o punho chegava dobrado
+	# pra tras, com as costas da mao contra o antebraco.
 	var ogiva := carregado * Vector3(-0.6, 0.0, 0.0)
 	var ajuste := _no("AjusteEsquerdo")
-	var empurra := _desentortar(_pulso(ogiva, tras, dir_da_arma, 0.075, 0.04), ajuste)
+	var antebraco: Vector3 = ogiva - (raiz.get_node("rig").get("cotovelo_esquerdo") as Vector3)
+	var dedos := antebraco - tras * antebraco.dot(tras)
+	var empurra := _desentortar(_pulso(ogiva, dedos, dir_da_arma, 0.075, 0.04), ajuste)
 	# na frente da boca a mao tem a MESMA orientacao do empurrao: o foguete
 	# chega alinhado com o cano e so' desliza pra dentro
 	var na_frente := Transform3D(empurra.basis, empurra.origin - tras * 0.24)
