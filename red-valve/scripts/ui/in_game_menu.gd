@@ -64,6 +64,10 @@ var mapa_painel: Control
 const TAB_ARQUIVOS := 2
 var arquivos_painel: ArquivosPainel
 
+## A aba em que o menu abre, escolhida por quem o cria antes do add_child
+## (-1: a última em que o jogador estava).
+var aba_inicial := -1
+
 func _ready() -> void:
 	self.layer = 150 # Acima das mensagens do jogo e no mesmo nível do Pause
 	self.process_mode = Node.PROCESS_MODE_ALWAYS
@@ -72,9 +76,11 @@ func _ready() -> void:
 	
 	GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/entrar_menu.mp3")
 
+	# Quem abre escolhe a aba (Y/T: inventário, Select/M: mapa). Sem escolha,
 	# reabre na aba em que o jogador estava. O menu é destruído ao fechar, por
 	# isso a lembrança mora em GlobalEvents e não aqui.
-	current_tab = clampi(GlobalEvents.menu_ultima_aba, 0, tabs.size() - 1)
+	var aba := aba_inicial if aba_inicial >= 0 else GlobalEvents.menu_ultima_aba
+	current_tab = clampi(aba, 0, tabs.size() - 1)
 	
 	# Fundo
 	bg = ColorRect.new()
@@ -632,11 +638,19 @@ func _executar_atalho() -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_menu_game") or event.is_action_pressed("ui_pause"):
+	if event.is_action_pressed("ui_menu_game") or event.is_action_pressed("ui_menu_mapa") \
+			or event.is_action_pressed("ui_pause"):
 		get_viewport().set_input_as_handled()
 		close_menu()
 		return
-		
+
+	# No controle, o menu se navega pelo DIRECIONAL. O analógico também cai em
+	# ui_up/down/left/right e, num submenu de três linhas, um encostar no
+	# analógico pulava opções sem querer. (O mapa ainda
+	# anda pelo analógico: ele lê `Input.get_vector` no _process, não aqui.)
+	if event is InputEventJoypadMotion:
+		return
+
 	# O submenu do atalho vem ANTES do menu de ação: ele abre por cima dele, e
 	# quem está por cima é quem lê a entrada.
 	if atalho_open:

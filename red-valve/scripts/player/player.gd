@@ -346,6 +346,11 @@ const CENAS_INTERIOR: PackedStringArray = [
 	"hospital", "escola", "porao", "igreja_interior",
 	"casa_jimmy_interior", "casa_nice_interior", "oficina_jimmy", "the_house",
 ]
+## As casas (a do Maycow, a do Jimmy e a da Dona Nice): dentro delas ele nao
+## corre, so' anda. Mesmo criterio de `CENAS_INTERIOR` (nome da cena atual).
+const CENAS_SEM_CORRIDA: PackedStringArray = [
+	"the_house", "casa_jimmy_interior", "casa_nice_interior",
+]
 ## Onde mora o componente do braco que empurra porta. Ele PRECISA ser filho do
 ## Skeleton3D — SkeletonModifier3D so' funciona ali.
 const CAMINHO_MAO_PORTA := "maycow_lopes_normal/Armature/Skeleton3D/PlayerDoorReach"
@@ -461,6 +466,8 @@ var last_camera_rot_x: float = 0.0
 ## não como passo. Este mínimo dá tempo do pé pousar. Vale só para a animação:
 ## o corpo continua parando de girar assim que alcança a câmera.
 @export var GIRO_ANIM_MINIMO: float = 0.30
+## Quantos dB a pisada do pivô fica abaixo da pisada do andar.
+@export var GIRO_PASSO_ATENUACAO: float = 7.0
 
 ## Yaw do CORPO, em coordenadas de MUNDO. É ele que manda no modelo; o
 ## `rotation.y` do jogador continua sendo o da câmera e o do movimento.
@@ -570,6 +577,14 @@ func em_interior() -> bool:
 	if arvore == null or arvore.current_scene == null:
 		return false
 	return CENAS_INTERIOR.has(String(arvore.current_scene.name))
+
+
+## Estamos numa das casas em que nao se corre? Ver `CENAS_SEM_CORRIDA`.
+func corrida_proibida() -> bool:
+	var arvore := get_tree()
+	if arvore == null or arvore.current_scene == null:
+		return false
+	return CENAS_SEM_CORRIDA.has(String(arvore.current_scene.name))
 
 
 ## Velocidade AGORA: a de sempre na rua, a curta nos interiores.
@@ -730,11 +745,10 @@ var _was_cutscene_blocked: bool = false
 ## lanterna. Agora ele é uma lanterna de verdade (facho longo, miolo forte,
 ## borda suave, com sombra) e só existe depois que o jogador pega o objeto.
 const LANTERNA_ITEM := "lanterna"
-## Som de acender: é o "entrar_super" do menu, puxado para baixo no pitch. Fica
-## com corpo de interruptor grande em vez de bipe de interface — e o jogador
-## não reconhece o som do menu.
-const LANTERNA_SOM := "res://assets/sounds/menu_itens/entrar_super.mp3"
-const LANTERNA_SOM_PITCH := 0.62
+## Som de acender/apagar: o botão de pressão da lanterna — o clique de apertar
+## e o de soltar (`tools/audio/gerar_sons_armas.py`, função `lanterna`).
+const LANTERNA_SOM := "res://assets/sounds/player/lanterna/lanterna_clique.ogg"
+const LANTERNA_SOM_PITCH := 1.0
 ## Quanto o facho aponta para BAIXO em relação à linha de visão. Lanterna
 ## apontada exatamente para o centro da tela ilumina o horizonte e deixa o chão
 ## à frente dos pés no escuro, que é justamente onde se anda.
@@ -758,6 +772,14 @@ const LANTERNA_SWAY_MAX := 0.09
 
 var lanterna_ligada: bool = false
 var _lanterna_som: AudioStreamPlayer = null
+
+## O som de sacar: toca quando uma arma de fogo passa a estar na mão (atalho do
+## direcional ou "Equipar" no menu — este, ao fechar o menu, que é quando o
+## jogo volta a andar). `_arma_na_mao_antes` começa em "?" para não tocar ao
+## carregar a cena com a arma já equipada.
+const SOM_SACAR_ARMA := "res://assets/sounds/player/guns/sacar_arma.ogg"
+var _som_sacar: AudioStreamPlayer = null
+var _arma_na_mao_antes := "?"
 ## Halo: o segundo facho, largo e fraco, que envolve o miolo. Uma lanterna real
 ## não projeta um disco de luz e escuro absoluto em volta — tem o círculo forte
 ## no meio e um derrame suave bem maior ao redor. Com um SpotLight3D só, o que
@@ -843,6 +865,30 @@ func alternar_lanterna() -> void:
 		# seguidos soam gravados, e este é um som que o jogador vai ouvir muito
 		_lanterna_som.pitch_scale = LANTERNA_SOM_PITCH + randf_range(-0.05, 0.05)
 		_lanterna_som.play()
+
+
+func _vigiar_arma_sacada() -> void:
+	var agora := ""
+	for arma in SaveManager.ARMAS_DE_FOGO:
+		if SaveManager.is_equipped(arma):
+			agora = arma
+			break
+	if agora == _arma_na_mao_antes:
+		return
+	var antes := _arma_na_mao_antes
+	_arma_na_mao_antes = agora
+	if antes == "?" or agora == "":
+		return
+	if _som_sacar == null:
+		_som_sacar = AudioStreamPlayer.new()
+		_som_sacar.name = "som_sacar"
+		_som_sacar.stream = load(SOM_SACAR_ARMA)
+		_som_sacar.volume_db = -5.0
+		add_child(_som_sacar)
+	# arma longa (cacadeira, Granola) sai mais pesada: um tom abaixo
+	var longa := agora == "shotgun" or agora == "granola"
+	_som_sacar.pitch_scale = (0.88 if longa else 1.0) + randf_range(-0.04, 0.04)
+	_som_sacar.play()
 
 
 ## Chamado quando o jogador acaba de pegar a lanterna: já entra acesa.
@@ -994,6 +1040,18 @@ func _processar_mira_de_arma() -> void:
 
 ## Desliga tudo o que a mira de arma acende. Chamado quando a mira não pode
 ## existir (cutscene, prólogo) — e não só quando o jogador solta o botão.
+## Apaga o motion blur leve da visao do amuleto — se nao for de outro efeito
+## que esteja usando o mesmo overlay agora (volta da arena, dash, dano).
+func _apagar_blur_da_visao() -> void:
+	if not is_instance_valid(hud_layer) or is_playing_return_effect or is_dashing \
+			or damage_blur_timer > 0.0:
+		return
+	var motion_blur = hud_layer.get_node_or_null("MotionBlurOverlay")
+	if motion_blur and motion_blur.visible:
+		motion_blur.material.set_shader_parameter("blur_strength", 0.0)
+		motion_blur.visible = false
+
+
 func _encerrar_mira_de_arma() -> void:
 	if is_instance_valid(gun_crosshair):
 		gun_crosshair.visible = false
@@ -1417,6 +1475,7 @@ func _physics_process(delta: float) -> void:
 	if not is_inside_tree() or get_tree() == null: return
 
 	_atualizar_mira_lanterna(delta)
+	_vigiar_arma_sacada()
 	
 	if damage_blur_timer > 0.0:
 		damage_blur_timer -= delta
@@ -1477,6 +1536,9 @@ func _physics_process(delta: float) -> void:
 				_run_toggle_active = false
 		else:
 			_run_toggle_active = Input.is_action_pressed("ui_run")
+		# nas casas ele so' anda (a corrida das cutscenes liga depois, no movimento)
+		if corrida_proibida():
+			_run_toggle_active = false
 	else:
 		if not _cutscene_auto_run:
 			_run_toggle_active = false
@@ -1886,6 +1948,11 @@ func _physics_process(delta: float) -> void:
 			_on_amulet_magic_released()
 
 		if normal_can_aim and mira_de_arma:
+			# Com arma equipada, o quadro em que o LB sobe ja' cai aqui — e so'
+			# os ramos de baixo apagavam o blur que a visao do amuleto acende.
+			# Ele ficava preso em 0,08: no centro quase nao se ve', mas e' um
+			# blur RADIAL, e no canto (o ECG do sangue) borrava tudo.
+			_apagar_blur_da_visao()
 			_processar_mira_de_arma()
 		elif normal_can_aim:
 			# Abrir o amuleto NO MEIO de uma mirada de arma cai aqui: sem isto, a
@@ -2072,6 +2139,16 @@ func _physics_process(delta: float) -> void:
 				_set_anim_time_scale(GIRO_ANIM_ESCALA if dando_passo else 1.0)
 				if dando_passo:
 					playback.travel("walk")
+					# o pé sai do lugar, então a pisada se ouve — mais baixa
+					# que a do andar: é um ajuste de pé, não uma passada
+					if not passos.playing:
+						passos.pitch_scale = randf_range(0.85, 0.95)
+						passos.volume_db = randf_range(-15.0, -12.0) - GIRO_PASSO_ATENUACAO
+						_passo_pe_alternado = !_passo_pe_alternado
+						if _passo_pe_alternado:
+							passos.volume_db -= 4.0
+							passos.pitch_scale -= 0.08
+						passos.play()
 				else:
 					playback.travel("idle")
 			velocity.x = move_toward(velocity.x, 0, velocidade_atual)

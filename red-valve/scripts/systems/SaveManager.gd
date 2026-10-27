@@ -1077,7 +1077,9 @@ func item_do_atalho(direcao: String) -> String:
 
 var menu_instance = null
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_menu_game"):
+	# Y (ou T) abre no inventario; o Select (ou M) abre direto no mapa.
+	var no_mapa := event.is_action_pressed("ui_menu_mapa")
+	if event.is_action_pressed("ui_menu_game") or no_mapa:
 		if get_tree().current_scene and (get_tree().current_scene.scene_file_path.contains("main_menu") or get_tree().current_scene.scene_file_path.contains("cutscene")):
 			return # Não abre menu nessas telas
 			
@@ -1100,6 +1102,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			if menu_script:
 				menu_instance = menu_script.new()
 				menu_instance.name = "InGameMenu"
+				menu_instance.aba_inicial = menu_instance.TAB_MAPA if no_mapa else 0
 				get_tree().root.add_child(menu_instance)
 		else:
 			pass

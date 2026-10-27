@@ -1,4 +1,5 @@
-"""Sons da MK3 (the_negotiator_V2) e da Granola (the_negotiator_V4).
+"""Sons da MK3 (the_negotiator_V2) e da Granola (the_negotiator_V4), do
+sacar de qualquer arma e do botao da lanterna.
 
     python3 tools/audio/gerar_sons_armas.py
 
@@ -118,6 +119,52 @@ def mira():
     gravar("granola", "granola_mira_trava.ogg", x)
 
 
+# Pacotes CC0 a mais, so' destes sons (o resto vem do gerador da igreja)
+PACOTES_EXTRAS = {
+    "equipmentclicks.wav": ("equipment-clicks-ii", "Equipment Clicks II"),
+    "10_clicks_and_switches.zip": ("10-clicks-and-switches", "10 Clicks and Switches"),
+}
+
+
+def sacar():
+    # Sacar a arma: a mao arrasta a arma pra fora do coldre (couro e pano
+    # roçando — chiado ESCURO, curto, que cresce e corta) e fecha na pegada: o
+    # baque surdo da palma no cabo junto do clack de metal. Ruido "granulado"
+    # (modulado por ruido lento) e' o que faz o atrito soar como couro e nao
+    # como vento. Os filtros daqui sao de um polo, por isso vao em cascata.
+    x = g.silencio(0.5)
+    n = int(0.17 * SR)
+    atrito = passa_alta(ruido(0.17), 450.0)
+    for _ in range(3):
+        atrito = g.passa_baixa(atrito, 2000.0)
+    grao = np.abs(g.passa_baixa(ruido(0.17), 45.0))
+    grao = (grao / (grao.max() or 1.0)) * 0.7 + 0.3
+    t = np.linspace(0.0, 1.0, n)
+    env = (np.sin(t * np.pi) ** 0.8) * (0.3 + 0.7 * t)
+    g.por(x, g.normal(atrito * grao * env.astype(np.float32)), 0.0, 0.32)
+    baque = g.normal(g.ler("sfx_breaking_and_falling/bfh1_hit_03.ogg"))[: int(0.12 * SR)]
+    for _ in range(2):
+        baque = g.passa_baixa(baque, 900.0)
+    g.por(x, g.fade(g.normal(baque), 0.001, 0.05), 0.15, 0.7)
+    clack = g.normal(g.ler("equipmentclicks.wav"))[int(0.13 * SR): int(0.30 * SR)]
+    clack = g.passa_baixa(g.tom(clack, 0.72), 6000.0)
+    g.por(x, g.fade(g.normal(clack), 0.002, 0.06), 0.155, 0.8)
+    gravar("", "sacar_arma.ogg", g.fade(g.normal(x), 0.004, 0.1))
+
+
+def lanterna():
+    # O botao da lanterna: aperta (clique firme) e solta (o mesmo mais leve e
+    # agudo), como num botao de pressao de verdade.
+    pasta = "10_clicks_and_switches/10 Clicks and Switches/"
+    aperta = g.normal(g.ler(pasta + "click.4.ogg"))
+    solta = g.normal(g.ler(pasta + "click.1.ogg"))
+    x = g.silencio(0.3)
+    g.por(x, aperta, 0.0, 1.0)
+    g.por(x, g.tom(solta, 1.15), 0.065, 0.45)
+    g.SAIDA = os.path.join(SONS, "lanterna")
+    g.gravar("lanterna_clique.ogg", g.fade(g.normal(x), 0.0, 0.05))
+
+
 def creditos():
     texto = ("Sons da MK3 e da Granola, compostos por tools/audio/gerar_sons_armas.py a\n"
              "partir dos sons da pistola e da cacadeira do projeto e de:\n\n"
@@ -126,11 +173,20 @@ def creditos():
     for pasta in ("mk3", "granola"):
         with open(os.path.join(SONS, "guns", pasta, "CREDITOS.txt"), "w") as f:
             f.write(texto)
+    with open(os.path.join(SONS, "guns", "CREDITOS.txt"), "w") as f:
+        f.write("sacar_arma.ogg, composto por tools/audio/gerar_sons_armas.py (atrito\n"
+                "sintetizado) com:\n\n"
+                "  \"Equipment Clicks II\" (CC0)  https://opengameart.org/content/equipment-clicks-ii\n")
+    with open(os.path.join(SONS, "lanterna", "CREDITOS.txt"), "w") as f:
+        f.write("lanterna_clique.ogg, composto por tools/audio/gerar_sons_armas.py com:\n\n"
+                "  \"10 Clicks and Switches\" (CC0)  https://opengameart.org/content/10-clicks-and-switches\n")
 
 
 if __name__ == "__main__":
+    g.PACOTES.update(PACOTES_EXTRAS)
     # sem argumento gera tudo; com nomes (ex.: `mira`) so' esses
     if len(sys.argv) > 1:
+        g.baixar()
         for nome in sys.argv[1:]:
             globals()[nome]()
     else:
@@ -138,4 +194,6 @@ if __name__ == "__main__":
         mk3()
         granola()
         mira()
+        sacar()
+        lanterna()
         creditos()
