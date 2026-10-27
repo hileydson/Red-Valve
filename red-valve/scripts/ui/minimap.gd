@@ -39,6 +39,10 @@ extends CanvasLayer
 @export var suavidade: float = 12.0
 ## Mostrar os pontos de interesse também no minimapa (sem rótulo).
 @export var pontos_no_minimapa: bool = true
+## O mapa só existe para o Maycow normal (o padrão: cidade e prédios). Os
+## infernos são jogados com o parasita e desligam isto — sem isso o minimapa e
+## a aba MAPA deles nunca apareceriam.
+@export var so_maycow_normal: bool = true
 
 @export_group("Prédio de dois andares")
 ## Planta do andar de cima. Vazio = esta cena tem um andar só, e nada disto

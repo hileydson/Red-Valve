@@ -1,21 +1,22 @@
-[gd_scene load_steps=64 format=3]
+[gd_scene load_steps=65 format=3]
 
 [ext_resource type="Script" path="res://scripts/stages/inferno/inferno.gd" id="1_inferno"]
 [ext_resource type="PackedScene" path="res://assets/3d_model/stages/inferno/inferno.glb" id="2_inferno"]
 [ext_resource type="Script" path="res://scripts/stages/materiais_por_sufixo.gd" id="3_materiais_por_sufixo"]
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="4_player"]
 [ext_resource type="PackedScene" path="res://scenes/configs/pause.tscn" id="5_pause"]
-[ext_resource type="PackedScene" path="res://scenes/configs/fade.tscn" id="6_fade"]
-[ext_resource type="PackedScene" path="res://scenes/effects/heat_distortion_filter.tscn" id="7_heat_distortion_filter"]
-[ext_resource type="Shader" path="res://shaders/environment/ceu_maldito.gdshader" id="8_ceu_maldito"]
-[ext_resource type="Shader" path="res://shaders/environment/portal_vortice.gdshader" id="9_portal_vortice"]
-[ext_resource type="AudioStream" path="res://assets/sounds/cenarios/drone_inferno.ogg" id="10_drone_inferno"]
-[ext_resource type="AudioStream" path="res://assets/sounds/cenarios/vento_quente.ogg" id="11_vento_quente"]
-[ext_resource type="AudioStream" path="res://assets/sounds/cenarios/lava.ogg" id="12_lava"]
-[ext_resource type="AudioStream" path="res://assets/sounds/cenarios/geiser.ogg" id="13_geiser"]
-[ext_resource type="AudioStream" path="res://assets/sounds/cenarios/trovao.ogg" id="14_trovao"]
-[ext_resource type="AudioStream" path="res://assets/sounds/common/fire_cracling.mp3" id="15_fire_cracling"]
-[ext_resource type="AudioStream" path="res://assets/sounds/episodios/portal_red_valve.mp3" id="16_portal_red_valve"]
+[ext_resource type="PackedScene" path="res://scenes/ui/minimap_inferno.tscn" id="6_minimap_inferno"]
+[ext_resource type="PackedScene" path="res://scenes/configs/fade.tscn" id="7_fade"]
+[ext_resource type="PackedScene" path="res://scenes/effects/heat_distortion_filter.tscn" id="8_heat_distortion_filter"]
+[ext_resource type="Shader" path="res://shaders/environment/ceu_maldito.gdshader" id="9_ceu_maldito"]
+[ext_resource type="Shader" path="res://shaders/environment/portal_vortice.gdshader" id="10_portal_vortice"]
+[ext_resource type="AudioStream" path="res://assets/sounds/cenarios/drone_inferno.ogg" id="11_drone_inferno"]
+[ext_resource type="AudioStream" path="res://assets/sounds/cenarios/vento_quente.ogg" id="12_vento_quente"]
+[ext_resource type="AudioStream" path="res://assets/sounds/cenarios/lava.ogg" id="13_lava"]
+[ext_resource type="AudioStream" path="res://assets/sounds/cenarios/geiser.ogg" id="14_geiser"]
+[ext_resource type="AudioStream" path="res://assets/sounds/cenarios/trovao.ogg" id="15_trovao"]
+[ext_resource type="AudioStream" path="res://assets/sounds/common/fire_cracling.mp3" id="16_fire_cracling"]
+[ext_resource type="AudioStream" path="res://assets/sounds/episodios/portal_red_valve.mp3" id="17_portal_red_valve"]
 
 [sub_resource type="FastNoiseLite" id="ruido_ceu_fn"]
 noise_type = 3
@@ -30,7 +31,7 @@ seamless = true
 noise = SubResource("ruido_ceu_fn")
 
 [sub_resource type="ShaderMaterial" id="ceu_mat"]
-shader = ExtResource("8_ceu_maldito")
+shader = ExtResource("9_ceu_maldito")
 shader_parameter/cor_zenite = Color(0.05, 0.012, 0.012, 1)
 shader_parameter/cor_horizonte = Color(0.36, 0.075, 0.035, 1)
 shader_parameter/cor_chao = Color(0.3, 0.06, 0.02, 1)
@@ -361,7 +362,7 @@ seamless = true
 noise = SubResource("ruido_portal_fn")
 
 [sub_resource type="ShaderMaterial" id="mat_portal"]
-shader = ExtResource("9_portal_vortice")
+shader = ExtResource("10_portal_vortice")
 shader_parameter/ruido = SubResource("ruido_portal")
 
 [sub_resource type="QuadMesh" id="malha_portal"]
@@ -597,7 +598,7 @@ draw_pass_1 = SubResource("quad_fogo")
 
 [node name="estalo_0" type="AudioStreamPlayer3D" parent="fogo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -9.69000, 0.63000, 358.67000)
-stream = ExtResource("15_fire_cracling")
+stream = ExtResource("16_fire_cracling")
 volume_db = -8
 unit_size = 6
 max_distance = 30
@@ -626,7 +627,7 @@ draw_pass_1 = SubResource("quad_fogo")
 
 [node name="estalo_2" type="AudioStreamPlayer3D" parent="fogo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.33000, -1.92000, 229.91000)
-stream = ExtResource("15_fire_cracling")
+stream = ExtResource("16_fire_cracling")
 volume_db = -8
 unit_size = 6
 max_distance = 30
@@ -655,7 +656,7 @@ draw_pass_1 = SubResource("quad_fogo")
 
 [node name="estalo_4" type="AudioStreamPlayer3D" parent="fogo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 47.76000, 2.49000, 74.04000)
-stream = ExtResource("15_fire_cracling")
+stream = ExtResource("16_fire_cracling")
 volume_db = -8
 unit_size = 6
 max_distance = 30
@@ -684,7 +685,7 @@ draw_pass_1 = SubResource("quad_fogo")
 
 [node name="estalo_6" type="AudioStreamPlayer3D" parent="fogo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 33.49000, 6.23000, -91.33000)
-stream = ExtResource("15_fire_cracling")
+stream = ExtResource("16_fire_cracling")
 volume_db = -8
 unit_size = 6
 max_distance = 30
@@ -713,7 +714,7 @@ draw_pass_1 = SubResource("quad_fogo")
 
 [node name="estalo_8" type="AudioStreamPlayer3D" parent="fogo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -3.90000, 3.23000, -186.57000)
-stream = ExtResource("15_fire_cracling")
+stream = ExtResource("16_fire_cracling")
 volume_db = -8
 unit_size = 6
 max_distance = 30
@@ -742,7 +743,7 @@ draw_pass_1 = SubResource("quad_fogo")
 
 [node name="estalo_10" type="AudioStreamPlayer3D" parent="fogo"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 17.06000, 0.77000, -321.71000)
-stream = ExtResource("15_fire_cracling")
+stream = ExtResource("16_fire_cracling")
 volume_db = -8
 unit_size = 6
 max_distance = 30
@@ -792,7 +793,7 @@ omni_range = 12.0
 
 [node name="som" type="AudioStreamPlayer3D" parent="geiseres/geiser_0"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000)
-stream = ExtResource("13_geiser")
+stream = ExtResource("14_geiser")
 volume_db = -2
 unit_size = 10
 max_distance = 60
@@ -828,7 +829,7 @@ omni_range = 12.0
 
 [node name="som" type="AudioStreamPlayer3D" parent="geiseres/geiser_1"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000)
-stream = ExtResource("13_geiser")
+stream = ExtResource("14_geiser")
 volume_db = -2
 unit_size = 10
 max_distance = 60
@@ -864,7 +865,7 @@ omni_range = 12.0
 
 [node name="som" type="AudioStreamPlayer3D" parent="geiseres/geiser_2"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000)
-stream = ExtResource("13_geiser")
+stream = ExtResource("14_geiser")
 volume_db = -2
 unit_size = 10
 max_distance = 60
@@ -900,7 +901,7 @@ omni_range = 12.0
 
 [node name="som" type="AudioStreamPlayer3D" parent="geiseres/geiser_3"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000)
-stream = ExtResource("13_geiser")
+stream = ExtResource("14_geiser")
 volume_db = -2
 unit_size = 10
 max_distance = 60
@@ -936,7 +937,7 @@ omni_range = 12.0
 
 [node name="som" type="AudioStreamPlayer3D" parent="geiseres/geiser_4"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000)
-stream = ExtResource("13_geiser")
+stream = ExtResource("14_geiser")
 volume_db = -2
 unit_size = 10
 max_distance = 60
@@ -972,7 +973,7 @@ omni_range = 12.0
 
 [node name="som" type="AudioStreamPlayer3D" parent="geiseres/geiser_5"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000)
-stream = ExtResource("13_geiser")
+stream = ExtResource("14_geiser")
 volume_db = -2
 unit_size = 10
 max_distance = 60
@@ -1008,7 +1009,7 @@ omni_range = 12.0
 
 [node name="som" type="AudioStreamPlayer3D" parent="geiseres/geiser_6"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000)
-stream = ExtResource("13_geiser")
+stream = ExtResource("14_geiser")
 volume_db = -2
 unit_size = 10
 max_distance = 60
@@ -1044,7 +1045,7 @@ omni_range = 12.0
 
 [node name="som" type="AudioStreamPlayer3D" parent="geiseres/geiser_7"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000)
-stream = ExtResource("13_geiser")
+stream = ExtResource("14_geiser")
 volume_db = -2
 unit_size = 10
 max_distance = 60
@@ -1080,7 +1081,7 @@ omni_range = 12.0
 
 [node name="som" type="AudioStreamPlayer3D" parent="geiseres/geiser_8"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000)
-stream = ExtResource("13_geiser")
+stream = ExtResource("14_geiser")
 volume_db = -2
 unit_size = 10
 max_distance = 60
@@ -1128,7 +1129,7 @@ draw_pass_1 = SubResource("quad_fagulha")
 
 [node name="lava_0" type="AudioStreamPlayer3D" parent="sons_lava"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -26.00000, -13.00000, 175.00000)
-stream = ExtResource("12_lava")
+stream = ExtResource("13_lava")
 volume_db = 2
 unit_size = 18
 max_distance = 110
@@ -1137,7 +1138,7 @@ parameters/looping = true
 
 [node name="lava_1" type="AudioStreamPlayer3D" parent="sons_lava"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -58.00000, -13.00000, 177.00000)
-stream = ExtResource("12_lava")
+stream = ExtResource("13_lava")
 volume_db = 2
 unit_size = 18
 max_distance = 110
@@ -1146,7 +1147,7 @@ parameters/looping = true
 
 [node name="lava_2" type="AudioStreamPlayer3D" parent="sons_lava"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 162.43000, -9.09000, 287.85000)
-stream = ExtResource("12_lava")
+stream = ExtResource("13_lava")
 volume_db = 2
 unit_size = 18
 max_distance = 110
@@ -1155,7 +1156,7 @@ parameters/looping = true
 
 [node name="lava_3" type="AudioStreamPlayer3D" parent="sons_lava"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 126.21000, -9.06000, 210.05000)
-stream = ExtResource("12_lava")
+stream = ExtResource("13_lava")
 volume_db = 2
 unit_size = 18
 max_distance = 110
@@ -1164,7 +1165,7 @@ parameters/looping = true
 
 [node name="lava_4" type="AudioStreamPlayer3D" parent="sons_lava"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -170.44000, -9.10000, 238.53000)
-stream = ExtResource("12_lava")
+stream = ExtResource("13_lava")
 volume_db = 2
 unit_size = 18
 max_distance = 110
@@ -1173,7 +1174,7 @@ parameters/looping = true
 
 [node name="lava_5" type="AudioStreamPlayer3D" parent="sons_lava"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -143.79000, -9.08000, 147.31000)
-stream = ExtResource("12_lava")
+stream = ExtResource("13_lava")
 volume_db = 2
 unit_size = 18
 max_distance = 110
@@ -1182,7 +1183,7 @@ parameters/looping = true
 
 [node name="lava_6" type="AudioStreamPlayer3D" parent="sons_lava"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -99.76000, -9.12000, -300.49000)
-stream = ExtResource("12_lava")
+stream = ExtResource("13_lava")
 volume_db = 2
 unit_size = 18
 max_distance = 110
@@ -1191,7 +1192,7 @@ parameters/looping = true
 
 [node name="lava_7" type="AudioStreamPlayer3D" parent="sons_lava"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 102.63000, -9.38000, -201.00000)
-stream = ExtResource("12_lava")
+stream = ExtResource("13_lava")
 volume_db = 2
 unit_size = 18
 max_distance = 110
@@ -1200,7 +1201,7 @@ parameters/looping = true
 
 [node name="lava_8" type="AudioStreamPlayer3D" parent="sons_lava"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -70.78000, 1.67000, -313.47000)
-stream = ExtResource("12_lava")
+stream = ExtResource("13_lava")
 volume_db = 2
 unit_size = 18
 max_distance = 110
@@ -1209,7 +1210,7 @@ parameters/looping = true
 
 [node name="lava_9" type="AudioStreamPlayer3D" parent="sons_lava"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 140.63000, -9.35000, -272.31000)
-stream = ExtResource("12_lava")
+stream = ExtResource("13_lava")
 volume_db = 2
 unit_size = 18
 max_distance = 110
@@ -1218,7 +1219,7 @@ parameters/looping = true
 
 [node name="lava_10" type="AudioStreamPlayer3D" parent="sons_lava"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -65.20000, 3.75000, -323.08000)
-stream = ExtResource("12_lava")
+stream = ExtResource("13_lava")
 volume_db = 2
 unit_size = 18
 max_distance = 110
@@ -1227,7 +1228,7 @@ parameters/looping = true
 
 [node name="lava_11" type="AudioStreamPlayer3D" parent="sons_lava"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 118.25000, -9.31000, -357.98000)
-stream = ExtResource("12_lava")
+stream = ExtResource("13_lava")
 volume_db = 2
 unit_size = 18
 max_distance = 110
@@ -1236,7 +1237,7 @@ parameters/looping = true
 
 [node name="lava_12" type="AudioStreamPlayer3D" parent="sons_lava"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -100.91000, -9.72000, -290.19000)
-stream = ExtResource("12_lava")
+stream = ExtResource("13_lava")
 volume_db = 2
 unit_size = 18
 max_distance = 110
@@ -1250,7 +1251,7 @@ cast_shadow = 0
 
 [node name="som_portal" type="AudioStreamPlayer3D" parent="."]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 17.41742, -432.00000)
-stream = ExtResource("16_portal_red_valve")
+stream = ExtResource("17_portal_red_valve")
 volume_db = -4
 unit_size = 14
 max_distance = 90
@@ -1412,26 +1413,28 @@ transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 22.50000, 1.91000, -392.50000)
 
 [node name="drone" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("10_drone_inferno")
+stream = ExtResource("11_drone_inferno")
 volume_db = -8
 autoplay = true
 parameters/looping = true
 
 [node name="vento_som" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("11_vento_quente")
+stream = ExtResource("12_vento_quente")
 volume_db = -12
 autoplay = true
 parameters/looping = true
 
 [node name="trovao" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("14_trovao")
+stream = ExtResource("15_trovao")
 volume_db = -6
 
-[node name="calor" parent="." instance=ExtResource("7_heat_distortion_filter")]
+[node name="calor" parent="." instance=ExtResource("8_heat_distortion_filter")]
 
-[node name="fade" parent="." instance=ExtResource("6_fade")]
+[node name="fade" parent="." instance=ExtResource("7_fade")]
 
 [node name="Pause" parent="." instance=ExtResource("5_pause")]
+
+[node name="minimapa" parent="." instance=ExtResource("6_minimap_inferno")]
 
 [node name="Player" parent="." instance=ExtResource("4_player")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 1.30000, 428.00000)

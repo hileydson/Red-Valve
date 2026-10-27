@@ -344,6 +344,23 @@ MAP_POI_ESC_SAIDA,Exit to the street,Saída para a rua
 MAP_POI_POR_ENTRADA,Way back to the storeroom,Volta para o depósito
 MAP_POI_POR_CAMARA,Large chamber,Câmara grande
 MAP_POI_POR_SAIDA,Way up to the supply room,Subida para o almoxarifado
+MAP_POI_INF_PORTAO,Gate of Ashes,Portão das Cinzas
+MAP_POI_INF_PLANICIE,Ash Plain,Planície das Cinzas
+MAP_POI_INF_PONTE,Lava River Bridge,Ponte do Rio de Lava
+MAP_POI_INF_COLOSSOS,Field of Colossi,Campo dos Colossos
+MAP_POI_INF_ESPINHOS,Forest of Thorns,Floresta de Espinhos
+MAP_POI_INF_CATEDRAL,Sunken Cathedral,Catedral Afundada
+MAP_POI_INF_CRISTA,The Ridge,A Crista
+MAP_POI_INF_PORTAL,The Portal,O Portal
+MAP_POI_INF2_CHEGADA,Arrival,Chegada
+MAP_POI_INF2_FENDA,The Rift,A Fenda
+MAP_POI_INF2_MIRANTE,The Overlook,O Mirante
+MAP_POI_INF2_CASCATA,The Lavafall,A Cascata
+MAP_POI_INF2_FORJA,The Forge,A Forja
+MAP_POI_INF2_ENFORCADOS,The Hanged,Os Enforcados
+MAP_POI_INF2_GARGANTA,The Gorge,A Garganta
+MAP_POI_INF2_PONTE,Chain Bridge,Ponte de Correntes
+MAP_POI_INF2_AGULHA,The Spire,A Agulha
 PROMPT_TAKE_PISTOL,Take the pistol?,Pegar a pistola?
 PROMPT_TAKE_AMMO,Take the ammunition?,Pegar a munição?
 PICKUP_PISTOL,"You picked up The Negotiator. Equip it in the menu to carry it in your hand.","Você pegou a The Negotiator. Equipe ela no menu para levá-la na mão."

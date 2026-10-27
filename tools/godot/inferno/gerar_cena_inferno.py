@@ -122,6 +122,7 @@ def main():
     pintor = t.ext("Script", "res://scripts/stages/materiais_por_sufixo.gd")
     player = t.ext("PackedScene", "res://scenes/player/player.tscn")
     pause = t.ext("PackedScene", "res://scenes/configs/pause.tscn")
+    minimapa = t.ext("PackedScene", "res://scenes/ui/minimap_inferno.tscn")
     fade = t.ext("PackedScene", "res://scenes/configs/fade.tscn")
     calor = t.ext("PackedScene", "res://scenes/effects/heat_distortion_filter.tscn")
     ceu_sh = t.ext("Shader", "res://shaders/environment/ceu_maldito.gdshader")
@@ -341,6 +342,9 @@ def main():
     t.no("calor", None, instancia=calor)
     t.no("fade", None, instancia=fade)
     t.no("Pause", None, instancia=pause)
+    # o mapa do local no canto (e a aba MAPA do menu): prancha de
+    # tools/godot/inferno/make_mapa_inferno.py
+    t.no("minimapa", None, instancia=minimapa)
     px, py, pz = P["player"]
     t.no("Player", None, instancia=player, props=[("transform", transform((px, py + 1.0, pz)))])
 

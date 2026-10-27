@@ -59,12 +59,18 @@ func uv(mundo_x: float, mundo_z: float) -> Vector2:
 
 
 ## Existe mapa utilizável nesta cena, para este Maycow?
+##
+## Por padrão só o Maycow normal tem mapa; a cena que é jogada com o parasita
+## (os infernos) libera no próprio perfil, com `so_maycow_normal` desligado.
 static func disponivel(arvore: SceneTree) -> bool:
-	if not GlobalEvents.is_maycow_normal:
-		return false
 	if GlobalEvents.in_cutscene:
 		return false
-	return arvore.get_first_node_in_group("mapa_cidade") != null
+	var no := arvore.get_first_node_in_group("mapa_cidade")
+	if no == null:
+		return false
+	if not GlobalEvents.is_maycow_normal and no.get("so_maycow_normal") != false:
+		return false
+	return true
 
 
 ## O nó que declara QUAL mapa esta cena usa.

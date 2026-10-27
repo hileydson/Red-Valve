@@ -1,0 +1,72 @@
+{
+ "nota": "recorte do inferno_2 coberto por T_inferno2map.png; gerado por tools/godot/inferno/make_mapa_inferno.py",
+ "mundo_x0": -252.88,
+ "mundo_z0": -194.35,
+ "tamanho_m": 531.54,
+ "resolucao": 2048,
+ "pontos": [
+  {
+   "id": "area_1_chegada",
+   "chave": "MAP_POI_INF2_CHEGADA",
+   "tipo": "local",
+   "x": 0.0,
+   "z": 230.0
+  },
+  {
+   "id": "area_2_fenda",
+   "chave": "MAP_POI_INF2_FENDA",
+   "tipo": "marco",
+   "x": 15.26,
+   "z": 150.52
+  },
+  {
+   "id": "area_3_mirante",
+   "chave": "MAP_POI_INF2_MIRANTE",
+   "tipo": "marco",
+   "x": 112.99,
+   "z": 88.3
+  },
+  {
+   "id": "area_4_cascata",
+   "chave": "MAP_POI_INF2_CASCATA",
+   "tipo": "marco",
+   "x": 122.96,
+   "z": -56.74
+  },
+  {
+   "id": "area_5_forja",
+   "chave": "MAP_POI_INF2_FORJA",
+   "tipo": "marco",
+   "x": -25.03,
+   "z": -123.17
+  },
+  {
+   "id": "area_6_enforcados",
+   "chave": "MAP_POI_INF2_ENFORCADOS",
+   "tipo": "marco",
+   "x": -92.74,
+   "z": 61.79
+  },
+  {
+   "id": "area_7_garganta",
+   "chave": "MAP_POI_INF2_GARGANTA",
+   "tipo": "marco",
+   "x": 3.04,
+   "z": -81.64
+  },
+  {
+   "id": "area_8_ponte",
+   "chave": "MAP_POI_INF2_PONTE",
+   "tipo": "marco",
+   "x": -40.44,
+   "z": 0.0
+  },
+  {
+   "id": "area_9_agulha",
+   "chave": "MAP_POI_INF2_AGULHA",
+   "tipo": "local",
+   "x": -20.1,
+   "z": 0.0
+  }
+ ]
+}
