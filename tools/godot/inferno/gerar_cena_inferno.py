@@ -26,6 +26,9 @@ import json
 import os
 import sys
 
+# o .pyc da base nao pode nascer antes de ela desligar o bytecode: desliga
+# aqui, antes de importar
+sys.dont_write_bytecode = True
 AQUI = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(AQUI, os.pardir, "cenarios"))
 

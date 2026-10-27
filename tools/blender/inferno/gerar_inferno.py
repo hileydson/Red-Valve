@@ -46,12 +46,17 @@ import math
 import os
 import sys
 
+# o .pyc da base (e o do gerador da arena 2, versionado) nao pode nascer
+# antes de a base desligar o bytecode: desliga aqui, antes de importar
+sys.dont_write_bytecode = True
 AQUI = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(AQUI, os.pardir, "cenarios"))
 
-from base import (Cena, caixa, caixa_girada, chapa_aberta, chapa_grossa,  # noqa: E402
-                  cilindro, cruz, domo, entulho, espinho, hexaedro, lerp,
-                  muro_invisivel, navmesh_grade, pilar_composto, ruido2,
+from base import (Cena, assentar, caixa, caixa_girada, chao_sob,  # noqa: E402
+                  chao_visivel, chapa_aberta, chapa_grossa, cilindro,
+                  corrente_vertical, cruz, domo, entulho, espinho,
+                  estender_ate_o_chao, hexaedro, lerp, muro_invisivel,
+                  navmesh_grade, pilar_composto, raiz_no_chao, ruido2,
                   silhueta_gotica, suave, tentaculo, tubo, tubo_redondo)
 
 LAVA = -14.0          # nivel do mar de lava
@@ -259,6 +264,15 @@ def y_ponte(z):
     return base + 1.4 * math.sin(t * math.pi / 2)
 
 
+def _sem_chao(xc, zc):
+    """A celula de chao com centro (xc, zc) fica de fora: longe demais da
+    linha ou toda embaixo da lava (ali o que se ve' e' o mar)."""
+    k, lat, d = LINHA.perto(xc, zc)
+    if k is None or abs(lat) > LINHA.p[k][2] + 120.0:
+        return True
+    return altura(xc, zc) < LAVA - 3.0 and abs(lat) > LINHA.p[k][2] + 2.0
+
+
 def altura_nav(x, z):
     if na_ponte(x, z):
         return y_ponte(z)
@@ -292,6 +306,20 @@ class Inferno(Cena):
         self.ocupado.append((x, z, r))
         if bloqueia:
             self.bloquear(x, z, r)
+
+    @staticmethod
+    def chao_v(x, z):
+        """O chao que se ve': a grade de `PASSO` m (nao a `altura` exata) e,
+        onde o `chao` nem desenha a celula, a lava."""
+        if _sem_chao((math.floor(x / PASSO) + 0.5) * PASSO, (math.floor(z / PASSO) + 0.5) * PASSO):
+            return LAVA - 0.5
+        return chao_visivel(altura, PASSO, x, z)
+
+    def pe(self, x, z, r):
+        return chao_sob(self.chao_v, x, z, r)
+
+    def firmar(self, pecas, folga=0.5):
+        return estender_ate_o_chao(pecas, self.chao_v, folga)
 
     def ponto(self, z, lado=0.0):
         """Ponto do caminho perto de Z, deslocado `lado` (fracao da largura,
@@ -339,15 +367,10 @@ class Inferno(Cena):
         for i in range(int(x0 / PASSO), int(x1 / PASSO)):
             for j in range(int(z0 / PASSO), int(z1 / PASSO)):
                 xc, zc = (i + 0.5) * PASSO, (j + 0.5) * PASSO
+                if _sem_chao(xc, zc):
+                    continue
                 k, lat, d = LINHA.perto(xc, zc)
-                if k is None:
-                    continue
                 w = LINHA.p[k][2]
-                if abs(lat) > w + 120.0:
-                    continue
-                h = altura(xc, zc)
-                if h < LAVA - 3.0 and abs(lat) > w + 2.0:
-                    continue          # fica todo embaixo da lava
                 if abs(lat) <= w + 0.5 and Z_FIM - 6 < zc < Z_INICIO + 6:
                     mat = "cinza" if ruido2(xc * 0.3, zc * 0.3, 4.0) > -0.1 else "basalto"
                 elif abs(lat) <= w + 10.0:
@@ -381,9 +404,12 @@ class Inferno(Cena):
                     continue
                 s = rnd.uniform(1.5, 5.0)
                 setor = self.setor_grade("pedras", x, z, SETOR)
-                self.m.add_pecas(setor, "rocha", [caixa_girada(x, y + s * 0.2, z, s, s * rnd.uniform(0.6, 1.4),
-                                                               s * rnd.uniform(0.7, 1.3), rnd.uniform(0, 3),
-                                                               rnd.uniform(-0.3, 0.3), rnd, 0.35)])
+                pedra = caixa_girada(x, y + s * 0.2, z, s, s * rnd.uniform(0.6, 1.4),
+                                     s * rnd.uniform(0.7, 1.3), rnd.uniform(0, 3),
+                                     rnd.uniform(-0.3, 0.3), rnd, 0.35)
+                if self.pe(x, z, s * 0.7) < LAVA + 1.0:
+                    continue          # na margem da lava o chao ali nem e' desenhado
+                self.m.add_pecas(setor, "rocha", assentar([pedra], self.chao_v))
 
     def mar_de_lava(self):
         """O mar: um disco enorme no nivel da lava. Aberto, normal pra cima."""
@@ -547,11 +573,13 @@ class Inferno(Cena):
             return (x + lx * ca + lz * sa, y + ly, z - lx * sa + lz * ca)
 
         h = alt
-        pecas = [caixa_girada(x, y + 0.6, z, 3.0, 1.2, 3.0, giro),
-                 cilindro(x, z, h * 0.12, y + 1.2, y + 1.2 + h * 0.5, n=8, raio_topo=h * 0.09),
-                 cilindro(x, z, h * 0.09, y + 1.2 + h * 0.5, y + 1.2 + h * 0.72, n=8, raio_topo=h * 0.13)]
+        # o pedestal desce ate' o chao que se ve' (na cabeceira ele cai pro rio)
+        pecas = self.firmar([caixa_girada(x, y + 0.6, z, 3.0, 1.2, 3.0, giro)])
+        pecas += [cilindro(x, z, h * 0.12, y + 1.2, y + 1.2 + h * 0.5, n=8, raio_topo=h * 0.09),
+                  cilindro(x, z, h * 0.09, y + 1.2 + h * 0.5, y + 1.2 + h * 0.72, n=8, raio_topo=h * 0.13)]
         cab = P(0, 1.2 + h * 0.8, h * 0.02)
-        pecas.append(cilindro(cab[0], cab[2], h * 0.07, cab[1] - h * 0.06, cab[1] + h * 0.06, n=8))
+        # a cabeca nasce no alto do tronco (antes ficava 18 cm acima dele)
+        pecas.append(cilindro(cab[0], cab[2], h * 0.07, y + 1.2 + h * 0.7, cab[1] + h * 0.06, n=8))
         for s in (-1, 1):
             pecas.append(espinho(P(s * h * 0.05, 1.2 + h * 0.84, 0), P(s * h * 0.16, 1.2 + h * 1.0, -h * 0.08),
                                  h * 0.025, n=5))
@@ -587,8 +615,10 @@ class Inferno(Cena):
                                              caixa((0.0, y - 1.0, z - 0.25), (9.5, y + 16.0, z + 0.55))])
         rebites = []
         for xx in range(-9, 10, 3):
+            # cada rebite nasce na face da SUA folha (a da direita e' 15 cm mais funda)
+            zf = z - 0.4 if xx + 0.5 < 0.0 else z - 0.25
             for yy in range(1, 16, 3):
-                rebites.append(espinho((xx + 0.5, y + yy, z - 0.4), (xx + 0.5, y + yy, z - 1.1), 0.22, n=4))
+                rebites.append(espinho((xx + 0.5, y + yy, zf), (xx + 0.5, y + yy, zf - 0.7), 0.22, n=4))
         self.m.add_pecas("portao", "metal", rebites)
         self.m.add_pecas("portao", "brasa", [caixa((-0.3, y - 1.0, z - 0.5), (0.3, y + 16.0, z - 0.42))])
         self.pontos["areas"]["area_1_portao"] = [0.0, altura(0.0, 420.0), 420.0]
@@ -677,6 +707,9 @@ class Inferno(Cena):
         x, y, z, i = self.ponto(62.0, -1.25)
         setor = "cranio"
         r = 16.0
+        # no meio da encosta a frente dele ficava 15 m no ar, por cima do
+        # caminho: desce ate' o chao mais baixo do pe' (o resto entra no morro)
+        y = min(y, self.pe(x, z, r) + 4.0)
         self.m.add_pecas(setor, "osso", [cilindro(x, z, r, y - 6.0, y + r * 0.8, n=14, raio_topo=r * 0.55),
                                          domo(x, z, r * 0.56, 5.0, n=14, aneis=3)], suave=True)
         self._levantar_ultimo(setor, "osso", y + r * 0.8, ultimos=1)
@@ -690,6 +723,12 @@ class Inferno(Cena):
             tx, tz = LINHA.t[i]
             bx = x + (-tz) * r * 0.85 + tx * k * 2.6 - tx * 8
             bz = z + tx * r * 0.85 + tz * k * 2.6 - tz * 8
+            # a raiz do dente entra no osso: na altura dele (y + 2) o tronco de
+            # cone ja' afinou pra menos que os 0,85 r de onde o dente saia
+            rr = r - r * 0.45 * 8.0 / (r * 0.8 + 6.0) - 0.6
+            dd = math.hypot(bx - x, bz - z)
+            if dd > rr:
+                bx, bz = x + (bx - x) * rr / dd, z + (bz - z) * rr / dd
             self.m.add_pecas(setor, "osso", [espinho((bx, y + 2.0, bz), (bx + (-tz) * 3.0, y - 1.0, bz + tx * 3.0 + a), 0.7, n=5)])
         self.col.append(cilindro(x, z, r, y - 6.0, y + 12.0, n=12))
         self.ocupar(x, z, r + 1.0)
@@ -704,9 +743,11 @@ class Inferno(Cena):
             comp = rnd.uniform(3.0, 9.0)
             p0 = (x - math.cos(a) * comp / 2, y + 0.3, zz - math.sin(a) * comp / 2)
             p1 = (x + math.cos(a) * comp / 2, y + rnd.uniform(0.3, 2.5), zz + math.sin(a) * comp / 2)
-            self.m.add_pecas(setor, "osso", [tubo_redondo([p0, p1], [0.45, 0.35], n=6),
-                                             cilindro(p0[0], p0[2], 0.7, y - 0.2, y + 0.9, n=6),
-                                             cilindro(p1[0], p1[2], 0.6, p1[1] - 0.6, p1[1] + 0.5, n=6)])
+            # os dois nos do osso descem ate' o chao: a ponta levantada fica
+            # escorada no proprio no, nao no ar
+            self.m.add_pecas(setor, "osso", [tubo_redondo([p0, p1], [0.45, 0.35], n=6)]
+                             + self.firmar([cilindro(p0[0], p0[2], 0.7, y - 0.2, y + 0.9, n=6),
+                                            cilindro(p1[0], p1[2], 0.6, p1[1] - 0.6, p1[1] + 0.5, n=6)], 0.3))
             if comp > 5.0:
                 self.col.append(tubo_redondo([p0, p1], [0.6, 0.6], n=6))
                 self.bloquear_linha(p0[0], p0[2], p1[0], p1[2], 0.8)
@@ -740,11 +781,14 @@ class Inferno(Cena):
             alt = rnd.uniform(5.0, 12.0) if dentro else rnd.uniform(12.0, 26.0)
             r = alt * rnd.uniform(0.06, 0.1)
             ponta = (x + rnd.uniform(-alt * 0.25, alt * 0.25), y + alt, zz + rnd.uniform(-alt * 0.25, alt * 0.25))
-            self.m.add_pecas(setor, "obsidiana", [espinho((x, y - 1.0, zz), ponta, r, n=5)])
-            # galhos-espinho
+            # fora do caminho ele nasce na beira: o pe' desce ate' o chao que
+            # se ve' (a grade grossa passa metros abaixo da `altura` ali)
+            yb = min(y, self.pe(x, zz, r)) - 1.0
+            self.m.add_pecas(setor, "obsidiana", [espinho((x, yb, zz), ponta, r, n=5)])
+            # galhos-espinho (no eixo do espinho, que agora sai de mais baixo)
             for g in range(rnd.randint(0, 3)):
                 t = rnd.uniform(0.3, 0.7)
-                b = (lerp(x, ponta[0], t), lerp(y, ponta[1], t), lerp(zz, ponta[2], t))
+                b = (lerp(x, ponta[0], t), lerp(yb + 1.0, ponta[1], t), lerp(zz, ponta[2], t))
                 a = rnd.uniform(0, 2 * math.pi)
                 self.m.add_pecas(setor, "obsidiana", [espinho(b, (b[0] + math.cos(a) * alt * 0.25, b[1] + alt * 0.15,
                                                                   b[2] + math.sin(a) * alt * 0.25), r * 0.4, n=4)])
@@ -765,14 +809,16 @@ class Inferno(Cena):
             b = (x - lx * w, zz - lz * w)
             ya, yb = altura(*a), altura(*b)
             topo = max(ya, yb, y) + 14.0
-            self.m.add_pecas(setor, "obsidiana", [espinho((a[0], ya - 1, a[1]), (a[0], topo + 3, a[1]), 1.4, n=5),
-                                                  espinho((b[0], yb - 1, b[1]), (b[0], topo + 3, b[1]), 1.4, n=5),
+            self.m.add_pecas(setor, "obsidiana", [espinho((a[0], min(ya, self.pe(a[0], a[1], 1.4)) - 1, a[1]),
+                                                          (a[0], topo + 3, a[1]), 1.4, n=5),
+                                                  espinho((b[0], min(yb, self.pe(b[0], b[1], 1.4)) - 1, b[1]),
+                                                          (b[0], topo + 3, b[1]), 1.4, n=5),
                                                   tubo([(a[0], topo, a[1]), (b[0], topo, b[1])], 0.8, 1.0)])
             for c in range(3):
                 t = (c + 1) / 4.0 + rnd.uniform(-0.05, 0.05)
                 gx, gz = lerp(a[0], b[0], t), lerp(a[1], b[1], t)
                 gy = topo - rnd.uniform(5.0, 9.0)
-                pecas = [tubo([(gx, topo, gz), (gx, gy + 2.2, gz)], 0.08, 0.08)]
+                pecas = corrente_vertical(gx, gz, topo, gy + 2.2)
                 for bb in range(8):
                     an = 2 * math.pi * bb / 8
                     pecas.append(caixa((gx + math.cos(an) * 0.7 - 0.04, gy, gz + math.sin(an) * 0.7 - 0.04),
@@ -817,12 +863,18 @@ class Inferno(Cena):
                 # janela ogival acesa
                 jx, jy, jz = P(s * (w - 1.2), afunda + h * 0.55, lz0 + comp / 12)
                 self.m.add_pecas(setor, "vitral", [caixa_girada(jx, jy, jz, 0.3, h * 0.4, comp / 6 * 0.4, giro, 0.0)])
-        # telhado partido
+        # telhado partido: cada metade tomba pro comprido da nave e a ponta
+        # baixa deita no alto da parede (antes ficava 1 a 4 m acima dela)
+        telhado = []
         for k in range(4):
             lz0 = -comp / 2 + k * comp / 5
             for s in (-1, 1):
-                cx_, cy_, cz_ = P(s * w * 0.5, -6.0 - k * 1.6 + h + 4.0, lz0 + comp / 10)
-                pecas.append(caixa_girada(cx_, cy_, cz_, w * 1.2, 0.8, comp / 5 - 1.0, giro + s * 0.02, s * 0.5))
+                lz_baixa = lz0 + comp / 10 + (comp / 10 - 0.5) * s
+                kp = min(5, max(0, int((lz_baixa + comp / 2) // (comp / 6))))
+                topo_parede = -6.0 - kp * 1.6 + h - 0.3
+                meio = (comp / 10 - 0.5) * math.sin(0.5) + 0.4 * math.cos(0.5)
+                cx_, cy_, cz_ = P(s * w * 0.5, topo_parede - 0.6 + meio, lz0 + comp / 10)
+                telhado.append(caixa_girada(cx_, cy_, cz_, w * 1.2, 0.8, comp / 5 - 1.0, giro + s * 0.02, s * 0.5))
         # fachada com rosacea e torre partida
         fx, fy, fz = P(0, -4.0 + h / 2, comp / 2)
         pecas.append(caixa_girada(fx, fy, fz, 2 * w + 2.0, h + 4.0, 2.4, giro, -0.05))
@@ -846,13 +898,22 @@ class Inferno(Cena):
                 pecas.append(espinho(P(s * (w + 2.0) + 2.0, 38.0, comp / 2 - 3.0), P(s * (w + 2.0) + 7.0, 62.0, comp / 2 - 6.0),
                                      4.6, n=4))
             else:
-                self.m.add_pecas(setor, "pedra", entulho(*P(s * (w + 8.0), 0, comp / 2 + 6.0)[::2], 6.0, 18, self.rnd,
-                                                          y=y, tamanho=(1.0, 3.0)))
-        self.m.add_pecas(setor, "pedra", pecas)
-        # tentaculos atravessando o telhado e a rosacea
+                self.m.add_pecas(setor, "pedra", assentar(entulho(*P(s * (w + 8.0), 0, comp / 2 + 6.0)[::2], 6.0, 18,
+                                                                  self.rnd, y=y, tamanho=(1.0, 3.0)), self.chao_v))
+        # a ponta da nave sai da beira do caminho: paredes, contrafortes,
+        # fachada e torres descem ate' o chao que se ve' (a agulha partida,
+        # que comeca la' em cima, fica como esta')
+        baixas = [pc for pc in pecas if min(q[1] for q in pc[0]) < y + 1.0]
+        altas = [pc for pc in pecas if min(q[1] for q in pc[0]) >= y + 1.0]
+        self.m.add_pecas(setor, "pedra", self.firmar(baixas, 1.0) + altas + telhado)
+        # tentaculos atravessando o telhado e a rosacea. Os do telhado
+        # nasciam no ar, dentro da nave: recuam pelo proprio eixo ate' a raiz
+        # entrar no chao, e crescem o mesmo tanto
         for k, (lx, lz, comp_t) in enumerate(((0.0, comp / 2 + 2.0, 26.0), (-6.0, 0.0, 34.0), (7.0, -18.0, 30.0))):
             b = P(lx, h * 0.5 if k == 0 else h * 0.75, lz)
             d = (sa * 0.6, 0.9, ca * 0.6) if k == 0 else (math.sin(k) * 0.4, 1.0, math.cos(k) * 0.4)
+            if k > 0:
+                b, comp_t = raiz_no_chao(b, d, comp_t, self.chao_v, raio=2.2)
             tentaculo(self, setor, "carne", b, d, comp_t, 2.2, curva=1.0, fase=k * 1.7, ventosas="osso")
         self.col.append(caixa_girada(x, y + 10.0, z, 2 * w + 10.0, 40.0, comp + 6.0, giro))
         self.ocupar(x, z, comp / 2 + 6.0, bloqueia=False)
@@ -871,7 +932,9 @@ class Inferno(Cena):
                     y = LAVA
                 setor = self.setor_grade("crista", x, zz, SETOR)
                 h = rnd.uniform(2.0, 9.0)
-                self.m.add_pecas(setor, "pedra", pilar_composto(x, zz, y - 2.0, y + h, r_nucleo=0.6, r_colunete=0.2)[0])
+                pilar = pilar_composto(x, zz, y - 2.0, y + h, r_nucleo=0.6, r_colunete=0.2)[0]
+                # na beira da lava o chao despenca: o plinto desce ate' ele
+                self.m.add_pecas(setor, "pedra", self.firmar(pilar[:1]) + pilar[1:])
         for z in (-246.0, -282.0, -308.0):
             for _t in range(10):
                 x, y, zz, i = self.ponto(z + rnd.uniform(-4, 4), rnd.uniform(-0.5, 0.5))
@@ -917,7 +980,8 @@ class Inferno(Cena):
                                (x + (r + comp) * math.sin(a), yc + (r + comp) * math.cos(a), z - 1.0), 0.6, n=5))
         self.m.add_pecas(setor, "osso", esp)
         for s in (-1, 1):
-            self.m.add_pecas(setor, "obsidiana", [caixa((x + s * (r + 1.0) - 1.5, y + 1.2, z - 1.5),
+            # o pilar passa da beira do patamar de cima: nasce no de baixo
+            self.m.add_pecas(setor, "obsidiana", [caixa((x + s * (r + 1.0) - 1.5, y + 0.6, z - 1.5),
                                                         (x + s * (r + 1.0) + 1.5, yc, z + 1.5))])
             self.col.append(caixa((x + s * (r + 1.0) - 1.5, y + 1.2, z - 1.5), (x + s * (r + 1.0) + 1.5, yc, z + 1.5)))
         self.pontos["portal"] = [x, yc, z]
@@ -944,8 +1008,8 @@ class Inferno(Cena):
                 if not self.livre(x, z, 2.0):
                     x, y, z, i = self.ponto(q[1], -lado)
                 setor = self.setor_grade("piras", x, z, SETOR)
-                self.m.add_pecas(setor, "obsidiana", [cilindro(x, z, 1.1, y - 0.5, y + 1.5, n=6, raio_topo=0.8),
-                                                      cilindro(x, z, 1.25, y + 1.5, y + 1.9, n=8, raio_topo=1.4)])
+                self.m.add_pecas(setor, "obsidiana", self.firmar([cilindro(x, z, 1.1, y - 0.5, y + 1.5, n=6, raio_topo=0.8)])
+                                 + [cilindro(x, z, 1.25, y + 1.5, y + 1.9, n=8, raio_topo=1.4)])
                 self.m.add_pecas(setor, "brasa", [cilindro(x, z, 1.15, y + 1.8, y + 1.95, n=8)])
                 for c in range(4):
                     a = c * math.pi / 2 + 0.4

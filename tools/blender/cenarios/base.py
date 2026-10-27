@@ -15,6 +15,10 @@ cenarios novos repetiriam igual:
   - `chao_grade`: chao visivel em lajes FECHADAS por setor (ver
     [[project-chapa-aberta-normais]] na memoria do projeto: chapa aberta sai
     com normal sorteada).
+  - `chao_visivel` / `estender_ate_o_chao` / `assentar` / `corrente_vertical`:
+    nada fica no ar — pe' de pilar desce ate' o chao que se VE (a grade
+    grossa passa metros abaixo da `altura` na beira do penhasco), pedra
+    solta assenta, e o que pende pende de uma corrente que existe.
 
 Convencao de eixos (a mesma do resto de tools/blender): X = largura, Y =
 ALTURA, Z = profundidade; -Z e' o "norte". Export com `export_yup=False`.
@@ -209,6 +213,98 @@ def colisao_grade(cena, celulas, passo, altura, esp=1.5):
 
 
 # --------------------------------------------------------------------------
+# assentar no chao (nada flutuando)
+
+
+def chao_visivel(altura, passo, x, z):
+    """Altura do chao que se VE em (x, z). O chao e' uma grade de `passo` m
+    com a altura so' nos cantos (`chapa_aberta`): entre eles o tampo e' reto,
+    entao na beira do penhasco ele passa metros abaixo da `altura` do ponto,
+    e o que nasce na `altura` fica no ar. A diagonal de cada quadrado depende
+    da triangulacao do export, entao vale a mais baixa das duas."""
+    i, j = math.floor(x / passo), math.floor(z / passo)
+    u, w = x / passo - i, z / passo - j
+    h00 = altura(i * passo, j * passo)
+    h10 = altura((i + 1) * passo, j * passo)
+    h01 = altura(i * passo, (j + 1) * passo)
+    h11 = altura((i + 1) * passo, (j + 1) * passo)
+    if u >= w:
+        a = h00 + (h10 - h00) * u + (h11 - h10) * w
+    else:
+        a = h00 + (h11 - h01) * u + (h01 - h00) * w
+    if u + w <= 1.0:
+        b = h00 + (h10 - h00) * u + (h01 - h00) * w
+    else:
+        b = h11 + (h01 - h11) * (1.0 - u) + (h10 - h11) * (1.0 - w)
+    return min(a, b, altura(x, z))
+
+
+def chao_sob(chao, x, z, raio):
+    """O ponto mais baixo de `chao(x, z)` debaixo de um pe' de `raio`."""
+    hs = [chao(x, z)]
+    for k in range(8):
+        a = math.pi * k / 4.0
+        for r in (raio * 0.5, raio):
+            hs.append(chao(x + r * math.cos(a), z + r * math.sin(a)))
+    return min(hs)
+
+
+def _pe(v):
+    """Indices dos vertices do pe' de uma peca (a face de baixo)."""
+    y0 = min(p[1] for p in v)
+    y1 = max(p[1] for p in v)
+    tol = max(0.05, 0.12 * (y1 - y0))
+    return [k for k, p in enumerate(v) if p[1] <= y0 + tol]
+
+
+def estender_ate_o_chao(pecas, chao, folga=0.5, passo=2.0):
+    """Puxa o pe' de cada peca (pilar, espinho, plinto, torre) pra baixo ate'
+    `folga` m DENTRO do chao mais baixo debaixo dela. A peca vira mais
+    comprida pra baixo: na encosta o lado de cima fica enterrado e o de baixo
+    desce ate' o chao, em vez de ficar no ar. So' desce, nunca sobe."""
+    out = []
+    for v, f in pecas:
+        pe = _pe(v)
+        xs = [v[k][0] for k in pe]
+        zs = [v[k][2] for k in pe]
+        nx = max(1, int(math.ceil((max(xs) - min(xs)) / passo)))
+        nz = max(1, int(math.ceil((max(zs) - min(zs)) / passo)))
+        fundo = min(chao(lerp(min(xs), max(xs), a / nx), lerp(min(zs), max(zs), b / nz))
+                    for a in range(nx + 1) for b in range(nz + 1)) - folga
+        v = list(v)
+        for k in pe:
+            if v[k][1] > fundo:
+                v[k] = (v[k][0], fundo, v[k][2])
+        out.append((v, f))
+    return out
+
+
+def assentar(pecas, chao, afundar=0.15):
+    """Desce cada peca inteira (pedra solta, entulho) ate' nenhum vertice do
+    pe' ficar acima do chao debaixo dele. So' desce, nunca sobe."""
+    out = []
+    for v, f in pecas:
+        folga = max(v[k][1] - chao(v[k][0], v[k][2]) for k in _pe(v))
+        dy = -(folga + afundar) if folga > -afundar else 0.0
+        out.append(([(p[0], p[1] + dy, p[2]) for p in v], f))
+    return out
+
+
+def corrente_vertical(x, z, y_cima, y_baixo, larg=0.16):
+    """Corrente pendurada, de elos chatos alternados a 90 graus e encavalados
+    (uma peca continua do apoio ate' o que ela segura). O `tubo` da igreja
+    nao serve aqui: a secao dele se orienta pelo passo em X/Z e, na vertical,
+    sai com espessura ZERO — a corrente some e a gaiola fica no ar."""
+    n = max(1, int(math.ceil((y_cima - y_baixo) / (larg * 2.2))))
+    passo = (y_cima - y_baixo) / n
+    pecas = []
+    for k in range(n):
+        yc = y_cima - passo * (k + 0.5)
+        pecas.append(caixa_girada(x, yc, z, larg, passo + larg * 0.6, larg * 0.4, (k % 2) * math.pi / 2))
+    return pecas
+
+
+# --------------------------------------------------------------------------
 # cerca e navmesh
 
 
@@ -364,6 +460,24 @@ def tentaculo(cena, setor, mat, base, direcao, comp, raio, curva=0.6, n=14,
                                                          p[1] - r * 0.15,
                                                          p[1] + r * 1.02, n=6)])
     return pts, raios
+
+
+def raiz_no_chao(base, direcao, comp, chao, fundo=1.5, raio=0.0):
+    """Recua a raiz de um tentaculo pelo proprio eixo ate' ela ficar `fundo`
+    m abaixo de `chao(x, z)` em toda a volta de `raio` (na parede ingreme o
+    centro enterrado ainda deixa meia boca da raiz de fora), e devolve
+    (raiz, comprimento + o recuo): o tentaculo que nascia no ar passa a sair
+    do chao, quase do mesmo tamanho a' vista."""
+    dx, dy, dz = direcao
+    d = math.sqrt(dx * dx + dy * dy + dz * dz) or 1.0
+    dx, dy, dz = dx / d, dy / d, dz / d
+    extra = 0.0
+    while extra < 80.0:
+        b = (base[0] - dx * extra, base[1] - dy * extra, base[2] - dz * extra)
+        if b[1] < chao_sob(chao, b[0], b[2], raio) - fundo:
+            return b, comp + extra
+        extra += 0.5
+    return b, comp + extra
 
 
 def silhueta_gotica(cena, setor, mat, x, z, larg, alt, rnd, giro=0.0):
