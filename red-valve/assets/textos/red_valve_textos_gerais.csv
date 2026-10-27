@@ -371,6 +371,13 @@ MAP_POI_INF3_CEMITERIO,Cemetery of Mourners,Cemitério dos Enlutados
 MAP_POI_INF3_BECO,Alley of Cages,Beco das Gaiolas
 MAP_POI_INF3_ESCADARIA,The Great Stairs,A Escadaria
 MAP_POI_INF3_CATEDRAL,The Cathedral,A Catedral
+MAP_POI_INF4_CHEGADA,The Ring,O Anel
+MAP_POI_INF4_LADEIRA,The Steep Street,A Ladeira
+MAP_POI_INF4_SUBIDA,The Climb,A Subida
+MAP_POI_INF4_CEMITERIO,Hillside Cemetery,Cemitério da Encosta
+MAP_POI_INF4_MIRANTE,The Lookout,O Mirante
+MAP_POI_INF4_DESCIDA,The Descent,A Descida
+MAP_POI_INF4_FOSSO,The Pit,O Fosso
 PROMPT_TAKE_PISTOL,Take the pistol?,Pegar a pistola?
 PROMPT_TAKE_AMMO,Take the ammunition?,Pegar a munição?
 PICKUP_PISTOL,"You picked up The Negotiator. Equip it in the menu to carry it in your hand.","Você pegou a The Negotiator. Equipe ela no menu para levá-la na mão."
@@ -411,6 +418,7 @@ DEBUG_TRAVEL_CEMETERY,Cemetery,Cemitério
 DEBUG_TRAVEL_HELL,Hell,Inferno
 DEBUG_TRAVEL_HELL_2,Hell 2,Inferno 2
 DEBUG_TRAVEL_HELL_3,Hell 3,Inferno 3
+DEBUG_TRAVEL_HELL_4,Hell 4,Inferno 4
 DEBUG_TRAVEL_ARENA_3,Arena 3 (Throne),Arena 3 (Trono)
 DEBUG_EVENT_PROLOG_FINISHED,Prologue Finished (Cap. 1),Prólogo Finalizado (Cap. 1)
 DEBUG_EVENT_STAGE1_INTRO,Stage 1 Intro Played,Intro da Stage 1 Reproduzida

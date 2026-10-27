@@ -1,0 +1,58 @@
+{
+ "nota": "recorte do inferno_4 coberto por T_inferno4map.png; gerado por tools/godot/inferno/make_mapa_inferno.py",
+ "mundo_x0": -338.56,
+ "mundo_z0": -447.02,
+ "tamanho_m": 716.91,
+ "resolucao": 2048,
+ "pontos": [
+  {
+   "id": "area_1_chegada",
+   "chave": "MAP_POI_INF4_CHEGADA",
+   "tipo": "local",
+   "x": 35.02,
+   "z": 154.61
+  },
+  {
+   "id": "area_2_ladeira",
+   "chave": "MAP_POI_INF4_LADEIRA",
+   "tipo": "marco",
+   "x": 33.69,
+   "z": 108.59
+  },
+  {
+   "id": "area_3_subida",
+   "chave": "MAP_POI_INF4_SUBIDA",
+   "tipo": "marco",
+   "x": 32.05,
+   "z": 45.8
+  },
+  {
+   "id": "area_4_cemiterio",
+   "chave": "MAP_POI_INF4_CEMITERIO",
+   "tipo": "marco",
+   "x": 19.93,
+   "z": 4.28
+  },
+  {
+   "id": "area_5_mirante",
+   "chave": "MAP_POI_INF4_MIRANTE",
+   "tipo": "marco",
+   "x": 1.05,
+   "z": -122.15
+  },
+  {
+   "id": "area_6_descida",
+   "chave": "MAP_POI_INF4_DESCIDA",
+   "tipo": "marco",
+   "x": 24.31,
+   "z": -214.92
+  },
+  {
+   "id": "area_7_fosso",
+   "chave": "MAP_POI_INF4_FOSSO",
+   "tipo": "local",
+   "x": 30.15,
+   "z": -305.83
+  }
+ ]
+}

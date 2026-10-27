@@ -434,8 +434,9 @@ def main():
 
     t.salvar(SAIDA, script_raiz=[
         ("script", 'ExtResource("%s")' % script),
-        # o anel de chegada volta pro inferno 2; a porta da catedral ainda nao leva
+        # o anel de chegada volta pro inferno 2; a porta da catedral leva ao 4
         ("cena_entrada", '"res://scenes/stages/inferno_2/inferno_2.tscn"'),
+        ("cena_saida", '"res://scenes/stages/inferno_4/inferno_4.tscn"'),
         ("maycow_normal", "true"), ("salvar_ao_entrar", "true"), ("nevoa_do_player", '"alta"'),
         ("segue_camera_altura", "true"),
     ])

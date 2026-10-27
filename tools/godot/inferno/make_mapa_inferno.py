@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Mapa visto de cima dos dois infernos, para o minimapa e a aba MAPA.
+"""Mapa visto de cima dos infernos, para o minimapa e a aba MAPA.
 
     python3 tools/godot/inferno/make_mapa_inferno.py     (precisa de Pillow)
 
@@ -10,6 +10,8 @@ Saidas (uma prancha por inferno):
     red-valve/assets/3d_model/stages/inferno_2/inferno2map.json
     red-valve/assets/3d_model/stages/inferno_3/textures/T_inferno3map.png
     red-valve/assets/3d_model/stages/inferno_3/inferno3map.json
+    red-valve/assets/3d_model/stages/inferno_4/textures/T_inferno4map.png
+    red-valve/assets/3d_model/stages/inferno_4/inferno4map.json
 
 Rode DEPOIS do Blender sempre que o caminho de um inferno mudar.
 
@@ -136,6 +138,24 @@ CONFIG = {
             ("area_6_beco", "MAP_POI_INF3_BECO", "marco"),
             ("area_7_escadaria", "MAP_POI_INF3_ESCADARIA", "marco"),
             ("area_8_catedral", "MAP_POI_INF3_CATEDRAL", "local"),
+        ],
+    },
+    "inferno_4": {
+        "gerador": "gerar_inferno_4",
+        "pasta": "inferno_4",
+        "png": "T_inferno4map.png",
+        "json": "inferno4map.json",
+        "passo": 3.0,
+        "margem": 60.0,
+        "paleta": PALETA_CIDADE,
+        "pontos": [
+            ("area_1_chegada", "MAP_POI_INF4_CHEGADA", "local"),
+            ("area_2_ladeira", "MAP_POI_INF4_LADEIRA", "marco"),
+            ("area_3_subida", "MAP_POI_INF4_SUBIDA", "marco"),
+            ("area_4_cemiterio", "MAP_POI_INF4_CEMITERIO", "marco"),
+            ("area_5_mirante", "MAP_POI_INF4_MIRANTE", "marco"),
+            ("area_6_descida", "MAP_POI_INF4_DESCIDA", "marco"),
+            ("area_7_fosso", "MAP_POI_INF4_FOSSO", "local"),
         ],
     },
 }
@@ -302,7 +322,10 @@ def _pontes(g):
                 pts = [(L.p[i][0], L.p[i][1]) for i in range(a, b + 1)]
             saida.append({"pts": pts, "w": p["w"]})
     elif not hasattr(g, "PONTE_COMP"):
-        # o inferno 3 guarda a ponte como (s0, s1) ao longo da linha
+        # o inferno 3 guarda a ponte como (s0, s1) ao longo da linha; o 4 nao
+        # tem ponte (a dele fica fora da linha)
+        if g.PONTE[1] < 0.0:
+            return saida
         a, b = L.em_s(g.PONTE[0] - 7.0), L.em_s(g.PONTE[1] + 7.0)
         saida.append({"pts": [(L.p[i][0], L.p[i][1]) for i in range(a, b + 1)], "w": 7.5})
     else:
@@ -376,5 +399,5 @@ def gerar(chave):
 
 
 if __name__ == "__main__":
-    for k in sys.argv[1:] or ("inferno", "inferno_2", "inferno_3"):
+    for k in sys.argv[1:] or ("inferno", "inferno_2", "inferno_3", "inferno_4"):
         gerar(k)

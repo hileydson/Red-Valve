@@ -311,6 +311,8 @@ class Inferno3(Cena):
             "navmesh": {"v": [], "p": []},
         }
         self.ocupado = []
+        # as fachadas de rua: (moldura, u0, u1, lado da rua, u dos caixoes)
+        self.fachadas = []
 
     def livre(self, x, z, r):
         for ox, oz, orr in self.ocupado:
@@ -585,9 +587,12 @@ class Inferno3(Cena):
         # caixoes encostados na fachada (mais na rua dos caixoes)
         s = LINHA.s[i]
         chance = 0.7 if 60.0 < s < 220.0 else 0.18
+        caixoes = []
         if rnd.random() < chance:
             for _k in range(rnd.randint(1, 3)):
-                self.caixao_encostado(P, rnd.uniform(u0 + 1.5, u1 - 1.5), yr, setor, d0, (ox, oz))
+                caixoes.append(rnd.uniform(u0 + 1.5, u1 - 1.5))
+                self.caixao_encostado(P, caixoes[-1], yr, setor, d0, (ox, oz))
+        self.fachadas.append((P, u0, u1, sg, yr, s, caixoes))
 
     def caixao_encostado(self, P, u, yr, setor, d0, o):
         """Caixao em pe' com a cabeca apoiada na fachada."""
@@ -621,7 +626,8 @@ class Inferno3(Cena):
                           caixao_local(0.08)[1]))
             self.m.add_pecas(setor, "escuro", [caixa_girada(x, y + 0.5, z, 0.6, 0.04, 1.6, giro)])
         self.m.add_pecas(setor, "madeira", pecas)
-        self.col.append(caixa_girada(x, y + 0.4, z, 0.9, 0.8, 2.1, giro))
+        # sem colisao: sao muitos, e o jogador topava neles a cada passo. O
+        # navmesh continua desviando (o inimigo contorna, nao atravessa).
         self.ocupar(x, z, 1.3, bloqueia=False)
         self.bloquear_linha(x - sa * 0.8, z - ca * 0.8, x + sa * 0.8, z + ca * 0.8, 0.55)
 
@@ -655,8 +661,8 @@ class Inferno3(Cena):
 
     # ------------------------------------------------------------------
     def rua_dos_caixoes(self):
-        """Caixoes largados na rua, carruagens abandonadas, barricadas de
-        chapa e sangue no chao."""
+        """Caixoes largados na rua, carruagens abandonadas, chapas de zinco
+        encostadas nas fachadas e sangue no chao."""
         rnd = self.rnd
         s0, s1 = 60.0, LINHA.s[LINHA.em_xz(-5.0, 302.0)]
         for k in range(9):
@@ -673,7 +679,7 @@ class Inferno3(Cena):
             x, y, z, i = self.ponto(s, lado)
             tx, tz = LINHA.t[i]
             self.carruagem(x, z, math.atan2(tx, tz) + rnd.uniform(-0.3, 0.3), quebrada=lado < 0)
-        # barricadas de chapa enferrujada nas bocas de beco
+        # chapas de zinco enferrujado encostadas nas casas
         for k in range(5):
             s = rnd.uniform(s0, s1)
             sg = rnd.choice((-1, 1))
@@ -708,7 +714,8 @@ class Inferno3(Cena):
                 c = P(u + 0.6, 0.0, v + 1.6)
                 anel = [(c[0] + 0.72 * math.cos(2 * math.pi * a / 16), c[1] + 0.07,
                          c[2] + 0.72 * math.sin(2 * math.pi * a / 16)) for a in range(17)]
-                ferro.append(tubo_redondo(anel, [0.07] * 17, n=5))
+                # assenta: em rua que desce, o chao do lado e' mais baixo
+                ferro.extend(assentar([tubo_redondo(anel, [0.07] * 17, n=5)], self.chao_v, 0.03))
                 # o eixo daquele lado desce ate' o chao: a carruagem ajoelha
                 madeira.append(bloco(P, u - 0.2, u + 0.2, -0.1, 0.85, v - 0.2, v + 0.2))
                 continue
@@ -733,24 +740,54 @@ class Inferno3(Cena):
         _ = rnd
 
     def barricada(self, x, z, i, sg):
+        """Tres chapas de zinco ENCOSTADAS na fachada mais perto de (x, z),
+        o pe' no chao e a ponta de cima apoiada na parede. Antes eram uma
+        cerca de pe' no meio da calcada, a 1,5 m da casa, sem apoio nenhum —
+        nao se entendia o que eram. Ficam fora do muro invisivel: sem colisao."""
         rnd = self.rnd
-        tx, tz = LINHA.t[i]
-        P = moldura(x, 0.0, z, tx, tz, -tz * sg, tx * sg)
-        y = self.pe(x, z, 2.0)
-        setor = self.setor_grade("rua", x, z, SETOR)
-        madeira = self.firmar([bloco(P, -1.8, -1.6, y - 0.3, y + 2.4, -0.1, 0.1),
-                               bloco(P, 1.6, 1.8, y - 0.3, y + 2.3, -0.1, 0.1)], 0.3)
+        # o sorteio vem antes de tudo e e' sempre o mesmo: o resto do mapa nao muda
+        sorteio = [(rnd.uniform(-0.2, 0.2), rnd.uniform(0, 0.2), rnd.uniform(0, 0.4)) for _k in range(3)]
+        melhor, md = None, 1e18
+        for fach in self.fachadas:
+            P, u0, u1, lado = fach[:4]
+            if lado != sg:
+                continue
+            c = P(0.0, 0.0, 0.0)
+            d = (c[0] - x) ** 2 + (c[2] - z) ** 2
+            if d < md:
+                melhor, md = fach, d
+        if melhor is None:
+            return
+        P, u0, u1, _lado, yr, _s, caixoes = melhor
+        o, eu = P(0.0, 0.0, 0.0), P(1.0, 0.0, 0.0)
+        u_alvo = (x - o[0]) * (eu[0] - o[0]) + (z - o[2]) * (eu[2] - o[2])
+        if md > ((u1 - u0) / 2.0 + 3.0) ** 2:
+            return
+        # longe dos caixoes que ja' estao encostados nessa fachada
+        candidatos = [min(max(u_alvo, u0 + 2.1), u1 - 2.1), u0 + 2.1, u1 - 2.1]
+        uc = None
+        for u in candidatos:
+            if u0 + 2.0 <= u <= u1 - 2.0 and all(abs(u - c) > 2.6 for c in caixoes):
+                uc = u
+                break
+        if uc is None:
+            return
+        setor = self.setor_grade("rua", *P(uc, 0.0, -0.5)[::2], SETOR)
         chapa = []
-        for k in range(3):
-            u = -1.2 + k * 1.2 + rnd.uniform(-0.2, 0.2)
-            chapa.append(bloco(P, u - 0.75, u + 0.75, y + 0.05 + rnd.uniform(0, 0.2), y + 1.9 + rnd.uniform(0, 0.4),
-                               -0.16 - k * 0.03, -0.08))
-        madeira.append(bloco(P, -1.9, 1.9, y + 1.2, y + 1.4, -0.26, -0.05))
-        self.m.add_pecas(setor, "madeira", madeira)
+        esp = 0.05
+        for k, (jit, dy0, dy1) in enumerate(sorteio):
+            u = uc - 1.2 + k * 1.2 + jit
+            ua, ub = u - 0.75, u + 0.75
+            vb, vt = -0.72 - 0.06 * k, -0.2 - 0.06 * k
+            pb = P(u, 0.0, vb)
+            yb = self.pe(pb[0], pb[2], 0.8) - 0.04 + dy0 * 0.2
+            yt = yr + 1.9 + dy1
+            chapa.append(hexaedro([P(ua, yb, vb - esp), P(ub, yb, vb - esp), P(ub, yb, vb), P(ua, yb, vb),
+                                   P(ua, yt, vt - esp), P(ub, yt, vt - esp), P(ub, yt, vt), P(ua, yt, vt)]))
         self.m.add_pecas(setor, "chapa", chapa)
-        self.col.append(caixa_girada(x, y + 1.2, z, 0.6, 2.4, 4.0, math.atan2(tx, tz)))
-        self.ocupar(x, z, 2.2, bloqueia=False)
-        self.bloquear_linha(x - tx * 1.9, z - tz * 1.9, x + tx * 1.9, z + tz * 1.9, 0.4)
+        c = P(uc, 0.0, -0.45)
+        self.ocupar(c[0], c[2], 2.0, bloqueia=False)
+        _ = i
 
     # ------------------------------------------------------------------
     def praca(self):
@@ -1302,7 +1339,9 @@ class Inferno3(Cena):
             silhueta_gotica(self, "horizonte", "silhueta", x, z, larg, alt, rnd, giro=giro)
             g = self.m.grupos[("horizonte", "silhueta")]
             b = self.pe(x, z, larg * 1.7) - 1.0
-            g["v"][v0:] = [(vx, vy + b, vz) for vx, vy, vz in g["v"][v0:]]
+            # o pe' de cada peca (corpo e torres) afunda mais 15 m: na quina do
+            # abismo a torre do lado ficava com a base no ar
+            g["v"][v0:] = [(vx, vy + b - (15.0 if vy < 0.01 else 0.0), vz) for vx, vy, vz in g["v"][v0:]]
             self.ocupar(x, z, larg * 0.7, bloqueia=False)
             feitas += 1
 
