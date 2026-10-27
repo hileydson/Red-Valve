@@ -1,0 +1,65 @@
+{
+ "nota": "recorte do inferno_3 coberto por T_inferno3map.png; gerado por tools/godot/inferno/make_mapa_inferno.py",
+ "mundo_x0": -487.63,
+ "mundo_z0": -430.1,
+ "tamanho_m": 978.26,
+ "resolucao": 2048,
+ "pontos": [
+  {
+   "id": "area_1_chegada",
+   "chave": "MAP_POI_INF3_CHEGADA",
+   "tipo": "local",
+   "x": -0.76,
+   "z": 432.02
+  },
+  {
+   "id": "area_2_rua",
+   "chave": "MAP_POI_INF3_RUA",
+   "tipo": "marco",
+   "x": -0.07,
+   "z": 360.21
+  },
+  {
+   "id": "area_3_praca",
+   "chave": "MAP_POI_INF3_PRACA",
+   "tipo": "marco",
+   "x": 2.7,
+   "z": 245.49
+  },
+  {
+   "id": "area_4_ponte",
+   "chave": "MAP_POI_INF3_PONTE",
+   "tipo": "marco",
+   "x": -7.97,
+   "z": 112.49
+  },
+  {
+   "id": "area_5_cemiterio",
+   "chave": "MAP_POI_INF3_CEMITERIO",
+   "tipo": "marco",
+   "x": 0.81,
+   "z": -30.53
+  },
+  {
+   "id": "area_6_beco",
+   "chave": "MAP_POI_INF3_BECO",
+   "tipo": "marco",
+   "x": -4.97,
+   "z": -139.9
+  },
+  {
+   "id": "area_7_escadaria",
+   "chave": "MAP_POI_INF3_ESCADARIA",
+   "tipo": "marco",
+   "x": 2.57,
+   "z": -224.73
+  },
+  {
+   "id": "area_8_catedral",
+   "chave": "MAP_POI_INF3_CATEDRAL",
+   "tipo": "local",
+   "x": -0.11,
+   "z": -322.0
+  }
+ ]
+}

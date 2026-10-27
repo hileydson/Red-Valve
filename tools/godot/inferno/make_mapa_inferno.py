@@ -8,6 +8,8 @@ Saidas (uma prancha por inferno):
     red-valve/assets/3d_model/stages/inferno/infernomap.json
     red-valve/assets/3d_model/stages/inferno_2/textures/T_inferno2map.png
     red-valve/assets/3d_model/stages/inferno_2/inferno2map.json
+    red-valve/assets/3d_model/stages/inferno_3/textures/T_inferno3map.png
+    red-valve/assets/3d_model/stages/inferno_3/inferno3map.json
 
 Rode DEPOIS do Blender sempre que o caminho de um inferno mudar.
 
@@ -61,13 +63,21 @@ SS = 2              # supersampling do vetor: desenha em 2x e reduz
 
 # Paleta: a mesma ideia da cidade (o contraste entre caminho e fundo carrega
 # a leitura em tamanho pequeno), na familia de cor do inferno.
-C_ROCHA = (74, 50, 42)
-C_LAVA = (150, 38, 12)
-C_LAVA_VIVA = (226, 104, 30)
-C_CAMINHO = (168, 146, 120)
-C_CAMINHO_BRD = (26, 16, 12)
-C_PONTE = (112, 80, 56)
-C_PONTE_BRD = (20, 12, 9)
+PALETA_FOGO = {
+    "rocha": (74, 50, 42), "lava": (150, 38, 12), "lava_viva": (226, 104, 30),
+    "caminho": (168, 146, 120), "caminho_brd": (26, 16, 12),
+    "ponte": (112, 80, 56), "ponte_brd": (20, 12, 9),
+}
+# O inferno 3 e' cidade de noite: pedra fria, o abismo de nevoa no lugar da
+# lava, e as QUADRAS (casas, catedral, mausoleus) desenhadas por cima — numa
+# rua estreita entre fachadas, o que diz "rua" no papel sao as casas.
+PALETA_CIDADE = {
+    "rocha": (58, 58, 64), "lava": (20, 23, 30), "lava_viva": (20, 23, 30),
+    "caminho": (150, 142, 128), "caminho_brd": (14, 14, 18),
+    "ponte": (104, 98, 92), "ponte_brd": (12, 12, 15),
+    "bloco": (34, 33, 38), "bloco_brd": (8, 8, 10),
+}
+PAL = PALETA_FOGO
 
 CONFIG = {
     "inferno": {
@@ -77,6 +87,7 @@ CONFIG = {
         "json": "infernomap.json",
         "passo": 3.0,
         "margem": 70.0,
+        "paleta": PALETA_FOGO,
         "pontos": [
             ("area_1_portao", "MAP_POI_INF_PORTAO", "local"),
             ("area_2_planicie", "MAP_POI_INF_PLANICIE", "marco"),
@@ -95,6 +106,7 @@ CONFIG = {
         "json": "inferno2map.json",
         "passo": 2.0,
         "margem": 50.0,
+        "paleta": PALETA_FOGO,
         "pontos": [
             ("area_1_chegada", "MAP_POI_INF2_CHEGADA", "local"),
             ("area_2_fenda", "MAP_POI_INF2_FENDA", "marco"),
@@ -105,6 +117,25 @@ CONFIG = {
             ("area_7_garganta", "MAP_POI_INF2_GARGANTA", "marco"),
             ("area_8_ponte", "MAP_POI_INF2_PONTE", "marco"),
             ("area_9_agulha", "MAP_POI_INF2_AGULHA", "local"),
+        ],
+    },
+    "inferno_3": {
+        "gerador": "gerar_inferno_3",
+        "pasta": "inferno_3",
+        "png": "T_inferno3map.png",
+        "json": "inferno3map.json",
+        "passo": 3.0,
+        "margem": 60.0,
+        "paleta": PALETA_CIDADE,
+        "pontos": [
+            ("area_1_chegada", "MAP_POI_INF3_CHEGADA", "local"),
+            ("area_2_rua", "MAP_POI_INF3_RUA", "marco"),
+            ("area_3_praca", "MAP_POI_INF3_PRACA", "marco"),
+            ("area_4_ponte", "MAP_POI_INF3_PONTE", "marco"),
+            ("area_5_cemiterio", "MAP_POI_INF3_CEMITERIO", "marco"),
+            ("area_6_beco", "MAP_POI_INF3_BECO", "marco"),
+            ("area_7_escadaria", "MAP_POI_INF3_ESCADARIA", "marco"),
+            ("area_8_catedral", "MAP_POI_INF3_CATEDRAL", "local"),
         ],
     },
 }
@@ -148,6 +179,9 @@ def _recorte(g, idx, margem):
 def _lava(g, x, z):
     if hasattr(g, "lava_em"):
         return g.lava_em(x, z)
+    if hasattr(g, "FUNDO"):
+        # a cidade: o "mar" e' o abismo de nevoa, abaixo de onde a nevoa baixa engole
+        return g.FUNDO + 30.0
     return g.LAVA
 
 
@@ -184,15 +218,15 @@ def _fundo(g, x0, z0, tam, passo):
             x = x0 + (i + 0.5) * passo
             h = alt[j][i]
             lava = _lava(g, x, z)
-            viva = g.dist_rio(x, z) < g.RIO_W + 0.5 if g.RIO else False
+            viva = g.dist_rio(x, z) < g.RIO_W + 0.5 if getattr(g, "RIO", None) else False
             if h < lava + 0.3 or _sem_chao(g, x, z, h):
                 k = 0.85 + 0.15 * g.ruido2(x * 0.06, z * 0.06, 3.0)
-                cor = C_LAVA_VIVA if viva else C_LAVA
+                cor = PAL["lava_viva"] if viva else PAL["lava"]
                 px[i, j] = tuple(int(c * k) for c in cor)
                 continue
             if viva and hasattr(g, "lava_em"):
                 # a cascata do inferno 2 escorre POR CIMA da parede
-                px[i, j] = C_LAVA_VIVA
+                px[i, j] = PAL["lava_viva"]
                 continue
             dx = suave[j][min(i + 1, n - 1)] - suave[j][max(i - 1, 0)]
             dz = suave[min(j + 1, n - 1)][i] - suave[max(j - 1, 0)][i]
@@ -202,7 +236,7 @@ def _fundo(g, x0, z0, tam, passo):
             # o que e' mais alto um tom mais claro: o funil se le' em degraus
             t = (h - h_min) / max(1.0, h_max - h_min)
             k = (0.35 + 0.85 * luz) * (0.8 + 0.35 * t)
-            px[i, j] = tuple(min(255, int(c * k)) for c in C_ROCHA)
+            px[i, j] = tuple(min(255, int(c * k)) for c in PAL["rocha"])
     return img
 
 
@@ -232,12 +266,12 @@ def _desenhar_caminho(g, idx, para_px, escala):
             w = max(L.p[a][2], L.p[b][2]) + folga
             faixa([(L.p[a][0], L.p[a][1]), (L.p[b][0], L.p[b][1])], w, cor)
 
-    pelo_caminho(1.6, C_CAMINHO_BRD)
-    pelo_caminho(0.0, C_CAMINHO)
+    pelo_caminho(1.6, PAL["caminho_brd"])
+    pelo_caminho(0.0, PAL["caminho"])
 
     for ponte in _pontes(g):
-        faixa(ponte["pts"], ponte["w"] + 1.4, C_PONTE_BRD)
-        faixa(ponte["pts"], ponte["w"], C_PONTE)
+        faixa(ponte["pts"], ponte["w"] + 1.4, PAL["ponte_brd"])
+        faixa(ponte["pts"], ponte["w"], PAL["ponte"])
         # as tabuas: riscos atravessados, que e' o que diz "ponte" a 190 px
         pts = ponte["pts"]
         for (ax, az), (bx, bz) in zip(pts, pts[1:]):
@@ -248,7 +282,7 @@ def _desenhar_caminho(g, idx, para_px, escala):
             while k < dd:
                 t = k / dd
                 cx, cz = ax + vx * t, az + vz * t
-                d.line([para_px(cx + ox, cz + oz), para_px(cx - ox, cz - oz)], fill=C_PONTE_BRD,
+                d.line([para_px(cx + ox, cz + oz), para_px(cx - ox, cz - oz)], fill=PAL["ponte_brd"],
                        width=max(1, int(0.35 * escala)))
                 k += 2.5
     return camada
@@ -267,6 +301,10 @@ def _pontes(g):
             else:
                 pts = [(L.p[i][0], L.p[i][1]) for i in range(a, b + 1)]
             saida.append({"pts": pts, "w": p["w"]})
+    elif not hasattr(g, "PONTE_COMP"):
+        # o inferno 3 guarda a ponte como (s0, s1) ao longo da linha
+        a, b = L.em_s(g.PONTE[0] - 7.0), L.em_s(g.PONTE[1] + 7.0)
+        saida.append({"pts": [(L.p[i][0], L.p[i][1]) for i in range(a, b + 1)], "w": 7.5})
     else:
         a = L.em_z(g.PONTE[1] + g.PONTE_COMP)
         b = L.em_z(g.PONTE[1] - g.PONTE_COMP)
@@ -275,8 +313,20 @@ def _pontes(g):
     return saida
 
 
+def _desenhar_blocos(blocos, para_px, escala):
+    """As quadras (casas, catedral, mausoleus) que o gerador anotou."""
+    camada = Image.new("RGBA", (RES * SS, RES * SS), (0, 0, 0, 0))
+    d = ImageDraw.Draw(camada)
+    for b in blocos:
+        pts = [para_px(x, z) for x, z in b]
+        d.polygon(pts, fill=PAL["bloco"], outline=PAL["bloco_brd"], width=max(1, int(0.5 * escala)))
+    return camada
+
+
 def gerar(chave):
+    global PAL
     cfg = CONFIG[chave]
+    PAL = cfg["paleta"]
     g = _carregar_gerador(cfg["gerador"], cfg["pasta"])
     idx = _trecho(g)
     x0, z0, tam = _recorte(g, idx, cfg["margem"])
@@ -290,6 +340,9 @@ def gerar(chave):
     # aparece em escadinha na beira da lava
     fundo = fundo.filter(ImageFilter.GaussianBlur(0.6)).resize((RES * SS, RES * SS), Image.BICUBIC)
     fundo = fundo.convert("RGBA")
+    pontos_cena = json.load(open(os.path.join(STAGES, cfg["pasta"], cfg["pasta"] + "_pontos.json"), encoding="utf-8"))
+    if pontos_cena.get("mapa_blocos"):
+        fundo.alpha_composite(_desenhar_blocos(pontos_cena["mapa_blocos"], para_px, escala))
     fundo.alpha_composite(_desenhar_caminho(g, idx, para_px, escala))
     final = fundo.convert("RGB").resize((RES, RES), Image.LANCZOS)
 
@@ -297,7 +350,6 @@ def gerar(chave):
     os.makedirs(os.path.join(pasta, "textures"), exist_ok=True)
     final.save(os.path.join(pasta, "textures", cfg["png"]))
 
-    pontos_cena = json.load(open(os.path.join(pasta, cfg["pasta"] + "_pontos.json"), encoding="utf-8"))
     pontos = []
     for area, chave_tr, tipo in cfg["pontos"]:
         p = pontos_cena["areas"].get(area)
@@ -324,5 +376,5 @@ def gerar(chave):
 
 
 if __name__ == "__main__":
-    for k in sys.argv[1:] or ("inferno", "inferno_2"):
+    for k in sys.argv[1:] or ("inferno", "inferno_2", "inferno_3"):
         gerar(k)

@@ -16,6 +16,13 @@ extends Node3D
 @export var materiais: Dictionary = {}
 ## Sufixos que não projetam sombra (silhueta de horizonte, emissão).
 @export var sem_sombra: PackedStringArray = []
+## Distância (m) a partir da qual uma malha deixa de ser desenhada. 0 = sempre.
+## Para cenário de névoa fechada (o inferno 3): o que a névoa já apagou não
+## precisa custar desenho. As malhas vêm em setores pequenos, então o corte é
+## por pedaço de mapa e não por cenário inteiro.
+@export var alcance_visivel: float = 0.0
+## Sufixos que ignoram `alcance_visivel` (silhueta grande que se vê de longe).
+@export var sempre_visivel: PackedStringArray = []
 
 var _cache: Dictionary = {}
 
@@ -36,6 +43,9 @@ func aplicar() -> void:
 		malha.set_surface_override_material(0, material)
 		if chave in sem_sombra:
 			malha.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		if alcance_visivel > 0.0 and not chave in sempre_visivel:
+			malha.visibility_range_end = alcance_visivel
+			malha.visibility_range_end_margin = alcance_visivel * 0.1
 
 
 func _chave_do_nome(nome: String) -> String:

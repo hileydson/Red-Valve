@@ -30,6 +30,8 @@ ITEM_LANTERNA_NAME,Flashlight,Lanterna
 ITEM_LANTERNA_DESC,"A heavy hand lamp, found still lit on the church floor. The beam holds up.","Lanterna de mão pesada, achada ainda acesa no chão da igreja. O facho aguenta firme."
 PICKUP_FLASHLIGHT_L3,"You picked up the flashlight, press L3 to turn it on","Você pegou a lanterna, aperte L3 para ativá-la"
 PICKUP_FLASHLIGHT_KEY,"You picked up the flashlight, press Y to turn it on","Você pegou a lanterna, aperte Y para ativá-la"
+HINT_DARK_FLASHLIGHT_L3,"Too dark to see. Press L3 to turn on the flashlight","Escuro demais. Aperte L3 para acender a lanterna"
+HINT_DARK_FLASHLIGHT_KEY,"Too dark to see. Press Y to turn on the flashlight","Escuro demais. Aperte Y para acender a lanterna"
 PICKUP_CONTINUE,Press any button to continue,Aperte qualquer botão para continuar
 PICKUP_CONTINUE_KEY,Press any key to continue,Aperte qualquer tecla para continuar
 PROMPT_LEAVE_CHURCH,Leave the church?,Sair da igreja?
@@ -361,6 +363,14 @@ MAP_POI_INF2_ENFORCADOS,The Hanged,Os Enforcados
 MAP_POI_INF2_GARGANTA,The Gorge,A Garganta
 MAP_POI_INF2_PONTE,Chain Bridge,Ponte de Correntes
 MAP_POI_INF2_AGULHA,The Spire,A Agulha
+MAP_POI_INF3_CHEGADA,The Ring,O Anel
+MAP_POI_INF3_RUA,Coffin Street,Rua dos Caixões
+MAP_POI_INF3_PRACA,Square of the Pyre,Praça da Fogueira
+MAP_POI_INF3_PONTE,Bridge of Laments,Ponte dos Lamentos
+MAP_POI_INF3_CEMITERIO,Cemetery of Mourners,Cemitério dos Enlutados
+MAP_POI_INF3_BECO,Alley of Cages,Beco das Gaiolas
+MAP_POI_INF3_ESCADARIA,The Great Stairs,A Escadaria
+MAP_POI_INF3_CATEDRAL,The Cathedral,A Catedral
 PROMPT_TAKE_PISTOL,Take the pistol?,Pegar a pistola?
 PROMPT_TAKE_AMMO,Take the ammunition?,Pegar a munição?
 PICKUP_PISTOL,"You picked up The Negotiator. Equip it in the menu to carry it in your hand.","Você pegou a The Negotiator. Equipe ela no menu para levá-la na mão."
@@ -400,6 +410,7 @@ DEBUG_TRAVEL_SCHOOL,School,Escola
 DEBUG_TRAVEL_CEMETERY,Cemetery,Cemitério
 DEBUG_TRAVEL_HELL,Hell,Inferno
 DEBUG_TRAVEL_HELL_2,Hell 2,Inferno 2
+DEBUG_TRAVEL_HELL_3,Hell 3,Inferno 3
 DEBUG_TRAVEL_ARENA_3,Arena 3 (Throne),Arena 3 (Trono)
 DEBUG_EVENT_PROLOG_FINISHED,Prologue Finished (Cap. 1),Prólogo Finalizado (Cap. 1)
 DEBUG_EVENT_STAGE1_INTRO,Stage 1 Intro Played,Intro da Stage 1 Reproduzida

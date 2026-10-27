@@ -1055,6 +1055,7 @@ func _build_debug_travel_tab() -> void:
 		{"name": tr("DEBUG_TRAVEL_CEMETERY"), "scene": "res://scenes/stages/cemiterio/cemiterio.tscn", "flag": ""},
 		{"name": tr("DEBUG_TRAVEL_HELL"), "scene": "res://scenes/stages/inferno/inferno.tscn", "flag": ""},
 		{"name": tr("DEBUG_TRAVEL_HELL_2"), "scene": "res://scenes/stages/inferno_2/inferno_2.tscn", "flag": ""},
+		{"name": tr("DEBUG_TRAVEL_HELL_3"), "scene": "res://scenes/stages/inferno_3/inferno_3.tscn", "flag": ""},
 		{"name": tr("DEBUG_TRAVEL_ARENA_3"), "scene": "res://scenes/stages/battlefield/battlefield_3.tscn", "flag": ""}
 	]
 
