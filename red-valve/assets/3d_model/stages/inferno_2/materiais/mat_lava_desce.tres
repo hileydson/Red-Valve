@@ -1,0 +1,24 @@
+[gd_resource type="ShaderMaterial" load_steps=4 format=3]
+
+[ext_resource type="Shader" path="res://shaders/environment/lava.gdshader" id="1"]
+
+[sub_resource type="FastNoiseLite" id="ruido_fn"]
+noise_type = 3
+frequency = 0.02
+fractal_octaves = 4
+
+[sub_resource type="NoiseTexture2D" id="ruido"]
+width = 256
+height = 256
+seamless = true
+noise = SubResource("ruido_fn")
+
+[resource]
+shader = ExtResource("1")
+shader_parameter/ruido = SubResource("ruido")
+shader_parameter/usar_mundo = false
+shader_parameter/escala_mundo = 0
+shader_parameter/escala_uv = Vector2(0.6, 1)
+shader_parameter/fluxo = Vector2(0, 0.32)
+shader_parameter/energia = 3.6
+shader_parameter/crosta = 0.46

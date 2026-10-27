@@ -343,6 +343,8 @@ def main():
 
     t.salvar(SAIDA, script_raiz=[
         ("script", 'ExtResource("%s")' % script),
+        # o portal do fim leva ao inferno 2 (que volta pra ca' pelo anel dele)
+        ("cena_saida", '"res://scenes/stages/inferno_2/inferno_2.tscn"'),
         ("salvar_ao_entrar", "true"), ("nevoa_do_player", '"baixa"'),
         ("gargulas_ceu", "7"), ("ceu_raio", "230.0"), ("ceu_altura_min", "60.0"),
         ("ceu_altura_max", "150.0"),

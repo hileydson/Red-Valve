@@ -380,6 +380,10 @@ DEBUG_TRAVEL_JIMMY_HOUSE,Jimmy's House,Casa do Jimmy
 DEBUG_TRAVEL_NICE_HOUSE,Ms. Nice's House,Casa da Dona Nice
 DEBUG_TRAVEL_HOSPITAL,Hospital,Hospital
 DEBUG_TRAVEL_SCHOOL,School,Escola
+DEBUG_TRAVEL_CEMETERY,Cemetery,Cemitério
+DEBUG_TRAVEL_HELL,Hell,Inferno
+DEBUG_TRAVEL_HELL_2,Hell 2,Inferno 2
+DEBUG_TRAVEL_ARENA_3,Arena 3 (Throne),Arena 3 (Trono)
 DEBUG_EVENT_PROLOG_FINISHED,Prologue Finished (Cap. 1),Prólogo Finalizado (Cap. 1)
 DEBUG_EVENT_STAGE1_INTRO,Stage 1 Intro Played,Intro da Stage 1 Reproduzida
 DEBUG_EVENT_BATTLEFIELD1_INTRO,Battlefield 1 Intro Played,Intro da Battlefield 1 Reproduzida

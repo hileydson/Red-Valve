@@ -16,8 +16,12 @@ extends "res://scripts/stages/cenario_aberto.gd"
 ##  - SOMBRAS gigantes de pé na lava, balançando e andando devagar;
 ##  - gárgulas cruzando o céu (a base solta), relâmpago vermelho raro.
 ##
-## As duas pontas levam a outras cenas que ainda não existem: preencha
-## `cena_saida` (o portal) e `cena_entrada` (o portão por onde se chegou).
+## As duas pontas levam a outras cenas: `cena_saida` (o portal) vai pro inferno
+## 2; `cena_entrada` (o portão por onde se chegou) ainda está vazia. Quem volta
+## pela entrada da cena seguinte reaparece no `spawn_saida` daqui.
+##
+## O inferno 2 herda daqui: o que muda de um mapa pro outro (onde nasce o fogo
+## ao longe, pra onde a sombra olha) está em `_ponto_erupcao` e `_giro_sombra`.
 
 @export_group("Ligações")
 ## Cena carregada ao atravessar o portal do norte. Vazio = o portal só gira.
@@ -40,6 +44,11 @@ extends "res://scripts/stages/cenario_aberto.gd"
 @export var erupcao_dist_max: float = 240.0
 
 const LAVA := -14.0
+
+## Cena que, ao abrir, põe o jogador no `spawn_saida` em vez do começo: quem
+## volta pelo portão da cena seguinte tem de aparecer na frente da saída
+## daqui. Static: sobrevive à troca de cena.
+static var _chegar_pela_saida: String = ""
 
 var _geiseres: Array[Dictionary] = []
 var _modelo_erupcao: GPUParticles3D
@@ -77,8 +86,14 @@ func _preparar() -> void:
 				"dir": Vector3(cos(a), 0.0, sin(a)), "anda": randf() < 0.55,
 				"vel": randf_range(0.4, 1.1), "volta": randf_range(40.0, 110.0), "t": 0.0,
 			})
-			# encarando o caminho (o centro do mapa é x=0)
-			n3.rotation.y = atan2(-n3.position.x, 0.0) + randf_range(-0.5, 0.5)
+			n3.rotation.y = _giro_sombra(n3.position) + randf_range(-0.5, 0.5)
+
+	if _chegar_pela_saida != "" and _chegar_pela_saida == _caminho_real(scene_file_path):
+		_chegar_pela_saida = ""
+		var spawn := get_node_or_null("spawn_saida") as Node3D
+		var player := get_node_or_null("Player") as Node3D
+		if spawn and player:
+			player.global_transform = Transform3D(spawn.global_basis, spawn.global_position + Vector3.UP)
 
 	var saida := get_node_or_null("saida") as Area3D
 	if saida:
@@ -86,6 +101,29 @@ func _preparar() -> void:
 	var entrada := get_node_or_null("entrada") as Area3D
 	if entrada:
 		entrada.body_entered.connect(_ao_voltar_portao)
+
+
+## Para onde a SOMBRA em `p` olha. Aqui, pro caminho (o centro do mapa é x=0).
+func _giro_sombra(p: Vector3) -> float:
+	return atan2(-p.x, 0.0)
+
+
+## Onde nasce o próximo fogo ao longe; Vector3.INF = nenhum desta vez. Aqui,
+## no mar de lava em volta da câmera.
+func _ponto_erupcao(cam: Camera3D) -> Vector3:
+	var a := randf() * TAU
+	var r := randf_range(erupcao_dist_min, erupcao_dist_max)
+	var p := cam.global_position + Vector3(cos(a) * r, 0.0, sin(a) * r)
+	p.y = LAVA
+	return p
+
+
+static func _caminho_real(caminho: String) -> String:
+	if caminho.begins_with("uid://"):
+		var id := ResourceUID.text_to_id(caminho)
+		if ResourceUID.has_id(id):
+			return ResourceUID.get_id_path(id)
+	return caminho
 
 
 func _passo(delta: float) -> void:
@@ -168,10 +206,9 @@ func _passo_erupcoes(delta: float) -> void:
 	var cam := get_viewport().get_camera_3d()
 	if cam == null:
 		return
-	var a := randf() * TAU
-	var r := randf_range(erupcao_dist_min, erupcao_dist_max)
-	var p := cam.global_position + Vector3(cos(a) * r, 0.0, sin(a) * r)
-	p.y = LAVA
+	var p := _ponto_erupcao(cam)
+	if p == Vector3.INF:
+		return
 	var e := _modelo_erupcao.duplicate() as GPUParticles3D
 	add_child(e)
 	e.global_position = p
@@ -219,6 +256,8 @@ func _ao_entrar_portal(corpo: Node3D) -> void:
 func _ao_voltar_portao(corpo: Node3D) -> void:
 	if not _eh_player(corpo) or cena_entrada == "":
 		return
+	# a cena de trás abre com o jogador na frente da saída dela
+	_chegar_pela_saida = _caminho_real(cena_entrada)
 	_trocar(cena_entrada)
 
 

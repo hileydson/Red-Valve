@@ -49,10 +49,17 @@ const GARGULA := preload("res://scenes/effects/fire_gargoyle.tscn")
 ## Energia de pico da direcional `relampago`.
 @export var relampago_energia: float = 2.6
 
+@export_group("Ar")
+## As partículas do grupo `segue_camera` acompanham também a ALTURA da câmera,
+## mantendo a posição local de cada uma como distância vertical até ela. Para
+## mapa que sobe e desce dezenas de metros (o funil do inferno 2).
+@export var segue_camera_altura: bool = false
+
 var _lampadas_piscando: Array[Dictionary] = []
 ## Partículas do grupo `segue_camera` (cinza, névoa rasteira): o mapa é grande
 ## demais pra uma caixa de emissão só; elas nascem em volta de onde se olha.
 var _segue_camera: Array[Node3D] = []
+var _segue_camera_dy: Array[float] = []
 var _tempo: float = 0.0
 var _relampago_prazo: float = 0.0
 var _luz_relampago: DirectionalLight3D
@@ -79,6 +86,7 @@ func _ready() -> void:
 	for no in get_tree().get_nodes_in_group("segue_camera"):
 		if no is Node3D and is_ancestor_of(no):
 			_segue_camera.append(no)
+			_segue_camera_dy.append((no as Node3D).position.y)
 	_preparar_lampadas()
 	_soltar_gargulas()
 	_preparar_relampagos()
@@ -99,8 +107,10 @@ func _process(delta: float) -> void:
 	_tempo += delta
 	var cam := get_viewport().get_camera_3d()
 	if cam:
-		for no in _segue_camera:
-			no.global_position = Vector3(cam.global_position.x, no.global_position.y, cam.global_position.z)
+		for k in range(_segue_camera.size()):
+			var no := _segue_camera[k]
+			var y := cam.global_position.y + _segue_camera_dy[k] if segue_camera_altura else no.global_position.y
+			no.global_position = Vector3(cam.global_position.x, y, cam.global_position.z)
 	_tremer_luzes(delta)
 	_relampago_passo(delta)
 	_passo(delta)

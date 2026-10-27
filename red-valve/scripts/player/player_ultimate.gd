@@ -820,10 +820,10 @@ func cogblade_melee_slash() -> bool:
 	if player.is_using_ultimate or player.cogblade_menu_open: return false
 	if player.is_magic_attacking or player.is_blade_returning or player.is_reloading: return false
 	if player.is_exhausted: return false
-	if not (player.current_stamina >= player.melee_stamina_cost or player.infinite_stamina_test):
+	if not (player.current_stamina >= player.melee_stamina_cost or player._stamina_infinita()):
 		return false
-	
-	if not player.infinite_stamina_test:
+
+	if not player._stamina_infinita():
 		player.current_stamina = maxf(0.0, player.current_stamina - player.melee_stamina_cost)
 	player.stamina_fade_timer = 2.0
 	

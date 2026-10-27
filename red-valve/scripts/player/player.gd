@@ -140,8 +140,60 @@ static func is_infinite_stamina_debug() -> bool:
 ## da aba DEBUG. E' consultada em vez de `infinite_stamina_test` direto porque a
 ## flag da instancia so e' sincronizada no _ready: lida assim, ligar/desligar no
 ## menu vale na hora, inclusive pra desligar.
+##
+## Fora de combate ela tambem e' infinita: correr pela cidade ou dar dash na
+## casa nao cansa. O gasto so' liga com inimigo vivo por perto ou dentro da
+## arena (ver `_atualizar_combate`).
 func _stamina_infinita() -> bool:
-	return infinite_stamina_test or _stamina_infinita_na_sessao
+	return infinite_stamina_test or _stamina_infinita_na_sessao or not _em_combate
+
+
+# --- Estamina so' em combate ---
+## Inimigo vivo a menos disto (em metros) liga o gasto de estamina.
+const COMBATE_RAIO: float = 25.0
+## Segundos que o combate ainda dura depois que o ultimo inimigo sai do raio:
+## sem a folga, recuar dois passos num duelo zerava o custo da corrida.
+const COMBATE_FOLGA: float = 4.0
+## O grupo "enemies" e' varrido so' quatro vezes por segundo.
+const COMBATE_CHECAGEM: float = 0.25
+var _em_combate: bool = false
+var _combate_folga_resto: float = 0.0
+var _combate_checagem_resto: float = 0.0
+
+
+func _atualizar_combate(delta: float) -> void:
+	_combate_checagem_resto -= delta
+	if _combate_checagem_resto > 0.0:
+		return
+	_combate_checagem_resto = COMBATE_CHECAGEM
+	if _inimigo_por_perto():
+		_combate_folga_resto = COMBATE_FOLGA
+	else:
+		_combate_folga_resto -= COMBATE_CHECAGEM
+	_em_combate = _combate_folga_resto > 0.0
+
+
+func _inimigo_por_perto() -> bool:
+	# a arena e' briga do comeco ao fim, mesmo com o chefe la' longe
+	var cena := get_tree().current_scene
+	if cena and cena.scene_file_path.contains("/battlefield/"):
+		return true
+	var raio2 := COMBATE_RAIO * COMBATE_RAIO
+	for inimigo in get_tree().get_nodes_in_group("enemies"):
+		if not (inimigo is Node3D) or not is_instance_valid(inimigo):
+			continue
+		# os da cena pausada atras da arena continuam no grupo
+		if not inimigo.is_inside_tree() or not inimigo.can_process() or not inimigo.is_visible_in_tree():
+			continue
+		# o "heart" (Area3D) tambem esta' no grupo, mas a flag de morte e' do corpo
+		var corpo: Node = inimigo
+		if not ("dead" in corpo) and corpo.get_parent() and "dead" in corpo.get_parent():
+			corpo = corpo.get_parent()
+		if "dead" in corpo and corpo.dead:
+			continue
+		if global_position.distance_squared_to((inimigo as Node3D).global_position) < raio2:
+			return true
+	return false
 
 
 var max_stamina: float = 100.0
@@ -1544,6 +1596,8 @@ func _physics_process(delta: float) -> void:
 			_run_toggle_active = false
 
 	
+	_atualizar_combate(delta)
+
 	# --- STAMINA EXHAUSTION LOGIC ---
 	if current_stamina <= 0.5:
 		is_exhausted = true
@@ -1556,6 +1610,9 @@ func _physics_process(delta: float) -> void:
 	if is_running_stam:
 		if not _stamina_infinita() and not GlobalEvents.is_maycow_normal:
 			current_stamina -= 20.0 * delta
+		elif not _em_combate:
+			# fora de briga a corrida nao gasta, e o que a luta levou volta
+			current_stamina = minf(max_stamina, current_stamina + 15.0 * delta)
 		if current_stamina < 0: current_stamina = 0
 		stamina_fade_timer = 2.0
 		if is_instance_valid(stamina_bar): stamina_bar.modulate.a = 1.0

@@ -68,7 +68,7 @@ func _measure() -> void:
 	var box := AABB()
 	var first := true
 	for mi in _meshes:
-		var b: AABB = mi.global_transform * mi.get_aabb()
+		var b: AABB = _mesh_box(mi)
 		if first:
 			box = b
 			first = false
@@ -78,6 +78,31 @@ func _measure() -> void:
 	_size = max(box.size.x, max(box.size.y, box.size.z))
 	if _size <= 0.0001:
 		_size = 0.2
+
+
+## Caixa da malha em MUNDO. Malha com esqueleto é medida pelos ossos: o AABB
+## dela é o da pose de repouso, e no rig das mãos de 1ª pessoa ele fica 27 cm
+## acima de onde a animação põe a mão (as chamas nasciam no alto da tela).
+## Osso solto, sem pai nem filho, é ponto de encaixe (o "arma") e não conta.
+func _mesh_box(mi: MeshInstance3D) -> AABB:
+	var esq := mi.get_node_or_null(mi.skeleton) as Skeleton3D
+	if esq == null:
+		return mi.global_transform * mi.get_aabb()
+	var box := AABB()
+	var first := true
+	for i in range(esq.get_bone_count()):
+		if esq.get_bone_parent(i) < 0 and esq.get_bone_children(i).is_empty():
+			continue
+		var p: Vector3 = esq.global_transform * esq.get_bone_global_pose(i).origin
+		if first:
+			box = AABB(p, Vector3.ZERO)
+			first = false
+		else:
+			box = box.expand(p)
+	if first:
+		return mi.global_transform * mi.get_aabb()
+	# os ossos passam pelo meio da carne: a casca fica uns centímetros fora
+	return box.grow(0.025)
 
 
 func _apply_skin_material() -> void:
@@ -278,7 +303,7 @@ func _process(delta: float) -> void:
 	for mi in _meshes:
 		if not is_instance_valid(mi):
 			continue
-		var b: AABB = mi.global_transform * mi.get_aabb()
+		var b: AABB = _mesh_box(mi)
 		if first:
 			box = b
 			first = false

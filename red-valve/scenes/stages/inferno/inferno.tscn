@@ -381,6 +381,7 @@ agent_radius = 0.6
 
 [node name="inferno" type="Node3D"]
 script = ExtResource("1_inferno")
+cena_saida = "res://scenes/stages/inferno_2/inferno_2.tscn"
 salvar_ao_entrar = true
 nevoa_do_player = "baixa"
 gargulas_ceu = 7

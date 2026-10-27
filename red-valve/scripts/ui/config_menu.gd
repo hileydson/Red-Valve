@@ -1051,8 +1051,19 @@ func _build_debug_travel_tab() -> void:
 		{"name": tr("DEBUG_TRAVEL_JIMMY_HOUSE"), "scene": "res://scenes/stages/jimmy_house/casa_jimmy_interior.tscn", "flag": ""},
 		{"name": tr("DEBUG_TRAVEL_NICE_HOUSE"), "scene": "res://scenes/stages/nice_house/casa_nice_interior.tscn", "flag": ""},
 		{"name": tr("DEBUG_TRAVEL_HOSPITAL"), "scene": "res://scenes/stages/hospital/hospital.tscn", "flag": ""},
-		{"name": tr("DEBUG_TRAVEL_SCHOOL"), "scene": "res://scenes/stages/escola/escola.tscn", "flag": ""}
+		{"name": tr("DEBUG_TRAVEL_SCHOOL"), "scene": "res://scenes/stages/escola/escola.tscn", "flag": ""},
+		{"name": tr("DEBUG_TRAVEL_CEMETERY"), "scene": "res://scenes/stages/cemiterio/cemiterio.tscn", "flag": ""},
+		{"name": tr("DEBUG_TRAVEL_HELL"), "scene": "res://scenes/stages/inferno/inferno.tscn", "flag": ""},
+		{"name": tr("DEBUG_TRAVEL_HELL_2"), "scene": "res://scenes/stages/inferno_2/inferno_2.tscn", "flag": ""},
+		{"name": tr("DEBUG_TRAVEL_ARENA_3"), "scene": "res://scenes/stages/battlefield/battlefield_3.tscn", "flag": ""}
 	]
+
+	# duas colunas: em uma so' a lista passava da altura da aba
+	var grade = GridContainer.new()
+	grade.columns = 2
+	grade.add_theme_constant_override("h_separation", 24)
+	grade.add_theme_constant_override("v_separation", 18)
+	vbox.add_child(grade)
 
 	debug_travel_first_btn = null
 	for dest in destinations:
@@ -1061,7 +1072,7 @@ func _build_debug_travel_tab() -> void:
 		btn.add_theme_font_size_override("font_size", 20)
 		btn.custom_minimum_size = Vector2(350, 45)
 		btn.pressed.connect(func(): _fast_travel_to(dest["scene"], dest["flag"]))
-		vbox.add_child(btn)
+		grade.add_child(btn)
 		if debug_travel_first_btn == null:
 			debug_travel_first_btn = btn
 

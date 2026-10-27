@@ -1030,8 +1030,25 @@ func cutscene_trailer_sequence() -> void:
 	
 	var player_hand = player_ref.find_child("hand_with_magic", true, false)
 	if player_hand:
-		var hand_3d = player_hand.duplicate()
-		_set_visible_recursive(hand_3d, true)
+		# Instância nova da cena da mão, e não cópia da do player: a cópia
+		# levava junto a pose em que o último gesto largou a `hand_magic`
+		# (idle, soco, magia...), e os marcadores enquadravam cada vez uma
+		# coisa — até o braço inteiro solto no ar.
+		var hand_3d: Node3D
+		if player_hand.scene_file_path != "":
+			hand_3d = load(player_hand.scene_file_path).instantiate()
+			# o take final apaga a mão flutuante procurando "hand" no nome
+			hand_3d.name = player_hand.name
+			# A cena já nasce com a visibilidade certa (a mão direita
+			# escondida). O fogo mede e queima toda malha que achar, então a
+			# escondida sai de vez, senão as chamas cobrem a tela inteira.
+			for mi in hand_3d.find_children("*", "MeshInstance3D", true, false):
+				if not mi.visible:
+					mi.get_parent().remove_child(mi)
+					mi.free()
+		else:
+			hand_3d = player_hand.duplicate()
+			_set_visible_recursive(hand_3d, true)
 		
 		# Para qualquer AnimationPlayer na mão clonada para que a animação (ex: idle)
 		# não puxe a mão de volta para a posição original quando o tween acabar
