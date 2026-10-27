@@ -783,6 +783,13 @@ func cutscene_trailer_sequence() -> void:
 
 	if is_instance_valid(player):
 		player.cutscene_set_camera_current(true)
+		# O PlayerCutscene só nasce 2 quadros depois do _ready do player, então
+		# a chamada acima ainda não troca câmera nenhuma. E a PreviaDaTela da
+		# mao_armada entra como `current` e se desliga no _ready, devolvendo a
+		# vez para a camera_1 fixa da cena (olhando para o chão). Liga a de 3ª
+		# pessoa direto, como ela ficava antes da mão armada existir.
+		if is_instance_valid(player.camera_third_person):
+			player.camera_third_person.make_current()
 
 	await get_tree().create_timer(8.0).timeout
 	print("... Take 1 concluído!")
