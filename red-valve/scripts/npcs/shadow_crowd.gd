@@ -2,6 +2,7 @@ extends Node3D
 class_name ShadowCrowd
 
 const ShadowRoads := preload("res://scripts/npcs/shadow_roads.gd")
+const Realidade := preload("res://scripts/systems/realidade_do_amuleto.gd")
 
 ## Povoa a cidade de ShadowPerson ao redor do jogador, dando a impressao de
 ## que ela esta cheia sem nunca pagar por uma cidade cheia de verdade.
@@ -35,6 +36,15 @@ const ShadowRoads := preload("res://scripts/npcs/shadow_roads.gd")
 ## diante ela ja virou, e a rua e das sombras — ShadowPerson e ShadowCar. Este
 ## no decide qual dos dois montar no `_ready`, olhando o estado do prologo; o
 ## resto do sistema (pool, anel, garagem) e identico nos dois casos.
+##
+## Amuleto fora do pescoco (Capitulo 1)
+## ------------------------------------
+## Do Capitulo 1 em diante o R3 / H tira o amuleto e a cidade volta a ser de
+## gente (`realidade_do_amuleto.gd`). Por isso no capitulo existem DOIS pools de
+## pessoas — sombras e moradores — e quem nasce e' sempre da realidade de agora.
+## Quando a onda da troca passa por alguem que esta na rua, ele e' recolhido e
+## o outro entra no MESMO lugar, virado pro mesmo lado, numa baforada de fumaca.
+## Os carros sao os mesmos nas duas: so trocam de casca (`ShadowCar.virar_real`).
 
 @export_group("Populacao")
 ## Cena da sombra. Se ficar vazio, usa res://scenes/npcs/shadow_person.tscn.
@@ -134,6 +144,11 @@ var _player_retry := 0.0
 var _nav_layers := 0
 var _warned_no_nav := false
 
+## Capitulo 1: os moradores da realidade sem amuleto, num pool proprio.
+var _pool_morador: Array[Node3D] = []
+var _idle_morador: Array[Node3D] = []
+var _duas_realidades := false
+
 var _car_pool: Array[Node3D] = []
 var _car_active: Array[Node3D] = []
 var _car_idle: Array[Node3D] = []
@@ -142,8 +157,11 @@ var _last_car_heading := 0.0
 
 func _ready() -> void:
 	_rng.randomize()
+	add_to_group("shadow_crowd")
 	if trocar_no_prologo and not _e_capitulo_1():
 		_veste_o_prologo()
+	elif trocar_no_prologo:
+		_duas_realidades = true
 	if shadow_scene == null:
 		shadow_scene = load("res://scenes/npcs/shadow_person.tscn") as PackedScene
 	if shadow_scene == null:
@@ -153,6 +171,7 @@ func _ready() -> void:
 	ShadowRoads.setup(get_tree(), road_node_name, road_group)
 	max_active = mini(max_active, pool_size)
 	_build_pool()
+	_build_pool_morador()
 	_build_car_pool()
 	# o NavigationAgent3D de cada sombra so existe alguns frames depois do
 	# _ready dela (o proprio script espera a nav map sincronizar)
@@ -246,7 +265,7 @@ func _sync_nav_layers() -> void:
 	_nav_layers = region.navigation_layers
 	if _nav_layers == 0:
 		return
-	for npc in _pool:
+	for npc in _pool + _pool_morador:
 		var agent := _find_agent(npc)
 		if agent != null:
 			agent.navigation_layers = _nav_layers
@@ -276,6 +295,10 @@ func _find_agent(node: Node) -> NavigationAgent3D:
 # ------------------------------------------------------------------- loop
 
 func _physics_process(delta: float) -> void:
+	# durante a onda da troca de realidade a conferencia e' a cada quadro: no
+	# ritmo do tick ela passaria de 12 em 12 metros e a troca sairia em blocos
+	if Realidade.onda_ativa:
+		_aplicar_realidade()
 	_tick -= delta
 	if _tick > 0.0:
 		return
@@ -292,6 +315,7 @@ func _physics_process(delta: float) -> void:
 	var cam := get_viewport().get_camera_3d()
 	var ppos := _player.global_position
 
+	_aplicar_realidade()
 	_retire_far(ppos, cam)
 	_fill(ppos, cam)
 	_retire_far_cars(ppos, cam)
@@ -317,7 +341,7 @@ func _retire_far(ppos: Vector3, cam: Camera3D) -> void:
 
 func _fill(ppos: Vector3, cam: Camera3D) -> void:
 	var budget := spawns_per_tick
-	while _active.size() < max_active and budget > 0 and not _idle.is_empty():
+	while _active.size() < max_active and budget > 0 and not _idle_de_agora().is_empty():
 		var p := _pick_spawn_point(ppos, cam)
 		if p == NO_SPOT:
 			break
@@ -512,6 +536,9 @@ func _deploy_car(pos: Vector3) -> void:
 	car.visible = true
 	if car.has_method("relocate"):
 		car.relocate(pos, _last_car_heading)
+	# nasce ja na casca da realidade de agora, sem fumaca
+	if car.has_method("virar_real"):
+		car.virar_real(_realidade_normal())
 	_car_active.append(car)
 
 
@@ -523,12 +550,13 @@ func _park(npc: Node3D) -> void:
 	npc.global_position = GARAGE
 	if npc is CharacterBody3D:
 		npc.velocity = Vector3.ZERO
-	if not _idle.has(npc):
-		_idle.append(npc)
+	var lista := _idle_morador if _pool_morador.has(npc) else _idle
+	if not lista.has(npc):
+		lista.append(npc)
 
 
 func _deploy(pos: Vector3) -> void:
-	var npc: Node3D = _idle.pop_back()
+	var npc: Node3D = _idle_de_agora().pop_back()
 	if npc == null or not is_instance_valid(npc):
 		return
 	npc.global_position = pos
@@ -539,6 +567,78 @@ func _deploy(pos: Vector3) -> void:
 	if npc.has_method("relocate"):
 		npc.relocate(pos)
 	_active.append(npc)
+
+
+## Capitulo 1: monta o pool dos moradores (a realidade sem amuleto). Menor que
+## o das sombras: so' o que cabe aceso ao mesmo tempo, mais uma folga pra troca.
+func _build_pool_morador() -> void:
+	if not _duas_realidades:
+		return
+	if npc_prologo_scene == null:
+		npc_prologo_scene = load("res://scenes/npcs/city_npc.tscn") as PackedScene
+	if npc_prologo_scene == null:
+		_duas_realidades = false
+		return
+	for i in mini(pool_size, max_active + 4):
+		var npc := npc_prologo_scene.instantiate() as Node3D
+		if npc == null:
+			continue
+		add_child(npc)
+		npc.global_position = GARAGE
+		if wander_radius > 0.0 and "wander_radius" in npc:
+			npc.wander_radius = wander_radius
+		_pool_morador.append(npc)
+		_park(npc)
+
+
+## A cidade esta na realidade de gente (amuleto fora do pescoco)?
+func _realidade_normal() -> bool:
+	return _duas_realidades and SaveManager.realidade_normal()
+
+
+## De onde sai quem nasce agora.
+func _idle_de_agora() -> Array[Node3D]:
+	return _idle_morador if _realidade_normal() else _idle
+
+
+## Quem esta na rua e e' da realidade errada troca de lugar com o da certa —
+## mas so' depois que a onda da troca passou por ele. Os carros so' trocam de
+## casca. Fora de uma troca isto nao acha ninguem e sai logo.
+func _aplicar_realidade() -> void:
+	if not _duas_realidades:
+		return
+	var normal := _realidade_normal()
+	for i in _active.size():
+		var velho: Node3D = _active[i]
+		if not is_instance_valid(velho) or _pool_morador.has(velho) == normal:
+			continue
+		if not Realidade.alcancou(velho.global_position):
+			continue
+		var fila := _idle_de_agora()
+		var pos := velho.global_position
+		var giro := velho.rotation.y
+		_park(velho)
+		if fila.is_empty():
+			_active[i] = null
+			continue
+		var novo: Node3D = fila.pop_back()
+		novo.global_position = pos
+		novo.process_mode = Node.PROCESS_MODE_INHERIT
+		novo.visible = true
+		if novo.has_method("relocate"):
+			novo.relocate(pos)
+		novo.rotation.y = giro
+		_active[i] = novo
+		Realidade.nuvem(self, pos + Vector3.UP * 0.9, 1.0, normal)
+	for i in range(_active.size() - 1, -1, -1):
+		if _active[i] == null:
+			_active.remove_at(i)
+	for car in _car_active:
+		if is_instance_valid(car) and car.has_method("virar_real") and car.get("real") != normal \
+				and Realidade.alcancou(car.global_position):
+			car.virar_real(normal)
+			var tam: Vector3 = car.get_meta("size", Vector3(2.0, 1.5, 4.5))
+			Realidade.nuvem(self, car.global_position + Vector3.UP * tam.y * 0.5, tam.z * 0.4, normal)
 
 
 func _find_player() -> Node3D:

@@ -1,5 +1,7 @@
 extends Node3D
 
+const Realidade := preload("res://scripts/systems/realidade_do_amuleto.gd")
+
 # O fim do prologo (cutscene_fight_with_power) vira arquivo de leitura assim que
 # o Capitulo 1 comeca.
 const ARQUIVO_CADERNO := "caderno_do_jimmy"
@@ -137,6 +139,8 @@ func _ready() -> void:
 	_setup_areas_casas()
 	setup_player_spawn()
 	_jonny_na_cidade()
+	# a cidade sem o amuleto no pescoço (R3 / H) tem mais cor: entra já assim
+	(func() -> void: Realidade.ajustar_cor_ao_entrar(self)).call_deferred()
 
 ## Rede de segurança do amuleto.
 ##

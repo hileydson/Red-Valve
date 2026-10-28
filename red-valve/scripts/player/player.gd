@@ -1,5 +1,7 @@
 extends CharacterBody3D
 
+const Realidade := preload("res://scripts/systems/realidade_do_amuleto.gd")
+
 @onready var camera = $Camera3D # Certifique-se de que sua câmera se chama Camera3D
 @onready var camera_third_person: Camera3D =$SpringArm3D/camera_third_person
 @onready var camera_third_person_marker: Marker3D = $SpringArm3D/camera_third_person_marker
@@ -903,6 +905,21 @@ func _configurar_lanterna() -> void:
 	add_child(_lanterna_som)
 
 
+## R3 / H: tira ou põe o amuleto, e com ele troca a realidade da cidade — com
+## ele, sombras e inimigos; sem ele, gente, carros e inimigos cegos virados em
+## sombra (`realidade_do_amuleto.gd`). Só do Capítulo 1 em diante: no prólogo
+## o botão não faz nada, e dentro de algum lugar ele avisa que ali o amuleto
+## não vale.
+func alternar_realidade() -> void:
+	if not GlobalEvents.is_maycow_normal:
+		return
+	if Realidade.alternar(get_tree()):
+		return
+	var capitulo_1: bool = SaveManager.prolog_finished or GlobalEvents.entering_chapter_1
+	if capitulo_1 and SaveManager.tem_item("amuleto") and not SaveManager.na_cidade():
+		GlobalUtils.mostrar_aviso_no_mapa(tr("AVISO_AMULETO_INDISPONIVEL"))
+
+
 ## Liga/desliga. Sem o item no inventário não acontece nada — é o que impede o
 ## jogador de ter lanterna antes de achar a lanterna.
 func alternar_lanterna() -> void:
@@ -1475,6 +1492,10 @@ func _input(event):
 		return
 	if camera_bullet_time_ON:
 		return
+
+	if event.is_action_pressed("ui_realidade"):
+		alternar_realidade()
+		return
 		
 	if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 		var sens_mult = SaveManager.config.get("sensitivity_aim", 0.4) if is_aiming else SaveManager.config.get("sensitivity_look", 1.0)
@@ -1988,7 +2009,9 @@ func _physics_process(delta: float) -> void:
 		# Dentro de algum lugar o amuleto apaga: o botao avisa por que nao abriu.
 		if normal_can_aim and Input.is_action_just_pressed("ui_amuleto") \
 				and SaveManager.tem_item("amuleto") and not SaveManager.amuleto_disponivel():
-			GlobalUtils.mostrar_aviso_no_mapa(tr("AVISO_AMULETO_INDISPONIVEL"))
+			# na rua, com ele fora do pescoço, o aviso é outro: falta pôr (R3 / H)
+			GlobalUtils.mostrar_aviso_no_mapa(tr("AVISO_AMULETO_GUARDADO" if SaveManager.realidade_normal() \
+				else "AVISO_AMULETO_INDISPONIVEL"))
 
 		# A troca de câmera para 1ª pessoa é controlada pelo poder do amuleto
 		# (player_amulet.gd), que faz o zoom gradual da 3ª pessoa antes de trocar.

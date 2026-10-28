@@ -213,8 +213,9 @@ void fragment() {
 	player.ammo_icon.offset_bottom = -45
 	player.hud_layer.add_child(player.ammo_icon)
 
-	# Símbolo 2D do amuleto: mesmo canto do HUD da arma, e só aparece quando
-	# não há arma na mão — o contador de balas tem a preferência do canto.
+	# Símbolo 2D do amuleto: mesmo canto do HUD da arma, e aparece enquanto ele
+	# estiver no pescoço (R3 / H tira e põe). Com arma na mão o contador de balas
+	# fica com o canto e o símbolo sobe pra cima dele (`update_ammo_ui`).
 	player.amulet_hud_icon = TextureRect.new()
 	player.amulet_hud_icon.texture = load("res://assets/images/menu/itens/amuleto_2d.png")
 	player.amulet_hud_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
@@ -522,7 +523,9 @@ func update_ammo_ui() -> void:
 		player.ammo_label.text = str(no_pente) + " / " + str(total)
 
 	if is_instance_valid(player.amulet_hud_icon):
-		player.amulet_hud_icon.visible = not tem_arma and SaveManager.is_equipped("amuleto")
+		player.amulet_hud_icon.visible = SaveManager.is_equipped("amuleto")
+		player.amulet_hud_icon.offset_top = -245 if tem_arma else -145
+		player.amulet_hud_icon.offset_bottom = -145 if tem_arma else -45
 
 func _start_heartbeat_pulse() -> void:
 	if player.current_health <= 0:

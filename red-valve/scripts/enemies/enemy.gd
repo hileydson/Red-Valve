@@ -20,6 +20,8 @@
  
 extends CharacterBody3D
 
+const Realidade := preload("res://scripts/systems/realidade_do_amuleto.gd")
+
 @onready var player = get_tree().get_first_node_in_group("player")
 
 @onready var nav_agent: NavigationAgent3D = $NavigationAgent3D
@@ -214,6 +216,17 @@ func _physics_process(delta: float) -> void:
 		velocity += get_gravity() * delta
 	else:
 		velocity.y = 0
+
+	# Sem o amuleto no pescoço do Maycow (R3 / H) ele vira sombra e deixa de
+	# enxergá-lo: nada de perseguir, atacar ou agarrar até o amuleto voltar.
+	if not cutscene_mode and Realidade.atualizar_disfarce(self):
+		is_attacking = false
+		steps.stop()
+		_travel("idle")
+		velocity.x = move_toward(velocity.x, 0, SPEED)
+		velocity.z = move_toward(velocity.z, 0, SPEED)
+		move_and_slide()
+		return
 
 	# Modo cutscene: só olha para o player, sem movimento/ataque
 	if cutscene_mode:
@@ -449,6 +462,9 @@ func _on_attack_body_entered(body: Node3D) -> void:
 func _acertar_player(body: Node3D) -> void:
 	if dead or not is_inside_tree() or not is_instance_valid(body):
 		return
+	# golpe que ja vinha no ar quando o amuleto saiu: de sombra ele nao acerta
+	if Realidade.oculto():
+		return
 
 	# Carência de dano (o jogador acabou de voltar da arena, por exemplo): sai
 	# ANTES do empurrão. Se só o `take_damage` lá embaixo respeitasse isso, ele
@@ -515,6 +531,8 @@ func _acertar_player(body: Node3D) -> void:
 ## true = o toque foi consumido; quem chamou não aplica mais dano nenhum.
 func _tenta_agarrao(body: Node3D) -> bool:
 	if not permite_agarrao:
+		return false
+	if Realidade.oculto():
 		return false
 	if not GlobalEvents.is_maycow_normal:
 		return false
@@ -682,7 +700,7 @@ func _throw_random_projectile() -> void:
 	
 	# Conecta o sinal de hit para causar dano
 	projectile.body_entered.connect(func(body):
-		if body == player and is_instance_valid(projectile):
+		if body == player and is_instance_valid(projectile) and not Realidade.oculto():
 			player.take_damage(attack_damage)
 			# Tremor de câmera
 			GlobalUtils.shake_camera(0.2, 0.2)

@@ -22,10 +22,11 @@ PROMPT_ENTER_MAYCOW_HOUSE,Enter Maycow's house?,Entrar na casa do Maycow?
 PROMPT_ENTER_CHURCH,Enter the church?,Entrar na igreja?
 PROMPT_TAKE_FLASHLIGHT,Take the flashlight?,Pegar a lanterna?
 ITEM_AMULETO_NAME,Gear Amulet,Amuleto da Engrenagem
-ITEM_AMULETO_DESC,"The Gear Amulet, forged by the Calixto family. It warms in the pocket when something from Arorua is close — and it is what drags the enemies over there.","O Amuleto da Engrenagem, forjado pela família Calixto. Esquenta no bolso quando algo de Arorua está perto — e é ele que arrasta os inimigos para lá."
+ITEM_AMULETO_DESC,"The Gear Amulet, forged by the Calixto family. It warms in the pocket when something from Arorua is close — and it is what drags the enemies over there. R3 (H) takes it off and puts it back on: without it the city is just a city, and the monsters can't see you.","O Amuleto da Engrenagem, forjado pela família Calixto. Esquenta no bolso quando algo de Arorua está perto — e é ele que arrasta os inimigos para lá. R3 (H) tira e põe o amuleto: sem ele a cidade volta a ser só uma cidade, e os monstros não te enxergam."
 PICKUP_AMULETO_PAD,"You now carry the amulet, the gateway to the parallel universe of Arorua. Hold the left shoulder button (LB) to call its vision","Agora você possui o amuleto, o portal para o universo paralelo de Arorua. Segure o botão de ombro esquerdo (LB) para chamar a visão dele"
 PICKUP_AMULETO_KEY,"You now carry the amulet, the gateway to the parallel universe of Arorua. Hold V to call its vision","Agora você possui o amuleto, o portal para o universo paralelo de Arorua. Segure a tecla V para chamar a visão dele"
 AVISO_AMULETO_INDISPONIVEL,The amulet doesn't answer in here,O amuleto não responde aqui dentro
+AVISO_AMULETO_GUARDADO,The amulet is off. Press R3 (H) to put it on,O amuleto está guardado. Aperte R3 (H) para colocá-lo
 ITEM_LANTERNA_NAME,Flashlight,Lanterna
 ITEM_LANTERNA_DESC,"A heavy hand lamp, found still lit on the church floor. The beam holds up.","Lanterna de mão pesada, achada ainda acesa no chão da igreja. O facho aguenta firme."
 PICKUP_FLASHLIGHT_L3,"You picked up the flashlight, press L3 to turn it on","Você pegou a lanterna, aperte L3 para ativá-la"

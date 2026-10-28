@@ -14,8 +14,37 @@ const ShadowRoads := preload("res://scripts/npcs/shadow_roads.gd")
 ##
 ## Coloque poucos, espalhados, JA EM CIMA de uma rua. Longe do player ele
 ## simplesmente some, e volta a aparecer quando o player se aproxima.
+##
+## Sem o amuleto no pescoco (Capitulo 1, R3 / H) a cidade volta a ser de gente
+## e o carro troca de CASCA: `virar_real(true)` esconde a lataria de fumaca e
+## mostra um carro de verdade (pacote CC0 "PSX Style Cars", em
+## `assets/3d_model/veiculos/carros_psx/`) do mesmo tipo e do mesmo comprimento.
+## Ele continua andando igual — quem dirige e' o mesmo no.
 
 const GRAVITY := 18.0
+
+const CARROS_PSX := "res://assets/3d_model/veiculos/carros_psx/"
+const _SEDAN_2 := ["car02/car2.obj", ["car2.png", "car2_black.png", "car2_red.png"]]
+const _SEDAN_5 := ["car05/car5.obj", ["car5.png", "car5_green.png", "car5_grey.png"]]
+const _TAXI := ["car05/car5_taxi.obj", ["car5_taxi.png"]]
+const _POLICIA := ["car05/car5_police.obj", ["car5_police.png", "car5_police_la.png"]]
+const _HATCH := ["car03/car3.obj", ["car3.png", "car3_red.png", "car3_yellow.png"]]
+const _VAN := ["car04/car4.obj", ["car4.png", "car4_grey.png", "car4_lightgrey.png", "car4_lightorange.png"]]
+const _PERUA := ["car01/car.obj", ["car.png", "car_blue.png", "car_gray.png", "car_red.png"]]
+const _FURGAO := ["car08/car8.obj", ["car8.png", "car8_grey.png", "car8_mail.png", "car8_purple.png"]]
+const _ANTIGO := ["car07/car7.obj", ["car7.png", "car7_black.png", "car7_brown.png", "car7_green.png", "car7_grey.png", "car7_red.png"]]
+## Que carro de verdade cada forma de sombra vira (modelo, cores possiveis).
+const CARRO_DE_VERDADE := {
+	"sedan": [_SEDAN_2, _SEDAN_5, _SEDAN_5, _TAXI, _POLICIA],
+	"hatch": [_HATCH],
+	"van": [_VAN],
+	"pickup": [_PERUA],
+	"caminhao": [_FURGAO],
+	"onibus": [_FURGAO],
+	"esportivo": [_ANTIGO, _SEDAN_2],
+}
+static var _malhas_reais: Dictionary = {}
+static var _pinturas: Dictionary = {}
 
 @export_group("Forma")
 ## -1 = sorteia no _ready. 0..N = forca uma das variacoes.
@@ -103,6 +132,9 @@ var _engine: Node = null
 var _engine_target_db := 0.0
 var _engine_db := -60.0
 var _body_root: Node3D
+var _real_root: Node3D
+## Esta de casca de verdade (realidade sem amuleto)?
+var real := false
 var _player: Node3D
 var _visible_now := true
 var _check_timer := 0.0
@@ -541,6 +573,8 @@ func _spin_wheels(delta: float) -> void:
 	if _body_root != null:
 		_body_root.rotation.z = lerp(_body_root.rotation.z, -_steer * 0.12,
 			clampf(delta * 4.0, 0.0, 1.0))
+		if _real_root != null:
+			_real_root.rotation.z = _body_root.rotation.z
 
 
 ## Longe do player o carro some por inteiro (nao processa, nao aparece).
@@ -661,3 +695,60 @@ func stop_engine() -> void:
 	_engine.stop()
 	_engine_db = -60.0
 	_engine.volume_db = _engine_db
+
+
+# ------------------------------------------------------------ carro de verdade
+
+## Troca a casca: `sim` = carro de verdade (cidade sem amuleto), senao a
+## lataria de fumaca. O de verdade so' e' montado na primeira vez que precisa.
+func virar_real(sim: bool) -> void:
+	real = sim
+	if sim and _real_root == null:
+		_montar_carro_real()
+	if _body_root != null:
+		_body_root.visible = not sim
+	if _real_root != null:
+		_real_root.visible = sim
+
+
+func _montar_carro_real() -> void:
+	var opcoes: Array = CARRO_DE_VERDADE.get(String(_profile.get("name", "sedan")), CARRO_DE_VERDADE["sedan"])
+	var escolha: Array = opcoes[_rng.randi_range(0, opcoes.size() - 1)]
+	var malha := _malha_real(String(escolha[0]))
+	if malha == null:
+		return
+	var cores: Array = escolha[1]
+	var pasta := String(escolha[0]).get_base_dir()
+	var pintura := _pintura(pasta + "/" + String(cores[_rng.randi_range(0, cores.size() - 1)]))
+	_real_root = Node3D.new()
+	_real_root.name = "CarroDeVerdade"
+	add_child(_real_root)
+	var mi := MeshInstance3D.new()
+	mi.mesh = malha
+	mi.material_override = pintura
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	# do mesmo comprimento da sombra (a colisao e' a dela), apoiado no chao. O
+	# modelo olha pro +Z, como o carro.
+	var caixa := malha.get_aabb()
+	var tam: Vector3 = get_meta("size", Vector3(1.8, 1.4, 4.4))
+	var esc := tam.z / maxf(caixa.size.z, 0.01)
+	mi.scale = Vector3.ONE * esc
+	mi.position = Vector3(-caixa.get_center().x * esc, -caixa.position.y * esc, -caixa.get_center().z * esc)
+	_real_root.add_child(mi)
+
+
+static func _malha_real(arquivo: String) -> Mesh:
+	if not _malhas_reais.has(arquivo):
+		_malhas_reais[arquivo] = load(CARROS_PSX + arquivo) as Mesh
+	return _malhas_reais[arquivo]
+
+
+static func _pintura(arquivo: String) -> StandardMaterial3D:
+	if not _pinturas.has(arquivo):
+		var m := StandardMaterial3D.new()
+		m.albedo_texture = load(CARROS_PSX + arquivo) as Texture2D
+		m.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST_WITH_MIPMAPS
+		m.roughness = 0.7
+		m.metallic = 0.15
+		_pinturas[arquivo] = m
+	return _pinturas[arquivo]

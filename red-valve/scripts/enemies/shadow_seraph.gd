@@ -39,6 +39,7 @@ class_name ShadowSeraph
 ##   magia:  anel          — deixa o jogador 60% mais lento por 12 s
 
 const ShadowRoads := preload("res://scripts/npcs/shadow_roads.gd")
+const Realidade := preload("res://scripts/systems/realidade_do_amuleto.gd")
 const FX := preload("res://scripts/effects/seraph_fx.gd")
 const Orbe := preload("res://scripts/effects/seraph_orb.gd")
 const Foguete := preload("res://scripts/effects/seraph_rocket.gd")
@@ -1008,6 +1009,16 @@ func _physics_process(delta: float) -> void:
 	_respiro = maxf(0.0, _respiro - delta)
 	for k in _esperas.keys():
 		_esperas[k] = float(_esperas[k]) - delta
+
+	# Sem o amuleto no pescoco do Maycow (R3 / H) ele vira sombra e deixa de
+	# enxerga-lo: larga o que estava fazendo e volta a vagar. Na arena, nunca.
+	if not _na_arena() and Realidade.atualizar_disfarce(self):
+		if _act != Act.NENHUMA:
+			_aborta_acao()
+		_vaga(delta)
+		_anima(delta)
+		move_and_slide()
+		return
 
 	if _act != Act.NENHUMA:
 		_anda_acao(delta)
@@ -2381,6 +2392,8 @@ func _no_toque(corpo: Node3D) -> void:
 ## true = o toque foi consumido; quem chamou nao aplica mais dano nenhum.
 func _tenta_agarrao(corpo: Node3D) -> bool:
 	if not permite_agarrao:
+		return false
+	if Realidade.oculto():
 		return false
 	if not GlobalEvents.is_maycow_normal:
 		return false

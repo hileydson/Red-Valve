@@ -61,6 +61,11 @@ var spawn_from_saved_position: bool = false
 ## O tutorial do amuleto (levar o inimigo pra arena) ja foi mostrado? Ele aparece
 ## uma unica vez na vida do save, no comeco da gameplay do Capitulo 1 na cidade.
 var tutorial_amuleto_visto: bool = false
+## O amuleto esta no pescoco? Do Capitulo 1 em diante o R3 / H tira e poe —
+## e e' isso que troca a REALIDADE da cidade: com ele, a rua e das sombras e
+## os inimigos enxergam o Maycow; sem ele, a rua e de gente e de carro, e os
+## inimigos viram sombras cegas. Comeca no pescoco (o Capitulo 1 abre assim).
+var amuleto_equipado: bool = true
 ## Ids dos arquivos de texto (aba ARQUIVOS do menu) que o jogador ja encontrou.
 ## O conteudo mora em ArquivosDados; aqui so fica o que ja foi liberado.
 var arquivos_desbloqueados: Array = []
@@ -509,6 +514,7 @@ func save_game(scene_path: String = ""):
 		"iron_rusks": iron_rusks,
 		"arquivos_desbloqueados": arquivos_desbloqueados,
 		"tutorial_amuleto_visto": tutorial_amuleto_visto,
+		"amuleto_equipado": amuleto_equipado,
 		"escola_portao_destrancado": GlobalEvents.escola_portao_destrancado,
 		"stage_1_saved_position": stage_1_saved_position,
 		"mapas_descobertos": mapas_descobertos,
@@ -573,6 +579,7 @@ func load_game(slot_id: int = -1) -> bool:
 				iron_rusks_display = iron_rusks
 				arquivos_desbloqueados = data.get("arquivos_desbloqueados", [])
 				tutorial_amuleto_visto = data.get("tutorial_amuleto_visto", false)
+				amuleto_equipado = bool(data.get("amuleto_equipado", true))
 				GlobalEvents.escola_portao_destrancado = data.get("escola_portao_destrancado", false)
 				stage_1_saved_position = data.get("stage_1_saved_position", {})
 				mapas_descobertos = data.get("mapas_descobertos", {})
@@ -654,6 +661,7 @@ func load_slot_data_only(slot_id: int = 1) -> bool:
 	iron_rusks_display = iron_rusks
 	arquivos_desbloqueados = data.get("arquivos_desbloqueados", [])
 	tutorial_amuleto_visto = data.get("tutorial_amuleto_visto", false)
+	amuleto_equipado = bool(data.get("amuleto_equipado", true))
 	GlobalEvents.escola_portao_destrancado = data.get("escola_portao_destrancado", false)
 	stage_1_saved_position = data.get("stage_1_saved_position", {})
 	mapas_descobertos = data.get("mapas_descobertos", {})
@@ -686,6 +694,7 @@ func reset_progress() -> void:
 	iron_rusks_display = 0
 	arquivos_desbloqueados = []
 	tutorial_amuleto_visto = false
+	amuleto_equipado = true
 	stage_1_saved_position = {}
 	spawn_from_saved_position = false
 	mapas_descobertos = {}
@@ -873,8 +882,37 @@ func is_equipped(item_id: String) -> bool:
 func amuleto_disponivel() -> bool:
 	if not tem_item("amuleto"):
 		return false
+	if not amuleto_equipado and _capitulo_1():
+		return false
+	return na_cidade()
+
+
+func na_cidade() -> bool:
 	var cena := get_tree().current_scene if is_inside_tree() else null
 	return cena != null and cena.scene_file_path == CENA_CIDADE
+
+
+## Mesmo teste da stage_1 e do ShadowCrowd: o prologo acabou?
+func _capitulo_1() -> bool:
+	return prolog_finished or GlobalEvents.entering_chapter_1
+
+
+## O R3 / H pode trocar de realidade agora? So' do Capitulo 1 em diante, so' na
+## cidade e so' com o amuleto no inventario.
+func pode_alternar_realidade() -> bool:
+	return _capitulo_1() and tem_item("amuleto") and na_cidade()
+
+
+## A cidade esta na realidade "de gente" (amuleto fora do pescoco)? E' a
+## pergunta que as sombras, os carros e os inimigos fazem.
+func realidade_normal() -> bool:
+	return pode_alternar_realidade() and not amuleto_equipado
+
+
+## Os inimigos da cidade enxergam o Maycow? Sem o amuleto, nao: eles viram
+## sombras e nao atacam nem agarram.
+func maycow_oculto() -> bool:
+	return realidade_normal()
 
 
 ## Este item aceita ser equipado?
