@@ -111,7 +111,7 @@ func _rodar() -> void:
 	ResourceLoader.load_threaded_request(destino)
 	_som.play()
 	GlobalUtils.vibrate_controller(null, 0.5, 0.6, 0.5)
-	var t := create_tween().set_parallel(true)
+	var t := create_tween().set_parallel(true).set_ignore_time_scale(true)
 	t.tween_property(_mat, "shader_parameter/intensity", 1.0, dur_entrada).set_trans(Tween.TRANS_SINE)
 	t.tween_property(_mat, "shader_parameter/streak", 0.85, dur_entrada).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	t.tween_property(_mat, "shader_parameter/warp", 0.55, dur_entrada).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
@@ -150,7 +150,9 @@ func _rodar() -> void:
 	_em_curso = false
 	trocou.emit()
 
-	var s := create_tween().set_parallel(true)
+	# a cena nova pode entrar em câmera lenta (a oficina cai com time_scale 0,12):
+	# a saída corre no relógio de parede, senão as linhas ficam rodando na tela
+	var s := create_tween().set_parallel(true).set_ignore_time_scale(true)
 	s.tween_property(_preto, "modulate:a", 0.0, dur_saida).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 	s.tween_property(_mat, "shader_parameter/intensity", 0.0, dur_saida).set_trans(Tween.TRANS_SINE)
 	s.tween_property(_mat, "shader_parameter/streak", 0.0, dur_saida * 0.8).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
@@ -158,4 +160,6 @@ func _rodar() -> void:
 	s.tween_property(_mat, "shader_parameter/aberration", 0.0, dur_saida)
 	s.tween_property(_som, "volume_db", -30.0, dur_saida)
 	await s.finished
+	_rect.visible = false
+	_preto.visible = false
 	queue_free()
