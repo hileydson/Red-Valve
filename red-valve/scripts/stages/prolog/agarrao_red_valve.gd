@@ -6,9 +6,10 @@ extends Node
 ## e a câmera de primeira pessoa) — o roteiro antigo dela (`open_dor`) não roda
 ## mais.
 ##
-##  1. a porta abre num tranco e o redemoinho aparece atrás dela;
-##  2. o Husk sai dele correndo, para no batente e ESTICA o braço: o antebraço
-##     cresce até alcançar o pescoço do Maycow;
+##  1. a porta abre num tranco e o fogo cospe pra fora: lá dentro é só fogo
+##     (`fogo_porta_red_valve.gd`), nada do que há atrás da porta aparece;
+##  2. o Husk sai DE DENTRO do fogo, para no batente e ESTICA o braço: o
+##     antebraço cresce até alcançar o pescoço do Maycow;
 ##  3. agarra — relâmpago, a câmera é puxada e erguida, tremendo, a tela pulsa
 ##     vermelho;
 ##  4. ele recua pro redemoinho ARRASTANDO o Maycow; a tela escurece devagar e
@@ -20,6 +21,9 @@ extends Node
 
 const ViagemPortal := preload("res://scripts/systems/viagem_portal.gd")
 const PoseApontada := preload("res://scripts/cutscenes/pose_apontada.gd")
+const FogoPorta := preload("res://scripts/stages/prolog/fogo_porta_red_valve.gd")
+const SOM_ESTOURO := "res://assets/sounds/common/explosao.mp3"
+const SOM_FOGO := "res://assets/sounds/common/fire_cracling.mp3"
 const INFERNO_2 := "res://scenes/stages/inferno_2/inferno_2.tscn"
 ## O Husk cru tem ~1,4 m; assim ele passa curvado pelo batente de 1,9 m.
 const ESCALA_HUSK := 1.3
@@ -30,6 +34,9 @@ const PORTA_ABERTA_POS := Vector3(-1.541, 0.0, 0.524)
 const CHAO := -0.95
 ## Quanto o olho sobe pra ver a cara do Husk no batente (rad).
 const OLHAR_PRA_CIMA := 0.3
+## De onde o Husk sai (no fundo do fogo) e onde ele para (no batente).
+const HUSK_FUNDO := -3.4
+const HUSK_BATENTE := -0.35
 
 var oficina: Node
 var sub: Node3D
@@ -37,6 +44,7 @@ var cam: Camera3D
 var husk: Node3D
 var pose
 var porta: Node3D
+var fogo
 var _vermelho: ColorRect
 
 
@@ -54,6 +62,13 @@ func rodar(dono: Node, sub_cena: Node3D) -> void:
 	cam = sub.get_node("Camera3D") as Camera3D
 	porta = sub.get_node("portal_red_valve") as Node3D
 	husk = sub.get_node("the-cobalt-husker") as Node3D
+	# o redemoinho antigo atrás da porta dá lugar ao fogo
+	var vortice := sub.get_node_or_null("VortexMagico") as Node3D
+	if vortice:
+		vortice.visible = false
+	fogo = FogoPorta.new()
+	fogo.name = "fogo_da_porta"
+	sub.add_child(fogo)
 	_preparar_husk()
 	_preparar_tela()
 	await _abrir_a_porta()
@@ -79,7 +94,7 @@ func _preparar_husk() -> void:
 		if i >= 0:
 			malha.set_blend_shape_value(i, 0.0)
 	husk.scale = Vector3.ONE * ESCALA_HUSK
-	husk.position = Vector3(0.0, CHAO, -2.8)
+	husk.position = Vector3(0.0, CHAO, HUSK_FUNDO)
 	husk.rotation = Vector3.ZERO
 	husk.visible = false
 	var sk := husk.find_child("Skeleton3D", true, false) as Skeleton3D
@@ -103,30 +118,43 @@ func _preparar_tela() -> void:
 func _abrir_a_porta() -> void:
 	_tocar("PortalRedValve")
 	await _esperar(0.5)
+	# escancara: o fogo de dentro cospe pra fora e a tela estoura em laranja
+	fogo.rajada()
+	_som(SOM_ESTOURO, 0.55, 2.0)
+	_som(SOM_FOGO, 0.8, 4.0)
+	_vermelho.color = Color(1.0, 0.45, 0.08, 0.6)
+	var clarao := create_tween()
+	clarao.tween_property(_vermelho, "color", Color(0.55, 0.0, 0.02, 0.0), 0.7)
 	var t := create_tween().set_parallel(true)
 	t.tween_property(porta, "quaternion", PORTA_ABERTA_GIRO, 1.1).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	t.tween_property(porta, "position", PORTA_ABERTA_POS, 1.1).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	GlobalUtils.vibrate_controller(null, 0.5, 0.4, 0.4)
-	# o susto: o olho recua um palmo
+	# o susto: o olho recua um palmo, tremendo com o bafo
 	var p0 := cam.position
 	await _fase(1.1, func(k: float) -> void:
-		cam.position = p0 + Vector3(0.0, 0.0, 0.12 * sin(k * PI * 0.5))
+		var bafo := Vector3(randf_range(-1, 1), randf_range(-1, 1), 0.0) * 0.02 * (1.0 - k)
+		cam.position = p0 + Vector3(0.0, 0.0, 0.2 * sin(k * PI * 0.5)) + bafo
 		cam.rotation.x = -0.02 * sin(k * PI))
+	# um instante de fogo puro no vão antes de ele aparecer
+	await _esperar(0.5)
 
 
 # ============================================================ 2) o Husk
 
 func _husk_sai() -> void:
 	husk.visible = true
-	_animar("Running", 1.3)
+	_animar("Running", 1.1)
 	_tocar("Growl1")
 	var de := husk.position
-	var ate := Vector3(0.0, CHAO, -0.55)
-	# o olho sobe acompanhando o bicho, que é mais alto que a porta
+	var ate := Vector3(0.0, CHAO, HUSK_BATENTE)
+	# atravessa as cortinas de fogo: primeiro é só um vulto lá no fundo
 	var x0 := cam.rotation.x
-	await _fase(0.9, func(k: float) -> void:
-		husk.position = de.lerp(ate, 1.0 - pow(1.0 - k, 2.0))
-		cam.rotation.x = lerpf(x0, OLHAR_PRA_CIMA, smoothstep(0.2, 1.0, k)))
+	var p0 := cam.position
+	await _fase(1.5, func(k: float) -> void:
+		husk.position = de.lerp(ate, smoothstep(0.0, 1.0, k))
+		# o olho sobe acompanhando o bicho, que é mais alto que a porta, e recua
+		cam.rotation.x = lerpf(x0, OLHAR_PRA_CIMA, smoothstep(0.55, 1.0, k))
+		cam.position = p0 + Vector3(0.0, 0.0, 0.1 * smoothstep(0.6, 1.0, k)))
 	_animar("Walking", 0.0)
 
 
@@ -145,10 +173,8 @@ func _alvo_rosto() -> Vector3:
 func _esticar_ate(alvo: Vector3, peso: float) -> void:
 	pose.mirar("braco", ["RightArm", "RightForeArm"], "RightHand", alvo, peso)
 	var ombro: Vector3 = pose.osso_no_mundo("RightArm")
-	var cotovelo: Vector3 = pose.osso_no_mundo("RightForeArm")
-	var pulso: Vector3 = pose.osso_no_mundo("RightHand")
-	var braco := ombro.distance_to(cotovelo)
-	var ante := maxf(cotovelo.distance_to(pulso), 0.01)
+	var braco: float = pose.segmento("braco", 0)
+	var ante := maxf(pose.segmento("braco", 1), 0.01)
 	var precisa := clampf((ombro.distance_to(alvo) - braco) / ante, 1.0, 3.5)
 	pose.esticar("braco", lerpf(1.0, precisa, peso))
 
@@ -181,7 +207,9 @@ func _arrasta_pra_dentro() -> void:
 	var blur = oficina.get("motion_blur_mat")
 	if blur:
 		create_tween().tween_property(blur, "shader_parameter/blur_strength", 1.3, 1.2)
-	_animar("Running", -1.0)
+	# passo de ré (o "Running" ao contrário começa do fim do clipe, onde o
+	# corpo já tombou pra frente: ele sumia de baixo da câmera)
+	_animar("Walking", -0.8)
 	_tocar("Growl1", 0.65)
 	var h0 := husk.position
 	var c0 := cam.position
@@ -215,6 +243,16 @@ func _tocar(no: String, tom: float = 1.0) -> void:
 	if s:
 		s.pitch_scale = tom
 		s.play()
+
+
+func _som(caminho: String, tom: float, volume: float) -> void:
+	var s := AudioStreamPlayer.new()
+	s.stream = load(caminho)
+	s.pitch_scale = tom
+	s.volume_db = volume
+	add_child(s)
+	s.play()
+	s.finished.connect(s.queue_free)
 
 
 func _fase(duracao: float, passo: Callable) -> void:
