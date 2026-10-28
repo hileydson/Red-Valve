@@ -1,17 +1,784 @@
 extends Node3D
 
+const Realidade := preload("res://scripts/systems/realidade_do_amuleto.gd")
+
+# O fim do prologo (cutscene_fight_with_power) vira arquivo de leitura assim que
+# o Capitulo 1 comeca.
+const ARQUIVO_CADERNO := "caderno_do_jimmy"
+
+# Tutorial do amuleto: aparece uma unica vez, depois de o jogador ter andado um
+# pouco pela cidade ja no Capitulo 1 (ver _agendar_tutorial_amuleto).
+const TUTORIAL_AMULETO_IMAGEM := "res://assets/tutorial/tutorial_1.png"
+const TUTORIAL_AMULETO_ESPERA := 15.0
+const TUTORIAL_AMULETO_TEXTOS := ["TUTORIAL_AMULET_1", "TUTORIAL_AMULET_2", "TUTORIAL_AMULET_3"]
+
+# Primeiro objetivo do jogo: a pista discreta no canto, depois da narracao de
+# abertura da stage_1 (so na primeira vez, junto com ela).
+const OBJETIVO_ESPERA_APOS_INTRO := 6.0
+const OBJETIVO_PRIMEIRO_DURACAO := 30.0
+
+# Objetivo do Capitulo 1: nao entra junto com a abertura. Espera um tempo de
+# gameplay de VERDADE (ver _esperar_gameplay: pausa, cutscene e ida a arena nao
+# contam) e so' entao aparece, por tempo limitado.
+const OBJETIVO_CAP1_ESPERA := 60.0
+const OBJETIVO_CAP1_DURACAO := 120.0
+
+# --- Igreja da praca ---------------------------------------------------------
+# O adro da igreja, em coordenadas de MUNDO. A igreja e' um no' da city.tscn,
+# que entra aqui deslocada de (640, 0, -280); estes numeros ja' sao o resultado
+# somado, pra nao depender do transform interno da cidade.
+#
+# De onde saem: a fachada da torre (com a porta) esta' em x = 582,1 e cobre
+# z = -321 a -314,5, ou seja, a porta fica em z = -317,7. Mas a caixa de
+# colisao da igreja na city.tscn engloba o muro do adro e vai ate' x = 579,1 —
+# o jogador PARA ali, no muro, e nao encosta na porta. Por isso o ponto de
+# interacao fica a 578: e' o mais perto que da' pra chegar de verdade.
+const IGREJA_PORTA := Vector3(577.6, 11.6, -317.5)
+# Ao voltar de dentro ele aparece de costas pra igreja, olhando pra praca. O
+# corpo do Maycow olha pro -Z com rotacao zero; PI/2 vira ele pro -X, que e'
+# a direcao da praca aqui.
+const IGREJA_OLHAR_Y := PI * 0.5
+const CENA_IGREJA := "res://scenes/stages/igreja/igreja_interior.tscn"
+## A chave girando na fechadura da igreja.
+const SOM_DESTRANCAR := "res://assets/sounds/igreja/destrancar_porta.ogg"
+
+# --- Hospital ----------------------------------------------------------------
+# Ao contrário da igreja, aqui NÃO há coordenada escrita no código. O hospital
+# é uma instância só (`hospital_exterior.tscn`) pendurada no Marker3D
+# `hospital_local`, e ele ainda vai ser girado e reposicionado à mão no editor
+# até encaixar na rua. Uma constante com a posição da porta ficaria errada no
+# primeiro arrasto — e o erro só apareceria no jogo, com o jogador nascendo
+# dentro da parede.
+#
+# Por isso tanto a área do prompt quanto o ponto de volta são NÓS DA PRÓPRIA
+# INSTÂNCIA: giram e andam junto com ela, de graça.
+const NO_HOSPITAL := "locais_importantes/hospital_exterior"
+const CENA_HOSPITAL := "res://scenes/stages/hospital/hospital.tscn"
+## O Jonny no colo (evento da Dona Nice): da porta da igreja ao hospital e'
+## gameplay, pela cidade.
+const CARREGAR_JONNY := "res://scripts/player/player_carregar_jonny.gd"
+
+# --- Escola ------------------------------------------------------------------
+# Mesmíssimo arranjo do hospital, e pelo mesmo motivo: a escola é uma instância
+# só (`escola_exterior.tscn`) pendurada no Marker3D `escola_local`, e ela leva
+# junto os dois nós de que este script precisa — `area_entrada` (o prompt) e
+# `ponto_de_saida` (para onde o jogador volta). Girar ou arrastar o prédio no
+# editor leva os dois de graça; coordenada escrita aqui ficaria mentindo no
+# primeiro ajuste.
+const NO_ESCOLA := "locais_importantes/escola_exterior"
+const CENA_ESCOLA := "res://scenes/stages/escola/escola.tscn"
+const NO_CASA_NICE := "casa_nice"
+const CENA_CASA_NICE := "res://scenes/stages/nice_house/casa_nice_interior.tscn"
+
 @onready var navigation_region_3d: NavigationRegion3D = $NavigationRegion3D
 @onready var real_time_label: Label = $real_time_label
 @onready var sky_3d: Sky3D = $WorldEnvironment/Sky3D
 
+var player_na_oficina: bool = false
+var player_na_casa_jimmy: bool = false
+var player_na_casa_nice: bool = false
+var player_na_casa_maycow: bool = false
+var player_na_igreja: bool = false
+var player_no_hospital: bool = false
+var player_na_escola: bool = false
+## Engole UMA entrada na área da igreja, pelo mesmo motivo da casa do Maycow:
+## quem volta de dentro reaparece no adro, já dentro da área, e sem isto o
+## prompt de "entrar" pipocaria no instante em que ele acabou de sair.
+var _ignorar_prompt_igreja: bool = false
+## Mesma coisa para o hospital: quem volta de dentro reaparece no tablado da
+## entrada, que é exatamente onde a área do prompt está.
+var _ignorar_prompt_hospital: bool = false
+## Mesma coisa para a escola: quem volta de dentro reaparece na calçada diante
+## do portão, que é exatamente onde a área do prompt está.
+var _ignorar_prompt_escola: bool = false
+## Engole UMA entrada na área da casa do Maycow. Ligado quando o jogador volta
+## de dentro da casa: ele reaparece na soleira, já dentro da área, e sem isto o
+## prompt de "entrar" pipocaria no mesmo instante em que ele acabou de sair.
+var _ignorar_prompt_casa_maycow: bool = false
+var prompt_label: Label
+var intro_label: Label
+var ui_layer: CanvasLayer
+
+var rain_scene = preload("res://scenes/effects/rain_effect.tscn")
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass #$cameras/camera_1.make_current()
+	Engine.time_scale = 1.0
+	AudioServer.playback_speed_scale = 1.0
+	GlobalEvents.in_cutscene = false
+	if is_instance_valid(real_time_label):
+		real_time_label.queue_free()
+	SaveManager.save_game()
+	GlobalEvents.set_low_nevoa()
+	GlobalEvents.is_maycow_normal = true
+	#$cameras/camera_1.make_current()
+	
+	# --- INICIA A CHUVA E ATMOSFERA PESADA ---
+	var rain = rain_scene.instantiate()
+	add_child(rain)
+	
+	# Escurecer o ambiente e aumentar a névoa para o clima de tempestade
+	var env_node = get_node_or_null("WorldEnvironment")
+	if env_node and env_node.environment:
+		var env = env_node.environment
+		env.volumetric_fog_enabled = true
+		env.volumetric_fog_density = 0.015
+		env.volumetric_fog_albedo = Color(0.3, 0.35, 0.4)
+		
+		env.fog_enabled = true
+		env.fog_density = 0.005
+		env.fog_light_color = Color(0.2, 0.25, 0.3)
+		
+		# Reduz levemente a luz ambiente
+		env.ambient_light_energy = 0.6
+	
+	ui_layer = CanvasLayer.new()
+	ui_layer.layer = 128
+	add_child(ui_layer)
+	_garantir_amuleto_no_inventario()
+	_setup_areas_casas()
+	setup_player_spawn()
+	_jonny_na_cidade()
+	# a cidade sem o amuleto no pescoço (R3 / H) tem mais cor: entra já assim
+	(func() -> void: Realidade.ajustar_cor_ao_entrar(self)).call_deferred()
+
+## Rede de segurança do amuleto.
+##
+## Quem entra no Capítulo 1 pela abertura recebe o amuleto com tela e tudo (ver
+## `executa_capitulo_1.gd`). Mas há vários outros caminhos de chegada — save
+## carregado no meio do capítulo, volta de dentro de uma casa, volta da arena —
+## e nenhum deles passa por aquela cutscene. Sem isto, o jogador usa o amuleto
+## no jogo e não o encontra no menu.
+func _garantir_amuleto_no_inventario() -> void:
+	if GlobalEvents.entering_chapter_1:
+		return   # a abertura vai entregar, com tela
+	if not SaveManager.prolog_finished:
+		return   # ainda é o prólogo: o amuleto ainda não é dele
+	if not SaveManager.tem_item("amuleto"):
+		SaveManager.add_item("amuleto", 1)
+	# Chegou na cidade por um caminho que NÃO é a volta da arena (save carregado,
+	# saída de uma casa): se ficou equipamento de arena pendurado, desfaz aqui.
+	# A volta pela arena não passa por este `_ready` — aquela cena fica escondida
+	# na árvore e é `play_return_from_arena_effect` quem desfaz.
+	SaveManager.sair_da_arena()
+	# Save antigo pode trazer o amuleto "equipado a mao" (de quando ele dividia
+	# a mira com as armas): limpa. Hoje ele vale sozinho aqui na cidade.
+	SaveManager.garantir_equipamento_do_normal()
+
+
+func setup_player_spawn() -> void:
+	var is_chapter_1 = GlobalEvents.entering_chapter_1 or SaveManager.prolog_finished
+	# Consome a flag aqui em cima pra ela nunca sobrar ligada quando o jogador
+	# chegar ao mapa por outro caminho (voltando de uma casa, por exemplo).
+	var usa_posicao_salva = SaveManager.spawn_from_saved_position and SaveManager.has_saved_position()
+	SaveManager.spawn_from_saved_position = false
+
+	# Voltando do interior da casa do Jimmy: o jogador tem de reaparecer na
+	# soleira, e não no ponto de entrada normal do mapa.
+	if GlobalEvents.voltando_da_casa_jimmy:
+		GlobalEvents.voltando_da_casa_jimmy = false
+		var saida = get_node_or_null("itens_caminho_jimmy/casa_jimmy/ponto_de_saida")
+		if not saida:
+			saida = find_child("ponto_de_saida", true, false)
+		var jogador = get_node_or_null("Player")
+		if not jogador:
+			jogador = find_child("Player", true, false)
+		if not jogador:
+			jogador = find_child("player", true, false)
+		if jogador and saida:
+			jogador.global_position = saida.global_position
+			jogador.global_rotation.y = saida.global_rotation.y
+	elif GlobalEvents.voltando_da_casa_nice:
+		GlobalEvents.voltando_da_casa_nice = false
+		var saida_nice := get_node_or_null(NO_CASA_NICE + "/ponto_de_saida") as Marker3D
+		var jogador_nice := get_node_or_null("Player") as Node3D
+		if jogador_nice and saida_nice:
+			jogador_nice.global_position = saida_nice.global_position
+			jogador_nice.global_rotation.y = saida_nice.global_rotation.y
+	elif GlobalEvents.voltando_da_igreja:
+		GlobalEvents.voltando_da_igreja = false
+		_devolver_ao_adro_da_igreja()
+	elif GlobalEvents.voltando_do_hospital:
+		GlobalEvents.voltando_do_hospital = false
+		_devolver_a_porta_do_hospital()
+	elif GlobalEvents.voltando_da_escola:
+		GlobalEvents.voltando_da_escola = false
+		_devolver_ao_portao_da_escola()
+	elif GlobalEvents.voltando_da_casa_maycow:
+		GlobalEvents.voltando_da_casa_maycow = false
+		# Ele reaparece dentro da própria área de entrada: segura o prompt até
+		# ele sair e decidir voltar (ver _ao_entrar_area_casa_maycow).
+		_ignorar_prompt_casa_maycow = true
+		var jogador = get_node_or_null("Player")
+		if not jogador:
+			jogador = find_child("Player", true, false)
+		if not jogador:
+			jogador = find_child("player", true, false)
+		if jogador:
+			jogador.global_position = Vector3(638.568, 6.75, -148.692)
+			jogador.global_rotation.y = PI * 0.5
+	elif is_chapter_1:
+		var spawn_point = get_node_or_null("itens_caminho_jimmy/auto_pecas_jimmy/maykow_capitulo_1_inicio")
+		var player = get_node_or_null("Player")
+		if not player:
+			player = find_child("Player", true, false)
+		if not player:
+			player = find_child("player", true, false)
+		# Se o save veio da opcao "Salvar" do menu de pause, o jogador volta na
+		# posicao exata em que gravou; senao, no ponto de entrada do capitulo 1.
+		if player and usa_posicao_salva:
+			player.global_position = SaveManager.get_saved_position()
+			player.global_rotation.y = SaveManager.get_saved_rotation_y()
+		elif player and SaveManager.evento_dona_nice == 4:
+			# save com o Jonny no colo e sem posicao (a igreja zera a dela):
+			# volta pra porta da igreja, de onde ele saiu
+			_devolver_ao_adro_da_igreja()
+		elif player and spawn_point:
+			player.global_position = spawn_point.global_position
+			player.global_rotation.y = spawn_point.global_rotation.y + PI
+
+	var bloqueio = get_node_or_null("bloqueio_prologo_oficina_jimmy")
+	if not bloqueio:
+		bloqueio = find_child("bloqueio_prologo_oficina_jimmy", true, false)
+	if bloqueio:
+		bloqueio.queue_free()
+		
+	# Remove os inimigos imediatamente se ainda estiver no prólogo
+	if not is_chapter_1:
+		var enemies_node = get_node_or_null("enemies")
+		if not enemies_node:
+			enemies_node = find_child("enemies", true, false)
+		if enemies_node:
+			enemies_node.queue_free()
+	else:
+		_ligar_spawner_de_inimigos()
+
+	if not is_instance_valid(prompt_label):
+		# Faixa ESQUERDA da tela, não o centro. Os avisos do prólogo (e o
+		# "novo arquivo") aparecem centralizados, e o prompt de entrar na casa
+		# caía exatamente por cima deles. Ancorado por proporção, não por pixel,
+		# pra continuar valendo em qualquer resolução.
+		var center_container = CenterContainer.new()
+		center_container.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		center_container.anchor_right = 0.42
+		center_container.offset_left = 40
+		center_container.offset_right = 0
+		center_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+		prompt_label = Label.new()
+		prompt_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		prompt_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		# SEM autowrap de propósito. Dentro de um CenterContainer o filho é
+		# dimensionado pelo tamanho MÍNIMO, e o mínimo de um Label com autowrap
+		# é a largura da maior PALAVRA — o texto quebrava palavra por palavra.
+		# Sem autowrap o mínimo é a frase inteira, numa linha só.
+		prompt_label.add_theme_font_size_override("font_size", 24)
+		prompt_label.add_theme_constant_override("outline_size", 4)
+		
+		center_container.add_child(prompt_label)
+		ui_layer.add_child(center_container)
+		center_container.visible = false
+		
+		# Guardamos a referência ao container para poder ligar/desligar a visibilidade
+		# Como o prompt_label é var, vamos sobrescrever o funcionamento usando a variável do prompt
+		prompt_label.set_meta("container", center_container)
+	
+	# Inicia a exibição do texto introdutório
+	_agendar_tutorial_amuleto(is_chapter_1)
+	_play_intro_text()
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	real_time_label.text = "Time: "+str(sky_3d.game_time)
+	#real_time_label.text = "Time: "+str(sky_3d.game_time)
+	
+	if not Input.is_action_just_pressed("ui_accept"):
+		return
+	# com o Jonny no colo o unico lugar pra entrar e' o hospital
+	if _jonny_no_colo() and not player_no_hospital:
+		return
+
+	if player_na_oficina:
+		player_na_oficina = false
+		_esconder_prompt()
+		GlobalUtils.esconder_objetivo()
+		GlobalUtils.hide_center_message("intro_stage_1")
+		$fade.fade_out()
+		await get_tree().create_timer(2.0).timeout
+		get_tree().change_scene_to_file("res://scenes/stages/prolog/oficina_jimmy.tscn")
+	elif player_na_casa_jimmy:
+		player_na_casa_jimmy = false
+		_esconder_prompt()
+		$fade.fade_out()
+		await get_tree().create_timer(2.0).timeout
+		LoadingScreen.load_scene("res://scenes/stages/jimmy_house/casa_jimmy_interior.tscn")
+	elif player_na_casa_nice:
+		player_na_casa_nice = false
+		_esconder_prompt()
+		$fade.fade_out()
+		await get_tree().create_timer(2.0).timeout
+		LoadingScreen.load_scene(CENA_CASA_NICE)
+	elif player_na_casa_maycow:
+		player_na_casa_maycow = false
+		GlobalEvents.entrando_na_casa_maycow = true
+		_esconder_prompt()
+		$fade.fade_out()
+		await get_tree().create_timer(2.0).timeout
+		LoadingScreen.load_scene("res://scenes/stages/prolog/the_house.tscn")
+	elif player_na_igreja:
+		# Trancada: sem a chave o "a igreja esta' trancada" ja' esta' na tela
+		# e o botao nao faz nada; com ela, a chave entra e some do menu.
+		if not SaveManager.igreja_aberta():
+			if not SaveManager.tem_item("chave_igreja"):
+				return
+			SaveManager.usar_chave_da_igreja()
+			GlobalUtils.play_ui_sound(SOM_DESTRANCAR)
+		player_na_igreja = false
+		_esconder_prompt()
+		$fade.fade_out()
+		await get_tree().create_timer(2.0).timeout
+		LoadingScreen.load_scene(CENA_IGREJA)
+	elif player_no_hospital:
+		player_no_hospital = false
+		_esconder_prompt()
+		$fade.fade_out()
+		await get_tree().create_timer(2.0).timeout
+		LoadingScreen.load_scene(CENA_HOSPITAL)
+	elif player_na_escola:
+		player_na_escola = false
+		_esconder_prompt()
+		$fade.fade_out()
+		await get_tree().create_timer(2.0).timeout
+		LoadingScreen.load_scene(CENA_ESCOLA)
+
+
+func _mostrar_prompt(texto: String) -> void:
+	if not is_instance_valid(prompt_label):
+		return
+	if _jonny_no_colo() and texto != tr("PROMPT_ENTER_HOSPITAL"):
+		return
+	prompt_label.text = texto
+	if prompt_label.has_meta("container"):
+		prompt_label.get_meta("container").visible = true
+	prompt_label.visible = true
+
+
+## `forcado` = apaga mesmo com o jogador dentro de alguma área de entrada.
+##
+## O prompt é UM só, compartilhado pelas quatro entradas do mapa (oficina, casa
+## do Jimmy, casa do Maycow, igreja). Sem esta guarda, a área que o jogador
+## acaba de DEIXAR apaga o aviso que outra acabou de mostrar. Era o que
+## acontecia ao voltar de dentro da igreja: ele reaparece no adro, a área da
+## igreja mostra "Entrar na igreja?" e, no mesmo quadro, o `body_exited` de
+## outra área apagava o texto — o prompt existia, com o texto certo, e ficava
+## invisível. Quem zera a própria flag antes de chamar (todos os pontos de
+## saída fazem isso) continua conseguindo apagar.
+func _esconder_prompt(forcado: bool = false) -> void:
+	if not is_instance_valid(prompt_label):
+		return
+	if not forcado and (player_na_oficina or player_na_casa_jimmy or player_na_casa_nice
+			or player_na_casa_maycow or player_na_igreja or player_no_hospital
+			or player_na_escola):
+		return
+	if prompt_label.has_meta("container"):
+		prompt_label.get_meta("container").visible = false
+	prompt_label.visible = false
+
+
+func _eh_o_player(body: Node3D) -> bool:
+	return body.name.to_lower() == "player" or body.is_in_group("player")
+
+
+## Casa do Jimmy: mesma mecânica de prompt da oficina, mas sem a trava do
+## prólogo — a casa continua acessível depois que ele termina.
+func _ao_entrar_area_casa_jimmy(body: Node3D) -> void:
+	if not _eh_o_player(body):
+		return
+	player_na_casa_jimmy = true
+	_mostrar_prompt(tr("PROMPT_ENTER_JIMMY_HOUSE"))
+
+
+func _ao_sair_area_casa_jimmy(body: Node3D) -> void:
+	if not _eh_o_player(body):
+		return
+	player_na_casa_jimmy = false
+	_esconder_prompt()
+
+
+func _ao_entrar_area_casa_nice(body: Node3D) -> void:
+	if not _eh_o_player(body):
+		return
+	player_na_casa_nice = true
+	_mostrar_prompt(tr("PROMPT_ENTER_NICE_HOUSE"))
+
+
+func _ao_sair_area_casa_nice(body: Node3D) -> void:
+	if not _eh_o_player(body):
+		return
+	player_na_casa_nice = false
+	_esconder_prompt()
+
+
+func _setup_areas_casas() -> void:
+	var casa_nice_area := get_node_or_null(NO_CASA_NICE + "/area_entrada") as Area3D
+	if casa_nice_area:
+		if not casa_nice_area.body_entered.is_connected(_ao_entrar_area_casa_nice):
+			casa_nice_area.body_entered.connect(_ao_entrar_area_casa_nice)
+		if not casa_nice_area.body_exited.is_connected(_ao_sair_area_casa_nice):
+			casa_nice_area.body_exited.connect(_ao_sair_area_casa_nice)
+	var casa_jimmy_area = get_node_or_null("itens_caminho_jimmy/casa_jimmy/area_entrada")
+	if not casa_jimmy_area:
+		casa_jimmy_area = find_child("area_entrada", true, false)
+	if casa_jimmy_area:
+		if not casa_jimmy_area.body_entered.is_connected(_ao_entrar_area_casa_jimmy):
+			casa_jimmy_area.body_entered.connect(_ao_entrar_area_casa_jimmy)
+		if not casa_jimmy_area.body_exited.is_connected(_ao_sair_area_casa_jimmy):
+			casa_jimmy_area.body_exited.connect(_ao_sair_area_casa_jimmy)
+
+	_criar_area_igreja()
+	_ligar_area_hospital()
+	_ligar_area_escola()
+
+	if get_node_or_null("area_entrada_casa_maycow") == null:
+		var area_maycow = Area3D.new()
+		area_maycow.name = "area_entrada_casa_maycow"
+		area_maycow.collision_layer = 0
+		area_maycow.collision_mask = 1
+		area_maycow.monitorable = false
+		var col_shape = CollisionShape3D.new()
+		var box = BoxShape3D.new()
+		box.size = Vector3(7.0, 5.0, 7.0)
+		col_shape.shape = box
+		area_maycow.add_child(col_shape)
+		add_child(area_maycow)
+		area_maycow.global_position = Vector3(639.5, 7.5, -148.7)
+		area_maycow.body_entered.connect(_ao_entrar_area_casa_maycow)
+		area_maycow.body_exited.connect(_ao_sair_area_casa_maycow)
+
+		if get_node_or_null("itens_caminho_jimmy/colisao_casa_maycow") == null and get_node_or_null("colisao_casa_maycow") == null:
+			var col_maycow = StaticBody3D.new()
+			col_maycow.name = "colisao_casa_maycow"
+			col_maycow.collision_layer = 2
+			col_maycow.collision_mask = 0
+			var c_shape = CollisionShape3D.new()
+			var c_box = BoxShape3D.new()
+			c_box.size = Vector3(17.0, 13.0, 15.0)
+			c_shape.shape = c_box
+			col_maycow.add_child(c_shape)
+			var parent_node = get_node_or_null("itens_caminho_jimmy")
+			if parent_node:
+				parent_node.add_child(col_maycow)
+			else:
+				add_child(col_maycow)
+			col_maycow.global_position = Vector3(649.5, 10.5, -150.45)
+
+
+## Area do adro. Criada por codigo (e nao na city.tscn) pelo mesmo motivo da
+## area da casa do Maycow: a cena da cidade e' compartilhada, enorme, e o que e'
+## regra de jogo mora no script da stage.
+func _criar_area_igreja() -> void:
+	if get_node_or_null("area_entrada_igreja") != null:
+		return
+	var area := Area3D.new()
+	area.name = "area_entrada_igreja"
+	area.collision_layer = 0
+	area.collision_mask = 1
+	area.monitorable = false
+	var forma := CollisionShape3D.new()
+	var caixa := BoxShape3D.new()
+	# Alta de proposito (10 m): o adro tem degraus e o terreno da praca nao e'
+	# plano, e uma caixa rasa erraria o jogador por meio metro de desnivel.
+	caixa.size = Vector3(7.0, 10.0, 8.0)
+	forma.shape = caixa
+	area.add_child(forma)
+	add_child(area)
+	area.global_position = IGREJA_PORTA
+	area.body_entered.connect(_ao_entrar_area_igreja)
+	area.body_exited.connect(_ao_sair_area_igreja)
+
+
+func _ao_entrar_area_igreja(body: Node3D) -> void:
+	if not _eh_o_player(body):
+		return
+	player_na_igreja = true
+	if _ignorar_prompt_igreja:
+		_ignorar_prompt_igreja = false
+		_esconder_prompt(true)
+		return
+	_mostrar_prompt(tr(_prompt_da_igreja()))
+
+
+## A igreja vive trancada ate' a chave reserva (no quarto da Dona Nice) ser
+## usada nela — ver `SaveManager.igreja_aberta()`.
+func _prompt_da_igreja() -> String:
+	if SaveManager.igreja_aberta():
+		return "PROMPT_ENTER_CHURCH"
+	if SaveManager.tem_item("chave_igreja"):
+		return "PROMPT_USE_CHURCH_KEY"
+	return "PROMPT_CHURCH_LOCKED"
+
+
+func _ao_sair_area_igreja(body: Node3D) -> void:
+	if not _eh_o_player(body):
+		return
+	player_na_igreja = false
+	# Saiu da área de verdade: a próxima entrada volta a mostrar o prompt.
+	_ignorar_prompt_igreja = false
+	_esconder_prompt()
+
+
+# ==============================================================================
+# HOSPITAL
+#
+# O prédio inteiro é uma instância só, posta em cima do Marker3D
+# `hospital_local`. Ela já traz consigo as duas coisas de que este script
+# precisa, e é de propósito que elas morem lá e não aqui:
+#
+#   area_entrada    — cobre a escada, o tablado e a soleira
+#   ponto_de_saida  — em cima do tablado, de costas para a porta
+#
+# Girar ou arrastar o hospital no editor leva as duas junto. Se fossem
+# coordenadas escritas aqui, o primeiro ajuste de posição já as deixaria
+# mentindo, e ninguém perceberia até um jogador nascer dentro da parede.
+# ==============================================================================
+
+func _no_do_hospital() -> Node3D:
+	var no := get_node_or_null(NO_HOSPITAL)
+	if no == null:
+		no = find_child("hospital_exterior", true, false)
+	return no as Node3D
+
+
+func _ligar_area_hospital() -> void:
+	var hospital := _no_do_hospital()
+	if hospital == null:
+		return
+	var area := hospital.get_node_or_null("area_entrada") as Area3D
+	if area == null:
+		return
+	if not area.body_entered.is_connected(_ao_entrar_area_hospital):
+		area.body_entered.connect(_ao_entrar_area_hospital)
+	if not area.body_exited.is_connected(_ao_sair_area_hospital):
+		area.body_exited.connect(_ao_sair_area_hospital)
+
+
+func _ao_entrar_area_hospital(body: Node3D) -> void:
+	if not _eh_o_player(body):
+		return
+	player_no_hospital = true
+	if _ignorar_prompt_hospital:
+		_ignorar_prompt_hospital = false
+		_esconder_prompt(true)
+		return
+	_mostrar_prompt(tr("PROMPT_ENTER_HOSPITAL"))
+
+
+func _ao_sair_area_hospital(body: Node3D) -> void:
+	if not _eh_o_player(body):
+		return
+	player_no_hospital = false
+	_ignorar_prompt_hospital = false
+	_esconder_prompt()
+
+
+## Devolve o jogador ao tablado da entrada depois de sair de dentro do hospital.
+##
+## A cota vem de raycast, e não do Y do marcador, pelo mesmo motivo da igreja: o
+## chão ali é o terreno do Terrain3D e o hospital ainda vai ser reposicionado à
+## mão. Com número fixo, o jogador nasce enterrado ou despenca meio metro toda
+## vez que alguém encostar o prédio um pouco mais no morro.
+func _devolver_a_porta_do_hospital() -> void:
+	var jogador = get_node_or_null("Player")
+	if not jogador:
+		jogador = find_child("Player", true, false)
+	if not jogador:
+		jogador = find_child("player", true, false)
+	var hospital := _no_do_hospital()
+	if not jogador or hospital == null:
+		return
+	var saida := hospital.get_node_or_null("ponto_de_saida") as Node3D
+	if saida == null:
+		return
+	_ignorar_prompt_hospital = true
+	jogador.global_position = saida.global_position
+	jogador.global_rotation.y = saida.global_rotation.y
+	_pousar_no_chao.call_deferred(jogador, saida.global_position)
+
+
+# ==============================================================================
+# ESCOLA
+#
+# Cópia do arranjo do hospital, de propósito: o prédio inteiro é uma instância
+# só, posta em cima do Marker3D `escola_local`, e ela já traz consigo as duas
+# coisas de que este script precisa.
+#
+#   area_entrada    — cobre o recuo do portão e a calçada diante dele
+#   ponto_de_saida  — na calçada, de costas para o portão
+#
+# Girar ou arrastar a escola no editor leva as duas junto.
+# ==============================================================================
+
+func _no_da_escola() -> Node3D:
+	var no := get_node_or_null(NO_ESCOLA)
+	if no == null:
+		no = find_child("escola_exterior", true, false)
+	return no as Node3D
+
+
+func _ligar_area_escola() -> void:
+	var escola := _no_da_escola()
+	if escola == null:
+		return
+	var area := escola.get_node_or_null("area_entrada") as Area3D
+	if area == null:
+		return
+	if not area.body_entered.is_connected(_ao_entrar_area_escola):
+		area.body_entered.connect(_ao_entrar_area_escola)
+	if not area.body_exited.is_connected(_ao_sair_area_escola):
+		area.body_exited.connect(_ao_sair_area_escola)
+
+
+func _ao_entrar_area_escola(body: Node3D) -> void:
+	if not _eh_o_player(body):
+		return
+	player_na_escola = true
+	if _ignorar_prompt_escola:
+		_ignorar_prompt_escola = false
+		_esconder_prompt(true)
+		return
+	_mostrar_prompt(tr("PROMPT_ENTER_SCHOOL"))
+
+
+func _ao_sair_area_escola(body: Node3D) -> void:
+	if not _eh_o_player(body):
+		return
+	player_na_escola = false
+	_ignorar_prompt_escola = false
+	_esconder_prompt()
+
+
+## Devolve o jogador à calçada depois de sair de dentro da escola.
+##
+## A cota vem de raycast, e não do Y do marcador, pelo mesmo motivo da igreja e
+## do hospital: o chão ali é o terreno do Terrain3D e a escola ainda vai ser
+## reposicionada à mão. Com número fixo, o jogador nasce enterrado ou despenca
+## meio metro toda vez que alguém encostar o prédio um pouco mais no morro.
+func _devolver_ao_portao_da_escola() -> void:
+	var jogador = get_node_or_null("Player")
+	if not jogador:
+		jogador = find_child("Player", true, false)
+	if not jogador:
+		jogador = find_child("player", true, false)
+	var escola := _no_da_escola()
+	if not jogador or escola == null:
+		return
+	var saida := escola.get_node_or_null("ponto_de_saida") as Node3D
+	if saida == null:
+		return
+	_ignorar_prompt_escola = true
+	jogador.global_position = saida.global_position
+	jogador.global_rotation.y = saida.global_rotation.y
+	_pousar_no_chao.call_deferred(jogador, saida.global_position)
+
+
+## Devolve o jogador ao adro depois de sair de dentro da igreja.
+##
+## O Y vem de um raycast, e nao de uma constante: o chao ali e' o terreno do
+## Terrain3D e a altura exata depende do que o terreno tem naquele ponto. Pondo
+## um numero fixo, ou o jogador nasce enterrado ou cai de dois metros toda vez
+## que alguem reesculpir a praca.
+func _devolver_ao_adro_da_igreja() -> void:
+	var jogador = get_node_or_null("Player")
+	if not jogador:
+		jogador = find_child("Player", true, false)
+	if not jogador:
+		jogador = find_child("player", true, false)
+	if not jogador:
+		return
+	_ignorar_prompt_igreja = true
+	jogador.global_position = IGREJA_PORTA
+	jogador.global_rotation.y = IGREJA_OLHAR_Y
+	# Adiado: `_pousar_no_chao` espera um quadro de fisica, e o spawn roda
+	# dentro do `_ready`, antes de existir qualquer estado de colisao pra
+	# consultar. Sem o defer, o raycast sai vazio e o jogador fica pendurado.
+	_pousar_no_chao.call_deferred(jogador, IGREJA_PORTA)
+
+
+## O Jonny depois da igreja (evento da Dona Nice). Saindo de la' com ele no
+## colo, o Maycow aparece no adro (`voltando_da_igreja`) e vai a pe' ate' o
+## hospital — a cidade e' gameplay, nao cutscene. Deixado no chao aqui, ele
+## fica onde ficou (e no mapa) ate' o Maycow voltar pra pegar.
+func _jonny_na_cidade() -> void:
+	var carregar = load(CARREGAR_JONNY)
+	if not carregar.jonny_esta_em(scene_file_path):
+		return
+	carregar.preparar(get_node_or_null("Player"), scene_file_path)
+	GlobalUtils.mostrar_objetivo(tr("OBJ_LEVAR_JONNY_HOSPITAL"))
+
+
+func _jonny_no_colo() -> bool:
+	var jogador := get_node_or_null("Player")
+	return jogador != null and jogador.get("carregando_jonny") == true
+
+
+## Acha o chão sob `alvo` e põe o nó em pé nele.
+##
+## Três cuidados, todos por causa de bug visto em jogo (o jogador reaparecia
+## enterrado até a cintura e ficava travado, porque `CharacterBody3D` não é
+## empurrado para fora de um corpo estático):
+##
+##  - INSISTE. O chão da praça é o Terrain3D, que monta a colisão em pedaços,
+##    em alguns quadros depois da cena abrir. Um raycast único no primeiro
+##    quadro costuma não achar nada.
+##  - olha TODAS as layers. O chão do jogo é a 2, mas calçada, degrau de adro e
+##    props usam outras, e o que interessa aqui é a superfície mais alta.
+##  - deixa uma FOLGA e entrega o resto à gravidade. Encostar o corpo no
+##    milímetro é o que produz o afundamento; um palmo no ar cai sozinho.
+func _pousar_no_chao(no: Node3D, alvo: Vector3, alcance: float = 30.0,
+		tentativas: int = 40) -> void:
+	var espaco: PhysicsDirectSpaceState3D = null
+	for _i in range(tentativas):
+		await get_tree().physics_frame
+		if not is_instance_valid(no):
+			return
+		espaco = get_world_3d().direct_space_state
+		var consulta := PhysicsRayQueryParameters3D.create(
+			alvo + Vector3.UP * alcance, alvo + Vector3.DOWN * alcance)
+		consulta.collision_mask = 0xFFFFFFFF
+		consulta.exclude = [no.get_rid()]
+		var batida := espaco.intersect_ray(consulta)
+		if batida:
+			no.global_position = batida.position + Vector3.UP * 0.9
+			return
+	# Nada achado: fica na altura nominal, alto o bastante para cair até o chão
+	# em vez de nascer dentro dele.
+	no.global_position = alvo + Vector3.UP * 1.5
+
+
+func _ao_entrar_area_casa_maycow(body: Node3D) -> void:
+	if not _eh_o_player(body):
+		return
+	player_na_casa_maycow = true
+
+	# Acabou de sair pela porta: o jogador reaparece DENTRO da área, então o
+	# `body_entered` dispara na hora e o prompt voltaria pedindo pra entrar de
+	# novo. Aqui ele é engolido uma vez; o prompt só volta quando o jogador sair
+	# da área e resolver voltar.
+	if _ignorar_prompt_casa_maycow:
+		_ignorar_prompt_casa_maycow = false
+		_esconder_prompt(true)
+		return
+
+	_mostrar_prompt(tr("PROMPT_ENTER_MAYCOW_HOUSE"))
+
+
+func _ao_sair_area_casa_maycow(body: Node3D) -> void:
+	if not _eh_o_player(body):
+		return
+	player_na_casa_maycow = false
+	# Saiu da área de verdade: a próxima entrada volta a mostrar o prompt.
+	_ignorar_prompt_casa_maycow = false
+	_esconder_prompt()
 
 
 func _on_timer_timeout() -> void:
@@ -27,3 +794,184 @@ func _on_camera_2_body_entered(body: Node3D) -> void:
 	print(body)
 	print("camera 2")
 	#$cameras/camera_2.make_current()
+
+
+func _on_area_3d_jimmy_house_body_entered(body: Node3D) -> void:
+	if SaveManager.prolog_finished:
+		return
+	if _eh_o_player(body):
+		player_na_oficina = true
+		_mostrar_prompt(tr("PROMPT_ENTER_WORKSHOP"))
+		GlobalUtils.esconder_objetivo()
+
+
+func _on_area_3d_jimmy_house_body_exited(body: Node3D) -> void:
+	if SaveManager.prolog_finished:
+		return
+	if _eh_o_player(body):
+		player_na_oficina = false
+		_esconder_prompt()
+
+func _play_intro_text() -> void:
+	if GlobalEvents.entering_chapter_1:
+		GlobalEvents.entering_chapter_1 = false
+		# Exibe o título "CAPÍTULO 1" em vermelho bem grande no centro da tela (tamanho 120 como no splash)
+		await get_tree().create_timer(1.0, false).timeout
+		
+		var chapter_label = Label.new()
+		chapter_label.text = tr("TXT_CHAPTER_1").to_upper()
+		chapter_label.set_anchors_preset(Control.PRESET_FULL_RECT)
+		chapter_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		chapter_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		chapter_label.add_theme_font_size_override("font_size", 180)
+		chapter_label.add_theme_color_override("font_color", Color(0.705882, 0.0, 0.0))
+		
+		var custom_font = load("res://assets/fonts/Montserrat-ExtraBold.ttf")
+		if custom_font:
+			chapter_label.add_theme_font_override("font", custom_font)
+			
+		ui_layer.add_child(chapter_label)
+		
+		chapter_label.modulate.a = 0.0
+		var tween_in = create_tween()
+		tween_in.tween_property(chapter_label, "modulate:a", 1.0, 1.0)
+		await tween_in.finished
+		
+		await get_tree().create_timer(3.5, false).timeout
+		
+		if is_instance_valid(chapter_label):
+			var tween_out = create_tween()
+			tween_out.tween_property(chapter_label, "modulate:a", 0.0, 1.0)
+			await tween_out.finished
+			chapter_label.queue_free()
+
+		# So depois que o "CAPITULO 1" saiu da tela: dois avisos grandes ao mesmo
+		# tempo no centro se atropelariam, e o respiro deixa claro que sao coisas
+		# diferentes.
+		await get_tree().create_timer(2.0, false).timeout
+		_novo_arquivo(ARQUIVO_CADERNO)
+
+		# Objetivo do Capitulo 1: entra DEPOIS de um minuto de jogo, nao junto
+		# com a abertura. `_esperar_gameplay` conta so' o tempo em que o jogador
+		# esta' de fato jogando com o Maycow normal nesta cena — menu aberto,
+		# cutscene e batalha na arena nao consomem o relogio, senao a dica
+		# apareceria sozinha num momento que nao faz sentido.
+		if not await _esperar_gameplay(OBJETIVO_CAP1_ESPERA):
+			return
+		GlobalUtils.mostrar_objetivo(tr("OBJ_EXPLORAR_CIDADE"), OBJETIVO_CAP1_DURACAO)
+		return
+
+	if SaveManager.prolog_finished:
+		return
+
+	if SaveManager.stage_1_intro_played:
+		return
+	SaveManager.stage_1_intro_played = true
+	SaveManager.save_game()
+	
+	# Pequena pausa antes de começar para não ser tão brusco
+	await get_tree().create_timer(1.5, false).timeout
+	if not is_inside_tree() or SaveManager.prolog_finished:
+		return
+
+	# Primeiro objetivo do jogo. Aparece logo no inicio da stage_1 no prologo.
+	GlobalUtils.mostrar_objetivo(tr("OBJ_OFICINA_JIMMY"), OBJETIVO_PRIMEIRO_DURACAO)
+	
+	var intro_keys = [
+		"NO_POWER_1_WALK_1", "NO_POWER_1_WALK_2", "NO_POWER_1_WALK_3", 
+		"NO_POWER_1_WALK_4", "NO_POWER_1_WALK_5", "NO_POWER_1_WALK_6"
+	]
+	
+	for key in intro_keys:
+		if not is_inside_tree() or SaveManager.prolog_finished or player_na_oficina:
+			break
+		GlobalUtils.show_center_message("intro_stage_1", tr(key), 18)
+		await get_tree().create_timer(4.5, false).timeout
+		if not is_inside_tree() or SaveManager.prolog_finished or player_na_oficina:
+			GlobalUtils.hide_center_message("intro_stage_1")
+			break
+		GlobalUtils.hide_center_message("intro_stage_1")
+		await get_tree().create_timer(0.5, false).timeout
+
+
+## O tutorial do amuleto: so no Capitulo 1, so uma vez na vida do save, e so
+## depois de TUTORIAL_AMULETO_ESPERA segundos de gameplay de verdade — cutscene,
+## menu aberto e a ida pra arena nao contam (ver _esperar_gameplay).
+func _agendar_tutorial_amuleto(is_chapter_1: bool) -> void:
+	if not is_chapter_1:
+		return
+	if SaveManager.tutorial_amuleto_visto:
+		return
+	_rodar_tutorial_amuleto()
+
+
+func _rodar_tutorial_amuleto() -> void:
+	if not await _esperar_gameplay(TUTORIAL_AMULETO_ESPERA):
+		return
+
+	# Nao emenda por cima de outro aviso no centro da tela (o "novo arquivo" do
+	# comeco do capitulo, por exemplo): espera a tela limpar.
+	while not GlobalUtils.active_messages.is_empty():
+		if not await _esperar_gameplay(0.5):
+			return
+
+	# Grava antes de exibir: se o jogo fechar no meio do tutorial, ele ja foi
+	# dado como visto e nao volta.
+	SaveManager.marcar_tutorial_amuleto_visto()
+
+	var textura: Texture2D = load(TUTORIAL_AMULETO_IMAGEM)
+	if textura == null:
+		push_warning("Tutorial do amuleto: imagem nao encontrada em " + TUTORIAL_AMULETO_IMAGEM)
+		return
+
+	var textos: Array = []
+	for chave in TUTORIAL_AMULETO_TEXTOS:
+		textos.append(tr(chave))
+
+	var overlay = load("res://scripts/ui/tutorial_overlay.gd").new()
+	overlay.name = "TutorialAmuleto"
+	get_tree().root.add_child(overlay)
+	overlay.mostrar(textura, textos)
+
+
+## Deixa passar `segundos` de gameplay do Maycow normal nesta cena. Devolve false
+## se a espera perdeu o sentido no meio (cena trocada ou descarregada).
+func _esperar_gameplay(segundos: float) -> bool:
+	var restante := segundos
+	while restante > 0.0:
+		await get_tree().process_frame
+		if not is_inside_tree():
+			return false
+		if get_tree().paused:
+			continue # menu, pause ou outro tutorial na tela
+		if GlobalEvents.in_cutscene or GlobalUtils.in_cinematic_cutscene:
+			continue
+		if not GlobalEvents.is_maycow_normal:
+			continue # Maycow de combate: o jogador esta na arena
+		if not visible:
+			continue # a cena fica escondida (e nao removida) durante a arena
+		if get_tree().get_first_node_in_group("player") == null:
+			continue # sem player na cidade nao ha gameplay pra contar
+		restante -= get_process_delta_time()
+	return true
+
+
+## A cidade do Capitulo 1 tem de ter inimigo aparecendo enquanto o Maycow anda.
+## O spawner nasce por codigo (e nao no .tscn) justamente porque ele NAO pode
+## existir no prologo: la a cidade e so travessia, e a stage_1 e a mesma cena.
+## Se a volta da casa do Jimmy ou da arena recarregar a cena, este _ready roda
+## de novo e o spawner e recriado — dai o cuidado de nao duplicar.
+func _ligar_spawner_de_inimigos() -> void:
+	if get_node_or_null("enemy_spawner") != null:
+		return
+	var spawner = load("res://scripts/enemies/enemy_spawner.gd").new()
+	spawner.name = "enemy_spawner"
+	add_child(spawner)
+
+
+## Libera o arquivo do menu, grava e avisa na tela. O aviso so sai na primeira vez.
+func _novo_arquivo(id: String) -> void:
+	if not SaveManager.desbloquear_arquivo(id):
+		return
+	# O aviso espera a cutscene acabar (ver GlobalUtils.show_new_file_message).
+	GlobalUtils.show_new_file_message(id)

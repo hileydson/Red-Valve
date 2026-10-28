@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/ui/minimap.tscn" id="1_mini"]
+[ext_resource type="Texture2D" path="res://assets/3d_model/stages/inferno/textures/T_infernomap.png" id="2_inf"]
+
+[node name="Minimap" instance=ExtResource("1_mini")]
+dados_json = "res://assets/3d_model/stages/inferno/infernomap.json"
+textura_mapa = ExtResource("2_inf")
+alcance_m = 150.0
+margem_px = Vector2(26, 162)
+so_maycow_normal = false
+zoom_min_m = 90.0
+zoom_max_m = 760.0
+zoom_inicial_m = 300.0
+grade_m = 100.0

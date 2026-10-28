@@ -1,0 +1,19 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://faebc2nljuq3"
+
+[deps]
+
+files=["res://assets/textos/cutscene_prologo_textos.en.translation", "res://assets/textos/cutscene_prologo_textos.pt.translation"]
+
+source_file="res://assets/textos/cutscene_prologo_textos.csv"
+dest_files=["res://assets/textos/cutscene_prologo_textos.en.translation", "res://assets/textos/cutscene_prologo_textos.pt.translation"]
+
+[params]
+
+compress=1
+delimiter=0
+unescape_keys=false
+unescape_translations=true

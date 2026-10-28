@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://cv4f2h7vortex"]
+
+[ext_resource type="Script" path="res://scenes/effects/vortex_magico.gd" id="1_vortex"]
+
+[node name="VortexMagico" type="Node3D"]
+script = ExtResource("1_vortex")

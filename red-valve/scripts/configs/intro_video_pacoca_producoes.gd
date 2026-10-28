@@ -1,19 +1,32 @@
 extends VideoStreamPlayer
-@onready var fade: ColorRect = $"../Fade"
 
+var is_fading: bool = false
 
-
-# Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	await get_tree().create_timer(4.0).timeout 
-	fade.fade_out()
+	# Fade In
+	modulate.a = 0.0
+	var tween = create_tween()
+	tween.tween_property(self, "modulate:a", 1.0, 1.5)
 
+func _process(_delta: float) -> void:
+	if is_fading: return
+	
+	# Permite pular o video
+	if Input.is_action_just_pressed("ui_accept") or Input.is_action_just_pressed("ui_cancel") or Input.is_action_just_pressed("ui_menu_game"):
+		_start_fade_out()
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
+func _start_fade_out() -> void:
+	if is_fading: return
+	is_fading = true
+	RenderingServer.set_default_clear_color(Color.BLACK)
 
+	# Fade Out
+	var tween = create_tween()
+	tween.tween_property(self, "modulate:a", 0.0, 1.5)
+	tween.tween_callback(func():
+		get_tree().change_scene_to_file("res://scenes/configs/trailer.tscn")
+	)
 
 func _on_finished() -> void:
-	await get_tree().create_timer(2.0).timeout 
-	get_tree().change_scene_to_file("res://scenes/configs/intro_game_video.tscn")
+	if not is_fading:
+		_start_fade_out()

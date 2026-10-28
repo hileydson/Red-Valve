@@ -1,0 +1,8 @@
+[gd_scene format=3]
+
+[ext_resource type="ArrayMesh" path="res://assets/3d_model/mobilia/malhas/mesa_leve_0.res" id="1_4f8ly"]
+
+[node name="mesa_leve" type="Node3D" unique_id=747030842]
+
+[node name="mesa_0" type="MeshInstance3D" parent="." unique_id=1926741191]
+mesh = ExtResource("1_4f8ly")

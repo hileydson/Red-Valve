@@ -1,0 +1,12 @@
+[gd_scene format=3]
+
+[ext_resource type="ArrayMesh" path="res://assets/3d_model/mobilia/malhas/tiny_living_orbital_high_dining_35_0.res" id="1_uvbxd"]
+[ext_resource type="ArrayMesh" path="res://assets/3d_model/mobilia/malhas/tiny_living_orbital_high_dining_35_1.res" id="2_76eos"]
+
+[node name="tiny_living_orbital_high_dining_35" type="Node3D" unique_id=2005469748]
+
+[node name="tiny_living_orbital_high_dining_35_0" type="MeshInstance3D" parent="." unique_id=566776135]
+mesh = ExtResource("1_uvbxd")
+
+[node name="tiny_living_orbital_high_dining_35_1" type="MeshInstance3D" parent="." unique_id=324040825]
+mesh = ExtResource("2_76eos")

@@ -1,0 +1,16 @@
+[gd_scene format=3]
+
+[ext_resource type="ArrayMesh" path="res://assets/3d_model/mobilia/malhas/tiny_living_murphy_bed_2_0.res" id="1_ry4re"]
+[ext_resource type="ArrayMesh" path="res://assets/3d_model/mobilia/malhas/tiny_living_murphy_bed_2_1.res" id="2_wlh6p"]
+[ext_resource type="ArrayMesh" path="res://assets/3d_model/mobilia/malhas/tiny_living_murphy_bed_2_2.res" id="3_n3r7b"]
+
+[node name="tiny_living_murphy_bed_2" type="Node3D" unique_id=511222372]
+
+[node name="tiny_living_murphy_bed_2_0" type="MeshInstance3D" parent="." unique_id=958479481]
+mesh = ExtResource("1_ry4re")
+
+[node name="tiny_living_murphy_bed_2_1" type="MeshInstance3D" parent="." unique_id=27077868]
+mesh = ExtResource("2_wlh6p")
+
+[node name="tiny_living_murphy_bed_2_2" type="MeshInstance3D" parent="." unique_id=2004945710]
+mesh = ExtResource("3_n3r7b")

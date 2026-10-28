@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" uid="uid://fxabduogn152" path="res://scripts/enemies/shadow_seraph.gd" id="1_seraph"]
+
+[node name="ShadowSeraph" type="Node3D"]
+
+[node name="enemy" type="CharacterBody3D" parent="." groups=["enemies"]]
+collision_layer = 4
+collision_mask = 2
+script = ExtResource("1_seraph")

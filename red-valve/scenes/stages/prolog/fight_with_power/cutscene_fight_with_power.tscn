@@ -1,0 +1,11 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/cutscenes/parallax_cutscene_base.tscn" id="1_base"]
+[ext_resource type="Script" uid="uid://dcddve3ck37yh" path="res://scripts/stages/prolog/fight_with_power/cutscene_fight_with_power.gd" id="2_cutsn"]
+[ext_resource type="AudioStream" uid="uid://lvxgd3tjitad" path="res://assets/cutscenes/sound/begin.mp3" id="3_music"]
+
+[node name="CutsceneFightWithPower" instance=ExtResource("1_base")]
+script = ExtResource("2_cutsn")
+
+[node name="Begin" parent="." index="0"]
+stream = ExtResource("3_music")

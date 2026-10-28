@@ -1,0 +1,8 @@
+[gd_scene format=3]
+
+[ext_resource type="ArrayMesh" path="res://assets/3d_model/mobilia/malhas/tiny_living_simpleand_clean_art_39_0.res" id="1_dvirb"]
+
+[node name="tiny_living_simpleand_clean_art_39" type="Node3D" unique_id=1296514737]
+
+[node name="tiny_living_simpleand_clean_art_39_0" type="MeshInstance3D" parent="." unique_id=1272424102]
+mesh = ExtResource("1_dvirb")

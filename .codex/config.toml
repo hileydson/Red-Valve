@@ -1,0 +1,26 @@
+[mcp_servers.filesystem]
+command = "npx"
+args = [
+    "@modelcontextprotocol/server-filesystem",
+    "/home/dev/Documents/Development/Game Development/Red Valve/Red-Valve",
+]
+
+[mcp_servers.godot]
+command = "npx"
+args = ["@coding-solo/godot-mcp"]
+
+[mcp_servers.memory]
+command = "npx"
+args = ["@modelcontextprotocol/server-memory"]
+
+[mcp_servers.unreal-mcp]
+url = "http://127.0.0.1:8001/mcp"
+
+[mcp_servers.blender]
+command = "/home/dev/.config/Claude/Claude Extensions/ant.dir.gh.blender.blender-mcp/.venv/bin/blender-mcp"
+args = ["--transport", "stdio"]
+startup_timeout_sec = 120
+
+[mcp_servers.blender.env]
+BLENDER_MCP_HOST = "127.0.0.1"
+BLENDER_MCP_PORT = "9877"

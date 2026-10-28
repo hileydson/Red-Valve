@@ -1,0 +1,8 @@
+[gd_scene format=3]
+
+[ext_resource type="ArrayMesh" path="res://assets/3d_model/mobilia/malhas/gray_l_shaped_couch_leve_0.res" id="1_kvm08"]
+
+[node name="gray_l_shaped_couch_leve" type="Node3D" unique_id=857807752]
+
+[node name="gray_l_shaped_couch_0" type="MeshInstance3D" parent="." unique_id=1179700694]
+mesh = ExtResource("1_kvm08")

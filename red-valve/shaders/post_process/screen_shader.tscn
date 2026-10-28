@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://qs43hjp5mf5x"]
+
+[ext_resource type="Shader" uid="uid://bmxmjs8tqb8xb" path="res://shaders/post_process/shade_ps1_ps2_graphics.gdshader" id="1_vmk05"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_n8exv"]
+render_priority = 0
+shader = ExtResource("1_vmk05")
+shader_parameter/pixel_size = 0.0010000000475
+shader_parameter/color_depth = 32
+shader_parameter/jitter_intensity = 0.001
+shader_parameter/vignette_strength = 0.0030000001425
+shader_parameter/scanline_intensity = 0.1
+shader_parameter/tint_color = Color(1, 1, 1, 1)
+
+[sub_resource type="QuadMesh" id="QuadMesh_gheg7"]
+size = Vector2(2, 2)
+
+[node name="screen_shader" type="MeshInstance3D" unique_id=380152255]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15899187, 0.19222116, -0.13536263)
+material_override = SubResource("ShaderMaterial_n8exv")
+cast_shadow = 0
+extra_cull_margin = 16384.0
+mesh = SubResource("QuadMesh_gheg7")
+skeleton = NodePath("../..")

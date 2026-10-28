@@ -1,0 +1,9 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" uid="uid://lk7rutoo2olu" path="res://assets/3d_model/player/the_negotiator_V1/pente_pistola.glb" id="1_pente"]
+
+[node name="PentePistolaFP" type="Node3D"]
+editor_description = "Pente em metros: origem na base, alimentacao para +Y, projeteis para -Z. Ajuste Modelo aqui para atualizar o pente na arma, na mao e na queda."
+
+[node name="Modelo" parent="." instance=ExtResource("1_pente")]
+transform = Transform3D(0, -0.067, 0, 0.067, 0, 0, 0, 0, 0.067, -0.0001289, 0.0637356, 0.0001124)

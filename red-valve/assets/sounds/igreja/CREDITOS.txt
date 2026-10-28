@@ -1,0 +1,26 @@
+Sons da cena da igreja (Dona Nice). Todos CC0 (dominio publico), do
+OpenGameArt. Compostos por tools/audio/gerar_sons_igreja.py a partir de:
+
+  "Dialog vocal samples"  https://opengameart.org/content/dialog-vocal-samples
+  "80 CC0 creature SFX"  https://opengameart.org/content/80-cc0-creature-sfx
+  "40 CC0 water / splash / slime SFX"  https://opengameart.org/content/40-cc0-water-splash-slime-sfx
+  "Deep Bone Crack/Break SFX"  https://opengameart.org/content/deep-bone-crackbreak-sfx
+  "7 Eating Crunches"  https://opengameart.org/content/7-eating-crunches
+  "CC0 Deep Monster Roar"  https://opengameart.org/content/cc0-deep-monster-roar
+  "Horror Scream1"  https://opengameart.org/content/horror-scream1
+  "Heartbeat sounds"  https://opengameart.org/content/heartbeat-sounds
+  "Ambient Horror"  https://opengameart.org/content/ambient-horror
+  "Squish sounds effects"  https://opengameart.org/content/squish-sounds-effects
+  "Evil Screech 1"  https://opengameart.org/content/evil-screech-1
+  "High pitch scream sounds(2)"  https://opengameart.org/content/high-pitch-scream-sounds2
+  "breathing tired"  https://opengameart.org/content/breathing-tired
+  "SkeletonSFXShortPack"  https://opengameart.org/content/skeletonsfxshortpack
+  "75 CC0 breaking / falling / hit sfx"  https://opengameart.org/content/75-cc0-breaking-falling-hit-sfx
+
+O canto do culto (sussurro_culto.ogg) foi montado silaba a silaba a
+partir das amostras sussurradas do "Dialog vocal samples": nao e' uma
+lingua, e sim silabas em sequencia, invertidas e graves, com reverb.
+
+A chave na porta da igreja (destrancar_porta.ogg) junta dois sons do
+"RPG Sound Pack" de artisticdude (CC0), inventory/metal-small2.wav e
+world/door.wav: https://opengameart.org/content/rpg-sound-pack

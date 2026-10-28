@@ -1,0 +1,2 @@
+Seringa de magia: o mesmo modelo da seringa de adrenalina
+(tools/blender/seringa/gerar_seringa.py), com o liquido roxo e o canhao violeta.

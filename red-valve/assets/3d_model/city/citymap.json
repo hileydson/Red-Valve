@@ -1,0 +1,65 @@
+{
+ "nota": "recorte do mundo coberto por T_citymap.png; gerado por tools/blender/citygen/textures/make_minimap.py",
+ "mundo_x0": 260.0,
+ "mundo_z0": -584.79,
+ "tamanho_m": 739.64,
+ "resolucao": 2048,
+ "pontos": [
+  {
+   "id": "pracinha",
+   "chave": "MAP_POI_PRACINHA",
+   "tipo": "marco",
+   "x": 640.0,
+   "z": -280.0
+  },
+  {
+   "id": "igreja",
+   "chave": "MAP_POI_IGREJA",
+   "tipo": "marco",
+   "x": 593.15,
+   "z": -314.0
+  },
+  {
+   "id": "oficina_jimmy",
+   "chave": "MAP_POI_OFICINA_JIMMY",
+   "tipo": "local",
+   "x": 460.04,
+   "z": -142.51
+  },
+  {
+   "id": "casa_jimmy",
+   "chave": "MAP_POI_CASA_JIMMY",
+   "tipo": "casa",
+   "x": 552.14,
+   "z": -340.51
+  },
+  {
+   "id": "casa_nice",
+   "chave": "MAP_POI_CASA_NICE",
+   "tipo": "casa",
+   "x": 568.0,
+   "z": -343.0
+  },
+  {
+   "id": "casa_maycow",
+   "chave": "MAP_POI_CASA_MAYCOW",
+   "tipo": "casa",
+   "x": 647.37,
+   "z": -150.45
+  },
+  {
+   "id": "hospital",
+   "chave": "MAP_POI_HOSPITAL",
+   "tipo": "marco",
+   "x": 723.67,
+   "z": -102.28
+  },
+  {
+   "id": "escola",
+   "chave": "MAP_POI_ESCOLA",
+   "tipo": "marco",
+   "x": 889.94,
+   "z": -398.49
+  }
+ ]
+}

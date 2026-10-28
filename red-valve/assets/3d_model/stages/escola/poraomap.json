@@ -1,0 +1,46 @@
+{
+ "nota": "planta do porao da escola, coberta por T_poraomap.png; gerado por tools/godot/escola/make_mapa_escola.py",
+ "nome": "MAP_NOME_PORAO",
+ "mundo_x0": -2.5,
+ "mundo_z0": -3.5,
+ "tamanho_m": 89.0,
+ "resolucao": 2048,
+ "nevoa": {
+  "resolucao": 256,
+  "raio_m": 6.5,
+  "margem_m": 1.0
+ },
+ "zonas": [
+  {
+   "id": "camara",
+   "tipo": "sala",
+   "x0": 24.0,
+   "z0": 36.0,
+   "x1": 48.0,
+   "z1": 54.0
+  }
+ ],
+ "pontos": [
+  {
+   "id": "boca_entrada",
+   "chave": "MAP_POI_POR_ENTRADA",
+   "tipo": "local",
+   "x": 6.0,
+   "z": 8.0
+  },
+  {
+   "id": "camara",
+   "chave": "MAP_POI_POR_CAMARA",
+   "tipo": "marco",
+   "x": 36.0,
+   "z": 45.0
+  },
+  {
+   "id": "boca_saida",
+   "chave": "MAP_POI_POR_SAIDA",
+   "tipo": "marco",
+   "x": 78.0,
+   "z": 74.0
+  }
+ ]
+}

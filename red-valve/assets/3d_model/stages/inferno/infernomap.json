@@ -1,0 +1,65 @@
+{
+ "nota": "recorte do inferno coberto por T_infernomap.png; gerado por tools/godot/inferno/make_mapa_inferno.py",
+ "mundo_x0": -540.38,
+ "mundo_z0": -540.44,
+ "tamanho_m": 1073.35,
+ "resolucao": 2048,
+ "pontos": [
+  {
+   "id": "area_1_portao",
+   "chave": "MAP_POI_INF_PORTAO",
+   "tipo": "local",
+   "x": 0.0,
+   "z": 420.0
+  },
+  {
+   "id": "area_2_planicie",
+   "chave": "MAP_POI_INF_PLANICIE",
+   "tipo": "marco",
+   "x": 18.53,
+   "z": 319.81
+  },
+  {
+   "id": "area_3_ponte",
+   "chave": "MAP_POI_INF_PONTE",
+   "tipo": "marco",
+   "x": -40.0,
+   "z": 175.0
+  },
+  {
+   "id": "area_4_colossos",
+   "chave": "MAP_POI_INF_COLOSSOS",
+   "tipo": "marco",
+   "x": 9.04,
+   "z": 70.22
+  },
+  {
+   "id": "area_5_espinhos",
+   "chave": "MAP_POI_INF_ESPINHOS",
+   "tipo": "marco",
+   "x": 24.47,
+   "z": -49.46
+  },
+  {
+   "id": "area_6_catedral",
+   "chave": "MAP_POI_INF_CATEDRAL",
+   "tipo": "marco",
+   "x": -37.86,
+   "z": -160.1
+  },
+  {
+   "id": "area_7_crista",
+   "chave": "MAP_POI_INF_CRISTA",
+   "tipo": "marco",
+   "x": 22.43,
+   "z": -289.1
+  },
+  {
+   "id": "area_8_portal",
+   "chave": "MAP_POI_INF_PORTAL",
+   "tipo": "local",
+   "x": 0.0,
+   "z": -414.0
+  }
+ ]
+}

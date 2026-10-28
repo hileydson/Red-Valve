@@ -1,0 +1,37 @@
+{
+ "nota": "silhueta da escola para o mapa da cidade; gerado por tools/godot/escola/gerar_cena_exterior.py",
+ "porta": [
+  0.0,
+  0.0
+ ],
+ "lote": [
+  [
+   -2.0,
+   -37.0,
+   82.0,
+   39.0
+  ],
+  [
+   -5.0,
+   -6.6,
+   2.0,
+   6.6
+  ]
+ ],
+ "patio": [
+  [
+   2.35,
+   -17.3,
+   48.0,
+   18.65
+  ]
+ ],
+ "predio": [
+  [
+   2.0,
+   -33.0,
+   78.0,
+   35.0
+  ]
+ ]
+}

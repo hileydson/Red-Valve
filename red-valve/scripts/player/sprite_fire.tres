@@ -1,0 +1,73 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://cawar0ym41nu6"]
+
+[ext_resource type="Texture2D" uid="uid://bcav021wtw4vf" path="res://assets/images/player/fire_gun.png" id="1_7sxas"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uniwh"]
+atlas = ExtResource("1_7sxas")
+region = Rect2(0, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_iqsei"]
+atlas = ExtResource("1_7sxas")
+region = Rect2(32, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tffgl"]
+atlas = ExtResource("1_7sxas")
+region = Rect2(64, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pk8ii"]
+atlas = ExtResource("1_7sxas")
+region = Rect2(96, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5mf0n"]
+atlas = ExtResource("1_7sxas")
+region = Rect2(128, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4hvnv"]
+atlas = ExtResource("1_7sxas")
+region = Rect2(160, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bbmj2"]
+atlas = ExtResource("1_7sxas")
+region = Rect2(192, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kxw46"]
+atlas = ExtResource("1_7sxas")
+region = Rect2(224, 0, 32, 48)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 0.01,
+"texture": null
+}, {
+"duration": 0.07,
+"texture": SubResource("AtlasTexture_uniwh")
+}, {
+"duration": 0.07,
+"texture": SubResource("AtlasTexture_iqsei")
+}, {
+"duration": 0.07,
+"texture": SubResource("AtlasTexture_tffgl")
+}, {
+"duration": 0.07,
+"texture": SubResource("AtlasTexture_pk8ii")
+}, {
+"duration": 0.07,
+"texture": SubResource("AtlasTexture_5mf0n")
+}, {
+"duration": 0.07,
+"texture": SubResource("AtlasTexture_4hvnv")
+}, {
+"duration": 0.07,
+"texture": SubResource("AtlasTexture_bbmj2")
+}, {
+"duration": 0.07,
+"texture": SubResource("AtlasTexture_kxw46")
+}, {
+"duration": 0.01,
+"texture": null
+}],
+"loop": false,
+"name": &"shoot",
+"speed": 5.0
+}]

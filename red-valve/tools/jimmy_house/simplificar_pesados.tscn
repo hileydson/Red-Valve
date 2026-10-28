@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tools/jimmy_house/simplificar_pesados.gd" id="1_simp"]
+
+[node name="SimplificarPesados" type="Node"]
+script = ExtResource("1_simp")

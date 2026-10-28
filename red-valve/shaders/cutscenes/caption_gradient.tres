@@ -1,0 +1,9 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3]
+
+[ext_resource type="Shader" path="res://shaders/cutscenes/caption_gradient.gdshader" id="1_capt"]
+
+[resource]
+shader = ExtResource("1_capt")
+shader_parameter/top_color = Color(0, 0, 0, 0)
+shader_parameter/bottom_color = Color(0, 0, 0, 0.9)
+shader_parameter/curve = 1.7

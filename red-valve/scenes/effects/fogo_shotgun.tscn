@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3]
+
+; O TIRO DA CACADEIRA — clarao, faiscas e fumaca na boca do cano.
+;
+; A cena e' so' a casca: as tres GPUParticles3D sao montadas no `_ready` do
+; script, que e' o padrao dos efeitos deste projeto (ver `blood.gd`). Quem
+; dispara e' o `player_combat.atirar_shotgun()`.
+
+[ext_resource type="Script" path="res://scripts/effects/fogo_shotgun.gd" id="1_fogo"]
+
+[node name="fogo_shotgun" type="Node3D"]
+script = ExtResource("1_fogo")

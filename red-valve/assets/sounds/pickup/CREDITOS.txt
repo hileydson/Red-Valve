@@ -1,0 +1,6 @@
+Sons de item de cenario (selecionar e pegar). CC0 (dominio publico), do OpenGameArt:
+
+selecionar.ogg   "RPG Sound Pack" — interface/interface1.wav   https://opengameart.org/content/rpg-sound-pack  (convertido de WAV)
+pegar.ogg        "RPG Sound Pack" — inventory/cloth.wav        https://opengameart.org/content/rpg-sound-pack  (convertido de WAV)
+
+Autor: artisticdude. Atribuicao nao exigida, mas fica o credito.

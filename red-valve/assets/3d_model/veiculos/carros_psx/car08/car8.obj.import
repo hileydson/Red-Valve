@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://bf633wrrugotu"
+path="res://.godot/imported/car8.obj-6d68f15ee2b2cc7f71c0acf85d5a6f07.mesh"
+
+[deps]
+
+files=["res://.godot/imported/car8.obj-6d68f15ee2b2cc7f71c0acf85d5a6f07.mesh"]
+
+source_file="res://assets/3d_model/veiculos/carros_psx/car08/car8.obj"
+dest_files=["res://.godot/imported/car8.obj-6d68f15ee2b2cc7f71c0acf85d5a6f07.mesh", "res://.godot/imported/car8.obj-6d68f15ee2b2cc7f71c0acf85d5a6f07.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

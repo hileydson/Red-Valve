@@ -1,0 +1,510 @@
+# A escola (e o porão)
+
+Um andar, com um **pátio descoberto** no meio — a "área de lazer" do desenho —
+e um **túnel de barro** cavado por baixo. Tudo (geometria, luz, móvel, pichação,
+colisão e navmesh) é **gerado por script** a partir da planta. Mexer pelo editor
+do Godot se perde na próxima geração, igual ao hospital e à arena 2.
+
+São **três cenas** saindo dos mesmos módulos:
+
+| Cena | O que é |
+| :--- | :--- |
+| `escola.tscn` | o prédio inteiro + o pátio, onde se joga |
+| `porao.tscn` | o túnel de barro debaixo dele |
+| `escola_exterior.tscn` | a casca vista da rua, instanciada na `stage_1` |
+
+O exterior é oco de propósito: entrar é trocar de cena, então ninguém atravessa
+a casca. Por isso toda janela leva um painel preto atrás do vidro e o portão da
+rua é de **chapa cega**. A exceção é o pátio, que fica **descoberto na casca
+também**, com o piso e a mancha da quadra desenhados nele — a cidade tem morro,
+e de cima de qualquer coisa dá para olhar por cima de um muro de 4,80 m.
+
+## Rodar
+
+```bash
+tools/godot/escola/construir.sh
+```
+
+Gera **e importa**. Nunca rode só o Python: o Godot continua carregando o `.scn`
+velho de `.godot/imported/` sem erro nem aviso.
+
+Para nascer em outro ponto enquanto testa (economiza muita caminhada):
+
+```bash
+ESCOLA_SPAWN="63,1.05,54.5,90" tools/godot/escola/construir.sh
+PORAO_SPAWN="73,1.05,73,270"   tools/godot/escola/construir.sh
+```
+
+`x,y,z,giro em graus`. Sem as variáveis, o jogador nasce no pátio (escola) e na
+boca de cima (porão).
+
+## O caminho que esta fase desenha
+
+É o desenho do caderno, e ele manda em tudo o que está na planta:
+
+1. o jogador chega da cidade pelo **portão da rua** e cai no **PÁTIO**;
+2. do pátio ele entra no prédio pela **porta principal** (corredor norte);
+3. anda o corredor norte → corredor leste → corredor sul e tromba na **GRADE**,
+   soldada de parede a parede no meio do corredor. Ela não abre nunca;
+4. do lado de cá da grade fica o **DEPÓSITO**, e no fundo dele o **BURACO**;
+5. o buraco leva ao **porão** (outra cena) e o devolve no **ALMOXARIFADO**, do
+   outro lado da grade;
+6. dali ele alcança o resto do prédio e o **PORTÃO DO PÁTIO**, que só destranca
+   por dentro — é o atalho de volta para a área de lazer.
+
+**O anel de corredores NÃO fecha, e isso é regra de jogo, não acaso.** Duas
+paredes seguram o desenho inteiro, e as duas estão comentadas na `planta.py`:
+
+- o corredor norte morre na fachada oeste (não dá a volta pelo lado de fora);
+- **a biblioteca não tem porta para o refeitório.** Ela abre só no corredor sul,
+  do lado de lá da grade. Uma porta ali ligaria "lado de cá" a "lado de lá" por
+  dentro e o jogador contornaria a grade sem nunca entrar no porão.
+
+Quem confere isso é `navmesh.py`, e ele confere **contando**:
+
+```bash
+python3 tools/godot/escola/navmesh.py
+```
+
+A última seção do relatório (`a grade separa os dois lados?`) simula a grade e o
+portão fechados e diz quantas células do mapa sobram inalcançáveis. Hoje são
+**826 de 4.117** — se esse número cair para perto de zero, alguém abriu um
+caminho por dentro e o porão virou enfeite.
+
+## O pátio
+
+É o único espaço **descoberto** da cena, e é isso que o separa de tudo o que já
+existe no projeto:
+
+- não leva laje de forro — leva céu, e por isso esta cena tem uma
+  **DirectionalLight** (a lua) e **chuva**, que um interior fechado não teria;
+- as paredes que dão para ele sobem além do pé-direito (`PATIO_MURO_ALTO`),
+  senão o céu apareceria por baixo do prédio;
+- a chuva é emitida só sobre ele, com vida curta o bastante para a gota morrer
+  perto do chão. Chuva atravessando a laje do corredor vizinho denunciaria na
+  hora que o prédio não tem telhado de verdade.
+
+Dentro dele vai exatamente o que foi pedido e nada mais: uma **quadra
+esportiva** (26 x 16 m, traves nas duas pontas) e **bancos**, todos encostados
+nos muros. O centro fica vazio. A quadra é **pintura**, não construção: uma laje
+rasa de asfalto com as linhas 1 cm acima, sem colisão nenhuma.
+
+A lua saiu de 0,55 para **1,50** depois de medir no jogo: com 0,55 o pátio
+ficava mais escuro que o corredor coberto, o que inverte a leitura do mapa
+inteiro. O piso de cimento tem albedo 0,40 e come quase tudo o que recebe.
+
+## O porão
+
+`porao.py` descreve o traçado (uma polilinha com raio variável, uma câmara
+grande e três becos sem saída) e **rasteriza tudo numa grade de 1 m**. Daqui
+saem quatro coisas, todas da mesma grade: chão, teto, parede e navmesh.
+
+**Por que grade e não caixa girada ao longo da linha:** caixa girada quebra na
+curva — na parte de fora de todo cotovelo sobra uma cunha sem parede e o jogador
+vê o vazio por ela. Rasterizando, a parede nasce na *fronteira* entre célula
+aberta e célula fechada: não existe canto sem tratamento porque não existe
+canto, existe célula. O túnel sai estanque por construção.
+
+O que tira a cara de gaveta que uma grade de 1 m tem: **torrões** (caixas
+pequenas e giradas saindo da parede), **raízes** descendo do teto (são elas que
+dão escala — sem nada pendurado, uma galeria de 2,60 m e uma de 5 m parecem a
+mesma coisa) e **escoras** de tábua a cada 9 m, que dão ritmo ao caminho.
+
+**A luz do porão é o assunto dele.** A `ambient_light_energy` é **0,42** contra
+1,75 da escola, e as lâmpadas são poucas, fracas e a maioria morta: elas
+*marcam* o caminho, não o iluminam. Foi o pedido — aqui a lanterna deixa de ser
+conforto e vira ferramenta, e por isso `porao.gd` avisa quem chegou sem ela.
+
+Abaixo de ~0,3 de ambiente o jogador para de enxergar a parede e passa a bater
+nela, o que não dá medo, dá raiva. 0,42 mostra a silhueta e esconde o resto.
+
+**O túnel é de mão dupla.** Dá para descer pelo depósito e voltar pelo mesmo
+buraco. Mão única viraria armadilha: quem descesse sem lanterna ficaria preso no
+escuro sem poder voltar.
+
+## Onde a escola fica na cidade
+
+A instância mora na `stage_1`, em `locais_importantes/escola_exterior`, em cima
+do `Marker3D` chamado `escola_local`. **Arrastar e girar pelo editor é seguro** —
+a posição mora na `stage_1`, não no gerador.
+
+O `(0,0,0)` da cena de fora é a **calçada diante do portão**, e não o canto do
+terreno. Logo, girar a instância gira o prédio *em torno da entrada*.
+
+Duas coisas viajam junto com a instância, e é por isso que o `stage_1.gd` não
+tem nenhuma coordenada da escola escrita no código:
+
+| Nó | Para quê |
+| :--- | :--- |
+| `area_entrada` | acende o "Entrar na escola?" |
+| `ponto_de_saida` | onde o jogador reaparece ao sair |
+
+**Hoje ela está em (889,94, 8,08, −398,49), sem giro**, na ponta sudeste — o
+último quarteirão da cidade de um lado, a mata do outro, com o portão dando na
+via que fecha a malha a leste. Das quatro orientações possíveis nesse ponto, a
+sem giro é a única cujo portão encara uma rua (o asfalto começa 12 m adiante
+dele); nenhuma das quatro engole casa nenhuma do gerador da cidade.
+
+**O Y é o ajuste que costuma sobrar**, igual ao hospital, e ele vale a mesma
+regra de sempre: é a cota do chão **no portão**, porque é ali que o jogador
+pisa. Enterrar é de graça — a casca de fora é fechada, ninguém enxerga por
+dentro dela — mas **flutuar não é**, dá para ver por baixo da parede.
+
+Aqui o terreno cai 2,2 m de uma ponta do lote à outra, três vezes o que a
+calçada de 0,70 m tapava. Por isso o embasamento e a calçada ganharam a
+`SAIA = 3.00` do `exterior.py`: as duas descem 3 m abaixo do chão de
+referência. Do lado alto some no barro; do lado baixo vira um embasamento de
+concreto, que é como um prédio de verdade se apoia em ladeira.
+
+### A mata não pode nascer dentro dela
+
+Esse canto do mapa é o anel de floresta, e o espalhamento da cidade não sabia
+da escola: 25 árvores e 5 arbustos nasciam **dentro** do lote, atravessando o
+telhado e o pátio. Quem segura isso é a lista `CLAREIRAS`, em
+`tools/blender/citygen/lib/vegetation.py` — retângulos onde não se planta, no
+mesmo espírito das vagas reservadas de `houses.py`.
+
+O corte é feito no **fim** de `scatter()`, e não dentro do laço, de propósito:
+o sorteio continua consumindo o `rng` na mesma ordem, então abrir uma clareira
+não move uma árvore que seja no resto do mapa.
+
+Mexeu na lista? São dois comandos, os dois sem Blender:
+
+```
+python3 tools/blender/citygen/refazer_scatter.py     # reescreve o scatter.json
+python3 tools/blender/citygen/podar_multimesh.py     # poda as MultiMesh assadas
+```
+
+O segundo existe porque o jogo **não lê o `scatter.json`**: lê as MultiMesh de
+`assets/3d_model/city/multimesh/`, assadas uma vez pelo nó `City/Vegetation`. O
+caminho oficial é apertar `construir` naquele nó — só que isso reassa a
+floresta inteira por causa de 30 plantas, e `ResourceSaver` dentro de um @tool
+já derrubou o editor neste projeto.
+
+**O retângulo é um número escrito à mão**, então arrastar a escola no editor o
+deixa para trás e as árvores voltam — sem erro nenhum, só aparece andando por
+lá. Por isso o `construir.sh` roda `conferir_clareira.py`, que compara os dois
+e escreve a linha certa para colar quando eles discordam.
+
+### E o mapa do menu
+
+A escola também é desenhada no mapa da cidade — a mancha verde com o pátio
+escuro no meio. Isso **não** é automático em tempo de jogo: a figura está assada
+no `T_citymap.png`, gerado por
+`tools/blender/citygen/textures/make_minimap.py`.
+
+Ele monta a silhueta de duas fontes, de propósito:
+
+| O quê | De onde | Quem escreve |
+| :--- | :--- | :--- |
+| a **forma** (lote, pátio, corpo) | `assets/3d_model/stages/escola/escola_mapa.json` | `gerar_cena_exterior.py` |
+| a **posição e o giro** | o nó `escola_exterior` dentro do `stage_1.tscn` | o editor, quando você arrasta |
+
+Por isso **arrastar ou girar o prédio no editor exige rodar o `construir.sh` de
+novo** (ou só o `make_minimap.py`). O losango fica na PORTA, e não no meio do
+prédio: com a planta inteira desenhada, o que falta dizer ao jogador não é onde
+ele fica, é por onde se entra.
+
+O recorte quadrado da imagem também deixou de ser só os limites da cidade: como
+parte do lote da escola caiu **fora** deles, `_recorte()` passou a incluir os
+dois prédios soltos, senão a escola saía cortada na borda. Ela cresceu de 680
+para 740 m, e a cidade inteira perdeu 8 % de resolução no mapa — foi o preço de
+a escola caber.
+
+O nome sai do CSV, chave `MAP_POI_ESCOLA`. O desenho sai 15 % menor que o prédio
+real (`ESCALA_ESCOLA`), encolhendo em torno do portão — mesma conta do hospital.
+A escola tem paleta **própria** no mapa da cidade (verde) e não o ouro do
+hospital: são os dois únicos prédios grandes, e no mesmo tom viravam duas
+manchas iguais.
+
+## Os mapas de dentro
+
+`make_mapa_escola.py` desenha **duas pranchas**, a partir dos mesmos módulos que
+geram a geometria:
+
+| Saída | O que é |
+| :--- | :--- |
+| `textures/T_escolamap.png` + `escolamap.json` | a planta da escola |
+| `textures/T_poraomap.png` + `poraomap.json` | o traçado do túnel |
+
+**Não há troca automática entre elas**, e não precisa haver: escola e porão são
+duas CENAS, cada uma instancia o seu perfil de minimapa
+(`scenes/ui/minimap_escola.tscn` e `minimap_porao.tscn`), e trocar de cena já
+troca o nó que declara o mapa. É o contrário do hospital, que tem dois andares
+no mesmo prédio e precisa do `minimap.gd` decidindo pela altura do jogador.
+
+A planta da escola é desenhada **pelo avesso** (preenche o prédio de massa de
+parede e escava o vão de cada sala; o que sobra são as paredes). Por cima vão os
+vãos de `planta.muros()` — porta em laranja, janela em azul. Três coisas só
+existem neste mapa, e as três são a regra de jogo:
+
+- o **pátio** sai numa cor própria (esverdeada): é o único espaço descoberto e é
+  onde o jogador nasce;
+- a **quadra** aparece desenhada dentro dele, que é o que faz o pátio ser
+  reconhecível como pátio e não como mais um salão;
+- a **grade** é uma barra **vermelha** atravessando o corredor sul. Sem ela o
+  mapa mostraria um corredor contínuo que não existe, e o jogador ficaria dando
+  voltas atrás de um caminho que o mapa promete e o jogo não tem.
+
+Os dois **buracos** aparecem saindo do prédio, com o nicho de terra atrás — é o
+que diz, sem texto, que aquilo não é uma porta para a rua.
+
+O mapa do porão sai direto da grade de células. O único enfeite é o **fio do
+caminho principal**: num túnel de terra sem rótulo nenhum, o que falta saber é
+qual das ramificações leva a algum lugar. Os becos sem saída ficam de fora do
+fio de propósito. Ele leva três pontos e nem um a mais (entrada, câmara, saída);
+no minimapa eles ficam **ligados**, ao contrário da escola — no escuro, ver para
+que lado fica a saída é a única orientação que o jogador tem.
+
+Os rótulos da escola saem da própria `planta.py` (`ESC_SALA_*`, as mesmas chaves
+que o prompt da porta usa) — renomear a sala no CSV renomeia no mapa.
+
+### O mapa começa apagado
+
+A prancha nasce toda escura e vai acendendo conforme o jogador anda. Quem
+guarda o que já foi descoberto é `scripts/ui/mapa_nevoa.gd` (uma máscara de
+256 x 256, uns 30 cm por pixel), quem a alimenta é o minimapa do HUD — ele já
+tem a posição do jogador a cada quadro — e quem a guarda entre uma visita e
+outra é o `SaveManager`, comprimida dentro do save.
+
+O que acende de uma vez e o que acende aos poucos sai da lista `zonas` que este
+script escreve no JSON, e a divisão já existe na `planta.py`:
+
+| na planta | zona | o que faz |
+| :--- | :--- | :--- |
+| `_sala(...)` | `"sala"` | entrou, acende **inteira** |
+| `_area(...)` | `"gradual"` | acende um disco em volta do jogador, **recortado na própria zona** |
+
+O recorte é o que segura a coisa de pé: sem ele um disco de 12 m no corredor
+acenderia meia sala dos dois lados através da parede. É por isso que o raio nos
+corredores pode ser generoso e o raio de quem está **fora** de qualquer zona
+(porta, soleira) é pequeno — ali não há parede que recorte nada.
+
+Zona em que o jogador nunca pisa leva um `gatilho`: um retângulo onde ele pisa
+e que acende a zona. É o mesmo mecanismo do altar da igreja.
+
+Os pontos do mapa (os losangos com o nome da sala) só aparecem depois que o
+lugar deles foi descoberto — nome de sala em cima de planta apagada entregaria
+justo o que a névoa existe para esconder.
+
+Sala nova na planta já nasce com zona. **O que não é automático são os raios**:
+eles moram no topo do script (`NEVOA_*`).
+
+No porão só a **câmara** é zona (e das que acendem inteiras): o resto é túnel de
+2 m, e túnel não tem "entrou, viu" — tem curva. Lá a névoa anda solta, num raio
+de 6,5 m, que mostra a curva que vem e não alcança o ramo vizinho (o mais perto
+deles passa a 10 m).
+
+Os dois **nichos** dos buracos são zona `"sala"` com gatilho na sala de dentro:
+eles ficam fora do prédio e ninguém pisa neles, mas são a saída da fase —
+entrar no depósito tem de mostrar onde está o rombo.
+
+## Pichação
+
+Reaproveita o atlas da cidade (`assets/images/textures/pichacao/`, gerado por
+`tools/texturas/gerar_pichacao.py`). É o mesmo mundo e a mesma gente: as facções
+que pixam o muro da rua são as que pixam a escola.
+
+Aqui são ~140 rabiscos dentro de um prédio, então cada um é um `MeshInstance3D`
+com `QuadMesh` e um `StandardMaterial3D` apontando para o atlas com `uv1_offset`
+e `uv1_scale` — a mesma conta do shader da cidade, feita pelo material padrão.
+O material é por **arte**, não por rabisco: 140 quads dividem ~50 materiais.
+
+Duas armadilhas já pagas na cidade e que valem aqui do mesmo jeito estão
+comentadas em `pichacao.py`: `cull_mode` tem de ser **2** (o `QuadMesh` com
+`orientation = FACE_Z` não encara o +Z local e o quad some sem erro nenhum em
+log), e o decalque usa **mistura**, nunca alpha scissor.
+
+O porão não leva pichação nenhuma — quem pixa quer plateia, e o túnel foi cavado
+às escondidas. Lá só vão manchas de umidade.
+
+## Entrar e sair
+
+- **Entrar (da cidade):** a `area_entrada` acende o prompt e o `ui_accept`
+  carrega `escola.tscn`. Mesmo caminho da igreja, da casa do Jimmy e do
+  hospital.
+- **Sair:** o portão da rua tem `metadata/saida = true`. Acionar chama
+  `escola.gd.sair_da_escola()`, que liga `GlobalEvents.voltando_da_escola` antes
+  de trocar de cena. O `stage_1` consome a flag no spawn.
+- **Escola ↔ porão:** os buracos e as bocas usam o **mesmo** script
+  (`buraco.gd`) nas duas cenas. Ele só acende o prompt e chama
+  `usar_buraco(papel)` no dono — quem sabe o que "trocar de lugar" significa é a
+  cena, não o buraco. Os pontos de chegada são `Marker3D` da cena gerada, nunca
+  coordenada escrita no `.gd`.
+
+## A camada de vida: escrita, papel, lixo, agua
+
+Por cima da planta e da mobilia vem `detalhes.py`, que espalha o que faz o
+lugar parecer escola — e abandonada. Nada dele declara `bloqueia`: ou e' chato
+(decalque no chao, o jogador pisa por cima), ou e' pequeno e solto (lata,
+garrafa: corpo fisico que o pe' empurra), ou mora na parede. O navmesh nao
+muda por causa dele.
+
+| O que | Como chega na cena |
+| :--- | :--- |
+| lousa escrita, placa de porta, SAIDA, sinalizacao, aviso do mural, rabisco | `Label3D` com a CHAVE do CSV no `text` |
+| cartaz didatico, desenho de crianca, folha de caderno, prova, jornal, foto de desaparecido | quad com as texturas de `texturas.py` |
+| poca, caco de vidro, folha seca, barro, pegada, teia, infiltracao, forro furado | quad (chao, parede ou teto) |
+| bolinha de papel | `SphereMesh` de 6 lados |
+| lata, garrafa, galao, maco de cigarro | modelo do Poly Haven com corpo fisico |
+| ventilador de teto (tres ainda giram, pelo `escola.gd`) | `ceiling_fan`, grupo `ventilador` |
+| bandeirinhas da festa junina no patio, um cordao arrebentado no chao | duas `MultiMesh` |
+
+O que conta historia sem uma palavra: a picareta encostada no rombo do
+deposito, a trilha de pezinhos de barro que sai da grade e entra nele, a seta
+de giz pra baixo, as maos na parede do corredor sul, a lousa da 104 com "Eu
+nao vou descer ao porao" escrito sete vezes, e o brilho alaranjado que sobe de
+dentro de cada buraco (`luzes.luzes_dos_buracos`).
+
+### Os textos: `textos.py`
+
+Toda palavra da escola mora la', com o ingles do lado. `textos.sincronizar()`
+(chamado pelo gerador) escreve no `assets/textos/red_valve_textos_gerais.csv`:
+atualiza a chave que ja' existe NO LUGAR e enfia a nova logo depois do bloco
+`ESC_`, nunca no fim do arquivo — o CSV e' editado por outras frentes ao mesmo
+tempo. `\n` vira quebra de linha (o .import tem `unescape_translations`).
+
+As fontes sao do Google Fonts (`assets/fonts/`, licencas ao lado): Caveat (giz),
+Oswald (placa), Special Elite (maquina de escrever), Permanent Marker e Rock
+Salt (rabisco).
+
+### As texturas proprias: `texturas.py`
+
+Quatro atlas desenhados em Python (`assets/images/textures/escola/`), com
+semente fixa. **Nenhuma palavra na textura**: o papel so' tem garrancho que
+parece letra, e a faixa do titulo do cartaz nasce vazia — quem escreve e' o
+`Label3D`. Letra solta e numero (alfabeto, tabuada) podem, nao tem idioma.
+
+Desenhar com `ImageDraw` numa imagem RGBA SUBSTITUI o alfa em vez de misturar:
+a mancha de 20 % virava uma bola marrom solida. Por isso o papel e' desenhado
+em RGB e o recorte so' entra no fim (`_fechar`).
+
+## A luz, a lente e os 32 degraus
+
+**O filtro PS1 do jogador** (`shader_ps1_ps2_graphics`, CanvasLayer 1 dentro do
+`player.tscn`) quantiza a tela em 32 degraus por canal. Tudo abaixo de ~8/255
+vira PRETO PURO. Medido no harness: a mediana da imagem da escola era 9/255 em
+qualquer vista — o primeiro degrau — e por isso o predio inteiro era um breu
+onde nenhum detalhe existia. Esse filtro e' do jogo todo e nao foi mexido; quem
+resolve e' a escola:
+
+- `ambient_light_source = 2` (COR). O 3 e' CEU, e o ceu noturno quase preto
+  anulava qualquer `ambient_light_energy`;
+- `tonemap_exposure = 1.6` (escola) e `1.8` (porao);
+- a **lente** (`shaders/post_process/escola_lente.gdshader`, CanvasLayer -1,
+  por baixo do HUD) tem um `gama` < 1 que levanta o escuro muito mais que o
+  claro, e tira a forma das coisas do primeiro degrau sem lavar as lampadas.
+
+A lente tambem faz grao (mais forte no escuro), vinheta que esfria o canto,
+aberracao cromatica na borda, grade de cor (sombra verde-azulada, luz de
+fluorescente velha), uma respiracao lenta de exposicao e, rara, uma faixa de
+interferencia. Os numeros sao por cena: `LENTE` em `gerar_cena_escola.py` e
+`LENTE_PORAO` em `gerar_cena_porao.py` (o porao levanta MENOS — la' quem tira
+a forma do escuro e' a lanterna, e sem ela o tunel continua preto).
+
+O barril da lente esta' em 0: com ele a imagem era reamostrada e as colunas de
+~1,9 px do filtro PS1 viravam listras. E nada de `filter_linear_mipmap` no
+`hint_screen_texture` — so' o nivel 0 e' lido.
+
+Luz que entrou nesta passada:
+
+- **luar nas salas** (`luzes_de_luar_salas`): um spot com sombra por fachada
+  de comodo, de fora, desenhando no chao e nas carteiras o retangulo de cada
+  janela. E' o que faz a sala apagada ter forma. Eles levaram o setor da
+  estrutura de 20 m para 8 m (o limite de 8 luzes por malha);
+- **feixes de luar** em geometria (`shaders/environment/feixe_janela.gdshader`):
+  uma BoxMesh CISALHADA pelo transform vira o prisma que a janela recorta;
+- os **cones das luminarias** ganharam shader proprio
+  (`shaders/environment/cone_luz.gdshader`): o material chapado era um
+  triangulo de borda dura, e a curva da lente o virava cunha cinza;
+- **SAIDA** acesa (verde, na bateria) sobre a porta principal e o portao;
+- **nevoa escura**: o fundo do corredor some no preto, nao no cinza.
+
+## Som
+
+`assets/sounds/escola/` (CC0, OpenGameArt — creditos em `CREDITOS.txt`; o
+Pixabay e o BigSoundBank recusaram download automatizado): o zumbido das
+fluorescentes que piscam (o `escola.gd` liga o volume ao piscar), goteira onde
+ha' poca, vento nas janelas quebradas, a chuva do patio, o relogio da 102 e
+uma atmosfera de fundo. Os dois sons reaproveitados de outras cenas (chuva e
+relogio) nao tem laco no .import, entao o laco e' feito no `escola.gd` (grupo
+`som_em_laco`).
+
+## Modelos leves (`<nome>_leve`)
+
+`mobilia.caminho()` e `mobilia.aabb()` usam `polyhaven/<nome>_leve/` quando
+ela existe. Sao decimacoes feitas no Blender (Dissolve + Collapse em
+superficie dura, so' Collapse no organico), conferindo a caixa delimitadora
+contra o original: carteira, cadeira, as moitas e a urtiga do patio,
+ventilador, extintor, gaveteiro, luminaria de mesa, projetor, enciclopedia,
+bola. A troca e' so' aqui: hospital e as outras cenas continuam nos originais.
+
+## Fotografar sem jogar
+
+```bash
+Godot_v4.6.1 --path red-valve --resolution 1280x720 res://tools/escola/fotos.tscn
+```
+
+Tira ~20 fotos de pontos fixos (e de perto: lousa, mural, buraco, SAIDA) com o
+FPS medio de 2 s de cada uma. Variaveis: `ESCOLA_FOTOS` (pasta),
+`ESCOLA_FOTOS_SO="3,5"`, `ESCOLA_CENA=porao`, `ESCOLA_LANTERNA=1`,
+`ESCOLA_IDIOMA=pt`, `ESCOLA_JOGADOR=1` (pela camera do jogador),
+`ESCOLA_ENV="tonemap_exposure=1.4"` e `ESCOLA_LENTE="gama=0.6"` (ajuste sem
+regerar), `ESCOLA_ESCONDER="detalhes,lente"` (mede o custo de um no').
+
+## Onde mexer em cada coisa
+
+| Arquivo | Assunto |
+| :--- | :--- |
+| `planta.py` | salas, muros, portas, janelas, a grade, os dois buracos |
+| `porao.py` | o traçado do túnel, a câmara, os becos |
+| `luzes.py` | luz da escola E do porão (os dois no mesmo arquivo, de propósito) |
+| `materiais.py` | textura e cor: interior, porão e fachada |
+| `mobilia.py` | o que vai em cada sala, a quadra e os bancos, o entulho do porão |
+| `pichacao.py` | onde nasce cada rabisco |
+| `detalhes.py` | a camada de vida: escrita, papel, lixo, agua, teia, bandeirinha |
+| `textos.py` | toda palavra da escola (PT + EN) e a sincronia com o CSV |
+| `texturas.py` | os atlas proprios: papel, cartaz, marca, chao, bandeira |
+| `navmesh.py` | malha de navegação + conferidor da planta + o teste da grade |
+| `comum.py` | setor de malha, Transform3D, juntador de peças, escritor de .tscn |
+| `gerar_cena_escola.py` | monta o `.tscn` do interior |
+| `gerar_cena_porao.py` | monta o `.tscn` do túnel |
+| `exterior.py` | medidas da fachada, estado das janelas, o letreiro |
+| `gerar_cena_exterior.py` | monta a casca + `escola_mapa.json` |
+| `make_mapa_escola.py` | as duas plantas do menu |
+
+O escritor de glTF é **importado do hospital** (`tools/godot/hospital/gltf.py`),
+e não copiado: ele transforma caixa em arquivo e não sabe nada de hospital. O
+resto **não** pode ser importado de lá — `gerar_cena_hospital.py` faz
+`import planta as P` no topo, e com a pasta da escola na frente do `sys.path`
+ele acordaria com a planta errada na mão.
+
+Comportamento (porta, grade, buraco, piscar de lâmpada) fica em
+`red-valve/scripts/stages/escola/`.
+
+## Conferir depois de mexer
+
+```bash
+# sobreposição de sala, vão fora de parede, vão encavalado, sala sem porta,
+# buraco fora do cômodo, ilha solta no navmesh, e o teste da grade
+python3 tools/godot/escola/navmesh.py
+
+# tunel em uma peça só, navmesh do porão inteiro, bocas dentro do túnel
+python3 tools/godot/escola/porao.py
+```
+
+O próprio `construir.sh` roda os dois antes de gerar, e os geradores imprimem o
+tamanho de setor que escolheram e quantas luzes a pior malha enxerga — se
+aparecer mais de 8, o renderer mobile vai descartar lâmpada em silêncio.
+
+## O que ainda não está feito
+
+- **O porão não tem inimigo.** O pedido chamou a câmara grande de "arena"; ela
+  está construída e com navmesh, mas não há spawner nenhum ligado nela.
+- Não tem som próprio de porta, de grade nem de terra; só a ambiência geral.
+- O estado do portão do pátio (`GlobalEvents.escola_portao_destrancado`) é de
+  **sessão**, não vai para o save. Carregar um save volta com ele trancado — e
+  ele se destranca de novo por dentro, em dois passos. Levar isso para o
+  `SaveManager` mexeria na serialização do save, que é assunto de outra tarefa.
+- A grade e o portão não têm animação de cadeado/corrente: a grade nunca abre e
+  o portão simplesmente gira quando destranca.

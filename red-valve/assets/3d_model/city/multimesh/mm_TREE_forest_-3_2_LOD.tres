@@ -1,0 +1,9 @@
+[gd_resource type="MultiMesh" format=3 uid="uid://cqkvcfgo2xixx"]
+
+[ext_resource type="ArrayMesh" uid="uid://c8ptuw5vbincr" path="res://assets/3d_model/city/multimesh/mesh_TREE_forest_LOD.tres" id="1_mss6r"]
+
+[resource]
+transform_format = 1
+instance_count = 2
+mesh = ExtResource("1_mss6r")
+buffer = PackedFloat32Array(0.8581554, 0, 0.49362865, -3.130005, 0, 0.99, 0, 0.3499999, -0.49362865, 0, 0.8581554, -7.799988, -0.75101554, 0, 0.8840676, 3.130005, 0, 1.16, 0, -0.3499999, -0.8840676, 0, -0.75101554, 7.8000183)

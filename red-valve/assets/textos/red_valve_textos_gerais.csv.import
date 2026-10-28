@@ -1,0 +1,19 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://c06k30q5atgt8"
+
+[deps]
+
+files=["res://assets/textos/red_valve_textos_gerais.en.translation", "res://assets/textos/red_valve_textos_gerais.pt.translation"]
+
+source_file="res://assets/textos/red_valve_textos_gerais.csv"
+dest_files=["res://assets/textos/red_valve_textos_gerais.en.translation", "res://assets/textos/red_valve_textos_gerais.pt.translation"]
+
+[params]
+
+compress=1
+delimiter=0
+unescape_keys=false
+unescape_translations=true

@@ -1,0 +1,21 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/stages/igreja/municao_igreja.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://assets/3d_model/player/the_negotiator_V1/cartridge/scene.gltf" id="2_caixa"]
+
+[sub_resource type="BoxShape3D" id="area"]
+size = Vector3(1.8, 2.0, 1.8)
+
+[node name="municao_igreja" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="modelo" parent="." instance=ExtResource("2_caixa")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.036, 0)
+
+[node name="area" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
+collision_layer = 0
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="area"]
+shape = SubResource("area")

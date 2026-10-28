@@ -1,0 +1,38 @@
+[gd_resource type="ArrayMesh" format=4 uid="uid://chhj1h2nvlfti"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wo2xi"]
+resource_name = "MI_canopy_urban"
+cull_mode = 2
+albedo_color = Color(0.33333334, 0.37647057, 0.227451, 1)
+roughness = 0.9
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_31il0"]
+_surfaces = [{
+"aabb": AABB(-0.68766445, 0, -0.80839807, 1.5376644, 1.25, 1.6167961),
+"format": 34896613377,
+"index_count": 24,
+"index_data": PackedByteArray("AAABAAIAAgABAAMABAABAAAABQACAAMAAwABAAUABQABAAQABQAAAAIAAAAFAAQA"),
+"name": "MI_canopy_urban",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 6,
+"vertex_data": PackedByteArray("//8AAP9/AAB8cv///38AADaeAAAAAAAAAAAAAOQwAAA2ngAA//8AAAAAAAAazwAA")
+}]
+blend_shape_mode = 0
+
+[resource]
+resource_name = "city_vegkit_BUSH_LOD"
+_surfaces = [{
+"aabb": AABB(-0.68766445, 0, -0.80839807, 1.5376644, 1.25, 1.6167961),
+"format": 34896613383,
+"index_count": 24,
+"index_data": PackedByteArray("AAABAAIAAwAEAAUABgAHAAgACQAKAAsADAANAA4ADwAQABEAEAAPABIAEAASABMA"),
+"material": SubResource("StandardMaterial3D_wo2xi"),
+"name": "MI_canopy_urban",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 20,
+"vertex_data": PackedByteArray("//8AAP9/Z/N8cv///39n8zaeAAAAAGfzNp4AAAAAh/58cv///3+H/gAAAADkMIf+AAAAAOQwl8p8cv///3+XygAAAAAaz5fKAAAAABrP58B8cv///3/nwDaeAAD//+fANp4AAP///Pl8cv///3/8+f//AAD/f/z5//8AAP9///8AAAAAGs///zaeAAD/////Np4AAAAA//8AAAAA5DD//1bF4pNWxeKTVsXikyvASikrwEopK8BKKZd9UtOXfVLTl31S0/uKp6L7iqei+4qnorijF5S4oxeUuKMXlP9//z//f/8//3//P/9//z//f/8/")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_31il0")

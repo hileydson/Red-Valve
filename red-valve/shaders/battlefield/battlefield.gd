@@ -1,0 +1,975 @@
+extends Node
+@onready var animation_intro: AnimationPlayer = $intro_camera/animation_intro
+@onready var camera_intro_2: Camera3D = $intro_camera/camera_intro_2
+
+
+var player: CharacterBody3D
+var enemies: Array = []
+var camera_intro: Camera3D
+@export var hurricane_particle_size_multiplier: float = 1.0
+@export var fire_gargoyle_count: int = 2
+
+var look_at_target: Node3D
+var look_at_offset: Vector3 = Vector3.ZERO
+var final_sequence_started: bool = false
+var hurricane_node: Node3D
+
+# Estado da câmera da intro pós-prólogo (segue o alvo com atraso, ver _process)
+var _rise_cam: Camera3D
+var _rise_cam_anchor: Node3D
+var _rise_look_at: Vector3 = Vector3.ZERO
+var _rise_cam_time: float = 0.0
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	_play_entry_blur()
+	_spawn_arena_hurricane()
+	_spawn_fire_gargoyles()
+	# A arena devolve a ARMA. Pra chegar aqui o jogador teve de trocar pro
+	# amuleto (e' ele que leva os inimigos pra ca'), entao ele chegava
+	# desarmado justo onde a arma serve. A volta desfaz isto sozinha.
+	SaveManager.entrar_na_arena()
+	SaveManager.save_game()
+	SaveManager.iron_rusks_pending = 0
+	GlobalEvents.set_high_nevoa()
+	GlobalEvents.is_maycow_normal = false
+	
+	var enemies_node = get_node_or_null("enemies")
+	if not enemies_node:
+		enemies_node = Node3D.new()
+		enemies_node.name = "enemies"
+		add_child(enemies_node)
+		
+	# Limpa inimigos do editor sem apagar os marcadores (Marker3D)
+	for child in enemies_node.get_children():
+		if child.is_in_group("enemies") or child.has_method("take_damage") \
+			or _resolve_enemy_body(child) != null:
+			child.queue_free()
+
+	if not SaveManager.prolog_finished:
+		# Prólogo: Spawna o TheCobaltHusker no marker "enemy_2"
+		var marker = enemies_node.get_node_or_null("enemy_2")
+		if marker:
+			var enemy_scene = load("res://scenes/enemies/the_cobalt_husker.tscn")
+			if enemy_scene:
+				var enemy_inst = enemy_scene.instantiate()
+				enemies_node.add_child(enemy_inst)
+				enemy_inst.global_position = marker.global_position
+				enemy_inst.global_rotation = marker.global_rotation
+				# ATENÇÃO: a raiz de the_cobalt_husker.tscn é um Node3D "casca"
+				# SEM script — quem tem vida/`dead`/`died` é o filho "enemy".
+				# Colocar a casca no grupo fazia a arena tratá-la como o inimigo
+				# e, como casca nenhuma tem `dead`, a checagem de "todos mortos"
+				# passava assim que a cutscene acabava (câmera lenta na hora).
+				var body := _resolve_enemy_body(enemy_inst)
+				if body and not body.is_in_group("enemies"):
+					body.add_to_group("enemies")
+	else:
+		# Pós-Prólogo: Transporta os inimigos capturados pelo amuleto
+		if GlobalEvents.amulet_captured_enemies.size() > 0:
+			for e in GlobalEvents.amulet_captured_enemies:
+				if is_instance_valid(e):
+					if e.get_parent():
+						e.get_parent().remove_child(e)
+					enemies_node.add_child(e)
+					
+					var angle = randf() * PI * 2
+					var radius = randf_range(2.0, 8.0) # Distribui aleatoriamente na arena
+					e.global_position = Vector3(cos(angle) * radius, 0.5, sin(angle) * radius)
+					
+					if not e.is_in_group("enemies"):
+						e.add_to_group("enemies")
+						
+			GlobalEvents.amulet_captured_enemies.clear()
+
+	player = get_tree().get_first_node_in_group("player")
+
+	# Escopado aos filhos de "enemies" (em vez de get_tree().get_nodes_in_group,
+	# que busca na árvore INTEIRA): a cena de origem (ex: stage_1) fica pausada
+	# mas ainda dentro da árvore enquanto a batalha rola, e seus inimigos
+	# continuam no grupo "enemies" mesmo parados — o que fazia a checagem de
+	# "todos mortos" nunca bater, já que eles nunca morrem.
+	# Resolve para o CORPO do inimigo (o nó com o script), e não para uma
+	# eventual raiz-casca do .tscn, senão `dead`/`died` nunca são encontrados.
+	enemies = []
+	for c in enemies_node.get_children():
+		if not is_instance_valid(c):
+			continue
+		var body := _resolve_enemy_body(c)
+		if body and not enemies.has(body):
+			enemies.append(body)
+
+	if player:
+		# Trava a cena para modo cutscene
+		for enemy in enemies:
+			if is_instance_valid(enemy):
+				# Reage no exato instante em que o inimigo morre (em vez de esperar o
+				# próximo frame do polling em _process), pra câmera lenta e afins já
+				# começarem ANTES da animação/som de morte do último inimigo tocar.
+				if enemy.has_signal("died") and not enemy.died.is_connected(_on_enemy_died):
+					enemy.died.connect(_on_enemy_died)
+				var enemy_script = _get_enemy_script(enemy)
+				if enemy_script:
+					# Atualiza a referência do player para que os inimigos teleportados não persigam o player da cena pausada
+					if "player" in enemy_script:
+						enemy_script.player = player
+					enemy_script.cutscene_mode = true
+		GlobalEvents.in_cutscene = true
+
+		# Esconde as mãos em primeira pessoa (hand_with_magic e hand_with_pistol) durante a cutscene de intro:
+		# como são filhas da Camera3D do player, continuam visíveis no mundo mesmo com outra
+		# câmera (a de intro) ativa, flutuando em cena. Restaura o estado original no final.
+		var hand_magic_was_visible = false
+		var hand_pistol_was_visible = false
+		if "hand_with_magic" in player and is_instance_valid(player.hand_with_magic):
+			hand_magic_was_visible = player.hand_with_magic.visible
+			player.hand_with_magic.visible = false
+		if "hand_with_pistol" in player and is_instance_valid(player.hand_with_pistol):
+			hand_pistol_was_visible = player.hand_with_pistol.visible
+			player.hand_with_pistol.visible = false
+
+		var is_first_time = not SaveManager.prolog_finished
+
+		if is_first_time:
+			# Prólogo: mantém a cutscene original de câmera
+			var anim = animation_intro.get_animation("intro_first_time")
+			for i in range(anim.get_track_count()):
+				if str(anim.track_get_path(i)).ends_with(":current"):
+					var key_idx = anim.track_get_key_count(i) - 1
+					if key_idx >= 0 and anim.track_get_key_value(i, key_idx) == false:
+						anim.track_set_key_value(i, key_idx, true)
+
+			camera_intro_2.make_current()
+			animation_intro.play("intro_first_time")
+			SaveManager.battlefield_1_intro_played = true
+			SaveManager.save_game()
+			await animation_intro.animation_finished
+		else:
+			# Pós-prólogo: player e inimigos emergem do chão da arena
+			await _play_rise_from_ground_intro()
+
+		# Restaura os controles e física APÓS o fim de toda a cutscene de entrada
+		if is_instance_valid(player):
+			if "camera_third_person" in player and is_instance_valid(player.camera_third_person):
+				player.camera_third_person.make_current()
+			if "hand_with_magic" in player and is_instance_valid(player.hand_with_magic):
+				player.hand_with_magic.visible = hand_magic_was_visible
+			if "hand_with_pistol" in player and is_instance_valid(player.hand_with_pistol):
+				player.hand_with_pistol.visible = hand_pistol_was_visible
+				
+		if is_instance_valid(player):
+			player.process_mode = Node.PROCESS_MODE_INHERIT
+
+		for enemy in enemies:
+			if is_instance_valid(enemy):
+				enemy.process_mode = Node.PROCESS_MODE_INHERIT
+				var enemy_script = _get_enemy_script(enemy)
+				if enemy_script:
+					enemy_script.cutscene_mode = false
+				
+		GlobalEvents.in_cutscene = false
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	# Mantém as mãos de primeira pessoa invisíveis durante qualquer cutscene na arena
+	if GlobalEvents.in_cutscene:
+		if is_instance_valid(player):
+			if player.get("hand_with_magic") and is_instance_valid(player.hand_with_magic):
+				player.hand_with_magic.visible = false
+			if player.get("hand_with_pistol") and is_instance_valid(player.hand_with_pistol):
+				player.hand_with_pistol.visible = false
+
+	if is_instance_valid(camera_intro):
+		camera_intro.make_current()
+		
+	if look_at_target and is_instance_valid(camera_intro) and camera_intro.current:
+		camera_intro.look_at(look_at_target.global_position + look_at_offset, Vector3.UP)
+
+	_update_rise_camera(delta)
+		
+	if is_instance_valid(hurricane_node):
+		# Gira o furacão constantemente em torno do eixo Y
+		hurricane_node.rotate_y(deg_to_rad(30.0) * delta)
+		
+				
+	# --- VERIFICAÇÃO DO ÚLTIMO INIMIGO (fallback; o caminho normal é o sinal "died") ---
+	_check_all_dead()
+
+func _on_enemy_died() -> void:
+	_check_all_dead()
+
+func _check_all_dead() -> void:
+	if final_sequence_started or GlobalEvents.in_cutscene or enemies.is_empty():
+		return
+	for enemy in enemies:
+		if is_instance_valid(enemy) and "dead" in enemy and not enemy.dead:
+			return
+	_start_final_sequence()
+
+func _start_final_sequence() -> void:
+	final_sequence_started = true
+	GlobalEvents.in_cutscene = true
+
+	# `in_cutscene` acima mata todo o input e so' volta la' embaixo, depois de
+	# uma espera longa E da troca de cena. Esta corrotina mora no no' da arena,
+	# que e' o no' que a propria troca destroi — se ela morrer no meio, o jogo
+	# fica sem input com a camera parada aqui. O watchdog (autoload, sobrevive a'
+	# troca) desfaz as travas se isso acontecer.
+	GlobalEvents.arena_retorno_pendente = true
+	GlobalUtils.watchdog_volta_da_arena(14.0)
+
+	if is_instance_valid(player):
+		player.invulnerable = true
+		# As maos e a arma ficam ate' a troca: e' so' quando ele volta a ser o
+		# Maycow normal que elas somem (antes sumiam no quadro do ultimo golpe).
+		if "maos_na_vitoria" in player:
+			player.maos_na_vitoria = true
+	
+	# 1. Ultra Câmera Lenta
+	Engine.time_scale = 0.15
+	AudioServer.set_playback_speed_scale(0.15) # Mantém o áudio (growl_death, drop_dead) em sincronia com o slowmo visual
+
+	# 2. Esconde Interface
+	var ui = get_tree().root.get_node_or_null("GlobalEnemyHealthUI")
+	if ui: ui.queue_free()
+
+	# 3. Faz o Fade Out super lento (ignorando time_scale)
+	var fade = get_node_or_null("fade")
+	if fade:
+		fade.modulate.a = 0.0
+		var tween = create_tween().set_ignore_time_scale(true)
+		tween.tween_property(fade, "modulate:a", 1.0, 3.0) # fade até o preto
+
+	# 4. Espera a animação terminar em tempo real.
+	# A 0.15x, a animação "dead" do inimigo precisa de vários segundos REAIS pra
+	# completar a queda; com a janela curta demais, o time_scale voltava a 1.0 no
+	# meio da animação e ela "acelerava" de repente. Estes 5 s dão a queda inteira
+	# e ainda deixam ~2 s de tela preta antes da troca — se quiser mais curto,
+	# baixe os dois números juntos (o fade tem de terminar antes da espera).
+	await get_tree().create_timer(5.0, true, false, true).timeout
+
+	# 5. Restaura e vai para a Cutscene
+	Engine.time_scale = 1.0
+	AudioServer.set_playback_speed_scale(1.0)
+	GlobalEvents.in_cutscene = false
+	if not SaveManager.prolog_finished:
+		GlobalEvents.arena_retorno_pendente = false
+		get_tree().change_scene_to_file("res://scenes/stages/prolog/fight_with_power/cutscene_fight_with_power.tscn")
+	else:
+		var volta: Node = GlobalEvents.paused_scene_for_amulet
+		if is_instance_valid(volta):
+			var tree := get_tree()
+			var arena := tree.current_scene
+
+			# A stage_1 nunca saiu da árvore (ver player_amulet.gd): ficou só
+			# escondida e sem processar. Aqui ela é reativada inteira, num quadro
+			# só — isso evita o bug do chão (Terrain3D) perdendo a textura ao ser
+			# readicionado, e mantém a troca instantânea.
+			#
+			# `is_maycow_normal` volta ANTES de a stage_1 processar: o Maycow de lá
+			# é o normal, e se ele acordasse com a flag do combate rodaria o ramo do
+			# parasita, que mexe em `$maycow_lopes` — nó liberado no _ready dele.
+			GlobalEvents.is_maycow_normal = GlobalEvents.previous_is_maycow_normal
+
+			# ORDEM IMPORTA: revive a stage_1 ANTES de mexer na arena. Antes era o
+			# contrário (remove_child na arena primeiro), e um `remove_child()`
+			# chamado daqui pode falhar com "Parent node is busy adding/removing
+			# children" — quando falhava, a arena ficava por cima e o jogador ficava
+			# preso nela.
+			volta.process_mode = Node.PROCESS_MODE_INHERIT
+			volta.visible = true
+			GlobalUtils.set_canvas_layers_hidden(volta, false)
+			tree.current_scene = volta
+
+			# Só agora a arena sai de cena. `queue_free()` já tira da árvore ao
+			# liberar, e em diferido — sem o remove_child síncrono que podia falhar
+			# no meio de um callback.
+			if is_instance_valid(arena) and arena != volta:
+				arena.queue_free()
+
+			# Toca o efeito de retorno na câmera da cena restaurada
+			var p = _find_player_recursive(volta)
+			if p:
+				if not p.is_in_group("player"):
+					p.add_to_group("player")
+				if p.has_method("play_return_from_arena_effect"):
+					p.play_return_from_arena_effect()
+
+			# (o estado normal/combat do jogador já foi restaurado lá em cima,
+			# antes de qualquer nó da stage_1 voltar a processar)
+			GlobalEvents.paused_scene_for_amulet = null
+			GlobalEvents.arena_retorno_pendente = false
+		else:
+			# Caminho de emergência (a cena pausada sumiu). Era
+			# "res://scenes/stages/stage_1.tscn", que NÃO existe — o arquivo
+			# mora em stage_1/stage_1.tscn. Com o caminho errado a troca falhava
+			# e o jogador ficava presos na arena, sem saída.
+			push_warning("Volta da arena: cena pausada invalida, recarregando a stage_1 do zero.")
+			GlobalEvents.arena_retorno_pendente = false
+			get_tree().change_scene_to_file("res://scenes/stages/stage_1/stage_1.tscn")
+
+func _find_player_recursive(node: Node) -> Node:
+	if node.is_in_group("player") or node.name.to_lower() == "player":
+		return node
+	for child in node.get_children():
+		var found = _find_player_recursive(child)
+		if found: return found
+	return null
+
+## Devolve o nó que de fato guarda o estado do inimigo (`dead`, sinal `died`).
+## Algumas cenas de inimigo (ex: the_cobalt_husker.tscn) têm uma raiz Node3D
+## sem script, com o CharacterBody3D do inimigo como filho.
+func _resolve_enemy_body(node: Node) -> Node:
+	if not is_instance_valid(node):
+		return null
+	if "dead" in node and node.has_signal("died"):
+		return node
+	for child in node.get_children():
+		var found := _resolve_enemy_body(child)
+		if found:
+			return found
+	return null
+
+
+func _get_enemy_script(enemy: Node) -> Node:
+	if "cutscene_mode" in enemy:
+		return enemy
+	for child in enemy.get_children():
+		if "cutscene_mode" in child:
+			return child
+	return null
+
+
+func iniciar_cutscene() -> void:
+	if not player or not camera_intro: return
+	
+	camera_intro.make_current()
+	
+	var anim_player = get_node_or_null("intro_camera/animation_intro")
+	if anim_player:
+		if not SaveManager.battlefield_1_intro_played:
+			anim_player.play("intro_first_time")
+			SaveManager.battlefield_1_intro_played = true
+			SaveManager.save_game()
+		else:
+			anim_player.play("intro_capitulo_1")
+			
+		await anim_player.animation_finished
+	else:
+		# Fallback se não encontrar a animação
+		await get_tree().create_timer(1.0).timeout
+	
+	# Encerramento: Restaura física e controles
+	if is_instance_valid(player):
+		if "camera_third_person" in player and is_instance_valid(player.camera_third_person):
+			player.camera_third_person.make_current()
+			
+	for enemy in enemies:
+		if is_instance_valid(enemy):
+			enemy.process_mode = Node.PROCESS_MODE_INHERIT
+			var enemy_script = _get_enemy_script(enemy)
+			if enemy_script:
+				enemy_script.cutscene_mode = false
+			
+	GlobalEvents.in_cutscene = false
+	# Opcional: deletar a câmera de intro apenas se nós a criamos por código
+	if is_instance_valid(camera_intro) and not get_node_or_null("intro_camera/camera_intro_4"):
+		camera_intro.queue_free()
+
+
+func _on_animation_intro_animation_finished(anim_name: StringName) -> void:
+	# O controle de câmera e física agora é feito no final da corrotina _ready()
+	# Isso garante que a cutscene de entrada rode por completo antes do Player assumir.
+	pass
+
+func _spawn_arena_hurricane() -> void:
+	hurricane_node = Node3D.new()
+	hurricane_node.name = "ArenaHurricane"
+	add_child.call_deferred(hurricane_node)
+	hurricane_node.global_position = Vector3(0, -1.0, 0) # Pouco abaixo do chão
+	
+	# Curva de tamanho: começa grande e afina/encolhe lá no alto
+	var scale_curve = Curve.new()
+	scale_curve.add_point(Vector2(0.0, 1.0))
+	scale_curve.add_point(Vector2(1.0, 0.1))
+	
+	# Sorteador de Tons de Vermelho iniciais (cada partícula nasce com uma cor dessas)
+	var initial_color_grad = Gradient.new()
+	initial_color_grad.offsets = [0.0, 0.3, 0.6, 1.0]
+	initial_color_grad.colors = [
+		Color(1.0, 0.0, 0.0, 1.0),   # Vermelho puro
+		Color(1.0, 0.2, 0.0, 1.0),   # Laranja avermelhado
+		Color(0.8, 0.0, 0.1, 1.0),   # Carmim brilhante
+		Color(0.5, 0.0, 0.0, 1.0)    # Vermelho escuro/Vinho
+	]
+	
+	# Curva de Alpha (Vida da partícula: nasce invisível, brilha, e morre invisível)
+	var alpha_grad = Gradient.new()
+	alpha_grad.offsets = [0.0, 0.2, 0.8, 1.0]
+	alpha_grad.colors = [
+		Color(1.0, 1.0, 1.0, 0.0),
+		Color(1.0, 1.0, 1.0, 1.0),
+		Color(1.0, 1.0, 1.0, 1.0),
+		Color(1.0, 1.0, 1.0, 0.0)
+	]
+	
+	var particles = CPUParticles3D.new()
+	particles.amount = 400
+	particles.lifetime = 6.0
+	particles.local_coords = true # Girar junto com o Node pai!
+	
+	particles.emission_shape = CPUParticles3D.EMISSION_SHAPE_RING
+	particles.emission_ring_radius = 16.0 # Fora da arena
+	particles.emission_ring_inner_radius = 13.0
+	particles.emission_ring_height = 2.0
+	particles.emission_ring_axis = Vector3.UP
+	
+	particles.direction = Vector3.UP
+	particles.spread = 15.0
+	particles.gravity = Vector3(0, 1.5, 0)
+	particles.initial_velocity_min = 2.0
+	particles.initial_velocity_max = 6.0
+	
+	particles.scale_amount_min = 0.5 * hurricane_particle_size_multiplier
+	particles.scale_amount_max = 1.5 * hurricane_particle_size_multiplier
+	particles.scale_amount_curve = scale_curve
+	
+	particles.color_initial_ramp = initial_color_grad
+	particles.color_ramp = alpha_grad
+	
+	var mat = StandardMaterial3D.new()
+	mat.albedo_color = Color(1, 1, 1, 1)
+	mat.emission_enabled = true
+	mat.emission = Color(1.0, 0.1, 0.0)
+	mat.emission_energy_multiplier = 4.0
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	
+	var mesh = SphereMesh.new()
+	mesh.radius = 0.2
+	mesh.height = 0.4
+	mesh.material = mat
+	particles.mesh = mesh
+	
+	hurricane_node.add_child(particles)
+	
+	# Fumaça do furacão
+	var smoke = CPUParticles3D.new()
+	smoke.amount = 250
+	smoke.lifetime = 8.0
+	smoke.local_coords = true
+	smoke.emission_shape = CPUParticles3D.EMISSION_SHAPE_RING
+	smoke.emission_ring_radius = 15.0
+	smoke.emission_ring_inner_radius = 12.0
+	smoke.emission_ring_height = 4.0
+	smoke.emission_ring_axis = Vector3.UP
+	
+	smoke.direction = Vector3.UP
+	smoke.spread = 20.0
+	smoke.gravity = Vector3(0, 1.2, 0)
+	smoke.initial_velocity_min = 1.0
+	smoke.initial_velocity_max = 4.0
+	
+	smoke.scale_amount_min = 3.0 * hurricane_particle_size_multiplier
+	smoke.scale_amount_max = 6.0 * hurricane_particle_size_multiplier
+	smoke.scale_amount_curve = scale_curve
+	
+	# Fumaça também ganha variação de vermelhos e o mesmo comportamento de alpha
+	smoke.color_initial_ramp = initial_color_grad
+	smoke.color_ramp = alpha_grad
+	
+	var smoke_mat = StandardMaterial3D.new()
+	smoke_mat.albedo_color = Color(1.0, 1.0, 1.0, 0.4) # Fumaça mais translúcida
+	var tex = load("res://assets/images/vfx/smoke.png")
+	if tex:
+		smoke_mat.albedo_texture = tex
+	smoke_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	smoke_mat.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+	smoke_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	
+	# Novo Shape da fumaça: Usando SphereMesh de baixa resolução (fumaça mais volumétrica)
+	var smoke_mesh = SphereMesh.new()
+	smoke_mesh.radius = 1.0
+	smoke_mesh.height = 2.0
+	smoke_mesh.radial_segments = 8
+	smoke_mesh.rings = 6
+	smoke_mesh.material = smoke_mat
+	smoke.mesh = smoke_mesh
+	
+	hurricane_node.add_child(smoke)
+
+
+
+# ============================================================
+# GÁRGULAS DE FOGO
+# ============================================================
+
+const FIRE_GARGOYLE_SCENE := preload("res://scenes/effects/fire_gargoyle.tscn")
+
+# Nomes dos cantos da arena, em ordem, para o sorteio de pouso.
+const ARENA_CORNER_NAMES := [
+	"arena_corner_1", "arena_corner_2", "arena_corner_3", "arena_corner_4",
+]
+
+# Ponto de pouso de cada canto, em espaço LOCAL do canto (antes da escala 9x).
+# Obtido varrendo o .glb num heightmap: a célula MAIS ALTA que ainda tem
+# superfície sólida na vizinhança 3x3 (o vértice mais alto puro caía no vão
+# entre duas torres em três dos quatro cantos, e a gárgula pousava no ar).
+# Como são coordenadas locais, seguem válidas se o canto for movido ou girado.
+const ARENA_CORNER_PEAKS := {
+	"arena_corner_1": Vector3(0.357, 0.408, -0.537),
+	"arena_corner_2": Vector3(0.645, 0.469, 0.049),
+	"arena_corner_3": Vector3(-0.892, 0.468, 0.390),
+	"arena_corner_4": Vector3(-0.358, 0.421, -0.903),
+}
+
+
+func _spawn_fire_gargoyles() -> void:
+	if fire_gargoyle_count <= 0:
+		return
+
+	var perches: Array[Node3D] = []
+	for corner_name in ARENA_CORNER_NAMES:
+		var corner := get_node_or_null(NodePath(corner_name))
+		if corner is Node3D:
+			perches.append(_ensure_perch_marker(corner as Node3D))
+	if perches.size() < 2:
+		return
+
+	var nest := Node3D.new()
+	nest.name = "FireGargoyles"
+	add_child(nest)
+
+	# Distribui as gárgulas em cantos bem separados (0 e 2 em quatro cantos).
+	var step: int = max(1, perches.size() / max(fire_gargoyle_count, 1))
+	for i in range(fire_gargoyle_count):
+		var g = FIRE_GARGOYLE_SCENE.instantiate()
+		nest.add_child(g)
+		g.setup(perches, (i * step) % perches.size())
+
+
+## Cria (uma única vez) o Marker3D do topo da rocha usado como poleiro.
+func _ensure_perch_marker(corner: Node3D) -> Node3D:
+	var existing := corner.get_node_or_null("gargoyle_perch")
+	if existing is Node3D:
+		return existing as Node3D
+
+	var marker := Marker3D.new()
+	marker.name = "gargoyle_perch"
+	corner.add_child(marker)
+	if ARENA_CORNER_PEAKS.has(corner.name):
+		marker.position = ARENA_CORNER_PEAKS[corner.name]
+	else:
+		# Sem valor tabelado: usa o topo do bounding box do próprio modelo.
+		var aabb := _visual_aabb(corner)
+		marker.position = Vector3(aabb.get_center().x, aabb.end.y, aabb.get_center().z)
+	return marker
+
+
+## AABB local do canto, unindo a de todos os MeshInstance3D descendentes.
+func _visual_aabb(root: Node3D) -> AABB:
+	var result := AABB()
+	var first := true
+	var stack: Array[Node] = [root]
+	while not stack.is_empty():
+		var node: Node = stack.pop_back()
+		for c in node.get_children():
+			stack.append(c)
+		var mi := node as MeshInstance3D
+		if mi != null and mi.mesh != null:
+			var box: AABB = mi.mesh.get_aabb()
+			box = root.global_transform.affine_inverse() * mi.global_transform * box
+			if first:
+				result = box
+				first = false
+			else:
+				result = result.merge(box)
+	return result
+
+# ============================================================
+#  INTRO PÓS-PRÓLOGO: todos emergem de baixo da arena
+# ============================================================
+const RISE_DEPTH: float = 12.0        # quanto abaixo da arena todos começam
+const RISE_TIME: float = 1.35         # duração da subida
+const RISE_SETTLE: float = 0.5        # respiro depois de chegar em cima
+const ROCK_COUNT: int = 80            # pedaços de pedra que sobem junto
+const ROCK_LIFETIME: float = 15.0     # tempo que as pedras ficam na arena
+const RISE_CAM_LAG: float = 4.2       # quanto MENOR, mais a câmera atrasa em relação ao alvo
+const RISE_CAM_AIM_LAG: float = 5.5   # atraso da mira (um pouco mais rápido que a posição)
+const SHADER_PEDRA := "res://shaders/effects/ember_rock.gdshader"
+
+func _play_rise_from_ground_intro() -> void:
+	# Guarda a posição final de todo mundo e joga todos pra debaixo da arena.
+	var risers: Array = []
+	if is_instance_valid(player):
+		risers.append({"node": player, "pos": player.global_position})
+	for e in enemies:
+		if is_instance_valid(e):
+			risers.append({"node": e, "pos": e.global_position})
+
+	for r in risers:
+		var n: Node3D = r["node"]
+		# Congela a física: sem isso o player/inimigo cairia ou atravessaria o chão
+		# enquanto o tween controla a posição na mão.
+		n.process_mode = Node.PROCESS_MODE_DISABLED
+		n.global_position = r["pos"] - Vector3(0, RISE_DEPTH, 0)
+
+	var player_final: Vector3 = risers[0]["pos"] if risers.size() > 0 else Vector3(0, 1.0, 0)
+	var cam_final: Vector3 = player_final + Vector3(0, 2.6, 5.5)
+
+	# A subida da câmera é feita num "anchor" invisível; a câmera persegue esse
+	# anchor com amortecimento (ver _update_rise_camera), então ela chega atrasada,
+	# passa um pouco do ponto e se acomoda — em vez de andar colada no trilho.
+	var anchor := Node3D.new()
+	add_child(anchor)
+	anchor.global_position = cam_final - Vector3(0, RISE_DEPTH, 0)
+
+	var cam := Camera3D.new()
+	add_child(cam)
+	cam.global_position = anchor.global_position - Vector3(0, 1.5, 0)
+	cam.fov = 82.0
+
+	# Motion blur durante a subida (DOF distante, some no final).
+	var blur := CameraAttributesPractical.new()
+	blur.dof_blur_far_enabled = true
+	blur.dof_blur_far_distance = 4.0
+	blur.dof_blur_far_transition = 8.0
+	blur.dof_blur_amount = 0.12
+	cam.attributes = blur
+
+	_rise_cam = cam
+	_rise_cam_anchor = anchor
+	_rise_cam_time = 0.0
+	_rise_look_at = player_final + Vector3(0, 1.0, 0) - Vector3(0, RISE_DEPTH, 0)
+	# _process() mantém esta câmera ativa; a mira/posição são suavizadas à parte.
+	camera_intro = cam
+
+	# Sobe todo mundo (leve overshoot pra dar o "estouro" ao furar o chão).
+	var tween := create_tween().set_parallel(true)
+	for r in risers:
+		var n: Node3D = r["node"]
+		tween.tween_property(n, "global_position", r["pos"], RISE_TIME) \
+			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween.tween_property(anchor, "global_position", cam_final, RISE_TIME) \
+		.set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
+	tween.tween_property(cam, "fov", 70.0, RISE_TIME + 0.3) \
+		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+	# No instante em que atravessamos o chão: pedras, poeira e tremor.
+	var punch_delay: float = RISE_TIME * 0.55
+	get_tree().create_timer(punch_delay).timeout.connect(func():
+		for r in risers:
+			var n: Node3D = r["node"]
+			if is_instance_valid(n):
+				_spawn_ground_burst(Vector3(n.global_position.x, 0.0, n.global_position.z))
+		GlobalUtils.vibrate_controller(Input, 0.8, 0.8, 0.5)
+		if is_instance_valid(cam):
+			var shake := create_tween()
+			shake.tween_property(cam, "v_offset", 0.25, 0.05)
+			shake.tween_property(cam, "v_offset", -0.18, 0.05)
+			shake.tween_property(cam, "v_offset", 0.09, 0.05)
+			shake.tween_property(cam, "v_offset", 0.0, 0.05)
+	)
+
+	await tween.finished
+
+	# Tira o blur enquanto a câmera termina de se acomodar no alvo.
+	var blur_out := create_tween()
+	blur_out.tween_property(blur, "dof_blur_amount", 0.0, RISE_SETTLE)
+
+	await get_tree().create_timer(RISE_SETTLE).timeout
+
+	# Devolve a câmera pro player (o _process para de forçar a câmera de intro).
+	camera_intro = null
+	_rise_cam = null
+	if is_instance_valid(anchor):
+		anchor.queue_free()
+	if is_instance_valid(cam):
+		cam.attributes = null
+		cam.queue_free()
+	_rise_cam_anchor = null
+
+
+func _update_rise_camera(delta: float) -> void:
+	if not is_instance_valid(_rise_cam) or not is_instance_valid(_rise_cam_anchor):
+		return
+
+	_rise_cam_time += delta
+
+	# Balanço mínimo de câmera na mão, só pra tirar o aspecto de trilho.
+	var sway := Vector3(
+		sin(_rise_cam_time * 1.7) * 0.07 + sin(_rise_cam_time * 0.61) * 0.05,
+		sin(_rise_cam_time * 2.3 + 1.3) * 0.05,
+		sin(_rise_cam_time * 1.1 + 0.7) * 0.04
+	)
+
+	# Suavização exponencial: independe do framerate e nunca gruda no alvo.
+	var f: float = 1.0 - exp(-delta * RISE_CAM_LAG)
+	_rise_cam.global_position = _rise_cam.global_position.lerp(
+		_rise_cam_anchor.global_position + sway, f
+	)
+
+	var aim_goal: Vector3 = _rise_look_at
+	if is_instance_valid(player):
+		aim_goal = player.global_position + Vector3(0, 1.0, 0)
+	var af: float = 1.0 - exp(-delta * RISE_CAM_AIM_LAG)
+	_rise_look_at = _rise_look_at.lerp(aim_goal, af)
+
+	if _rise_cam.global_position.distance_to(_rise_look_at) > 0.1:
+		_rise_cam.look_at(_rise_look_at, Vector3.UP)
+
+
+func _spawn_ground_burst(pos: Vector3, quantidade: int = -1) -> void:
+	# Poeira/terra saindo do ponto onde alguém furou o chão
+	var dust := CPUParticles3D.new()
+	add_child(dust)
+	dust.global_position = pos
+	dust.emitting = true
+	dust.one_shot = true
+	dust.amount = 40
+	dust.lifetime = 1.4
+	dust.explosiveness = 0.9
+	dust.spread = 55.0
+	dust.direction = Vector3.UP
+	dust.initial_velocity_min = 3.0
+	dust.initial_velocity_max = 9.0
+	dust.gravity = Vector3(0, -3.0, 0)
+	dust.scale_amount_min = 1.5
+	dust.scale_amount_max = 3.5
+	var dust_mat := StandardMaterial3D.new()
+	var tex = load("res://assets/images/vfx/smoke.png")
+	if tex:
+		dust_mat.albedo_texture = tex
+	dust_mat.albedo_color = Color(0.42, 0.31, 0.26, 0.85)
+	dust_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	dust_mat.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+	dust_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	var dust_mesh := QuadMesh.new()
+	dust_mesh.size = Vector2(2.5, 2.5)
+	dust_mesh.material = dust_mat
+	dust.mesh = dust_mesh
+	get_tree().create_timer(3.0).timeout.connect(func():
+		if is_instance_valid(dust):
+			dust.queue_free()
+	)
+
+	# Pedaços de pedra subindo junto e quicando na arena
+	var n := quantidade
+	if n < 0:
+		n = int(round(float(ROCK_COUNT) / max(1.0, float(enemies.size() + 1))))
+	for i in range(max(10, n)):
+		_spawn_rock_chunk(pos)
+
+
+## Material das pedras da intro: o mesmo shader de carvão aceso do Shadow Seraph
+## (ver `shaders/effects/ember_rock.gdshader`). Um único material `static` serve
+## todas as pedras de todas as batalhas — são dezenas de malhas por intro e o
+## shader é caro de compilar.
+static var _mat_pedra: ShaderMaterial
+
+func _material_pedra() -> ShaderMaterial:
+	if _mat_pedra == null:
+		_mat_pedra = ShaderMaterial.new()
+		_mat_pedra.shader = load(SHADER_PEDRA)
+	return _mat_pedra
+
+
+func _spawn_rock_chunk(origin: Vector3) -> void:
+	var rock := RigidBody3D.new()
+	# Só colide com o chão da arena (layer 2): não empurra player nem inimigos.
+	rock.collision_layer = 0
+	# Ligada só depois que a pedra sai de baixo da arena (ver timer no fim).
+	rock.collision_mask = 0
+	rock.gravity_scale = 2.4
+	rock.continuous_cd = true
+	var phys := PhysicsMaterial.new()
+	phys.bounce = 0.45
+	phys.friction = 0.85
+	rock.physics_material_override = phys
+	add_child(rock)
+
+	var size := randf_range(0.14, 0.62)
+
+	# Formato angular de pedra (esfera de baixíssima resolução, achatada aleatoriamente)
+	var mesh := SphereMesh.new()
+	mesh.radius = size * 0.5
+	mesh.height = size
+	mesh.radial_segments = 5
+	mesh.rings = 3
+
+	var mi := MeshInstance3D.new()
+	mi.mesh = mesh
+	mi.scale = Vector3(randf_range(0.7, 1.4), randf_range(0.6, 1.2), randf_range(0.7, 1.4))
+	# Mesmo visual do Shadow Seraph: carvão aceso com veias de brasa.
+	mi.material_override = _material_pedra()
+	# Um material só pras ~80 pedras; o que varia por pedaço vai nestes dois
+	# instance uniforms (senão todas respiram e estouram no mesmo instante).
+	mi.set_instance_shader_parameter("semente", randf())
+	mi.set_instance_shader_parameter("raio", size * 0.5)
+	rock.add_child(mi)
+
+	var shape := CollisionShape3D.new()
+	var sphere := SphereShape3D.new()
+	sphere.radius = size * 0.45
+	shape.shape = sphere
+	rock.add_child(shape)
+
+	# Nasce escondida embaixo da arena e sobe furando o chão junto com o pessoal.
+	var ang := randf() * TAU
+	var rad := randf_range(0.3, 3.0)
+	rock.global_position = origin + Vector3(cos(ang) * rad, -1.4, sin(ang) * rad)
+	rock.rotation = Vector3(randf() * TAU, randf() * TAU, randf() * TAU)
+	rock.linear_velocity = Vector3(
+		cos(ang) * randf_range(1.0, 5.0),
+		randf_range(9.0, 17.0),
+		sin(ang) * randf_range(1.0, 5.0)
+	)
+	rock.angular_velocity = Vector3(
+		randf_range(-9.0, 9.0), randf_range(-9.0, 9.0), randf_range(-9.0, 9.0)
+	)
+
+	# A colisão com o chão só liga depois que a pedra já saiu de baixo dele,
+	# senão ela bateria na face inferior da arena e nunca apareceria.
+	get_tree().create_timer(0.3).timeout.connect(func():
+		if is_instance_valid(rock):
+			rock.collision_mask = 2
+	)
+
+	# Some suavemente depois de ficar um tempão quicando/parada na arena.
+	get_tree().create_timer(ROCK_LIFETIME).timeout.connect(func():
+		if not is_instance_valid(rock):
+			return
+		var t := create_tween()
+		t.tween_property(mi, "scale", Vector3.ZERO, 1.0).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
+		t.tween_callback(func():
+			if is_instance_valid(rock):
+				rock.queue_free()
+		)
+	)
+
+
+func _play_entry_blur() -> void:
+	# Continuação visual da transição do amuleto: a arena abre já borrada, como
+	# se o player ainda estivesse chegando em alta velocidade, e limpa rápido.
+	var shader := load("res://shaders/effects/warp_speed.gdshader")
+	if not shader: return
+
+	var layer := CanvasLayer.new()
+	layer.layer = 127
+	layer.process_mode = Node.PROCESS_MODE_ALWAYS
+	add_child(layer)
+
+	var rect := ColorRect.new()
+	rect.name = "ArenaEntryBlur"
+	rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	var mat := ShaderMaterial.new()
+	mat.shader = shader
+	mat.set_shader_parameter("streak", 0.9)
+	mat.set_shader_parameter("intensity", 1.0) # Streaks roxos em força máxima
+	mat.set_shader_parameter("warp", 0.7)
+	mat.set_shader_parameter("aberration", 0.014)
+	mat.set_shader_parameter("flash", 0.55) # Herda o estouro branco do fim da transição
+	mat.set_shader_parameter("time_offset", randf() * 10.0)
+	rect.material = mat
+	layer.add_child(rect)
+
+	# Ignora o time_scale porque a intro da arena pode rodar em câmera lenta.
+	# Tudo em paralelo com delay (nada de chain) pra cada parâmetro ter seu
+	# próprio ritmo: o borrão limpa rápido, as linhas roxas seguram mais.
+	var tw := create_tween().set_parallel(true).set_ignore_time_scale(true)
+	tw.tween_property(mat, "shader_parameter/flash", 0.0, 0.35).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tw.tween_property(mat, "shader_parameter/streak", 0.0, 0.8).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	tw.tween_property(mat, "shader_parameter/warp", 0.0, 0.8).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	tw.tween_property(mat, "shader_parameter/aberration", 0.0, 0.8).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	# As linhas roxas continuam em cheio por um instante e só então somem - é o
+	# que dá a sensação de continuidade com a transição que acabou de rolar.
+	tw.tween_property(mat, "shader_parameter/intensity", 0.0, 1.2).set_delay(0.3).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	tw.set_parallel(false)
+	tw.tween_callback(layer.queue_free)
+
+
+# ============================================================
+#  RESGATE DA GÁRGULA: cair da arena não mata mais
+# ============================================================
+## Fora da arena, sair do mapa é morte (`player._trigger_fall_death`). Aqui não:
+## a arena está no ar e a borda é curta demais para a queda ser uma punição de
+## verdade. Quem despenca é PEGO no ar por uma gárgula, levado de volta e
+## largado num ponto sorteado do chão.
+##
+## A sequência inteira mora em `resgate_gargula.gd`, pelo mesmo motivo do
+## agarrão: ela é uma cinematica de câmera e mãos em 1ª pessoa, e não tem nada
+## a ver com o resto desta cena.
+const RESGATE_SCRIPT := "res://scripts/stages/battlefield/resgate_gargula.gd"
+
+## Nó que carrega o chão jogável da arena. É dele que sai o ponto de largada.
+const CHAO_DA_ARENA := "Ambient/Ground"
+
+var _resgate: Node
+
+
+## Chamado pelo `player` no lugar da morte por queda. true = a arena assumiu o
+## jogador e ninguém mais deve matá-lo.
+func resgatar_do_abismo(jogador: Node3D) -> bool:
+	if not is_instance_valid(jogador):
+		return false
+	# Já resgatando: o `_physics_process` do jogador continua perguntando todo
+	# quadro enquanto ele estiver abaixo da linha, e responder `false` aqui
+	# mandaria a morte por queda por cima da cinematica.
+	if is_instance_valid(_resgate):
+		return true
+	if not is_instance_valid(player) or jogador != player:
+		return false
+
+	_resgate = load(RESGATE_SCRIPT).new()
+	_resgate.name = "ResgateGargula"
+	add_child(_resgate)
+	_resgate.resgatar(jogador)
+	return true
+
+
+## Um ponto qualquer do chão da arena, com folga para a borda e longe dos
+## inimigos — é onde a gárgula larga o jogador.
+func ponto_aleatorio_na_arena(margem: float = 3.5) -> Vector3:
+	var centro := Vector3.ZERO
+	var meio := Vector2(6.5, 6.5)
+	var chao := get_node_or_null(NodePath(CHAO_DA_ARENA)) as MeshInstance3D
+	if chao != null and chao.mesh != null:
+		var caixa: AABB = chao.global_transform * chao.mesh.get_aabb()
+		centro = caixa.get_center()
+		meio = Vector2(maxf(caixa.size.x * 0.5 - margem, 1.0),
+				maxf(caixa.size.z * 0.5 - margem, 1.0))
+
+	# Dez tentativas de cair longe de todo mundo; na pior das hipóteses vale a
+	# última mesmo assim — melhor esbarrar num inimigo do que não largar nunca.
+	var escolhido := centro
+	for tentativa in range(10):
+		escolhido = Vector3(centro.x + randf_range(-meio.x, meio.x), centro.y,
+				centro.z + randf_range(-meio.y, meio.y))
+		var perto := false
+		for e in enemies:
+			if is_instance_valid(e) and e.global_position.distance_to(escolhido) < 3.0:
+				perto = true
+				break
+		if not perto:
+			break
+
+	# O AABB da malha não conhece o relevo: o piso de verdade vem do raio.
+	var mundo := get_viewport().find_world_3d() if get_viewport() != null else null
+	if mundo != null:
+		var consulta := PhysicsRayQueryParameters3D.create(
+				escolhido + Vector3.UP * 8.0, escolhido - Vector3.UP * 12.0, 2)
+		var piso := mundo.direct_space_state.intersect_ray(consulta)
+		if piso:
+			escolhido.y = piso.position.y
+	return escolhido
+
+
+## Pedras e poeira estourando em volta de um ponto do chão — exatamente as
+## mesmas da chegada na arena (`_play_rise_from_ground_intro`). É o que o
+## resgate dispara quando o jogador bate no chão.
+func estourar_chao(pos: Vector3, quantidade: int = 34) -> void:
+	_spawn_ground_burst(pos, quantidade)

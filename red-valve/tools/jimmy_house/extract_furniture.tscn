@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tools/jimmy_house/extract_furniture.gd" id="1_extrair"]
+
+[node name="ExtractFurniture" type="Node"]
+script = ExtResource("1_extrair")

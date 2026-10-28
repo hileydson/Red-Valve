@@ -1,0 +1,561 @@
+extends Node
+
+var player: CharacterBody3D
+
+func _ready() -> void:
+	player = get_parent()
+	_setup_iron_rusks_hud()
+	_setup_health_hud()
+	_setup_cel_shading()
+
+func _setup_cel_shading() -> void:
+	# Filtro de cel shading (estilo Borderlands) por cima do render 3D.
+	# F7 liga/desliga em tempo real pra comparar com o visual original.
+	if player.has_node("CelShadingOverlay"): return
+	var overlay = load("res://scripts/effects/cel_shading_overlay.gd").new()
+	overlay.name = "CelShadingOverlay"
+	player.add_child(overlay)
+
+func _setup_health_hud() -> void:
+	player.current_health = player.max_health
+	# Vindo de outra cena, continua com o sangue que tinha (ver
+	# `SaveManager.sangue_entre_cenas`).
+	if SaveManager.sangue_entre_cenas > 0:
+		player.current_health = clampi(SaveManager.sangue_entre_cenas, 1, player.max_health)
+
+	# Batalha forçada pelo toque: o Maycow de combate da arena é um player.tscn
+	# recém instanciado, então nasceria com a vida cheia. Aqui ele recebe o
+	# sangue que sobrou do tranco levado na cidade — é com esse que vai lutar.
+	if GlobalEvents.forced_battle_health >= 0:
+		player.current_health = clampi(GlobalEvents.forced_battle_health, 1, player.max_health)
+		GlobalEvents.forced_battle_health = -1
+
+	player.hud_layer = CanvasLayer.new()
+	player.hud_layer.layer = 100
+	player.hud_layer.process_mode = Node.PROCESS_MODE_ALWAYS
+	var sc = GDScript.new()
+	# O _process abaixo remarca a HUD como visível todo frame. Como este
+	# CanvasLayer é PROCESS_MODE_ALWAYS, ele continuava rodando mesmo com a
+	# cena inteira desligada por trás da arena do amuleto — e a HUD daquela
+	# cena reaparecia por cima da arena e, depois, do menu principal. Quem
+	# esconde a cena marca a meta "_was_visible_before_pause" (ver
+	# GlobalUtils.set_canvas_layers_hidden), então respeitamos ela aqui.
+	sc.source_code = "extends CanvasLayer\nfunc _process(delta):\n\tif has_meta('_was_visible_before_pause'):\n\t\tvisible = false\n\t\treturn\n\tif get_parent()._cutscene_hud_hidden:\n\t\tvisible = false\n\telse:\n\t\tvisible = not GlobalEvents.in_cutscene"
+	sc.reload()
+	player.hud_layer.set_script(sc)
+	player.add_child(player.hud_layer)
+	
+	player.heartbeat_hud = ColorRect.new()
+	player.heartbeat_hud.anchor_left = 0.0
+	player.heartbeat_hud.anchor_top = 1.0
+	player.heartbeat_hud.anchor_right = 0.0
+	player.heartbeat_hud.anchor_bottom = 1.0
+	player.heartbeat_hud.offset_left = 30
+	player.heartbeat_hud.offset_top = -110
+	player.heartbeat_hud.offset_right = 230
+	player.heartbeat_hud.offset_bottom = -30
+	player.heartbeat_hud.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	
+	var shader = Shader.new()
+	shader.code = """
+shader_type canvas_item;
+uniform vec4 line_color : source_color = vec4(0.0, 1.0, 0.0, 1.0);
+uniform float speed = 1.0;
+uniform float line_thickness = 0.02;
+
+float ekg(float x) {
+	x = fract(x); 
+	float y = 0.5;
+	y += 0.08 * exp(-pow((x - 0.2) * 50.0, 2.0));
+	y -= 0.15 * exp(-pow((x - 0.3) * 100.0, 2.0));
+	y += 0.45 * exp(-pow((x - 0.35) * 150.0, 2.0));
+	y -= 0.20 * exp(-pow((x - 0.4) * 100.0, 2.0));
+	y += 0.10 * exp(-pow((x - 0.6) * 30.0, 2.0));
+	return y;
+}
+
+void fragment() {
+	// 2 batimentos por tela, movendo para a esquerda
+	float x = UV.x * 2.0 + TIME * speed;
+	float target_y = ekg(x);
+	
+	float dist = abs(UV.y - target_y);
+	float glow = line_thickness / (dist + 0.005);
+	
+	// Fundo totalmente transparente
+	vec4 bg = vec4(0.0, 0.0, 0.0, 0.0);
+	
+	COLOR = mix(bg, vec4(line_color.rgb, 1.0), clamp(glow, 0.0, 1.0) * line_color.a);
+}
+"""
+	var mat = ShaderMaterial.new()
+	mat.shader = shader
+	player.heartbeat_hud.material = mat
+	
+	player.hud_layer.add_child(player.heartbeat_hud)
+	
+	if !GlobalEvents.is_maycow_normal:
+		player.cogblade_hud = TextureProgressBar.new()
+		var cog_tex = load("res://assets/images/menu/itens/red_valve/cogblade.png")
+		player.cogblade_hud.texture_under = cog_tex
+		player.cogblade_hud.texture_progress = cog_tex
+		player.cogblade_hud.tint_under = Color(1, 1, 1, 0.25) # Marca d'água permanente na tela
+		player.cogblade_hud.tint_progress = Color(1, 1, 1, 1.0) # Cor de preenchimento
+		player.cogblade_hud.fill_mode = TextureProgressBar.FILL_BOTTOM_TO_TOP
+		player.cogblade_hud.min_value = 0
+		player.cogblade_hud.max_value = 100
+		player.cogblade_hud.value = 0
+		player.cogblade_hud.anchor_left = 0.0
+		player.cogblade_hud.anchor_top = 0.0
+		player.cogblade_hud.anchor_right = 0.0
+		player.cogblade_hud.anchor_bottom = 0.0
+		player.cogblade_hud.offset_left = 20
+		player.cogblade_hud.offset_top = 20
+		player.cogblade_hud.scale = Vector2(0.4, 0.4)
+		player.hud_layer.add_child(player.cogblade_hud)
+		
+		player.cogblade_hud_label = Label.new()
+		player.cogblade_hud_label.text = tr("HUD_COGBLADE_POWER")
+		player.cogblade_hud_label.add_theme_font_size_override("font_size", 64)
+		player.cogblade_hud_label.add_theme_color_override("font_color", Color(1, 0, 0, 1))
+		player.cogblade_hud_label.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+		player.cogblade_hud_label.visible = false
+		player.hud_layer.add_child(player.cogblade_hud_label)
+
+	# Adicionando BackBufferCopy para garantir captura da tela
+	var back_buffer = BackBufferCopy.new()
+	back_buffer.copy_mode = BackBufferCopy.COPY_MODE_VIEWPORT
+	player.hud_layer.add_child(back_buffer)
+
+	var blur_overlay = ColorRect.new()
+	blur_overlay.name = "MotionBlurOverlay"
+	blur_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	blur_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	blur_overlay.visible = false
+	var blur_shader = Shader.new()
+	blur_shader.code = """
+	shader_type canvas_item;
+	uniform sampler2D screen_texture : hint_screen_texture, filter_linear_mipmap;
+	uniform float blur_strength = 0.0;
+	
+	void fragment() {
+		vec2 center = vec2(0.5, 0.5);
+		vec2 uv = SCREEN_UV;
+		vec2 dir = center - uv;
+		vec4 c = texture(screen_texture, uv);
+		c += texture(screen_texture, uv + dir * blur_strength * 0.05);
+		c += texture(screen_texture, uv + dir * blur_strength * 0.10);
+		c += texture(screen_texture, uv + dir * blur_strength * 0.15);
+		c += texture(screen_texture, uv + dir * blur_strength * 0.20);
+		c += texture(screen_texture, uv + dir * blur_strength * 0.25);
+		c += texture(screen_texture, uv + dir * blur_strength * 0.30);
+		c += texture(screen_texture, uv + dir * blur_strength * 0.35);
+		COLOR = c / 8.0;
+	}
+	"""
+	var blur_mat = ShaderMaterial.new()
+	blur_mat.shader = blur_shader
+	blur_overlay.material = blur_mat
+	player.hud_layer.add_child(blur_overlay)
+
+	
+	player.blood_overlay = ColorRect.new()
+	player.blood_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	player.blood_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var blood_shader = Shader.new()
+	blood_shader.code = """
+shader_type canvas_item;
+uniform vec4 color : source_color = vec4(0.8, 0.0, 0.0, 1.0);
+uniform float multiplier = 0.0;
+uniform float softness = 0.8;
+
+void fragment() {
+	float value = distance(UV, vec2(0.5));
+	value = smoothstep(0.5 - softness, 0.5, value);
+	COLOR = vec4(color.rgb, value * multiplier);
+}
+"""
+	var blood_mat = ShaderMaterial.new()
+	blood_mat.shader = blood_shader
+	player.blood_overlay.material = blood_mat
+	player.hud_layer.add_child(player.blood_overlay)
+
+	# Blur Setup
+	
+	player.ammo_label = Label.new()
+	player.ammo_label.anchor_left = 1.0
+	player.ammo_label.anchor_top = 1.0
+	player.ammo_label.anchor_right = 1.0
+	player.ammo_label.anchor_bottom = 1.0
+	player.ammo_label.offset_left = -300
+	player.ammo_label.offset_top = -100
+	player.ammo_label.offset_right = -80
+	player.ammo_label.offset_bottom = -30
+	player.ammo_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	player.ammo_label.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
+	player.ammo_label.add_theme_font_size_override("font_size", 48)
+	player.ammo_label.add_theme_color_override("font_color", Color(1, 1, 1, 1))
+	player.ammo_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
+	player.ammo_label.add_theme_constant_override("outline_size", 6)
+	player.hud_layer.add_child(player.ammo_label)
+	
+	player.ammo_icon = TextureRect.new()
+	player.ammo_icon.texture = load("res://assets/images/menu/itens/mostragem_bullets/mostragem_bullets.png")
+	player.ammo_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	player.ammo_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	player.ammo_icon.anchor_left = 1.0
+	player.ammo_icon.anchor_top = 1.0
+	player.ammo_icon.anchor_right = 1.0
+	player.ammo_icon.anchor_bottom = 1.0
+	player.ammo_icon.offset_left = -70
+	player.ammo_icon.offset_top = -85
+	player.ammo_icon.offset_right = -30
+	player.ammo_icon.offset_bottom = -45
+	player.hud_layer.add_child(player.ammo_icon)
+
+	# Símbolo 2D do amuleto: mesmo canto do HUD da arma, e aparece enquanto ele
+	# estiver no pescoço (R3 / H tira e põe). Com arma na mão o contador de balas
+	# fica com o canto e o símbolo sobe pra cima dele (`update_ammo_ui`).
+	player.amulet_hud_icon = TextureRect.new()
+	player.amulet_hud_icon.texture = load("res://assets/images/menu/itens/amuleto_2d.png")
+	player.amulet_hud_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	player.amulet_hud_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	player.amulet_hud_icon.modulate = Color(1, 1, 1, 0.5)
+	player.amulet_hud_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	player.amulet_hud_icon.anchor_left = 1.0
+	player.amulet_hud_icon.anchor_top = 1.0
+	player.amulet_hud_icon.anchor_right = 1.0
+	player.amulet_hud_icon.anchor_bottom = 1.0
+	player.amulet_hud_icon.offset_left = -130
+	player.amulet_hud_icon.offset_top = -145
+	player.amulet_hud_icon.offset_right = -30
+	player.amulet_hud_icon.offset_bottom = -45
+	player.amulet_hud_icon.visible = false
+	player.hud_layer.add_child(player.amulet_hud_icon)
+
+	update_ammo_ui()
+
+	# MP Bar
+	player.mp_bar = ProgressBar.new()
+	player.mp_bar.anchor_left = 0.5
+	player.mp_bar.anchor_top = 1.0
+	player.mp_bar.anchor_right = 0.5
+	player.mp_bar.anchor_bottom = 1.0
+	player.mp_bar.offset_left = -100
+	player.mp_bar.offset_top = -35
+	player.mp_bar.offset_right = 100
+	player.mp_bar.offset_bottom = -25
+	player.mp_bar.show_percentage = false
+	var mp_sb = StyleBoxFlat.new()
+	mp_sb.bg_color = Color(0.2, 0.4, 0.9, 0.65)
+	mp_sb.corner_radius_top_left = 4
+	mp_sb.corner_radius_top_right = 4
+	mp_sb.corner_radius_bottom_left = 4
+	mp_sb.corner_radius_bottom_right = 4
+	player.mp_bar.add_theme_stylebox_override("fill", mp_sb)
+	var mp_bg = StyleBoxFlat.new()
+	mp_bg.bg_color = Color(0.1, 0.1, 0.1, 0.4)
+	mp_bg.corner_radius_top_left = 4
+	mp_bg.corner_radius_top_right = 4
+	mp_bg.corner_radius_bottom_left = 4
+	mp_bg.corner_radius_bottom_right = 4
+	player.mp_bar.add_theme_stylebox_override("background", mp_bg)
+	player.hud_layer.add_child(player.mp_bar)
+
+	# Stamina Bar
+	player.stamina_bar = ProgressBar.new()
+	player.stamina_bar.anchor_left = 0.5
+	player.stamina_bar.anchor_top = 1.0
+	player.stamina_bar.anchor_right = 0.5
+	player.stamina_bar.anchor_bottom = 1.0
+	player.stamina_bar.offset_left = -150
+	player.stamina_bar.offset_top = -50
+	player.stamina_bar.offset_right = 150
+	player.stamina_bar.offset_bottom = -40
+	player.stamina_bar.show_percentage = false
+	var st_sb = StyleBoxFlat.new()
+	st_sb.bg_color = Color(0.9, 0.9, 0.9, 0.7)
+	st_sb.corner_radius_top_left = 2
+	st_sb.corner_radius_top_right = 2
+	st_sb.corner_radius_bottom_left = 2
+	st_sb.corner_radius_bottom_right = 2
+	player.stamina_bar.add_theme_stylebox_override("fill", st_sb)
+	var st_bg = StyleBoxFlat.new()
+	st_bg.bg_color = Color(0.1, 0.1, 0.1, 0.3)
+	st_bg.corner_radius_top_left = 2
+	st_bg.corner_radius_top_right = 2
+	st_bg.corner_radius_bottom_left = 2
+	st_bg.corner_radius_bottom_right = 2
+	player.stamina_bar.add_theme_stylebox_override("background", st_bg)
+	player.hud_layer.add_child(player.stamina_bar)
+	
+	# Mira do Amuleto (Círculo Estilo DOOM)
+	player.amulet_crosshair = Panel.new()
+	player.amulet_crosshair.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+	player.amulet_crosshair.custom_minimum_size = Vector2(32, 32)
+	player.amulet_crosshair.offset_left = -16
+	player.amulet_crosshair.offset_top = -16
+	player.amulet_crosshair.offset_right = 16
+	player.amulet_crosshair.offset_bottom = 16
+	player.amulet_crosshair.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	
+	var style = StyleBoxFlat.new()
+	style.bg_color = Color(0, 0, 0, 0) # Transparente no meio
+	style.border_width_left = 3
+	style.border_width_right = 3
+	style.border_width_top = 3
+	style.border_width_bottom = 3
+	style.border_color = Color(0.9, 0.2, 1.0, 0.8) # Roxo/Magia
+	style.corner_radius_top_left = 16
+	style.corner_radius_top_right = 16
+	style.corner_radius_bottom_left = 16
+	style.corner_radius_bottom_right = 16
+	style.anti_aliasing = true
+	player.amulet_crosshair.add_theme_stylebox_override("panel", style)
+	player.amulet_crosshair.visible = false
+	player.hud_layer.add_child(player.amulet_crosshair)
+
+	_setup_gun_crosshair()
+	_setup_shotgun_crosshair()
+	
+	# Amulet Counter Label
+	player.amulet_counter_label = Label.new()
+	player.amulet_counter_label.add_theme_font_size_override("font_size", 54)
+	player.amulet_counter_label.add_theme_color_override("font_color", Color(1, 0, 0, 1))
+	player.amulet_counter_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
+	player.amulet_counter_label.add_theme_constant_override("outline_size", 10)
+	player.amulet_counter_label.anchor_left = 1.0
+	player.amulet_counter_label.anchor_right = 1.0
+	player.amulet_counter_label.anchor_top = 0.5
+	player.amulet_counter_label.anchor_bottom = 0.5
+	player.amulet_counter_label.offset_left = -150
+	player.amulet_counter_label.offset_top = -55
+	player.amulet_counter_label.offset_right = -40
+	player.amulet_counter_label.offset_bottom = 55
+	player.amulet_counter_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	player.amulet_counter_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	player.amulet_counter_label.visible = false
+	player.hud_layer.add_child(player.amulet_counter_label)
+	
+	# Piscar em tons de vermelho
+	var counter_tween = create_tween().set_loops()
+	counter_tween.tween_property(player.amulet_counter_label, "theme_override_colors/font_color", Color(1.0, 0.2, 0.2, 1.0), 0.4)
+	counter_tween.tween_property(player.amulet_counter_label, "theme_override_colors/font_color", Color(0.5, 0.0, 0.0, 1.0), 0.4)
+	
+	_start_heartbeat_pulse()
+
+## A mira da PISTOLA: quatro riscos em cruz, com um buraco no meio.
+##
+## Não é a mira do amuleto com outra cor: aquela é um círculo grande e roxo, que
+## diz "este inimigo inteiro está marcado"; esta precisa dizer "a bala sai
+## exatamente daqui", e por isso o miolo fica vazio e os riscos são finos.
+##
+## Nasce escondida — quem a acende é `player._processar_mira_de_arma()`, só
+## enquanto o botão de mira está segurado.
+func _setup_gun_crosshair() -> void:
+	var raiz = Control.new()
+	raiz.name = "GunCrosshair"
+	raiz.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+	raiz.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	raiz.visible = false
+
+	# (deslocamento do centro, tamanho) de cada risco
+	var riscos = [
+		[Vector2(-14, -1), Vector2(9, 2)],
+		[Vector2(5, -1), Vector2(9, 2)],
+		[Vector2(-1, -14), Vector2(2, 9)],
+		[Vector2(-1, 5), Vector2(2, 9)],
+	]
+	for r in riscos:
+		var risco = ColorRect.new()
+		risco.color = Color(1, 1, 1, 0.85)
+		risco.position = r[0]
+		risco.size = r[1]
+		risco.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		raiz.add_child(risco)
+
+	# Ponto central, bem pequeno: é ele que o jogador realmente usa de perto.
+	var ponto = ColorRect.new()
+	ponto.color = Color(1, 0.35, 0.3, 0.9)
+	ponto.position = Vector2(-1, -1)
+	ponto.size = Vector2(2, 2)
+	ponto.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	raiz.add_child(ponto)
+
+	player.hud_layer.add_child(raiz)
+	player.gun_crosshair = raiz
+
+## A mira da CAÇADEIRA: um círculo aberto, sem cruz e sem ponto no meio.
+##
+## A diferença com a da pistola não é enfeite. A pistola põe uma bala num ponto,
+## e a cruz fina com o miolo vazio diz exatamente isso — "sai daqui". A
+## caçadeira solta um punhado de chumbo que se abre com a distância, e não
+## existe "daqui": existe uma área. Um anel é a única forma que promete a coisa
+## certa; uma cruz aqui estaria mentindo sobre a precisão da arma.
+##
+## Nasce escondida — quem a acende é `player._processar_mira_de_arma()`.
+func _setup_shotgun_crosshair() -> void:
+	var raiz = Control.new()
+	raiz.name = "ShotgunCrosshair"
+	raiz.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+	raiz.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	raiz.visible = false
+
+	# Diâmetro do anel, em pixels. Não é o tamanho real do espalhamento (esse
+	# muda com a distância e o HUD não sabe dela) — é grande o bastante para ler
+	# como "área" e pequeno o bastante para ainda se mirar com ele.
+	var diametro := 40
+
+	var anel = Panel.new()
+	anel.custom_minimum_size = Vector2(diametro, diametro)
+	anel.position = Vector2(-diametro * 0.5, -diametro * 0.5)
+	anel.size = Vector2(diametro, diametro)
+	anel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	var estilo = StyleBoxFlat.new()
+	estilo.bg_color = Color(0, 0, 0, 0)
+	estilo.border_width_left = 2
+	estilo.border_width_right = 2
+	estilo.border_width_top = 2
+	estilo.border_width_bottom = 2
+	estilo.border_color = Color(1, 1, 1, 0.85)
+	# Raio igual a meio lado é o que transforma o quadrado em círculo.
+	var raio := diametro / 2
+	estilo.corner_radius_top_left = raio
+	estilo.corner_radius_top_right = raio
+	estilo.corner_radius_bottom_left = raio
+	estilo.corner_radius_bottom_right = raio
+	estilo.anti_aliasing = true
+	anel.add_theme_stylebox_override("panel", estilo)
+	raiz.add_child(anel)
+
+	player.hud_layer.add_child(raiz)
+	player.shotgun_crosshair = raiz
+
+func _setup_iron_rusks_hud() -> void:
+	var iron_rusks_layer = CanvasLayer.new()
+	iron_rusks_layer.layer = 120 # Acima do HUD normal (100), mas por baixo do overlay do menu (129)
+	iron_rusks_layer.process_mode = Node.PROCESS_MODE_ALWAYS
+	iron_rusks_layer.visible = SaveManager.prolog_finished
+
+	var value_label = Label.new()
+	value_label.name = "IronRusksValue"
+	value_label.add_theme_font_size_override("font_size", 32)
+	value_label.add_theme_color_override("font_color", Color(0.85, 0.75, 0.4, 1.0))
+	value_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
+	value_label.add_theme_constant_override("outline_size", 6)
+	value_label.anchor_left = 1.0
+	value_label.anchor_right = 1.0
+	value_label.offset_left = -220
+	value_label.offset_top = 15
+	value_label.offset_right = -20
+	value_label.offset_bottom = 55
+	value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	value_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	value_label.pivot_offset = Vector2(100, 20)
+	value_label.text = str(SaveManager.iron_rusks_display)
+	iron_rusks_layer.add_child(value_label)
+
+	var caption_label = Label.new()
+	caption_label.add_theme_font_size_override("font_size", 14)
+	caption_label.add_theme_color_override("font_color", Color(0.85, 0.75, 0.4, 0.85))
+	caption_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
+	caption_label.add_theme_constant_override("outline_size", 5)
+	caption_label.anchor_left = 1.0
+	caption_label.anchor_right = 1.0
+	caption_label.offset_left = -220
+	caption_label.offset_top = 55
+	caption_label.offset_right = -20
+	caption_label.offset_bottom = 75
+	caption_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	caption_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	caption_label.text = "Iron Rusks"
+	caption_label.visible = false
+	iron_rusks_layer.add_child(caption_label)
+
+	var sc = GDScript.new()
+	# O contador segue as MESMAS regras de visibilidade do hud_layer: some em
+	# cutscene (GlobalEvents.in_cutscene ou cutscene_set_hud_enabled(false)) e
+	# quando a cena inteira é escondida (meta "_was_visible_before_pause").
+	# Sem isso o _process daqui reescrevia `visible` todo frame e o contador
+	# ficava por cima da cutscene (ex: a intro do Capitulo 1, em
+	# executa_capitulo_1.gd, que so chama GlobalEvents.set_in_cutscene()).
+	sc.source_code = "extends CanvasLayer\nvar value_label: Label\nvar caption_label: Label\nvar is_in_menu: bool = false\nfunc _is_in_game_menu() -> bool:\n\tvar root = get_tree().root\n\tfor child in root.get_children():\n\t\tif child is CanvasLayer and child.name == \"InGameMenu\" and child.visible:\n\t\t\treturn true\n\treturn false\nfunc _process(_delta):\n\tif has_meta('_was_visible_before_pause'):\n\t\tvisible = false\n\t\treturn\n\tvisible = SaveManager.prolog_finished and not GlobalEvents.in_cutscene and not get_parent()._cutscene_hud_hidden\n\tif not visible: return\n\tvalue_label.text = str(SaveManager.iron_rusks_display)\n\tvar in_menu = _is_in_game_menu()\n\tif in_menu and not is_in_menu:\n\t\tis_in_menu = true\n\t\tlayer = 160\n\t\tvar tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)\n\t\ttween.set_parallel(true)\n\t\ttween.tween_property(value_label, \"anchor_top\", 1.0, 0.3)\n\t\ttween.tween_property(value_label, \"anchor_bottom\", 1.0, 0.3)\n\t\ttween.tween_property(value_label, \"offset_top\", -75, 0.3)\n\t\ttween.tween_property(value_label, \"offset_bottom\", -15, 0.3)\n\t\ttween.tween_property(caption_label, \"anchor_top\", 1.0, 0.3)\n\t\ttween.tween_property(caption_label, \"anchor_bottom\", 1.0, 0.3)\n\t\ttween.tween_property(caption_label, \"offset_top\", -105, 0.3)\n\t\ttween.tween_property(caption_label, \"offset_bottom\", -85, 0.3)\n\telif not in_menu and is_in_menu:\n\t\tis_in_menu = false\n\t\tlayer = 120\n\t\tvar tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)\n\t\ttween.set_parallel(true)\n\t\ttween.tween_property(value_label, \"anchor_top\", 0.0, 0.3)\n\t\ttween.tween_property(value_label, \"anchor_bottom\", 0.0, 0.3)\n\t\ttween.tween_property(value_label, \"offset_top\", 15, 0.3)\n\t\ttween.tween_property(value_label, \"offset_bottom\", 55, 0.3)\n\t\ttween.tween_property(caption_label, \"anchor_top\", 0.0, 0.3)\n\t\ttween.tween_property(caption_label, \"anchor_bottom\", 0.0, 0.3)\n\t\ttween.tween_property(caption_label, \"offset_top\", 55, 0.3)\n\t\ttween.tween_property(caption_label, \"offset_bottom\", 75, 0.3)\n\tcaption_label.visible = in_menu"
+	sc.reload()
+	# O script precisa ser anexado ANTES do nó entrar na árvore, senão o Godot
+	# não habilita o _process automaticamente (mesmo padrão usado no hud_layer acima).
+	iron_rusks_layer.set_script(sc)
+	iron_rusks_layer.value_label = value_label
+	iron_rusks_layer.caption_label = caption_label
+
+	player.add_child(iron_rusks_layer)
+	player.iron_rusks_value_label = value_label
+
+## O contador de balas segue a ARMA, não a forma do Maycow.
+##
+## Antes ele era escondido sempre que `is_maycow_normal` — o normal não tinha
+## arma nenhuma, e um "8 / 25" no canto da tela dele não queria dizer nada.
+## Agora a pistola é pega no hospital e vale para os dois: o mesmo pente, a
+## mesma caixa de balas (SaveManager.ITENS_COMPARTILHADOS). Quem decide se o
+## contador aparece é só uma coisa: a pistola estar equipada.
+func update_ammo_ui() -> void:
+	if not is_instance_valid(player.ammo_label): return
+
+	# O contador é o MESMO para todas as armas: elas nunca estão equipadas
+	# juntas (SaveManager.EQUIPAMENTO_EXCLUSIVO), então o que muda é só de qual
+	# pente e de qual caixa os dois números saem.
+	var arma: String = player._arma_de_fogo_equipada()
+	var tem_arma = arma != ""
+
+	if not tem_arma:
+		player.ammo_label.visible = false
+		if is_instance_valid(player.ammo_icon): player.ammo_icon.visible = false
+	else:
+		player.ammo_label.visible = true
+		if is_instance_valid(player.ammo_icon): player.ammo_icon.visible = true
+		var no_pente: int = player.clip_pistol_ammo
+		match arma:
+			"shotgun": no_pente = player.clip_shotgun_ammo
+			"mk3": no_pente = player.clip_mk3_ammo
+			"granola": no_pente = player.clip_granola_ammo
+		var id_municao = arma + "_ammo"
+		var total = SaveManager.get_item_amount(id_municao)
+		player.ammo_label.text = str(no_pente) + " / " + str(total)
+
+	if is_instance_valid(player.amulet_hud_icon):
+		player.amulet_hud_icon.visible = SaveManager.is_equipped("amuleto")
+		player.amulet_hud_icon.offset_top = -245 if tem_arma else -145
+		player.amulet_hud_icon.offset_bottom = -145 if tem_arma else -45
+
+func _start_heartbeat_pulse() -> void:
+	if player.current_health <= 0:
+		player.heartbeat_hud.visible = false
+		return
+		
+	if player.heartbeat_tween:
+		player.heartbeat_tween.kill()
+		
+	player.heartbeat_tween = create_tween().set_parallel(true)
+	
+	var target_speed = 1.0
+	var target_color = Color(0, 1, 0, 1.0) # Verde
+	
+	if player.current_health < 30:
+		target_color = Color(1, 0, 0, 1.0) # Vermelho
+		target_speed = 2.8
+	elif player.current_health < 70:
+		target_color = Color(1, 1, 0, 1.0) # Amarelo
+		target_speed = 2.0
+		
+	var mat = player.heartbeat_hud.material as ShaderMaterial
+	if not mat: return
+	
+	var current_color = mat.get_shader_parameter("line_color")
+	if current_color == null: current_color = Color(0, 1, 0, 1.0)
+	
+	var current_speed = mat.get_shader_parameter("speed")
+	if current_speed == null: current_speed = 1.0
+	
+	# Transição suave de cor e velocidade do ECG
+	player.heartbeat_tween.tween_method(func(val): mat.set_shader_parameter("line_color", val), current_color, target_color, 0.5)
+	player.heartbeat_tween.tween_method(func(val): mat.set_shader_parameter("speed", val), current_speed, target_speed, 0.5) 

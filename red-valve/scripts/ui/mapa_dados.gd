@@ -1,0 +1,135 @@
+class_name MapaDados
+extends RefCounted
+## Recorte do mundo coberto por T_citymap.png, e os pontos de interesse.
+##
+## Escrito por tools/blender/citygen/textures/make_minimap.py junto com a
+## textura. Ler daqui em vez de repetir os números garante que, se a cidade
+## for regerada num tamanho diferente, o minimapa e o mapa do menu
+## acompanhem sozinhos.
+##
+## Os pontos trazem `chave`, não texto: quem escreve na tela usa `tr()`.
+
+const CAMINHO := "res://assets/3d_model/city/citymap.json"
+
+var ok: bool = false
+## Chave de tradução do nome deste mapa, ou "" quando ele não tem nome.
+## Só os mapas de prédio com mais de uma prancha usam: é o que diz ao jogador
+## QUAL andar ele está vendo, já que as duas plantas são do mesmo prédio.
+var nome: String = ""
+var x0: float = 0.0
+var z0: float = 0.0
+var tam: float = 1.0
+var pontos: Array = []
+## Retangulos que dizem o que acende de uma vez e o que acende aos poucos
+## quando o jogador anda. Vazio = este mapa nasce todo aceso (a cidade).
+## Quem os usa e o MapaNevoa; aqui eles so passam.
+var zonas: Array = []
+## Ajustes da nevoa desta planta: resolucao da mascara, raio fora de zona e
+## quanto cada carimbo transborda. Vazio = planta sem nevoa.
+var nevoa: Dictionary = {}
+
+
+func _init(caminho: String = CAMINHO) -> void:
+	var txt := FileAccess.get_file_as_string(caminho)
+	if txt.is_empty():
+		push_error("MapaDados: não consegui ler %s" % caminho)
+		return
+	var d = JSON.parse_string(txt)
+	if typeof(d) != TYPE_DICTIONARY:
+		push_error("MapaDados: %s inválido" % caminho)
+		return
+	nome = String(d.get("nome", ""))
+	x0 = float(d.get("mundo_x0", 0.0))
+	z0 = float(d.get("mundo_z0", 0.0))
+	tam = float(d.get("tamanho_m", 1.0))
+	pontos = d.get("pontos", [])
+	zonas = d.get("zonas", [])
+	nevoa = d.get("nevoa", {})
+	ok = tam > 0.0
+
+
+## Esta planta comeca apagada e vai sendo descoberta?
+func tem_nevoa() -> bool:
+	return not nevoa.is_empty()
+
+
+## Mundo (X, Z) -> UV da textura.
+func uv(mundo_x: float, mundo_z: float) -> Vector2:
+	return Vector2((mundo_x - x0) / tam, (mundo_z - z0) / tam)
+
+
+## Existe mapa utilizável nesta cena, para este Maycow?
+##
+## Por padrão só o Maycow normal tem mapa; a cena que é jogada com o parasita
+## (os infernos) libera no próprio perfil, com `so_maycow_normal` desligado.
+static func disponivel(arvore: SceneTree) -> bool:
+	if GlobalEvents.in_cutscene:
+		return false
+	var no := arvore.get_first_node_in_group("mapa_cidade")
+	if no == null:
+		return false
+	if not GlobalEvents.is_maycow_normal and no.get("so_maycow_normal") != false:
+		return false
+	return true
+
+
+## O nó que declara QUAL mapa esta cena usa.
+##
+## É o próprio minimapa do HUD: ele já precisa estar na cena para aparecer no
+## canto da tela, já carrega a textura e já está no grupo. A aba MAPA do menu
+## pergunta a ele em vez de ter uma lista de cena -> mapa em algum lugar — cena
+## nova com mapa novo é só instanciar o minimapa certo lá dentro.
+static func perfil(arvore: SceneTree) -> Node:
+	return arvore.get_first_node_in_group("mapa_cidade")
+
+
+## Caminho do JSON de mapa da cena atual, ou "" se esta cena não tem mapa.
+static func caminho_da_cena(arvore: SceneTree) -> String:
+	var no := perfil(arvore)
+	if no == null:
+		return ""
+	# `get` devolve null quando a propriedade não existe — um minimapa antigo,
+	# sem o export, ainda vale como "esta cena tem o mapa da cidade".
+	var c = no.get("dados_json")
+	if typeof(c) != TYPE_STRING or String(c).is_empty():
+		return CAMINHO
+	return String(c)
+
+
+## Os pontos que NAO moram no JSON: os nos do grupo "ponto_no_mapa"
+## (`ponto_no_mapa.gd` — o Jonny deixado no chao do hospital). Num predio de
+## dois andares cada um vai so' pra prancha do andar em que esta', pela mesma
+## regra de altura com que o minimapa troca de prancha (`altura_andar_2`).
+static func pontos_vivos(arvore: SceneTree, caminho: String) -> Array:
+	var saida := []
+	var andar_2 := ""
+	var altura := 0.0
+	var no_perfil := perfil(arvore)
+	if no_perfil != null:
+		var a2 = no_perfil.get("dados_json_andar_2")
+		if typeof(a2) == TYPE_STRING:
+			andar_2 = String(a2)
+		var h = no_perfil.get("altura_andar_2")
+		if typeof(h) == TYPE_FLOAT or typeof(h) == TYPE_INT:
+			altura = float(h)
+	for no in arvore.get_nodes_in_group("ponto_no_mapa"):
+		if not no.has_method("dados"):
+			continue
+		var d: Dictionary = no.dados()
+		if andar_2 != "" and (float(d.get("y", 0.0)) >= altura) != (caminho == andar_2):
+			continue
+		saida.append(d)
+	return saida
+
+
+## Este ponto deve aparecer agora?
+##
+## `oculto_com_item` some quando o jogador tem o item no inventário — é assim
+## que a interrogação da lanterna desaparece no instante em que ela é pega. A
+## pergunta é ao inventário, e não a uma flag à parte: um save antigo que já
+## tenha a lanterna também chega aqui com o mapa limpo.
+static func ponto_visivel(p: Dictionary) -> bool:
+	var item := String(p.get("oculto_com_item", ""))
+	if item.is_empty():
+		return true
+	return not SaveManager.tem_item(item)

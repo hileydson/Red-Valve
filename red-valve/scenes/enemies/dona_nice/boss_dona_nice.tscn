@@ -1,0 +1,100 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/dona_nice/boss_dona_nice.gd" id="1_boss"]
+[ext_resource type="PackedScene" path="res://scenes/npcs/igreja/dona_nice_monster.tscn" id="2_visual"]
+[ext_resource type="Script" path="res://scripts/enemies/dona_nice/ponto_fraco.gd" id="3_fraco"]
+[ext_resource type="AudioStream" path="res://assets/sounds/enemies/zombies/zombie_steps.mp3" id="4_passos"]
+[ext_resource type="AudioStream" path="res://assets/sounds/igreja/dano_monstro_1.ogg" id="5_dano"]
+[ext_resource type="AudioStream" path="res://assets/sounds/igreja/respiracao_monstro.ogg" id="6_respira"]
+[ext_resource type="AudioStream" path="res://assets/sounds/igreja/mordida_1.ogg" id="7_mordida"]
+[ext_resource type="AudioStream" path="res://assets/sounds/igreja/baba.ogg" id="8_baba"]
+
+[sub_resource type="CapsuleShape3D" id="corpo"]
+radius = 0.38
+height = 1.8
+
+[sub_resource type="SphereShape3D" id="cabeca"]
+radius = 0.17
+
+[sub_resource type="ParticleProcessMaterial" id="baba_proc"]
+direction = Vector3(0, -1, 0.3)
+spread = 12.0
+initial_velocity_min = 0.05
+initial_velocity_max = 0.25
+gravity = Vector3(0, -5, 0)
+scale_min = 0.5
+scale_max = 1.3
+
+[sub_resource type="StandardMaterial3D" id="baba_mat"]
+albedo_color = Color(0.32, 0.62, 0.1, 0.85)
+transparency = 1
+roughness = 0.05
+emission_enabled = true
+emission = Color(0.12, 0.3, 0.02, 1)
+emission_energy_multiplier = 0.6
+
+[sub_resource type="SphereMesh" id="baba_gota"]
+material = SubResource("baba_mat")
+radius = 0.012
+height = 0.04
+radial_segments = 6
+rings = 3
+
+[node name="boss_dona_nice" type="CharacterBody3D" groups=["enemies"]]
+editor_description = "Dona Nice monstro, fase 1 da luta da igreja. O corpo (visual) toca os clipes de dona_nice_monster_clipes.tres; a IA esta no script. Frente = +Z."
+collision_layer = 4
+collision_mask = 2
+script = ExtResource("1_boss")
+
+[node name="body_shape" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+shape = SubResource("corpo")
+
+[node name="heart" type="Area3D" parent="." groups=["enemies"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.04, 1.62, 0.12)
+collision_layer = 8
+collision_mask = 0
+monitoring = false
+script = ExtResource("3_fraco")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="heart"]
+shape = SubResource("cabeca")
+
+[node name="visual" parent="." instance=ExtResource("2_visual")]
+clipe_inicial = &"parado"
+sangue = 0.3
+veias = 0.35
+
+[node name="baba" type="GPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.04, 1.52, 0.22)
+amount = 14
+amount_ratio = 0.35
+lifetime = 1.4
+local_coords = false
+process_material = SubResource("baba_proc")
+draw_pass_1 = SubResource("baba_gota")
+
+[node name="sons" type="Node3D" parent="."]
+
+[node name="passos" type="AudioStreamPlayer3D" parent="sons"]
+stream = ExtResource("4_passos")
+volume_db = -6.0
+unit_size = 6.0
+
+[node name="dano" type="AudioStreamPlayer3D" parent="sons"]
+stream = ExtResource("5_dano")
+unit_size = 10.0
+
+[node name="respira" type="AudioStreamPlayer3D" parent="sons"]
+stream = ExtResource("6_respira")
+volume_db = -4.0
+unit_size = 6.0
+
+[node name="mordida" type="AudioStreamPlayer3D" parent="sons"]
+stream = ExtResource("7_mordida")
+volume_db = 3.0
+unit_size = 10.0
+
+[node name="baba" type="AudioStreamPlayer3D" parent="sons"]
+stream = ExtResource("8_baba")
+unit_size = 8.0

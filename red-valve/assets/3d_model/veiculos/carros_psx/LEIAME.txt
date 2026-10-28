@@ -1,0 +1,7 @@
+PSX Style Cars — GGBot (https://ggbot.itch.io/)
+Fonte: https://opengameart.org/content/psx-style-cars
+Licença: CC0 (domínio público). Baixado em 2026-10-28.
+
+Usados pelos carros da realidade "de gente" da cidade (ShadowCar sem o amuleto).
+Os .blend e as variantes com neve do pacote original ficaram de fora; o Car 06
+(carcaça queimada) também — carro que roda na rua não pode ser sucata.

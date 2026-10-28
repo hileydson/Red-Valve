@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://tools/igreja/montar_cena_dona_nice.gd" id="1"]
+
+[node name="montar_cena_dona_nice" type="Node"]
+script = ExtResource("1")

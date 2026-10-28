@@ -1,0 +1,79 @@
+[gd_scene load_steps=15 format=3]
+
+[ext_resource type="Script" uid="uid://dn6v6fcyxtmqo" path="res://scripts/player/hand_with_magic.gd" id="1_sway"]
+[ext_resource type="PackedScene" uid="uid://33tuk2yjdpe3" path="res://assets/3d_model/player/hands/maos_fp/maos_fp.glb" id="2_rig"]
+[ext_resource type="Material" path="res://assets/3d_model/player/hands/maos_fp/maos_fp_pele_magica.tres" id="3_pele"]
+[ext_resource type="AnimationLibrary" path="res://assets/3d_model/player/hands/maos_fp/maos_fp_clipes.tres" id="4_clipes"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_gun"]
+animation = &"magic_holding_gun"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_shoot"]
+animation = &"magic_holding_shoot"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_reload"]
+animation = &"magic_reload"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_thrown"]
+animation = &"magic_thrown"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="Transicao_entrada"]
+xfade_time = 0.1
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="Transicao_pedida"]
+xfade_time = 0.15
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="Transicao_volta_shoot"]
+xfade_time = 0.15
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="Transicao_volta_reload"]
+xfade_time = 0.2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="Transicao_volta_thrown"]
+xfade_time = 0.2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_magica"]
+states/magic_holding_gun/node = SubResource("AnimationNodeAnimation_gun")
+states/magic_holding_gun/position = Vector2(372, 20)
+states/magic_holding_shoot/node = SubResource("AnimationNodeAnimation_shoot")
+states/magic_holding_shoot/position = Vector2(388, 95)
+states/magic_reload/node = SubResource("AnimationNodeAnimation_reload")
+states/magic_reload/position = Vector2(238, 206)
+states/magic_thrown/node = SubResource("AnimationNodeAnimation_thrown")
+states/magic_thrown/position = Vector2(358, 154)
+transitions = ["Start", "magic_holding_gun", SubResource("Transicao_entrada"), "Start", "magic_holding_shoot", SubResource("Transicao_pedida"), "Start", "magic_thrown", SubResource("Transicao_pedida"), "Start", "magic_reload", SubResource("Transicao_pedida"), "magic_holding_gun", "magic_holding_shoot", SubResource("Transicao_pedida"), "magic_holding_gun", "magic_reload", SubResource("Transicao_pedida"), "magic_holding_gun", "magic_thrown", SubResource("Transicao_pedida"), "magic_holding_shoot", "magic_holding_gun", SubResource("Transicao_volta_shoot"), "magic_reload", "magic_holding_gun", SubResource("Transicao_volta_reload"), "magic_thrown", "magic_holding_gun", SubResource("Transicao_volta_thrown")]
+
+[node name="MaoMagica" type="Node3D"]
+script = ExtResource("1_sway")
+
+; A mao magica nasce 15 cm ACIMA do que a pose do Blender diz.
+; O nó antigo tinha uma base girada e uma origem propria que, somadas,
+; punham a mao 15 cm mais alta do que ela cai agora — e a 26 cm do olho
+; esses 15 cm sao quase uma tela inteira: o punho ficava embaixo do quadro.
+; Este numero e a origem do `hand_magic` sao a MESMA coisa que o
+; `hand_magic_3d_pos_original` do player.gd, que e o alvo pra onde os tweens
+; de soco e recarga trazem a mao de volta.
+[node name="hand_magic" parent="." instance=ExtResource("2_rig")]
+transform = Transform3D(0.17, 0, 0, 0, 0.17, 0, 0, 0, 0.17, -0.03, 0.15, 0)
+
+[node name="mao_esq" parent="hand_magic/Armature/Skeleton3D" index="0"]
+cast_shadow = 0
+surface_material_override/0 = ExtResource("3_pele")
+
+[node name="mao_dir" parent="hand_magic/Armature_dir/Skeleton3D" index="0"]
+visible = false
+
+[node name="AnimationPlayer" parent="hand_magic" index="2"]
+libraries = {
+&"": ExtResource("4_clipes")
+}
+
+[node name="AnimationTree" type="AnimationTree" parent="hand_magic"]
+tree_root = SubResource("AnimationNodeStateMachine_magica")
+anim_player = NodePath("../AnimationPlayer")
+
+[editable path="hand_magic"]

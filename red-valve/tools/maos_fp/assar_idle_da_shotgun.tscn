@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tools/maos_fp/assar_idle_da_shotgun.gd" id="1"]
+
+[node name="assar_idle_da_shotgun" type="Node"]
+script = ExtResource("1")

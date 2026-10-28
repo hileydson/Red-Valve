@@ -1,0 +1,186 @@
+extends Control
+
+@onready var image_rect: TextureRect = $ImageRect
+@onready var label: Label = $TextBackground/Label
+@onready var fade = $fade
+@onready var audio_player: AudioStreamPlayer = $Begin
+
+var slides = [
+	{
+		"image_path": "res://assets/cutscenes/prolog/fight_no_power/no_power_1.png",
+		"texts": [
+			"NO_POWER_1_1", "NO_POWER_1_2", "NO_POWER_1_3", "NO_POWER_1_4",
+			"NO_POWER_1_5", "NO_POWER_1_6"
+		]
+	},
+	{
+		"image_path": "res://assets/cutscenes/prolog/fight_no_power/no_power_2.png",
+		"texts": [
+			"NO_POWER_2_1", "NO_POWER_2_2", "NO_POWER_2_3", "NO_POWER_2_4",
+			"NO_POWER_2_5"
+		]
+	},
+	{
+		"image_path": "res://assets/cutscenes/prolog/fight_no_power/no_power_3.png",
+		"texts": [
+			"NO_POWER_3_1", "NO_POWER_3_2", "NO_POWER_3_3", "NO_POWER_3_4"
+		]
+	},
+	{
+		"image_path": "res://assets/cutscenes/prolog/fight_no_power/no_power_4.png",
+		"texts": [
+			"NO_POWER_4_1", "NO_POWER_4_2", "NO_POWER_4_3", "NO_POWER_4_4"
+		]
+	},
+	{
+		"image_path": "res://assets/cutscenes/prolog/fight_no_power/no_power_5.png",
+		"texts": [
+			"NO_POWER_5_1", "NO_POWER_5_2", "NO_POWER_5_3", "NO_POWER_5_4"
+		]
+	}
+]
+
+var current_slide_index: int = 0
+var current_text_index: int = 0
+var image_tween: Tween
+var text_tween: Tween
+var is_transitioning: bool = false
+var waiting_for_input: bool = false
+var finished: bool = false
+
+func _ready() -> void:
+	# -- INJEÇÃO DO FILTRO VHS --
+	var vhs_mat = ShaderMaterial.new()
+	vhs_mat.shader = load("res://shaders/vhs_filter.gdshader")
+	if "image_rect" in self and self.get("image_rect") != null:
+		self.get("image_rect").material = vhs_mat
+	elif has_node("ImageRect"):
+		get_node("ImageRect").material = vhs_mat
+	# ---------------------------
+
+	# Instancia o UI de Skip
+	var skip_layer = CanvasLayer.new()
+	skip_layer.layer = 128
+	var skip_ui = load("res://scripts/ui/skip_cutscene_ui.gd").new()
+	skip_layer.add_child(skip_ui)
+	add_child(skip_layer)
+	skip_ui.skipped.connect(finish_cutscene)
+	
+	# Fade-in suave no áudio para não começar estourando
+	var target_volume = audio_player.volume_db
+	audio_player.volume_db = -80.0
+	var audio_tween = create_tween()
+	audio_tween.tween_property(audio_player, "volume_db", target_volume, 4.0)
+	
+	# Esconde tudo inicialmente
+	image_rect.modulate.a = 0
+	$TextBackground.modulate.a = 0
+	
+	# Inicia o primeiro slide após o fade in
+	await get_tree().create_timer(1.0).timeout
+	load_slide()
+
+func load_slide() -> void:
+	if current_slide_index >= slides.size():
+		finish_cutscene()
+		return
+		
+	is_transitioning = true
+	waiting_for_input = false
+	current_text_index = 0
+	
+	var slide = slides[current_slide_index]
+	var tex = load(slide["image_path"])
+	if tex:
+		image_rect.texture = tex
+	
+	# Reseta as propriedades da imagem para preparar o efeito "Max Payne"
+	image_rect.scale = Vector2(1.1, 1.1)
+	image_rect.pivot_offset = Vector2(get_viewport_rect().size.x / 2.0, get_viewport_rect().size.y * 0.2)
+	image_rect.position = Vector2(0, 0)
+	
+	# Inicia a animação de zoom out leve e pan para baixo
+	if image_tween:
+		image_tween.kill()
+	image_tween = create_tween().set_parallel(true)
+	image_tween.tween_property(image_rect, "scale", Vector2(1.0, 1.0), 12.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	image_tween.tween_property(image_rect, "position", Vector2(0, 0), 12.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	
+	# Mostra a imagem com fade
+	var show_tween = create_tween().set_parallel(true)
+	show_tween.tween_property(image_rect, "modulate:a", 1.0, 1.0)
+	await show_tween.finished
+	
+	# Mostra o primeiro texto
+	show_text()
+
+func show_text() -> void:
+	var slide = slides[current_slide_index]
+	if current_text_index < slide["texts"].size():
+		var text_key = slide["texts"][current_text_index]
+		label.text = tr(text_key)
+		
+		# Inicia a animação de máquina de escrever
+		label.visible_characters = 0
+		if text_tween:
+			text_tween.kill()
+		
+		var text_length = label.text.length()
+		var duration = text_length * 0.05
+		
+		text_tween = create_tween()
+		text_tween.tween_property(label, "visible_characters", text_length, duration)
+		
+		if $TextBackground.modulate.a == 0:
+			var tween = create_tween()
+			tween.tween_property($TextBackground, "modulate:a", 1.0, 0.5)
+		
+		is_transitioning = false
+		waiting_for_input = true
+	else:
+		next_slide()
+
+func next_slide() -> void:
+	is_transitioning = true
+	waiting_for_input = false
+	
+	var hide_tween = create_tween().set_parallel(true)
+	hide_tween.tween_property($TextBackground, "modulate:a", 0.0, 0.5)
+	hide_tween.tween_property(image_rect, "modulate:a", 0.0, 1.0)
+	await hide_tween.finished
+	
+	current_slide_index += 1
+	load_slide()
+
+func finish_cutscene() -> void:
+	if finished: return
+	finished = true
+	
+	if image_tween: image_tween.kill()
+	if text_tween: text_tween.kill()
+	
+	is_transitioning = true
+	waiting_for_input = false
+	
+	var hide_tween = create_tween()
+	hide_tween.tween_property($TextBackground, "modulate:a", 0.0, 0.5)
+	
+	var audio_out_tween = create_tween()
+	audio_out_tween.tween_property(audio_player, "volume_db", -80.0, 2.0)
+	
+	fade.fade_out()
+	await get_tree().create_timer(2.0).timeout
+	
+	# Muda a cena diretamente para a oficina
+	LoadingScreen.load_scene("res://scenes/stages/prolog/oficina_jimmy.tscn")
+
+func _process(delta: float) -> void:
+	if waiting_for_input and not is_transitioning:
+		if Input.is_action_just_pressed("ui_accept"):
+			if label.visible_characters >= 0 and label.visible_characters < label.text.length():
+				if text_tween:
+					text_tween.kill()
+				label.visible_characters = -1
+			else:
+				current_text_index += 1
+				show_text()

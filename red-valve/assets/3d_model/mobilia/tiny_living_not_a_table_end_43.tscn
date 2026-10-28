@@ -1,0 +1,8 @@
+[gd_scene format=3]
+
+[ext_resource type="ArrayMesh" path="res://assets/3d_model/mobilia/malhas/tiny_living_not_a_table_end_43_0.res" id="1_vglyc"]
+
+[node name="tiny_living_not_a_table_end_43" type="Node3D" unique_id=893690726]
+
+[node name="tiny_living_not_a_table_end_43_0" type="MeshInstance3D" parent="." unique_id=1670012116]
+mesh = ExtResource("1_vglyc")

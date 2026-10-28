@@ -1,0 +1,8 @@
+[gd_scene format=3]
+
+[ext_resource type="ArrayMesh" path="res://assets/3d_model/mobilia/malhas/cozinha_armario_leve_0.res" id="1_br61s"]
+
+[node name="cozinha_armario_leve" type="Node3D" unique_id=1125535662]
+
+[node name="cozinha_armario_0" type="MeshInstance3D" parent="." unique_id=687771660]
+mesh = ExtResource("1_br61s")

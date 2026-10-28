@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://conopu68ccqfu"]
+
+[node name="Sketchfab_Scene" unique_id=917940033]
+
+[node name="Sketchfab_model" parent="." index="0" unique_id=1959605532]
+transform = Transform3D(0.1, 0, 0, 0, -4.371139e-09, 0.1, 0, -0.1, -4.371139e-09, 0, 0, 0)
+
+[node name="fps-hands_fbx" parent="Sketchfab_model" index="0" unique_id=1800986728]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 2.09908, -7.8090143, 9.195401e-06)

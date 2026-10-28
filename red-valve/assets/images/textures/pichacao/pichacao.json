@@ -1,0 +1,1189 @@
+{
+ "nota": "gerado por tools/texturas/gerar_pichacao.py — nao editar a mao",
+ "atlas": {
+  "parede": "res://assets/images/textures/pichacao/pichacao_parede.png",
+  "chao": "res://assets/images/textures/pichacao/pichacao_chao.png"
+ },
+ "artes": [
+  {
+   "n": "alto_1994",
+   "atlas": "parede",
+   "papel": "alto",
+   "uv": [
+    0.001953,
+    0.854167,
+    0.25,
+    0.070175
+   ],
+   "px": [
+    512,
+    256
+   ],
+   "largura": [
+    2.0,
+    3.2
+   ],
+   "peso": 3
+  },
+  {
+   "n": "alto_antilopes",
+   "atlas": "parede",
+   "papel": "alto",
+   "uv": [
+    0.001953,
+    0.782895,
+    0.25,
+    0.070175
+   ],
+   "px": [
+    512,
+    256
+   ],
+   "largura": [
+    3.4,
+    5.2
+   ],
+   "peso": 5
+  },
+  {
+   "n": "alto_arorua",
+   "atlas": "parede",
+   "papel": "alto",
+   "uv": [
+    0.253906,
+    0.782895,
+    0.25,
+    0.070175
+   ],
+   "px": [
+    512,
+    256
+   ],
+   "largura": [
+    2.6,
+    4.2
+   ],
+   "peso": 4
+  },
+  {
+   "n": "alto_kraycik",
+   "atlas": "parede",
+   "papel": "alto",
+   "uv": [
+    0.505859,
+    0.782895,
+    0.25,
+    0.070175
+   ],
+   "px": [
+    512,
+    256
+   ],
+   "largura": [
+    2.8,
+    4.4
+   ],
+   "peso": 4
+  },
+  {
+   "n": "simb_engrenagem_alto",
+   "atlas": "parede",
+   "papel": "alto",
+   "uv": [
+    0.191406,
+    0.925439,
+    0.125,
+    0.070175
+   ],
+   "px": [
+    256,
+    256
+   ],
+   "largura": [
+    1.3,
+    2.3
+   ],
+   "peso": 3
+  },
+  {
+   "n": "simb_olho_alto",
+   "atlas": "parede",
+   "papel": "alto",
+   "uv": [
+    0.318359,
+    0.925439,
+    0.125,
+    0.070175
+   ],
+   "px": [
+    256,
+    256
+   ],
+   "largura": [
+    1.3,
+    2.2
+   ],
+   "peso": 3
+  },
+  {
+   "n": "cartaz_01",
+   "atlas": "parede",
+   "papel": "cartaz",
+   "uv": [
+    0.822266,
+    0.142544,
+    0.125,
+    0.105263
+   ],
+   "px": [
+    256,
+    384
+   ],
+   "largura": [
+    0.36,
+    0.56
+   ],
+   "peso": 6
+  },
+  {
+   "n": "cartaz_02",
+   "atlas": "parede",
+   "papel": "cartaz",
+   "uv": [
+    0.001953,
+    0.248904,
+    0.125,
+    0.105263
+   ],
+   "px": [
+    256,
+    384
+   ],
+   "largura": [
+    0.36,
+    0.56
+   ],
+   "peso": 6
+  },
+  {
+   "n": "cartaz_03",
+   "atlas": "parede",
+   "papel": "cartaz",
+   "uv": [
+    0.128906,
+    0.248904,
+    0.125,
+    0.105263
+   ],
+   "px": [
+    256,
+    384
+   ],
+   "largura": [
+    0.36,
+    0.56
+   ],
+   "peso": 6
+  },
+  {
+   "n": "cartaz_04",
+   "atlas": "parede",
+   "papel": "cartaz",
+   "uv": [
+    0.255859,
+    0.248904,
+    0.125,
+    0.105263
+   ],
+   "px": [
+    256,
+    384
+   ],
+   "largura": [
+    0.36,
+    0.56
+   ],
+   "peso": 6
+  },
+  {
+   "n": "cartaz_05",
+   "atlas": "parede",
+   "papel": "cartaz",
+   "uv": [
+    0.382812,
+    0.248904,
+    0.125,
+    0.105263
+   ],
+   "px": [
+    256,
+    384
+   ],
+   "largura": [
+    0.36,
+    0.56
+   ],
+   "peso": 6
+  },
+  {
+   "n": "chao_ferrugem",
+   "atlas": "chao",
+   "papel": "mancha_chao",
+   "uv": [
+    0.490234,
+    0.002604,
+    0.242188,
+    0.322917
+   ],
+   "px": [
+    496,
+    496
+   ],
+   "largura": [
+    1.0,
+    2.2
+   ],
+   "peso": 6
+  },
+  {
+   "n": "chao_jornais",
+   "atlas": "chao",
+   "papel": "mancha_chao",
+   "uv": [
+    0.734375,
+    0.002604,
+    0.242188,
+    0.322917
+   ],
+   "px": [
+    496,
+    496
+   ],
+   "largura": [
+    0.9,
+    1.6
+   ],
+   "peso": 7
+  },
+  {
+   "n": "chao_limo",
+   "atlas": "chao",
+   "papel": "mancha_chao",
+   "uv": [
+    0.246094,
+    0.002604,
+    0.242188,
+    0.322917
+   ],
+   "px": [
+    496,
+    496
+   ],
+   "largura": [
+    1.2,
+    2.8
+   ],
+   "peso": 7
+  },
+  {
+   "n": "chao_terra",
+   "atlas": "chao",
+   "papel": "mancha_chao",
+   "uv": [
+    0.001953,
+    0.002604,
+    0.242188,
+    0.322917
+   ],
+   "px": [
+    496,
+    496
+   ],
+   "largura": [
+    1.6,
+    3.6
+   ],
+   "peso": 9
+  },
+  {
+   "n": "escorrido_ferrugem",
+   "atlas": "parede",
+   "papel": "mancha_parede",
+   "uv": [
+    0.001953,
+    0.001096,
+    0.125,
+    0.140351
+   ],
+   "px": [
+    256,
+    512
+   ],
+   "largura": [
+    1.0,
+    2.5
+   ],
+   "peso": 8
+  },
+  {
+   "n": "escorrido_fuligem",
+   "atlas": "parede",
+   "papel": "mancha_parede",
+   "uv": [
+    0.255859,
+    0.001096,
+    0.125,
+    0.140351
+   ],
+   "px": [
+    256,
+    512
+   ],
+   "largura": [
+    1.0,
+    2.4
+   ],
+   "peso": 6
+  },
+  {
+   "n": "escorrido_umidade",
+   "atlas": "parede",
+   "papel": "mancha_parede",
+   "uv": [
+    0.128906,
+    0.001096,
+    0.125,
+    0.140351
+   ],
+   "px": [
+    256,
+    512
+   ],
+   "largura": [
+    1.2,
+    2.8
+   ],
+   "peso": 8
+  },
+  {
+   "n": "mancha_reboco",
+   "atlas": "parede",
+   "papel": "mancha_parede",
+   "uv": [
+    0.382812,
+    0.001096,
+    0.25,
+    0.140351
+   ],
+   "px": [
+    512,
+    512
+   ],
+   "largura": [
+    1.4,
+    3.0
+   ],
+   "peso": 6
+  },
+  {
+   "n": "parede_rachadura",
+   "atlas": "parede",
+   "papel": "mancha_parede",
+   "uv": [
+    0.699219,
+    0.248904,
+    0.1875,
+    0.105263
+   ],
+   "px": [
+    384,
+    384
+   ],
+   "largura": [
+    1.2,
+    2.5
+   ],
+   "peso": 7
+  },
+  {
+   "n": "parede_tijolo",
+   "atlas": "parede",
+   "papel": "mancha_parede",
+   "uv": [
+    0.509766,
+    0.248904,
+    0.1875,
+    0.105263
+   ],
+   "px": [
+    384,
+    384
+   ],
+   "largura": [
+    1.1,
+    2.2
+   ],
+   "peso": 7
+  },
+  {
+   "n": "rua_bueiro",
+   "atlas": "chao",
+   "papel": "mancha_rua",
+   "uv": [
+    0.490234,
+    0.653646,
+    0.1875,
+    0.25
+   ],
+   "px": [
+    384,
+    384
+   ],
+   "largura": [
+    0.85,
+    1.05
+   ],
+   "peso": 6
+  },
+  {
+   "n": "rua_jornais",
+   "atlas": "chao",
+   "papel": "mancha_rua",
+   "uv": [
+    0.246094,
+    0.653646,
+    0.242188,
+    0.322917
+   ],
+   "px": [
+    496,
+    496
+   ],
+   "largura": [
+    0.85,
+    1.5
+   ],
+   "peso": 5
+  },
+  {
+   "n": "rua_oleo",
+   "atlas": "chao",
+   "papel": "mancha_rua",
+   "uv": [
+    0.001953,
+    0.328125,
+    0.242188,
+    0.322917
+   ],
+   "px": [
+    496,
+    496
+   ],
+   "largura": [
+    1.2,
+    2.6
+   ],
+   "peso": 8
+  },
+  {
+   "n": "rua_poca_01",
+   "atlas": "chao",
+   "papel": "mancha_rua",
+   "uv": [
+    0.246094,
+    0.328125,
+    0.242188,
+    0.322917
+   ],
+   "px": [
+    496,
+    496
+   ],
+   "largura": [
+    1.8,
+    3.8
+   ],
+   "peso": 10
+  },
+  {
+   "n": "rua_poca_02",
+   "atlas": "chao",
+   "papel": "mancha_rua",
+   "uv": [
+    0.490234,
+    0.328125,
+    0.242188,
+    0.322917
+   ],
+   "px": [
+    496,
+    496
+   ],
+   "largura": [
+    1.4,
+    3.2
+   ],
+   "peso": 9
+  },
+  {
+   "n": "rua_queimado",
+   "atlas": "chao",
+   "papel": "mancha_rua",
+   "uv": [
+    0.734375,
+    0.328125,
+    0.242188,
+    0.322917
+   ],
+   "px": [
+    496,
+    496
+   ],
+   "largura": [
+    0.9,
+    2.0
+   ],
+   "peso": 5
+  },
+  {
+   "n": "rua_rachadura",
+   "atlas": "chao",
+   "papel": "mancha_rua",
+   "uv": [
+    0.001953,
+    0.653646,
+    0.242188,
+    0.322917
+   ],
+   "px": [
+    496,
+    496
+   ],
+   "largura": [
+    1.4,
+    3.0
+   ],
+   "peso": 8
+  },
+  {
+   "n": "bomba_94",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.253906,
+    0.142544,
+    0.25,
+    0.105263
+   ],
+   "px": [
+    512,
+    384
+   ],
+   "largura": [
+    2.0,
+    3.2
+   ],
+   "peso": 4
+  },
+  {
+   "n": "bomba_al",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.001953,
+    0.142544,
+    0.25,
+    0.105263
+   ],
+   "px": [
+    512,
+    384
+   ],
+   "largura": [
+    2.2,
+    3.4
+   ],
+   "peso": 4
+  },
+  {
+   "n": "bomba_rv",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.634766,
+    0.001096,
+    0.25,
+    0.105263
+   ],
+   "px": [
+    512,
+    384
+   ],
+   "largura": [
+    2.2,
+    3.4
+   ],
+   "peso": 5
+  },
+  {
+   "n": "bomba_xis",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.505859,
+    0.142544,
+    0.1875,
+    0.105263
+   ],
+   "px": [
+    384,
+    384
+   ],
+   "largura": [
+    1.4,
+    2.2
+   ],
+   "peso": 3
+  },
+  {
+   "n": "risco_01",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.445312,
+    0.925439,
+    0.25,
+    0.070175
+   ],
+   "px": [
+    512,
+    256
+   ],
+   "largura": [
+    1.4,
+    2.8
+   ],
+   "peso": 5
+  },
+  {
+   "n": "risco_02",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.697266,
+    0.925439,
+    0.25,
+    0.070175
+   ],
+   "px": [
+    512,
+    256
+   ],
+   "largura": [
+    1.4,
+    2.8
+   ],
+   "peso": 5
+  },
+  {
+   "n": "simb_abismo",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.634766,
+    0.854167,
+    0.125,
+    0.070175
+   ],
+   "px": [
+    256,
+    256
+   ],
+   "largura": [
+    0.8,
+    1.5
+   ],
+   "peso": 5
+  },
+  {
+   "n": "simb_contagem",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.001953,
+    0.925439,
+    0.1875,
+    0.070175
+   ],
+   "px": [
+    384,
+    256
+   ],
+   "largura": [
+    0.9,
+    1.7
+   ],
+   "peso": 6
+  },
+  {
+   "n": "simb_engrenagem",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.253906,
+    0.854167,
+    0.125,
+    0.070175
+   ],
+   "px": [
+    256,
+    256
+   ],
+   "largura": [
+    0.8,
+    1.6
+   ],
+   "peso": 6
+  },
+  {
+   "n": "simb_olho",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.507812,
+    0.854167,
+    0.125,
+    0.070175
+   ],
+   "px": [
+    256,
+    256
+   ],
+   "largura": [
+    0.75,
+    1.4
+   ],
+   "peso": 6
+  },
+  {
+   "n": "simb_perigo",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.761719,
+    0.854167,
+    0.125,
+    0.070175
+   ],
+   "px": [
+    256,
+    256
+   ],
+   "largura": [
+    0.7,
+    1.2
+   ],
+   "peso": 5
+  },
+  {
+   "n": "simb_valvula",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.380859,
+    0.854167,
+    0.125,
+    0.070175
+   ],
+   "px": [
+    256,
+    256
+   ],
+   "largura": [
+    0.85,
+    1.6
+   ],
+   "peso": 7
+  },
+  {
+   "n": "simb_vizinho",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.695312,
+    0.142544,
+    0.125,
+    0.105263
+   ],
+   "px": [
+    256,
+    384
+   ],
+   "largura": [
+    0.9,
+    1.5
+   ],
+   "peso": 5
+  },
+  {
+   "n": "tag_0000",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.001953,
+    0.711623,
+    0.25,
+    0.070175
+   ],
+   "px": [
+    512,
+    256
+   ],
+   "largura": [
+    1.6500000000000001,
+    2.75
+   ],
+   "peso": 5
+  },
+  {
+   "n": "tag_13",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.505859,
+    0.640351,
+    0.25,
+    0.070175
+   ],
+   "px": [
+    512,
+    256
+   ],
+   "largura": [
+    0.8850000000000001,
+    1.475
+   ],
+   "peso": 4
+  },
+  {
+   "n": "tag_1994",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.505859,
+    0.426535,
+    0.25,
+    0.070175
+   ],
+   "px": [
+    512,
+    256
+   ],
+   "largura": [
+    1.395,
+    2.325
+   ],
+   "peso": 6
+  },
+  {
+   "n": "tag_666",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.253906,
+    0.711623,
+    0.25,
+    0.070175
+   ],
+   "px": [
+    512,
+    256
+   ],
+   "largura": [
+    1.1400000000000001,
+    1.9
+   ],
+   "peso": 4
+  },
+  {
+   "n": "tag_al",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.253906,
+    0.640351,
+    0.25,
+    0.070175
+   ],
+   "px": [
+    512,
+    256
+   ],
+   "largura": [
+    0.8850000000000001,
+    1.475
+   ],
+   "peso": 5
+  },
+  {
+   "n": "tag_antilopes",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.253906,
+    0.355263,
+    0.25,
+    0.070175
+   ],
+   "px": [
+    512,
+    256
+   ],
+   "largura": [
+    2.9250000000000003,
+    4.875
+   ],
+   "peso": 8
+  },
+  {
+   "n": "tag_arorua",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.001953,
+    0.355263,
+    0.25,
+    0.070175
+   ],
+   "px": [
+    512,
+    256
+   ],
+   "largura": [
+    1.905,
+    3.175
+   ],
+   "peso": 8
+  },
+  {
+   "n": "tag_bica",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.505859,
+    0.569079,
+    0.25,
+    0.070175
+   ],
+   "px": [
+    512,
+    256
+   ],
+   "largura": [
+    1.395,
+    2.325
+   ],
+   "peso": 4
+  },
+  {
+   "n": "tag_calixto",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.505859,
+    0.355263,
+    0.25,
+    0.070175
+   ],
+   "px": [
+    512,
+    256
+   ],
+   "largura": [
+    2.16,
+    3.6000000000000005
+   ],
+   "peso": 6
+  },
+  {
+   "n": "tag_cobalt",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.253906,
+    0.497807,
+    0.25,
+    0.070175
+   ],
+   "px": [
+    512,
+    256
+   ],
+   "largura": [
+    1.905,
+    3.175
+   ],
+   "peso": 4
+  },
+  {
+   "n": "tag_husker",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.001953,
+    0.497807,
+    0.25,
+    0.070175
+   ],
+   "px": [
+    512,
+    256
+   ],
+   "largura": [
+    1.905,
+    3.175
+   ],
+   "peso": 5
+  },
+  {
+   "n": "tag_jimmy",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.253906,
+    0.426535,
+    0.25,
+    0.070175
+   ],
+   "px": [
+    512,
+    256
+   ],
+   "largura": [
+    1.905,
+    3.175
+   ],
+   "peso": 7
+  },
+  {
+   "n": "tag_kraycik",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.001953,
+    0.426535,
+    0.25,
+    0.070175
+   ],
+   "px": [
+    512,
+    256
+   ],
+   "largura": [
+    2.16,
+    3.6000000000000005
+   ],
+   "peso": 6
+  },
+  {
+   "n": "tag_lopes",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.505859,
+    0.497807,
+    0.25,
+    0.070175
+   ],
+   "px": [
+    512,
+    256
+   ],
+   "largura": [
+    1.6500000000000001,
+    2.75
+   ],
+   "peso": 4
+  },
+  {
+   "n": "tag_maycow",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.001953,
+    0.569079,
+    0.25,
+    0.070175
+   ],
+   "px": [
+    512,
+    256
+   ],
+   "largura": [
+    1.905,
+    3.175
+   ],
+   "peso": 3
+  },
+  {
+   "n": "tag_nice",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.253906,
+    0.569079,
+    0.25,
+    0.070175
+   ],
+   "px": [
+    512,
+    256
+   ],
+   "largura": [
+    1.395,
+    2.325
+   ],
+   "peso": 3
+  },
+  {
+   "n": "tag_rv",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.001953,
+    0.640351,
+    0.25,
+    0.070175
+   ],
+   "px": [
+    512,
+    256
+   ],
+   "largura": [
+    1.6500000000000001,
+    2.75
+   ],
+   "peso": 6
+  },
+  {
+   "n": "tag_xix",
+   "atlas": "parede",
+   "papel": "pichacao",
+   "uv": [
+    0.505859,
+    0.711623,
+    0.25,
+    0.070175
+   ],
+   "px": [
+    512,
+    256
+   ],
+   "largura": [
+    1.1400000000000001,
+    1.9
+   ],
+   "peso": 3
+  }
+ ]
+}

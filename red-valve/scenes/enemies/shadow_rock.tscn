@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" uid="uid://dwrermo785n2i" path="res://scripts/enemies/shadow_rock.gd" id="1_rock"]
+
+[node name="ShadowRock" type="Node3D"]
+
+[node name="enemy" type="CharacterBody3D" parent="." groups=["enemies"]]
+collision_layer = 4
+collision_mask = 2
+script = ExtResource("1_rock")

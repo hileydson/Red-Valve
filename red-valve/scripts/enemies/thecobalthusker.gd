@@ -18,11 +18,15 @@ const SPEED = 2.0
 const ACCEL = 4.0
 
 @export var max_health = 150
+@export var iron_rusks_value: int = 4
 var current_health = max_health
 var update_timer = 0.0
 
-var playback 
+signal died
+
+var playback
 var dead:bool = false
+var cutscene_mode:bool = false
 
 func _ready() -> void:
 	playback = animation_tree["parameters/playback"]
@@ -44,6 +48,16 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity.y = 0
 
+	# Modo cutscene: só olha para o player, sem movimento/ataque
+	if cutscene_mode:
+		if player:
+			var look_pos = player.global_position
+			look_pos.y = global_position.y
+			if global_position.distance_to(look_pos) > 0.5:
+				look_at(look_pos, Vector3.UP)
+		move_and_slide()
+		return
+
 	if player and nav_agent:
 		# 2. Atualiza o destino apenas 5 vezes por segundo (Economiza CPU)
 		update_timer += delta
@@ -58,17 +72,17 @@ func _physics_process(delta: float) -> void:
 			
 			direction.y = 0 # FORÇA o inimigo a não subir
 			direction = direction.normalized()
-			
+
 			# Aplica a velocidade suavemente
 			velocity.x = lerp(velocity.x, direction.x * SPEED, delta * ACCEL)
 			velocity.z = lerp(velocity.z, direction.z * SPEED, delta * ACCEL)
-			
+
 			# 4. Rotação (Olha para o player, mas mantém o corpo reto)
 			var look_pos = player.global_position
 			look_pos.y = global_position.y
 			if global_position.distance_to(look_pos) > 0.5:
 				look_at(look_pos, Vector3.UP)
-			
+
 			if steps.playing == false and !dead: steps.play()
 		else:
 			steps.stop()
@@ -92,23 +106,27 @@ func take_damage(amount):
 	var tween = create_tween()
 	tween.tween_property(health_bar, "value", current_health, 0.2).set_trans(Tween.TRANS_SINE)
 	
-	if current_health <= 0:
+	if current_health <= 0 and not dead:
 		die()
 
 func die():
-	growl_2.play()
-	
 	dead = true
+	died.emit()
+	growl_2.play()
+	SaveManager.add_iron_rusks(iron_rusks_value)
 	health_bar_sprite.hide()
 	# Seu código de morte aqui
 	playback.travel("dead")
 	
+	if not is_inside_tree() or get_tree() == null: return
 	await get_tree().create_timer(3.7).timeout
 	drop_dead.play()
 	
+	if not is_inside_tree() or get_tree() == null: return
 	await get_tree().create_timer(1.0).timeout
 	self.set_collision_layer_value(3,false)
 	
+	if not is_inside_tree() or get_tree() == null: return
 	await get_tree().create_timer(15.0).timeout
 	queue_free()
 

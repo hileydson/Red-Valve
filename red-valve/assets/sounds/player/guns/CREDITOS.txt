@@ -1,0 +1,4 @@
+sacar_arma.ogg, composto por tools/audio/gerar_sons_armas.py (atrito
+sintetizado) com:
+
+  "Equipment Clicks II" (CC0)  https://opengameart.org/content/equipment-clicks-ii

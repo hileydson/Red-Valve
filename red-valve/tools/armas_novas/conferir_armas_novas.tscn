@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://tools/armas_novas/conferir_armas_novas.gd" id="1"]
+
+[node name="conferir_armas_novas" type="Node"]
+script = ExtResource("1")

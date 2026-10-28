@@ -1,0 +1,179 @@
+[gd_scene format=3 uid="uid://c4ko48jpe1vms"]
+
+[ext_resource type="Script" uid="uid://ya6fe0yegmsa" path="res://scripts/stages/prolog/oficina_jimmy.gd" id="1_17iq3"]
+[ext_resource type="PackedScene" uid="uid://bnjk8up77e563" path="res://scenes/effects/heat_distortion_filter.tscn" id="1_63lqe"]
+[ext_resource type="PackedScene" uid="uid://bhyhnppiawn07" path="res://scenes/configs/pause.tscn" id="1_b8np8"]
+[ext_resource type="PackedScene" uid="uid://bjlae2i2x8twg" path="res://assets/3d_model/stages/prolog/auto_pecas_jimmy.glb" id="1_q6dip"]
+[ext_resource type="PackedScene" uid="uid://dy356o67p6jyn" path="res://scenes/configs/fade.tscn" id="2_6q8v1"]
+[ext_resource type="PackedScene" uid="uid://cluvbknxfjx2k" path="res://scenes/player/player.tscn" id="2_falgx"]
+[ext_resource type="PackedScene" uid="uid://b7pdlllpih4yc" path="res://scenes/configs/cutscene_takes.tscn" id="2_jcde1"]
+[ext_resource type="AudioStream" uid="uid://cl5shgtn61go3" path="res://assets/sounds/common/fire_cracling.mp3" id="2_oc6fq"]
+[ext_resource type="PackedScene" uid="uid://cv4f2h7vortex" path="res://scenes/effects/vortex_magico.tscn" id="3_6q8v1"]
+[ext_resource type="AudioStream" uid="uid://fj4slbstwq3d" path="res://assets/cutscenes/sound/song_first_battle.mp3" id="3_e7swq"]
+[ext_resource type="AudioStream" uid="uid://d2ot3qcslngxq" path="res://assets/sounds/episodios/ambient_noise_slow.mp3" id="5_xddky"]
+[ext_resource type="PackedScene" uid="uid://xf6qeqrya6pi" path="res://scenes/enemies/the_cobalt_husker.tscn" id="8_5tdqg"]
+[ext_resource type="PackedScene" uid="uid://cl5veaedywunh" path="res://assets/3d_model/stages/prolog/oficina_jimmy_peca_4.glb" id="8_fu0a6"]
+[ext_resource type="Script" uid="uid://dev7jghc8pt3g" path="res://scripts/stages/prolog/flutuar_pecas.gd" id="8_ixu7l"]
+[ext_resource type="PackedScene" uid="uid://dhkec8411f51e" path="res://assets/3d_model/stages/prolog/oficina_jimmy_peca_3.glb" id="9_ixu7l"]
+[ext_resource type="PackedScene" uid="uid://bqavl5m1blf5b" path="res://assets/3d_model/stages/prolog/oficina_jimmy_peca_2.glb" id="10_5tdqg"]
+[ext_resource type="PackedScene" uid="uid://cao7ykq68lbsl" path="res://assets/3d_model/stages/prolog/oficina_jimmy_peca_1.glb" id="11_oc6fq"]
+[ext_resource type="PackedScene" uid="uid://dtqgby062bw1n" path="res://assets/3d_model/objects/portal_red_valve.glb" id="16_vy4g6"]
+[ext_resource type="PackedScene" uid="uid://b3xg324lfskhi" path="res://assets/3d_model/stages/prolog/armario.glb" id="17_jcde1"]
+[ext_resource type="AudioStream" uid="uid://5a1hffxew2cf" path="res://assets/sounds/episodios/red_valve_noise.mp3" id="19_q0ggi"]
+
+[sub_resource type="Gradient" id="Gradient_6q8v1"]
+offsets = PackedFloat32Array(0, 0.1, 0.4, 0.7, 1)
+colors = PackedColorArray(0.1, 0.5, 2, 0, 1, 0.1, 0.1, 0, 1.5, 0.2, 2, 1.2, 2.5, 0.1, 0.5, 1.2, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_xddky"]
+gradient = SubResource("Gradient_6q8v1")
+
+[sub_resource type="Curve" id="Curve_17iq3"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.2, 1), 0.0, 0.0, 0, 0, Vector2(0.8, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_q0ggi"]
+curve = SubResource("Curve_17iq3")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_tpw8k"]
+emission_shape = 6
+emission_ring_axis = Vector3(0, 1, 0)
+emission_ring_height = 0.5
+emission_ring_radius = 0.8
+emission_ring_inner_radius = 0.24
+emission_ring_cone_angle = 90.0
+orbit_velocity_min = 0.3
+orbit_velocity_max = 1.0
+radial_velocity_min = -3.0
+radial_velocity_max = -1.0
+gravity = Vector3(0, 2, 0)
+scale_min = 50000.0
+scale_max = 150000.0
+scale_curve = SubResource("CurveTexture_q0ggi")
+color_ramp = SubResource("GradientTexture1D_xddky")
+turbulence_enabled = true
+turbulence_noise_strength = 1.5
+turbulence_noise_scale = 3.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wt114"]
+blend_mode = 1
+shading_mode = 0
+vertex_color_use_as_albedo = true
+billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_fu0a6"]
+material = SubResource("StandardMaterial3D_wt114")
+size = Vector2(0.06, 0.06)
+
+[node name="oficina_jimmy" type="Node3D" unique_id=2029993664]
+script = ExtResource("1_17iq3")
+
+[node name="cutscene" parent="." unique_id=796399776 instance=ExtResource("2_jcde1")]
+visible = false
+
+[node name="FireCracling" type="AudioStreamPlayer" parent="." unique_id=1778625709]
+stream = ExtResource("2_oc6fq")
+volume_db = -17.492
+autoplay = true
+parameters/looping = true
+
+[node name="SongFirstBattle" type="AudioStreamPlayer" parent="." unique_id=467169788]
+stream = ExtResource("3_e7swq")
+volume_db = -4.471
+parameters/looping = true
+
+[node name="AmbientNoiseSlow" type="AudioStreamPlayer" parent="." unique_id=346077798]
+stream = ExtResource("5_xddky")
+volume_db = -9.245
+pitch_scale = 0.32
+autoplay = true
+parameters/looping = true
+
+[node name="camera_oficina" type="Camera3D" parent="." unique_id=451681609]
+transform = Transform3D(0.16972786, -0.78479624, 0.5960599, 0, 0.60483545, 0.79635054, -0.985491, -0.13516288, 0.10265744, 0, 1.4036655, 0)
+
+[node name="HeatDistortionFilter" parent="." unique_id=1887297 instance=ExtResource("1_63lqe")]
+
+[node name="Pause" parent="." unique_id=1267958209 instance=ExtResource("1_b8np8")]
+
+[node name="fade" parent="." unique_id=158118564 instance=ExtResource("2_6q8v1")]
+
+[node name="auto_pecas_jimmy" parent="." unique_id=790947015 instance=ExtResource("1_q6dip")]
+transform = Transform3D(9.963111, 0, 0, 0, 7.8780704, 0, 0, 0, 21.186905, -0.9719733, 0, -0.896631)
+
+[node name="VortexMagico" parent="auto_pecas_jimmy" unique_id=2059200178 instance=ExtResource("3_6q8v1")]
+transform = Transform3D(1, 0, 0, 0, 0.9999998, 0, 0, 0, 1, 0, -0.3174093, 0)
+tamanho_das_particulas = 0.06
+raio_do_furacao = 0.8
+alcance_da_luz = 9.0
+
+[node name="MagicParticles" type="GPUParticles3D" parent="auto_pecas_jimmy/VortexMagico" unique_id=806630580]
+transform = Transform3D(0.37881106, 0, 0, 0, 0.9999998, 0, 0, 0, 0.20909539, 0, 0, 0)
+amount = 1100
+lifetime = 3.5
+randomness = 0.5
+visibility_aabb = AABB(-15, -5, -15, 30, 30, 30)
+process_material = SubResource("ParticleProcessMaterial_tpw8k")
+draw_pass_1 = SubResource("QuadMesh_fu0a6")
+
+[node name="MagicLight" type="OmniLight3D" parent="auto_pecas_jimmy/VortexMagico" unique_id=1767021547]
+light_color = Color(1, 0.4, 0.1, 1)
+light_energy = 6.15
+shadow_enabled = true
+omni_range = 9.0
+
+[node name="Player" parent="." unique_id=448699446 instance=ExtResource("2_falgx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.538715, -4.2253184, 2.9094856)
+
+[node name="TheCobaltHusker" parent="." unique_id=669848176 instance=ExtResource("8_5tdqg")]
+transform = Transform3D(-0.33241317, 0, -0.7181764, 0, 0.73305094, 0, 0.61932474, 0, -0.38547027, -1.4511609, -5.1195, -1.2733573)
+
+[node name="pecas" type="Node3D" parent="." unique_id=1518424243]
+script = ExtResource("8_ixu7l")
+
+[node name="oficina_jimmy_peca_4" parent="pecas" unique_id=1937086540 instance=ExtResource("8_fu0a6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.034958, -4.39374, 2.2907526)
+
+[node name="oficina_jimmy_peca_5" parent="pecas" unique_id=471365061 instance=ExtResource("8_fu0a6")]
+transform = Transform3D(-0.041526932, 0, -0.9991374, 0, 1, 0, 0.9991374, 0, -0.041526932, -8.569721, -4.39374, -1.0755305)
+
+[node name="oficina_jimmy_peca_3" parent="pecas" unique_id=1059152765 instance=ExtResource("9_ixu7l")]
+transform = Transform3D(-0.46035376, 0, 0, 0, 0.41921884, 0, 0, 0, 0.4763551, 0.5617777, -4.901072, -4.718685)
+
+[node name="oficina_jimmy_peca_2" parent="pecas" unique_id=1792194529 instance=ExtResource("10_5tdqg")]
+transform = Transform3D(-0.928563, 0, 0.40958273, 0, 1.7874265, 0, -0.120319225, 0, -3.1609526, -5.51892, -3.9341364, -2.7507043)
+
+[node name="oficina_jimmy_peca_1" parent="pecas" unique_id=562929052 instance=ExtResource("11_oc6fq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6207197, -4.4285827, -6.5256596)
+
+[node name="oficina_jimmy_peca_8" parent="pecas" unique_id=1390271073 instance=ExtResource("11_oc6fq")]
+transform = Transform3D(0.11356744, 0, 0.9935303, 0, 1, 0, -0.9935303, 0, 0.11356744, -8.948151, -4.4285827, -4.3664436)
+
+[node name="oficina_jimmy_peca_7" parent="pecas" unique_id=1726708629 instance=ExtResource("11_oc6fq")]
+transform = Transform3D(0.06883367, 0, 0.99762815, 0, 1, 0, -0.99762815, 0, 0.06883367, -4.595435, -4.428582, 0.25828552)
+
+[node name="oficina_jimmy_peca_6" parent="pecas" unique_id=1147850552 instance=ExtResource("11_oc6fq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.9328327, -4.428582, 3.5379272)
+
+[node name="portal" type="Node3D" parent="." unique_id=1086288297]
+
+[node name="portal_red_valve" parent="portal" unique_id=1307033612 instance=ExtResource("16_vy4g6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.4188294, -4.3606133, -6.4884176)
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="portal/portal_red_valve" unique_id=1585019630]
+stream = ExtResource("19_q0ggi")
+volume_db = -8.75
+pitch_scale = 0.63
+autoplay = true
+parameters/looping = true
+
+[node name="armario" parent="portal" unique_id=1420347684 instance=ExtResource("17_jcde1")]
+transform = Transform3D(1.6344355, 0, 0, 0, 1.1668708, 0, 0, 0, 1.3613855, -6.161995, -4.201392, -6.011673)
+
+[node name="camera_inicio_cutscene" type="Camera3D" parent="portal" unique_id=544353729]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.9424763, -3.723655, 1.61424)
+
+[editable path="auto_pecas_jimmy"]

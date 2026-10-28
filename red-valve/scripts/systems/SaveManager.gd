@@ -1,0 +1,1166 @@
+extends Node
+
+const CONFIG_PATH = "user://config.json"
+var current_slot: int = 1
+
+func get_save_path(slot_index: int = -1) -> String:
+	if slot_index == -1:
+		slot_index = current_slot
+	return "user://save_game_" + str(slot_index) + ".json"
+
+var current_stage: String = ""
+var inventory_normal: Array = []
+var inventory_combat: Array = []
+var equipped_items: Array = ["cogblade"] # Cogblade sempre equipada
+## A ultima ARMA que o jogador equipou de propria vontade.
+##
+## Existe por causa de um vaivem: pra ir pra arena ele PRECISA trocar pro
+## amuleto (e' o amuleto que leva os inimigos pra la'), e ate' aqui ele chegava
+## na batalha desarmado. Agora a arena devolve esta arma sozinha, e a volta
+## devolve o que ele estava usando na cidade (`equipado_na_cidade`).
+var ultima_arma_equipada: String = ""
+## O que o Maycow NORMAL estava com a mao na ida pra arena. Vazio fora dela;
+## `MAOS_VAZIAS` quando ele foi sem nada na mao.
+var equipado_na_cidade: String = ""
+
+## O sangue do Maycow de uma cena pra outra (-1 = cheio).
+##
+## Cada cena tem o seu `player.tscn`, que nasce com a vida cheia: sem isto,
+## sair da igreja depois da luta devolvia todo o sangue perdido. O jogador
+## grava aqui ao sair da arvore e o proximo le' ao nascer. Nao vai pro arquivo
+## de save: carregar um jogo (ou morrer, que carrega) comeca de vida cheia.
+var sangue_entre_cenas: int = -1
+const MAOS_VAZIAS := "-"
+
+## Ids dos itens de cenario que ja' foram recolhidos ("hospital_municao_1"...).
+##
+## E' o que permite haver DUAS caixas de bala no mesmo balcao: "ja' peguei este
+## item" nao serve de resposta pra item empilhavel — quem tem 25 balas ainda
+## pode pegar mais 25. A pergunta certa e' "ja' peguei ESTE objeto ali".
+var pickups_pegos: Array = []
+
+## Atalhos do direcional: "esquerda"/"cima"/"direita"/"baixo" -> id do item.
+##
+## Existe porque so' UM item equipavel cabe por vez (ver EQUIPAMENTO_EXCLUSIVO):
+## sem um jeito de trocar sem abrir o menu, mudar de pistola pra caçadeira custaria
+## tres telas no meio da rua. Quem le' isto fora do menu e' `player_atalhos.gd`.
+var atalhos: Dictionary = {}
+var max_mp: float = 30.0
+var current_mp: float = 30.0
+var prolog_finished: bool = false
+var battlefield_1_intro_played: bool = false
+var stage_1_intro_played: bool = false
+var iron_rusks: int = 0
+## Posicao exata do player no stage_1, gravada pela opcao "Salvar" do menu de pause.
+## Fica vazio enquanto o jogador nunca usou essa opcao — nesse caso o stage_1 usa o
+## ponto de spawn de sempre. Formato: {"x": float, "y": float, "z": float, "ry": float}.
+var stage_1_saved_position: Dictionary = {}
+## Ligado so no momento em que um save e carregado; o stage_1 consome pra saber que
+## deve nascer na posicao gravada em vez do ponto de entrada do capitulo.
+var spawn_from_saved_position: bool = false
+## O tutorial do amuleto (levar o inimigo pra arena) ja foi mostrado? Ele aparece
+## uma unica vez na vida do save, no comeco da gameplay do Capitulo 1 na cidade.
+var tutorial_amuleto_visto: bool = false
+## O amuleto esta no pescoco? Do Capitulo 1 em diante o R3 / H tira e poe —
+## e e' isso que troca a REALIDADE da cidade: com ele, a rua e das sombras e
+## os inimigos enxergam o Maycow; sem ele, a rua e de gente e de carro, e os
+## inimigos viram sombras cegas. Comeca no pescoco (o Capitulo 1 abre assim).
+var amuleto_equipado: bool = true
+## Ids dos arquivos de texto (aba ARQUIVOS do menu) que o jogador ja encontrou.
+## O conteudo mora em ArquivosDados; aqui so fica o que ja foi liberado.
+var arquivos_desbloqueados: Array = []
+## Que parte do mapa de cada interior ja foi descoberta, por caminho do JSON
+## da planta: {"res://...escolamap.json": {"n": 256, "m": "<base64>", ...}}.
+##
+## A mascara em si e do MapaNevoa; aqui ela so fica guardada entre uma visita
+## e outra. Ver scripts/ui/mapa_nevoa.gd.
+var mapas_descobertos: Dictionary = {}
+## Onde o evento da Dona Nice (a igreja) esta' — ver `scripts/stages/igreja/`.
+##   0 nada aconteceu (a primeira entrada na igreja dispara a cutscene)
+##   1 cutscene vista, luta contra a fase 1
+##   2 luta contra a fase 2
+##   3 ela morreu; o Jonny ainda esta' caido na igreja
+##   4 o Maycow esta' carregando o Jonny (da porta da igreja ate' o hospital,
+##     andando pela cidade, e dentro do hospital)
+##   5 o Jonny ficou no chao, onde o Maycow o deixou (na cidade ou no hospital)
+## E' daqui que a igreja sabe se roda a cutscene, recomeca a luta (morte do
+## jogador volta pro comeco da fase em que ele estava) ou so' mostra o
+## resultado final.
+var evento_dona_nice: int = 0
+## A igreja vive TRANCADA ate' o Maycow usar a chave reserva que a Dona Nice
+## guarda no quarto dela (ver `igreja_aberta()`).
+var igreja_destrancada: bool = false
+## Onde o Jonny foi deixado (estado 5): [x, y, z, giro_y]. O nome ficou do
+## tempo em que so' dava pra deixar ele no hospital; a cena vai em
+## `jonny_deixado_em` (vazio = save antigo = hospital).
+var jonny_no_hospital: Array = []
+var jonny_deixado_em: String = ""
+var iron_rusks_pending: int = 0 # Ganho na luta atual, ainda não somado visualmente no HUD
+var iron_rusks_display: int = 0 # Valor mostrado no canto da tela, só sobe com a animação de tally
+
+var brightness_rect: ColorRect
+
+var default_config = {
+	"aim_mode": "hold",
+	"language": "pt",
+	"run_mode": "hold",
+	"deadzone": 0.2,
+	"sensitivity_look": 1.0,
+	"sensitivity_aim": 0.4,
+	"resolution": "1080p",
+	"display_mode": "windowed",
+	"brightness": 1.0,
+	"aim_assist": true,
+	"aim_assist_strength": 1.0, # 0.5 = sutil, 2.0 = bem grudento (menu: 50-200%)
+	"cel_shading": false,
+	"cel_shading_intensity": 0.65 # Faixa útil: 0.55 a 0.85 (ver menu de vídeo)
+}
+
+var config = default_config.duplicate()
+var _last_applied_mode: String = ""
+var _last_applied_resolution: String = ""
+
+var inventory: Array:
+	get:
+		if GlobalEvents.is_maycow_normal:
+			return inventory_normal
+		else:
+			return inventory_combat
+	set(val):
+		if GlobalEvents.is_maycow_normal:
+			inventory_normal = val
+		else:
+			inventory_combat = val
+
+var item_db = {
+	# A chave reserva da igreja: no quarto da Dona Nice, em cima da comoda. Some
+	# do menu quando abre a porta da igreja (`stage_1.gd`).
+	"chave_igreja": {
+		"name_key": "ITEM_CHAVE_IGREJA_NAME",
+		"desc_key": "ITEM_CHAVE_IGREJA_DESC",
+		"icon_path": "res://assets/images/menu/itens/red_valve/chave_igreja.png",
+		"model_path": "res://assets/3d_model/objects/chave_igreja/chave_igreja.glb",
+		"stackable": false,
+		"type": "inspectable"
+	},
+	# A seringa de adrenalina: usada pelo menu, devolve CURA_SERINGA do sangue.
+	"seringa_adrenalina": {
+		"name_key": "ITEM_SERINGA_NAME",
+		"desc_key": "ITEM_SERINGA_DESC",
+		"icon_path": "res://assets/images/menu/itens/red_valve/seringa_adrenalina.png",
+		"model_path": "res://assets/3d_model/objects/seringa_adrenalina/seringa_adrenalina.glb",
+		"stackable": true,
+		"type": "usable"
+	},
+	# A seringa de magia: a mesma seringa, com o liquido roxo. Usada pelo menu,
+	# devolve RECARGA_SERINGA_MAGIA da magia — a magia nao volta sozinha.
+	"seringa_magia": {
+		"name_key": "ITEM_SERINGA_MAGIA_NAME",
+		"desc_key": "ITEM_SERINGA_MAGIA_DESC",
+		"icon_path": "res://assets/images/menu/itens/red_valve/seringa_magia.png",
+		"model_path": "res://assets/3d_model/objects/seringa_magia/seringa_magia.glb",
+		"stackable": true,
+		"type": "usable"
+	},
+	"maycow_watch": {
+		"name_key": "ITEM_MAYCOW_WATCH_NAME",
+		"desc_key": "ITEM_MAYCOW_WATCH_DESC",
+		"icon_path": "res://assets/images/menu/itens/relogio.png",
+		"model_path": "res://assets/3d_model/player/Maycow Lopes/relogio.glb",
+		"stackable": false,
+		"type": "inspectable"
+	},
+	"amuleto": {
+		"name_key": "ITEM_AMULETO_NAME",
+		"desc_key": "ITEM_AMULETO_DESC",
+		"icon_path": "res://assets/images/menu/itens/amuleto_2d.png",
+		"model_path": "res://assets/3d_model/player/Maycow Lopes/amuleto_power.glb",
+		"stackable": false,
+		# So' "inspectable": o jogador nao equipa o amuleto. Ele vale sozinho na
+		# cidade e apaga dentro dos lugares — ver `amuleto_disponivel()`.
+		"type": "inspectable"
+	},
+	"lanterna": {
+		"name_key": "ITEM_LANTERNA_NAME",
+		"desc_key": "ITEM_LANTERNA_DESC",
+		"icon_path": "res://assets/images/menu/itens/lanterna_2d.png",
+		"model_path": "res://assets/3d_model/player/lanterna/lanterna.glb",
+		"stackable": false,
+		"type": "inspectable"
+	},
+	"pistol": {
+		"name_key": "ITEM_PISTOL_NAME",
+		"desc_key": "ITEM_PISTOL_DESC",
+		"icon_path": "res://assets/images/menu/itens/red_valve/pistola.png",
+		"model_path": "res://assets/3d_model/player/the_negotiator_V1/the_negotiator_v1.glb",
+		"stackable": false,
+		"type": "equippable"
+	},
+	"cogblade": {
+		"name_key": "ITEM_COGBLADE_NAME",
+		"desc_key": "ITEM_COGBLADE_DESC",
+		"icon_path": "res://assets/images/menu/itens/red_valve/cogblade.png",
+		"stackable": false,
+		"type": "equippable",
+		# Empunhar e' o toque no `ui_cogblade_power` (LB / C), nao o menu: la'
+		# ela aparece sempre equipada e sem "Equipar" nem "Atalho".
+		"equipavel": false
+	},
+	"pistol_ammo": {
+		"name_key": "ITEM_AMMO_NAME",
+		"desc_key": "ITEM_AMMO_DESC",
+		"icon_path": "res://assets/images/menu/itens/red_valve/pistola_bala.png",
+		"model_path": "res://assets/3d_model/player/the_negotiator_V1/cartridge/scene.gltf",
+		"stackable": true,
+		"type": "inspectable"
+	},
+	# A caçadeira e a munição dela. Vêm do MESMO balcão da pistola, do outro
+	# lado do círculo — ver `tools/godot/hospital/gerar_cena_hospital.py`.
+	#
+	# O `model_path` da arma é a V3 INTEIRA, e não a versão dobrável: aquela é
+	# cortada em duas peças para a recarga, e o menu não tem por que mostrar a
+	# costura de uma arma que o jogador ainda nem viu abrir.
+	"shotgun": {
+		"name_key": "ITEM_SHOTGUN_NAME",
+		"desc_key": "ITEM_SHOTGUN_DESC",
+		"icon_path": "res://assets/images/menu/itens/red_valve/shotgun.png",
+		"model_path": "res://assets/3d_model/player/the_negotiator_V3/the_negotiator_V3.glb",
+		"stackable": false,
+		"type": "equippable"
+	},
+	"shotgun_ammo": {
+		"name_key": "ITEM_SHOTGUN_AMMO_NAME",
+		"desc_key": "ITEM_SHOTGUN_AMMO_DESC",
+		"icon_path": "res://assets/images/menu/itens/red_valve/shotgun_bala.png",
+		"model_path": "res://assets/3d_model/player/the_negotiator_V3/cartridge/the_negotiator_V3_bullet_x2.glb",
+		"stackable": true,
+		"type": "inspectable"
+	},
+	# A MK3 (the_negotiator_V2) e a Granola (the_negotiator_V4), com as
+	# municoes. Tambem no balcao do hospital. A MK3 atira em rajadas de 3 e
+	# troca de pente; a Granola leva um mini-foguete por vez, pela boca.
+	"mk3": {
+		"name_key": "ITEM_MK3_NAME",
+		"desc_key": "ITEM_MK3_DESC",
+		"icon_path": "res://assets/images/menu/itens/red_valve/mk3.png",
+		"model_path": "res://assets/3d_model/player/the_negotiator_V2/the_negotiator_V2.glb",
+		"stackable": false,
+		"type": "equippable"
+	},
+	"mk3_ammo": {
+		"name_key": "ITEM_MK3_AMMO_NAME",
+		"desc_key": "ITEM_MK3_AMMO_DESC",
+		"icon_path": "res://assets/images/menu/itens/red_valve/mk3_bala.png",
+		"model_path": "res://assets/3d_model/player/the_negotiator_V2/cartridge/the_negotiator_V2_bullet.glb",
+		"stackable": true,
+		"type": "inspectable"
+	},
+	"granola": {
+		"name_key": "ITEM_GRANOLA_NAME",
+		"desc_key": "ITEM_GRANOLA_DESC",
+		"icon_path": "res://assets/images/menu/itens/red_valve/granola.png",
+		"model_path": "res://assets/3d_model/player/the_negotiator_V4/the_negotiator_V4.glb",
+		"stackable": false,
+		"type": "equippable"
+	},
+	"granola_ammo": {
+		"name_key": "ITEM_GRANOLA_AMMO_NAME",
+		"desc_key": "ITEM_GRANOLA_AMMO_DESC",
+		"icon_path": "res://assets/images/menu/itens/red_valve/granola_bala.png",
+		"model_path": "res://assets/3d_model/player/the_negotiator_V4/cartridge/the_negotiator_V4_bullet.glb",
+		"stackable": true,
+		"type": "inspectable"
+	}
+}
+
+## Itens que sao do MAYCOW, e nao da forma dele.
+##
+## A pistola e a municao sao pegas uma vez so', no hospital, e a partir dali
+## existem nos DOIS inventarios ao mesmo tempo: quem atira e' a mesma pessoa, com
+## a mesma arma e a mesma caixa de balas, esteja ela andando na cidade ou lutando
+## na arena. Por isso `add_item` e `remove_item_amount` mexem nas duas listas
+## quando o item e' um destes — senao o pente esvaziado na arena voltaria cheio
+## do outro lado, e a arma pega no hospital so' apareceria no menu de um deles.
+const ITENS_COMPARTILHADOS := ["pistol", "pistol_ammo", "shotgun", "shotgun_ammo",
+	"mk3", "mk3_ammo", "granola", "granola_ammo", "seringa_adrenalina", "seringa_magia"]
+
+## So' UM destes fica equipado por vez.
+##
+## Toda arma de fogo do Maycow normal usa o mesmo botao de mira e so' uma cabe
+## na mao. Trocar de uma pra outra e' equipar a outra — no menu ou pelo atalho
+## do direcional.
+##
+## A cogblade fica de fora: ela e' do Maycow parasita, nunca sai da mao dele e
+## nao disputa o gatilho com nada. O AMULETO tambem: ele tem botao proprio
+## (`ui_amuleto`) e nao se equipa — ver `amuleto_disponivel()`.
+const EQUIPAMENTO_EXCLUSIVO := ["pistol", "shotgun", "mk3", "granola"]
+
+## Quais dos exclusivos sao ARMA (e nao poder). E' o que a arena devolve.
+const ARMAS_DE_FOGO := ["pistol", "shotgun", "mk3", "granola"]
+
+## A cogblade esta empunhada como arma corpo a corpo (duas maos)?
+## Quando ativo, substitui a arma de fogo na primeira pessoa e libera os
+## ataques melee variados e a defesa. Os poderes da cogblade (segurar C)
+## continuam funcionando independente disto.
+var cogblade_arma_ativa: bool = false
+
+
+## Tem ALGUMA arma de fogo na mao?
+##
+## Quase todo lugar que perguntava `is_equipped("pistol")` na verdade queria
+## isto — "a mao da arma aparece?". Com a cacadeira tambem na primeira pessoa,
+## perguntar so' pela pistola escondia a mao com a cacadeira equipada.
+func arma_de_fogo_equipada() -> bool:
+	for arma in ARMAS_DE_FOGO:
+		if is_equipped(arma):
+			return true
+	return false
+
+
+## A cogblade esta empunhada como arma E o jogador a tem no inventario?
+func cogblade_como_arma() -> bool:
+	return cogblade_arma_ativa and tem_item("cogblade")
+
+func _ready():
+	self.process_mode = Node.PROCESS_MODE_ALWAYS
+	iron_rusks_display = iron_rusks
+	
+	var canvas = CanvasLayer.new()
+	canvas.layer = 125
+	add_child(canvas)
+	brightness_rect = ColorRect.new()
+	brightness_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	brightness_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	brightness_rect.color = Color(0, 0, 0, 0)
+	canvas.add_child(brightness_rect)
+	
+	if inventory_normal.is_empty():
+		inventory_normal.append({"id": "maycow_watch", "amount": 1})
+	# A pistola e a municao NAO nascem mais aqui: elas ficam no balcao da
+	# recepcao do hospital e entram nos dois inventarios quando o jogador pega
+	# (ver `scripts/stages/hospital/item_de_balcao.gd`).
+	if inventory_combat.is_empty():
+		inventory_combat.append({"id": "cogblade", "amount": 1})
+
+	# Lê apenas as configurações globais
+	if FileAccess.file_exists(CONFIG_PATH):
+		var file = FileAccess.open(CONFIG_PATH, FileAccess.READ)
+		if file:
+			var content = file.get_as_text()
+			file.close()
+			var json = JSON.new()
+			if json.parse(content) == OK:
+				var data = json.get_data()
+				if typeof(data) == TYPE_DICTIONARY:
+					for key in data.keys():
+						config[key] = data[key]
+	apply_configs()
+
+	# Ao rodar qualquer scene do game pelo editor (ou ao iniciar), o default sempre é o save do Slot 1:
+	current_slot = 1
+	if FileAccess.file_exists(get_save_path(1)):
+		load_slot_data_only(1)
+
+func save_config() -> void:
+	var file = FileAccess.open(CONFIG_PATH, FileAccess.WRITE)
+	if file:
+		file.store_string(JSON.stringify(config))
+		file.close()
+
+func is_window_embedded() -> bool:
+	if Engine.has_method("is_embedded_in_editor") and Engine.is_embedded_in_editor():
+		return true
+	var win = get_window() if has_method("get_window") else null
+	if win:
+		if win.has_method("is_embedded") and win.is_embedded():
+			return true
+		if win.has_method("get_embedder") and win.get_embedder() != null:
+			return true
+	if get_tree() and get_tree().root:
+		if get_tree().root.has_method("is_embedded") and get_tree().root.is_embedded():
+			return true
+		if get_tree().root.has_method("get_embedder") and get_tree().root.get_embedder() != null:
+			return true
+	return false
+
+func apply_configs() -> void:
+	TranslationServer.set_locale(config["language"])
+	
+	var cur_mode = config.get("display_mode", "windowed")
+	var cur_res = config.get("resolution", "1080p")
+	
+	var res_map = {
+		"720p": Vector2i(1280, 720),
+		"1080p": Vector2i(1920, 1080),
+		"1440p": Vector2i(2560, 1440)
+	}
+	var target_res = res_map.get(cur_res, Vector2i(1920, 1080))
+	
+	var res_scale_map = {
+		"720p": 0.5,
+		"1080p": 1.0,
+		"1440p": 1.5
+	}
+	var scale_3d = res_scale_map.get(cur_res, 1.0)
+	
+	if get_tree() and get_tree().root:
+		get_tree().root.content_scale_size = Vector2i(1920, 1080)
+		get_tree().root.scaling_3d_scale = scale_3d
+	
+	if cur_mode != _last_applied_mode or cur_res != _last_applied_resolution:
+		_last_applied_mode = cur_mode
+		_last_applied_resolution = cur_res
+		
+		if not is_window_embedded():
+			if cur_mode == "fullscreen":
+				DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
+			else:
+				DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+				DisplayServer.window_set_size(target_res)
+				var screen_size = DisplayServer.screen_get_size()
+				var win_size = DisplayServer.window_get_size()
+				DisplayServer.window_set_position((screen_size - win_size) / 2)
+		
+	var actions = ["ui_left", "ui_right", "ui_up", "ui_down", "ui_mover_esquerda", "ui_mover_direita", "ui_mover_cima", "ui_mover_baixo", "ui_look_left", "ui_look_right", "ui_look_up", "ui_look_down"]
+	for action in actions:
+		if InputMap.has_action(action):
+			InputMap.action_set_deadzone(action, config["deadzone"])
+			
+	_apply_cel_shading_config()
+
+	if is_instance_valid(brightness_rect):
+		var b = clamp(config["brightness"], 0.1, 2.0)
+		if b <= 1.0:
+			brightness_rect.color = Color(0, 0, 0, 1.0 - b)
+		else:
+			brightness_rect.color = Color(1, 1, 1, (b - 1.0) * 0.5)
+
+func _apply_cel_shading_config() -> void:
+	# Repassa a config de vídeo para o overlay de cel shading que estiver ativo
+	# (ele se registra no grupo ao entrar na árvore).
+	if not get_tree(): return
+	for overlay in get_tree().get_nodes_in_group("cel_shading_overlay"):
+		if is_instance_valid(overlay):
+			overlay.apply_config()
+
+func get_slots_info() -> Array:
+	var info = []
+	for i in range(1, 4):
+		var path = get_save_path(i)
+		if FileAccess.file_exists(path):
+			var file = FileAccess.open(path, FileAccess.READ)
+			if file:
+				var content = file.get_as_text()
+				file.close()
+				var json = JSON.new()
+				if json.parse(content) == OK:
+					var data = json.get_data()
+					if typeof(data) == TYPE_DICTIONARY:
+						var ch = "TXT_PROLOGUE"
+						if data.get("prolog_finished", false):
+							ch = "TXT_CHAPTER_1"
+						info.append({"empty": false, "slot": i, "chapter": ch})
+						continue
+		info.append({"empty": true, "slot": i, "chapter": ""})
+	return info
+
+## Cena que NAO pode virar checkpoint sozinha depois do prologo.
+##
+## A arena e lugar de PASSAGEM: entra-se nela pelo amuleto, de dentro do
+## stage_1, e sai-se dela de volta pro mesmo ponto da cidade. Gravar "voce
+## estava na arena" larga o jogador, ao carregar, dentro de um campo de batalha
+## vazio — sem inimigos, sem o Maycow normal e sem caminho de volta.
+##
+## No PROLOGO e o contrario: ali a arena e etapa obrigatoria do roteiro, e quem
+## fecha o jogo no meio dela tem de voltar PRA ELA. Por isso a trava so vale
+## depois que o prologo terminou.
+const CENA_DE_PASSAGEM := "battlefield"
+
+## O mapa da cidade. E pra ca que se volta quando o checkpoint gravado nao serve.
+const CENA_CIDADE := "res://scenes/stages/stage_1/stage_1.tscn"
+
+
+## Esta cena pode ser gravada como o ponto pra onde o "Carregar" leva?
+func _pode_virar_checkpoint(caminho: String) -> bool:
+	if caminho.contains("main_menu"):
+		return false
+	if prolog_finished and caminho.contains(CENA_DE_PASSAGEM):
+		return false
+	return true
+
+
+## `scene_path` explicito SEMPRE vence: quem passa um caminho a mao sabe onde
+## quer que o jogador reapareca (o fim do prologo faz isso pra mandar pro
+## stage_1). Sem ele, vale a cena atual — desde que ela sirva de checkpoint.
+func save_game(scene_path: String = ""):
+	var temp_stage = current_stage
+	
+	if scene_path != "":
+		temp_stage = scene_path
+	elif get_tree().current_scene and _pode_virar_checkpoint(get_tree().current_scene.scene_file_path):
+		temp_stage = get_tree().current_scene.scene_file_path
+		
+	if temp_stage != "":
+		current_stage = temp_stage
+		
+	# A mascara viva vence a guardada: o jogador pode ter descoberto meio
+	# predio desde o ultimo save, e quem tem isso na mao e o MapaNevoa.
+	MapaNevoa.recolher(mapas_descobertos)
+
+	var save_data = {
+		"current_stage": current_stage,
+		"prolog_finished": prolog_finished,
+		"battlefield_1_intro_played": battlefield_1_intro_played,
+		"stage_1_intro_played": stage_1_intro_played,
+		"inventory_normal": inventory_normal,
+		"inventory_combat": inventory_combat,
+		"equipped_items": equipped_items,
+		"atalhos": atalhos,
+		"ultima_arma_equipada": ultima_arma_equipada,
+		"equipado_na_cidade": equipado_na_cidade,
+		"pickups_pegos": pickups_pegos,
+		"max_mp": max_mp,
+		"current_mp": current_mp,
+		"iron_rusks": iron_rusks,
+		"arquivos_desbloqueados": arquivos_desbloqueados,
+		"tutorial_amuleto_visto": tutorial_amuleto_visto,
+		"amuleto_equipado": amuleto_equipado,
+		"escola_portao_destrancado": GlobalEvents.escola_portao_destrancado,
+		"stage_1_saved_position": stage_1_saved_position,
+		"mapas_descobertos": mapas_descobertos,
+		"cogblade_arma_ativa": cogblade_arma_ativa,
+		"evento_dona_nice": evento_dona_nice,
+		"igreja_destrancada": igreja_destrancada,
+		"jonny_no_hospital": jonny_no_hospital,
+		"jonny_deixado_em": jonny_deixado_em
+	}
+	
+	save_config() # Sempre salvar config junto
+	var path = get_save_path()
+	var file = FileAccess.open(path, FileAccess.WRITE)
+	if file:
+		file.store_string(JSON.stringify(save_data))
+		file.close()
+		print("Game Saved in slot ", current_slot, "! Stage: ", current_stage)
+
+func delete_save(slot_id: int) -> void:
+	var path = get_save_path(slot_id)
+	if FileAccess.file_exists(path):
+		var dir = DirAccess.open("user://")
+		if dir:
+			dir.remove(path.get_file())
+			print("Game save deleted from slot ", slot_id)
+
+func load_game(slot_id: int = -1) -> bool:
+	sangue_entre_cenas = -1
+	if slot_id != -1:
+		current_slot = slot_id
+		
+	var path = get_save_path()
+	if not FileAccess.file_exists(path):
+		return false
+		
+	var file = FileAccess.open(path, FileAccess.READ)
+	if file:
+		var content = file.get_as_text()
+		file.close()
+		
+		var json = JSON.new()
+		var error = json.parse(content)
+		if error == OK:
+			var data = json.get_data()
+			if typeof(data) == TYPE_DICTIONARY:
+				current_stage = data.get("current_stage", "")
+				prolog_finished = data.get("prolog_finished", false)
+				battlefield_1_intro_played = data.get("battlefield_1_intro_played", false)
+				stage_1_intro_played = data.get("stage_1_intro_played", false)
+				inventory_normal = data.get("inventory_normal", [{"id": "maycow_watch", "amount": 1}])
+				inventory_combat = data.get("inventory_combat", [{"id": "cogblade", "amount": 1}])
+				equipped_items = data.get("equipped_items", ["cogblade"])
+				atalhos = data.get("atalhos", {})
+				ultima_arma_equipada = data.get("ultima_arma_equipada", "")
+				equipado_na_cidade = data.get("equipado_na_cidade", "")
+				pickups_pegos = data.get("pickups_pegos", [])
+				_sincronizar_itens_compartilhados()
+				garantir_equipamento_do_normal()
+				max_mp = data.get("max_mp", 30.0)
+				current_mp = data.get("current_mp", 30.0)
+				iron_rusks = data.get("iron_rusks", 0)
+				iron_rusks_display = iron_rusks
+				arquivos_desbloqueados = data.get("arquivos_desbloqueados", [])
+				tutorial_amuleto_visto = data.get("tutorial_amuleto_visto", false)
+				amuleto_equipado = bool(data.get("amuleto_equipado", true))
+				GlobalEvents.escola_portao_destrancado = data.get("escola_portao_destrancado", false)
+				stage_1_saved_position = data.get("stage_1_saved_position", {})
+				mapas_descobertos = data.get("mapas_descobertos", {})
+				cogblade_arma_ativa = data.get("cogblade_arma_ativa", false)
+				evento_dona_nice = int(data.get("evento_dona_nice", 0))
+				igreja_destrancada = bool(data.get("igreja_destrancada", false))
+				jonny_no_hospital = data.get("jonny_no_hospital", [])
+				jonny_deixado_em = data.get("jonny_deixado_em", "")
+				# As mascaras vivas sao do save ANTERIOR: sem isto, a escola
+				# descoberta no slot 1 apareceria descoberta no slot 2.
+				MapaNevoa.esquecer_tudo()
+
+				# Conserto de save gravado dentro da arena. Ate a trava do
+				# `_pode_virar_checkpoint` existir, entrar na arena carimbava o
+				# checkpoint nela — e carregar esse save largava o jogador num
+				# campo de batalha vazio, sem inimigos e sem saida, com o save
+				# ja gravado la: nao dava nem pra sair andando.
+				#
+				# Fica aqui pra sempre, nao so como migracao: a arena nunca e um
+				# lugar valido pra reaparecer depois do prologo, venha o valor de
+				# onde vier. Com posicao gravada o jogador volta pra ela; sem
+				# ela, pro ponto de entrada do capitulo 1.
+				if prolog_finished and current_stage.contains(CENA_DE_PASSAGEM):
+					print("Save apontava pra arena; devolvendo pro mapa da cidade.")
+					current_stage = CENA_CIDADE
+
+				# So vale pro mapa da cidade: e la que a posicao exata foi gravada.
+				spawn_from_saved_position = not stage_1_saved_position.is_empty() \
+					and current_stage == CENA_CIDADE
+				
+				if current_stage != "" and ResourceLoader.exists(current_stage):
+					print("Game Loaded from slot ", current_slot, "! ", current_stage)
+					LoadingScreen.load_scene(current_stage)
+					return true
+	return false
+
+## Carrega os dados do save em memória SEM disparar troca de cena e sem resetar texturas do jogo ativo.
+## Usado pelo menu Debug para inspecionar e alterar eventos do Slot 1 (ou outro slot).
+func load_slot_data_only(slot_id: int = 1) -> bool:
+	current_slot = slot_id
+	var path = get_save_path(slot_id)
+	if not FileAccess.file_exists(path):
+		return false
+		
+	var file = FileAccess.open(path, FileAccess.READ)
+	if not file:
+		return false
+		
+	var content = file.get_as_text()
+	file.close()
+	
+	var json = JSON.new()
+	var error = json.parse(content)
+	if error != OK:
+		return false
+		
+	var data = json.get_data()
+	if typeof(data) != TYPE_DICTIONARY:
+		return false
+		
+	var loaded_stage = data.get("current_stage", "")
+	if loaded_stage != "":
+		current_stage = loaded_stage
+	prolog_finished = data.get("prolog_finished", false)
+	battlefield_1_intro_played = data.get("battlefield_1_intro_played", false)
+	stage_1_intro_played = data.get("stage_1_intro_played", false)
+	inventory_normal = data.get("inventory_normal", [{"id": "maycow_watch", "amount": 1}])
+	inventory_combat = data.get("inventory_combat", [{"id": "cogblade", "amount": 1}])
+	equipped_items = data.get("equipped_items", ["cogblade"])
+	atalhos = data.get("atalhos", {})
+	ultima_arma_equipada = data.get("ultima_arma_equipada", "")
+	equipado_na_cidade = data.get("equipado_na_cidade", "")
+	pickups_pegos = data.get("pickups_pegos", [])
+	_sincronizar_itens_compartilhados()
+	garantir_equipamento_do_normal()
+	max_mp = data.get("max_mp", 30.0)
+	current_mp = data.get("current_mp", 30.0)
+	iron_rusks = data.get("iron_rusks", 0)
+	iron_rusks_display = iron_rusks
+	arquivos_desbloqueados = data.get("arquivos_desbloqueados", [])
+	tutorial_amuleto_visto = data.get("tutorial_amuleto_visto", false)
+	amuleto_equipado = bool(data.get("amuleto_equipado", true))
+	GlobalEvents.escola_portao_destrancado = data.get("escola_portao_destrancado", false)
+	stage_1_saved_position = data.get("stage_1_saved_position", {})
+	mapas_descobertos = data.get("mapas_descobertos", {})
+	cogblade_arma_ativa = data.get("cogblade_arma_ativa", false)
+	evento_dona_nice = int(data.get("evento_dona_nice", 0))
+	igreja_destrancada = bool(data.get("igreja_destrancada", false))
+	jonny_no_hospital = data.get("jonny_no_hospital", [])
+	jonny_deixado_em = data.get("jonny_deixado_em", "")
+	print("Game data loaded into memory from slot ", slot_id, " (no scene change)")
+	return true
+
+
+func reset_progress() -> void:
+	sangue_entre_cenas = -1
+	current_stage = ""
+	prolog_finished = false
+	battlefield_1_intro_played = false
+	stage_1_intro_played = false
+	GlobalEvents.escola_portao_destrancado = false
+	inventory_normal = [{"id": "maycow_watch", "amount": 1}]
+	inventory_combat = [{"id": "cogblade", "amount": 1}]
+	equipped_items = ["cogblade"]
+	atalhos = {}
+	ultima_arma_equipada = ""
+	equipado_na_cidade = ""
+	pickups_pegos = []
+	max_mp = 30.0
+	current_mp = 30.0
+	iron_rusks = 0
+	iron_rusks_display = 0
+	arquivos_desbloqueados = []
+	tutorial_amuleto_visto = false
+	amuleto_equipado = true
+	stage_1_saved_position = {}
+	spawn_from_saved_position = false
+	mapas_descobertos = {}
+	evento_dona_nice = 0
+	igreja_destrancada = false
+	jonny_no_hospital = []
+	jonny_deixado_em = ""
+	MapaNevoa.esquecer_tudo()
+
+
+## Grava o que ja foi descoberto dos mapas SEM mexer no checkpoint.
+##
+## Passar `current_stage` de volta e o que faz isso: `save_game` so troca a
+## cena gravada quando recebe outra ou quando decide pela cena atual. Quem
+## chama e o minimapa, ao sair do predio — descobrir mapa e progresso, e sair
+## da escola nao pode marcar a escola como o lugar pra onde o "Carregar" leva.
+func gravar_mapas() -> void:
+	# Sem checkpoint nao ha arquivo pra carimbar, e gravar um com
+	# "current_stage" vazio deixaria no slot um save que existe e nao carrega.
+	# A mascara nao se perde: ela fica viva na sessao e entra no proximo save.
+	if current_stage == "":
+		return
+	save_game(current_stage)
+
+
+
+## Grava a posicao exata do player no mapa da cidade e salva na hora. So faz sentido
+## no stage_1 e a partir do capitulo 1, e quem chama ja checa isso:
+##   - o menu de pause, na opcao "Salvar";
+##   - o amuleto, ao partir pra arena (`_grava_checkpoint_antes_da_arena`), pra
+##     que fechar o jogo dentro da batalha devolva o jogador a este ponto.
+func save_player_position(pos: Vector3, rot_y: float) -> void:
+	stage_1_saved_position = {"x": pos.x, "y": pos.y, "z": pos.z, "ry": rot_y}
+	save_game()
+
+
+## Ha uma posicao gravada no stage_1 pela opcao "Salvar"?
+func has_saved_position() -> bool:
+	return not stage_1_saved_position.is_empty()
+
+
+## Devolve a posicao gravada, ou Vector3.ZERO se nao houver nenhuma.
+func get_saved_position() -> Vector3:
+	if stage_1_saved_position.is_empty():
+		return Vector3.ZERO
+	return Vector3(
+		float(stage_1_saved_position.get("x", 0.0)),
+		float(stage_1_saved_position.get("y", 0.0)),
+		float(stage_1_saved_position.get("z", 0.0))
+	)
+
+
+## Rotacao Y gravada junto com a posicao.
+func get_saved_rotation_y() -> float:
+	return float(stage_1_saved_position.get("ry", 0.0))
+
+
+## O jogador ja tem este arquivo?
+func tem_arquivo(id: String) -> bool:
+	return arquivos_desbloqueados.has(id)
+
+
+## Libera um arquivo pra aba ARQUIVOS e grava na hora — encontrar um arquivo e
+## progresso, e o jogador nao deveria perde-lo se fechar o jogo em seguida.
+## Devolve true so na primeira vez, pra quem chamou poder avisar na tela sem
+## repetir o aviso quando a cena for revisitada.
+func desbloquear_arquivo(id: String) -> bool:
+	if arquivos_desbloqueados.has(id):
+		return false
+	arquivos_desbloqueados.append(id)
+	save_game()
+	return true
+
+## Marca o tutorial do amuleto como visto e grava na hora: e progresso de uma vez
+## so, e o jogador nao pode ve-lo de novo se fechar o jogo logo depois.
+func marcar_tutorial_amuleto_visto() -> void:
+	if tutorial_amuleto_visto:
+		return
+	tutorial_amuleto_visto = true
+	save_game()
+
+
+func add_iron_rusks(amount: int) -> void:
+	iron_rusks += amount
+	iron_rusks_pending += amount
+
+## As listas em que este item mora.
+##
+## Quase todo item vive so' no inventario da forma atual (`inventory`); os de
+## ITENS_COMPARTILHADOS vivem nos dois ao mesmo tempo.
+func _listas_do_item(item_id: String) -> Array:
+	if item_id in ITENS_COMPARTILHADOS:
+		return [inventory_normal, inventory_combat]
+	return [inventory]
+
+
+func add_item(item_id: String, amount: int = 1):
+	if not item_db.has(item_id): return
+	for lista in _listas_do_item(item_id):
+		_add_item_na_lista(lista, item_id, amount)
+
+
+## Iguala os itens compartilhados nos dois inventarios.
+##
+## Rede pra save antigo e pra qualquer dessincronia: a pistola nasceu, por
+## muito tempo, so' no inventario de combate — carregar um desses deixava o
+## Maycow normal sem a arma que ele "tem". A quantidade que vale e' a MAIOR:
+## ninguem perde bala por causa de um conserto.
+func _sincronizar_itens_compartilhados() -> void:
+	for id in ITENS_COMPARTILHADOS:
+		var maior := 0
+		for lista in [inventory_normal, inventory_combat]:
+			for item in lista:
+				if item.get("id", "") == id:
+					maior = maxi(maior, int(item.get("amount", 0)))
+		if maior <= 0:
+			continue
+		for lista in [inventory_normal, inventory_combat]:
+			var achou := false
+			for item in lista:
+				if item.get("id", "") == id:
+					item["amount"] = maior
+					achou = true
+					break
+			if not achou:
+				lista.append({"id": id, "amount": maior})
+
+
+func _add_item_na_lista(lista: Array, item_id: String, amount: int) -> void:
+	var empilhavel: bool = item_db[item_id]["stackable"]
+	for item in lista:
+		if item["id"] == item_id:
+			if empilhavel:
+				item["amount"] += amount
+			return
+	lista.append({"id": item_id, "amount": amount if empilhavel else 1})
+
+## O jogador TEM este item, esteja ele no inventário do Maycow normal ou no do
+## de combate?
+##
+## `inventory` sozinho não serve para isto: ele devolve um inventário ou outro
+## conforme `GlobalEvents.is_maycow_normal`, e quem pergunta "já peguei a
+## lanterna?" (o player, para acender; a igreja, para não oferecer de novo)
+## precisa da resposta certa nos dois lados.
+func tem_item(item_id: String) -> bool:
+	for lista in [inventory_normal, inventory_combat]:
+		for item in lista:
+			if item.get("id", "") == item_id and int(item.get("amount", 0)) > 0:
+				return true
+	return false
+
+
+func get_item_amount(item_id: String) -> int:
+	for item in inventory:
+		if item["id"] == item_id:
+			return item["amount"]
+	return 0
+
+func remove_item_amount(item_id: String, amount: int) -> void:
+	for lista in _listas_do_item(item_id):
+		for i in range(lista.size()):
+			if lista[i]["id"] == item_id:
+				lista[i]["amount"] = maxi(0, int(lista[i]["amount"]) - amount)
+				break
+
+
+## Equipado E' TER: um save antigo carrega com "pistol" na lista de equipados, e
+## a pistola agora so' existe depois do hospital. Sem esta segunda metade o jogo
+## desenhava a mao com a arma de quem nunca a pegou.
+func is_equipped(item_id: String) -> bool:
+	if item_id == "cogblade":
+		return cogblade_arma_ativa and tem_item("cogblade")
+	if item_id == "amuleto":
+		return amuleto_disponivel()
+	return item_id in equipped_items and tem_item(item_id)
+
+
+## O amuleto esta "equipado" agora?
+##
+## Nao e' escolha do jogador: na cidade ele vale sempre (segurar `ui_amuleto`
+## abre a visao dele), e dentro de qualquer lugar — igreja, hospital, escola,
+## casas — ele apaga sozinho. A pergunta e' pela CENA atual, e nao por uma lista
+## de interiores: lugar novo ja' nasce sem amuleto. Na arena a cena atual e' a
+## battlefield, e na volta o `battlefield.gd` devolve a cidade como atual.
+func amuleto_disponivel() -> bool:
+	if not tem_item("amuleto"):
+		return false
+	if not amuleto_equipado and _capitulo_1():
+		return false
+	return na_cidade()
+
+
+func na_cidade() -> bool:
+	var cena := get_tree().current_scene if is_inside_tree() else null
+	return cena != null and cena.scene_file_path == CENA_CIDADE
+
+
+## Mesmo teste da stage_1 e do ShadowCrowd: o prologo acabou?
+func _capitulo_1() -> bool:
+	return prolog_finished or GlobalEvents.entering_chapter_1
+
+
+## O R3 / H pode trocar de realidade agora? So' do Capitulo 1 em diante, so' na
+## cidade, so' com o amuleto no inventario e so' o Maycow normal (o outro ja'
+## vive na outra realidade e nao tem amuleto).
+func pode_alternar_realidade() -> bool:
+	return GlobalEvents.is_maycow_normal and _capitulo_1() and tem_item("amuleto") and na_cidade()
+
+
+## A cidade esta na realidade "de gente" (amuleto fora do pescoco)? E' a
+## pergunta que as sombras, os carros e os inimigos fazem.
+func realidade_normal() -> bool:
+	return pode_alternar_realidade() and not amuleto_equipado
+
+
+## Os inimigos da cidade enxergam o Maycow? Sem o amuleto, nao: eles viram
+## sombras e nao atacam nem agarram.
+func maycow_oculto() -> bool:
+	return realidade_normal()
+
+
+## Este item aceita ser equipado?
+##
+## O `type` do item_db so' guarda UM papel, e o amuleto tem dois (equipavel e
+## inspecionavel). Por isso a chave extra `equipavel` vence quando existe.
+func pode_equipar(item_id: String) -> bool:
+	var info: Dictionary = item_db.get(item_id, {})
+	return bool(info.get("equipavel", info.get("type", "") == "equippable"))
+
+
+func equip_item(item_id: String) -> void:
+	# Equipar a cogblade como arma corpo a corpo: desliga as armas de fogo
+	# do slot exclusivo, mas a cogblade continua em equipped_items
+	# (ela nunca sai de la').
+	if item_id == "cogblade":
+		for outro in EQUIPAMENTO_EXCLUSIVO:
+			equipped_items.erase(outro)
+		cogblade_arma_ativa = true
+		return
+	# Qualquer outro item exclusivo desativa a cogblade-arma.
+	if item_id in EQUIPAMENTO_EXCLUSIVO:
+		cogblade_arma_ativa = false
+	# Um item do grupo exclusivo derruba o outro: e' o mesmo botao de mira que
+	# muda de funcao, entao os dois juntos nao querem dizer nada.
+	if item_id in EQUIPAMENTO_EXCLUSIVO:
+		for outro in EQUIPAMENTO_EXCLUSIVO:
+			if outro != item_id:
+				equipped_items.erase(outro)
+	# Arma fica lembrada: e' a que a arena devolve (ver `entrar_na_arena`).
+	if item_id in ARMAS_DE_FOGO:
+		ultima_arma_equipada = item_id
+	if not item_id in equipped_items:
+		equipped_items.append(item_id)
+
+func unequip_item(item_id: String) -> void:
+	if item_id == "cogblade":
+		cogblade_arma_ativa = false
+		return
+	if item_id in equipped_items:
+		equipped_items.erase(item_id)
+
+
+## A porta da igreja abre? So' depois de usar a chave — ou em save antigo em
+## que o evento da Dona Nice ja' comecou (ele entrou quando a porta nao tinha
+## tranca, e trancar agora o prenderia do lado de fora no meio da historia).
+func igreja_aberta() -> bool:
+	return igreja_destrancada or evento_dona_nice > 0
+
+
+## A chave entra na fechadura: some do menu e a igreja fica aberta pra sempre.
+func usar_chave_da_igreja() -> void:
+	igreja_destrancada = true
+	consumir_item("chave_igreja", 1)
+	save_game()
+
+
+## Quanto do sangue maximo a seringa de adrenalina devolve.
+const CURA_SERINGA := 0.30
+## Quanto da magia maxima a seringa de magia devolve. E' o UNICO jeito de a
+## magia voltar: gastou, fica gasto.
+const RECARGA_SERINGA_MAGIA := 0.40
+
+## Usa um item pelo menu ("Usar"). Devolve false quando nao da' — a seringa
+## com o sangue (ou a magia) cheio nao se gasta.
+func usar_item(item_id: String) -> bool:
+	match item_id:
+		"seringa_adrenalina":
+			var jogador := _jogador_da_cena()
+			if jogador == null or jogador.current_health >= jogador.max_health:
+				return false
+			var cura := int(ceil(jogador.max_health * CURA_SERINGA))
+			jogador.current_health = mini(jogador.max_health, jogador.current_health + cura)
+			consumir_item(item_id, 1)
+			return true
+		"seringa_magia":
+			if current_mp >= max_mp:
+				return false
+			current_mp = minf(max_mp, current_mp + max_mp * RECARGA_SERINGA_MAGIA)
+			consumir_item(item_id, 1)
+			return true
+	consumir_item(item_id, 1)
+	return true
+
+
+## Tira do inventario e, se acabou, some com a linha do item (a seringa e a
+## chave nao ficam no menu com zero, como a caixa de bala vazia fica).
+func consumir_item(item_id: String, quantidade: int) -> void:
+	remove_item_amount(item_id, quantidade)
+	for lista in _listas_do_item(item_id):
+		for i in range(lista.size() - 1, -1, -1):
+			if lista[i]["id"] == item_id and int(lista[i]["amount"]) <= 0:
+				lista.remove_at(i)
+
+
+## O Maycow da cena atual. Na arena a cidade continua na arvore (escondida),
+## com o Maycow dela no grupo "player": o que vale e' o da cena que esta' em uso.
+func _jogador_da_cena() -> Node:
+	var cena := get_tree().current_scene if is_inside_tree() else null
+	for p in get_tree().get_nodes_in_group("player"):
+		if cena != null and (cena == p or cena.is_ancestor_of(p)) and "current_health" in p:
+			return p
+	return null
+
+
+## Limpa o amuleto "equipado a mao" de save antigo.
+##
+## Houve um tempo em que o amuleto se equipava no menu e disputava a mira com as
+## armas. Agora ele tem botao proprio e vale sozinho na cidade, entao o id dele
+## na lista de equipados — e um atalho do direcional apontando pra ele — so'
+## sobram de saves antigos e nao querem dizer mais nada. A cogblade tambem
+## perdeu o atalho: ela se empunha pelo proprio botao (`ui_cogblade_power`).
+func garantir_equipamento_do_normal() -> void:
+	equipped_items.erase("amuleto")
+	# `atalhos.erase` direto, e nao `limpar_atalho`: aquele grava o jogo, e isto
+	# roda no meio do `load_game`.
+	for item in ["amuleto", "cogblade"]:
+		var direcao := atalho_do_item(item)
+		if direcao != "":
+			atalhos.erase(direcao)
+
+
+# ==============================================================================
+# A IDA E A VOLTA DA ARENA
+# ==============================================================================
+## Chegou na arena: guarda o que o Maycow normal tinha na mao e devolve a ARMA.
+##
+## Na arena a arma serve pra alguma coisa, entao ele chega com a ultima que
+## usou mesmo tendo saido da cidade de maos vazias. A volta desfaz.
+func entrar_na_arena() -> void:
+	# "Nada na mao" tambem e' lembrado: sem isto ele voltaria da arena com a
+	# arma que ela entregou, e nao como saiu da cidade.
+	equipado_na_cidade = MAOS_VAZIAS
+	if cogblade_arma_ativa:
+		equipado_na_cidade = "cogblade"
+	else:
+		for id in EQUIPAMENTO_EXCLUSIVO:
+			if is_equipped(id):
+				equipado_na_cidade = id
+				break
+	if ultima_arma_equipada != "" and tem_item(ultima_arma_equipada):
+		equip_item(ultima_arma_equipada)
+
+
+## Voltou pra cidade: devolve o que ele estava usando antes de partir.
+##
+## Sem isto o jogador volta da arena com a arma que ela entregou, e nao com o
+## que tinha na mao na cidade.
+func sair_da_arena() -> void:
+	if equipado_na_cidade == "":
+		return
+	if equipado_na_cidade == MAOS_VAZIAS:
+		for arma in EQUIPAMENTO_EXCLUSIVO:
+			equipped_items.erase(arma)
+		cogblade_arma_ativa = false
+	elif tem_item(equipado_na_cidade):
+		equip_item(equipado_na_cidade)
+	equipado_na_cidade = ""
+
+
+# ==============================================================================
+# ITENS DE CENARIO JA' RECOLHIDOS
+# ==============================================================================
+## Este objeto do cenario ja' foi pego?
+##
+## Pergunta por OBJETO e nao por item: duas caixas de bala no mesmo balcao sao
+## dois objetos, e "ja' tenho bala" nao responde se a segunda ainda esta' la'.
+func pickup_ja_pego(id: String) -> bool:
+	return id != "" and pickups_pegos.has(id)
+
+
+func marcar_pickup(id: String) -> void:
+	if id == "" or pickups_pegos.has(id):
+		return
+	pickups_pegos.append(id)
+
+
+# ==============================================================================
+# ATALHOS DO DIRECIONAL
+# ==============================================================================
+## Liga um item a um direcional. Um item mora num direcional so': repetir o
+## mesmo item noutra direcao MUDA ele de lugar, em vez de aparecer nos dois.
+func definir_atalho(direcao: String, item_id: String) -> void:
+	for d in atalhos.keys():
+		if atalhos[d] == item_id:
+			atalhos.erase(d)
+	atalhos[direcao] = item_id
+	save_game()
+
+
+func limpar_atalho(direcao: String) -> void:
+	if not atalhos.has(direcao):
+		return
+	atalhos.erase(direcao)
+	save_game()
+
+
+## Em que direcional este item esta', ou "" se nao esta' em nenhum.
+func atalho_do_item(item_id: String) -> String:
+	for d in atalhos.keys():
+		if atalhos[d] == item_id:
+			return String(d)
+	return ""
+
+
+## Que item esta' neste direcional, ou "" se nenhum.
+func item_do_atalho(direcao: String) -> String:
+	return String(atalhos.get(direcao, ""))
+
+var menu_instance = null
+func _unhandled_input(event: InputEvent) -> void:
+	# Y (ou T) abre no inventario; o Select (ou M) abre direto no mapa.
+	var no_mapa := event.is_action_pressed("ui_menu_mapa")
+	if event.is_action_pressed("ui_menu_game") or no_mapa:
+		if get_tree().current_scene and (get_tree().current_scene.scene_file_path.contains("main_menu") or get_tree().current_scene.scene_file_path.contains("cutscene")):
+			return # Não abre menu nessas telas
+			
+		if GlobalEvents.in_cutscene:
+			return # Não abre menu durante a cutscene da oficina
+			
+		var players = get_tree().get_nodes_in_group("player")
+		if players.size() == 0:
+			return # Só abre o inventário se o Player estiver presente na cena
+			
+		var player = players[0]
+		if "is_using_ultimate" in player and player.is_using_ultimate:
+			return # Não abre menu durante o ultimate da cogblade
+			
+		if menu_instance == null or not is_instance_valid(menu_instance):
+			if get_tree().paused:
+				return # Não abre se o jogo já estiver pausado (ex: Pause menu)
+				
+			var menu_script = load("res://scripts/ui/in_game_menu.gd")
+			if menu_script:
+				menu_instance = menu_script.new()
+				menu_instance.name = "InGameMenu"
+				menu_instance.aba_inicial = menu_instance.TAB_MAPA if no_mapa else 0
+				get_tree().root.add_child(menu_instance)
+		else:
+			pass

@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/ui/minimap.tscn" id="1_mini"]
+[ext_resource type="Texture2D" path="res://assets/3d_model/stages/escola/textures/T_poraomap.png" id="2_por"]
+
+[node name="Minimap" instance=ExtResource("1_mini")]
+dados_json = "res://assets/3d_model/stages/escola/poraomap.json"
+textura_mapa = ExtResource("2_por")
+pontos_no_minimapa = true
+alcance_m = 40.0
+zoom_min_m = 22.0
+zoom_max_m = 96.0
+zoom_inicial_m = 60.0
+grade_m = 10.0

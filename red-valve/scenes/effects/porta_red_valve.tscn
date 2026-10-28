@@ -1,0 +1,120 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/effects/porta_red_valve.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://dtqgby062bw1n" path="res://assets/3d_model/objects/portal_red_valve.glb" id="2_porta"]
+[ext_resource type="Shader" path="res://shaders/environment/portal_vortice.gdshader" id="3_vortice"]
+[ext_resource type="AudioStream" uid="uid://5a1hffxew2cf" path="res://assets/sounds/episodios/red_valve_noise.mp3" id="4_zumbido"]
+[ext_resource type="AudioStream" uid="uid://l4totvs8hn3k" path="res://assets/sounds/episodios/portal_red_valve.mp3" id="5_abrir"]
+
+[sub_resource type="StandardMaterial3D" id="ferro"]
+albedo_color = Color(0.17, 0.075, 0.06, 1)
+metallic = 0.6
+roughness = 0.72
+
+[sub_resource type="BoxMesh" id="umbral"]
+material = SubResource("ferro")
+size = Vector3(0.16, 2.44, 0.5)
+
+[sub_resource type="BoxMesh" id="verga"]
+material = SubResource("ferro")
+size = Vector3(1.84, 0.16, 0.5)
+
+[sub_resource type="StandardMaterial3D" id="breu"]
+shading_mode = 0
+albedo_color = Color(0, 0, 0, 1)
+
+[sub_resource type="QuadMesh" id="poco"]
+material = SubResource("breu")
+size = Vector2(1.5, 2.28)
+
+[sub_resource type="FastNoiseLite" id="ruido_fn"]
+noise_type = 3
+frequency = 0.03
+
+[sub_resource type="NoiseTexture2D" id="ruido"]
+width = 256
+height = 256
+seamless = true
+noise = SubResource("ruido_fn")
+
+[sub_resource type="ShaderMaterial" id="mat_vortice"]
+render_priority = 0
+shader = ExtResource("3_vortice")
+shader_parameter/ruido = SubResource("ruido")
+shader_parameter/cor_borda = Color(1, 0.13, 0.06, 1)
+shader_parameter/cor_meio = Color(0.28, 0, 0.04, 1)
+shader_parameter/velocidade = 1.2
+shader_parameter/brilho = 2.0
+
+[sub_resource type="QuadMesh" id="malha_vortice"]
+material = SubResource("mat_vortice")
+size = Vector2(1.45, 2.22)
+
+[sub_resource type="BoxShape3D" id="forma"]
+size = Vector3(1.9, 2.5, 0.6)
+
+[node name="porta_red_valve" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="dobradica" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.751, 0, 0.275)
+
+[node name="porta" parent="dobradica" instance=ExtResource("2_porta")]
+transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, 0.751, 1.142, 0)
+
+[node name="umbral_esq" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.84, 1.22, 0.25)
+mesh = SubResource("umbral")
+
+[node name="umbral_dir" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.84, 1.22, 0.25)
+mesh = SubResource("umbral")
+
+[node name="verga" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.36, 0.25)
+mesh = SubResource("verga")
+
+[node name="poco" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.142, 0.012)
+mesh = SubResource("poco")
+cast_shadow = 0
+
+[node name="vortice" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.142, 0.03)
+mesh = SubResource("malha_vortice")
+cast_shadow = 0
+
+[node name="luz" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0.9)
+light_color = Color(1, 0.2, 0.12, 1)
+light_energy = 2.6
+shadow_enabled = false
+omni_range = 7.0
+omni_attenuation = 1.4
+
+[node name="zumbido" type="AudioStreamPlayer3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0.3)
+stream = ExtResource("4_zumbido")
+volume_db = -12.0
+unit_size = 2.5
+max_distance = 20.0
+autoplay = true
+parameters/looping = true
+
+[node name="som_abrir" type="AudioStreamPlayer3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0.4)
+stream = ExtResource("5_abrir")
+volume_db = -2.0
+unit_size = 4.0
+max_distance = 30.0
+
+[node name="colisao" type="StaticBody3D" parent="."]
+collision_layer = 2
+collision_mask = 0
+
+[node name="forma" type="CollisionShape3D" parent="colisao"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0.3)
+shape = SubResource("forma")
+
+[node name="chegada" type="Marker3D" parent="."]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0.05, 3.2)

@@ -1,0 +1,38 @@
+[gd_resource type="ArrayMesh" format=4 uid="uid://c8ptuw5vbincr"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6r63g"]
+resource_name = "MI_canopy_forest"
+cull_mode = 2
+albedo_color = Color(0.24313726, 0.2901961, 0.18039218, 1)
+roughness = 0.9
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_f0sgh"]
+_surfaces = [{
+"aabb": AABB(-3.4, 0, -3.4, 6.8, 17.5, 6.8),
+"format": 34896613377,
+"index_count": 18,
+"index_data": PackedByteArray("AAABAAIAAwABAAAAAwAAAAIAAgABAAQABAABAAMAAwACAAQA"),
+"name": "MI_canopy_forest",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 5,
+"vertex_data": PackedByteArray("//8AAP9/AAD/f////38AAP9/AAAAAAAA/38AAP//AAAAAAAA/38AAA==")
+}]
+blend_shape_mode = 0
+
+[resource]
+resource_name = "city_vegkit_TREE_forest_LOD"
+_surfaces = [{
+"aabb": AABB(-3.4, 0, -3.4, 6.8, 17.5, 6.8),
+"format": 34896613383,
+"index_count": 18,
+"index_data": PackedByteArray("AAABAAIAAwAEAAUABgAHAAgACQAKAAsADAANAA4ADAAPAA0A"),
+"material": SubResource("StandardMaterial3D_6r63g"),
+"name": "MI_canopy_forest",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 16,
+"vertex_data": PackedByteArray("//8AAP9/KPL/f////38o8v9/AAAAACjy/38AAAAAX+T/f////39f5AAAAAD/f1/kAAAAAP9/Tav/f////39Nq/9/AAD//02r/38AAP//B+z/f////38H7P//AAD/fwfs/38AAP//////fwAAAAD//wAAAAD/f/////8AAP9///9BzXBrQc1wa0HNcGsHY6PQB2Oj0Adjo9AedQe/HnUHvx51B7/epS193qUtfd6lLX3/f/8//3//P/9//z//f/8/")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_f0sgh")

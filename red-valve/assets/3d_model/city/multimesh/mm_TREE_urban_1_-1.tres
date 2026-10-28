@@ -1,0 +1,9 @@
+[gd_resource type="MultiMesh" format=3 uid="uid://bt1jp5kvqvejc"]
+
+[ext_resource type="ArrayMesh" uid="uid://dpoeoopy84n2l" path="res://assets/3d_model/city/multimesh/mesh_TREE_urban.tres" id="1_qd6py"]
+
+[resource]
+transform_format = 1
+instance_count = 2
+mesh = ExtResource("1_qd6py")
+buffer = PackedFloat32Array(0.6075388, 0, -0.9634406, 6.8399963, 0, 1.139, 0, 0.6700001, 0.9634406, 0, 0.6075388, -23.789999, -0.076281235, 0, 0.9258629, -6.8400116, 0, 0.929, 0, -0.6700001, -0.9258629, 0, -0.076281235, 23.79)

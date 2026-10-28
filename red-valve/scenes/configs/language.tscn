@@ -8,7 +8,7 @@ script = ExtResource("1_tfytk")
 [node name="ColorRect" type="ColorRect" parent="."]
 offset_right = 1965.0
 offset_bottom = 1101.0
-color = Color(0.50140655, 0.5014065, 0.5014065, 1)
+color = Color(0, 0, 0, 1)
 
 [node name="Control" type="Control" parent="."]
 layout_mode = 3

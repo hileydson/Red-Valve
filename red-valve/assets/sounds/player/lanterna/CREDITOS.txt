@@ -1,0 +1,3 @@
+lanterna_clique.ogg, composto por tools/audio/gerar_sons_armas.py com:
+
+  "10 Clicks and Switches" (CC0)  https://opengameart.org/content/10-clicks-and-switches

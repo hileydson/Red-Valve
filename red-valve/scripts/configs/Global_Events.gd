@@ -1,0 +1,241 @@
+extends Node
+
+const language_pt_br = "PT-BR"
+const language_en = "EN"
+
+# data to be saved
+var can_load:bool = false
+var in_cutscene:bool = false:
+	set(val):
+		in_cutscene = val
+		if val and GlobalUtils:
+			GlobalUtils.clear_all_messages()
+
+var telefone_cutscene_active: bool = false
+var save_array = {}
+var default_language:String = language_pt_br
+
+var is_maycow_normal = false
+var entering_chapter_1: bool = false
+var debug_mode_unlocked: bool = false
+
+func show_debug_mode_banner() -> void:
+	debug_mode_unlocked = true
+	var tree = Engine.get_main_loop() as SceneTree
+	if not tree:
+		return
+	var canvas = CanvasLayer.new()
+	canvas.layer = 250
+	canvas.process_mode = Node.PROCESS_MODE_ALWAYS
+	
+	var label = Label.new()
+	label.text = "DEBUG MODE"
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.set_anchors_preset(Control.PRESET_FULL_RECT)
+	label.add_theme_font_size_override("font_size", 96)
+	label.add_theme_color_override("font_color", Color(1.0, 0.1, 0.1, 1.0))
+	label.add_theme_constant_override("outline_size", 16)
+	label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1.0))
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	label.modulate.a = 0.0
+	canvas.add_child(label)
+	
+	tree.root.add_child(canvas)
+	
+	if GlobalUtils:
+		GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/selecionar_item.mp3")
+	
+	var tween = canvas.create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tween.tween_property(label, "modulate:a", 1.0, 0.3)
+	tween.tween_interval(1.5)
+	tween.tween_property(label, "modulate:a", 0.0, 0.4)
+	tween.tween_callback(func(): canvas.queue_free())
+
+
+## --- Janelinha anti-dash ao fechar menu ---
+## O `ui_dash` está no mesmo botão do controle (B) que fecha o pause, o
+## inventário e o tutorial. Ao sair do menu, o jogo despausa no mesmo quadro em
+## que a tecla foi apertada, e o `is_action_just_pressed("ui_dash")` do player
+## via a MESMA tecla — o Maycow saía em disparada só por ter fechado o menu.
+## Quem fecha o menu chama `bloquear_dash_por()`; o dash consulta o resto.
+var _dash_liberado_em_ms: int = 0
+
+## Segura o dash por alguns milissegundos. Curto de propósito: só o bastante pra
+## a tecla que fechou o menu não ser lida como dash.
+func bloquear_dash_por(ms: int = 250) -> void:
+	_dash_liberado_em_ms = Time.get_ticks_msec() + ms
+
+
+func dash_bloqueado() -> bool:
+	return Time.get_ticks_msec() < _dash_liberado_em_ms
+
+## Ligado enquanto a volta da arena para a stage_1 está em andamento. A sequência
+## final da batalha liga `in_cutscene` (que mata TODO o input) antes de uma espera
+## longa e só desliga depois da troca de cena; se essa corrente quebrar no meio, o
+## jogo fica sem input, com a câmera parada na arena. Isto é o que o watchdog em
+## GlobalUtils.watchdog_volta_da_arena() usa para perceber e destravar.
+var arena_retorno_pendente: bool = false
+
+## Ligado pela cena do interior da casa do Jimmy no instante em que o jogador
+## sai pela porta. O stage_1 consome (e zera) isto no spawn para devolver o
+## jogador à soleira da casa em vez do ponto de entrada padrão do mapa.
+var voltando_da_casa_jimmy: bool = false
+## Usado para devolver o jogador à porta da Dona Nice ao sair do interior.
+var voltando_da_casa_nice: bool = false
+## Ligado pela the_house ao sair pela porta de volta à stage_1.
+var voltando_da_casa_maycow: bool = false
+## Ligado pela stage_1 ao interagir para entrar de volta na casa do Maycow.
+var entrando_na_casa_maycow: bool = false
+## Ligado pelo interior da igreja quando o jogador sai pelo portal. O stage_1
+## consome (e zera) isto no spawn para devolvê-lo ao adro, e não ao ponto de
+## entrada padrão do mapa — que fica do outro lado da cidade.
+var voltando_da_igreja: bool = false
+## Ligado pelo interior do hospital quando o jogador sai pela porta da rua. O
+## stage_1 consome (e zera) isto no spawn para devolvê-lo ao tablado da
+## entrada, e não ao ponto de entrada padrão do mapa.
+var voltando_do_hospital: bool = false
+## Mesma coisa para a escola: ligado quando ele sai pelo portão da rua, e
+## consumido pelo stage_1 para devolvê-lo à calçada diante do portão.
+var voltando_da_escola: bool = false
+
+# --- escola <-> porão ---------------------------------------------------------
+# A escola e o porão são duas cenas, e o jogador vai e volta entre elas pelos
+# dois buracos. Estas duas variáveis dizem POR ONDE ele chegou, e cada cena
+# consome (e zera) a sua no `_ready`. Vazio = entrou pelo caminho normal: na
+# escola isso é o portão da rua, no porão é a boca de cima.
+#
+# São String e não bool porque há mais de uma porta de cada lado — o túnel é de
+# mão dupla de propósito, para quem descer sem lanterna poder voltar.
+var escola_chegada: String = ""      # "" | "deposito" | "almoxarifado"
+var porao_chegada: String = ""       # "" | "entrada"  | "saida"
+
+## O portão do pátio da escola já foi destrancado?
+##
+## Ele só abre pelo lado do corredor sul, que é o lado a que o jogador só chega
+## depois de atravessar o porão — é esse portão que fecha o atalho de volta
+## para a área de lazer.
+##
+## Mora aqui, e não no nó da porta, porque o jogador troca de cena entre um
+## momento e outro (escola -> porão -> escola) e o nó morre junto. Mora aqui, e
+## não no SaveManager, porque isto é estado de sessão: carregar um save volta
+## com o portão trancado, e ele se destranca de novo por dentro em dois passos.
+var escola_portao_destrancado: bool = false
+var game_weapon_events = {taken_pistol=false, taken_smg=false, taken_cogblade=false, taken_magic_hand_1=false}
+
+# --- estado de UI, só em memória (de propósito fora do save) ---
+
+## Última aba aberta no menu do jogo (0 inventário, 1 mapa, 2 arquivos).
+## O menu é destruído ao fechar e recriado ao abrir, então a lembrança tem de
+## morar aqui fora. Some ao fechar o jogo, que é o que se quer.
+var menu_ultima_aba: int = 0
+
+## Qual dispositivo o jogador está usando AGORA. A UI usa isto para mostrar a
+## legenda de controle ou a de mouse, nunca as duas ao mesmo tempo.
+var usando_controle: bool = false
+
+var paused_scene_for_amulet: Node3D = null
+var amulet_captured_enemies: Array[Node] = []
+var previous_is_maycow_normal: bool = false
+
+## --- Batalha forçada pelo toque (inimigo encosta no Maycow normal na cidade) ---
+## Ligado enquanto a sequência (dano em câmera lenta + viagem) está rodando.
+## Segura um segundo inimigo de disparar a mesma coisa por cima e faz os toques
+## que chegarem no meio da cinemática não tirarem vida nenhuma.
+var forced_battle_running: bool = false
+## Sangue com que o Maycow de combate deve nascer na arena. A arena instancia um
+## player.tscn novo, que nasceria com a vida cheia e apagaria o tranco levado na
+## rua; quem consome (e zera) isto é o player_hud.gd. -1 = nasce cheio.
+var forced_battle_health: int = -1
+
+## --- Agarrão (inimigo encosta no jogador FORA da arena) ---
+## Ligado enquanto a cinemática de primeira pessoa do agarrão está rodando (ver
+## player_grab.gd). Todo inimigo consulta isto antes de tentar agarrar: sem a
+## trava, dois que encostam no mesmo quadro abrem duas cenas por cima uma da
+## outra. Ela também é o que o watchdog em GlobalUtils.watchdog_agarrao() usa
+## para perceber que a sequência morreu no meio e destravar o input.
+var agarrao_rodando: bool = false
+## Número de série do agarrão em curso. O watchdog guarda o número de quando
+## foi armado e desiste se ele já mudou — senão o watchdog de um agarrão que
+## terminou bem derruba o agarrão SEGUINTE, que a essa altura está no meio da
+## cinemática (o teto do watchdog é maior que a espera entre dois agarrões).
+var agarrao_id: int = 0
+
+func _ready() -> void:
+	# PROCESS_MODE_ALWAYS por causa do `_input` abaixo: com a árvore pausada
+	# (menu aberto) um autoload PAUSABLE não recebe entrada nenhuma, e a
+	# detecção de dispositivo congelava justamente onde ela é usada.
+	process_mode = Node.PROCESS_MODE_ALWAYS
+
+
+func _process(delta: float) -> void:
+	pass #print(back_caminho_das_pedras)
+
+
+func set_in_cutscene() ->void:
+	in_cutscene = true;
+func unset_in_cutscene() ->void:
+	in_cutscene = false;
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventJoypadButton:
+		usando_controle = true
+	elif event is InputEventJoypadMotion:
+		# limiar alto, e não a zona morta: analógico solto fica tremendo perto
+		# de zero e trocaria a legenda sozinho, sem ninguém encostar nele
+		if absf((event as InputEventJoypadMotion).axis_value) > 0.5:
+			usando_controle = true
+	elif event is InputEventMouseButton or event is InputEventMouseMotion \
+			or event is InputEventKey:
+		usando_controle = false
+
+
+# EVENTOS DE TEMPO
+# emite sinal de nevoa, sendo maior que 0 aplica, se for 0 para
+func set_minimum_nevoa() -> void:
+	_set_nevoa(500)
+
+func set_low_nevoa() -> void:
+	_set_nevoa(1000)
+
+func set_high_nevoa() -> void:
+	_set_nevoa(5000)
+
+func _set_nevoa(amount:int) -> void:
+	var player = get_tree().get_first_node_in_group("player")
+	player.get_node("nevoa").emitting = true
+	player.get_node("nevoa").amount = amount
+	
+func stop_nevoa() -> void:
+	var player = get_tree().get_first_node_in_group("player")
+	player.get_node("nevoa").emitting = false
+
+func save_progress(fase:String)->void:
+	save_array = {}
+	save_array["default_language"] = default_language
+	save_array["game_weapon_events"] = game_weapon_events
+	
+	var file = FileAccess.open("user://savegame.save", FileAccess.WRITE) 
+	var json_string = JSON.stringify(save_array) 
+	file.store_line(json_string)
+
+func check_load():
+	if FileAccess.file_exists("user://savegame.save"): 
+		can_load = true
+	
+	return can_load
+	
+		
+func load_progress()->void:
+	
+	if FileAccess.file_exists("user://savegame.save"): 
+		can_load = true
+		var file = FileAccess.open("user://savegame.save", FileAccess.READ) 
+		var json_string = file.get_as_text() 
+		save_array = JSON.parse_string(json_string)
+		
+		default_language = save_array["default_language"]
+		game_weapon_events = save_array["game_weapon_events"]
+		
+		LoadingScreen.load_scene("res://scenes/stages/stage_1/stage_1.tscn")
+		
