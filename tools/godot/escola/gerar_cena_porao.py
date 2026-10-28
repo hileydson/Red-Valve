@@ -450,6 +450,15 @@ def escrever_cena(colisoes, props, plano, lista_luminarias, nav, rabiscos):
         c.no("forma", tipo="CollisionShape3D", pai=papel + "/area",
              props=[("shape", 'SubResource("%s")' % ident)])
 
+    # ---- a porta red valve (o +Z dela olha pro +X: pra dentro da camara). O
+    # nome do no' e' o ponto de chegada de quem volta do inferno por ela.
+    id_red_valve = c.externo("PackedScene", "res://scenes/effects/porta_red_valve.tscn")
+    rx, rz = PO.RED_VALVE
+    c.no("red_valve", pai=".", instancia=id_red_valve,
+         props=[("transform", "Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, %.2f, 0.0, %.2f)" % (rx, rz)),
+                ("cena_destino", '"res://scenes/stages/inferno_4/inferno_4.tscn"'),
+                ("ponto_destino", '"spawn_entrada"')])
+
     # Os dois pontos de chegada. Sao dois porque o tunel e' de MAO DUPLA: da'
     # pra descer pelo buraco do deposito e da' pra descer de volta pelo do
     # almoxarifado. Tunel de mao unica viraria armadilha — quem entrasse sem

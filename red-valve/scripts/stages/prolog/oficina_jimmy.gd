@@ -1,5 +1,8 @@
 extends Node3D
 
+const ViagemPortal := preload("res://scripts/systems/viagem_portal.gd")
+const AgarraoRedValve := preload("res://scripts/stages/prolog/agarrao_red_valve.gd")
+
 @onready var camera_oficina: Camera3D = $camera_oficina
 @onready var player = $Player
 @onready var enemy = $TheCobaltHusker
@@ -155,8 +158,42 @@ func _ready() -> void:
 	if pecas:
 		pecas.process_mode = Node.PROCESS_MODE_DISABLED
 		
-	# Inicia o filme
-	iniciar_cutscene()
+	# A porta red valve leva o Maycow ao inferno 2 no meio do filme (o Husk o
+	# arrasta pra lá) e a viagem o devolve aqui: aí o filme segue do Maycow
+	# caindo no chão. Pular lá dentro volta direto pra luta.
+	var ponto := ViagemPortal.pegar_chegada(scene_file_path)
+	if ponto == "cutscene_volta":
+		_voltar_do_inferno()
+	elif ponto == "cutscene_pular":
+		_pular_na_volta()
+	else:
+		# Inicia o filme
+		iniciar_cutscene()
+
+
+## O que a primeira metade do filme deixou feito antes de a porta abrir: a
+## estante arrastada, o portal à mostra.
+func _arrastar_estante() -> void:
+	var armario = get_node_or_null("portal/armario")
+	if armario:
+		armario.global_position -= armario.global_transform.basis.x * 1.9
+
+
+func _voltar_do_inferno() -> void:
+	_arrastar_estante()
+	_esconder_para_o_filme()
+	if is_instance_valid(enemy):
+		enemy.visible = true
+	var vortex = get_node_or_null("auto_pecas_jimmy/VortexMagico")
+	if vortex:
+		vortex.visible = true
+	iniciar_cutscene_antiga()
+
+
+func _pular_na_volta() -> void:
+	_arrastar_estante()
+	cutscene_skipped = true
+	_finalizar_cutscene_tudo()
 
 func _criar_faiscas_inimigo() -> void:
 	if not enemy: return
@@ -362,11 +399,21 @@ func _ativar_motion_blur(ativar: bool) -> void:
 		motion_blur_overlay.visible = ativar
 
 func iniciar_cutscene() -> void:
-	_setup_motion_blur()
-	
 	if not enemy or not player:
 		return
-		
+	_esconder_para_o_filme()
+	enemy.visible = false
+	var vortex = get_node_or_null("auto_pecas_jimmy/VortexMagico")
+	if vortex:
+		vortex.visible = false
+	_iniciar_cutscene_com_camera()
+
+
+## Player e mãos escondidos, barras de cinema e o "segure pra pular".
+func _esconder_para_o_filme() -> void:
+	_setup_motion_blur()
+	if not player:
+		return
 	# Esconde o player, inimigo e vortex temporariamente
 	player.visible = false
 	if is_instance_valid(player):
@@ -379,10 +426,6 @@ func iniciar_cutscene() -> void:
 		if ctrl_magic: ctrl_magic.visible = false
 		var ctrl_weap = player.get_node_or_null("Camera3D/CanvasLayer/control_weapons")
 		if ctrl_weap: ctrl_weap.visible = false
-	enemy.visible = false
-	var vortex = get_node_or_null("auto_pecas_jimmy/VortexMagico")
-	if vortex:
-		vortex.visible = false
 		
 	# Barra da cutscene
 	var cutscene_bars = get_node_or_null("cutscene")
@@ -398,7 +441,10 @@ func iniciar_cutscene() -> void:
 	add_child(skip_layer)
 	skip_ui_instance = skip_layer
 	skip_ui.skipped.connect(skip_cutscene)
-		
+
+
+func _iniciar_cutscene_com_camera() -> void:
+	var vortex = get_node_or_null("auto_pecas_jimmy/VortexMagico")
 	var camera_inicio = get_node_or_null("portal/camera_inicio_cutscene")
 	
 	if not camera_inicio:
@@ -599,10 +645,7 @@ func iniciar_cutscene() -> void:
 	temp_audio.play()
 	
 	# Move a estante revelando o portal
-	var armario = get_node_or_null("portal/armario")
-	if armario:
-		# Arrastar pro lado (baseado na orientação local)
-		armario.global_position -= armario.global_transform.basis.x * 1.9
+	_arrastar_estante()
 	
 	await get_tree().create_timer(1.5).timeout
 	if cutscene_skipped: return
@@ -650,23 +693,14 @@ func iniciar_cutscene() -> void:
 		if motion_blur_mat:
 			motion_blur_mat.set_shader_parameter("blur_strength", 0.3)
 			
-		await get_tree().create_timer(6.6).timeout
-		if cutscene_skipped: return
-		
-		_disparar_relampago_sub_scene()
-		
-		await get_tree().create_timer(1.0).timeout
-		if cutscene_skipped: return
-		
-		_ativar_motion_blur(false)
-		
-		if fade:
-			fade.fade_out()
-		await get_tree().create_timer(2.0).timeout
-		if cutscene_skipped: return
-		
-		if is_instance_valid(sub_scene):
-			sub_scene.queue_free()
+		# A porta abre, o Husk estica a mão, pega o Maycow pelo pescoço e o
+		# arrasta pra dentro: a viagem vai ao inferno 2 e volta por
+		# `_voltar_do_inferno` (ver `agarrao_red_valve.gd`).
+		var agarrao = AgarraoRedValve.new()
+		agarrao.name = "agarrao_red_valve"
+		add_child(agarrao)
+		await agarrao.rodar(self, sub_scene)
+		return
 	# --- FIM NOVA SUB-SCENE ---
 		
 	# Restaura elementos ocultos

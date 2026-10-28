@@ -31,6 +31,7 @@ extends Node3D
 ## almoxarifado nasce na de saída. Mão dupla de propósito — ver `buraco.gd`.
 
 const LAYER_CHAO := 2
+const ViagemPortal := preload("res://scripts/systems/viagem_portal.gd")
 const CENA_ESCOLA := "res://scenes/stages/escola/escola.tscn"
 const TEMPO_FADE := 2.0
 
@@ -52,6 +53,7 @@ func _ready() -> void:
 	_conferir_colisao()
 	_preparar_lampadas()
 	_posicionar_jogador()
+	_chegar_por_portal()
 
 	SaveManager.save_game()
 	GlobalUtils.mostrar_objetivo(tr("OBJ_POR_ATRAVESSAR"))
@@ -84,6 +86,18 @@ func _posicionar_jogador() -> void:
 		return
 	jogador.global_position = marcador.global_position
 	jogador.global_rotation.y = marcador.global_rotation.y
+
+
+## Quem volta do inferno pela porta red valve da câmara grande (o ponto de
+## chegada é o nome do nó dela) sai cuspido por ela.
+func _chegar_por_portal() -> void:
+	var ponto := ViagemPortal.pegar_chegada(scene_file_path)
+	if ponto.is_empty():
+		return
+	var porta := get_node_or_null(ponto)
+	var jogador := _jogador() as CharacterBody3D
+	if porta and porta.has_method("chegar") and jogador:
+		porta.chegar(jogador)
 
 
 func _jogador() -> Node3D:

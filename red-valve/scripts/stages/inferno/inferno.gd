@@ -16,18 +16,25 @@ extends "res://scripts/stages/cenario_aberto.gd"
 ##  - SOMBRAS gigantes de pé na lava, balançando e andando devagar;
 ##  - gárgulas cruzando o céu (a base solta), relâmpago vermelho raro.
 ##
-## As duas pontas levam a outras cenas: `cena_saida` (o portal) vai pro inferno
-## 2; `cena_entrada` (o portão por onde se chegou) ainda está vazia. Quem volta
-## pela entrada da cena seguinte reaparece no `spawn_saida` daqui.
+## As duas pontas são PORTAIS (`portal_vortice.gd`): o vento entra neles, e
+## quem chega perto é sugado e viaja (`viagem_portal.gd`, as linhas roxas) pra
+## `cena_saida` / `cena_entrada`, chegando no marcador `ponto_saida` /
+## `ponto_entrada` de lá. Quem chega AQUI por um portal sai cuspido do vórtice
+## que fica junto do marcador de chegada (`spawn_entrada` é o do começo,
+## `spawn_saida` o do fim).
 ##
 ## O inferno 2 herda daqui: o que muda de um mapa pro outro (onde nasce o fogo
 ## ao longe, pra onde a sombra olha) está em `_ponto_erupcao` e `_giro_sombra`.
 
 @export_group("Ligações")
-## Cena carregada ao atravessar o portal do norte. Vazio = o portal só gira.
+## Cena do portal do FIM. Vazio = o portal só gira (e não suga).
 @export_file("*.tscn") var cena_saida: String = ""
-## Cena carregada ao voltar pelo portão do sul. Vazio = o portão fica fechado.
+## Onde se chega na `cena_saida`: o nome do marcador de lá ("" = onde ela nasce).
+@export var ponto_saida: String = "spawn_entrada"
+## Cena do portal do COMEÇO. Vazio = o portal só gira.
 @export_file("*.tscn") var cena_entrada: String = ""
+## Onde se chega na `cena_entrada`.
+@export var ponto_entrada: String = "spawn_saida"
 
 @export_group("Gêiseres")
 @export var geiser_espera_min: float = 7.0
@@ -44,17 +51,14 @@ extends "res://scripts/stages/cenario_aberto.gd"
 @export var erupcao_dist_max: float = 240.0
 
 const LAVA := -14.0
-
-## Cena que, ao abrir, põe o jogador no `spawn_saida` em vez do começo: quem
-## volta pelo portão da cena seguinte tem de aparecer na frente da saída
-## daqui. Static: sobrevive à troca de cena.
-static var _chegar_pela_saida: String = ""
+const PortalVortice := preload("res://scripts/effects/portal_vortice.gd")
 
 var _geiseres: Array[Dictionary] = []
 var _modelo_erupcao: GPUParticles3D
 var _erupcao_prazo: float = 1.0
 var _sombras: Array[Dictionary] = []
-var _trocando: bool = false
+var _portal_saida: Node3D
+var _portal_entrada: Node3D
 
 
 func _preparar() -> void:
@@ -88,19 +92,11 @@ func _preparar() -> void:
 			})
 			n3.rotation.y = _giro_sombra(n3.position) + randf_range(-0.5, 0.5)
 
-	if _chegar_pela_saida != "" and _chegar_pela_saida == _caminho_real(scene_file_path):
-		_chegar_pela_saida = ""
-		var spawn := get_node_or_null("spawn_saida") as Node3D
-		var player := get_node_or_null("Player") as Node3D
-		if spawn and player:
-			player.global_transform = Transform3D(spawn.global_basis, spawn.global_position + Vector3.UP)
-
-	var saida := get_node_or_null("saida") as Area3D
-	if saida:
-		saida.body_entered.connect(_ao_entrar_portal)
-	var entrada := get_node_or_null("entrada") as Area3D
-	if entrada:
-		entrada.body_entered.connect(_ao_voltar_portao)
+	_portal_saida = _montar_portal("saida", "spawn_saida", cena_saida, ponto_saida)
+	_portal_entrada = _montar_portal("entrada", "spawn_entrada", cena_entrada, ponto_entrada)
+	var ponto := ViagemPortal.pegar_chegada(scene_file_path)
+	if ponto != "":
+		_chegar(ponto)
 
 
 ## Para onde a SOMBRA em `p` olha. Aqui, pro caminho (o centro do mapa é x=0).
@@ -116,14 +112,6 @@ func _ponto_erupcao(cam: Camera3D) -> Vector3:
 	var p := cam.global_position + Vector3(cos(a) * r, 0.0, sin(a) * r)
 	p.y = LAVA
 	return p
-
-
-static func _caminho_real(caminho: String) -> String:
-	if caminho.begins_with("uid://"):
-		var id := ResourceUID.text_to_id(caminho)
-		if ResourceUID.has_id(id):
-			return ResourceUID.get_id_path(id)
-	return caminho
 
 
 func _passo(delta: float) -> void:
@@ -244,33 +232,54 @@ func _passo_sombras(delta: float) -> void:
 # ==============================================================================
 # PONTAS
 # ==============================================================================
-func _ao_entrar_portal(corpo: Node3D) -> void:
-	if not _eh_player(corpo):
-		return
-	if cena_saida == "":
-		push_warning("inferno: portal sem `cena_saida` definida")
-		return
-	_trocar(cena_saida)
+## O portal da área `area_nome`, no vórtice mais perto dela, olhando pro
+## marcador `spawn_nome` (é de lá que se chega e é pra lá que se é cuspido).
+func _montar_portal(area_nome: String, spawn_nome: String, cena: String, ponto: String) -> Node3D:
+	var area := get_node_or_null(area_nome) as Area3D
+	if area == null:
+		return null
+	var vortice: MeshInstance3D = null
+	var melhor := INF
+	for no in get_children():
+		var m := no as MeshInstance3D
+		# o poço do inferno 2 é o fundo do funil (PlaneMesh), não um portal
+		if m == null or not ("redemoinho" in String(m.name)) or not (m.mesh is QuadMesh):
+			continue
+		var d := m.global_position.distance_to(area.global_position)
+		if d < melhor:
+			melhor = d
+			vortice = m
+	# a área fica no vórtice; um longe é o da outra ponta
+	if vortice == null or melhor > 40.0:
+		return null
+	var tam := (vortice.mesh as QuadMesh).size
+	var spawn := get_node_or_null(spawn_nome) as Node3D
+	var frente := (spawn.global_position - vortice.global_position) if spawn else vortice.global_basis.z
+	var portal := PortalVortice.new()
+	portal.name = "portal_" + area_nome
+	add_child(portal)
+	portal.montar(vortice, maxf(tam.x, tam.y) * 0.5, frente, cena, ponto)
+	area.body_entered.connect(func(corpo: Node3D) -> void:
+		if _eh_player(corpo):
+			portal.tentar_sugar(corpo))
+	return portal
 
 
-func _ao_voltar_portao(corpo: Node3D) -> void:
-	if not _eh_player(corpo) or cena_entrada == "":
+## Chegou por portal: põe o jogador no marcador e, se ele for o de um dos dois
+## portais daqui, o portal o cospe pra fora.
+func _chegar(ponto: String) -> void:
+	var marcador := get_node_or_null(ponto) as Node3D
+	var player := get_node_or_null("Player") as CharacterBody3D
+	if marcador == null or player == null:
 		return
-	# a cena de trás abre com o jogador na frente da saída dela
-	_chegar_pela_saida = _caminho_real(cena_entrada)
-	_trocar(cena_entrada)
-
-
-func _trocar(cena: String) -> void:
-	if _trocando:
-		return
-	_trocando = true
-	GlobalEvents.in_cutscene = true
-	var fade := get_node_or_null("fade")
-	if fade and fade.has_method("fade_out"):
-		fade.fade_out()
-	await get_tree().create_timer(1.6).timeout
-	LoadingScreen.load_scene(cena)
+	player.global_transform = Transform3D(marcador.global_basis, marcador.global_position + Vector3.UP)
+	var portal = null
+	if ponto == "spawn_entrada":
+		portal = _portal_entrada
+	elif ponto == "spawn_saida":
+		portal = _portal_saida
+	if portal:
+		portal.ejetar(player, marcador)
 
 
 func _eh_player(corpo: Node3D) -> bool:

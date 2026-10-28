@@ -12,6 +12,10 @@ uniform float aberration : hint_range(0.0, 0.05) = 0.0;
 uniform float warp : hint_range(0.0, 1.0) = 0.0;        // Curvatura de túnel
 uniform float flash : hint_range(0.0, 1.0) = 0.0;
 uniform float time_offset = 0.0;
+// Multiplicador da corrida dos streaks. 5 no amuleto, que roda em slow motion
+// (Engine.time_scale baixo também desacelera TIME); a viagem por portal roda
+// em tempo normal e usa ~1.
+uniform float velocidade = 5.0;
 uniform vec3 energy_color : source_color = vec3(0.65, 0.25, 1.0);
 
 float hash(vec2 p) {
@@ -53,9 +57,10 @@ void fragment() {
 	// nas laterais e ausentes bem no centro da tela.
 	float lane = floor(uv.x * 90.0);
 	float seed = hash(vec2(lane, 3.0));
-	// Multiplicador alto porque a transição roda em slow motion (Engine.time_scale
-	// baixo também desacelera TIME) e os rastros precisam continuar rápidos.
-	float speed = (2.5 + seed * 6.0) * 5.0;
+	// Multiplicador (`velocidade`) alto no amuleto porque a transição dele roda em
+	// slow motion (Engine.time_scale baixo também desacelera TIME) e os rastros
+	// precisam continuar rápidos.
+	float speed = (2.5 + seed * 6.0) * velocidade;
 	float pos = fract(uv.y + t * speed + seed);
 	float line = smoothstep(0.85, 1.0, pos) * smoothstep(1.0, 0.94, pos);
 	float lane_mask = step(0.62, hash(vec2(lane, 11.0)));

@@ -13,6 +13,7 @@ extends Node3D
 ## A layer do chão. Ver o comentário de `LAYER_CHAO` no battlefield_2.gd.
 const LAYER_CHAO := 2
 const GARGULA := preload("res://scenes/effects/fire_gargoyle.tscn")
+const ViagemPortal := preload("res://scripts/systems/viagem_portal.gd")
 
 @export_group("Jogador")
 ## Maycow normal (cidade) ou o de batalha (arenas, o outro lado).
@@ -72,7 +73,7 @@ func _ready() -> void:
 	GlobalEvents.is_maycow_normal = maycow_normal
 	if e_arena:
 		SaveManager.entrar_na_arena()
-	elif salvar_ao_entrar:
+	elif salvar_ao_entrar and not _visita_de_cutscene():
 		SaveManager.save_game()
 	match nevoa_do_player:
 		"alta":
@@ -91,6 +92,12 @@ func _ready() -> void:
 	_soltar_gargulas()
 	_preparar_relampagos()
 	_preparar()
+
+
+## Quem chega por portal só pra uma cutscene (ponto "cutscene_*", ver
+## `viagem_portal.gd`) não vira checkpoint: o prólogo passa pelo inferno 2.
+static func _visita_de_cutscene() -> bool:
+	return String(ViagemPortal.chegada.get("ponto", "")).begins_with("cutscene_")
 
 
 ## Para quem herda.

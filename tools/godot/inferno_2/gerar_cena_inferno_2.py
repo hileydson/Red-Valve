@@ -42,7 +42,7 @@ MAT_DIR = os.path.join(T.BASE, "assets/3d_model/stages/inferno_2/materiais")
 MAT_RES = "res://assets/3d_model/stages/inferno_2/materiais/"
 LAVA_POCO = -64.0
 INFERNO_1 = "res://scenes/stages/inferno/inferno.tscn"
-INFERNO_3 = "res://scenes/stages/inferno_3/inferno_3.tscn"
+ARENA_2 = "res://scenes/stages/battlefield/battlefield_2.tscn"
 
 
 def _lava_tres(nome, usar_mundo, escala_mundo, escala_uv, fluxo, energia, crosta):
@@ -437,9 +437,12 @@ def main():
 
     t.salvar(SAIDA, script_raiz=[
         ("script", 'ExtResource("%s")' % script),
+        # o anel de chegada leva ao comeco do inferno 1 (e o de la' volta pra ca');
+        # a boca da agulha leva a' arena 2
         ("cena_entrada", '"%s"' % INFERNO_1),
-        # a boca da agulha leva a' cidade dos enlutados (que volta pra ca' pelo anel dela)
-        ("cena_saida", '"%s"' % INFERNO_3),
+        ("ponto_entrada", '"spawn_entrada"'),
+        ("cena_saida", '"%s"' % ARENA_2),
+        ("ponto_saida", '""'),
         ("salvar_ao_entrar", "true"), ("nevoa_do_player", '"baixa"'),
         ("gargulas_poleiro", "2"), ("gargula_alcance", "9.0"),
         ("gargulas_ceu", "7"), ("ceu_raio", "220.0"), ("ceu_altura_min", "70.0"),

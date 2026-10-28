@@ -411,6 +411,7 @@ CONFIG_TAB_DEBUG_TRAVEL,Debug Travel,Debug Travel
 DEBUG_TRAVEL_MAYCOW_HOUSE,Maycow's House,Casa do Maycow
 DEBUG_TRAVEL_CHURCH,Church,Igreja
 DEBUG_TRAVEL_JIMMY_HOUSE,Jimmy's House,Casa do Jimmy
+DEBUG_TRAVEL_JIMMY_WORKSHOP,Jimmy's Workshop,Oficina do Jimmy
 DEBUG_TRAVEL_NICE_HOUSE,Ms. Nice's House,Casa da Dona Nice
 DEBUG_TRAVEL_HOSPITAL,Hospital,Hospital
 DEBUG_TRAVEL_SCHOOL,School,Escola

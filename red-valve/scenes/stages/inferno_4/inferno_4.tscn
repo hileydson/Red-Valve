@@ -377,7 +377,9 @@ agent_radius = 0.6
 
 [node name="inferno_4" type="Node3D"]
 script = ExtResource("1_inferno_4")
-cena_entrada = "res://scenes/stages/inferno_3/inferno_3.tscn"
+cena_entrada = "res://scenes/stages/escola/porao.tscn"
+ponto_entrada = "red_valve"
+cena_saida = "res://scenes/stages/inferno_3/inferno_3.tscn"
 maycow_normal = true
 salvar_ao_entrar = true
 nevoa_do_player = "alta"

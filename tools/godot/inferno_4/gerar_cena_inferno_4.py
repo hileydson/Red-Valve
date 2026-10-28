@@ -374,8 +374,11 @@ def main():
     z1, z2, z3, z4 = P["nevoa_z"]
     t.salvar(SAIDA, script_raiz=[
         ("script", 'ExtResource("%s")' % script),
-        # o anel de chegada volta pro inferno 3; o do largo do fim ainda nao leva
-        ("cena_entrada", '"%s"' % INFERNO_3),
+        # o anel de chegada volta pra porta red valve do porao da escola (de
+        # onde se vem); o do largo do fim leva ao comeco do inferno 3
+        ("cena_entrada", '"res://scenes/stages/escola/porao.tscn"'),
+        ("ponto_entrada", '"red_valve"'),
+        ("cena_saida", '"%s"' % INFERNO_3),
         ("maycow_normal", "true"), ("salvar_ao_entrar", "true"), ("nevoa_do_player", '"alta"'),
         ("segue_camera_altura", "true"),
         # o ceu cheio de gargulas: as da base seguem a camera...

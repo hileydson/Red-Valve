@@ -89,7 +89,10 @@ CONTROLE = [
 ]
 Z_INICIO = 446.0       # muro atras do portao de entrada
 Z_FIM = -452.0         # muro atras do portal
-SPAWN = (0.0, 0.3, 428.0)
+# o anel de chegada fica na frente do portao (fechado, de fundo); o jogador
+# nasce no pe' da rampa dele
+ANEL_ENTRADA = 424.0
+SPAWN = (0.0, 0.3, 393.0)
 PONTE = (-40.0, 175.0)
 RIO_W = 12.0
 PONTE_COMP = 26.0      # meia-extensao do tabuleiro ao longo do caminho
@@ -285,7 +288,7 @@ class Inferno(Cena):
         super().__init__("inf", 666)
         self.pontos = {
             "player": list(SPAWN),
-            "entrada": [0.0, 0.0, 438.0],
+            "entrada": [0.0, 0.0, ANEL_ENTRADA],
             "saida": [0.0, 2.0, -432.0],
             "areas": {},
             "braseiros": [],
@@ -346,6 +349,7 @@ class Inferno(Cena):
         self.catedral()
         self.crista()
         self.portal()
+        self.portal_entrada()
         self.braseiros()
         self.cachoeiras()
         self.longe()
@@ -946,8 +950,25 @@ class Inferno(Cena):
     def portal(self):
         """A saida: anel de osso e obsidiana de 26 m em cima de uma escadaria
         rasa. O redemoinho de dentro e' do Godot (shader)."""
-        x, y, z = 0.0, altura(0.0, -432.0), -432.0
-        setor = "portal"
+        x, z = 0.0, -432.0
+        y, yc = self._anel(x, z, 1.0, "portal")
+        self.pontos["portal"] = [x, yc, z]
+        self.pontos["saida"] = [x, y + 1.2, z]
+        self.pontos["areas"]["area_8_portal"] = [x, y + 1.2, z + 18.0]
+
+    def portal_entrada(self):
+        """O anel por onde se CHEGA: o mesmo da saida, na frente do portao
+        fechado, de costas pra ele (a rampa desce pro norte, pro caminho)."""
+        x, z = 0.0, ANEL_ENTRADA
+        y, yc = self._anel(x, z, -1.0, "portal_entrada")
+        self.pontos["portal_entrada"] = [x, yc, z]
+        self.pontos["entrada"] = [x, y + 1.2, z]
+
+    def _anel(self, x, z, f, setor):
+        """Anel de 26 m em cima de uma plataforma rasa; `f` = +1 se a rampa
+        (o lado de onde se chega) fica pro +z, -1 se fica pro -z. Devolve a
+        altura do chao e a do centro do anel."""
+        y = altura(x, z)
         r = 13.0
         # plataforma (rampa suave na colisao)
         self.m.add_pecas(setor, "obsidiana", [cilindro(x, z, 18.0, y - 2.0, y + 0.6, n=24, raio_topo=17.0),
@@ -956,37 +977,36 @@ class Inferno(Cena):
         # dos dois patamares do desenho — patamar de 60 cm e' degrau, e o
         # CharacterBody3D nao sobe degrau
         self.col.append(cilindro(x, z, 18.5, y - 2.0, y + 1.2, n=20, raio_topo=14.0))
-        # rampa de acesso pela frente (o jogador vem do sul), mais comprida
-        # que a escadaria do desenho pra nao sobrar quina
-        self.col.append(hexaedro([(x - 8, y - 1.0, z + 26.0), (x + 8, y - 1.0, z + 26.0), (x + 8, y - 1.0, z + 8.0),
-                                  (x - 8, y - 1.0, z + 8.0), (x - 8, y, z + 26.0), (x + 8, y, z + 26.0),
-                                  (x + 8, y + 1.2, z + 8.0), (x - 8, y + 1.2, z + 8.0)]))
+        # rampa de acesso pela frente, mais comprida que a escadaria do desenho
+        # pra nao sobrar quina
+        self.col.append(hexaedro([(x - 8, y - 1.0, z + 26.0 * f), (x + 8, y - 1.0, z + 26.0 * f),
+                                  (x + 8, y - 1.0, z + 8.0 * f), (x - 8, y - 1.0, z + 8.0 * f),
+                                  (x - 8, y, z + 26.0 * f), (x + 8, y, z + 26.0 * f),
+                                  (x + 8, y + 1.2, z + 8.0 * f), (x - 8, y + 1.2, z + 8.0 * f)]))
         degraus = []
         for k in range(6):
-            zz = z + 23.0 - k * 2.0
+            zz = z + (23.0 - k * 2.0) * f
             degraus.append(caixa((x - 8, y - 1.0, zz - 1.0), (x + 8, y + 0.2 * (k + 1), zz + 1.0)))
         self.m.add_pecas(setor, "obsidiana", degraus)
         yc = y + 1.2 + r + 1.0
         anel = [(x + r * math.sin(2 * math.pi * k / 48), yc + r * math.cos(2 * math.pi * k / 48), z) for k in range(49)]
         self.m.add_pecas(setor, "obsidiana", [tubo_redondo(anel, [1.5] * 49, n=10)], suave=True)
-        anel2 = [(x + (r - 1.6) * math.sin(2 * math.pi * k / 48), yc + (r - 1.6) * math.cos(2 * math.pi * k / 48), z + 0.4)
-                 for k in range(49)]
+        anel2 = [(x + (r - 1.6) * math.sin(2 * math.pi * k / 48), yc + (r - 1.6) * math.cos(2 * math.pi * k / 48),
+                  z + 0.4 * f) for k in range(49)]
         self.m.add_pecas(setor, "brasa", [tubo_redondo(anel2, [0.35] * 49, n=6)])
         esp = []
         for k in range(30):
             a = 2 * math.pi * k / 30
             comp = 8.0 if k % 2 == 0 else 4.0
             esp.append(espinho((x + (r + 1.0) * math.sin(a), yc + (r + 1.0) * math.cos(a), z),
-                               (x + (r + comp) * math.sin(a), yc + (r + comp) * math.cos(a), z - 1.0), 0.6, n=5))
+                               (x + (r + comp) * math.sin(a), yc + (r + comp) * math.cos(a), z - 1.0 * f), 0.6, n=5))
         self.m.add_pecas(setor, "osso", esp)
         for s in (-1, 1):
             # o pilar passa da beira do patamar de cima: nasce no de baixo
             self.m.add_pecas(setor, "obsidiana", [caixa((x + s * (r + 1.0) - 1.5, y + 0.6, z - 1.5),
                                                         (x + s * (r + 1.0) + 1.5, yc, z + 1.5))])
             self.col.append(caixa((x + s * (r + 1.0) - 1.5, y + 1.2, z - 1.5), (x + s * (r + 1.0) + 1.5, yc, z + 1.5)))
-        self.pontos["portal"] = [x, yc, z]
-        self.pontos["saida"] = [x, y + 1.2, z]
-        self.pontos["areas"]["area_8_portal"] = [x, y + 1.2, z + 18.0]
+        return y, yc
 
     def braseiros(self):
         """Pira de pedra com fogo marcando o caminho a cada ~70 m: a luz que

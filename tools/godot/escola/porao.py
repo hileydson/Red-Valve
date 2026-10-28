@@ -108,6 +108,12 @@ BECOS = [
     [(28.0, 52.0, 1.8), (14.0, 46.0, 1.6)],
 ]
 
+# A porta RED VALVE (`scenes/effects/porta_red_valve.tscn`): no meio da camara
+# grande, encostada na parede oeste (x = 24 entre z 39 e 46), de frente pra
+# quem entra na camara pelo canto de cima. E' um portal: leva ao comeco do
+# inferno 4, e e' por ela que se volta de la'.
+RED_VALVE = (24.0, 42.0)
+
 # As duas bocas, em coordenadas de mundo do porao.
 BOCA_ENTRADA = (6.0, 8.0)
 BOCA_SAIDA = (78.0, 74.0)

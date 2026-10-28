@@ -28,6 +28,7 @@ extends "res://scripts/stages/inferno/inferno.gd"
 @export var grito_espera_max: float = 70.0
 
 const LAVA_POCO := -64.0
+const CutsceneHusk := preload("res://scripts/stages/prolog/cutscene_husk_inferno_2.gd")
 ## O mar de fora começa depois da encosta da cratera.
 const R_MAR := 250.0
 
@@ -51,6 +52,18 @@ func _preparar() -> void:
 		_energia_coracao = _luz_coracao.light_energy
 	_grito = get_node_or_null("grito") as AudioStreamPlayer3D
 	_grito_prazo = randf_range(grito_espera_min * 0.5, grito_espera_max * 0.5)
+
+
+## A cutscene da oficina (prólogo) passa por aqui: o Husk traz o Maycow pelo
+## anel de chegada (ver `cutscene_husk_inferno_2.gd`).
+func _chegar(ponto: String) -> void:
+	if ponto == "cutscene_oficina":
+		var c = CutsceneHusk.new()
+		c.name = "cutscene_husk"
+		add_child(c)
+		c.rodar(self)
+		return
+	super._chegar(ponto)
 
 
 func _passo(delta: float) -> void:

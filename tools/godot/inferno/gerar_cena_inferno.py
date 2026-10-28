@@ -221,7 +221,6 @@ def main():
                                            'shader_parameter/ruido = SubResource("ruido_portal")'])
     t.sub("malha_portal", "QuadMesh", ['material = SubResource("mat_portal")', "size = Vector2(23, 23)"])
     t.sub("forma_portal", "BoxShape3D", ["size = Vector3(22, 26, 3)"])
-    t.sub("forma_portao", "BoxShape3D", ["size = Vector3(18, 14, 4)"])
 
     T.navmesh(t, P["navmesh"])
 
@@ -258,6 +257,12 @@ def main():
     px_, py_, pz_ = P["portal"]
     t.no("luz_portal", "OmniLight3D", "luzes", props=[
         ("transform", transform((px_, py_, pz_ + 4.0))),
+        ("light_color", cor((1.0, 0.3, 0.12, 1))), ("light_energy", "6.0"),
+        ("shadow_enabled", "false"), ("omni_range", "26.0"), ("omni_attenuation", "1.4")],
+        metas=[("piscar", "pulso")])
+    qx_, qy_, qz_ = P["portal_entrada"]
+    t.no("luz_portal_entrada", "OmniLight3D", "luzes", props=[
+        ("transform", transform((qx_, qy_, qz_ - 4.0))),
         ("light_color", cor((1.0, 0.3, 0.12, 1))), ("light_energy", "6.0"),
         ("shadow_enabled", "false"), ("omni_range", "26.0"), ("omni_attenuation", "1.4")],
         metas=[("piscar", "pulso")])
@@ -310,7 +315,8 @@ def main():
     for i, (x, y, z) in enumerate(P["lavas_som"]):
         T.som(t, "lava_%d" % i, "sons_lava", s_lava, pos=(x, y, z), volume=2.0, unit=18.0, maxd=110.0)
 
-    # --- o portal (saida) e o portao (entrada)
+    # --- os dois aneis: o do fim (saida) e o da chegada (entrada), este de
+    # costas pro portao fechado
     t.no("redemoinho", "MeshInstance3D", props=[
         ("transform", transform((px_, py_, pz_ + 0.2))), ("mesh", 'SubResource("malha_portal")'),
         ("cast_shadow", "0")])
@@ -320,11 +326,14 @@ def main():
     t.no("saida", "Area3D", props=[("transform", transform((px_, py_ - 3.0, pz_))), ("collision_layer", "0"),
                                    ("collision_mask", "1"), ("monitorable", "false")])
     t.no("forma", "CollisionShape3D", "saida", props=[("shape", 'SubResource("forma_portal")')])
-    ex, ey, ez = P["entrada"]
-    t.no("entrada", "Area3D", props=[("transform", transform((ex, ey + 6.0, ez + 6.0))),
+    t.no("redemoinho_entrada", "MeshInstance3D", props=[
+        ("transform", transform((qx_, qy_, qz_ - 0.2), 3.14159)), ("mesh", 'SubResource("malha_portal")'),
+        ("cast_shadow", "0")])
+    T.som(t, "som_portal_entrada", ".", s_portal, pos=(qx_, qy_, qz_), volume=-4.0, unit=14.0, maxd=90.0)
+    t.no("entrada", "Area3D", props=[("transform", transform((qx_, qy_ - 3.0, qz_))),
                                      ("collision_layer", "0"), ("collision_mask", "1"),
                                      ("monitorable", "false")])
-    t.no("forma", "CollisionShape3D", "entrada", props=[("shape", 'SubResource("forma_portao")')])
+    t.no("forma", "CollisionShape3D", "entrada", props=[("shape", 'SubResource("forma_portal")')])
 
     # --- marcadores: areas (pra montar o conteudo depois), spawn e inimigos
     t.no("areas", "Node3D")
@@ -350,8 +359,12 @@ def main():
 
     t.salvar(SAIDA, script_raiz=[
         ("script", 'ExtResource("%s")' % script),
-        # o portal do fim leva ao inferno 2 (que volta pra ca' pelo anel dele)
-        ("cena_saida", '"res://scenes/stages/inferno_2/inferno_2.tscn"'),
+        # o portal do fim leva a' arena 3; o anel do comeco, ao comeco do
+        # inferno 2 (e o do comeco de la' volta pra este)
+        ("cena_saida", '"res://scenes/stages/battlefield/battlefield_3.tscn"'),
+        ("ponto_saida", '""'),
+        ("cena_entrada", '"res://scenes/stages/inferno_2/inferno_2.tscn"'),
+        ("ponto_entrada", '"spawn_entrada"'),
         ("salvar_ao_entrar", "true"), ("nevoa_do_player", '"baixa"'),
         ("gargulas_ceu", "7"), ("ceu_raio", "230.0"), ("ceu_altura_min", "60.0"),
         ("ceu_altura_max", "150.0"),

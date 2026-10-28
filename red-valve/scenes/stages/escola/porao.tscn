@@ -1,4 +1,4 @@
-[gd_scene load_steps=497 format=3]
+[gd_scene load_steps=498 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="e0"]
 [ext_resource type="PackedScene" path="res://scenes/configs/pause.tscn" id="e1"]
@@ -24,10 +24,11 @@
 [ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/cement_bag/cement_bag_1k.gltf" id="e21"]
 [ext_resource type="PackedScene" path="res://assets/3d_model/stages/escola/pecas_porao/bulbo_5cc96b1375.gltf" id="e22"]
 [ext_resource type="PackedScene" path="res://assets/3d_model/stages/escola/pecas_porao/bulbo_54472a2b3a.gltf" id="e23"]
-[ext_resource type="Texture2D" path="res://assets/images/textures/pichacao/pichacao_parede.png" id="e24"]
-[ext_resource type="Shader" path="res://shaders/post_process/escola_lente.gdshader" id="e25"]
-[ext_resource type="AudioStream" path="res://assets/sounds/escola/goteira_porao.ogg" id="e26"]
-[ext_resource type="AudioStream" path="res://assets/sounds/escola/atmosfera_fantasma.ogg" id="e27"]
+[ext_resource type="PackedScene" path="res://scenes/effects/porta_red_valve.tscn" id="e24"]
+[ext_resource type="Texture2D" path="res://assets/images/textures/pichacao/pichacao_parede.png" id="e25"]
+[ext_resource type="Shader" path="res://shaders/post_process/escola_lente.gdshader" id="e26"]
+[ext_resource type="AudioStream" path="res://assets/sounds/escola/goteira_porao.ogg" id="e27"]
+[ext_resource type="AudioStream" path="res://assets/sounds/escola/atmosfera_fantasma.ogg" id="e28"]
 
 [sub_resource type="Environment" id="ambiente"]
 background_mode = 0
@@ -1396,7 +1397,7 @@ cull_mode = 2
 shading_mode = 1
 specular_mode = 2
 albedo_color = Color(0.550, 0.550, 0.550, 1)
-albedo_texture = ExtResource("e24")
+albedo_texture = ExtResource("e25")
 texture_repeat = false
 uv1_scale = Vector3(0.125000, 0.140351, 1)
 uv1_offset = Vector3(0.128906, 0.001096, 0)
@@ -1416,7 +1417,7 @@ cull_mode = 2
 shading_mode = 1
 specular_mode = 2
 albedo_color = Color(0.550, 0.550, 0.550, 1)
-albedo_texture = ExtResource("e24")
+albedo_texture = ExtResource("e25")
 texture_repeat = false
 uv1_scale = Vector3(0.187500, 0.105263, 1)
 uv1_offset = Vector3(0.699219, 0.248904, 0)
@@ -1436,7 +1437,7 @@ cull_mode = 2
 shading_mode = 1
 specular_mode = 2
 albedo_color = Color(0.550, 0.550, 0.550, 1)
-albedo_texture = ExtResource("e24")
+albedo_texture = ExtResource("e25")
 texture_repeat = false
 uv1_scale = Vector3(0.187500, 0.105263, 1)
 uv1_offset = Vector3(0.509766, 0.248904, 0)
@@ -1456,7 +1457,7 @@ cull_mode = 2
 shading_mode = 1
 specular_mode = 2
 albedo_color = Color(0.550, 0.550, 0.550, 1)
-albedo_texture = ExtResource("e24")
+albedo_texture = ExtResource("e25")
 texture_repeat = false
 uv1_scale = Vector3(0.250000, 0.140351, 1)
 uv1_offset = Vector3(0.382812, 0.001096, 0)
@@ -1476,7 +1477,7 @@ cull_mode = 2
 shading_mode = 1
 specular_mode = 2
 albedo_color = Color(0.550, 0.550, 0.550, 1)
-albedo_texture = ExtResource("e24")
+albedo_texture = ExtResource("e25")
 texture_repeat = false
 uv1_scale = Vector3(0.125000, 0.140351, 1)
 uv1_offset = Vector3(0.255859, 0.001096, 0)
@@ -1496,7 +1497,7 @@ cull_mode = 2
 shading_mode = 1
 specular_mode = 2
 albedo_color = Color(0.550, 0.550, 0.550, 1)
-albedo_texture = ExtResource("e24")
+albedo_texture = ExtResource("e25")
 texture_repeat = false
 uv1_scale = Vector3(0.125000, 0.140351, 1)
 uv1_offset = Vector3(0.001953, 0.001096, 0)
@@ -1577,7 +1578,7 @@ material = SubResource("pich_mat_3")
 size = Vector2(1.70, 1.70)
 
 [sub_resource type="ShaderMaterial" id="lente_mat"]
-shader = ExtResource("e25")
+shader = ExtResource("e26")
 shader_parameter/barril = 0.0
 shader_parameter/aberracao = 1.8
 shader_parameter/exposicao = 1.0
@@ -5395,6 +5396,11 @@ monitorable = false
 [node name="forma" type="CollisionShape3D" parent="boca_saida/area"]
 shape = SubResource("f432")
 
+[node name="red_valve" parent="." instance=ExtResource("e24")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 24.00, 0.0, 42.00)
+cena_destino = "res://scenes/stages/inferno_4/inferno_4.tscn"
+ponto_destino = "spawn_entrada"
+
 [node name="chegada_entrada" type="Marker3D" parent="."]
 transform = Transform3D(0.00000, 0.00000, -1.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, 0.00000, 7.60000, 0.10000, 8.00000)
 
@@ -5687,7 +5693,7 @@ mouse_filter = 2
 
 [node name="goteira_0" type="AudioStreamPlayer3D" parent="sons"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 28.77469, 1.80000, 19.24306)
-stream = ExtResource("e26")
+stream = ExtResource("e27")
 volume_db = -8.0
 unit_size = 3.0
 max_distance = 16.0
@@ -5696,7 +5702,7 @@ autoplay = true
 
 [node name="goteira_1" type="AudioStreamPlayer3D" parent="sons"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 77.69525, 1.80000, 27.23812)
-stream = ExtResource("e26")
+stream = ExtResource("e27")
 volume_db = -8.0
 unit_size = 3.0
 max_distance = 16.0
@@ -5705,7 +5711,7 @@ autoplay = true
 
 [node name="goteira_2" type="AudioStreamPlayer3D" parent="sons"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 42.55766, 1.80000, 40.67738)
-stream = ExtResource("e26")
+stream = ExtResource("e27")
 volume_db = -8.0
 unit_size = 3.0
 max_distance = 16.0
@@ -5714,7 +5720,7 @@ autoplay = true
 
 [node name="goteira_3" type="AudioStreamPlayer3D" parent="sons"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 36.69600, 1.80000, 71.61486)
-stream = ExtResource("e26")
+stream = ExtResource("e27")
 volume_db = -8.0
 unit_size = 3.0
 max_distance = 16.0
@@ -5722,6 +5728,6 @@ max_polyphony = 1
 autoplay = true
 
 [node name="atmosfera" type="AudioStreamPlayer" parent="sons"]
-stream = ExtResource("e27")
+stream = ExtResource("e28")
 volume_db = -17.0
 autoplay = true

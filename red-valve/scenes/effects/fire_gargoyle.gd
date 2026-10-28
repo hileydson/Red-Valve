@@ -1084,7 +1084,12 @@ func voo_dirigido_fugir(meio: Vector3, longe: Vector3, duracao: float) -> void:
 	var de := global_position
 	var t := 0.0
 	while t < duracao:
+		# a cena pode trocar no meio da fuga (a viagem de volta pra oficina)
+		if not is_inside_tree():
+			return
 		await get_tree().process_frame
+		if not is_inside_tree():
+			return
 		t += get_process_delta_time()
 		var k: float = Tween.interpolate_value(0.0, 1.0, minf(t, duracao), duracao,
 				Tween.TRANS_QUAD, Tween.EASE_IN)
