@@ -35,7 +35,7 @@ var _perto: bool = false
 var _malhas: Array = []
 var _overlay_atual: ShaderMaterial = null
 var _prompt_ligado: bool = false
-var _marca: MeshInstance3D = null
+var _marca: Node3D = null
 
 
 func configurar(objeto: Node3D, area: Area3D, chave_prompt: String) -> void:
@@ -43,7 +43,7 @@ func configurar(objeto: Node3D, area: Area3D, chave_prompt: String) -> void:
 	_prompt = chave_prompt
 	_malhas = _recolher_malhas(objeto)
 	add_to_group(Balcao.GRUPO)
-	# a bolinha de longe; deferido porque o dono pode estar no meio do _ready
+	# o indicador de perto; deferido porque o dono pode estar no meio do _ready
 	_marca = MarcaDeItem.new()
 	_marca.dono = objeto
 	_marca.malhas = _malhas
