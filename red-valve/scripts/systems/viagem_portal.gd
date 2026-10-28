@@ -149,6 +149,11 @@ func _rodar() -> void:
 	await get_tree().process_frame
 	_em_curso = false
 	trocou.emit()
+	# Rede de segurança: as linhas nunca passam da cena em que chegaram nem do
+	# tempo da saída. Se a saída empacar (ou a cena trocar de novo — a porta pra
+	# cidade, um load), o efeito some sozinho em vez de ficar rodando por cima.
+	get_tree().scene_changed.connect(_largar, CONNECT_ONE_SHOT)
+	get_tree().create_timer(dur_saida + 1.0, true, false, true).timeout.connect(_largar)
 
 	# a cena nova pode entrar em câmera lenta (a oficina cai com time_scale 0,12):
 	# a saída corre no relógio de parede, senão as linhas ficam rodando na tela
@@ -160,6 +165,12 @@ func _rodar() -> void:
 	s.tween_property(_mat, "shader_parameter/aberration", 0.0, dur_saida)
 	s.tween_property(_som, "volume_db", -30.0, dur_saida)
 	await s.finished
+	_largar()
+
+
+func _largar() -> void:
+	if is_queued_for_deletion():
+		return
 	_rect.visible = false
 	_preto.visible = false
 	queue_free()

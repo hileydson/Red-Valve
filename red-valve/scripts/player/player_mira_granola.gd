@@ -14,6 +14,7 @@ extends Node
 ## resolucao. As outras miras sao apagadas daqui, depois do player acende-las
 ## no quadro (este no' e' filho dele, entao processa depois).
 
+const Realidade := preload("res://scripts/systems/realidade_do_amuleto.gd")
 const SOM_BIP := preload("res://assets/sounds/player/guns/granola/granola_mira_bip.ogg")
 const SOM_TRAVA := preload("res://assets/sounds/player/guns/granola/granola_mira_trava.ogg")
 
@@ -169,6 +170,9 @@ func _procurar(cam: Camera3D, centro: Vector2, altura: float) -> Node3D:
 
 func _vivo(no) -> bool:
 	if not (no is Node3D) or not is_instance_valid(no) or no is Area3D:
+		return false
+	# de sombra, na outra realidade (sem o amuleto): nao da pra travar
+	if Realidade.em_outra_realidade(no):
 		return false
 	# inimigos da cena pausada atras da arena continuam no grupo
 	if not no.is_inside_tree() or not no.can_process() or not no.is_visible_in_tree():

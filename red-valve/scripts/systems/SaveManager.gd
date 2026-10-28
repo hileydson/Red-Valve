@@ -898,9 +898,10 @@ func _capitulo_1() -> bool:
 
 
 ## O R3 / H pode trocar de realidade agora? So' do Capitulo 1 em diante, so' na
-## cidade e so' com o amuleto no inventario.
+## cidade, so' com o amuleto no inventario e so' o Maycow normal (o outro ja'
+## vive na outra realidade e nao tem amuleto).
 func pode_alternar_realidade() -> bool:
-	return _capitulo_1() and tem_item("amuleto") and na_cidade()
+	return GlobalEvents.is_maycow_normal and _capitulo_1() and tem_item("amuleto") and na_cidade()
 
 
 ## A cidade esta na realidade "de gente" (amuleto fora do pescoco)? E' a

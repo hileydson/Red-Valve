@@ -21,6 +21,7 @@ extends Node3D
 ## faiscas, fumaca e o som de explosao do projeto.
 
 const FX := preload("res://scripts/effects/seraph_fx.gd")
+const Realidade := preload("res://scripts/systems/realidade_do_amuleto.gd")
 const MODELO := preload("res://assets/3d_model/player/the_negotiator_V4/cartridge/the_negotiator_V4_bullet.glb")
 
 ## 48 cm de foguete (o .glb tem 1,91 unidade, com a ponta no -X).
@@ -104,6 +105,12 @@ func _physics_process(delta: float) -> void:
 	if is_instance_valid(dono) and dono is CollisionObject3D:
 		consulta.exclude = [(dono as CollisionObject3D).get_rid()]
 	var toque := get_world_3d().direct_space_state.intersect_ray(consulta)
+	# inimigo de sombra (sem o amuleto) esta na outra realidade: o foguete passa
+	var fora: Array[RID] = consulta.exclude
+	while not toque.is_empty() and Realidade.em_outra_realidade(toque.get("collider")) and fora.size() < 8:
+		fora.append(toque["rid"])
+		consulta.exclude = fora
+		toque = get_world_3d().direct_space_state.intersect_ray(consulta)
 	if not toque.is_empty():
 		global_position = toque["position"]
 		_explodir(toque.get("collider"), toque["normal"])
@@ -116,6 +123,8 @@ func _physics_process(delta: float) -> void:
 
 func _perseguindo() -> bool:
 	if not is_instance_valid(alvo) or not alvo.is_inside_tree():
+		return false
+	if Realidade.em_outra_realidade(alvo):
 		return false
 	return not ("dead" in alvo and alvo.dead)
 
@@ -151,6 +160,8 @@ func _explodir(alvo: Object, normal: Vector3) -> void:
 		if not (no is Node3D) or no is Area3D or no in ja_levou:
 			continue
 		if not no.has_method("take_damage") or ("dead" in no and no.dead):
+			continue
+		if Realidade.em_outra_realidade(no):
 			continue
 		var d := (no as Node3D).global_position.distance_to(p)
 		if d > raio + 1.0:

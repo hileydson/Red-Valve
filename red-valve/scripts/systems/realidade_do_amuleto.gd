@@ -18,6 +18,9 @@ extends Node3D
 ##   - `alcancou(pos)`: a onda ja passou por este ponto? (sem onda = sim)
 ##   - `atualizar_disfarce(no)`: pros inimigos — veste ou tira a sombra quando a
 ##     onda passa e devolve se ele esta cego agora.
+##   - `em_outra_realidade(no)`: pras armas do Maycow — o inimigo (ou a area da
+##     cabeca dele) esta de sombra? Bala e explosao atravessam, sem dano e sem
+##     sangue.
 ##
 ## Sem `class_name` (ver [[project-class-name-travado]]): quem usa faz
 ## `const Realidade := preload("res://scripts/systems/realidade_do_amuleto.gd")`.
@@ -94,6 +97,20 @@ static func atualizar_disfarce(no: Node3D) -> bool:
 			nuvem(no, no.global_position + Vector3.UP * 1.0, 1.4, not quer)
 		esta = quer
 	return esta
+
+
+## O no (ou o inimigo de quem ele e' parte: a area da cabeca, o corpo) esta
+## na outra realidade agora? E' a marca que o `disfarcar` deixa, entao vale
+## so' depois que a onda passou por ele.
+static func em_outra_realidade(no: Object) -> bool:
+	var n := no as Node
+	var subidas := 0
+	while n != null and subidas < 6:
+		if n.get_meta("_sombra_da_realidade", false):
+			return true
+		n = n.get_parent()
+		subidas += 1
+	return false
 
 
 # ============================================================ a troca

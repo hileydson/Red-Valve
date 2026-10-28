@@ -19,7 +19,10 @@ const ShadowRoads := preload("res://scripts/npcs/shadow_roads.gd")
 ## e o carro troca de CASCA: `virar_real(true)` esconde a lataria de fumaca e
 ## mostra um carro de verdade (pacote CC0 "PSX Style Cars", em
 ## `assets/3d_model/veiculos/carros_psx/`) do mesmo tipo e do mesmo comprimento.
-## Ele continua andando igual — quem dirige e' o mesmo no.
+## Ele continua andando igual — quem dirige e' o mesmo no. As rodas do pacote
+## vem coladas na lataria (uma malha so'); na primeira vez que um modelo e'
+## usado elas sao separadas (cada roda e' uma peca solta encostando no chao) e
+## giram de verdade, como as da sombra.
 
 const GRAVITY := 18.0
 
@@ -133,6 +136,10 @@ var _engine_target_db := 0.0
 var _engine_db := -60.0
 var _body_root: Node3D
 var _real_root: Node3D
+## As rodas do carro de verdade (pivo no centro de cada uma) e o raio delas.
+var _rodas_reais: Array[Node3D] = []
+var _rodas_reais_frente: Array[Node3D] = []
+var _raio_roda_real := 0.34
 ## Esta de casca de verdade (realidade sem amuleto)?
 var real := false
 var _player: Node3D
@@ -569,6 +576,12 @@ func _spin_wheels(delta: float) -> void:
 	# so as rodas da frente viram; as de tras seguem fixas no eixo
 	for w in _front_wheels:
 		w.rotation.y = lerp(w.rotation.y, _steer, clampf(delta * 6.0, 0.0, 1.0))
+	if real:
+		var giro := _speed / maxf(_raio_roda_real, 0.05) * delta
+		for w in _rodas_reais:
+			w.rotation.x = wrapf(w.rotation.x + giro, -PI, PI)
+		for w in _rodas_reais_frente:
+			w.rotation.y = lerp(w.rotation.y, _steer, clampf(delta * 6.0, 0.0, 1.0))
 	# leve inclinacao do corpo na curva
 	if _body_root != null:
 		_body_root.rotation.z = lerp(_body_root.rotation.z, -_steer * 0.12,
@@ -714,8 +727,8 @@ func virar_real(sim: bool) -> void:
 func _montar_carro_real() -> void:
 	var opcoes: Array = CARRO_DE_VERDADE.get(String(_profile.get("name", "sedan")), CARRO_DE_VERDADE["sedan"])
 	var escolha: Array = opcoes[_rng.randi_range(0, opcoes.size() - 1)]
-	var malha := _malha_real(String(escolha[0]))
-	if malha == null:
+	var pecas := _malha_real(String(escolha[0]))
+	if pecas.is_empty():
 		return
 	var cores: Array = escolha[1]
 	var pasta := String(escolha[0]).get_base_dir()
@@ -723,24 +736,136 @@ func _montar_carro_real() -> void:
 	_real_root = Node3D.new()
 	_real_root.name = "CarroDeVerdade"
 	add_child(_real_root)
+	# do mesmo comprimento da sombra (a colisao e' a dela), apoiado no chao. O
+	# modelo olha pro +Z, como o carro.
+	var caixa: AABB = pecas["caixa"]
+	var tam: Vector3 = get_meta("size", Vector3(1.8, 1.4, 4.4))
+	var esc := tam.z / maxf(caixa.size.z, 0.01)
+	var casca := Node3D.new()
+	casca.scale = Vector3.ONE * esc
+	casca.position = Vector3(-caixa.get_center().x * esc, -caixa.position.y * esc, -caixa.get_center().z * esc)
+	_real_root.add_child(casca)
+	casca.add_child(_peca_real(pecas["corpo"], pintura))
+	for roda in pecas["rodas"]:
+		var pivo := Node3D.new()
+		pivo.position = roda["centro"]
+		casca.add_child(pivo)
+		pivo.add_child(_peca_real(roda["malha"], pintura))
+		_rodas_reais.append(pivo)
+		if (roda["centro"] as Vector3).z > caixa.get_center().z:
+			_rodas_reais_frente.append(pivo)
+		_raio_roda_real = float(roda["raio"]) * esc
+
+
+func _peca_real(malha: Mesh, pintura: Material) -> MeshInstance3D:
 	var mi := MeshInstance3D.new()
 	mi.mesh = malha
 	mi.material_override = pintura
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	# do mesmo comprimento da sombra (a colisao e' a dela), apoiado no chao. O
-	# modelo olha pro +Z, como o carro.
-	var caixa := malha.get_aabb()
-	var tam: Vector3 = get_meta("size", Vector3(1.8, 1.4, 4.4))
-	var esc := tam.z / maxf(caixa.size.z, 0.01)
-	mi.scale = Vector3.ONE * esc
-	mi.position = Vector3(-caixa.get_center().x * esc, -caixa.position.y * esc, -caixa.get_center().z * esc)
-	_real_root.add_child(mi)
+	return mi
 
 
-static func _malha_real(arquivo: String) -> Mesh:
+## O modelo cortado em lataria + rodas: {"caixa": AABB do modelo inteiro,
+## "corpo": Mesh, "rodas": [{"malha", "centro", "raio"}]}. Cada roda vem com os
+## vertices em volta da propria origem, pra girar no lugar. Feito uma vez por
+## modelo e guardado.
+static func _malha_real(arquivo: String) -> Dictionary:
 	if not _malhas_reais.has(arquivo):
-		_malhas_reais[arquivo] = load(CARROS_PSX + arquivo) as Mesh
+		var malha := load(CARROS_PSX + arquivo) as Mesh
+		_malhas_reais[arquivo] = _separar_rodas(malha) if malha != null else {}
 	return _malhas_reais[arquivo]
+
+
+## Acha as rodas pela forma: peca solta (nenhum vertice em comum com o resto),
+## encostando no chao do modelo, redonda de perfil (altura = comprimento) e
+## estreita de lado.
+static func _separar_rodas(malha: Mesh) -> Dictionary:
+	var arr := malha.surface_get_arrays(0)
+	var vs: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+	var ns = arr[Mesh.ARRAY_NORMAL]
+	var uvs = arr[Mesh.ARRAY_TEX_UV]
+	var ids: PackedInt32Array = arr[Mesh.ARRAY_INDEX] if arr[Mesh.ARRAY_INDEX] != null else PackedInt32Array()
+	if ids.is_empty():
+		ids.resize(vs.size())
+		for i in vs.size():
+			ids[i] = i
+	var caixa := malha.get_aabb()
+	# uniao dos vertices que se tocam (o .obj duplica vertice por quina)
+	var pai: Array = range(vs.size())
+	var mesmo_lugar := {}
+	for i in vs.size():
+		var k := Vector3i((vs[i] * 1000.0).round())
+		if mesmo_lugar.has(k):
+			_unir(pai, i, mesmo_lugar[k])
+		else:
+			mesmo_lugar[k] = i
+	for t in range(0, ids.size(), 3):
+		_unir(pai, ids[t], ids[t + 1])
+		_unir(pai, ids[t], ids[t + 2])
+	var grupos := {}
+	for t in range(0, ids.size(), 3):
+		var r := _raiz(pai, ids[t])
+		if not grupos.has(r):
+			grupos[r] = []
+		(grupos[r] as Array).append(t)
+	var corpo: Array = []
+	var rodas: Array = []
+	for r in grupos:
+		var tris: Array = grupos[r]
+		var cx := AABB(vs[ids[tris[0]]], Vector3.ZERO)
+		for t in tris:
+			for j in 3:
+				cx = cx.expand(vs[ids[t + j]])
+		var e_roda := cx.position.y - caixa.position.y < 0.1 \
+			and cx.size.y > caixa.size.y * 0.2 \
+			and absf(cx.size.y - cx.size.z) < cx.size.y * 0.25 \
+			and cx.size.x < cx.size.y * 0.7
+		if e_roda:
+			var centro := cx.get_center()
+			rodas.append({"malha": _montar_peca(vs, ns, uvs, ids, tris, centro),
+				"centro": centro, "raio": cx.size.y * 0.5})
+		else:
+			corpo.append_array(tris)
+	return {"caixa": caixa, "corpo": _montar_peca(vs, ns, uvs, ids, corpo, Vector3.ZERO), "rodas": rodas}
+
+
+static func _montar_peca(vs: PackedVector3Array, ns, uvs, ids: PackedInt32Array,
+		tris: Array, origem: Vector3) -> ArrayMesh:
+	var pv := PackedVector3Array()
+	var pn := PackedVector3Array()
+	var pu := PackedVector2Array()
+	for t in tris:
+		for j in 3:
+			var i := ids[t + j]
+			pv.append(vs[i] - origem)
+			if ns != null:
+				pn.append(ns[i])
+			if uvs != null:
+				pu.append(uvs[i])
+	var a := []
+	a.resize(Mesh.ARRAY_MAX)
+	a[Mesh.ARRAY_VERTEX] = pv
+	if ns != null:
+		a[Mesh.ARRAY_NORMAL] = pn
+	if uvs != null:
+		a[Mesh.ARRAY_TEX_UV] = pu
+	var m := ArrayMesh.new()
+	m.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, a)
+	return m
+
+
+static func _raiz(pai: Array, i: int) -> int:
+	while pai[i] != i:
+		pai[i] = pai[pai[i]]
+		i = pai[i]
+	return i
+
+
+static func _unir(pai: Array, a: int, b: int) -> void:
+	var ra := _raiz(pai, a)
+	var rb := _raiz(pai, b)
+	if ra != rb:
+		pai[ra] = rb
 
 
 static func _pintura(arquivo: String) -> StandardMaterial3D:

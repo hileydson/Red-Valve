@@ -15,6 +15,8 @@ extends Node
 # A intensidade escala as duas coisas ao mesmo tempo: o tamanho do cone que
 # procura alvos E a força do puxão - por isso a diferença é bem perceptível.
 
+const Realidade := preload("res://scripts/systems/realidade_do_amuleto.gd")
+
 const MAX_DISTANCE := 45.0          # Alcance máximo pra considerar um alvo
 const BASE_ANGLE_DEG := 7.0         # Cone ao redor do centro da tela (x intensidade)
 const MAX_PULL_DEG_PER_SEC := 110.0 # Teto da correção (x intensidade)
@@ -82,6 +84,8 @@ func _find_best_target(cam: Camera3D) -> Node3D:
 		if not enemy.is_visible_in_tree(): continue
 		# Inimigos usam a flag "dead" (ver zombie.gd); mortos não atraem a mira.
 		if "dead" in enemy and enemy.dead: continue
+		# De sombra, na outra realidade (sem o amuleto): o tiro passa por ele.
+		if Realidade.em_outra_realidade(enemy): continue
 
 		var aim_point: Vector3 = _aim_point(enemy)
 		var to_target := aim_point - origin

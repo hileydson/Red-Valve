@@ -1,5 +1,7 @@
 extends Node
 
+const Realidade := preload("res://scripts/systems/realidade_do_amuleto.gd")
+
 var player: CharacterBody3D
 
 func _ready() -> void:
@@ -676,7 +678,7 @@ func _raio_do_tiro_shotgun() -> void:
 		consulta.collide_with_areas = true
 		consulta.exclude = [player.get_rid()]
 
-		var toque := espaco.intersect_ray(consulta)
+		var toque := _raio_nesta_realidade(espaco, consulta)
 		if toque.is_empty(): continue
 
 		var alvo = toque.get("collider")
@@ -710,7 +712,7 @@ func _raio_do_tiro_3p(dano: int = -1, desvio_graus: float = 0.0) -> Dictionary:
 	consulta.collide_with_areas = true
 	consulta.exclude = [player.get_rid()]
 
-	var toque := player.get_world_3d().direct_space_state.intersect_ray(consulta)
+	var toque := _raio_nesta_realidade(player.get_world_3d().direct_space_state, consulta)
 	if toque.is_empty(): return {}
 
 	var alvo = toque.get("collider")
@@ -720,6 +722,21 @@ func _raio_do_tiro_3p(dano: int = -1, desvio_graus: float = 0.0) -> Dictionary:
 	if alvo.is_in_group("enemies"):
 		spawn_blood_raycast(toque["position"], toque["normal"])
 	return toque
+
+
+## O primeiro toque do raio NESTA realidade: sem o amuleto (R3 / H) os
+## inimigos da cidade estao de sombra, na outra, e a bala passa por eles como
+## se nao estivessem ali — sem dano, sem sangue e sem eles notarem o Maycow.
+func _raio_nesta_realidade(espaco: PhysicsDirectSpaceState3D,
+		consulta: PhysicsRayQueryParameters3D) -> Dictionary:
+	var fora: Array[RID] = consulta.exclude
+	for tentativa in 6:
+		var toque := espaco.intersect_ray(consulta)
+		if toque.is_empty() or not Realidade.em_outra_realidade(toque.get("collider")):
+			return toque
+		fora.append(toque["rid"])
+		consulta.exclude = fora
+	return {}
 
 
 ## Clarão curto na boca do cano. É uma luz só, com alcance pequeno e vida de
@@ -782,6 +799,8 @@ func _soltar_capsula(ponto: Vector3) -> void:
 func raycast_process_shoot() -> void:
 	if player.ray_cast_3d.is_colliding():
 		var target = player.ray_cast_3d.get_collider()
+		if Realidade.em_outra_realidade(target):
+			return
 		
 		if target and target.has_method("take_damage"):
 			target.take_damage(player.damage_pistol)
@@ -1302,6 +1321,11 @@ func _on_area_3d_body_exited(body: Node3D) -> void:
 		if body.has_method("take_damage"): body.take_damage(player.damage_crescent_cogblade)
 
 func _on_bullet_touch_body_entered(body: Node3D) -> void:
+	# A area vive presa na camera o tempo todo: so' vale com a bala do bullet
+	# time voando (visivel). Sem isso, andar por dentro de um inimigo — o que
+	# so' da pra fazer com ele de sombra, na outra realidade — espirrava sangue.
+	if not player.bullet.visible or Realidade.em_outra_realidade(body):
+		return
 	player.bullet.visible = false
 	spawn_blood_effect(body)
 
