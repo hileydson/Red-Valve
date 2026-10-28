@@ -49,7 +49,7 @@ const HORA_SEM_AMULETO := 19.0
 const AMBIENTE_SEM_AMULETO := 1.25
 ## A troca cansa o amuleto: depois de uma, a proxima so' depois desta espera
 ## (segundos de relogio de parede, pra pausa e camera lenta nao mexerem nela).
-const ESPERA_ENTRE_TROCAS := 60.0
+const ESPERA_ENTRE_TROCAS := 15.0
 ## E cada troca gasta esta fracao da magia maxima — que nao volta sozinha.
 const CUSTO_MAGIA := 0.15
 

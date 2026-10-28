@@ -98,6 +98,8 @@ func _process_amulet_magic(delta: float) -> void:
 	else:
 		if player.amulet_magic_active:
 			_hide_amulet_magic()
+		# sem magia: a barra vazia aparece pra dizer o porquê
+		player.mostrar_magia()
 
 func _ensure_amuleto_visual() -> void:
 	if is_instance_valid(player.amuleto_node): return
@@ -293,6 +295,129 @@ func _process_amulet_targeting() -> void:
 
 		if player.amulet_counter_label:
 			player.amulet_counter_label.text = str(player.amulet_selected_enemies.size())
+
+	# B (`ui_dash`, que o Maycow normal nao usa): desfaz todas as selecoes de
+	# uma vez, sem precisar mirar em cada um de novo.
+	if Input.is_action_just_pressed("ui_dash") and not player.amulet_selected_enemies.is_empty():
+		_desfazer_selecoes()
+
+## Solta todo mundo que estava marcado pra arena. O efeito e' o da selecao ao
+## contrario: em cada um o anel FECHA e as faiscas sao sugadas pra dentro, e a
+## tela da' um pulso roxo curto.
+func _desfazer_selecoes() -> void:
+	var soltos: Array = player.amulet_selected_enemies.duplicate()
+	player.amulet_selected_enemies.clear()
+	for enemy in soltos:
+		if not is_instance_valid(enemy):
+			continue
+		_remove_magic_aura(enemy)
+		_remove_silhouette(enemy)
+		_play_release_burst(enemy)
+	# o hover se refaz no proximo quadro, ja' sem o vermelho de selecionado
+	_clear_amulet_hover()
+
+	if player.amulet_counter_label:
+		var rotulo: Label = player.amulet_counter_label
+		rotulo.text = "0"
+		rotulo.pivot_offset = rotulo.size / 2.0
+		var tw_r := rotulo.create_tween()
+		rotulo.scale = Vector2(1.6, 1.6)
+		tw_r.tween_property(rotulo, "scale", Vector2.ONE, 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+	if is_instance_valid(player.hud_layer):
+		var pulso := ColorRect.new()
+		pulso.name = "AmuletReleasePulse"
+		pulso.set_anchors_preset(Control.PRESET_FULL_RECT)
+		pulso.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		pulso.color = Color(0.55, 0.15, 0.9, 0.0)
+		player.hud_layer.add_child(pulso)
+		var tw_p := pulso.create_tween()
+		tw_p.tween_property(pulso, "color:a", 0.22, 0.06)
+		tw_p.tween_property(pulso, "color:a", 0.0, 0.35).set_trans(Tween.TRANS_SINE)
+		tw_p.tween_callback(pulso.queue_free)
+
+	var som := AudioStreamPlayer.new()
+	som.stream = load("res://assets/sounds/player/blade_back.mp3")
+	som.pitch_scale = 0.75
+	som.volume_db = -6.0
+	player.add_child(som)
+	som.finished.connect(som.queue_free)
+	som.play()
+
+	GlobalUtils.vibrate_controller(null, 0.35, 0.2, 0.2)
+
+## O contrario do `_play_selection_burst`: o anel vem de fora e fecha no
+## inimigo, e as faiscas convergem pro centro e se apagam.
+func _play_release_burst(enemy: Node3D) -> void:
+	if not is_instance_valid(enemy) or enemy.get_parent() == null: return
+
+	var burst := Node3D.new()
+	burst.name = "AmuletReleaseBurst"
+	enemy.get_parent().add_child(burst)
+	burst.global_position = enemy.global_position + Vector3.UP * 1.0
+
+	var ring := MeshInstance3D.new()
+	var torus := TorusMesh.new()
+	torus.inner_radius = 0.75
+	torus.outer_radius = 0.9
+	ring.mesh = torus
+	ring.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	var ring_mat := StandardMaterial3D.new()
+	ring_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	ring_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	ring_mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	ring_mat.albedo_color = Color(0.7, 0.35, 1.0, 0.0)
+	ring.material_override = ring_mat
+	burst.add_child(ring)
+	# De frente pra camera: deitado como o da selecao, visto da altura do olho
+	# ele virava uma barra achatada atravessando os inimigos.
+	var cam := player.get_viewport().get_camera_3d()
+	if cam:
+		var para_cam := cam.global_position - burst.global_position
+		if para_cam.length() > 0.01 and absf(para_cam.normalized().dot(Vector3.UP)) < 0.99:
+			# o eixo do TorusMesh e' o Y local
+			ring.global_basis = Basis.looking_at(para_cam.normalized(), Vector3.UP) * Basis(Vector3.RIGHT, -PI / 2.0)
+	ring.scale = Vector3(1.8, 1.8, 1.8)
+
+	# faiscas nascendo na casca e puxadas pro meio
+	var sparks := CPUParticles3D.new()
+	sparks.emitting = true
+	sparks.one_shot = true
+	sparks.explosiveness = 0.85
+	sparks.amount = 40
+	sparks.lifetime = 0.45
+	sparks.local_coords = true
+	sparks.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE_SURFACE
+	sparks.emission_sphere_radius = 1.4
+	sparks.gravity = Vector3.ZERO
+	sparks.initial_velocity_min = 0.0
+	sparks.initial_velocity_max = 0.0
+	sparks.radial_accel_min = -14.0
+	sparks.radial_accel_max = -10.0
+	sparks.scale_amount_min = 0.4
+	sparks.scale_amount_max = 0.8
+	var grad := Gradient.new()
+	grad.offsets = [0.0, 0.6, 1.0]
+	grad.colors = [Color(0.6, 0.25, 1.0, 0.0), Color(0.85, 0.6, 1.0, 1.0), Color(1.0, 1.0, 1.0, 0.0)]
+	sparks.color_ramp = grad
+	sparks.mesh = _make_spark_mesh()
+	burst.add_child(sparks)
+
+	var flash := OmniLight3D.new()
+	flash.light_color = Color(0.7, 0.4, 1.0)
+	flash.light_energy = 0.0
+	flash.omni_range = 5.0
+	flash.shadow_enabled = false
+	burst.add_child(flash)
+
+	var tw := burst.create_tween().set_parallel(true)
+	tw.tween_property(ring, "scale", Vector3(0.1, 0.1, 0.1), 0.4).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+	tw.tween_property(ring_mat, "albedo_color:a", 1.0, 0.25).set_trans(Tween.TRANS_SINE)
+	tw.tween_property(flash, "light_energy", 5.0, 0.35).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	tw.chain().tween_property(flash, "light_energy", 0.0, 0.15)
+	tw.parallel().tween_property(ring_mat, "albedo_color:a", 0.0, 0.15)
+	tw.chain().tween_interval(0.4)
+	tw.chain().tween_callback(burst.queue_free)
 
 ## Raio exato no centro da tela — o jeito preciso, quando acerta.
 func _raio_no_centro(cam: Camera3D) -> Node3D:

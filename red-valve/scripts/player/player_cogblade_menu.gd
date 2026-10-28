@@ -115,6 +115,9 @@ func _process(_delta: float) -> void:
 func _empunhar_cogblade() -> void:
 	if not SaveManager.tem_item("cogblade") or SaveManager.cogblade_como_arma():
 		return
+	# a mesma regra dos atalhos: no meio da recarga nao se troca de arma
+	if player.is_reloading:
+		return
 	SaveManager.equip_item("cogblade")
 	SaveManager.save_game()
 	player.update_ammo_ui()

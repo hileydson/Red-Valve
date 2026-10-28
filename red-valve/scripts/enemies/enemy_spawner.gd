@@ -40,6 +40,11 @@ const ShadowRoads := preload("res://scripts/npcs/shadow_roads.gd")
 ## Sobrescreve o `distance_to_aproach` do inimigo, para que ele perceba o
 ## jogador a partir do anel onde nasceu. 0 = deixa o valor da cena.
 @export var distance_to_aproach: float = 45.0
+## Das vagas acima, quantas podem ir pros que passeiam antes de notar o jogador
+## (os de `aproximacao` propria: vizinho, Seraph, Rock). Com teto de dois, um
+## vizinho e um Rock vagando a 30 m ocupavam as duas e nenhum zumbi nascia: com
+## o amuleto no pescoco a cidade parecia vazia.
+@export var max_que_passeiam: int = 1
 
 @export_group("Zumbis")
 ## Vazio = res://scenes/enemies/zombie_1.tscn.
@@ -250,7 +255,8 @@ func _physics_process(delta: float) -> void:
 		tipo["cooldown"] = float(tipo["cooldown"]) - tick_interval
 		if float(tipo["cooldown"]) > 0.0:
 			continue
-		if total >= max_active or _vivos_do_tipo(tipo) >= int(tipo["max_ativos"]):
+		if total >= max_active or _vivos_do_tipo(tipo) >= int(tipo["max_ativos"]) \
+				or (_passeia(tipo) and _vivos_que_passeiam() >= max_que_passeiam):
 			# Lotado: espera um pouco e olha de novo, sem gastar o intervalo cheio.
 			tipo["cooldown"] = 2.0
 			continue
@@ -328,6 +334,20 @@ func _vivos_do_tipo(tipo: Dictionary) -> int:
 		var corpo = reg["corpo"]
 		if is_instance_valid(corpo) and not ("dead" in corpo and corpo.dead):
 			n += 1
+	return n
+
+
+## O tipo vaga pela cidade antes de notar o jogador (tem raio de percepcao
+## proprio, menor que o geral)?
+func _passeia(tipo: Dictionary) -> bool:
+	return float(tipo.get("aproximacao", 0.0)) > 0.0
+
+
+func _vivos_que_passeiam() -> int:
+	var n := 0
+	for tipo in _tipos:
+		if _passeia(tipo):
+			n += _vivos_do_tipo(tipo)
 	return n
 
 

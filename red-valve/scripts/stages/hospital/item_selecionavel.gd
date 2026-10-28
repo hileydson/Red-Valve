@@ -23,6 +23,7 @@ extends Node
 signal pegar
 
 const Balcao := preload("res://scripts/stages/hospital/item_de_balcao.gd")
+const MarcaDeItem := preload("res://scripts/stages/hospital/marca_de_item.gd")
 
 ## Falso enquanto nao ha' o que pegar (ja' pego, esperando reaparecer...).
 var disponivel: bool = true
@@ -34,6 +35,7 @@ var _perto: bool = false
 var _malhas: Array = []
 var _overlay_atual: ShaderMaterial = null
 var _prompt_ligado: bool = false
+var _marca: MeshInstance3D = null
 
 
 func configurar(objeto: Node3D, area: Area3D, chave_prompt: String) -> void:
@@ -41,6 +43,11 @@ func configurar(objeto: Node3D, area: Area3D, chave_prompt: String) -> void:
 	_prompt = chave_prompt
 	_malhas = _recolher_malhas(objeto)
 	add_to_group(Balcao.GRUPO)
+	# a bolinha de longe; deferido porque o dono pode estar no meio do _ready
+	_marca = MarcaDeItem.new()
+	_marca.dono = objeto
+	_marca.malhas = _malhas
+	objeto.add_child.call_deferred(_marca)
 	if area:
 		area.body_entered.connect(_ao_entrar)
 		area.body_exited.connect(_ao_sair)
@@ -55,6 +62,8 @@ func _exit_tree() -> void:
 func _process(_delta: float) -> void:
 	if not is_instance_valid(_raiz):
 		return
+	if is_instance_valid(_marca):
+		_marca.ativa = disponivel
 	Balcao._arbitrar(get_tree(), get_viewport().get_camera_3d())
 
 	var escolhido: bool = Balcao._selecionado == self

@@ -78,6 +78,9 @@ const GRUPO := "item_de_balcao"
 
 const SHADER_REALCE := "res://shaders/effects/enemy_highlight.gdshader"
 
+## A bolinha debaixo do item, que o faz ser visto de longe.
+const MarcaDeItem := preload("res://scripts/stages/hospital/marca_de_item.gd")
+
 ## Os dois sons de todo item de cenario: um clique sutil quando ele fica
 ## selecionado (a virada do prompt) e o do item indo pro bolso ao pegar. Os
 ## outros pickups (`item_selecionavel.gd`) tocam os MESMOS, por estas constantes.
@@ -117,6 +120,11 @@ func _ready() -> void:
 
 	add_to_group(GRUPO)
 	_malhas = _recolher_malhas(self)
+	# depois do recolher: a marca nao e' malha do item e nao leva o realce
+	var marca := MarcaDeItem.new()
+	marca.dono = self
+	marca.malhas = _malhas
+	add_child(marca)
 
 	var area := get_node_or_null("area") as Area3D
 	if area == null:

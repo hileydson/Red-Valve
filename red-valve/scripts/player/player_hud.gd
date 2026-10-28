@@ -247,14 +247,14 @@ void fragment() {
 	player.mp_bar.offset_bottom = -25
 	player.mp_bar.show_percentage = false
 	var mp_sb = StyleBoxFlat.new()
-	mp_sb.bg_color = Color(0.2, 0.4, 0.9, 0.8)
+	mp_sb.bg_color = Color(0.2, 0.4, 0.9, 0.65)
 	mp_sb.corner_radius_top_left = 4
 	mp_sb.corner_radius_top_right = 4
 	mp_sb.corner_radius_bottom_left = 4
 	mp_sb.corner_radius_bottom_right = 4
 	player.mp_bar.add_theme_stylebox_override("fill", mp_sb)
 	var mp_bg = StyleBoxFlat.new()
-	mp_bg.bg_color = Color(0.1, 0.1, 0.1, 0.5)
+	mp_bg.bg_color = Color(0.1, 0.1, 0.1, 0.4)
 	mp_bg.corner_radius_top_left = 4
 	mp_bg.corner_radius_top_right = 4
 	mp_bg.corner_radius_bottom_left = 4

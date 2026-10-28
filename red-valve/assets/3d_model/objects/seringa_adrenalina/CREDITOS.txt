@@ -1,3 +1,3 @@
-Seringa de adrenalina: "syringe" (CC0) do OpenGameArt, com o liquido
-pintado de vermelho e o tubo em vidro, posta no tamanho real (14 cm):
-https://opengameart.org/content/syringe
+Seringa de adrenalina: modelada do zero por script no Blender
+(tools/blender/seringa/gerar_seringa.py), seringa de 5 ml com escala, rolha
+de borracha, canhao rosa e agulha 21G; liquido vermelho. Tamanho do jogo: 14 cm.

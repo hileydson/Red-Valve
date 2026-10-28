@@ -189,7 +189,14 @@ const PORTE_ATRAVESSA := 16.0
 ##
 ## So' vale no porte: mirando, o `apontando` ja' apaga o PORTE_ATRAVESSA
 ## inteiro, e este vai junto.
-const CORRIDA_ATRAVESSA := 8.0
+##
+## Com 8 graus a boca ainda ficava pra frente (o usuario reclamou em
+## 2026-10-28): correndo, a arma atravessa o peito de verdade, a boca pra
+## esquerda dele.
+const CORRIDA_ATRAVESSA := 40.0
+## E vem pra perto do corpo: a mao direita recua e entra pro meio (cm).
+const CORRIDA_RECUA := 6.0
+const CORRIDA_PRA_DENTRO := 4.0
 ## Em quanto tempo ele entra e sai, em segundos. Sem isto a arma daria um
 ## tranco no quadro em que a corrida comeca.
 const CORRIDA_ENTRA := 0.25
@@ -631,6 +638,9 @@ func _montar_contexto(sk: Skeleton3D, alvo: Vector3, peso: float,
 	var mao_d := no_porte.lerp(na_mira, apontando)
 	mao_d += (dir * RECARGA_AFASTA + cima * RECARGA_SOBE
 		+ direita * RECARGA_LADO) * recolhe
+	# correndo, a arma vem pra junto do corpo (so' no porte)
+	mao_d -= (dir * CORRIDA_RECUA + direita * CORRIDA_PRA_DENTRO) \
+		* smoothstep(0.0, 1.0, _corrida) * (1.0 - apontando)
 
 	return {
 		"dir": dir, "direita": direita, "cima": cima, "ancora": ancora,

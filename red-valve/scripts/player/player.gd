@@ -354,6 +354,11 @@ var is_exhausted: bool = false
 
 var cogblade_blocking: bool = false
 var mp_bar: ProgressBar
+## Segundos que a barra de magia do Maycow normal fica acesa depois de a magia
+## mudar (gasto, seringa) ou de faltar magia pra alguma coisa.
+const MAGIA_VISIVEL_POR := 4.0
+var _magia_acesa_resto: float = MAGIA_VISIVEL_POR
+var _magia_vista: float = -1.0
 
 var hud_layer: CanvasLayer
 var amulet_counter_label: Label
@@ -862,13 +867,15 @@ func _configurar_lanterna() -> void:
 	# MIOLO. Antes eram 14 de energia e 45 m de alcance: acendia o corredor
 	# inteiro e estourava tudo que estivesse perto. Uma lanterna de mão alcança
 	# um punhado de metros; o que vem depois disso ela só insinua.
-	lanterna.light_energy = 4.6
+	# (2026-10-28: "um pouco mais forte e um pouco mais longe" — 4,6 / 14 m /
+	# 1,5 viraram 5,5 / 18 m / 1,3.)
+	lanterna.light_energy = 5.5
 	lanterna.light_indirect_energy = 0.55
 	lanterna.light_volumetric_fog_energy = 1.1
-	lanterna.spot_range = 14.0
+	lanterna.spot_range = 18.0
 	lanterna.spot_angle = 18.0
 	lanterna.spot_angle_attenuation = 1.15   # miolo forte com borda que derrete
-	lanterna.spot_attenuation = 1.5          # morre antes do fim do alcance
+	lanterna.spot_attenuation = 1.3          # morre antes do fim do alcance
 	lanterna.shadow_enabled = true
 	lanterna.shadow_bias = 0.04
 	lanterna.shadow_normal_bias = 1.4
@@ -887,10 +894,10 @@ func _configurar_lanterna() -> void:
 	_lanterna_halo.position = Vector3.ZERO
 	_lanterna_halo.rotation = Vector3.ZERO
 	_lanterna_halo.light_color = Color(0.92, 0.94, 1.0)
-	_lanterna_halo.light_energy = 1.15
+	_lanterna_halo.light_energy = 1.35
 	_lanterna_halo.light_indirect_energy = 0.35
 	_lanterna_halo.light_volumetric_fog_energy = 0.6
-	_lanterna_halo.spot_range = 8.5
+	_lanterna_halo.spot_range = 10.5
 	_lanterna_halo.spot_angle = 44.0
 	_lanterna_halo.spot_angle_attenuation = 0.35
 	_lanterna_halo.spot_attenuation = 1.2
@@ -904,6 +911,12 @@ func _configurar_lanterna() -> void:
 	_lanterna_som.pitch_scale = LANTERNA_SOM_PITCH
 	_lanterna_som.volume_db = -4.0
 	add_child(_lanterna_som)
+
+
+## Acende a barra de magia do Maycow normal por uns segundos (ela some
+## sozinha em gameplay). Quem recusa algo por falta de magia chama isto.
+func mostrar_magia() -> void:
+	_magia_acesa_resto = MAGIA_VISIVEL_POR
 
 
 ## R3 / H: tira ou põe o amuleto, e com ele troca a realidade da cidade — com
@@ -922,6 +935,7 @@ func alternar_realidade() -> void:
 			GlobalUtils.mostrar_aviso_no_mapa(tr("AVISO_REALIDADE_ESPERA") % espera)
 		elif not Realidade.magia_para_trocar():
 			GlobalUtils.mostrar_aviso_no_mapa(tr("AVISO_REALIDADE_SEM_MAGIA"))
+			mostrar_magia()
 		return
 	var capitulo_1: bool = SaveManager.prolog_finished or GlobalEvents.entering_chapter_1
 	if capitulo_1 and SaveManager.tem_item("amuleto") and not SaveManager.na_cidade():
@@ -1603,9 +1617,9 @@ func _physics_process(delta: float) -> void:
 	var is_in_house = get_tree().current_scene.name == "the_house" if get_tree() and get_tree().current_scene else false
 	var can_run_normal = GlobalEvents.is_maycow_normal and not is_in_house
 	var stamina_active = not GlobalEvents.is_maycow_normal or can_run_normal
-	# O Maycow normal tem estamina infinita (não cansa correndo pela cidade):
-	# a barra nunca faz sentido pra ele, prólogo incluso.
-	var show_stamina_bar = stamina_active and not GlobalEvents.is_maycow_normal
+	# Os dois Maycows seguem a mesma regra: longe de inimigo a estamina é
+	# infinita e a barra some (ver `_stamina_infinita` e o apagar abaixo).
+	var show_stamina_bar = stamina_active
 	
 	var camera_atual_check = get_viewport().get_camera_3d()
 	var current_camera_rot_x = camera_atual_check.rotation.x if camera_atual_check else 0.0
@@ -1639,10 +1653,10 @@ func _physics_process(delta: float) -> void:
 		is_exhausted = false
 		
 	# --- STAMINA LOGIC ---
-	var is_running_stam = _run_toggle_active and velocity.length() > 0.1 and (current_stamina > 0 or _stamina_infinita() or GlobalEvents.is_maycow_normal) and stamina_active and not is_exhausted and not is_aiming
+	var is_running_stam = _run_toggle_active and velocity.length() > 0.1 and (current_stamina > 0 or _stamina_infinita()) and stamina_active and not is_exhausted and not is_aiming
 	var _bloqueando_cogblade := cogblade_blocking
 	if is_running_stam:
-		if not _stamina_infinita() and not GlobalEvents.is_maycow_normal:
+		if not _stamina_infinita():
 			current_stamina -= 20.0 * delta
 		elif not _em_combate:
 			# fora de briga a corrida nao gasta, e o que a luta levou volta
@@ -1670,9 +1684,22 @@ func _physics_process(delta: float) -> void:
 		stamina_bar.visible = show_stamina_bar
 		stamina_bar.max_value = max_stamina
 		stamina_bar.value = current_stamina
+		# Fora de briga não há o que medir: a barra se apaga mesmo correndo ou
+		# dando dash. Fica no self_modulate pra não brigar com o `modulate`,
+		# que é o apagar de "estamina cheia" de sempre.
+		stamina_bar.self_modulate.a = move_toward(stamina_bar.self_modulate.a, 1.0 if _em_combate else 0.0, delta * 2.0)
 		
 	if is_instance_valid(mp_bar):
-		# os dois Maycows mostram a magia: ela e' uma so' e nao volta sozinha
+		# A magia e' uma so' e nao volta sozinha. O Maycow da primeira pessoa a
+		# ve sempre; o normal so' quando ela muda ou esta em uso, e a barra se
+		# apaga uns segundos depois (no menu ela aparece sempre).
+		if absf(SaveManager.current_mp - _magia_vista) > 0.001 or amulet_magic_active:
+			_magia_vista = SaveManager.current_mp
+			_magia_acesa_resto = MAGIA_VISIVEL_POR
+		else:
+			_magia_acesa_resto = maxf(0.0, _magia_acesa_resto - delta)
+		var acesa: bool = not GlobalEvents.is_maycow_normal or _magia_acesa_resto > 0.0
+		mp_bar.modulate.a = move_toward(mp_bar.modulate.a, 1.0 if acesa else 0.0, delta * (4.0 if acesa else 1.0))
 		mp_bar.visible = true
 		mp_bar.max_value = SaveManager.max_mp
 		mp_bar.value = SaveManager.current_mp

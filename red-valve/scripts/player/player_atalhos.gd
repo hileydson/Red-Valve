@@ -57,6 +57,10 @@ func _unhandled_input(event: InputEvent) -> void:
 	# deixaria o jogador sem entender o que aconteceu.
 	if player.is_using_ultimate or player.camera_bullet_time_ON:
 		return
+	# Troca de arma só depois que a recarga termina: no meio do gesto a arma
+	# sumiria da mão com o pente (ou o cartucho) ainda no ar.
+	if player.is_reloading:
+		return
 
 	for acao in DIRECOES.keys():
 		if event.is_action_pressed(acao):

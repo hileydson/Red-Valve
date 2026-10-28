@@ -24,6 +24,11 @@ vec3 _gotas_lente(vec2 uv, float t) {
 	vec2 p = uv * asp * 7.5;
 	vec2 id = floor(p);
 	vec2 f = fract(p) - 0.5;
+	// A conta abaixo foi escrita com o y crescendo pra CIMA, mas o SCREEN_UV
+	// cresce pra BAIXO: a gota SUBIA com o rastro embaixo, e na tela isso lia
+	// como uma mancha correndo de baixo pra cima (parecia sobra do efeito da
+	// viagem pra arena). Espelhada aqui, ela escorre com o rastro em cima.
+	f.y = -f.y;
 	float h = _hash(id);
 	float vel = 0.35 + h * 0.65;
 	float fase = fract(t * vel + h * 6.2831);
@@ -38,7 +43,8 @@ vec3 _gotas_lente(vec2 uv, float t) {
 		* smoothstep(y_gota, y_gota + 0.38, f.y)
 		* smoothstep(0.45, y_gota, f.y) * 0.45;
 	float mask = max(gota, rastro) * step(0.42, h);
-	return vec3(delta * mask * 2.2, mask);
+	// a refracao volta pro y da tela
+	return vec3(vec2(delta.x, -delta.y) * mask * 2.2, mask);
 }
 
 void fragment() {

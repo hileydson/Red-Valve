@@ -401,7 +401,9 @@ func update_ui() -> void:
 		lbl.add_theme_color_override("font_color", target_color)
 		
 	if is_instance_valid(barra_magia):
-		barra_magia.visible = current_tab == 0
+		# com o menu aberto a magia aparece sempre, em qualquer aba (o mapa e
+		# os arquivos terminam 70 px acima dela)
+		barra_magia.visible = true
 		barra_magia.max_value = SaveManager.max_mp
 		barra_magia.value = SaveManager.current_mp
 
@@ -450,14 +452,23 @@ func _montar_barra_de_magia() -> void:
 	barra_magia.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	# as cores da barra da HUD (`player_hud.gd`)
 	var cheio := StyleBoxFlat.new()
-	cheio.bg_color = Color(0.2, 0.4, 0.9, 0.8)
+	cheio.bg_color = Color(0.2, 0.4, 0.9, 0.65)
 	cheio.set_corner_radius_all(4)
 	barra_magia.add_theme_stylebox_override("fill", cheio)
 	var fundo := StyleBoxFlat.new()
-	fundo.bg_color = Color(0.1, 0.1, 0.1, 0.5)
+	fundo.bg_color = Color(0.1, 0.1, 0.1, 0.4)
 	fundo.set_corner_radius_all(4)
 	barra_magia.add_theme_stylebox_override("background", fundo)
 	add_child(barra_magia)
+
+
+## O jogador está no meio de uma recarga e este item é arma (de fogo ou a
+## cogblade)? Então equipar ou desequipar fica para depois.
+func _troca_de_arma_bloqueada(item_id: String) -> bool:
+	if not (item_id in SaveManager.ARMAS_DE_FOGO or item_id == "cogblade"):
+		return false
+	var jogador = get_tree().get_first_node_in_group("player")
+	return jogador != null and "is_reloading" in jogador and jogador.is_reloading
 
 
 func _render_inventory() -> void:
@@ -559,6 +570,9 @@ func _render_action_menu() -> void:
 		if i == 3 and equipavel: enabled = true
 
 		if i == 1 and item_id == "cogblade" and GlobalEvents.is_maycow_normal: enabled = false
+		# Arma só se troca depois que a recarga termina (o jogo pausa com o
+		# menu aberto, mas o gesto continua de onde parou ao fechar).
+		if i == 1 and _troca_de_arma_bloqueada(item_id): enabled = false
 
 		btn.disabled = not enabled
 		

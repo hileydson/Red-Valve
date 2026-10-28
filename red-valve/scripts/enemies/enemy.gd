@@ -21,6 +21,7 @@
 extends CharacterBody3D
 
 const Realidade := preload("res://scripts/systems/realidade_do_amuleto.gd")
+const ShadowRoads := preload("res://scripts/npcs/shadow_roads.gd")
 
 @onready var player = get_tree().get_first_node_in_group("player")
 
@@ -117,6 +118,20 @@ var _is_frozen: bool = false
 var _nav_disponivel: bool = false
 ## Distância horizontal máxima até o navmesh para considerá-lo utilizável aqui.
 const NAV_TOLERANCIA := 3.0
+
+# --- Passeio sem enxergar o Maycow (amuleto fora) ---
+## Até onde ele se afasta de onde começou a passear.
+@export var wander_radius: float = 30.0
+# Estava atrás do Maycow quando a onda da troca passou por ele: só esse passeia.
+var _vaga_ao_perder: bool = false
+var _home: Vector3 = Vector3.ZERO
+var _tem_home: bool = false
+var _destino: Vector3 = Vector3.ZERO
+var _troca_destino: float = 0.0
+# parado olhando em volta antes de seguir pro próximo ponto
+var _pausa_passeio: float = 0.0
+# andando sem sair do lugar (parede, poste, carro): desiste do ponto
+var _empacado: float = 0.0
 
 func _ready() -> void:
 	current_health = max_health
@@ -219,12 +234,25 @@ func _physics_process(delta: float) -> void:
 
 	# Sem o amuleto no pescoço do Maycow (R3 / H) ele vira sombra e deixa de
 	# enxergá-lo: nada de perseguir, atacar ou agarrar até o amuleto voltar.
+	# Quem estava atrás dele quando a onda passou fica passeando pela rua, de
+	# onde o perdeu; quem já nasceu de sombra (inclusive no meio da onda, ainda
+	# no respiro do spawn) fica parado, como sempre foi.
+	var era_sombra: bool = get_meta("_sombra_da_realidade", false)
 	if not cutscene_mode and Realidade.atualizar_disfarce(self):
+		if not era_sombra:
+			_vaga_ao_perder = Realidade.onda_ativa and _spawn_grace_time <= 0.0 \
+				and is_instance_valid(player) \
+				and global_position.distance_to(player.global_position) < distance_to_aproach
+			_tem_home = false
 		is_attacking = false
-		steps.stop()
-		_travel("idle")
-		velocity.x = move_toward(velocity.x, 0, SPEED)
-		velocity.z = move_toward(velocity.z, 0, SPEED)
+		if _vaga_ao_perder:
+			_vaga_sem_ver(delta)
+			_trava_no_lugar_se_preso()
+		else:
+			steps.stop()
+			_travel("idle")
+			velocity.x = move_toward(velocity.x, 0, SPEED)
+			velocity.z = move_toward(velocity.z, 0, SPEED)
 		move_and_slide()
 		return
 
@@ -369,8 +397,68 @@ func _physics_process(delta: float) -> void:
 	# 5. Move o corpo físico
 	_trava_no_lugar_se_preso()
 	move_and_slide()
-	
-	
+
+
+## Passeio de quem não enxerga o Maycow: vai até um ponto de rua sorteado
+## perto de onde estava, para um pouco olhando em volta e escolhe outro. Mesma
+## ideia do `_vaga` das outras sombras da cidade.
+func _vaga_sem_ver(delta: float) -> void:
+	if not _tem_home:
+		_tem_home = true
+		_home = global_position
+		_sorteia_destino()
+
+	if _pausa_passeio > 0.0:
+		_pausa_passeio -= delta
+		# O Cobalt não tem "idle": parado ele ficaria andando no lugar, então
+		# segue direto pro próximo ponto.
+		if GlobalUtils.safe_travel(animation_tree, "idle"):
+			steps.stop()
+			velocity.x = move_toward(velocity.x, 0, SPEED)
+			velocity.z = move_toward(velocity.z, 0, SPEED)
+			return
+		_pausa_passeio = 0.0
+
+	_troca_destino -= delta
+	var dir := _destino - global_position
+	dir.y = 0.0
+	if _troca_destino <= 0.0 or dir.length() < 1.2:
+		_sorteia_destino()
+		_pausa_passeio = randf_range(1.5, 4.5)
+		return
+	dir = dir.normalized()
+
+	velocity.x = lerp(velocity.x, dir.x * SPEED, delta * ACCEL)
+	velocity.z = lerp(velocity.z, dir.z * SPEED, delta * ACCEL)
+	# Vira aos poucos pro caminho (o corpo olha pro -Z, como no look_at).
+	rotation.y = lerp_angle(rotation.y, atan2(-dir.x, -dir.z), clampf(delta * 3.0, 0.0, 1.0))
+	if steps.playing == false and !dead:
+		steps.play()
+		_travel("walk")
+
+	# Andando sem sair do lugar (parede, poste, carro): desiste do ponto.
+	var real := get_real_velocity()
+	if Vector2(real.x, real.z).length() < SPEED * 0.25:
+		_empacado += delta
+		if _empacado > 1.5:
+			_sorteia_destino()
+	else:
+		_empacado = 0.0
+
+
+func _sorteia_destino() -> void:
+	_troca_destino = randf_range(8.0, 16.0)
+	_empacado = 0.0
+	for _i in 10:
+		var ang := randf() * TAU
+		var r := randf_range(wander_radius * 0.25, wander_radius)
+		var cand := _home + Vector3(cos(ang) * r, 0.0, sin(ang) * r)
+		if ShadowRoads.is_road(cand):
+			_destino = cand
+			return
+	_destino = _home
+
+
 ## Tira o inimigo do jogo sem nada na tela: sem barra de chefe, sem iron rusks,
 ## sem animação nem som de morte. É o caminho de quem some longe do jogador —
 ## o spawner da cidade usa isto ao liberar quem ficou para trás, e o inimigo
