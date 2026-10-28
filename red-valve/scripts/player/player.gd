@@ -334,8 +334,9 @@ var is_exhausted: bool = false
 
 # --- COGBLADE EMPUNHADA COMO ARMA MELEE (equipar via atalho/menu) ---
 @export_group("Cogblade Weapon")
-## Dano de cada golpe melee com a cogblade empunhada.
-@export var cogblade_attack_damage: int = 5
+## Dano de cada golpe melee com a cogblade empunhada. Um zumbi (150) cai em
+## seis golpes, o Husk (250) em dez — com 5 eram trinta golpes num zumbi.
+@export var cogblade_attack_damage: int = 25
 ## Alcance dos golpes melee.
 @export var cogblade_attack_range: float = 3.2
 ## Duracao total da animacao de um golpe (wind-up + strike + follow-through).
@@ -914,6 +915,13 @@ func alternar_realidade() -> void:
 	if not GlobalEvents.is_maycow_normal:
 		return
 	if Realidade.alternar(get_tree()):
+		return
+	if SaveManager.pode_alternar_realidade():
+		var espera := Realidade.segundos_para_trocar()
+		if espera > 0:
+			GlobalUtils.mostrar_aviso_no_mapa(tr("AVISO_REALIDADE_ESPERA") % espera)
+		elif not Realidade.magia_para_trocar():
+			GlobalUtils.mostrar_aviso_no_mapa(tr("AVISO_REALIDADE_SEM_MAGIA"))
 		return
 	var capitulo_1: bool = SaveManager.prolog_finished or GlobalEvents.entering_chapter_1
 	if capitulo_1 and SaveManager.tem_item("amuleto") and not SaveManager.na_cidade():
@@ -1664,7 +1672,8 @@ func _physics_process(delta: float) -> void:
 		stamina_bar.value = current_stamina
 		
 	if is_instance_valid(mp_bar):
-		mp_bar.visible = not GlobalEvents.is_maycow_normal
+		# os dois Maycows mostram a magia: ela e' uma so' e nao volta sozinha
+		mp_bar.visible = true
 		mp_bar.max_value = SaveManager.max_mp
 		mp_bar.value = SaveManager.current_mp
 	# ---------------------

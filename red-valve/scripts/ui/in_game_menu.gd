@@ -58,6 +58,10 @@ var atalho_index = 0
 const TAB_MAPA := 1
 const MAPA_PAINEL := preload("res://scenes/ui/mapa_painel.tscn")
 var mapa_painel: Control
+## A magia na aba do inventario: a mesma barra da HUD, no mesmo lugar e sem
+## numero, acesa por cima do fundo escuro do menu. A magia nao
+## volta sozinha, entao e' aqui que se ve quanto sobrou antes de usar a seringa.
+var barra_magia: ProgressBar
 
 # Aba ARQUIVOS (índice 2 em `tabs`). Mesmo acordo da aba do mapa: o painel se
 # monta sozinho e só recebe `ativar()`/`desativar()` quando entra e sai de foco.
@@ -124,6 +128,8 @@ func _ready() -> void:
 		carousel_container.add_child(lbl)
 		carousel_labels.append(lbl)
 	
+	_montar_barra_de_magia()
+
 	# Painel Esquerdo (Info do Item)
 	var left_vbox = VBoxContainer.new()
 	left_vbox.set_anchors_preset(Control.PRESET_LEFT_WIDE)
@@ -394,6 +400,11 @@ func update_ui() -> void:
 		carousel_tween.tween_property(lbl, "modulate:a", target_alpha, 0.2)
 		lbl.add_theme_color_override("font_color", target_color)
 		
+	if is_instance_valid(barra_magia):
+		barra_magia.visible = current_tab == 0
+		barra_magia.max_value = SaveManager.max_mp
+		barra_magia.value = SaveManager.current_mp
+
 	if current_tab == 0:
 		grid_container.visible = true
 		_render_inventory()
@@ -423,6 +434,31 @@ func update_ui() -> void:
 		_render_action_menu()
 	if atalho_open:
 		_render_atalho_menu()
+
+func _montar_barra_de_magia() -> void:
+	barra_magia = ProgressBar.new()
+	barra_magia.anchor_left = 0.5
+	barra_magia.anchor_top = 1.0
+	barra_magia.anchor_right = 0.5
+	barra_magia.anchor_bottom = 1.0
+	# em cima da barra da HUD, que fica escurecida pelo fundo do menu
+	barra_magia.offset_left = -100
+	barra_magia.offset_top = -35
+	barra_magia.offset_right = 100
+	barra_magia.offset_bottom = -25
+	barra_magia.show_percentage = false
+	barra_magia.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	# as cores da barra da HUD (`player_hud.gd`)
+	var cheio := StyleBoxFlat.new()
+	cheio.bg_color = Color(0.2, 0.4, 0.9, 0.8)
+	cheio.set_corner_radius_all(4)
+	barra_magia.add_theme_stylebox_override("fill", cheio)
+	var fundo := StyleBoxFlat.new()
+	fundo.bg_color = Color(0.1, 0.1, 0.1, 0.5)
+	fundo.set_corner_radius_all(4)
+	barra_magia.add_theme_stylebox_override("background", fundo)
+	add_child(barra_magia)
+
 
 func _render_inventory() -> void:
 	# Limpa slots

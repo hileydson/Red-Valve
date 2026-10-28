@@ -775,6 +775,9 @@ func _build_debug_tab():
 	_add_event_checkbox(vbox, "item_seringa", tr("DEBUG_ITEM_SERINGA"), SaveManager.tem_item("seringa_adrenalina"), func(val):
 		_debug_set_item("seringa_adrenalina", val, 1)
 	)
+	_add_event_checkbox(vbox, "item_seringa_magia", tr("DEBUG_ITEM_SERINGA_MAGIA"), SaveManager.tem_item("seringa_magia"), func(val):
+		_debug_set_item("seringa_magia", val, 1)
+	)
 	_add_event_checkbox(vbox, "igreja_destrancada", tr("DEBUG_EVENT_IGREJA_DESTRANCADA"), SaveManager.igreja_destrancada, func(val):
 		SaveManager.igreja_destrancada = val
 		SaveManager.save_game()

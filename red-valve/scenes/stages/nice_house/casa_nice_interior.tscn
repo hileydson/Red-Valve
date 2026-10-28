@@ -166,6 +166,8 @@
 
 [ext_resource type="PackedScene" path="res://assets/3d_model/objects/seringa_adrenalina/seringa_adrenalina.glb" id="modelo_37"]
 
+[ext_resource type="PackedScene" path="res://assets/3d_model/objects/seringa_magia/seringa_magia.glb" id="modelo_38"]
+
 [sub_resource type="StandardMaterial3D" id="chao"]
 albedo_color = Color(0.40, 0.34, 0.29, 1)
 roughness = 0.92
@@ -2079,6 +2081,27 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="seringa_ritual/area"]
+shape = SubResource("shape41")
+
+[node name="seringa_magia_cozinha" type="Node3D" parent="."]
+transform = Transform3D(0.93937, 0, -0.34290, 0, 1.00000, 0, 0.34290, 0, 0.93937, 3.1200, 0.8300, -4.7400)
+script = ExtResource("item_script")
+metadata/id = "casa_nice_seringa_magia_cozinha"
+metadata/item = "seringa_magia"
+metadata/quantidade = 1
+metadata/prompt = "PROMPT_TAKE_SYRINGE"
+metadata/texto = "PICKUP_SERINGA_MAGIA"
+metadata/repetido = "PICKUP_AMMO_AGAIN"
+
+[node name="modelo" parent="seringa_magia_cozinha" instance=ExtResource("modelo_38")]
+transform = Transform3D(1.30000, 0, 0.00000, 0, 1.30000, 0, -0.00000, 0, 1.30000, 0.0000, 0.0000, 0.0000)
+
+[node name="area" type="Area3D" parent="seringa_magia_cozinha"]
+transform = Transform3D(1.00000, 0, 0.00000, 0, 1.00000, 0, -0.00000, 0, 1.00000, 0.0000, 0.2500, 0.0000)
+collision_layer = 0
+monitorable = false
+
+[node name="forma" type="CollisionShape3D" parent="seringa_magia_cozinha/area"]
 shape = SubResource("shape41")
 
 [node name="luz_sala" type="OmniLight3D" parent="luzes"]

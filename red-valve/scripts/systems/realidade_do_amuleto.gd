@@ -47,6 +47,11 @@ const ALTURA_ONDA := 14.0
 ## cena tinha.
 const HORA_SEM_AMULETO := 19.0
 const AMBIENTE_SEM_AMULETO := 1.25
+## A troca cansa o amuleto: depois de uma, a proxima so' depois desta espera
+## (segundos de relogio de parede, pra pausa e camera lenta nao mexerem nela).
+const ESPERA_ENTRE_TROCAS := 60.0
+## E cada troca gasta esta fracao da magia maxima — que nao volta sozinha.
+const CUSTO_MAGIA := 0.15
 
 ## A onda de agora (lida pelos objetos da cidade).
 static var onda_ativa: bool = false
@@ -56,6 +61,7 @@ static var _em_curso: bool = false
 static var _mat_sombra: ShaderMaterial
 static var _cache_quadro: int = -1
 static var _cache_oculto: bool = false
+static var _proxima_troca_ms: int = 0
 
 var para_normal: bool = false
 ## Onde o Maycow estava no aperto: a onda nasce aqui. Vem antes do add_child —
@@ -124,16 +130,31 @@ static func em_outra_realidade(no: Object) -> bool:
 
 # ============================================================ a troca
 
+## Quantos segundos faltam pra poder trocar de novo (0 = ja' pode).
+static func segundos_para_trocar() -> int:
+	return maxi(ceili((_proxima_troca_ms - Time.get_ticks_msec()) / 1000.0), 0)
+
+
+## Tem magia pra pagar uma troca?
+static func magia_para_trocar() -> bool:
+	return SaveManager.current_mp + 0.001 >= SaveManager.max_mp * CUSTO_MAGIA
+
+
 ## Aperto do R3 / H. Tira ou poe o amuleto e solta a onda. Devolve false se
-## nao deu (prologo, fora da cidade, sem o amuleto, troca em andamento).
+## nao deu (prologo, fora da cidade, sem o amuleto, troca em andamento, ainda
+## na espera, sem magia).
 static func alternar(arvore: SceneTree) -> bool:
 	if _em_curso or not SaveManager.pode_alternar_realidade():
+		return false
+	if segundos_para_trocar() > 0 or not magia_para_trocar():
 		return false
 	var player := arvore.get_first_node_in_group("player") as Node3D
 	var cena := arvore.current_scene
 	if player == null or cena == null:
 		return false
 	SaveManager.amuleto_equipado = not SaveManager.amuleto_equipado
+	SaveManager.current_mp = maxf(SaveManager.current_mp - SaveManager.max_mp * CUSTO_MAGIA, 0.0)
+	_proxima_troca_ms = Time.get_ticks_msec() + int(ESPERA_ENTRE_TROCAS * 1000.0)
 	_cache_quadro = -1
 	var n = (load(_EU) as GDScript).new()
 	n.name = "troca_de_realidade"

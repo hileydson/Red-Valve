@@ -62,6 +62,13 @@ const CLIPE_CORPO := "Female_Crouch_Pick_Throw_Forward"
 const CORPO_EM_PE := 0.75
 const CORPO_AGACHADO := 1.95
 const CORPO_LEVANTADO := 2.98
+## De pé SEGURANDO o Maycow (o cara a cara): o começo do soco no chão, firme,
+## pernas abertas e plantadas. O "de pé" do clipe de arremesso é um corpo
+## torcido de pernas cruzadas — servia de passagem, não de pose parada.
+const CLIPE_FIRME := "Charged_Ground_Slam"
+## Quanto além do pulso fica a palma da garra, em fração do antebraço: o osso
+## da mão termina no pulso, e pendurar ali deixava o Maycow no meio do braço.
+const PALMA := 0.5
 
 var cena: Node3D
 var cam: Camera3D
@@ -178,8 +185,7 @@ func _cara_a_cara() -> void:
 	var ate := meio + lado * 2.6 + f * 0.9 + Vector3.UP * 0.1
 	_tocar(SOM_ROSNADO, 0.65, 8.0)
 	await _fase(2.4, func(k: float) -> void:
-		# o fim do clipe é o começo dele: segue de pé
-		_corpo(lerpf(0.0, CORPO_EM_PE, k))
+		_firme()
 		# traz o Maycow pra frente da cara, rugindo
 		_segurar_pelo_pescoco(lerpf(1.0, 0.25, smoothstep(0.0, 0.5, k)), 0.0,
 			smoothstep(0.1, 0.6, k))
@@ -204,13 +210,15 @@ func _segurar_pelo_pescoco(alto: float, atras: float = 0.0, cara: float = 0.0) -
 	var mao := base + Vector3.UP * lerpf(2.3, 3.0, alto) + f * lerpf(1.3, 0.85, alto) - f * atras
 	mao = mao.lerp(base + Vector3.UP * 2.25 + f * 0.95, cara)
 	pose_husk.mirar("braco", ["RightArm", "RightForeArm"], "RightHand", mao)
-	var na_mao: Vector3 = pose_husk.ponta_mirada("braco")
-	_pendurar(na_mao)
-	# as duas mãos dele fecham no antebraço do Husk, logo atrás da garra
+	var punho: Vector3 = pose_husk.ponta_mirada("braco")
 	var ombro: Vector3 = pose_husk.osso_no_mundo("RightArm")
-	var ao_longo := (na_mao - ombro).normalized()
+	var ao_longo := (punho - ombro).normalized()
+	# o pescoço vai na PALMA da garra, um palmo além do pulso
+	var palma: Vector3 = punho + ao_longo * pose_husk.segmento("braco", 1) * PALMA
+	_pendurar(palma)
+	# as duas mãos dele fecham no pulso do Husk, logo atrás da garra
 	var de_lado := ao_longo.cross(Vector3.UP).normalized()
-	var pulso := na_mao - ao_longo * 0.16
+	var pulso := punho - ao_longo * 0.04
 	_maos_em(pulso + de_lado * 0.07, pulso - de_lado * 0.07)
 	_espernear(1.0)
 
@@ -594,6 +602,18 @@ func _ator(caminho: String) -> Node3D:
 	var a := (load(caminho) as PackedScene).instantiate() as Node3D
 	cena.add_child(a)
 	return a
+
+
+## O Husk parado de pé, firme (ver CLIPE_FIRME). Entra sempre num corte de
+## câmera: a troca de clipe é seca.
+func _firme() -> void:
+	var ap := husk.find_child("AnimationPlayer", true, false) as AnimationPlayer
+	if ap == null or not ap.has_animation(CLIPE_FIRME):
+		_corpo(CORPO_EM_PE)
+		return
+	if ap.current_animation != CLIPE_FIRME:
+		ap.play(CLIPE_FIRME, 0.0, 0.0)
+	ap.seek(0.0, true)
 
 
 ## Põe o corpo do Husk no tempo `t` do clipe de arremesso (parado nele).

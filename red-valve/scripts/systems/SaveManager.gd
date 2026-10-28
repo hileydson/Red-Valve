@@ -152,6 +152,16 @@ var item_db = {
 		"stackable": true,
 		"type": "usable"
 	},
+	# A seringa de magia: a mesma seringa, com o liquido roxo. Usada pelo menu,
+	# devolve RECARGA_SERINGA_MAGIA da magia — a magia nao volta sozinha.
+	"seringa_magia": {
+		"name_key": "ITEM_SERINGA_MAGIA_NAME",
+		"desc_key": "ITEM_SERINGA_MAGIA_DESC",
+		"icon_path": "res://assets/images/menu/itens/red_valve/seringa_magia.png",
+		"model_path": "res://assets/3d_model/objects/seringa_magia/seringa_magia.glb",
+		"stackable": true,
+		"type": "usable"
+	},
 	"maycow_watch": {
 		"name_key": "ITEM_MAYCOW_WATCH_NAME",
 		"desc_key": "ITEM_MAYCOW_WATCH_DESC",
@@ -272,7 +282,7 @@ var item_db = {
 ## quando o item e' um destes — senao o pente esvaziado na arena voltaria cheio
 ## do outro lado, e a arma pega no hospital so' apareceria no menu de um deles.
 const ITENS_COMPARTILHADOS := ["pistol", "pistol_ammo", "shotgun", "shotgun_ammo",
-	"mk3", "mk3_ammo", "granola", "granola_ammo", "seringa_adrenalina"]
+	"mk3", "mk3_ammo", "granola", "granola_ammo", "seringa_adrenalina", "seringa_magia"]
 
 ## So' UM destes fica equipado por vez.
 ##
@@ -973,9 +983,12 @@ func usar_chave_da_igreja() -> void:
 
 ## Quanto do sangue maximo a seringa de adrenalina devolve.
 const CURA_SERINGA := 0.30
+## Quanto da magia maxima a seringa de magia devolve. E' o UNICO jeito de a
+## magia voltar: gastou, fica gasto.
+const RECARGA_SERINGA_MAGIA := 0.40
 
 ## Usa um item pelo menu ("Usar"). Devolve false quando nao da' — a seringa
-## com o sangue cheio nao se gasta.
+## com o sangue (ou a magia) cheio nao se gasta.
 func usar_item(item_id: String) -> bool:
 	match item_id:
 		"seringa_adrenalina":
@@ -984,6 +997,12 @@ func usar_item(item_id: String) -> bool:
 				return false
 			var cura := int(ceil(jogador.max_health * CURA_SERINGA))
 			jogador.current_health = mini(jogador.max_health, jogador.current_health + cura)
+			consumir_item(item_id, 1)
+			return true
+		"seringa_magia":
+			if current_mp >= max_mp:
+				return false
+			current_mp = minf(max_mp, current_mp + max_mp * RECARGA_SERINGA_MAGIA)
 			consumir_item(item_id, 1)
 			return true
 	consumir_item(item_id, 1)

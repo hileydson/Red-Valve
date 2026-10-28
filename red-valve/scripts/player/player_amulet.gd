@@ -951,7 +951,8 @@ func _on_amulet_magic_released() -> void:
 
 	player.is_teleporting_enemies = true
 
-	SaveManager.current_mp = SaveManager.max_mp
+	# A magia NAO enche na ida: ela e' sempre o ultimo valor, e so' a seringa de
+	# magia a devolve (`SaveManager.RECARGA_SERINGA_MAGIA`).
 
 	var tree = get_tree()
 	var root = tree.root
@@ -1062,10 +1063,8 @@ func play_return_from_arena_effect() -> void:
 	# para o resto da partida.
 	GlobalEvents.forced_battle_running = false
 
-	# O combate na arena (Maycow não normal) consome o mesmo SaveManager.current_mp
-	# usado pelo poder do amuleto. Sem isso, o jogador podia voltar da arena sem mana
-	# e o amuleto (mão, giro, mira) simplesmente não aparecia mais no mundo normal.
-	SaveManager.current_mp = SaveManager.max_mp
+	# A magia gasta na arena continua gasta na volta: ela e' sempre o ultimo
+	# valor, e so' a seringa de magia a devolve.
 
 	# Devolve o que ele estava com a mão antes de partir (normalmente o amuleto).
 	# A arena trocou pela arma sozinha na chegada; sem esta metade ele voltaria

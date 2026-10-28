@@ -22,11 +22,13 @@ PROMPT_ENTER_MAYCOW_HOUSE,Enter Maycow's house?,Entrar na casa do Maycow?
 PROMPT_ENTER_CHURCH,Enter the church?,Entrar na igreja?
 PROMPT_TAKE_FLASHLIGHT,Take the flashlight?,Pegar a lanterna?
 ITEM_AMULETO_NAME,Gear Amulet,Amuleto da Engrenagem
-ITEM_AMULETO_DESC,"The Gear Amulet, forged by the Calixto family. It warms in the pocket when something from Arorua is close — and it is what drags the enemies over there. R3 (H) takes it off and puts it back on: without it the city is just a city, and the monsters can't see you.","O Amuleto da Engrenagem, forjado pela família Calixto. Esquenta no bolso quando algo de Arorua está perto — e é ele que arrasta os inimigos para lá. R3 (H) tira e põe o amuleto: sem ele a cidade volta a ser só uma cidade, e os monstros não te enxergam."
+ITEM_AMULETO_DESC,"The Gear Amulet, forged by the Calixto family. It warms in the pocket when something from Arorua is close — and it is what drags the enemies over there. R3 (H) takes it off and puts it back on: without it the city is just a city, and the monsters can't see you. Each switch costs magic and tires it for a minute.","O Amuleto da Engrenagem, forjado pela família Calixto. Esquenta no bolso quando algo de Arorua está perto — e é ele que arrasta os inimigos para lá. R3 (H) tira e põe o amuleto: sem ele a cidade volta a ser só uma cidade, e os monstros não te enxergam. Cada troca gasta magia e o cansa por um minuto."
 PICKUP_AMULETO_PAD,"You now carry the amulet, the gateway to the parallel universe of Arorua. Hold the left shoulder button (LB) to call its vision","Agora você possui o amuleto, o portal para o universo paralelo de Arorua. Segure o botão de ombro esquerdo (LB) para chamar a visão dele"
 PICKUP_AMULETO_KEY,"You now carry the amulet, the gateway to the parallel universe of Arorua. Hold V to call its vision","Agora você possui o amuleto, o portal para o universo paralelo de Arorua. Segure a tecla V para chamar a visão dele"
 AVISO_AMULETO_INDISPONIVEL,The amulet doesn't answer in here,O amuleto não responde aqui dentro
 AVISO_AMULETO_GUARDADO,The amulet is off. Press R3 (H) to put it on,O amuleto está guardado. Aperte R3 (H) para colocá-lo
+AVISO_REALIDADE_ESPERA,The amulet is still recovering (%d s),O amuleto ainda está se recuperando (%d s)
+AVISO_REALIDADE_SEM_MAGIA,Not enough magic to switch realities,Magia insuficiente para trocar de realidade
 ITEM_LANTERNA_NAME,Flashlight,Lanterna
 ITEM_LANTERNA_DESC,"A heavy hand lamp, found still lit on the church floor. The beam holds up.","Lanterna de mão pesada, achada ainda acesa no chão da igreja. O facho aguenta firme."
 PICKUP_FLASHLIGHT_L3,"You picked up the flashlight, press L3 to turn it on","Você pegou a lanterna, aperte L3 para ativá-la"
@@ -481,12 +483,16 @@ ITEM_CHAVE_IGREJA_NAME,Church Key,Chave da Igreja
 ITEM_CHAVE_IGREJA_DESC,"The church's spare key, rusted through. Dona Nice kept it in her bedroom.","A chave reserva da igreja, toda enferrujada. A Dona Nice guardava no quarto dela."
 ITEM_SERINGA_NAME,Adrenaline Syringe,Seringa de Adrenalina
 ITEM_SERINGA_DESC,"A shot of adrenaline straight into the vein. Restores 30% of your blood.","Uma dose de adrenalina direto na veia. Recupera 30% do sangue."
+ITEM_SERINGA_MAGIA_NAME,Magic Syringe,Seringa de Magia
+ITEM_SERINGA_MAGIA_DESC,"A purple dose that burns going in. Restores 40% of your magic — the only thing that brings it back.","Uma dose roxa que queima ao entrar. Recupera 40% da magia — é a única coisa que a traz de volta."
 PROMPT_TAKE_KEY,Take the key?,Pegar a chave?
 PROMPT_TAKE_SYRINGE,Take the syringe?,Pegar a seringa?
 PICKUP_CHAVE_IGREJA,"You picked up the church's spare key. Use it on the church door.","Você pegou a chave reserva da igreja. Use na porta da igreja."
 PICKUP_SERINGA,"You picked up an adrenaline syringe. Use it from the menu to restore 30% of your blood.","Você pegou uma seringa de adrenalina. Use pelo menu para recuperar 30% do sangue."
+PICKUP_SERINGA_MAGIA,"You picked up a magic syringe. Use it from the menu to restore 40% of your magic.","Você pegou uma seringa de magia. Use pelo menu para recuperar 40% da magia."
 PROMPT_CHURCH_LOCKED,The church is locked.,A igreja está trancada.
 PROMPT_USE_CHURCH_KEY,Use the church key?,Usar a chave da igreja?
 DEBUG_ITEM_CHAVE_IGREJA,Church Key,Chave da Igreja
 DEBUG_ITEM_SERINGA,Adrenaline Syringe,Seringa de Adrenalina
+DEBUG_ITEM_SERINGA_MAGIA,Magic Syringe,Seringa de Magia
 DEBUG_EVENT_IGREJA_DESTRANCADA,Church unlocked,Igreja destrancada

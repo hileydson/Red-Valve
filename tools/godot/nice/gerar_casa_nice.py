@@ -632,6 +632,12 @@ def interior():
               'PICKUP_SERINGA', 'PICKUP_AMMO_AGAIN',
               'res://assets/3d_model/objects/seringa_adrenalina/seringa_adrenalina.glb', _giro((0, 0, 0), 0.0, 1.3))
 
+    # A seringa de MAGIA (liquido roxo), na mesa da cozinha, do outro lado da
+    # bala: e' o unico jeito de a magia voltar.
+    c.pegavel('seringa_magia_cozinha', 'seringa_magia', 1, (3.12, 0.83, -4.74), -0.35, 'PROMPT_TAKE_SYRINGE',
+              'PICKUP_SERINGA_MAGIA', 'PICKUP_AMMO_AGAIN',
+              'res://assets/3d_model/objects/seringa_magia/seringa_magia.glb', _giro((0, 0, 0), 0.0, 1.3))
+
     # ---------------------------------------------------------------- luz
     # Sete luzes ao todo (o renderer mobile aguenta 8 por malha): a lamparina
     # da sala, a lampada fria da cozinha, a da entrada, a do criado-mudo, e no

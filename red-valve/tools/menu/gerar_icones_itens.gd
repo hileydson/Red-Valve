@@ -39,6 +39,8 @@ const ITENS := [
 		"tamanho": 0.6},
 	{"nome": "seringa_adrenalina", "modelo": "res://assets/3d_model/objects/seringa_adrenalina/seringa_adrenalina.glb",
 		"giro": Vector3(20, 0, -20), "saida": "res://assets/images/menu/itens/red_valve/seringa_adrenalina.png"},
+	{"nome": "seringa_magia", "modelo": "res://assets/3d_model/objects/seringa_magia/seringa_magia.glb",
+		"giro": Vector3(20, 0, -20), "saida": "res://assets/images/menu/itens/red_valve/seringa_magia.png"},
 ]
 
 
