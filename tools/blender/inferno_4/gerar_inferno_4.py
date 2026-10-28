@@ -189,14 +189,14 @@ def altura_vista(x, z):
 
 
 def altura_col(x, z):
-    """A colisao: o caminho segue plano 1,2 m alem da beira."""
+    """A colisao: o caminho segue plano 3 m alem da beira (ver a do inferno 3)."""
     i, lat, _d = LINHA.perto(x, z)
     if i is None:
         return altura(x, z)
     q = LINHA.p[i]
-    if abs(lat) > q[2] + 1.2:
+    if abs(lat) > q[2] + 3.0:
         return altura(x, z)
-    return max(altura(x, z), q[3] - 0.4)
+    return max(altura(x, z), q[3] - (0.05 if abs(lat) <= q[2] + inf3.BEIRA else 0.4))
 
 
 def altura_nav(x, z):
@@ -344,9 +344,13 @@ class Inferno4(inf3.Inferno3):
                     for a in (0, 1):
                         for b in (0, 1):
                             colisao.add((2 * i + a, 2 * j + b))
+        malhas = []
         for (setor, mat), cel in visiveis.items():
-            v, f = chapa_aberta(cel, PASSO, altura)
+            # a beira do abismo: a mesma do inferno 3 (le' LINHA/altura daqui)
+            v, f = chapa_aberta(cel, PASSO, altura, inf3.vertice_chao)
             self.m.add(setor, mat, v, f)
+            malhas.append((v, f))
+        self.medir_chao(malhas)
         v, f = chapa_grossa(list(colisao), PASSO_COL, altura_col, 3.0)
         self.col.append((v, f))
 

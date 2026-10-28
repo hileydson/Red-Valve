@@ -55,6 +55,15 @@ const MONTADA_LADO := 1.8
 const RAIO_FINAL := 125.0
 const GIRO_DO_VOO := 1.75
 const SUBIDA_DO_VOO := 22.0
+## O desfoque do voo: tudo borrado menos o Maycow. Na TELA (`SHADER_FOCO`), um
+## círculo nítido em volta dele — a gárgula é fogo transparente e o desfoque
+## por profundidade não a pega; e na CÂMERA, só o de longe, que borra a cratera
+## logo atrás dele, dentro do círculo. O nítido da câmera vai até `FOCO_FRACAO`
+## da distância além do Maycow (nunca menos que `FOCO_MIN` m).
+const SHADER_FOCO := "res://shaders/cutscenes/foco_no_maycow.gdshader"
+const FOCO_FRACAO := 0.1
+const FOCO_MIN := 2.5
+const DESFOQUE := 0.12
 
 var cena: Node3D
 var player: CharacterBody3D
@@ -65,6 +74,7 @@ var gargula: Node3D
 var _recorte: OmniLight3D
 var _tela: ColorRect
 var _camada: CanvasLayer
+var _borrao: CanvasLayer
 var _modelo_escondido := false
 var _acabou := false
 
@@ -194,6 +204,22 @@ func _voar_na_gargula() -> void:
 	var vento := cena.get_node_or_null("vento_som") as AudioStreamPlayer
 	var vento_vol := vento.volume_db if vento else 0.0
 	var estado := {"fade": false}
+	var foco := CameraAttributesPractical.new()
+	foco.dof_blur_far_enabled = true
+	foco.dof_blur_amount = 0.0
+	cam.attributes = foco
+	# embaixo da lente da cena (-1) e do filtro PS1 do player: os dois passam
+	# por cima do borrão, como no resto do jogo
+	_borrao = CanvasLayer.new()
+	_borrao.layer = -2
+	add_child(_borrao)
+	var borrao_mat := ShaderMaterial.new()
+	borrao_mat.shader = load(SHADER_FOCO)
+	var borrao_tela := ColorRect.new()
+	borrao_tela.material = borrao_mat
+	borrao_tela.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	borrao_tela.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_borrao.add_child(borrao_tela)
 	_recorte = OmniLight3D.new()
 	_recorte.light_color = Color(1.0, 0.72, 0.5)
 	_recorte.light_energy = 0.0
@@ -230,6 +256,21 @@ func _voar_na_gargula() -> void:
 		var arfagem := lerpf(asin(clampf(dir_a.y, -1.0, 1.0)), asin(clampf(dir_fim.y, -1.0, 1.0)), vira)
 		var dir := Vector3(sin(guinada) * cos(arfagem), sin(arfagem), cos(guinada) * cos(arfagem))
 		_plantar(pos, pos + dir * 10.0, sin(t * 0.8) * 0.06 * p)
+		# o foco fica no Maycow; o borrão entra enquanto a câmera vira pra ele
+		var maycow := player.global_position + Vector3.UP * 0.9
+		var dist := pos.distance_to(maycow)
+		var faixa := maxf(dist * FOCO_FRACAO, FOCO_MIN)
+		var borra := _suave(clampf((p - 0.2) / 0.6, 0.0, 1.0))
+		foco.dof_blur_far_distance = dist + faixa
+		foco.dof_blur_far_transition = faixa * 1.5
+		foco.dof_blur_amount = DESFOQUE * borra
+		if cam.is_position_behind(maycow):
+			borra = 0.0
+		var tam := get_viewport().get_visible_rect().size
+		borrao_mat.set_shader_parameter("foco", cam.unproject_position(maycow) / tam)
+		# o círculo acompanha o tamanho dele na tela (1,8 m a `dist`, fov 70)
+		borrao_mat.set_shader_parameter("raio", 0.05 + 2.6 / maxf(dist, 1.0))
+		borrao_mat.set_shader_parameter("forca", borra)
 		if is_instance_valid(_recorte):
 			_recorte.light_energy = 4.0 * p
 		if p > 0.25 and _modelo_escondido:
@@ -291,6 +332,8 @@ func _encerrar() -> void:
 		gargula.queue_free()
 	if is_instance_valid(_recorte):
 		_recorte.queue_free()
+	if is_instance_valid(_borrao):
+		_borrao.queue_free()
 	if is_instance_valid(player):
 		player.cutscene_set_auto_walk(false)
 		if _modelo_escondido:

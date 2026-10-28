@@ -156,18 +156,23 @@ class Cena:
 # chao
 
 
-def chapa_aberta(celulas, passo, altura):
+def chapa_aberta(celulas, passo, altura, vertice=None):
     """So' o tampo da grade, com vertices compartilhados e a face ja' virada
     pra cima (a, b, c, d = (i,j), (i,j+1), (i+1,j+1), (i+1,j) da' normal +Y).
     Serve pro chao que so' se VE: o setor tem de ir em `abertos` no export,
-    senao o `normals_make_consistent` sorteia o lado."""
+    senao o `normals_make_consistent` sorteia o lado.
+    `vertice(i, j) -> (x, y, z)`, se vier, decide onde fica cada canto (a
+    beira do abismo puxa os de fora pra linha da beira)."""
     idx, verts, faces = {}, [], []
 
     def vid(i, j):
         if (i, j) not in idx:
-            x, z = i * passo, j * passo
             idx[(i, j)] = len(verts)
-            verts.append((x, altura(x, z), z))
+            if vertice is not None:
+                verts.append(vertice(i, j))
+            else:
+                x, z = i * passo, j * passo
+                verts.append((x, altura(x, z), z))
         return idx[(i, j)]
 
     for (i, j) in celulas:

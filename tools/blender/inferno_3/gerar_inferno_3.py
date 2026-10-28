@@ -77,6 +77,9 @@ FUNDO = -60.0          # o fundo do abismo (a nevoa baixa esconde)
 PASSO = 4.0            # chao visivel
 PASSO_COL = 2.0        # colisao do chao
 PASSO_NAV = 2.5
+# o chao do caminho segue plano ate' aqui alem da beira (a balaustrada fica a
+# 0,9, o muro invisivel acaba a 1,3) e so' dali o abismo despenca
+BEIRA = 1.6
 SETOR = 48.0           # cota de 8 omni por malha: setor menor que nos infernos
 
 # (x, z, meia-largura, altura, abismo_a, abismo_b, campo_a, campo_b)
@@ -175,18 +178,70 @@ def _altura(x, z):
     return lerp(h, abismo, ab)
 
 
+def vertice_chao(i, j):
+    """Canto (i, j) da grade do chao visivel. A grade tem `PASSO` m e a beira
+    do abismo nao cai em cima dela: um canto logo alem da beira ja' despencou
+    metros, e o tampo reto ate' ele passava por baixo de onde o jogador pisa
+    (andava-se no ar, rente a balaustrada). Os cantos de fora do caminho ate'
+    um `PASSO` alem da beira vem pra linha dela, na altura do caminho: o
+    penhasco comeca ali, liso, e todo triangulo que tem chao pisavel fica com
+    os cantos no plano do caminho. A `altura` nao muda (o que se assenta e o
+    que se sorteia pelo mapa continua igual). Onde o caminho alarga a beira
+    nao e' paralela a linha: o passo pela normal erra, entao repete."""
+    x, z = i * PASSO, j * PASSO
+    k, lat, _d = LINHA.perto(x, z)
+    if k is not None and not na_ponte_s(LINHA.s[k]):
+        q = LINHA.p[k]
+        sg = 1 if lat > 0 else -1
+        fora = abs(lat) - q[2]
+        if (q[4] if sg > 0 else q[5]) > 0.005 and 0.0 < fora <= BEIRA + PASSO:
+            for _t in range(6):
+                tx, tz = LINHA.t[k]
+                d = BEIRA - 0.05 - fora
+                if abs(d) < 0.02:
+                    break
+                x, z = x - tz * sg * d, z + tx * sg * d
+                k2, lat2, _d2 = LINHA.perto(x, z)
+                if k2 is None:
+                    break
+                k, fora = k2, abs(lat2) - LINHA.p[k2][2]
+            # a altura do caminho logo dentro da beira, pela normal
+            tx, tz = LINHA.t[k]
+            d = -(fora + 0.1)
+            return (x, altura(x - tz * sg * d, z + tx * sg * d), z)
+    y = altura(x, z)
+    # onde a largura muda depressa (o largo do fim do inferno 4) o ponto mais
+    # perto da linha pode ser um trecho estreito: o canto parece longe da
+    # beira e despenca, colado em chao que se pisa. Fica na altura desse chao
+    # (a mais baixa em volta: na escada o vizinho de cima esta' um degrau acima).
+    k, lat, _d = LINHA.perto(x, z)
+    if k is None or abs(lat) <= LINHA.p[k][2]:
+        return (x, y, z)
+    perto = []
+    for a, b in ((1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (1, -1), (-1, 1), (-1, -1)):
+        px, pz = x + a * PASSO * 0.7, z + b * PASSO * 0.7
+        kp, latp, _dp = LINHA.perto(px, pz)
+        if kp is not None and not na_ponte_s(LINHA.s[kp]) and abs(latp) <= LINHA.p[kp][2]:
+            perto.append(altura(px, pz))
+    if perto and y < min(perto) - 1.0:
+        y = min(perto) - 0.05
+    return (x, y, z)
+
+
 def altura_col(x, z):
-    """A colisao: o caminho segue plano 1,2 m alem da beira, e na ponte vira o
-    tabuleiro (o chao de baixo e' o fundo do abismo)."""
+    """A colisao: o caminho segue plano 3 m alem da beira (a grade dela tem 2 m:
+    um canto que ja' despencou entortava o chao ate' dentro do caminho), e na
+    ponte vira o tabuleiro (o chao de baixo e' o fundo do abismo)."""
     i, lat, _d = LINHA.perto(x, z)
     if i is None:
         return altura(x, z)
     q = LINHA.p[i]
-    if abs(lat) > q[2] + 1.2:
+    if abs(lat) > q[2] + 3.0:
         return altura(x, z)
     if na_ponte_s(LINHA.s[i]):
         return q[3]
-    return max(altura(x, z), q[3] - 0.4)
+    # ate' a beira o chao visivel e' o do caminho (`vertice_chao`)
+    return max(altura(x, z), q[3] - (0.05 if abs(lat) <= q[2] + BEIRA else 0.4))
 
 
 def altura_nav(x, z):
@@ -325,10 +380,33 @@ class Inferno3(Cena):
         if bloqueia:
             self.bloquear(x, z, r)
 
-    @staticmethod
-    def chao_v(x, z):
-        """O chao que se ve' (a grade de `PASSO` m), nao a `altura` exata."""
-        return chao_visivel(altura, PASSO, x, z)
+    def chao_v(self, x, z):
+        """O chao que se ve' (a grade de `PASSO` m), nao a `altura` exata. Na
+        beira do abismo os cantos da grade sao puxados pra linha da beira
+        (`vertice_chao`) e a conta da grade regular erra: vale o mais baixo
+        entre ela e a malha de chao de verdade, medida por raio."""
+        h = chao_visivel(altura, PASSO, x, z)
+        arv = getattr(self, "_arv_chao", None)
+        if arv is not None:
+            from mathutils import Vector
+            hit = arv.ray_cast(Vector((x, 2000.0, z)), Vector((0.0, -1.0, 0.0)), 4000.0)[0]
+            if hit is not None:
+                h = min(h, hit.y)
+        return h
+
+    def medir_chao(self, malhas):
+        """Guarda a malha do chao visivel (lista de (v, f)) pro `chao_v`. Fora
+        do Blender (o baker do minimapa) nao ha' `mathutils` nem precisa."""
+        try:
+            from mathutils.bvhtree import BVHTree
+        except ImportError:
+            return
+        vv, ff = [], []
+        for v, f in malhas:
+            b = len(vv)
+            vv.extend(v)
+            ff.extend([[k + b for k in fa] for fa in f])
+        self._arv_chao = BVHTree.FromPolygons(vv, ff)
 
     def pe(self, x, z, r):
         return chao_sob(self.chao_v, x, z, r)
@@ -417,9 +495,12 @@ class Inferno3(Cena):
                     for a in (0, 1):
                         for b in (0, 1):
                             colisao.add((2 * i + a, 2 * j + b))
+        malhas = []
         for (setor, mat), cel in visiveis.items():
-            v, f = chapa_aberta(cel, PASSO, altura)
+            v, f = chapa_aberta(cel, PASSO, altura, vertice_chao)
             self.m.add(setor, mat, v, f)
+            malhas.append((v, f))
+        self.medir_chao(malhas)
         v, f = chapa_grossa(list(colisao), PASSO_COL, altura_col, 3.0)
         self.col.append((v, f))
 
