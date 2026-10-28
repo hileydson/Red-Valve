@@ -692,31 +692,58 @@ func _ponto_na_frente(inimigo: Node3D, metros: float) -> Vector3:
 ## (quem soma a altura do corpo e' `_plantar_jogador`). Encurta antes de
 ## qualquer parede: e' o mesmo cuidado do empurrao em enemy.gd, que sem isto
 ## atravessava o jogador para fora do cenario.
+##
+## Dentro de um lugar fechado (a oficina) o ponto ainda precisa: ter o MESMO
+## piso de onde ele saiu (o raio de chao vindo de cima pousava ele no alto de
+## prateleira e de pilha de pecas) e ter teto em cima (senao a parede tinha
+## fresta e ele caia do lado de fora). Nao serviu, encurta; no pior caso cai
+## onde esta.
 func _ponto_de_queda(inimigo: Node3D) -> Vector3:
 	var fuga := -_direcao_ate(inimigo)
-	var destino := player.global_position + fuga * DISTANCIA_ARREMESSO
 	var espaco := player.get_world_3d().direct_space_state
-	var altura := Vector3(0.0, 1.0, 0.0)
+	var piso0 := player.global_position.y - _altura_do_corpo
+	var origem := Vector3(player.global_position.x, piso0, player.global_position.z)
+	var coberto := _tem_teto(espaco, origem)
 
-	var consulta := PhysicsRayQueryParameters3D.create(
-			player.global_position + altura, destino + altura, player.collision_mask)
-	consulta.exclude = [player.get_rid()]
-	var parede := espaco.intersect_ray(consulta)
-	if parede:
-		var livre: float = maxf(player.global_position.distance_to(parede.position) - 0.8, 0.0)
-		destino = player.global_position + fuga * livre
+	# a capsula inteira, e nao um raio so': uma esfera na altura da canela e
+	# outra na do peito, varrendo o caminho
+	var livre := DISTANCIA_ARREMESSO
+	var bola := SphereShape3D.new()
+	bola.radius = 0.4
+	for h in [0.55, 1.35]:
+		var q := PhysicsShapeQueryParameters3D.new()
+		q.shape = bola
+		q.collision_mask = player.collision_mask
+		q.exclude = [player.get_rid()]
+		q.transform = Transform3D(Basis.IDENTITY, origem + Vector3.UP * h)
+		q.motion = fuga * DISTANCIA_ARREMESSO
+		var fracao: PackedFloat32Array = espaco.cast_motion(q)
+		if fracao.size() > 0:
+			livre = minf(livre, DISTANCIA_ARREMESSO * fracao[0])
+	livre = maxf(livre - 0.5, 0.0)
 
-	var chao := PhysicsRayQueryParameters3D.create(
-			destino + Vector3.UP * 4.0, destino - Vector3.UP * 12.0, player.collision_mask)
-	chao.exclude = [player.get_rid()]
-	var piso := espaco.intersect_ray(chao)
-	if piso:
+	for parte: float in [1.0, 0.8, 0.6, 0.45, 0.3, 0.15]:
+		var destino: Vector3 = origem + fuga * livre * parte
+		var chao := PhysicsRayQueryParameters3D.create(
+				destino + Vector3.UP * 1.2, destino - Vector3.UP * 12.0, player.collision_mask)
+		chao.exclude = [player.get_rid()]
+		var piso := espaco.intersect_ray(chao)
+		if not piso or absf(piso.position.y - piso0) > 0.6:
+			continue
 		destino.y = piso.position.y
-	else:
-		# Sem chao debaixo do ponto de queda, devolve o chao de ONDE ELE ESTA:
-		# melhor cair de pe no mesmo nivel do que afundar num buraco.
-		destino.y = player.global_position.y - _altura_do_corpo
-	return destino
+		if coberto and not _tem_teto(espaco, destino):
+			continue
+		return destino
+	# Sem lugar bom na direcao do voo, cai onde esta: melhor um arremesso
+	# curto do que afundar num buraco ou sair da sala.
+	return origem
+
+
+func _tem_teto(espaco: PhysicsDirectSpaceState3D, ponto: Vector3) -> bool:
+	var q := PhysicsRayQueryParameters3D.create(ponto + Vector3.UP * 1.0,
+			ponto + Vector3.UP * 9.0, player.collision_mask)
+	q.exclude = [player.get_rid()]
+	return not espaco.intersect_ray(q).is_empty()
 
 
 ## Poe o corpo no ponto de queda. `chao` e' o piso; a origem do jogador sobe

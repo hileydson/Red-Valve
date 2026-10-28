@@ -1445,6 +1445,11 @@ func _ready():
 	mira_granola_component.name = "PlayerMiraGranola"
 	add_child(mira_granola_component)
 
+	# Instancia Componente da Mira da visao do amuleto (a mesma trava, em roxo)
+	var mira_amuleto_component = load("res://scripts/player/player_mira_amuleto.gd").new()
+	mira_amuleto_component.name = "PlayerMiraAmuleto"
+	add_child(mira_amuleto_component)
+
 	# Instancia Componente do Menu Radial da Cogblade (segurar C / L1)
 	var cogblade_menu_component = load("res://scripts/player/player_cogblade_menu.gd").new()
 	cogblade_menu_component.name = "PlayerCogbladeMenu"

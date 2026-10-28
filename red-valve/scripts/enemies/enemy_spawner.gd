@@ -33,9 +33,10 @@ const ShadowRoads := preload("res://scripts/npcs/shadow_roads.gd")
 ## de continuar vazio.
 
 @export_group("Inimigos")
-## Teto de inimigos vivos somando TODOS os tipos. Trava de desempenho: cada um
-## carrega luz propria, esqueleto animado e barra de vida.
-@export var max_active: int = 6
+## Teto de inimigos vivos somando TODOS os tipos. No maximo dois na rua de uma
+## vez: e' o tamanho de briga que a cidade pede (e cada um ainda carrega luz
+## propria, esqueleto animado e barra de vida).
+@export var max_active: int = 2
 ## Sobrescreve o `distance_to_aproach` do inimigo, para que ele perceba o
 ## jogador a partir do anel onde nasceu. 0 = deixa o valor da cena.
 @export var distance_to_aproach: float = 45.0

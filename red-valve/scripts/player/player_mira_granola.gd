@@ -33,6 +33,8 @@ const PISCADAS := 6.0
 const SEGUE := 16.0
 
 var player: CharacterBody3D
+## A cor dos circulos (a mira do amuleto, que herda desta, e' roxa).
+var cor_da_mira := COR
 ## A mira esta' na tela agora.
 var ativa := false
 
@@ -204,7 +206,7 @@ func _garantir_desenho() -> bool:
 
 func _desenhar() -> void:
 	var k := _desenho.get_viewport_rect().size.y / 1080.0
-	var cor := COR
+	var cor := cor_da_mira
 	var fora := RAIO_FORA
 	if _alvo != null:
 		# marcado: pisca, e o circulo de fora aperta em volta dele

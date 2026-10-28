@@ -397,7 +397,7 @@ PICKUP_GRANOLA,"You picked up the Granola. One rocket loaded — it explodes on 
 PICKUP_GRANOLA_AMMO,"Mini rockets for the Granola. It holds one at a time, loaded through the muzzle.","Mini-foguetes da Granola. Ela leva um por vez, carregado pela boca do cano."
 ACTION_SHORTCUT,Shortcut,Atalho
 SHORTCUT_TITLE,Assign to a direction,Atribuir a um direcional
-SHORTCUT_HINT,Numeric keypad: 8 4 6 2,Teclado numérico: 8 4 6 2
+SHORTCUT_HINT,Keyboard: 1 up · 2 right · 3 down · 4 left,Teclado: 1 cima · 2 direita · 3 baixo · 4 esquerda
 SHORTCUT_HINT_PAD,Controller D-pad,Direcional do controle
 SHORTCUT_CLEAR,Remove shortcut,Remover atalho
 SHORTCUT_LEFT,Left,Esquerda

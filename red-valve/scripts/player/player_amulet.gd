@@ -249,7 +249,12 @@ func _process_amulet_targeting() -> void:
 	# exatamente em cima do inimigo. Por isso, se o raio não acertar nada, cai
 	# num segundo passo tolerante: o inimigo mais próximo do centro da câmera
 	# dentro de um cone pequeno, igual ao aim assist já faz para o tiro.
-	var target: Node3D = _raio_no_centro(cam)
+	# Antes de tudo, o inimigo em que a mira roxa grudou (`player_mira_amuleto.gd`,
+	# que so' trava em quem ainda nao foi selecionado).
+	var mira = player.get_node_or_null("PlayerMiraAmuleto")
+	var target: Node3D = mira.alvo_travado() if mira else null
+	if not target:
+		target = _raio_no_centro(cam)
 	if not target:
 		target = _inimigo_mais_proximo_do_centro(cam)
 

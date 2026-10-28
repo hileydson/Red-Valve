@@ -20,8 +20,9 @@ extends Node
 ##
 ## Por isso `ui_atalho_*` são ações próprias, e propositalmente estreitas:
 ##   - no controle, SÓ o D-pad;
-##   - no teclado, SÓ o teclado numérico 4/8/6/2, que é o único direcional que
-##     não está em uso (as setas também andam).
+##   - no teclado, os números 1 a 4 — tanto os de cima das letras quanto os do
+##     teclado numérico: 1 = cima, 2 = direita, 3 = baixo, 4 = esquerda (as
+##     setas também andam, então não servem).
 ##
 ## E o caminho de volta: ANDAR não lê mais `ui_left`. O `player.gd` e o
 ## `player_dash.gd` leem `ui_mover_*`, que é a mesma coisa SEM o D-pad —

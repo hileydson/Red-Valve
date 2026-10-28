@@ -238,15 +238,17 @@ func _pendurar(ponto: Vector3) -> void:
 
 
 ## Pernas chutando no ar, joelhos pra frente (do corpo, não do mundo: no
-## arremesso ele gira).
+## arremesso ele gira). O lado de cada pé sai das próprias coxas — um lado
+## deduzido da frente do modelo trocava os pés e as pernas se cruzavam.
 func _espernear(forca: float) -> void:
 	var quadril: Vector3 = pose_maycow.osso_no_mundo("Hips")
 	var f := _frente_de(maycow)
 	var baixo := -maycow.global_basis.y.normalized()
-	var l := baixo.cross(f).normalized()
+	var l: Vector3 = pose_maycow.osso_no_mundo("LeftUpLeg") - pose_maycow.osso_no_mundo("RightUpLeg")
+	l = (l - baixo * l.dot(baixo)).normalized() if l.length_squared() > 0.0001 else f.cross(baixo).normalized()
 	for s: float in [1.0, -1.0]:
 		var chute := sin(_t * 9.0 + (0.0 if s > 0.0 else PI)) * forca
-		var pe := quadril + baixo * (0.82 - 0.2 * maxf(chute, 0.0)) + f * (0.08 + 0.32 * chute) + l * s * 0.14
+		var pe := quadril + baixo * (0.82 - 0.2 * maxf(chute, 0.0)) + f * (0.08 + 0.32 * chute) + l * s * 0.17
 		var nome := "LeftUpLeg" if s > 0.0 else "RightUpLeg"
 		var perna := "LeftLeg" if s > 0.0 else "RightLeg"
 		var tornozelo := "LeftFoot" if s > 0.0 else "RightFoot"
@@ -285,7 +287,7 @@ func _arremesso() -> void:
 	var fov0 := cam.fov
 	# depois do arremesso a câmera corta pro alto: o Maycow sobe pro quadro e a
 	# gárgula entra de lado e o pega (do chão, ele virava um ponto no céu)
-	var no_ar := apice - f * 5.0 + lado * 3.0 - Vector3.UP * 0.5
+	var no_ar := apice - f * 9.0 + lado * 6.0 + Vector3.UP * 0.5
 	await _fase(1.9, func(k: float) -> void:
 		var e := 1.0 - pow(1.0 - k, 2.4)
 		_corpo(lerpf(CORPO_AGACHADO, CORPO_LEVANTADO, smoothstep(0.0, 0.2, k)))
@@ -312,6 +314,7 @@ func _arremesso() -> void:
 				estado.cortou = true
 				cam.fov = 52.0
 				cam.global_position = no_ar
+			_desfoque(cam.global_position.distance_to(maycow.global_position))
 			_chave.global_position = maycow.global_position.lerp(cam.global_position, 0.4)
 			_chave.light_energy = 2.0
 			cam.look_at(maycow.global_position.lerp(pg, 0.3) + Vector3.UP * 0.5))
@@ -426,10 +429,11 @@ func _trecho_de_voo(a: Vector3, b: Vector3, c: Vector3, dur: float, lado_cam: fl
 		var pg := _bezier(a, b, b.lerp(c, 0.5), c.lerp(b, 0.25), kk)
 		gargula.voo_dirigido_ir(pg, 0.6 + 0.4 * sin(_t * 1.7))
 		_nas_garras()
-		var quer := pg - dir * 4.0 + l * 2.2 - Vector3.UP * 0.3
+		var quer := pg - dir * 9.5 + l * 5.5 + Vector3.UP * 1.2
 		estado.pos = quer if estado.primeiro else (estado.pos as Vector3).lerp(quer, 0.3)
 		cam.global_position = estado.pos
 		cam.look_at(pg.lerp(maycow.global_position, 0.35) + dir * 3.0)
+		_desfoque(cam.global_position.distance_to(maycow.global_position))
 		if estado.primeiro:
 			estado.primeiro = false
 			if depois_do_clarao:
@@ -444,6 +448,7 @@ func _trecho_de_voo(a: Vector3, b: Vector3, c: Vector3, dur: float, lado_cam: fl
 ## fica BRANCA, e quem volta pra gárgula tira o branco já com ela voando.
 func _clarao_de_fuga(quantos: int) -> void:
 	await _piscar(0.08)
+	_desfoque(0.0)
 	var pe := Vector3(centro.x, piso, centro.z)
 	var l := lado if randf() < 0.5 else -lado
 	cam.global_position = pe + frente * 19.0 + l * 3.0 + Vector3.UP * 1.7
@@ -491,13 +496,15 @@ func _volta_ao_anel() -> void:
 		var pg := _bezier(a, a.lerp(b, 0.4), b, solta_em, lerpf(k0, 1.0, k))
 		gargula.voo_dirigido_ir(pg, 1.0)
 		_nas_garras()
-		var quer := pg + frente * 5.0 + lado * 2.0 + Vector3.UP * 0.4
+		var quer := pg + frente * 10.0 + lado * 4.5 + Vector3.UP * 1.2
 		estado.pos = quer if estado.primeiro else (estado.pos as Vector3).lerp(quer, 0.3)
 		cam.global_position = estado.pos
 		cam.look_at(centro.lerp(maycow.global_position, 0.5))
+		_desfoque(cam.global_position.distance_to(maycow.global_position))
 		if estado.primeiro:
 			estado.primeiro = false
 			_piscar_saida(0.2))
+	_desfoque(0.0)
 	# larga: o Maycow é atirado no vórtice e a gárgula arremete pra cima
 	_tocar(SOM_GRITO, 1.5, 4.0)
 	var p0 := maycow.global_position
@@ -701,6 +708,24 @@ func _frente_de(ator: Node3D, sinal: float = SINAL_FRENTE) -> Vector3:
 	var z := ator.global_basis.z * sinal
 	z.y = 0.0
 	return z.normalized() if z.length_squared() > 0.0001 else frente
+
+
+## Desfoque leve do que fica atrás do Maycow pendurado (a câmera vem de
+## longe, e o fundo borrado dá a distância e a velocidade). `foco` é a
+## distância até ele; 0 desliga. Só o desfoque de LONGE: o de perto no mobile
+## borra tudo.
+func _desfoque(foco: float) -> void:
+	if foco <= 0.0:
+		cam.attributes = null
+		return
+	var at := cam.attributes as CameraAttributesPractical
+	if at == null:
+		at = CameraAttributesPractical.new()
+		at.dof_blur_amount = 0.05
+		at.dof_blur_far_transition = 30.0
+		cam.attributes = at
+	at.dof_blur_far_enabled = true
+	at.dof_blur_far_distance = foco + 4.0
 
 
 func _tocar(caminho: String, tom: float, volume: float) -> void:
