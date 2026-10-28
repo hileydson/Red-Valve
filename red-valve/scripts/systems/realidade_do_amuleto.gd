@@ -41,6 +41,12 @@ const LENTO := 0.45
 const LENTO_SEGUNDOS := 0.3
 ## Altura do muro de luz da onda.
 const ALTURA_ONDA := 14.0
+## A cidade de gente e' a do fim de tarde: o relogio do Sky3D vai pras 19h
+## (no relogio dele, o horizonte ainda alaranjado; as 20h da cena ja' sao
+## noite fechada) e o ambiente clareia um pouco. Com o amuleto volta ao que a
+## cena tinha.
+const HORA_SEM_AMULETO := 19.0
+const AMBIENTE_SEM_AMULETO := 1.25
 
 ## A onda de agora (lida pelos objetos da cidade).
 static var onda_ativa: bool = false
@@ -64,6 +70,9 @@ var _env: Environment
 var _sat0: float = 1.0
 var _bri0: float = 1.0
 var _contraste0: float = 1.0
+var _ceu: Node
+var _hora0: float = 20.0
+var _ambiente0: float = 1.0
 
 
 # ============================================================ perguntas
@@ -241,6 +250,11 @@ func _prepara_cor_da_cidade() -> void:
 	if _env == null:
 		var we := get_tree().current_scene.find_child("WorldEnvironment", true, false) as WorldEnvironment
 		_env = we.environment if we else null
+	_ceu = _ceu_da_cidade(get_tree().current_scene)
+	if _ceu != null:
+		_guardar_ceu_das_sombras(_ceu)
+		_hora0 = _ceu.current_time
+		_ambiente0 = _ceu.ambient_energy
 	if _env == null:
 		return
 	if not _env.has_meta("_cor_das_sombras"):
@@ -252,6 +266,10 @@ func _prepara_cor_da_cidade() -> void:
 
 
 func _cor_da_cidade(k: float) -> void:
+	if is_instance_valid(_ceu):
+		var ceu0: Array = _ceu.get_meta("_ceu_das_sombras")
+		_ceu.current_time = lerpf(_hora0, HORA_SEM_AMULETO if para_normal else ceu0[0], k)
+		_ceu.ambient_energy = lerpf(_ambiente0, ceu0[1] * (AMBIENTE_SEM_AMULETO if para_normal else 1.0), k)
 	if _env == null:
 		return
 	var base: Array = _env.get_meta("_cor_das_sombras")
@@ -265,6 +283,13 @@ func _cor_da_cidade(k: float) -> void:
 
 ## A cidade que acabou de carregar ja nasce na cor da realidade gravada.
 static func ajustar_cor_ao_entrar(cena: Node) -> void:
+	var ceu := _ceu_da_cidade(cena)
+	if ceu != null:
+		_guardar_ceu_das_sombras(ceu)
+		var ceu0: Array = ceu.get_meta("_ceu_das_sombras")
+		var sem_amuleto := SaveManager.realidade_normal()
+		ceu.current_time = HORA_SEM_AMULETO if sem_amuleto else ceu0[0]
+		ceu.ambient_energy = ceu0[1] * (AMBIENTE_SEM_AMULETO if sem_amuleto else 1.0)
 	var vp := cena.get_viewport()
 	var env: Environment = vp.world_3d.environment if vp and vp.world_3d else null
 	if env == null:
@@ -280,6 +305,21 @@ static func ajustar_cor_ao_entrar(cena: Node) -> void:
 	env.adjustment_saturation = base[0] * (1.3 if normal else 1.0)
 	env.adjustment_brightness = base[1] * (1.06 if normal else 1.0)
 	env.adjustment_contrast = base[2] * (0.97 if normal else 1.0)
+
+
+## O Sky3D da cidade (o relogio e a luz ambiente dela).
+static func _ceu_da_cidade(cena: Node) -> Node:
+	if cena == null:
+		return null
+	var ceu := cena.get_node_or_null("WorldEnvironment/Sky3D")
+	return ceu if ceu != null and "current_time" in ceu and "ambient_energy" in ceu else null
+
+
+## Hora e luz ambiente com que a cena foi feita (a cidade das sombras),
+## guardadas no proprio Sky3D na primeira vez — e' pra la' que o amuleto volta.
+static func _guardar_ceu_das_sombras(ceu: Node) -> void:
+	if not ceu.has_meta("_ceu_das_sombras"):
+		ceu.set_meta("_ceu_das_sombras", [ceu.current_time, ceu.ambient_energy])
 
 
 func _som(caminho: String, tom: float, volume: float) -> void:
