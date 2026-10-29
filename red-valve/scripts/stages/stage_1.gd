@@ -831,7 +831,22 @@ func _play_intro_text() -> void:
 			chapter_label.add_theme_font_override("font", custom_font)
 			
 		ui_layer.add_child(chapter_label)
-		
+
+		# O nome do capitulo, pequeno e no mesmo vermelho, logo abaixo; filho do
+		# titulo pra entrar e sair no mesmo fade.
+		var subtitle_label = Label.new()
+		subtitle_label.text = tr("TXT_CHAPTER_1_SUBTITULO")
+		subtitle_label.set_anchors_preset(Control.PRESET_FULL_RECT)
+		subtitle_label.offset_top = 170
+		subtitle_label.offset_bottom = 170
+		subtitle_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		subtitle_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		subtitle_label.add_theme_font_size_override("font_size", 48)
+		subtitle_label.add_theme_color_override("font_color", Color(0.705882, 0.0, 0.0))
+		if custom_font:
+			subtitle_label.add_theme_font_override("font", custom_font)
+		chapter_label.add_child(subtitle_label)
+
 		chapter_label.modulate.a = 0.0
 		var tween_in = create_tween()
 		tween_in.tween_property(chapter_label, "modulate:a", 1.0, 1.0)
