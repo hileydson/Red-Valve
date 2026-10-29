@@ -24,10 +24,10 @@ outro mundo. Para isso continua sendo preciso atravessar a Red Valve.
 
 **Os Anti-Lopes.** É uma seita oculta que se reúne na igreja abandonada da cidade. Tem cinco
 integrantes:
-- Marcio El Fofon
+- El Fofon
 - Leo Weaky
-- Marolis Genzo
-- Pastor Acilio
+- Grizzolito Marolis
+- Pastor Seco
 - Dona Nice
 
 Os quatro primeiros já atravessaram. Dona Nice é a última que ainda está deste lado.
