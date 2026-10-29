@@ -22,6 +22,14 @@
  ],
  "pontos": [
   {
+   "id": "lanterna",
+   "chave": "",
+   "tipo": "interrogacao",
+   "x": 11.0,
+   "z": 8.6,
+   "oculto_com_item": "lanterna"
+  },
+  {
    "id": "boca_entrada",
    "chave": "MAP_POI_POR_ENTRADA",
    "tipo": "local",

@@ -136,11 +136,14 @@ void fragment() {
 	fade_tween.tween_property(fade, "color:a", 1.0, 1.5)
 	
 	await fade_tween.finished
-	print("Fade out completo. Retornando ao menu...")
+	print("Fade out completo. Voltando ao último save...")
 	
 	get_tree().paused = false
 	# Morrer na arena do amuleto deixava a cena anterior (escondida, mas ainda
 	# na árvore) sobrevivendo à troca de cena, junto com a HUD e o sangue dela.
 	GlobalUtils.cleanup_gameplay_leftovers()
-	get_tree().change_scene_to_file("res://scenes/configs/main_menu_v2.tscn")
+	# Volta pro último lugar salvo (o mesmo "Carregar" do menu, no slot em
+	# jogo). Sem save nenhum, o menu principal.
+	if not SaveManager.load_game(SaveManager.current_slot):
+		get_tree().change_scene_to_file("res://scenes/configs/main_menu_v2.tscn")
 	queue_free()

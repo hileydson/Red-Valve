@@ -138,6 +138,7 @@ func _ready() -> void:
 	_garantir_amuleto_no_inventario()
 	_setup_areas_casas()
 	setup_player_spawn()
+	_salvar_posicao_de_chegada()
 	_jonny_na_cidade()
 	# a cidade sem o amuleto no pescoço (R3 / H) tem mais cor: entra já assim
 	(func() -> void: Realidade.ajustar_cor_ao_entrar(self)).call_deferred()
@@ -164,6 +165,18 @@ func _garantir_amuleto_no_inventario() -> void:
 	# Save antigo pode trazer o amuleto "equipado a mao" (de quando ele dividia
 	# a mira com as armas): limpa. Hoje ele vale sozinho aqui na cidade.
 	SaveManager.garantir_equipamento_do_normal()
+
+
+## Entrar na cidade é entrar num lugar: salva, e com o ponto onde ele chegou
+## (a porta de onde saiu, o começo do capítulo...). O save do `_ready` vem
+## antes do spawn, e sem a posição o "Carregar" e o game over o largariam no
+## último "Salvar" do pause, ou no começo do capítulo.
+func _salvar_posicao_de_chegada() -> void:
+	if not SaveManager.prolog_finished:
+		return
+	var jogador := get_node_or_null("Player") as Node3D
+	if jogador:
+		SaveManager.save_player_position(jogador.global_position, jogador.global_rotation.y)
 
 
 func setup_player_spawn() -> void:

@@ -25,12 +25,6 @@ extends Node3D
 const LAYER_CHAO := 2
 const CENA_MAPA := "res://scenes/stages/stage_1/stage_1.tscn"
 const CENA_PORAO := "res://scenes/stages/escola/porao.tscn"
-const CENA_ITEM_OBTIDO := "res://scenes/ui/item_obtido.tscn"
-const ITEM_LANTERNA := "lanterna"
-const MODELO_LANTERNA := "res://assets/3d_model/player/lanterna/lanterna.glb"
-## A selecao da lanterna (realce, prompt e sons), a mesma de todo item de
-## cenario. Ver `item_selecionavel.gd`.
-const ItemSelecionavel := preload("res://scripts/stages/hospital/item_selecionavel.gd")
 ## O Capítulo 1 aqui dentro (a escola clara, a quadra, o Grizzolito, a prisão).
 const Capitulo1Escola := preload("res://scripts/stages/escola/capitulo_1_escola.gd")
 
@@ -53,6 +47,9 @@ var piscar_lampadas: bool = true
 ## botão durante esses dois segundos empilha mais uma troca.
 var _saindo: bool = false
 
+## Por onde o jogador chegou nesta visita ("" = pela rua, ou carregando o save).
+var chegada: String = ""
+
 ## Pás dos ventiladores de teto que ainda giram (metadata "velocidade", em
 ## voltas por segundo). Os parados nem entram na lista.
 var _pas: Array[Dictionary] = []
@@ -68,7 +65,6 @@ func _ready() -> void:
 	_preparar_ventiladores()
 	_preparar_sons()
 	_posicionar_jogador()
-	_preparar_lanterna()
 
 	# save_game() toma o caminho da cena atual como checkpoint, igual à casa do
 	# Jimmy, à igreja e ao hospital.
@@ -107,6 +103,7 @@ func _conferir_colisao() -> void:
 func _posicionar_jogador() -> void:
 	var destino := String(GlobalEvents.escola_chegada)
 	GlobalEvents.escola_chegada = ""
+	chegada = destino
 	if destino.is_empty():
 		return    # veio da cidade: o Player já nasce no pátio, pelo gerador
 	var marcador := get_node_or_null("chegada_" + destino) as Node3D
@@ -220,63 +217,6 @@ func _process(delta: float) -> void:
 		var pas: Node3D = item["pas"]
 		if is_instance_valid(pas):
 			pas.rotate_y(TAU * float(item["velocidade"]) * delta)
-
-
-# ==============================================================================
-# A LANTERNA NA MESA DA SALA 103
-# ==============================================================================
-## Ela morava no chão da igreja e mudou para cá: fica acesa em cima da mesa da
-## professora, com o facho saindo pela porta — quem anda o corredor norte vê o
-## clarão no chão antes de ver a sala. O lugar sai de `planta.py` (`lanterna()`),
-## que também põe a interrogação no mapa.
-##
-## Evento de uma vez só: quem já pegou não a encontra de novo. A checagem é no
-## inventário salvo, e não numa flag à parte — assim um save antigo que já tenha
-## a lanterna (pega ainda na igreja) também chega com a mesa vazia.
-func _preparar_lanterna() -> void:
-	var conjunto := get_node_or_null("lanterna_no_chao")
-	if conjunto == null:
-		return
-	if SaveManager.tem_item(ITEM_LANTERNA):
-		conjunto.queue_free()
-		return
-	var selecao := ItemSelecionavel.new()
-	conjunto.add_child(selecao)
-	selecao.configurar(conjunto, conjunto.get_node_or_null("area") as Area3D,
-		"PROMPT_TAKE_FLASHLIGHT")
-	selecao.pegar.connect(_pegar_lanterna)
-
-
-func _pegar_lanterna() -> void:
-	SaveManager.add_item(ITEM_LANTERNA, 1)
-	SaveManager.save_game()
-
-	var conjunto := get_node_or_null("lanterna_no_chao")
-	if conjunto:
-		conjunto.queue_free()
-
-	# Espera o prompt sumir ANTES de abrir a tela. `hide_center_message` apaga
-	# com um tween de meio segundo, e tween não anda com a árvore pausada — sem
-	# esta pausa o "Pegar a lanterna?" ficava congelado atrás do modelo 3D até
-	# o jogador fechar a tela.
-	await get_tree().create_timer(0.55).timeout
-
-	# A mensagem muda com o dispositivo em uso: quem está no controle procura
-	# L3, quem está no teclado procura Y.
-	var chave := "PICKUP_FLASHLIGHT_L3" if GlobalEvents.usando_controle \
-		else "PICKUP_FLASHLIGHT_KEY"
-	var tela: CanvasLayer = load(CENA_ITEM_OBTIDO).instantiate()
-	tela.model_path = MODELO_LANTERNA
-	tela.texto = tr(chave)
-	get_tree().root.add_child(tela)
-	await tela.fechado
-
-	# Sai daqui já acesa: ele acabou de ver uma lanterna acesa em cima da mesa,
-	# e ficar no escuro logo depois de pegá-la seria o contrário do que a cena
-	# mostrou.
-	var jogador := _jogador()
-	if jogador and jogador.has_method("acender_lanterna_agora"):
-		jogador.acender_lanterna_agora()
 
 
 ## Duas falhas diferentes, as mesmas da casa do Jimmy, da igreja e do hospital:

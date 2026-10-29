@@ -30,7 +30,7 @@ AVISO_AMULETO_GUARDADO,The amulet is off. Press R3 (H) to put it on,O amuleto es
 AVISO_REALIDADE_ESPERA,The amulet is still recovering (%d s),O amuleto ainda está se recuperando (%d s)
 AVISO_REALIDADE_SEM_MAGIA,Not enough magic to switch realities,Magia insuficiente para trocar de realidade
 ITEM_LANTERNA_NAME,Flashlight,Lanterna
-ITEM_LANTERNA_DESC,"A heavy hand lamp, found still lit on the church floor. The beam holds up.","Lanterna de mão pesada, achada ainda acesa no chão da igreja. O facho aguenta firme."
+ITEM_LANTERNA_DESC,"A heavy hand lamp, found still lit at the start of the school dungeon. The beam holds up.","Lanterna de mão pesada, achada ainda acesa no começo do calabouço da escola. O facho aguenta firme."
 PICKUP_FLASHLIGHT_L3,"You picked up the flashlight, press L3 to turn it on","Você pegou a lanterna, aperte L3 para ativá-la"
 PICKUP_FLASHLIGHT_KEY,"You picked up the flashlight, press Y to turn it on","Você pegou a lanterna, aperte Y para ativá-la"
 HINT_DARK_FLASHLIGHT_L3,"Too dark to see. Press L3 to turn on the flashlight","Escuro demais. Aperte L3 para acender a lanterna"
@@ -339,7 +339,7 @@ PROMPT_POR_SUBIR_DEPOSITO,Climb back into the storeroom,Voltar para o depósito
 PROMPT_POR_SUBIR_ALMOX,Climb up into the supply room,Subir para o almoxarifado
 OBJ_ESC_EXPLORAR,Find a way past the blocked hallway,Encontre um jeito de passar do corredor bloqueado
 OBJ_POR_ATRAVESSAR,Cross the tunnel to the other side of the school,Atravesse o túnel até o outro lado da escola
-AVISO_POR_SEM_LANTERNA,It's too dark down here. You need a flashlight,Está escuro demais aqui embaixo. Você precisa de uma lanterna
+AVISO_POR_SEM_LANTERNA,It's too dark down here... There's a light on the ground up ahead.,Está escuro demais aqui embaixo... Tem uma luz no chão ali na frente.
 MAP_POI_ESCOLA,School,Escola
 MAP_NOME_ESCOLA,School,Escola
 MAP_NOME_PORAO,Basement tunnel,Túnel do porão
@@ -514,7 +514,7 @@ DEBUG_EVT_CAP1_ADULTOS,School: arrival (adults cutscene),Escola: chegada (cutsce
 DEBUG_EVT_CAP1_FALOU_JONNY,School: the teacher said Ms. Nice took Jonny,Escola: a professora contou que a Dona Nice levou o Jonny
 DEBUG_EVT_CAP1_TRANSFORMADA,School: Ms. Nice's lightning (school turns dark),Escola: o raio da Dona Nice (escola escura)
 DEBUG_EVT_CAP1_GRIZZOLITO,Grizzolito defeated in the arena,Grizzolito derrotado na arena
-DEBUG_EVT_CAP1_PRESA,School: the street gate shut (trapped),Escola: o portão da rua fechou (preso)
+DEBUG_EVT_CAP1_PRESA,School: the main door shut behind him (trapped),Escola: a porta principal fechou atrás dele (preso)
 DEBUG_EVT_CAP1_RED_VALVE,Basement: first Red Valve crossing,Porão: primeira travessia da Red Valve
 DEBUG_EVT_CAP1_INFERNO_4,Hell 4: reached the limit (end portal),Inferno 4: chegou ao limite (portal do fim)
 DEBUG_EVT_CAP1_CONCLUIDO,Chapter 1 finished (left the school),Capítulo 1 concluído (saiu da escola)
@@ -526,7 +526,7 @@ OBJ_CAP1_IR_ESCOLA,Jimmy went to pick up Jonny at school. Go to the school.,O Ji
 OBJ_CAP1_ULTIMA_SALA,Look for Jonny in the school's last classroom (Room 107).,Procure o Jonny na última sala da escola (Sala 107).
 OBJ_CAP1_CASA_NICE,Ms. Nice took Jonny. Go to her house.,A Dona Nice levou o Jonny. Vá até a casa dela.
 OBJ_CAP1_GRIZZOLITO,Take Grizzolito to the arena with the amulet!,Leve o Grizzolito para a arena com o amuleto!
-OBJ_CAP1_SAIR_ESCOLA,The school has closed in on you. Find another way out.,A escola se fechou. Encontre outro caminho para sair.
+OBJ_CAP1_SAIR_ESCOLA,You're trapped inside the school. Find a way out.,Você está preso dentro da escola. Encontre uma forma de sair.
 OBJ_CAP1_ATRAVESSAR_PORAO,Cross the basement to the other side of the school and unbolt the courtyard gate.,Atravesse o porão até o outro lado da escola e destranque o portão do pátio.
 OBJ_CAP1_SAIR_PELO_PATIO,The courtyard gate is open. Leave the school through the street gate.,O portão do pátio está aberto. Saia da escola pelo portão da rua.
 OBJ_CAP1_INFERNO_4_SEGUIR,Press on through the parallel world.,Siga pelo mundo paralelo.
@@ -587,3 +587,6 @@ SAVE_IRON_RUSKS,Iron Rusks: %d,Iron Rusks: %d
 PROMPT_ABRIR_GAVETA,Open the drawer?,Abrir a gaveta?
 PICKUP_PISTOL_JIMMY,"You found Jimmy's pistol, The Negotiator. Equip it in the menu to carry it in your hand.","Você achou a pistola do Jimmy, a The Negotiator. Equipe ela no menu para levá-la na mão."
 DEBUG_EVENT_PICKUP_JIMMY_AMMO,Pickup: Ammo in Jimmy's Drawer,Pickup: Munição na Gaveta do Jimmy
+CAP1_CENA_PORTA_FECHOU,Maycow: It slammed shut... Something is holding it from the courtyard side.,Maycow: Bateu sozinha... Alguma coisa está segurando do lado do pátio.
+PROMPT_ESC_PORTA_PRESA,It won't budge. Something is holding it from the courtyard side.,Não se mexe. Alguma coisa a segura do lado do pátio.
+MAP_POI_CALABOUCO,Dungeon,Calabouço

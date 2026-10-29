@@ -164,6 +164,8 @@ func descoberto(x: float, z: float) -> bool:
 func ponto_visivel(p: Dictionary) -> bool:
 	if not MapaDados.ponto_visivel(p):
 		return false
+	if p.get("sempre_visivel", false):
+		return true
 	return descoberto(float(p.get("x", 0.0)), float(p.get("z", 0.0)))
 
 

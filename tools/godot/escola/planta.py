@@ -141,32 +141,9 @@ BURACO_SAIDA = {"ident": "buraco_saida", "sala": "almoxarifado",
 # --------------------------------------------------------------------------
 # A LANTERNA
 #
-# Em cima da mesa da professora da sala 103, ACESA, com o facho apontado pra
-# porta: quem passa pelo corredor norte ve' a luz saindo da sala antes de ver
-# a sala. E' isca, como era na igreja.
-#
-# Fica deste lado da grade de proposito. A lanterna e' o que torna o porao
-# atravessavel, entao tem de ser achada ANTES do buraco do deposito — numa
-# sala da ala sul ela so' seria alcancada depois do tunel que ela ilumina.
-#
-# A mesa e' a de `mobilia._sala_aula`: encostada na parede da lousa, 1,30 m
-# pra dentro, no meio da parede, tampo a 0,77 m do piso. A cena
-# (`gerar_cena_escola.py`) e o mapa (`make_mapa_escola.py`, a interrogacao)
-# leem daqui — nada e' digitado duas vezes.
+# Mora no porao, no comeco do calabouco (ver `porao.lanterna()`): saiu da
+# mesa da sala 103 a pedido. Aqui nao sobra nada dela.
 # --------------------------------------------------------------------------
-LANTERNA_SALA = "sala_103"
-LANTERNA_PORTA = "p_103"
-LANTERNA_TAMPO = 0.77
-
-
-def lanterna():
-    """((x, y, z) da lanterna no tampo, (dx, dz) do facho rumo a' porta)."""
-    s = por_ident(LANTERNA_SALA)
-    x, z = s["x0"] + 1.30, (s["z0"] + s["z1"]) * 0.5
-    px, pz = ponto_do_vao(LANTERNA_PORTA, 0.60) or (x + 1.0, z)
-    dx, dz = px - x, pz - z
-    n = math.hypot(dx, dz) or 1.0
-    return (x, cota() + LANTERNA_TAMPO, z), (dx / n, dz / n)
 
 
 def _sala(ident, chave, tipo, x0, x1, z0, z1, **extra):

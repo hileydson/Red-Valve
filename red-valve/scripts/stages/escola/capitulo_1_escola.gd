@@ -15,9 +15,11 @@ extends Node
 ##     · o Maycow no meio da quadra, o Grizzolito vindo do canto; o amuleto
 ##       vale aqui (`SaveManager._na_quadra_contra_o_grizzolito`). Morrer aqui,
 ##       na quadra ou na arena, volta pra este começo de luta.
-##   PRESA (portão fechado até destrancar o do pátio)
-##     · a volta da arena roda a cutscene do portão; daí em diante a escola é a
-##       escura de sempre, com pouca munição espalhada pelas salas.
+##   PRESA (porta principal fechada até destrancar o portão do pátio)
+##     · a volta da arena roda a cutscene da porta: o Maycow entra no corredor
+##       norte e a porta principal bate atrás dele. Daí em diante a escola é a
+##       escura de sempre, sem acesso ao pátio, com pouca munição espalhada
+##       pelas salas e uma interrogação no mapa no caminho do calabouço.
 ##
 ## Do Capítulo 2 em diante (ou antes do 1, pelo debug) isto não faz nada: a
 ## escola é a escura, como sempre foi.
@@ -29,6 +31,7 @@ const CutsceneAdultos := preload("res://scripts/stages/escola/cutscene_adultos.g
 const CutsceneQuadra := preload("res://scripts/stages/escola/cutscene_quadra.gd")
 const CutscenePortao := preload("res://scripts/stages/escola/cutscene_portao.gd")
 const Municao := preload("res://scripts/stages/escola/municao_espalhada.gd")
+const PontoNoMapa := preload("res://scripts/ui/ponto_no_mapa.gd")
 
 const CENA_GRIZZOLITO := "res://scenes/enemies/grizzolito.tscn"
 const CENA_DONA_NICE := "res://scenes/npcs/igreja/dona_nice.tscn"
@@ -68,6 +71,12 @@ const ADULTOS := [
 ]
 
 ## As caixas de bala da escola escura: [id do save, (x, altura do raio, z), balas].
+## Onde o Maycow preso nasce quando a escola carrega (save, game over): no
+## corredor norte, logo depois da porta principal, olhando pro leste.
+const PRESO_NASCE := Vector3(21.0, 0.0, 12.8)
+## A interrogação do mapa: o buraco do depósito, a entrada do calabouço.
+const INTERROGACAO_CALABOUCO := Vector3(67.0, 0.0, 66.42)
+
 const MUNICAO_ESCOLA := [
 	["escola_municao_101", Vector3(1.75, 2.0, 5.6), 6],
 	["escola_municao_secretaria", Vector3(69.5, 2.0, 8.4), 8],
@@ -100,7 +109,7 @@ func iniciar(dono: Node3D) -> void:
 	elif Eventos.feito(Eventos.CAP1_GRIZZOLITO_DERROTADO) and not Eventos.feito(Eventos.CAP1_ESCOLA_PRESA):
 		_portao_fecha.call_deferred()
 	else:
-		_escola_presa()
+		_escola_presa(true)
 
 
 ## O objetivo da escola é da história enquanto o Capítulo 1 estiver aqui.
@@ -330,7 +339,7 @@ func _portao_fecha() -> void:
 	GlobalUtils.esconder_objetivo()
 	var c = CutscenePortao.new()
 	c.name = "cutscene_portao"
-	c.portao = escola.get_node_or_null("portas/portao_rua")
+	c.porta = escola.get_node_or_null("portas/porta_principal")
 	escola.add_child(c)
 	c.rodar(escola, player)
 	await c.terminou
@@ -338,9 +347,30 @@ func _portao_fecha() -> void:
 	_escola_presa()
 
 
-func _escola_presa() -> void:
+## `ao_carregar`: a cena acabou de abrir (e não a cutscene acabou de rodar).
+func _escola_presa(ao_carregar: bool = false) -> void:
 	Municao.espalhar(escola, MUNICAO_ESCOLA)
+	if Eventos.escola_presa():
+		# Veio da cidade, do save ou do game over: o pátio está fechado, então ele
+		# nasce do lado de dentro. Vindo pelo buraco, o marcador dele já vale.
+		if ao_carregar and String(escola.get("chegada")) == "" and is_instance_valid(player):
+			player.global_position = PRESO_NASCE + Vector3.UP * 1.05
+			player.rotation.y = -PI * 0.5
+		marcar_interrogacao(escola, INTERROGACAO_CALABOUCO)
 	_objetivo()
+
+
+## Uma interrogação no mapa (a aba MAPA e o minimapa), presa a um nó parado.
+static func marcar_interrogacao(dono: Node3D, onde: Vector3) -> void:
+	var no := Node3D.new()
+	no.name = "interrogacao_calabouco"
+	dono.add_child(no)
+	no.global_position = onde
+	var ponto = PontoNoMapa.new()
+	ponto.chave = "MAP_POI_CALABOUCO"
+	ponto.tipo = "interrogacao"
+	ponto.sempre_visivel = true
+	no.add_child(ponto)
 
 
 # ==============================================================================

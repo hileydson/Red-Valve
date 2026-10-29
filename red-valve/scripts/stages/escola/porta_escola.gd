@@ -161,7 +161,7 @@ func _process(delta: float) -> void:
 ## O portão do pátio só entra nisto DEPOIS de destrancado: trancado, ele é uma
 ## conversa, e conversa não se tem esbarrando.
 func _empurrando() -> bool:
-	if aberta or _trancada_agora() or _saida or not is_instance_valid(_player):
+	if aberta or _trancada_agora() or _saida or _presa_por_dentro() or not is_instance_valid(_player):
 		return false
 	if _portao_trancado():
 		return false
@@ -247,6 +247,10 @@ func _acionar() -> void:
 			return
 		GlobalUtils.show_center_message(
 			_id_msg, tr("PROMPT_ESC_PORTAO_TRANCADO"), 16, 1.8)
+		return
+
+	if _presa_por_dentro():
+		GlobalUtils.show_center_message(_id_msg, tr("PROMPT_ESC_PORTA_PRESA"), 16, 2.2)
 		return
 
 	if _trancada_agora():
@@ -346,11 +350,17 @@ func _ao_sair(body: Node3D) -> void:
 func _atualizar_prompt() -> void:
 	if not _player_perto:
 		return
+	# numa cutscene (a porta principal do Capítulo 1) o nome da sala não aparece
+	if GlobalEvents.in_cutscene or GlobalUtils.in_cinematic_cutscene:
+		return
 	if _portao_trancado():
 		GlobalUtils.show_center_message(
 			_id_msg,
 			tr("PROMPT_ESC_PORTAO_ABRIR") if _no_lado_de_dentro()
 			else tr("PROMPT_ESC_PORTAO_TRANCADO"), 16)
+		return
+	if _presa_por_dentro():
+		GlobalUtils.show_center_message(_id_msg, tr("PROMPT_ESC_PORTA_PRESA"), 16)
 		return
 	if _trancada_agora():
 		GlobalUtils.show_center_message(_id_msg, tr("PROMPT_ESC_TRANCADA"), 16)
@@ -370,6 +380,14 @@ func _atualizar_prompt() -> void:
 ## trancada — nem a sala trancada, nem o portão do pátio.
 func _trancada_agora() -> bool:
 	return _trancada and not Eventos.escola_clara()
+
+
+## A PORTA PRINCIPAL no Capítulo 1, da cutscene em que ela bate atrás do
+## Maycow até ele destrancar o portão do pátio por dentro: segurada do lado do
+## pátio. Com ela e o portão do pátio fechados, a quadra só se alcança pelo
+## calabouço (ver `cutscene_portao.gd`).
+func _presa_por_dentro() -> bool:
+	return name == "porta_principal" and Eventos.escola_presa()
 
 
 func _portao_trancado() -> bool:

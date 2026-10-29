@@ -43,6 +43,8 @@ func _ready() -> void:
 	else:
 		GlobalEvents.entrando_na_casa_maycow = false
 		telefone_atendido = true
+		# entrar num lugar salva (as outras casas fazem o mesmo)
+		SaveManager.save_game()
 		telefone_tocando = false
 		var player = get_node_or_null("Player")
 		if not player:

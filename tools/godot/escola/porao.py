@@ -124,6 +124,22 @@ BOCA_SAIDA = (78.0, 74.0)
 OLHAR_ENTRADA = math.atan2(16.0 - 6.0, 9.0 - 8.0)
 OLHAR_SAIDA = math.atan2(78.0 - 70.0, 74.0 - 70.0)
 
+# A LANTERNA, no chao, logo no comeco do calabouco: quem cai pela boca de
+# entrada da' com ela acesa a uns tres metros, o facho apontado pra DENTRO do
+# tunel (pro proximo ponto do caminho), de costas pra boca — e' ela que torna
+# o resto do tunel atravessavel. A cena
+# (`gerar_cena_porao.py`) e o mapa (`make_mapa_escola.py`, a interrogacao)
+# leem daqui.
+LANTERNA = (11.0, 8.6)
+
+
+def lanterna():
+    """((x, y, z) da lanterna no chao, (dx, dz) do facho tunel adentro."""
+    x, z = LANTERNA
+    dx, dz = CAMINHO[1][0] - x, CAMINHO[1][1] - z
+    n = math.hypot(dx, dz) or 1.0
+    return (x, 0.0, z), (dx / n, dz / n)
+
 
 # ==========================================================================
 # RASTERIZACAO

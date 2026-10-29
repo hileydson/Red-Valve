@@ -472,6 +472,9 @@ def escrever_cena(colisoes, props, plano, lista_luminarias, nav, rabiscos):
              (PO.BOCA_SAIDA[0] - 1.6, 0.10, PO.BOCA_SAIDA[1]),
              math.pi * 0.5))])
 
+    # ---- a lanterna, no comeco do calabouco
+    _emitir_lanterna(c)
+
     c.no("NavigationRegion3D", tipo="NavigationRegion3D", pai=".",
          props=[("navigation_mesh", 'SubResource("navmesh")'),
                 ("navigation_layers", "4")])
@@ -534,6 +537,53 @@ LENTE_PORAO = [
     ("respiracao", "0.05"),
     ("interferencia", "0.5"),
 ]
+
+
+def _emitir_lanterna(c):
+    """A lanterna acesa no chao, no comeco do calabouco (ver `PO.lanterna()`).
+
+    Mesmo conjunto que ela tinha na igreja e na sala 103 da escola — modelo,
+    facho, brilho e a area do prompt —, com o mesmo nome (`lanterna_no_chao`),
+    porque quem pega e' o mesmo codigo, agora no `porao.gd`.
+
+    O modelo tem a LENTE no -X local e 1,9 unidade de comprimento: a escala de
+    0,16 da' uns 30 cm, e o giro em Y poe o -X em cima da direcao do facho
+    (rotation.y = t leva o -X a (-cos t, 0, sen t)). A altura de 0,052 e' a
+    metade da altura do modelo ja' escalado: ela assenta no chao.
+
+    O facho desce um pouco (0,10) e corre tunel adentro, de costas pra boca —
+    o clarao no chao a' frente e' o que chama o jogador ate' ela. Sem sombra: encostado na luz, o proprio
+    corpo da lanterna tapava o cone.
+    """
+    (x, y, z), (dx, dz) = PO.lanterna()
+    giro = math.atan2(dz, -dx)
+    c.no("lanterna_no_chao", tipo="Node3D", pai=".")
+    c.no("modelo", pai="lanterna_no_chao",
+         instancia=c.externo("PackedScene",
+                             "res://assets/3d_model/player/lanterna/lanterna.glb"),
+         props=[("transform", C.transform_pos((x, y + 0.052, z), giro, 0.16))])
+    c.no("facho", tipo="SpotLight3D", pai="lanterna_no_chao",
+         props=[("transform", C.transform_olhando(
+                    (x + dx * 0.18, y + 0.07, z + dz * 0.18), (dx, -0.10, dz))),
+                ("light_color", C.cor((1.0, 0.94, 0.82, 1))),
+                ("light_energy", "18.0"),
+                ("light_volumetric_fog_energy", "4.0"),
+                ("shadow_enabled", "false"),
+                ("spot_range", "10.0"),
+                ("spot_angle", "28.0"),
+                ("spot_angle_attenuation", "0.45")])
+    c.no("brilho", tipo="OmniLight3D", pai="lanterna_no_chao",
+         props=[("transform", C.transform_pos((x + dx * 0.30, y + 0.10, z + dz * 0.30))),
+                ("light_color", C.cor((1.0, 0.9, 0.75, 1))),
+                ("light_energy", "0.7"),
+                ("omni_range", "1.8")])
+    # A area em volta dela: a capsula do jogador tem 1,35 m e para longe.
+    ident = c.forma(3.2, 2.6, 3.2)
+    c.no("area", tipo="Area3D", pai="lanterna_no_chao",
+         props=[("transform", C.transform_pos((x, y + 0.5, z))),
+                ("collision_layer", "0"), ("monitorable", "false")])
+    c.no("CollisionShape3D", tipo="CollisionShape3D", pai="lanterna_no_chao/area",
+         props=[("shape", 'SubResource("%s")' % ident)])
 
 
 def _ponto_de_entrada():

@@ -12,6 +12,9 @@ extends Node
 @export var chave: String = ""
 ## Tipo do losango (a cor sai do COR_TIPO do minimapa e do painel).
 @export var tipo: String = "pessoa"
+## Aparece mesmo com a área ainda na névoa (a interrogação do calabouço: o mapa
+## zera, mas o lugar pra onde ir tem de estar marcado).
+@export var sempre_visivel: bool = false
 
 
 func _enter_tree() -> void:
@@ -34,4 +37,4 @@ func _avisar() -> void:
 func dados() -> Dictionary:
 	var p := (get_parent() as Node3D).global_position
 	return {"id": "vivo_%d" % get_instance_id(), "chave": chave, "tipo": tipo,
-		"x": p.x, "z": p.z, "y": p.y}
+		"x": p.x, "z": p.z, "y": p.y, "sempre_visivel": sempre_visivel}

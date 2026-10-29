@@ -80,17 +80,21 @@ e a do próprio Maycow abrem.
 4. **A luta.** Na quadra o amuleto volta a valer. Bala não derruba o Grizzolito: ele corre, soca, chuta
    e dá voadoras até matar o Maycow. O único jeito é levá-lo com o amuleto para a **Arena 1**. Lá ele
    vira o primeiro monstro; morto este, vira o segundo — e só então morre de verdade, pela cogblade.
-5. **Presa.** De volta à quadra, Maycow anda até o portão da rua, que está aberto — e ele bate na cara
-   dele, segurado por alguma coisa do outro lado. Esta escola não é a que ele conhecia: o mapa dela
-   recomeça do zero. O caminho é atravessar o prédio inteiro, descer pelo buraco do depósito e cruzar
-   o calabouço (o porão). Há pouca munição espalhada pelas salas e pelo túnel.
+5. **Presa.** De volta à quadra, Maycow vai direto para dentro do prédio: atravessa a **porta
+   principal**, a que leva ao corredor das salas — e ela bate atrás dele, segurada por alguma coisa do
+   lado do pátio. Ele está preso por dentro da escola. Esta escola não é a que ele conhecia: o mapa
+   dela recomeça do zero, e toda porta que dá para a quadra está fechada. O caminho é atravessar o
+   prédio inteiro, descer pelo buraco do depósito e cruzar o calabouço (o porão), marcado no mapa só
+   com uma interrogação. Logo no começo do calabouço, caída no chão e ainda acesa, está a **lanterna**
+   — sem ela o túnel é breu. Há pouca munição espalhada pelas salas e pelo túnel.
 6. **O portal.** No meio do calabouço, na câmara grande, há uma **Red Valve**. Na primeira vez ela o
    chama: Maycow anda até ela (em primeira pessoa), a porta abre e o leva ao **Inferno 4**, uma parte
    mais escura do mundo paralelo. No fim do caminho o portal não o aceita: ele ainda é fraco demais para
    ir além. Volta pelo portal do começo, que o devolve à Red Valve (dali em diante ela só abre quando
    ele quer).
 7. **Saída.** Maycow segue pelo calabouço até o outro lado da escola, sobe pelo almoxarifado e
-   destranca por dentro o portão do pátio. Com isso o portão da rua solta, e ele sai.
+   destranca por dentro o portão do pátio — a única porta de volta para a quadra. Com isso o portão
+   da rua solta, e ele sai.
 
 Ao fim do capítulo, Maycow sabe que Dona Nice está envolvida, mas ainda não sabe o porquê nem o resto
 da história.

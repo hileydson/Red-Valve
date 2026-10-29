@@ -59,6 +59,17 @@ var _lampadas: Array[Dictionary] = []
 var _saindo: bool = false
 
 
+const CENA_ITEM_OBTIDO := "res://scenes/ui/item_obtido.tscn"
+const ITEM_LANTERNA := "lanterna"
+const MODELO_LANTERNA := "res://assets/3d_model/player/lanterna/lanterna.glb"
+## A selecao da lanterna (realce, prompt e sons), a mesma de todo item de
+## cenario. Ver `item_selecionavel.gd`.
+const ItemSelecionavel := preload("res://scripts/stages/hospital/item_selecionavel.gd")
+const Capitulo1Escola := preload("res://scripts/stages/escola/capitulo_1_escola.gd")
+## A subida pro almoxarifado (o ponto "boca_saida" do mapa do porão).
+const SAIDA_DO_CALABOUCO := Vector3(78.0, 0.0, 74.0)
+
+
 func _ready() -> void:
 	GlobalEvents.in_cutscene = false
 	GlobalEvents.is_maycow_normal = true
@@ -71,9 +82,13 @@ func _ready() -> void:
 
 	SaveManager.save_game()
 	GlobalUtils.mostrar_objetivo(tr("OBJ_POR_ATRAVESSAR"))
+	_preparar_lanterna()
 	_avisar_da_lanterna()
 	_preparar_red_valve()
 	Municao.espalhar(self, MUNICAO_PORAO)
+	# Capítulo 1, preso na escola: a saída do calabouço é o que ele procura.
+	if Eventos.escola_presa():
+		Capitulo1Escola.marcar_interrogacao(self, SAIDA_DO_CALABOUCO)
 
 
 ## A red valve da câmara. A primeira travessia do Capítulo 1 é a cutscene
@@ -112,6 +127,64 @@ func _conferir_colisao() -> void:
 	if fora > 0:
 		push_warning("porao: %d corpo(s) estático(s) estavam fora da layer %d"
 			% [fora, LAYER_CHAO])
+
+
+# ==============================================================================
+# A LANTERNA NO COMEÇO DO CALABOUÇO
+# ==============================================================================
+## Ela morou no chão da igreja e na mesa da sala 103 da escola; agora fica
+## acesa no chão do túnel, logo depois da boca de entrada, com o facho
+## apontado pra boca — quem cai no calabouço dá com ela. O lugar sai de
+## `tools/godot/escola/porao.py` (`lanterna()`), que também põe a interrogação
+## no mapa.
+##
+## Evento de uma vez só: quem já pegou não a encontra de novo. A checagem é no
+## inventário salvo, e não numa flag à parte — assim um save antigo que já tenha
+## a lanterna (pega ainda na igreja ou na escola) também chega sem ela no chão.
+func _preparar_lanterna() -> void:
+	var conjunto := get_node_or_null("lanterna_no_chao")
+	if conjunto == null:
+		return
+	if SaveManager.tem_item(ITEM_LANTERNA):
+		conjunto.queue_free()
+		return
+	var selecao := ItemSelecionavel.new()
+	conjunto.add_child(selecao)
+	selecao.configurar(conjunto, conjunto.get_node_or_null("area") as Area3D,
+		"PROMPT_TAKE_FLASHLIGHT")
+	selecao.pegar.connect(_pegar_lanterna)
+
+
+func _pegar_lanterna() -> void:
+	SaveManager.add_item(ITEM_LANTERNA, 1)
+	SaveManager.save_game()
+
+	var conjunto := get_node_or_null("lanterna_no_chao")
+	if conjunto:
+		conjunto.queue_free()
+
+	# Espera o prompt sumir ANTES de abrir a tela. `hide_center_message` apaga
+	# com um tween de meio segundo, e tween não anda com a árvore pausada — sem
+	# esta pausa o "Pegar a lanterna?" ficava congelado atrás do modelo 3D até
+	# o jogador fechar a tela.
+	await get_tree().create_timer(0.55).timeout
+
+	# A mensagem muda com o dispositivo em uso: quem está no controle procura
+	# L3, quem está no teclado procura Y.
+	var chave := "PICKUP_FLASHLIGHT_L3" if GlobalEvents.usando_controle \
+		else "PICKUP_FLASHLIGHT_KEY"
+	var tela: CanvasLayer = load(CENA_ITEM_OBTIDO).instantiate()
+	tela.model_path = MODELO_LANTERNA
+	tela.texto = tr(chave)
+	get_tree().root.add_child(tela)
+	await tela.fechado
+
+	# Sai daqui já acesa: ele acabou de ver uma lanterna acesa no chão,
+	# e ficar no escuro logo depois de pegá-la seria o contrário do que a cena
+	# mostrou.
+	var jogador := _jogador()
+	if jogador and jogador.has_method("acender_lanterna_agora"):
+		jogador.acender_lanterna_agora()
 
 
 ## Por qual das duas bocas o jogador entrou. O marcador mora na cena gerada, e

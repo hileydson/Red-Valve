@@ -364,16 +364,6 @@ def _pontos_escola():
         pontos.append({"id": "saida", "chave": "MAP_POI_ESC_SAIDA",
                        "tipo": "marco", "x": round(ponto[0], 2),
                        "z": round(ponto[1], 2)})
-
-    # A interrogacao da lanterna, exatamente em cima da mesa onde ela esta'.
-    # `chave` vazia de proposito (interrogacao com nome escrito ao lado nao
-    # seria interrogacao), e `oculto_com_item` faz o Godot apaga-la no
-    # instante em que a lanterna entra no inventario — save antigo que ja' a
-    # tenha chega com o mapa limpo.
-    (lx, _, lz), _ = P.lanterna()
-    pontos.append({"id": "lanterna", "chave": "", "tipo": "interrogacao",
-                   "x": round(lx, 2), "z": round(lz, 2),
-                   "oculto_com_item": "lanterna"})
     return pontos
 
 
@@ -471,7 +461,7 @@ def _zonas_porao():
 
 
 def _pontos_porao():
-    """Tres pontos, e nem um a mais.
+    """Tres pontos (e a interrogacao da lanterna), e nem um a mais.
 
     Um tunel de terra nao tem comodo pra rotular, e encher o mapa de losango
     aqui seria inventar informacao que o lugar nao tem. O que o jogador precisa
@@ -479,7 +469,14 @@ def _pontos_porao():
     que e' a referencia dele pra saber se ja' passou da metade.
     """
     x0, z0, x1, z1 = PO.CAMARA
+    # A interrogacao da lanterna, em cima dela, no comeco do tunel. `chave`
+    # vazia de proposito (interrogacao com nome escrito ao lado nao seria
+    # interrogacao), e `oculto_com_item` faz o Godot apaga-la no instante em
+    # que a lanterna entra no inventario.
+    (lx, _, lz), _ = PO.lanterna()
     return [
+        {"id": "lanterna", "chave": "", "tipo": "interrogacao",
+         "x": round(lx, 2), "z": round(lz, 2), "oculto_com_item": "lanterna"},
         {"id": "boca_entrada", "chave": "MAP_POI_POR_ENTRADA", "tipo": "local",
          "x": round(PO.BOCA_ENTRADA[0], 2), "z": round(PO.BOCA_ENTRADA[1], 2)},
         {"id": "camara", "chave": "MAP_POI_POR_CAMARA", "tipo": "marco",
