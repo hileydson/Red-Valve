@@ -307,12 +307,17 @@ func _process(delta: float) -> void:
 		await get_tree().create_timer(2.0).timeout
 		get_tree().change_scene_to_file("res://scenes/stages/prolog/oficina_jimmy.tscn")
 	elif player_na_casa_jimmy:
+		if not Eventos.local_aberto("casa_jimmy"):
+			return
 		player_na_casa_jimmy = false
 		_esconder_prompt()
 		$fade.fade_out()
 		await get_tree().create_timer(2.0).timeout
 		LoadingScreen.load_scene("res://scenes/stages/jimmy_house/casa_jimmy_interior.tscn")
 	elif player_na_casa_nice:
+		# fechado: o aviso ja' esta' na tela e o botao nao faz nada
+		if not Eventos.local_aberto("casa_nice"):
+			return
 		player_na_casa_nice = false
 		_esconder_prompt()
 		$fade.fade_out()
@@ -328,6 +333,8 @@ func _process(delta: float) -> void:
 	elif player_na_igreja:
 		# Trancada: sem a chave o "a igreja esta' trancada" ja' esta' na tela
 		# e o botao nao faz nada; com ela, a chave entra e some do menu.
+		if not Eventos.local_aberto("igreja"):
+			return
 		if not SaveManager.igreja_aberta():
 			if not SaveManager.tem_item("chave_igreja"):
 				return
@@ -339,12 +346,16 @@ func _process(delta: float) -> void:
 		await get_tree().create_timer(2.0).timeout
 		LoadingScreen.load_scene(CENA_IGREJA)
 	elif player_no_hospital:
+		if not Eventos.local_aberto("hospital"):
+			return
 		player_no_hospital = false
 		_esconder_prompt()
 		$fade.fade_out()
 		await get_tree().create_timer(2.0).timeout
 		LoadingScreen.load_scene(CENA_HOSPITAL)
 	elif player_na_escola:
+		if not Eventos.local_aberto("escola"):
+			return
 		player_na_escola = false
 		_esconder_prompt()
 		$fade.fade_out()
@@ -385,6 +396,13 @@ func _esconder_prompt(forcado: bool = false) -> void:
 	prompt_label.visible = false
 
 
+## O prompt de entrar, ou o aviso de trancado quando a história ainda não
+## abriu este lugar (ver `Eventos.local_aberto`).
+func _prompt_do_local(local: String, chave_entrar: String) -> String:
+	var fechado := Eventos.aviso_local_fechado(local)
+	return tr(fechado if fechado != "" else chave_entrar)
+
+
 func _eh_o_player(body: Node3D) -> bool:
 	return body.name.to_lower() == "player" or body.is_in_group("player")
 
@@ -395,7 +413,7 @@ func _ao_entrar_area_casa_jimmy(body: Node3D) -> void:
 	if not _eh_o_player(body):
 		return
 	player_na_casa_jimmy = true
-	_mostrar_prompt(tr("PROMPT_ENTER_JIMMY_HOUSE"))
+	_mostrar_prompt(_prompt_do_local("casa_jimmy", "PROMPT_ENTER_JIMMY_HOUSE"))
 
 
 func _ao_sair_area_casa_jimmy(body: Node3D) -> void:
@@ -409,7 +427,7 @@ func _ao_entrar_area_casa_nice(body: Node3D) -> void:
 	if not _eh_o_player(body):
 		return
 	player_na_casa_nice = true
-	_mostrar_prompt(tr("PROMPT_ENTER_NICE_HOUSE"))
+	_mostrar_prompt(_prompt_do_local("casa_nice", "PROMPT_ENTER_NICE_HOUSE"))
 
 
 func _ao_sair_area_casa_nice(body: Node3D) -> void:
@@ -511,6 +529,8 @@ func _ao_entrar_area_igreja(body: Node3D) -> void:
 ## A igreja vive trancada ate' a chave reserva (no quarto da Dona Nice) ser
 ## usada nela — ver `SaveManager.igreja_aberta()`.
 func _prompt_da_igreja() -> String:
+	if not Eventos.local_aberto("igreja"):
+		return Eventos.aviso_local_fechado("igreja")
 	if SaveManager.igreja_aberta():
 		return "PROMPT_ENTER_CHURCH"
 	if SaveManager.tem_item("chave_igreja"):
@@ -570,7 +590,7 @@ func _ao_entrar_area_hospital(body: Node3D) -> void:
 		_ignorar_prompt_hospital = false
 		_esconder_prompt(true)
 		return
-	_mostrar_prompt(tr("PROMPT_ENTER_HOSPITAL"))
+	_mostrar_prompt(_prompt_do_local("hospital", "PROMPT_ENTER_HOSPITAL"))
 
 
 func _ao_sair_area_hospital(body: Node3D) -> void:
@@ -646,7 +666,7 @@ func _ao_entrar_area_escola(body: Node3D) -> void:
 		_ignorar_prompt_escola = false
 		_esconder_prompt(true)
 		return
-	_mostrar_prompt(tr("PROMPT_ENTER_SCHOOL"))
+	_mostrar_prompt(_prompt_do_local("escola", "PROMPT_ENTER_SCHOOL"))
 
 
 func _ao_sair_area_escola(body: Node3D) -> void:
@@ -818,47 +838,7 @@ func _play_intro_text() -> void:
 		# Exibe o título "CAPÍTULO 1" em vermelho bem grande no centro da tela (tamanho 120 como no splash)
 		await get_tree().create_timer(1.0, false).timeout
 		
-		var chapter_label = Label.new()
-		chapter_label.text = tr("TXT_CHAPTER_1").to_upper()
-		chapter_label.set_anchors_preset(Control.PRESET_FULL_RECT)
-		chapter_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		chapter_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		chapter_label.add_theme_font_size_override("font_size", 180)
-		chapter_label.add_theme_color_override("font_color", Color(0.705882, 0.0, 0.0))
-		
-		var custom_font = load("res://assets/fonts/Montserrat-ExtraBold.ttf")
-		if custom_font:
-			chapter_label.add_theme_font_override("font", custom_font)
-			
-		ui_layer.add_child(chapter_label)
-
-		# O nome do capitulo, pequeno e no mesmo vermelho, logo abaixo; filho do
-		# titulo pra entrar e sair no mesmo fade.
-		var subtitle_label = Label.new()
-		subtitle_label.text = tr("TXT_CHAPTER_1_SUBTITULO")
-		subtitle_label.set_anchors_preset(Control.PRESET_FULL_RECT)
-		subtitle_label.offset_top = 170
-		subtitle_label.offset_bottom = 170
-		subtitle_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		subtitle_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		subtitle_label.add_theme_font_size_override("font_size", 48)
-		subtitle_label.add_theme_color_override("font_color", Color(0.705882, 0.0, 0.0))
-		if custom_font:
-			subtitle_label.add_theme_font_override("font", custom_font)
-		chapter_label.add_child(subtitle_label)
-
-		chapter_label.modulate.a = 0.0
-		var tween_in = create_tween()
-		tween_in.tween_property(chapter_label, "modulate:a", 1.0, 1.0)
-		await tween_in.finished
-		
-		await get_tree().create_timer(3.5, false).timeout
-		
-		if is_instance_valid(chapter_label):
-			var tween_out = create_tween()
-			tween_out.tween_property(chapter_label, "modulate:a", 0.0, 1.0)
-			await tween_out.finished
-			chapter_label.queue_free()
+		await _titulo_do_capitulo("TXT_CHAPTER_1", "TXT_CHAPTER_1_SUBTITULO")
 
 		# So depois que o "CAPITULO 1" saiu da tela: dois avisos grandes ao mesmo
 		# tempo no centro se atropelariam, e o respiro deixa claro que sao coisas
@@ -873,10 +853,18 @@ func _play_intro_text() -> void:
 		# apareceria sozinha num momento que nao faz sentido.
 		if not await _esperar_gameplay(OBJETIVO_CAP1_ESPERA):
 			return
-		GlobalUtils.mostrar_objetivo(tr("OBJ_EXPLORAR_CIDADE"), OBJETIVO_CAP1_DURACAO)
+		GlobalUtils.mostrar_objetivo(tr(Eventos.objetivo_atual()), OBJETIVO_CAP1_DURACAO)
+		return
+
+	if GlobalEvents.entering_chapter_2:
+		GlobalEvents.entering_chapter_2 = false
+		await get_tree().create_timer(1.0, false).timeout
+		await _titulo_do_capitulo("TXT_CHAPTER_2", "TXT_CHAPTER_2_SUBTITULO")
+		_mostrar_objetivo_da_historia(2.0)
 		return
 
 	if SaveManager.prolog_finished:
+		_mostrar_objetivo_da_historia(2.5)
 		return
 
 	if SaveManager.stage_1_intro_played:
@@ -907,6 +895,62 @@ func _play_intro_text() -> void:
 			break
 		GlobalUtils.hide_center_message("intro_stage_1")
 		await get_tree().create_timer(0.5, false).timeout
+
+
+## O título de capítulo: o nome bem grande, em vermelho, no meio da tela, e o
+## subtítulo pequeno logo abaixo. Entra e sai em fade; volta quando já saiu.
+func _titulo_do_capitulo(chave_titulo: String, chave_subtitulo: String) -> void:
+	var chapter_label = Label.new()
+	chapter_label.text = tr(chave_titulo).to_upper()
+	chapter_label.set_anchors_preset(Control.PRESET_FULL_RECT)
+	chapter_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	chapter_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	chapter_label.add_theme_font_size_override("font_size", 180)
+	chapter_label.add_theme_color_override("font_color", Color(0.705882, 0.0, 0.0))
+
+	var custom_font = load("res://assets/fonts/Montserrat-ExtraBold.ttf")
+	if custom_font:
+		chapter_label.add_theme_font_override("font", custom_font)
+
+	ui_layer.add_child(chapter_label)
+
+	# O nome do capitulo, pequeno e no mesmo vermelho, logo abaixo; filho do
+	# titulo pra entrar e sair no mesmo fade.
+	var subtitle_label = Label.new()
+	subtitle_label.text = tr(chave_subtitulo)
+	subtitle_label.set_anchors_preset(Control.PRESET_FULL_RECT)
+	subtitle_label.offset_top = 170
+	subtitle_label.offset_bottom = 170
+	subtitle_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	subtitle_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	subtitle_label.add_theme_font_size_override("font_size", 48)
+	subtitle_label.add_theme_color_override("font_color", Color(0.705882, 0.0, 0.0))
+	if custom_font:
+		subtitle_label.add_theme_font_override("font", custom_font)
+	chapter_label.add_child(subtitle_label)
+
+	chapter_label.modulate.a = 0.0
+	var tween_in = create_tween()
+	tween_in.tween_property(chapter_label, "modulate:a", 1.0, 1.0)
+	await tween_in.finished
+
+	await get_tree().create_timer(3.5, false).timeout
+
+	if is_instance_valid(chapter_label):
+		var tween_out = create_tween()
+		tween_out.tween_property(chapter_label, "modulate:a", 0.0, 1.0)
+		await tween_out.finished
+		chapter_label.queue_free()
+
+
+## O objetivo da etapa da história em que o jogador está (ver
+## `Eventos.objetivo_atual`), um pouco depois de ele chegar na cidade.
+func _mostrar_objetivo_da_historia(espera: float) -> void:
+	if not await _esperar_gameplay(espera):
+		return
+	var chave := Eventos.objetivo_atual()
+	if chave != "" and not _jonny_no_colo():
+		GlobalUtils.mostrar_objetivo(tr(chave), OBJETIVO_PRIMEIRO_DURACAO)
 
 
 ## O tutorial do amuleto: so no Capitulo 1, so uma vez na vida do save, e so

@@ -5,6 +5,7 @@ extends CanvasLayer
 ## em tempo real por Player.set_infinite_health_debug. Remover quando os
 ## testes acabarem.
 const PlayerScript := preload("res://scripts/player/player.gd")
+const DebugQuantidade := preload("res://scripts/ui/debug_quantidade.gd")
 
 var bg: ColorRect
 var title_label: Label
@@ -55,7 +56,7 @@ var cel_check: CheckButton
 var cel_intensity_label: Label
 var cel_intensity_slider: HSlider
 
-# Debug Tab (só visível após sequência)
+# Debug Eventos (só visível após sequência)
 var tab_debug: MarginContainer
 var debug_infinite_hp_label: Label
 var debug_infinite_hp_check: CheckButton
@@ -63,14 +64,14 @@ var debug_infinite_stamina_label: Label
 var debug_infinite_stamina_check: CheckButton
 var debug_events_scroll: ScrollContainer
 var debug_event_checks: Dictionary = {}
-var debug_rusks_spin: SpinBox
-var debug_max_mp_spin: SpinBox
-var debug_curr_mp_spin: SpinBox
-var debug_ammo_pistol_spin: SpinBox
-var debug_ammo_shotgun_spin: SpinBox
-var debug_ammo_mk3_spin: SpinBox
-var debug_ammo_granola_spin: SpinBox
-var debug_save_btn: Button
+
+# Debug Itens (só visível após sequência)
+var tab_debug_itens: MarginContainer
+var debug_itens_scroll: ScrollContainer
+var debug_itens_first: Control
+var debug_rusks_spin: Button
+var debug_max_mp_spin: Button
+var debug_curr_mp_spin: Button
 
 # Debug Travel Tab (só visível após sequência)
 var tab_debug_travel: MarginContainer
@@ -124,6 +125,7 @@ func _ready() -> void:
 		# Sempre carregar os dados em memória como estão gravados no Slot 1 (sem troca de cena)
 		SaveManager.load_slot_data_only(1)
 		_build_debug_tab()
+		_build_debug_itens_tab()
 		_build_debug_travel_tab()
 	
 	_update_tab_titles()
@@ -150,7 +152,9 @@ func _focus_first_item() -> void:
 		display_option.grab_focus()
 	elif tab_container.current_tab == 3 and is_instance_valid(debug_infinite_hp_check):
 		debug_infinite_hp_check.grab_focus()
-	elif tab_container.current_tab == 4 and is_instance_valid(debug_travel_first_btn):
+	elif tab_container.current_tab == 4 and is_instance_valid(debug_itens_first):
+		debug_itens_first.grab_focus()
+	elif tab_container.current_tab == 5 and is_instance_valid(debug_travel_first_btn):
 		debug_travel_first_btn.grab_focus()
 
 
@@ -211,6 +215,10 @@ func _process(delta: float) -> void:
 			var joy_y = Input.get_axis("ui_look_up", "ui_look_down")
 			if abs(joy_y) > 0.1:
 				debug_events_scroll.scroll_vertical += int(joy_y * 600 * delta)
+		elif tab_container.current_tab == 4 and is_instance_valid(debug_itens_scroll):
+			var joy_y = Input.get_axis("ui_look_up", "ui_look_down")
+			if abs(joy_y) > 0.1:
+				debug_itens_scroll.scroll_vertical += int(joy_y * 600 * delta)
 
 func _get_active_spin_or_slider() -> Dictionary:
 	var focus_owner = get_viewport().gui_get_focus_owner() if get_viewport() else null
@@ -305,7 +313,8 @@ func _update_tab_titles():
 	if tab_container.get_tab_count() > 1: tab_container.set_tab_title(1, tr("CONFIG_TAB_CONTROLS"))
 	if tab_container.get_tab_count() > 2: tab_container.set_tab_title(2, tr("CONFIG_TAB_VIDEO"))
 	if tab_container.get_tab_count() > 3: tab_container.set_tab_title(3, tr("CONFIG_TAB_DEBUG"))
-	if tab_container.get_tab_count() > 4: tab_container.set_tab_title(4, tr("CONFIG_TAB_DEBUG_TRAVEL"))
+	if tab_container.get_tab_count() > 4: tab_container.set_tab_title(4, tr("CONFIG_TAB_DEBUG_ITENS"))
+	if tab_container.get_tab_count() > 5: tab_container.set_tab_title(5, tr("CONFIG_TAB_DEBUG_TRAVEL"))
 
 
 func _build_gameplay_tab():
@@ -646,35 +655,19 @@ func _update_cel_shading_ui() -> void:
 func _build_debug_tab():
 	tab_debug = MarginContainer.new()
 	tab_debug.name = "Debug"
-	tab_debug.add_theme_constant_override("margin_left", 30)
-	tab_debug.add_theme_constant_override("margin_right", 30)
-	tab_debug.add_theme_constant_override("margin_top", 20)
-	tab_debug.add_theme_constant_override("margin_bottom", 20)
+	_margem_debug(tab_debug)
+	var vbox := _rolagem_debug(tab_debug)
+	debug_events_scroll = vbox.get_parent() as ScrollContainer
 
-	var scroll = ScrollContainer.new()
-	scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	scroll.follow_focus = true
-	debug_events_scroll = scroll
-	tab_debug.add_child(scroll)
-
-	var vbox = VBoxContainer.new()
-	vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	vbox.add_theme_constant_override("separation", 14)
-	scroll.add_child(vbox)
-
-	# --- Batalha / Testes ---
-	var section_combat = Label.new()
-	section_combat.text = "--- " + tr("CONFIG_TAB_GAMEPLAY") + " / Status ---"
-	section_combat.add_theme_font_size_override("font_size", 22)
-	section_combat.add_theme_color_override("font_color", Color(1.0, 0.4, 0.4))
-	vbox.add_child(section_combat)
+	# --- Status do jogador (vale na hora, nao vai pro save) ---
+	_secao_debug(vbox, tr("DEBUG_SECAO_STATUS"))
 
 	debug_infinite_hp_check = CheckButton.new()
 	debug_infinite_hp_check.text = tr("CONFIG_DEBUG_INFINITE_HP")
 	debug_infinite_hp_check.add_theme_font_size_override("font_size", 18)
 	debug_infinite_hp_check.button_pressed = PlayerScript.is_infinite_health_debug()
 	debug_infinite_hp_check.toggled.connect(func(pressed): PlayerScript.set_infinite_health_debug(pressed))
+	_foco_debug(debug_infinite_hp_check)
 	vbox.add_child(debug_infinite_hp_check)
 
 	debug_infinite_stamina_check = CheckButton.new()
@@ -682,274 +675,244 @@ func _build_debug_tab():
 	debug_infinite_stamina_check.add_theme_font_size_override("font_size", 18)
 	debug_infinite_stamina_check.button_pressed = PlayerScript.is_infinite_stamina_debug()
 	debug_infinite_stamina_check.toggled.connect(func(pressed): PlayerScript.set_infinite_stamina_debug(pressed))
+	_foco_debug(debug_infinite_stamina_check)
 	vbox.add_child(debug_infinite_stamina_check)
 
-	# --- Eventos do Jogo e Save do Player (Slot 1) ---
-	var section_events = Label.new()
-	section_events.text = "--- " + tr("MENU_TAB_FILES") + " / Eventos do Save (Slot 1) ---"
-	section_events.add_theme_font_size_override("font_size", 22)
-	section_events.add_theme_color_override("font_color", Color(1.0, 0.4, 0.4))
-	vbox.add_child(section_events)
+	# --- Eventos da historia, por capitulo (Slot 1) ---
+	# Ligar um evento liga tudo o que ele exige; desligar desliga tudo o que
+	# depende dele (ver scripts/systems/eventos_historia.gd).
+	var dica := Label.new()
+	dica.text = tr("DEBUG_DICA_DEPENDENCIA")
+	dica.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	dica.add_theme_font_size_override("font_size", 15)
+	dica.add_theme_color_override("font_color", Color(0.75, 0.75, 0.75))
+	vbox.add_child(dica)
 
-	# Eventos de História e Progressão
-	_add_event_checkbox(vbox, "prolog_finished", tr("DEBUG_EVENT_PROLOG_FINISHED"), SaveManager.prolog_finished, func(val):
-		SaveManager.prolog_finished = val
-		_auto_save_debug()
-	)
-	_add_event_checkbox(vbox, "phone_answered", tr("DEBUG_EVENT_PHONE_ANSWERED"), SaveManager.tem_arquivo("telefonema_dona_nice"), func(val):
-		if val:
-			if not SaveManager.arquivos_desbloqueados.has("telefonema_dona_nice"):
-				SaveManager.arquivos_desbloqueados.append("telefonema_dona_nice")
-		else:
-			SaveManager.arquivos_desbloqueados.erase("telefonema_dona_nice")
-		if debug_event_checks.has("file_telefone"):
-			debug_event_checks["file_telefone"].set_pressed_no_signal(val)
-		_auto_save_debug()
-	)
-	_add_event_checkbox(vbox, "stage_1_intro_played", tr("DEBUG_EVENT_STAGE1_INTRO"), SaveManager.stage_1_intro_played, func(val):
-		SaveManager.stage_1_intro_played = val
-		_auto_save_debug()
-	)
-	_add_event_checkbox(vbox, "battlefield_1_intro_played", tr("DEBUG_EVENT_BATTLEFIELD1_INTRO"), SaveManager.battlefield_1_intro_played, func(val):
-		SaveManager.battlefield_1_intro_played = val
-		_auto_save_debug()
-	)
-	_add_event_checkbox(vbox, "tutorial_amuleto_visto", tr("DEBUG_EVENT_AMULETO_TUTORIAL"), SaveManager.tutorial_amuleto_visto, func(val):
-		SaveManager.tutorial_amuleto_visto = val
-		_auto_save_debug()
-	)
-	_add_event_checkbox(vbox, "escola_portao_destrancado", tr("DEBUG_EVENT_ESCOLA_PORTAO"), GlobalEvents.escola_portao_destrancado, func(val):
-		GlobalEvents.escola_portao_destrancado = val
-		_auto_save_debug()
-	)
-	# O evento da Dona Nice (igreja), por etapa: 0 nada, 1 luta fase 1, 2 luta
-	# fase 2, 3 o Jonny no chao da igreja, 4 no colo (hospital), 5 deixado la'.
-	var linha_dona_nice = HBoxContainer.new()
-	var rotulo_dona_nice = Label.new()
-	rotulo_dona_nice.text = tr("DEBUG_EVENT_DONA_NICE")
-	rotulo_dona_nice.add_theme_font_size_override("font_size", 18)
-	linha_dona_nice.add_child(rotulo_dona_nice)
-	var spin_dona_nice = SpinBox.new()
-	_setup_debug_spinbox(spin_dona_nice, 0, 5, SaveManager.evento_dona_nice)
-	spin_dona_nice.value_changed.connect(func(v):
-		SaveManager.evento_dona_nice = int(v)
-		_auto_save_debug()
-	)
-	linha_dona_nice.add_child(spin_dona_nice)
-	vbox.add_child(linha_dona_nice)
+	for cap in [Eventos.PROLOGO, Eventos.CAPITULO_1, Eventos.CAPITULO_2]:
+		_secao_debug(vbox, tr(Eventos.TITULOS_CAPITULO[cap]))
+		for id in Eventos.do_capitulo(cap):
+			var id_evento: String = id
+			_add_event_checkbox(vbox, "evt_" + id_evento, tr(Eventos.rotulo(id_evento)),
+				Eventos.feito(id_evento), func(val):
+					Eventos.forcar(id_evento, val)
+					_atualizar_checks_de_eventos()
+			)
+		if cap == Eventos.CAPITULO_2:
+			# O evento da Dona Nice (igreja), por etapa: 0 nada, 1 luta fase 1,
+			# 2 luta fase 2, 3 o Jonny no chao da igreja, 4 no colo, 5 deixado.
+			var etapa := _linha_quantidade(vbox, tr("DEBUG_EVENT_DONA_NICE"), 0, 5,
+				SaveManager.evento_dona_nice)
+			etapa.value_changed.connect(func(v):
+				SaveManager.evento_dona_nice = int(v)
+				_auto_save_debug()
+			)
 
-	# --- Armas e Itens Possuídos (Inventário) ---
-	var section_items = Label.new()
-	section_items.text = "--- Armas e Itens no Inventário ---"
-	section_items.add_theme_font_size_override("font_size", 20)
-	section_items.add_theme_color_override("font_color", Color(1.0, 0.4, 0.4))
-	vbox.add_child(section_items)
+	tab_container.add_child(tab_debug)
 
-	_add_event_checkbox(vbox, "item_watch", tr("DEBUG_ITEM_WATCH"), SaveManager.tem_item("maycow_watch"), func(val):
-		_debug_set_item("maycow_watch", val, 1)
-	)
-	_add_event_checkbox(vbox, "item_amuleto", tr("DEBUG_ITEM_AMULETO"), SaveManager.tem_item("amuleto"), func(val):
-		_debug_set_item("amuleto", val, 1)
-	)
-	_add_event_checkbox(vbox, "item_lanterna", tr("DEBUG_ITEM_LANTERNA"), SaveManager.tem_item("lanterna"), func(val):
-		_debug_set_item("lanterna", val, 1)
-	)
-	_add_event_checkbox(vbox, "item_pistol", tr("DEBUG_ITEM_PISTOL"), SaveManager.tem_item("pistol"), func(val):
-		_debug_set_item("pistol", val, 1)
-	)
-	_add_event_checkbox(vbox, "item_shotgun", tr("DEBUG_ITEM_SHOTGUN"), SaveManager.tem_item("shotgun"), func(val):
-		_debug_set_item("shotgun", val, 1)
-	)
-	_add_event_checkbox(vbox, "item_mk3", tr("DEBUG_ITEM_MK3"), SaveManager.tem_item("mk3"), func(val):
-		_debug_set_item("mk3", val, 1)
-	)
-	_add_event_checkbox(vbox, "item_granola", tr("DEBUG_ITEM_GRANOLA"), SaveManager.tem_item("granola"), func(val):
-		_debug_set_item("granola", val, 1)
-	)
-	_add_event_checkbox(vbox, "item_cogblade", tr("DEBUG_ITEM_COGBLADE"), SaveManager.tem_item("cogblade"), func(val):
-		_debug_set_item("cogblade", val, 1)
-	)
-	_add_event_checkbox(vbox, "item_chave_igreja", tr("DEBUG_ITEM_CHAVE_IGREJA"), SaveManager.tem_item("chave_igreja"), func(val):
-		_debug_set_item("chave_igreja", val, 1)
-	)
-	_add_event_checkbox(vbox, "item_seringa", tr("DEBUG_ITEM_SERINGA"), SaveManager.tem_item("seringa_adrenalina"), func(val):
-		_debug_set_item("seringa_adrenalina", val, 1)
-	)
-	_add_event_checkbox(vbox, "item_seringa_magia", tr("DEBUG_ITEM_SERINGA_MAGIA"), SaveManager.tem_item("seringa_magia"), func(val):
-		_debug_set_item("seringa_magia", val, 1)
-	)
-	_add_event_checkbox(vbox, "igreja_destrancada", tr("DEBUG_EVENT_IGREJA_DESTRANCADA"), SaveManager.igreja_destrancada, func(val):
-		SaveManager.igreja_destrancada = val
-		SaveManager.save_game()
-	)
 
-	# Arquivos desbloqueados
-	var section_files = Label.new()
-	section_files.text = "--- Arquivos Desbloqueados ---"
-	section_files.add_theme_font_size_override("font_size", 18)
-	section_files.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
-	vbox.add_child(section_files)
+## Depois de um `Eventos.forcar` outros eventos podem ter mudado junto
+## (dependencias e dependentes): todas as caixinhas releem o estado.
+func _atualizar_checks_de_eventos() -> void:
+	for e in Eventos.CATALOGO:
+		var chave := "evt_" + String(e["id"])
+		if debug_event_checks.has(chave):
+			debug_event_checks[chave].set_pressed_no_signal(Eventos.feito(String(e["id"])))
+	# o telefonema tambem e' um arquivo: a aba de itens acompanha
+	if debug_event_checks.has("file_telefone"):
+		debug_event_checks["file_telefone"].set_pressed_no_signal(SaveManager.tem_arquivo("telefonema_dona_nice"))
 
-	_add_event_checkbox(vbox, "file_apos_trabalho", tr("DEBUG_EVENT_FILE_APOS_TRABALHO"), SaveManager.arquivos_desbloqueados.has("apos_um_dia_de_trabalho"), func(val):
-		_debug_set_array_entry(SaveManager.arquivos_desbloqueados, "apos_um_dia_de_trabalho", val)
-	)
-	_add_event_checkbox(vbox, "file_telefone", tr("DEBUG_EVENT_FILE_TELEFONE"), SaveManager.arquivos_desbloqueados.has("telefonema_dona_nice"), func(val):
-		_debug_set_array_entry(SaveManager.arquivos_desbloqueados, "telefonema_dona_nice", val)
-		if debug_event_checks.has("phone_answered"):
-			debug_event_checks["phone_answered"].set_pressed_no_signal(val)
-	)
-	_add_event_checkbox(vbox, "file_caderno", tr("DEBUG_EVENT_FILE_CADERNO"), SaveManager.arquivos_desbloqueados.has("caderno_do_jimmy"), func(val):
-		_debug_set_array_entry(SaveManager.arquivos_desbloqueados, "caderno_do_jimmy", val)
-	)
 
-	# Pickups do cenário
-	var section_pickups = Label.new()
-	section_pickups.text = "--- Pickups do Cenário Recolhidos ---"
-	section_pickups.add_theme_font_size_override("font_size", 18)
-	section_pickups.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
-	vbox.add_child(section_pickups)
+## Itens, pickups, arquivos e quantidades — o que fica no menu do jogador —,
+## separados pelo capitulo em que aparecem.
+const DEBUG_ITENS_POR_CAPITULO := {
+	0: [["maycow_watch", "DEBUG_ITEM_WATCH"], ["cogblade", "DEBUG_ITEM_COGBLADE"]],
+	1: [["amuleto", "DEBUG_ITEM_AMULETO"], ["lanterna", "DEBUG_ITEM_LANTERNA"],
+		["pistol", "DEBUG_ITEM_PISTOL"]],
+	2: [["chave_igreja", "DEBUG_ITEM_CHAVE_IGREJA"],
+		["shotgun", "DEBUG_ITEM_SHOTGUN"], ["mk3", "DEBUG_ITEM_MK3"],
+		["granola", "DEBUG_ITEM_GRANOLA"]],
+}
+const DEBUG_ARQUIVOS_POR_CAPITULO := {
+	0: [["file_apos_trabalho", "DEBUG_EVENT_FILE_APOS_TRABALHO", "apos_um_dia_de_trabalho"],
+		["file_telefone", "DEBUG_EVENT_FILE_TELEFONE", "telefonema_dona_nice"]],
+	1: [["file_caderno", "DEBUG_EVENT_FILE_CADERNO", "caderno_do_jimmy"],
+		["file_diario", "DEBUG_EVENT_FILE_DIARIO", "diario_do_jimmy"]],
+}
+## [chave do checkbox, rotulo, id do pickup no save, (sala, se o rotulo for
+## o generico "Municao (%s)")]
+const DEBUG_PICKUPS_POR_CAPITULO := {
+	1: [["pickup_pistol", "DEBUG_EVENT_PICKUP_PISTOL", "casa_jimmy_pistola_gaveta"],
+		["pickup_jimmy_ammo", "DEBUG_EVENT_PICKUP_JIMMY_AMMO", "casa_jimmy_municao_gaveta"],
+		["pickup_esc_101", "DEBUG_PICKUP_MUNICAO_EM", "escola_municao_101", "ESC_SALA_101"],
+		["pickup_esc_secretaria", "DEBUG_PICKUP_MUNICAO_EM", "escola_municao_secretaria", "ESC_SALA_SECRETARIA"],
+		["pickup_esc_biblioteca", "DEBUG_PICKUP_MUNICAO_EM", "escola_municao_biblioteca", "ESC_SALA_BIBLIOTECA"],
+		["pickup_esc_106", "DEBUG_PICKUP_MUNICAO_EM", "escola_municao_106", "ESC_SALA_106"],
+		["pickup_por_1", "DEBUG_PICKUP_MUNICAO_EM", "porao_municao_1", "DEBUG_LOCAL_PORAO_BECO_1"],
+		["pickup_por_2", "DEBUG_PICKUP_MUNICAO_EM", "porao_municao_2", "MAP_POI_POR_CAMARA"],
+		["pickup_por_3", "DEBUG_PICKUP_MUNICAO_EM", "porao_municao_3", "DEBUG_LOCAL_PORAO_BECO_2"]],
+	2: [["pickup_nice_ammo1", "DEBUG_EVENT_PICKUP_NICE_AMMO1", "casa_nice_municao_cozinha"],
+		["pickup_nice_ammo2", "DEBUG_EVENT_PICKUP_NICE_AMMO2", "casa_nice_municao_quarto"],
+		["pickup_seringa_igreja", "DEBUG_EVENT_PICKUP_SERINGA_IGREJA", "igreja_seringa_galeria"],
+		["pickup_ammo1", "DEBUG_EVENT_PICKUP_AMMO1", "hospital_municao_no_balcao"],
+		["pickup_ammo2", "DEBUG_EVENT_PICKUP_AMMO2", "hospital_municao_no_balcao_2"],
+		["pickup_shotgun", "DEBUG_EVENT_PICKUP_SHOTGUN", "hospital_shotgun_no_balcao"],
+		["pickup_shotgun_ammo1", "DEBUG_EVENT_PICKUP_SHOTGUN_AMMO1", "hospital_shotgun_municao_no_balcao"],
+		["pickup_shotgun_ammo2", "DEBUG_EVENT_PICKUP_SHOTGUN_AMMO2", "hospital_shotgun_municao_no_balcao_2"],
+		["pickup_mk3", "DEBUG_EVENT_PICKUP_MK3", "hospital_mk3_no_balcao"],
+		["pickup_mk3_ammo1", "DEBUG_EVENT_PICKUP_MK3_AMMO1", "hospital_mk3_municao_no_balcao"],
+		["pickup_mk3_ammo2", "DEBUG_EVENT_PICKUP_MK3_AMMO2", "hospital_mk3_municao_no_balcao_2"],
+		["pickup_granola", "DEBUG_EVENT_PICKUP_GRANOLA", "hospital_granola_no_balcao"],
+		["pickup_granola_ammo1", "DEBUG_EVENT_PICKUP_GRANOLA_AMMO1", "hospital_granola_foguete_no_balcao"],
+		["pickup_granola_ammo2", "DEBUG_EVENT_PICKUP_GRANOLA_AMMO2", "hospital_granola_foguete_no_balcao_2"]],
+}
+## [rotulo, item] — quantidade no inventario.
+const DEBUG_QUANTIDADES_POR_CAPITULO := {
+	1: [["DEBUG_ITEM_PISTOL_AMMO", "pistol_ammo"]],
+	2: [["DEBUG_ITEM_SERINGA", "seringa_adrenalina"], ["DEBUG_ITEM_SERINGA_MAGIA", "seringa_magia"],
+		["DEBUG_ITEM_SHOTGUN_AMMO", "shotgun_ammo"], ["DEBUG_ITEM_MK3_AMMO", "mk3_ammo"],
+		["DEBUG_ITEM_GRANOLA_AMMO", "granola_ammo"]],
+}
 
-	_add_event_checkbox(vbox, "pickup_pistol", tr("DEBUG_EVENT_PICKUP_PISTOL"), SaveManager.pickups_pegos.has("casa_nice_pistola_altar"), func(val):
-		_debug_set_array_entry(SaveManager.pickups_pegos, "casa_nice_pistola_altar", val)
-	)
-	_add_event_checkbox(vbox, "pickup_ammo1", tr("DEBUG_EVENT_PICKUP_AMMO1"), SaveManager.pickups_pegos.has("hospital_municao_no_balcao"), func(val):
-		_debug_set_array_entry(SaveManager.pickups_pegos, "hospital_municao_no_balcao", val)
-	)
-	_add_event_checkbox(vbox, "pickup_ammo2", tr("DEBUG_EVENT_PICKUP_AMMO2"), SaveManager.pickups_pegos.has("hospital_municao_no_balcao_2"), func(val):
-		_debug_set_array_entry(SaveManager.pickups_pegos, "hospital_municao_no_balcao_2", val)
-	)
-	_add_event_checkbox(vbox, "pickup_shotgun", tr("DEBUG_EVENT_PICKUP_SHOTGUN"), SaveManager.pickups_pegos.has("hospital_shotgun_no_balcao"), func(val):
-		_debug_set_array_entry(SaveManager.pickups_pegos, "hospital_shotgun_no_balcao", val)
-	)
-	_add_event_checkbox(vbox, "pickup_shotgun_ammo1", tr("DEBUG_EVENT_PICKUP_SHOTGUN_AMMO1"), SaveManager.pickups_pegos.has("hospital_shotgun_municao_no_balcao"), func(val):
-		_debug_set_array_entry(SaveManager.pickups_pegos, "hospital_shotgun_municao_no_balcao", val)
-	)
-	_add_event_checkbox(vbox, "pickup_shotgun_ammo2", tr("DEBUG_EVENT_PICKUP_SHOTGUN_AMMO2"), SaveManager.pickups_pegos.has("hospital_shotgun_municao_no_balcao_2"), func(val):
-		_debug_set_array_entry(SaveManager.pickups_pegos, "hospital_shotgun_municao_no_balcao_2", val)
-	)
-	# A MK3 e a Granola no balcao, e as balas da casa da Dona Nice.
-	for pickup in [["pickup_mk3", "DEBUG_EVENT_PICKUP_MK3", "hospital_mk3_no_balcao"],
-			["pickup_mk3_ammo1", "DEBUG_EVENT_PICKUP_MK3_AMMO1", "hospital_mk3_municao_no_balcao"],
-			["pickup_mk3_ammo2", "DEBUG_EVENT_PICKUP_MK3_AMMO2", "hospital_mk3_municao_no_balcao_2"],
-			["pickup_granola", "DEBUG_EVENT_PICKUP_GRANOLA", "hospital_granola_no_balcao"],
-			["pickup_granola_ammo1", "DEBUG_EVENT_PICKUP_GRANOLA_AMMO1", "hospital_granola_foguete_no_balcao"],
-			["pickup_granola_ammo2", "DEBUG_EVENT_PICKUP_GRANOLA_AMMO2", "hospital_granola_foguete_no_balcao_2"],
-			["pickup_nice_ammo1", "DEBUG_EVENT_PICKUP_NICE_AMMO1", "casa_nice_municao_cozinha"],
-			["pickup_nice_ammo2", "DEBUG_EVENT_PICKUP_NICE_AMMO2", "casa_nice_municao_quarto"]]:
-		var id_pickup: String = pickup[2]
-		_add_event_checkbox(vbox, pickup[0], tr(pickup[1]), SaveManager.pickups_pegos.has(id_pickup), func(val):
-			_debug_set_array_entry(SaveManager.pickups_pegos, id_pickup, val)
-		)
 
-	# Recursos Numéricos e Munições
-	var section_numeric = Label.new()
-	section_numeric.text = "--- Recursos e Munições ---"
-	section_numeric.add_theme_font_size_override("font_size", 18)
-	section_numeric.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
-	vbox.add_child(section_numeric)
+func _build_debug_itens_tab() -> void:
+	tab_debug_itens = MarginContainer.new()
+	tab_debug_itens.name = "Debug Itens"
+	_margem_debug(tab_debug_itens)
+	var vbox := _rolagem_debug(tab_debug_itens)
+	debug_itens_scroll = vbox.get_parent() as ScrollContainer
+	debug_itens_first = null
 
-	# Iron Rusks
-	var hbox_rusks = HBoxContainer.new()
-	hbox_rusks.add_theme_constant_override("separation", 20)
-	var lbl_rusks = Label.new()
-	lbl_rusks.text = tr("DEBUG_EVENT_IRON_RUSKS")
-	lbl_rusks.add_theme_font_size_override("font_size", 18)
-	hbox_rusks.add_child(lbl_rusks)
-	debug_rusks_spin = SpinBox.new()
-	_setup_debug_spinbox(debug_rusks_spin, 0, 99999, SaveManager.iron_rusks)
+	var dica := Label.new()
+	dica.text = tr("DEBUG_DICA_QUANTIDADE")
+	dica.add_theme_font_size_override("font_size", 15)
+	dica.add_theme_color_override("font_color", Color(0.75, 0.75, 0.75))
+	vbox.add_child(dica)
+
+	for cap in [Eventos.PROLOGO, Eventos.CAPITULO_1, Eventos.CAPITULO_2]:
+		_secao_debug(vbox, tr(Eventos.TITULOS_CAPITULO[cap]))
+		for par in DEBUG_ITENS_POR_CAPITULO.get(cap, []):
+			var item_id: String = par[0]
+			_add_event_checkbox(vbox, "item_" + item_id, tr(par[1]), SaveManager.tem_item(item_id), func(val):
+				_debug_set_item(item_id, val, 1)
+			)
+		for arq in DEBUG_ARQUIVOS_POR_CAPITULO.get(cap, []):
+			var arq_id: String = arq[2]
+			_add_event_checkbox(vbox, arq[0], tr(arq[1]), SaveManager.tem_arquivo(arq_id), func(val):
+				_debug_set_array_entry(SaveManager.arquivos_desbloqueados, arq_id, val)
+				_atualizar_checks_de_eventos()
+			)
+		var pickups: Array = DEBUG_PICKUPS_POR_CAPITULO.get(cap, [])
+		if not pickups.is_empty():
+			_subsecao_debug(vbox, tr("DEBUG_SECAO_PICKUPS"))
+		for pk in pickups:
+			var pk_id: String = pk[2]
+			var texto: String = tr(pk[1]) % tr(pk[3]) if pk.size() > 3 else tr(pk[1])
+			_add_event_checkbox(vbox, pk[0], texto, SaveManager.pickups_pegos.has(pk_id), func(val):
+				_debug_set_array_entry(SaveManager.pickups_pegos, pk_id, val)
+			)
+		var quantidades: Array = DEBUG_QUANTIDADES_POR_CAPITULO.get(cap, [])
+		if not quantidades.is_empty():
+			_subsecao_debug(vbox, tr("DEBUG_SECAO_QUANTIDADES"))
+		for q in quantidades:
+			var q_item: String = q[1]
+			var linha := _linha_quantidade(vbox, tr(q[0]), 0, 999, _debug_get_item_amount(q_item))
+			linha.value_changed.connect(func(v):
+				_debug_set_item_amount(q_item, int(v))
+				if debug_event_checks.has("item_" + q_item):
+					debug_event_checks["item_" + q_item].set_pressed_no_signal(SaveManager.tem_item(q_item))
+			)
+
+	# --- Recursos (de qualquer capitulo) ---
+	_secao_debug(vbox, tr("DEBUG_SECAO_RECURSOS"))
+	debug_rusks_spin = _linha_quantidade(vbox, tr("DEBUG_EVENT_IRON_RUSKS"), 0, 99999, SaveManager.iron_rusks)
 	debug_rusks_spin.value_changed.connect(func(v):
 		SaveManager.iron_rusks = int(v)
 		SaveManager.iron_rusks_display = SaveManager.iron_rusks
 		_auto_save_debug()
 	)
-	hbox_rusks.add_child(debug_rusks_spin)
-	vbox.add_child(hbox_rusks)
-
-	# Max MP
-	var hbox_max_mp = HBoxContainer.new()
-	hbox_max_mp.add_theme_constant_override("separation", 20)
-	var lbl_max_mp = Label.new()
-	lbl_max_mp.text = tr("DEBUG_EVENT_MAX_MP")
-	lbl_max_mp.add_theme_font_size_override("font_size", 18)
-	hbox_max_mp.add_child(lbl_max_mp)
-	debug_max_mp_spin = SpinBox.new()
-	_setup_debug_spinbox(debug_max_mp_spin, 1, 100, SaveManager.max_mp)
+	debug_max_mp_spin = _linha_quantidade(vbox, tr("DEBUG_EVENT_MAX_MP"), 1, 100, SaveManager.max_mp)
 	debug_max_mp_spin.value_changed.connect(func(v):
 		SaveManager.max_mp = float(v)
 		_auto_save_debug()
 	)
-	hbox_max_mp.add_child(debug_max_mp_spin)
-	vbox.add_child(hbox_max_mp)
-
-	# Current MP
-	var hbox_curr_mp = HBoxContainer.new()
-	hbox_curr_mp.add_theme_constant_override("separation", 20)
-	var lbl_curr_mp = Label.new()
-	lbl_curr_mp.text = tr("DEBUG_EVENT_CURRENT_MP")
-	lbl_curr_mp.add_theme_font_size_override("font_size", 18)
-	hbox_curr_mp.add_child(lbl_curr_mp)
-	debug_curr_mp_spin = SpinBox.new()
-	_setup_debug_spinbox(debug_curr_mp_spin, 0, 100, SaveManager.current_mp)
+	debug_curr_mp_spin = _linha_quantidade(vbox, tr("DEBUG_EVENT_CURRENT_MP"), 0, 100, SaveManager.current_mp)
 	debug_curr_mp_spin.value_changed.connect(func(v):
 		SaveManager.current_mp = float(v)
 		_auto_save_debug()
 	)
-	hbox_curr_mp.add_child(debug_curr_mp_spin)
-	vbox.add_child(hbox_curr_mp)
 
-	# Munição Pistola
-	var hbox_ammo_p = HBoxContainer.new()
-	hbox_ammo_p.add_theme_constant_override("separation", 20)
-	var lbl_ammo_p = Label.new()
-	lbl_ammo_p.text = tr("DEBUG_ITEM_PISTOL_AMMO")
-	lbl_ammo_p.add_theme_font_size_override("font_size", 18)
-	hbox_ammo_p.add_child(lbl_ammo_p)
-	debug_ammo_pistol_spin = SpinBox.new()
-	_setup_debug_spinbox(debug_ammo_pistol_spin, 0, 999, _debug_get_item_amount("pistol_ammo"))
-	debug_ammo_pistol_spin.value_changed.connect(func(v):
-		_debug_set_item_amount("pistol_ammo", int(v))
-	)
-	hbox_ammo_p.add_child(debug_ammo_pistol_spin)
-	vbox.add_child(hbox_ammo_p)
-
-	# Munição Espingarda
-	var hbox_ammo_s = HBoxContainer.new()
-	hbox_ammo_s.add_theme_constant_override("separation", 20)
-	var lbl_ammo_s = Label.new()
-	lbl_ammo_s.text = tr("DEBUG_ITEM_SHOTGUN_AMMO")
-	lbl_ammo_s.add_theme_font_size_override("font_size", 18)
-	hbox_ammo_s.add_child(lbl_ammo_s)
-	debug_ammo_shotgun_spin = SpinBox.new()
-	_setup_debug_spinbox(debug_ammo_shotgun_spin, 0, 999, _debug_get_item_amount("shotgun_ammo"))
-	debug_ammo_shotgun_spin.value_changed.connect(func(v):
-		_debug_set_item_amount("shotgun_ammo", int(v))
-	)
-	hbox_ammo_s.add_child(debug_ammo_shotgun_spin)
-	vbox.add_child(hbox_ammo_s)
-
-	# Munição da MK3 e foguetes da Granola
-	debug_ammo_mk3_spin = _debug_spin_de_municao(vbox, "DEBUG_ITEM_MK3_AMMO", "mk3_ammo")
-	debug_ammo_granola_spin = _debug_spin_de_municao(vbox, "DEBUG_ITEM_GRANOLA_AMMO", "granola_ammo")
+	tab_container.add_child(tab_debug_itens)
 
 
-	tab_container.add_child(tab_debug)
+# --- pecas comuns das duas abas de debug ---------------------------------------
 
-## Uma linha "nome da munição + quantidade", igual às da pistola e da espingarda.
-func _debug_spin_de_municao(vbox: Node, chave: String, item: String) -> SpinBox:
-	var hbox = HBoxContainer.new()
-	hbox.add_theme_constant_override("separation", 20)
-	var lbl = Label.new()
-	lbl.text = tr(chave)
-	lbl.add_theme_font_size_override("font_size", 18)
-	hbox.add_child(lbl)
-	var spin = SpinBox.new()
-	_setup_debug_spinbox(spin, 0, 999, _debug_get_item_amount(item))
-	spin.value_changed.connect(func(v):
-		_debug_set_item_amount(item, int(v))
-	)
-	hbox.add_child(spin)
-	vbox.add_child(hbox)
-	return spin
+func _margem_debug(aba: MarginContainer) -> void:
+	aba.add_theme_constant_override("margin_left", 30)
+	aba.add_theme_constant_override("margin_right", 30)
+	aba.add_theme_constant_override("margin_top", 20)
+	aba.add_theme_constant_override("margin_bottom", 20)
+
+
+## ScrollContainer + VBox. O `follow_focus` e' o que faz a lista rolar sozinha
+## acompanhando o direcional.
+func _rolagem_debug(aba: Control) -> VBoxContainer:
+	var scroll = ScrollContainer.new()
+	scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	scroll.follow_focus = true
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	aba.add_child(scroll)
+	var vbox = VBoxContainer.new()
+	vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	vbox.add_theme_constant_override("separation", 10)
+	scroll.add_child(vbox)
+	return vbox
+
+
+func _secao_debug(vbox: Node, titulo: String) -> void:
+	var rotulo = Label.new()
+	rotulo.text = "--- " + titulo + " ---"
+	rotulo.add_theme_font_size_override("font_size", 22)
+	rotulo.add_theme_color_override("font_color", Color(1.0, 0.4, 0.4))
+	vbox.add_child(rotulo)
+
+
+func _subsecao_debug(vbox: Node, titulo: String) -> void:
+	var rotulo = Label.new()
+	rotulo.text = titulo
+	rotulo.add_theme_font_size_override("font_size", 17)
+	rotulo.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
+	vbox.add_child(rotulo)
+
+
+## A marca de "voce esta' aqui": fundo claro e borda vermelha. A do tema padrao
+## e' um contorno fino que some contra o fundo preto do menu.
+var _estilo_foco_debug: StyleBoxFlat
+
+func _foco_debug(controle: Control) -> void:
+	if _estilo_foco_debug == null:
+		_estilo_foco_debug = StyleBoxFlat.new()
+		_estilo_foco_debug.bg_color = Color(1.0, 0.35, 0.35, 0.16)
+		_estilo_foco_debug.border_color = Color(1.0, 0.4, 0.4)
+		_estilo_foco_debug.set_border_width_all(2)
+		_estilo_foco_debug.set_corner_radius_all(4)
+		_estilo_foco_debug.content_margin_left = 8
+		_estilo_foco_debug.content_margin_right = 8
+	controle.add_theme_stylebox_override("focus", _estilo_foco_debug)
+
+
+## Uma linha de quantidade (ver debug_quantidade.gd): navegavel com o
+## direcional e marcada quando esta' em foco.
+func _linha_quantidade(vbox: Node, texto: String, minimo: float, maximo: float, atual: float) -> Button:
+	var linha = DebugQuantidade.new()
+	linha.configurar(texto, minimo, maximo, atual)
+	linha.add_theme_font_size_override("font_size", 18)
+	linha.custom_minimum_size = Vector2(0, 38)
+	_foco_debug(linha)
+	vbox.add_child(linha)
+	if vbox.get_parent() == debug_itens_scroll and debug_itens_first == null:
+		debug_itens_first = linha
+	return linha
 
 
 func _add_event_checkbox(parent: Node, id: String, title: String, current_state: bool, on_toggled: Callable) -> void:
@@ -958,21 +921,11 @@ func _add_event_checkbox(parent: Node, id: String, title: String, current_state:
 	check.add_theme_font_size_override("font_size", 18)
 	check.button_pressed = current_state
 	check.toggled.connect(on_toggled)
+	_foco_debug(check)
 	parent.add_child(check)
 	debug_event_checks[id] = check
-
-func _setup_debug_spinbox(spin: SpinBox, min_v: float, max_v: float, cur_v: float) -> void:
-	spin.min_value = min_v
-	spin.max_value = max_v
-	spin.step = 1
-	spin.value = cur_v
-	spin.custom_minimum_size = Vector2(140, 36)
-	spin.focus_mode = Control.FOCUS_ALL
-	var le = spin.get_line_edit()
-	if is_instance_valid(le):
-		le.add_theme_font_size_override("font_size", 18)
-		le.focus_mode = Control.FOCUS_ALL
-		spin.mouse_entered.connect(func(): if is_instance_valid(le): le.grab_focus())
+	if parent.get_parent() == debug_itens_scroll and debug_itens_first == null:
+		debug_itens_first = check
 
 func _auto_save_debug() -> void:
 	SaveManager.current_slot = 1

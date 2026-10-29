@@ -32,6 +32,20 @@ extends Node3D
 
 const LAYER_CHAO := 2
 const ViagemPortal := preload("res://scripts/systems/viagem_portal.gd")
+const Municao := preload("res://scripts/stages/escola/municao_espalhada.gd")
+const CutsceneRedValve := preload("res://scripts/stages/escola/cutscene_red_valve.gd")
+
+## A câmara grande (x0, z0, x1, z1 — o `CAMARA` de `porao.py`, um palmo pra
+## dentro): no Capítulo 1, pisar nela pela primeira vez é a cutscene da red
+## valve.
+const CAMARA := Rect2(26.0, 37.5, 21.0, 15.0)
+## As balas do túnel: [id do save, (x, altura do raio, z), balas]. Duas no
+## fundo dos becos (quem explora acha) e uma na câmara. Pontos de `porao.py`.
+const MUNICAO_PORAO := [
+	["porao_municao_1", Vector3(45.0, 2.0, 8.6), 6],
+	["porao_municao_2", Vector3(40.0, 2.0, 50.0), 8],
+	["porao_municao_3", Vector3(67.5, 2.0, 52.6), 6],
+]
 const CENA_ESCOLA := "res://scenes/stages/escola/escola.tscn"
 const TEMPO_FADE := 2.0
 
@@ -58,6 +72,34 @@ func _ready() -> void:
 	SaveManager.save_game()
 	GlobalUtils.mostrar_objetivo(tr("OBJ_POR_ATRAVESSAR"))
 	_avisar_da_lanterna()
+	_preparar_red_valve()
+	Municao.espalhar(self, MUNICAO_PORAO)
+
+
+## A red valve da câmara. A primeira travessia do Capítulo 1 é a cutscene
+## (a porta fica muda até ela); daí em diante, e fora do prólogo, ela pergunta
+## antes de abrir.
+var _red_valve: Node3D = null
+var _cutscene_armada := false
+
+func _preparar_red_valve() -> void:
+	_red_valve = get_node_or_null("red_valve") as Node3D
+	if _red_valve == null:
+		return
+	if Eventos.pode(Eventos.CAP1_RED_VALVE):
+		_red_valve.set("bloqueada", true)
+		_cutscene_armada = true
+	elif Eventos.capitulo_atual() >= Eventos.CAPITULO_1:
+		_red_valve.set("com_prompt", true)
+
+
+func _entrou_na_camara() -> void:
+	_cutscene_armada = false
+	var c = CutsceneRedValve.new()
+	c.name = "cutscene_red_valve"
+	c.porta = _red_valve
+	add_child(c)
+	c.rodar(self, _jogador() as CharacterBody3D)
 
 
 func _conferir_colisao() -> void:
@@ -149,6 +191,10 @@ func usar_buraco(papel: String) -> void:
 
 
 func _process(delta: float) -> void:
+	if _cutscene_armada and not GlobalEvents.in_cutscene:
+		var j := _jogador()
+		if j and CAMARA.has_point(Vector2(j.global_position.x, j.global_position.z)):
+			_entrou_na_camara()
 	for lamp in _lampadas:
 		var luz: Light3D = lamp["luz"]
 		if not is_instance_valid(luz):

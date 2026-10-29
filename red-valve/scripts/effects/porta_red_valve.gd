@@ -25,6 +25,13 @@ const PortalVortice := preload("res://scripts/effects/portal_vortice.gd")
 ## A luz vermelha fechada: pouca, vazando pela fresta — no escuro do porão é
 ## ela que anuncia a porta de longe.
 @export var luz_fechada: float = 0.45
+## Com prompt: chegar perto só PERGUNTA ("Atravessar a Red Valve?") e o aceitar
+## abre. Sem, ela abre e puxa sozinha. A do porão passa a ter prompt depois da
+## primeira travessia do Capítulo 1 (ver `porao.gd`).
+@export var com_prompt: bool = false
+## Desligada de todo (nem abre, nem pergunta): a da primeira travessia do
+## Capítulo 1, que é a cutscene que abre.
+var bloqueada: bool = false
 
 @onready var _dobradica: Node3D = $dobradica
 @onready var _vortice: MeshInstance3D = $vortice
@@ -52,13 +59,45 @@ func _ready() -> void:
 
 
 func _physics_process(_delta: float) -> void:
-	if _ocupada or cena_destino == "" or GlobalEvents.in_cutscene:
+	if _ocupada or cena_destino == "" or GlobalEvents.in_cutscene or bloqueada:
+		_perguntar(false)
 		return
 	var player := get_tree().get_first_node_in_group("player") as CharacterBody3D
 	if player == null:
 		return
-	if _distancia(player) < raio_abrir:
+	var perto := _distancia(player) < raio_abrir
+	if com_prompt:
+		_perguntar(perto)
+		if perto and Input.is_action_just_pressed("ui_accept"):
+			_perguntar(false)
+			_abrir_e_sugar(player)
+		return
+	if perto:
 		_abrir_e_sugar(player)
+
+
+var _perguntando := false
+
+func _perguntar(sim: bool) -> void:
+	if sim == _perguntando:
+		return
+	_perguntando = sim
+	if sim:
+		GlobalUtils.show_center_message("red_valve_" + name, tr("PROMPT_ATRAVESSAR_RED_VALVE"), 16)
+	else:
+		GlobalUtils.hide_center_message("red_valve_" + name)
+
+
+## A cutscene da primeira travessia abre a porta e cuida da viagem ela mesma.
+func abrir_sem_sugar() -> void:
+	_ocupada = true
+	_portal.ventar(true)
+	await _abrir(0.9)
+
+
+## O ponto do redemoinho atrás da porta (pra onde a câmera é puxada).
+func centro_do_vortice() -> Vector3:
+	return _vortice.global_position
 
 
 func _abrir_e_sugar(player: CharacterBody3D) -> void:

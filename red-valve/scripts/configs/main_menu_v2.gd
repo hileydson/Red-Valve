@@ -249,29 +249,18 @@ func _ready() -> void:
 	# não pode deixar cena/HUD/sangue do jogo pendurados na árvore.
 	GlobalUtils.cleanup_gameplay_leftovers()
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-	load_btn.grab_focus()
 	
-	# Verifica se há saves para o botão de load e configura
+	# Uma opção só: sem save nenhum aparece "Novo Jogo"; com algum save aparece
+	# só "Carregar", e os slots vazios lá dentro viram "Novo Jogo".
 	var slots = SaveManager.get_slots_info()
-	var has_any_save = false
-	var has_empty_slot = false
+	_atualizar_botoes_principais()
 	# O braço em chamas é o Maycow parasita: só faz sentido no menu depois que o
 	# jogador viu isso acontecer. Enquanto todos os saves estiverem no prólogo
 	# (ou não houver save nenhum), a mão fica limpa.
 	var has_save_pos_prologo = false
 	for slot in slots:
-		if not slot["empty"]:
-			has_any_save = true
-			if slot["chapter"] == "TXT_CHAPTER_1":
-				has_save_pos_prologo = true
-		else:
-			has_empty_slot = true
-			
-	if not has_any_save:
-		load_btn.disabled = true
-		new_game.grab_focus()
-	if not has_empty_slot:
-		new_game.disabled = true
+		if not slot["empty"] and slot["chapter"] != "TXT_PROLOGUE":
+			has_save_pos_prologo = true
 	
 	var ashen_target = ashen.volume_db
 	ashen.volume_db = -80.0
@@ -343,12 +332,20 @@ func _ready() -> void:
 	# (pra travar navegação durante a intro), então o load_btn.grab_focus() lá
 	# em cima nunca sobrevivia até aqui: o menu abria sem nada selecionado e o
 	# controle não tinha de onde navegar. Foca de novo agora que já destravou.
-	if is_instance_valid(load_btn) and not load_btn.disabled:
-		load_btn.grab_focus()
-	elif is_instance_valid(new_game) and not new_game.disabled:
-		new_game.grab_focus()
+	_atualizar_botoes_principais().grab_focus()
 
-func _show_slots_menu(is_new_game: bool) -> void:
+## Mostra "Novo Jogo" OU "Carregar" (nunca os dois) e devolve o que ficou à vista.
+func _atualizar_botoes_principais() -> Button:
+	var tem_save := false
+	for slot in SaveManager.get_slots_info():
+		if not slot["empty"]:
+			tem_save = true
+			break
+	new_game.visible = not tem_save
+	load_btn.visible = tem_save
+	return load_btn if tem_save else new_game
+
+func _show_slots_menu() -> void:
 	GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/selecionar_item.mp3")
 	$UI/Control.visible = false
 	
@@ -370,7 +367,7 @@ func _show_slots_menu(is_new_game: bool) -> void:
 	panel.add_child(vbox)
 	
 	var title = Label.new()
-	title.text = tr("UI_SELECT_SAVE_SLOT") if is_new_game else tr("BTN_LOAD_GAME")
+	title.text = tr("BTN_LOAD_GAME") if load_btn.visible else tr("UI_SELECT_SAVE_SLOT")
 	title.add_theme_font_size_override("font_size", 48)
 	title.add_theme_color_override("font_color", Color(1, 0, 0, 1))
 	vbox.add_child(title)
@@ -385,14 +382,13 @@ func _show_slots_menu(is_new_game: bool) -> void:
 		
 		btn.set_meta("slot_idx", slot_idx)
 		btn.set_meta("is_empty", is_empty)
-		btn.set_meta("is_new_game", is_new_game)
 		
 		btn.custom_minimum_size = Vector2(400, 80)
 		
 		if is_empty:
-			btn.text = tr("UI_SLOT") + " " + str(slot_idx) + " - [ " + tr("UI_EMPTY") + " ]"
+			btn.text = tr("UI_SLOT") + " " + str(slot_idx) + " - [ " + tr("BTN_NEW_GAME") + " ]"
 		else:
-			btn.text = tr("UI_SLOT") + " " + str(slot_idx) + " - " + tr(slot_info["chapter"])
+			btn.text = tr("UI_SLOT") + " " + str(slot_idx) + " - " + _resumo_do_save(slot_info)
 			
 		var style_normal = StyleBoxEmpty.new()
 		var style_focus = StyleBoxFlat.new()
@@ -414,13 +410,11 @@ func _show_slots_menu(is_new_game: bool) -> void:
 		
 		btn.add_theme_font_size_override("font_size", 22)
 		
-		if is_new_game and not is_empty:
-			btn.disabled = true
-		elif not is_new_game and is_empty:
-			btn.disabled = true
-		else:
-			if not first_focusable:
-				first_focusable = btn
+		# O foco abre no primeiro save; sem save nenhum, no primeiro slot.
+		if not is_empty and (not first_focusable or first_focusable.get_meta("is_empty")):
+			first_focusable = btn
+		elif not first_focusable:
+			first_focusable = btn
 				
 		btn.focus_entered.connect(func():
 			GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/mudar_selecao.mp3")
@@ -433,8 +427,9 @@ func _show_slots_menu(is_new_game: bool) -> void:
 		
 		btn.pressed.connect(func():
 			if input_locked: return
-			if is_new_game:
-				_on_slot_selected(slot_idx, is_new_game)
+			# Slot vazio começa um jogo novo nele; com save abre carregar/apagar.
+			if is_empty:
+				_on_slot_selected(slot_idx, true)
 			else:
 				_show_slot_action_menu(slot_idx, btn)
 		)
@@ -455,10 +450,8 @@ func _show_slots_menu(is_new_game: bool) -> void:
 		if slots_panel == panel:
 			slots_panel = null
 		$UI/Control.visible = true
-		if is_new_game:
-			new_game.grab_focus()
-		else:
-			load_btn.grab_focus()
+		# Apagar o último save dentro do painel devolve o menu ao "Novo Jogo".
+		_atualizar_botoes_principais().grab_focus()
 	)
 	vbox.add_child(back_btn)
 	
@@ -466,6 +459,19 @@ func _show_slots_menu(is_new_game: bool) -> void:
 		first_focusable.grab_focus()
 	else:
 		back_btn.grab_focus()
+
+## Capítulo (com o subtítulo, se houver), e na segunda linha o local e os Iron Rusks.
+func _resumo_do_save(slot_info: Dictionary) -> String:
+	var capitulo: String = slot_info["chapter"]
+	var linha_1 := tr(capitulo)
+	var subtitulo := capitulo + "_SUBTITULO"
+	if tr(subtitulo) != subtitulo:
+		linha_1 += " · " + tr(subtitulo)
+	var detalhes: Array[String] = []
+	if slot_info["local"] != "":
+		detalhes.append(tr(slot_info["local"]))
+	detalhes.append(tr("SAVE_IRON_RUSKS") % slot_info["iron_rusks"])
+	return linha_1 + "\n" + " · ".join(detalhes)
 
 func _lock_all_inputs() -> void:
 	input_locked = true
@@ -504,11 +510,12 @@ func _on_slot_selected(slot_id: int, is_new_game: bool) -> void:
 
 func _on_load_pressed() -> void:
 	if input_locked: return
-	_show_slots_menu(false)
+	_show_slots_menu()
 
+## Só aparece sem save nenhum: abre os slots (todos "Novo Jogo") pro jogador escolher.
 func _on_start_pressed() -> void:
 	if input_locked: return
-	_show_slots_menu(true)
+	_show_slots_menu()
 
 func _on_config_pressed() -> void:
 	if input_locked: return
@@ -667,12 +674,12 @@ func _show_slot_action_menu(slot_idx: int, trigger_btn: Button) -> void:
 	btn_delete.pressed.connect(func():
 		if input_locked: return
 		menu.queue_free()
-		_show_delete_prompt(slot_idx, false, trigger_btn)
+		_show_delete_prompt(slot_idx, trigger_btn)
 	)
 	
 	btn_load.grab_focus()
 
-func _show_delete_prompt(slot_idx: int, is_new_game: bool, trigger_btn: Button) -> void:
+func _show_delete_prompt(slot_idx: int, trigger_btn: Button) -> void:
 	GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/selecionar_item.mp3")
 	if not is_instance_valid(slots_panel):
 		return
@@ -744,7 +751,7 @@ func _show_delete_prompt(slot_idx: int, is_new_game: bool, trigger_btn: Button) 
 		prompt.queue_free()
 		# _show_slots_menu() ja descarta o painel antigo e assume o novo; fechar
 		# aqui tambem deixava dois "SlotsPanel" vivos no mesmo quadro.
-		_show_slots_menu(is_new_game)
+		_show_slots_menu()
 	)
 	
 	btn_no.grab_focus()

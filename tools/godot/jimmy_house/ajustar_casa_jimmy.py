@@ -66,6 +66,8 @@ MOVER = {
     # q3: caixa e cadeira caída abriam só uma fresta entre a cama e o armário
     'caixa_q3': (13.55, 0.0, 12.4, None),
     'cadeira_caida_q3': (13.35, 0.33, 13.55, None),
+    # o criado-mudo do q3 (a gaveta com a pistola do Jimmy) flutuava a 25 cm
+    'criado_mudo_q3': (10.25, 0.0, 10.95, None),
     # banheiro: o cesto fechava o caminho até o vaso
     'cesto_banheiro': (19.5, 0.0, 14.45, None),
 }

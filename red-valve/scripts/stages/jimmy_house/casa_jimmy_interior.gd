@@ -8,6 +8,8 @@ extends Node3D
 ## disso é GlobalEvents.voltando_da_casa_jimmy, lido pelo stage_1 no spawn.
 
 const CENA_MAPA := "res://scenes/stages/stage_1/stage_1.tscn"
+const DiarioJimmy := preload("res://scripts/stages/jimmy_house/diario_jimmy.gd")
+const GavetaPistola := preload("res://scripts/stages/jimmy_house/gaveta_pistola.gd")
 
 @onready var fade: ColorRect = $fade
 
@@ -29,6 +31,34 @@ func _ready() -> void:
 	SaveManager.save_game()
 
 	_preparar_lampadas()
+	_preparar_diario()
+	_preparar_gaveta()
+
+
+## O diário do Jimmy na mesa de jantar: a pista do Capítulo 1 que manda o
+## Maycow para a escola. Some depois de lido (ver `diario_jimmy.gd`).
+func _preparar_diario() -> void:
+	if Eventos.capitulo_atual() != Eventos.CAPITULO_1 or Eventos.feito(Eventos.CAP1_DIARIO_JIMMY):
+		return
+	var mesa := get_node_or_null("mobilia/mesa_jantar") as Node3D
+	if mesa == null:
+		return
+	var diario = DiarioJimmy.new()
+	diario.name = "diario_jimmy"
+	add_child(diario)
+	diario.pousar_em(mesa)
+	GlobalUtils.mostrar_objetivo(tr("OBJ_CAP1_PROCURAR_PISTA"), 30.0)
+
+
+## A pistola do Jimmy, na gaveta do criado-mudo do quarto dele (q3).
+func _preparar_gaveta() -> void:
+	var movel := get_node_or_null("mobilia/criado_mudo_q3") as Node3D
+	if movel == null:
+		return
+	var gaveta = GavetaPistola.new()
+	gaveta.name = "gaveta_pistola"
+	add_child(gaveta)
+	gaveta.instalar(movel)
 
 
 func _preparar_lampadas() -> void:

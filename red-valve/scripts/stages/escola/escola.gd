@@ -31,6 +31,8 @@ const MODELO_LANTERNA := "res://assets/3d_model/player/lanterna/lanterna.glb"
 ## A selecao da lanterna (realce, prompt e sons), a mesma de todo item de
 ## cenario. Ver `item_selecionavel.gd`.
 const ItemSelecionavel := preload("res://scripts/stages/hospital/item_selecionavel.gd")
+## O Capítulo 1 aqui dentro (a escola clara, a quadra, o Grizzolito, a prisão).
+const Capitulo1Escola := preload("res://scripts/stages/escola/capitulo_1_escola.gd")
 
 ## Quanto tempo o fade leva antes da troca de cena. O mesmo do hospital e da
 ## igreja, para a transição entre os prédios da cidade ter um ritmo só.
@@ -42,6 +44,10 @@ const TEMPO_FADE := 2.0
 ## tremor oscila em torno dela, senão a fluorescente do corredor e o refletor
 ## da quadra acabariam na mesma intensidade.
 var _lampadas: Array[Dictionary] = []
+
+## Desligado na escola CLARA do Capítulo 1 (fim de expediente, tudo aceso): as
+## lâmpadas ficam firmes. A transformação da quadra religa.
+var piscar_lampadas: bool = true
 
 ## Trava a troca de cena: o fade dura dois segundos, e sem isto cada aperto no
 ## botão durante esses dois segundos empilha mais uma troca.
@@ -68,7 +74,12 @@ func _ready() -> void:
 	# Jimmy, à igreja e ao hospital.
 	SaveManager.save_game()
 
-	GlobalUtils.mostrar_objetivo(tr("OBJ_ESC_EXPLORAR"))
+	var capitulo_1 = Capitulo1Escola.new()
+	capitulo_1.name = "capitulo_1"
+	add_child(capitulo_1)
+	capitulo_1.iniciar(self)
+	if not capitulo_1.cuida_do_objetivo():
+		GlobalUtils.mostrar_objetivo(tr("OBJ_ESC_EXPLORAR"))
 
 
 ## Varre a cena atrás de corpo estático fora da layer do chão. Barato, roda uma
@@ -173,6 +184,11 @@ func sair_da_escola() -> void:
 	_saindo = true
 	GlobalEvents.in_cutscene = true
 	GlobalEvents.voltando_da_escola = true
+	# Saiu depois de destrancar o portão do pátio: acabou o Capítulo 1. A
+	# stage_1 mostra o "CAPÍTULO 2" na chegada.
+	if Eventos.pode(Eventos.CAP1_CONCLUIDO):
+		Eventos.concluir(Eventos.CAP1_CONCLUIDO)
+		GlobalEvents.entering_chapter_2 = true
 	GlobalUtils.esconder_objetivo()
 	fade.fade_out()
 	await get_tree().create_timer(TEMPO_FADE).timeout
@@ -272,6 +288,8 @@ func _pegar_lanterna() -> void:
 ## sincronizadas, as lâmpadas de um corredor piscam como pisca-pisca de natal
 ## em vez de um corredor de escola quebrado.
 func _atualizar_lampadas(delta: float) -> void:
+	if not piscar_lampadas:
+		return
 	for lamp in _lampadas:
 		var luz: Light3D = lamp["luz"]
 		if not is_instance_valid(luz):

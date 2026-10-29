@@ -122,7 +122,7 @@ LOADING_TEXT_5,The Negotiator (V2): The evolution of firepower.,The Negotiator (
 CONFIG_TAB_GAMEPLAY,Gameplay,Gameplay
 CONFIG_TAB_CONTROLS,Controls,Controles
 CONFIG_TAB_VIDEO,Video,Vídeo
-CONFIG_TAB_DEBUG,Debug,Debug
+CONFIG_TAB_DEBUG,Debug Events,Debug Eventos
 CONFIG_DEBUG_INFINITE_HP,Infinite HP,Vida infinita
 CONFIG_DEBUG_INFINITE_STAMINA,Infinite stamina,Estamina infinita
 CONFIG_RUN_MODE,Run Mode,Modo de Corrida
@@ -429,11 +429,11 @@ DEBUG_EVENT_PROLOG_FINISHED,Prologue Finished (Cap. 1),Prólogo Finalizado (Cap.
 DEBUG_EVENT_STAGE1_INTRO,Stage 1 Intro Played,Intro da Stage 1 Reproduzida
 DEBUG_EVENT_BATTLEFIELD1_INTRO,Battlefield 1 Intro Played,Intro da Battlefield 1 Reproduzida
 DEBUG_EVENT_AMULETO_TUTORIAL,Amulet Tutorial Seen,Tutorial do Amuleto Visto
-DEBUG_EVENT_ESCOLA_PORTAO,School Gate Unbolted,Portão da Escola Destrancado
+DEBUG_EVENT_ESCOLA_PORTAO,School: courtyard gate unbolted (from inside),Escola: portão do pátio destrancado (por dentro)
 DEBUG_EVENT_FILE_APOS_TRABALHO,File: After a Day of Work,Arquivo: Após um Dia de Trabalho
 DEBUG_EVENT_FILE_TELEFONE,File: Nice's Phone Call,Arquivo: Telefonema Dona Nice
 DEBUG_EVENT_FILE_CADERNO,File: Jimmy's Notebook,Arquivo: Caderno do Jimmy
-DEBUG_EVENT_PICKUP_PISTOL,Pickup: Pistol on Dona Nice's Altar,Pickup: Pistola no Altar da Dona Nice
+DEBUG_EVENT_PICKUP_PISTOL,Pickup: Pistol in Jimmy's Drawer,Pickup: Pistola na Gaveta do Jimmy
 DEBUG_EVENT_PICKUP_AMMO1,Pickup: Pistol Ammo 1,Pickup: Munição Pistola 1
 DEBUG_EVENT_PICKUP_AMMO2,Pickup: Pistol Ammo 2,Pickup: Munição Pistola 2
 DEBUG_EVENT_PICKUP_SHOTGUN,Pickup: Shotgun on Counter,Pickup: Espingarda no Balcão
@@ -497,3 +497,93 @@ DEBUG_ITEM_CHAVE_IGREJA,Church Key,Chave da Igreja
 DEBUG_ITEM_SERINGA,Adrenaline Syringe,Seringa de Adrenalina
 DEBUG_ITEM_SERINGA_MAGIA,Magic Syringe,Seringa de Magia
 DEBUG_EVENT_IGREJA_DESTRANCADA,Church unlocked,Igreja destrancada
+CONFIG_TAB_DEBUG_ITENS,Debug Items,Debug Itens
+DEBUG_SECAO_STATUS,Player status,Status do jogador
+DEBUG_SECAO_PICKUPS,Items picked up in the world,Itens recolhidos no cenário
+DEBUG_SECAO_QUANTIDADES,Amounts,Quantidades
+DEBUG_SECAO_RECURSOS,Resources,Recursos
+DEBUG_DICA_DEPENDENCIA,Turning an event on also turns on everything it requires; turning it off also turns off everything that depends on it.,Ligar um evento liga tudo o que ele exige antes; desligar desliga tudo o que depende dele.
+DEBUG_DICA_QUANTIDADE,◀ ▶ changes the amount (hold to speed up),◀ ▶ muda a quantidade (segure para acelerar)
+DEBUG_EVENT_FILE_DIARIO,File: Jimmy's Diary,Arquivo: Diário do Jimmy
+DEBUG_EVENT_PICKUP_SERINGA_IGREJA,Pickup: Syringe (Church Gallery),Pickup: Seringa (Galeria da Igreja)
+DEBUG_PICKUP_MUNICAO_EM,Pickup: Ammo (%s),Pickup: Munição (%s)
+DEBUG_LOCAL_PORAO_BECO_1,"Basement, dead end 1","Porão, beco 1"
+DEBUG_LOCAL_PORAO_BECO_2,"Basement, dead end 2","Porão, beco 2"
+DEBUG_EVT_CAP1_DIARIO,Jimmy's house: diary read,Casa do Jimmy: diário lido
+DEBUG_EVT_CAP1_ADULTOS,School: arrival (adults cutscene),Escola: chegada (cutscene dos adultos)
+DEBUG_EVT_CAP1_FALOU_JONNY,School: the teacher said Ms. Nice took Jonny,Escola: a professora contou que a Dona Nice levou o Jonny
+DEBUG_EVT_CAP1_TRANSFORMADA,School: Ms. Nice's lightning (school turns dark),Escola: o raio da Dona Nice (escola escura)
+DEBUG_EVT_CAP1_GRIZZOLITO,Grizzolito defeated in the arena,Grizzolito derrotado na arena
+DEBUG_EVT_CAP1_PRESA,School: the street gate shut (trapped),Escola: o portão da rua fechou (preso)
+DEBUG_EVT_CAP1_RED_VALVE,Basement: first Red Valve crossing,Porão: primeira travessia da Red Valve
+DEBUG_EVT_CAP1_INFERNO_4,Hell 4: reached the limit (end portal),Inferno 4: chegou ao limite (portal do fim)
+DEBUG_EVT_CAP1_CONCLUIDO,Chapter 1 finished (left the school),Capítulo 1 concluído (saiu da escola)
+TXT_CHAPTER_2,CHAPTER 2,CAPÍTULO 2
+TXT_CHAPTER_2_SUBTITULO,Ms. Nice,Dona Nice
+OBJ_CAP1_CASA_JIMMY,Go to Jimmy's house and find out where he is.,Vá até a casa do Jimmy e descubra onde ele está.
+OBJ_CAP1_PROCURAR_PISTA,Look around the house for a clue about Jimmy.,Procure alguma pista do Jimmy pela casa.
+OBJ_CAP1_IR_ESCOLA,Jimmy went to pick up Jonny at school. Go to the school.,O Jimmy foi buscar o Jonny na escola. Vá até a escola.
+OBJ_CAP1_ULTIMA_SALA,Look for Jonny in the school's last classroom (Room 107).,Procure o Jonny na última sala da escola (Sala 107).
+OBJ_CAP1_CASA_NICE,Ms. Nice took Jonny. Go to her house.,A Dona Nice levou o Jonny. Vá até a casa dela.
+OBJ_CAP1_GRIZZOLITO,Take Grizzolito to the arena with the amulet!,Leve o Grizzolito para a arena com o amuleto!
+OBJ_CAP1_SAIR_ESCOLA,The school has closed in on you. Find another way out.,A escola se fechou. Encontre outro caminho para sair.
+OBJ_CAP1_ATRAVESSAR_PORAO,Cross the basement to the other side of the school and unbolt the courtyard gate.,Atravesse o porão até o outro lado da escola e destranque o portão do pátio.
+OBJ_CAP1_SAIR_PELO_PATIO,The courtyard gate is open. Leave the school through the street gate.,O portão do pátio está aberto. Saia da escola pelo portão da rua.
+OBJ_CAP1_INFERNO_4_SEGUIR,Press on through the parallel world.,Siga pelo mundo paralelo.
+OBJ_CAP1_INFERNO_4_VOLTAR,Go back through the starting portal to the basement's Red Valve.,Volte pelo portal do começo até a Red Valve do porão.
+OBJ_CAP2_CASA_NICE,Go to Ms. Nice's house.,Vá até a casa da Dona Nice.
+PROMPT_ESCOLA_FECHADA,The school is closed. Better look for Jimmy first.,A escola está fechada. Melhor procurar o Jimmy primeiro.
+PROMPT_HOSPITAL_FECHADO,The hospital is closed.,O hospital está fechado.
+PROMPT_CASA_NICE_FECHADA,Ms. Nice's house is locked.,A casa da Dona Nice está trancada.
+PROMPT_LOCAL_FECHADO,It's locked.,Está trancado.
+PROMPT_LER_DIARIO,Read the diary?,Ler o diário?
+PROMPT_FALAR_PROFESSORA,Talk to the teacher?,Falar com a professora?
+PROMPT_ESC_PORTAO_RUA_SELADO,The gate won't open. Something is holding it from the other side.,O portão não abre. Alguma coisa o segura do outro lado.
+PROMPT_ATRAVESSAR_RED_VALVE,Cross the Red Valve?,Atravessar a Red Valve?
+PROMPT_VOLTAR_PORTAL,Go back through the portal?,Voltar pelo portal?
+LEITURA_CONTINUAR_PAD,A — continue,A — continuar
+LEITURA_CONTINUAR_KEY,Any key — continue,Qualquer tecla — continuar
+FILE_DIARIO_JIMMY_TITLE,Jimmy's Diary,O Diário do Jimmy
+DIARIO_JIMMY_1_1,I don't know who to trust in this town anymore.,Não sei mais em quem confiar nesta cidade.
+DIARIO_JIMMY_1_2,"I found out there's a sect here. They call themselves the Anti-Lopes, and they meet in secret.",Descobri que existe uma seita aqui. Eles se chamam de Anti-Lopes e se reúnem às escondidas.
+DIARIO_JIMMY_1_3,"They talk about crossing over to the other side. I heard everything, and I wish I hadn't.","Falam em atravessar para o outro lado. Eu ouvi tudo, e queria não ter ouvido."
+DIARIO_JIMMY_2_1,They have an amulet. They say it's the key to the crossing.,Eles têm um amuleto. Dizem que é a chave da travessia.
+DIARIO_JIMMY_2_2,"I took it. I know it was madness, but I took it.","Eu peguei. Sei que foi loucura, mas peguei."
+DIARIO_JIMMY_2_3,I gave it to Maycow as a gift. He has no idea what it is — and it's better that way. Nobody will look for it with him.,Dei de presente pro Maycow. Ele não faz ideia do que é — e é melhor assim. Ninguém vai procurar com ele.
+DIARIO_JIMMY_3_1,The worst part is that one of them walks around inside my own house. Too close to my son.,O pior é que um deles anda dentro da minha casa. Perto demais do meu filho.
+DIARIO_JIMMY_3_2,"Without the amulet, there is another way to cross. It's written in the notes I found: the sacrifice of an innocent.","Sem o amuleto, existe outro jeito de atravessar. Está nas anotações que eu achei: o sacrifício de um inocente."
+DIARIO_JIMMY_3_3,I got myself into something bigger than me.,Eu me meti numa confusão maior do que eu.
+DIARIO_JIMMY_4_1,"It's almost six o'clock. I have to pick Jonny up at school, NOW.","Já são quase seis horas. Tenho que buscar o Jonny na escola, AGORA."
+DIARIO_JIMMY_4_2,I'm running out. I won't leave him alone for another minute.,Saio correndo. Não deixo ele sozinho nem mais um minuto.
+DIARIO_JIMMY_4_3,If anyone finds this: Jonny is at the school.,Se alguém achar isto: o Jonny está na escola.
+CAP1_107_MAYCOW_1,"Maycow: Good evening... I came to pick up Jonny, Jimmy's son. Is he still here?","Maycow: Boa tarde... Eu vim buscar o Jonny, filho do Jimmy. Ele ainda está aí?"
+CAP1_107_PROF_1,Teacher: Jonny? He left a little while ago.,Professora: O Jonny? Ele já foi embora faz um tempinho.
+CAP1_107_PROF_2,Teacher: Ms. Nice came to get him early today. She said his father had asked her to.,Professora: A Dona Nice veio buscar ele mais cedo hoje. Disse que o pai tinha pedido.
+CAP1_107_MAYCOW_2,Maycow: Ms. Nice...? Then he's with her. I'll go to her house.,Maycow: A Dona Nice...? Então ele está com ela. Vou até a casa dela.
+CAP1_CENA_MAYCOW_CHAMA,Maycow: Ms. Nice! Wait!,Maycow: Dona Nice! Espera!
+CAP1_CENA_PORTAO_FECHOU,Maycow: It's locked... Something is holding it shut from the other side.,Maycow: Trancou... Alguma coisa está segurando do outro lado.
+GRIZZOLITO_NOME,GRIZZOLITO MAROLIS,GRIZZOLITO MAROLIS
+GRIZZOLITO_MONSTRO_1_NOME,GRIZZOLITO — THE HOST,GRIZZOLITO — O HOSPEDEIRO
+GRIZZOLITO_MONSTRO_2_NOME,GRIZZOLITO — THE PARASITE,GRIZZOLITO — O PARASITA
+AVISO_GRIZZOLITO_AMULETO_PAD,"Bullets won't bring him down! Hold LB, mark Grizzolito with the amulet and let go to drag him to the arena.","Balas não o derrubam! Segure LB, marque o Grizzolito com o amuleto e solte para levá-lo à arena."
+AVISO_GRIZZOLITO_AMULETO_KEY,"Bullets won't bring him down! Hold V, mark Grizzolito with the amulet and let go to drag him to the arena.","Balas não o derrubam! Segure V, marque o Grizzolito com o amuleto e solte para levá-lo à arena."
+AVISO_INFERNO_4_FRACO,A force pushes me back... I'm still too weak to go any further.,Uma força me empurra de volta... Ainda sou fraco demais para seguir por aqui.
+SAVE_LOCAL_CIDADE,City,Cidade
+SAVE_LOCAL_CASA_MAYCOW,Maycow's House,Casa do Maycow
+SAVE_LOCAL_OFICINA_JIMMY,Jimmy's Workshop,Oficina do Jimmy
+SAVE_LOCAL_CASA_JIMMY,Jimmy's House,Casa do Jimmy
+SAVE_LOCAL_CASA_NICE,Ms. Nice's House,Casa da Dona Nice
+SAVE_LOCAL_IGREJA,Church,Igreja
+SAVE_LOCAL_HOSPITAL,Hospital,Hospital
+SAVE_LOCAL_ESCOLA,School,Escola
+SAVE_LOCAL_PORAO,School Basement,Porão da Escola
+SAVE_LOCAL_CEMITERIO,Cemetery,Cemitério
+SAVE_LOCAL_INFERNO,Hell,Inferno
+SAVE_LOCAL_INFERNO_2,Hell 2,Inferno 2
+SAVE_LOCAL_INFERNO_3,Hell 3,Inferno 3
+SAVE_LOCAL_INFERNO_4,Hell 4,Inferno 4
+SAVE_LOCAL_ARENA,Arena,Arena
+SAVE_IRON_RUSKS,Iron Rusks: %d,Iron Rusks: %d
+PROMPT_ABRIR_GAVETA,Open the drawer?,Abrir a gaveta?
+PICKUP_PISTOL_JIMMY,"You found Jimmy's pistol, The Negotiator. Equip it in the menu to carry it in your hand.","Você achou a pistola do Jimmy, a The Negotiator. Equipe ela no menu para levá-la na mão."
+DEBUG_EVENT_PICKUP_JIMMY_AMMO,Pickup: Ammo in Jimmy's Drawer,Pickup: Munição na Gaveta do Jimmy

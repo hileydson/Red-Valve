@@ -45,6 +45,12 @@ var armado: bool = true
 var casca_vento: float = -1.0
 ## Quem é dono do portal desliga ele inteiro (a porta red valve fechada).
 var bloqueado: bool = false
+## Com prompt: chegar perto não suga — pergunta (`chave_prompt`), e o aceitar
+## entra. É o portal do COMEÇO de um mapa, por onde se volta: ser sugado de
+## volta só por passar perto dele seria castigo.
+var com_prompt: bool = false
+var chave_prompt: String = "PROMPT_VOLTAR_PORTAL"
+var _perguntando := false
 
 var _vento: AudioStreamPlayer3D
 var _faiscas: GPUParticles3D
@@ -78,9 +84,16 @@ func _physics_process(_delta: float) -> void:
 			armado = true
 		return
 	if destino == "" or GlobalEvents.in_cutscene:
+		_perguntar(false)
 		return
 	var dy := player.global_position.y - global_position.y
-	if d < raio_captura and dy > -raio - 4.0 and dy < raio:
+	var dentro := d < raio_captura and dy > -raio - 4.0 and dy < raio
+	if com_prompt:
+		_perguntar(dentro)
+		if dentro and Input.is_action_just_pressed("ui_accept"):
+			_perguntar(false)
+			sugar(player)
+	elif dentro:
 		sugar(player)
 	# o vendaval sobe chegando perto
 	if _vento:
@@ -89,8 +102,20 @@ func _physics_process(_delta: float) -> void:
 
 ## Também chamado pela área de entrada da cena, se o jogador entrar nela antes.
 func tentar_sugar(corpo: Node3D) -> void:
+	if bloqueado or com_prompt:
+		return
 	if armado and not _ocupado and destino != "" and not GlobalEvents.in_cutscene and corpo is CharacterBody3D:
 		sugar(corpo as CharacterBody3D)
+
+
+func _perguntar(sim: bool) -> void:
+	if sim == _perguntando:
+		return
+	_perguntando = sim
+	if sim:
+		GlobalUtils.show_center_message("portal_" + name, tr(chave_prompt), 16)
+	else:
+		GlobalUtils.hide_center_message("portal_" + name)
 
 
 # ==============================================================================

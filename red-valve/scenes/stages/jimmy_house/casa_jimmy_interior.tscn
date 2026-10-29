@@ -3351,7 +3351,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.59, 0)
 shape = SubResource("bs_1p19_1p18_0p62")
 
 [node name="criado_mudo_q3" parent="mobilia" instance=ExtResource("ph_painted_wooden_nightstand")]
-transform = Transform3D(0.877583, 0, 0.479426, 0, 1, 0, -0.479426, 0, 0.877583, 10.25, 0.25, 10.95)
+transform = Transform3D(0.877583, 0, 0.479426, 0, 1, 0, -0.479426, 0, 0.877583, 10.25, 0, 10.95)
 
 [node name="prateleira_q3" parent="mobilia" instance=ExtResource("mb_tiny_living_tiered_shelf_29")]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 9.87, 1.9, 13.6)

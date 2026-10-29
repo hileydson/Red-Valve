@@ -15,6 +15,7 @@ class_name ArquivosDados
 ##   apos_um_dia_de_trabalho  -> the_house.gd, ao entrar na casa
 ##   telefonema_dona_nice     -> the_house.gd, ao terminar a ligacao
 ##   caderno_do_jimmy         -> stage_1.gd, quando o Capitulo 1 comeca
+##   diario_do_jimmy          -> diario_jimmy.gd, ao ler o diario na casa do Jimmy
 ##
 ## O que o jogador ja abriu mora em SaveManager.arquivos_desbloqueados; aqui so
 ## existe o conteudo.
@@ -53,6 +54,18 @@ const CATALOGO := [
 			["WITH_POWER_2_1", "WITH_POWER_2_2", "WITH_POWER_2_3"],
 			["WITH_POWER_3_1", "WITH_POWER_3_2", "WITH_POWER_3_3"],
 			["WITH_POWER_4_1", "WITH_POWER_4_2", "WITH_POWER_4_3", "WITH_POWER_4_4"],
+		],
+	},
+	{
+		"id": "diario_do_jimmy",
+		"titulo": "FILE_DIARIO_JIMMY_TITLE",
+		# o diario largado na mesa da sala da casa do Jimmy (Capitulo 1): cada
+		# paragrafo e' uma pagina na tela de leitura (leitura_diario.gd)
+		"paragrafos": [
+			["DIARIO_JIMMY_1_1", "DIARIO_JIMMY_1_2", "DIARIO_JIMMY_1_3"],
+			["DIARIO_JIMMY_2_1", "DIARIO_JIMMY_2_2", "DIARIO_JIMMY_2_3"],
+			["DIARIO_JIMMY_3_1", "DIARIO_JIMMY_3_2", "DIARIO_JIMMY_3_3"],
+			["DIARIO_JIMMY_4_1", "DIARIO_JIMMY_4_2", "DIARIO_JIMMY_4_3"],
 		],
 	},
 ]

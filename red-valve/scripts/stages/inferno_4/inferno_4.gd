@@ -63,6 +63,12 @@ var _drone: AudioStreamPlayer
 ## Quanto a vista está aberta (0 na subida, 1 no topo): a cutscene lê.
 var abertura: float = 0.0
 var _mirante_visto: bool = false
+## Capítulo 1: o portal do fim não leva a lugar nenhum (o Maycow ainda é fraco
+## demais pra ir além) e o aviso disso sai uma vez, chegando perto dele.
+var _fim_trancado := false
+var _avisou_do_fim := false
+## A que distância (no chão) do portal do fim o aviso aparece.
+const PERTO_DO_FIM := 16.0
 
 
 func _preparar() -> void:
@@ -79,6 +85,38 @@ func _preparar() -> void:
 	var gatilho := get_node_or_null("gatilho_mirante") as Area3D
 	if gatilho:
 		gatilho.body_entered.connect(_ao_pisar_no_mirante)
+	_regras_da_historia()
+
+
+## O portal do COMEÇO é a volta pra red valve do porão: pergunta antes de
+## levar (não suga quem só passou perto). O do FIM, no Capítulo 1, não suga
+## ninguém — é o limite do que o Maycow aguenta (ver `Eventos`).
+func _regras_da_historia() -> void:
+	if _portal_entrada:
+		_portal_entrada.com_prompt = true
+	if Eventos.capitulo_atual() == Eventos.CAPITULO_1 and _portal_saida:
+		_portal_saida.bloqueado = true
+		_fim_trancado = true
+		_avisou_do_fim = Eventos.feito(Eventos.CAP1_INFERNO_4_LIMITE)
+		GlobalUtils.mostrar_objetivo(tr("OBJ_CAP1_INFERNO_4_VOLTAR" if _avisou_do_fim
+			else "OBJ_CAP1_INFERNO_4_SEGUIR"), 40.0)
+
+
+func _passo(delta: float) -> void:
+	super._passo(delta)
+	if not _fim_trancado or _avisou_do_fim or GlobalEvents.in_cutscene:
+		return
+	var jogador := get_node_or_null("Player") as Node3D
+	if jogador == null or not is_instance_valid(_portal_saida):
+		return
+	var d := Vector2(jogador.global_position.x - _portal_saida.global_position.x,
+		jogador.global_position.z - _portal_saida.global_position.z).length()
+	if d < PERTO_DO_FIM:
+		_avisou_do_fim = true
+		GlobalUtils.show_center_message("inferno_4_limite", tr("AVISO_INFERNO_4_FRACO"), 20, 6.0)
+		GlobalUtils.shake_camera(0.6, 0.2)
+		Eventos.concluir(Eventos.CAP1_INFERNO_4_LIMITE)
+		GlobalUtils.mostrar_objetivo(tr("OBJ_CAP1_INFERNO_4_VOLTAR"), 60.0)
 
 
 ## Os gigantes da vista olham pro mirante, não pro meio do mapa.

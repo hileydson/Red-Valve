@@ -58,24 +58,45 @@ desconfia de Dona Nice.
 ## Capítulo 1 — O Amuleto
 
 Maycow começa a procurar a verdade. Ele descobre que o amuleto alterna as realidades e pode levar
-inimigos para o outro mundo.
+inimigos para o outro mundo. No começo do capítulo a cidade inteira está fechada: só a casa do Jimmy
+e a do próprio Maycow abrem.
 
-1. **Casa do Jimmy.** Maycow vai até lá atrás do patrão. Num quadro de anotações, vê que nesse horário
-   o Jimmy busca o Jonny na escola.
-2. **Escola.** Lá, Maycow fica sabendo que Dona Nice já levou o Jonny, antes da hora, para ter tempo de
-   fazer o sacrifício na igreja.
-3. **Quadra da escola.** Dona Nice ainda está na escola. Ao ver Maycow, ela se apavora e chama um
-   integrante da seita, que vem do mundo paralelo. Maycow alterna a realidade para enfrentá-lo. No
-   começo da luta, Dona Nice vê o amuleto e tenta tomá-lo. O amuleto cai longe, e ela foge.
-4. **A luta.** Maycow enfrenta o integrante como o Maycow normal. Depois de um tempo, percebe que pode
-   levá-lo para a Arena 1, e o mata lá.
-5. **Presa.** Depois da luta, a escola fica fechada. Maycow resolve uma série de puzzles para abrir
-   as portas até o calabouço.
-6. **O portal.** No calabouço, um portal o leva a uma parte mais escura do mundo paralelo. Ele avança
-   até certo ponto e para: ainda é fraco demais para ir além.
-7. **Saída.** Maycow volta, segue pelo calabouço até outra parte da escola e sai.
+1. **Casa do Jimmy.** Maycow vai até lá atrás do patrão. Em cima da mesa da sala está o **diário do
+   Jimmy**. Ele conta a confusão em que se meteu — a seita dos Anti-Lopes, o amuleto que roubou e deu
+   de presente ao Maycow para ninguém procurar com ele, e que "um deles" anda perto demais do filho —,
+   sem dizer quem. A última página diz que já são quase seis horas e que ele saiu correndo para buscar
+   o Jonny na escola. O diário vai para os arquivos do Maycow, e a escola abre. No quarto do Jimmy,
+   na gaveta do criado-mudo, está a **pistola dele** (a The Negotiator) com uma caixa de balas.
+2. **Escola, às seis da tarde.** A escola ainda é uma escola: acesa, fim de expediente, os alunos já
+   foram embora e sobram professores e funcionários pelos corredores. Nada está trancado, não há
+   buraco nenhum na parede. Fora da rua o amuleto fica no bolso. Na **última sala (107)**, a professora
+   conta que a Dona Nice já levou o Jonny, mais cedo — "o pai pediu".
+3. **Quadra da escola.** No pátio, Maycow vê a Dona Nice indo embora pelo portão da rua, de mão dada com
+   o Jonny. Ela para, olha para trás e o vê. Ergue a mão para o céu, e um **raio** cai no meio da
+   quadra. Ela e o Jonny somem no clarão. A escuridão se espalha a partir da quadra e transforma a
+   escola na **escola escura** — abandonada, pichada, com a grade no corredor sul e o buraco para o
+   porão. Todos os adultos somem. Do canto da quadra vem andando **Grizzolito Marolis**, um dos
+   Anti-Lopes, olhando para o Maycow.
+4. **A luta.** Na quadra o amuleto volta a valer. Bala não derruba o Grizzolito: ele corre, soca, chuta
+   e dá voadoras até matar o Maycow. O único jeito é levá-lo com o amuleto para a **Arena 1**. Lá ele
+   vira o primeiro monstro; morto este, vira o segundo — e só então morre de verdade, pela cogblade.
+5. **Presa.** De volta à quadra, Maycow anda até o portão da rua, que está aberto — e ele bate na cara
+   dele, segurado por alguma coisa do outro lado. Esta escola não é a que ele conhecia: o mapa dela
+   recomeça do zero. O caminho é atravessar o prédio inteiro, descer pelo buraco do depósito e cruzar
+   o calabouço (o porão). Há pouca munição espalhada pelas salas e pelo túnel.
+6. **O portal.** No meio do calabouço, na câmara grande, há uma **Red Valve**. Na primeira vez ela o
+   chama: Maycow anda até ela (em primeira pessoa), a porta abre e o leva ao **Inferno 4**, uma parte
+   mais escura do mundo paralelo. No fim do caminho o portal não o aceita: ele ainda é fraco demais para
+   ir além. Volta pelo portal do começo, que o devolve à Red Valve (dali em diante ela só abre quando
+   ele quer).
+7. **Saída.** Maycow segue pelo calabouço até o outro lado da escola, sobe pelo almoxarifado e
+   destranca por dentro o portão do pátio. Com isso o portão da rua solta, e ele sai.
 
 Ao fim do capítulo, Maycow sabe que Dona Nice está envolvida, mas ainda não sabe o porquê nem o resto
 da história.
+
+## Capítulo 2 — Dona Nice
+
+Começa quando Maycow sai da escola.
 
 *(Continua.)*

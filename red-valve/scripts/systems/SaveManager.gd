@@ -95,6 +95,10 @@ var igreja_destrancada: bool = false
 ## `jonny_deixado_em` (vazio = save antigo = hospital).
 var jonny_no_hospital: Array = []
 var jonny_deixado_em: String = ""
+## Ids dos eventos da historia ja' concluidos (os NOVOS; os antigos continuam
+## nas variaveis proprias). Quem le' e escreve e' o autoload `Eventos`
+## (scripts/systems/eventos_historia.gd) — aqui so' fica guardado.
+var eventos_concluidos: Array = []
 var iron_rusks_pending: int = 0 # Ganho na luta atual, ainda não somado visualmente no HUD
 var iron_rusks_display: int = 0 # Valor mostrado no canto da tela, só sobe com a animação de tally
 
@@ -459,10 +463,43 @@ func get_slots_info() -> Array:
 						var ch = "TXT_PROLOGUE"
 						if data.get("prolog_finished", false):
 							ch = "TXT_CHAPTER_1"
-						info.append({"empty": false, "slot": i, "chapter": ch})
+						if (data.get("eventos_concluidos", []) as Array).has("cap1_concluido"):
+							ch = "TXT_CHAPTER_2"
+						info.append({"empty": false, "slot": i, "chapter": ch,
+							"local": nome_do_local(str(data.get("current_stage", ""))),
+							"iron_rusks": int(data.get("iron_rusks", 0))})
 						continue
-		info.append({"empty": true, "slot": i, "chapter": ""})
+		info.append({"empty": true, "slot": i, "chapter": "", "local": "", "iron_rusks": 0})
 	return info
+
+## Chave de tradução do lugar onde o save parou (pela cena salva). Vazio se a
+## cena não tiver nome conhecido; quem mostra decide o que fazer.
+func nome_do_local(caminho: String) -> String:
+	const LOCAIS := {
+		"stage_1/": "SAVE_LOCAL_CIDADE",
+		"city/": "SAVE_LOCAL_CIDADE",
+		"prolog/the_house": "SAVE_LOCAL_CASA_MAYCOW",
+		"prolog/oficina_jimmy": "SAVE_LOCAL_OFICINA_JIMMY",
+		"jimmy_house/": "SAVE_LOCAL_CASA_JIMMY",
+		"nice_house/": "SAVE_LOCAL_CASA_NICE",
+		"igreja/": "SAVE_LOCAL_IGREJA",
+		"hospital/": "SAVE_LOCAL_HOSPITAL",
+		"escola/porao": "SAVE_LOCAL_PORAO",
+		"escola/": "SAVE_LOCAL_ESCOLA",
+		"cemiterio/": "SAVE_LOCAL_CEMITERIO",
+		"inferno_2/": "SAVE_LOCAL_INFERNO_2",
+		"inferno_3/": "SAVE_LOCAL_INFERNO_3",
+		"inferno_4/": "SAVE_LOCAL_INFERNO_4",
+		"inferno/": "SAVE_LOCAL_INFERNO",
+		"battlefield/": "SAVE_LOCAL_ARENA",
+		"prolog/": "SAVE_LOCAL_CIDADE",
+	}
+	# A ordem do dicionário importa: o mais específico vem antes ("escola/porao"
+	# antes de "escola/", "prolog/the_house" antes de "prolog/").
+	for trecho in LOCAIS:
+		if caminho.contains("/stages/" + trecho):
+			return LOCAIS[trecho]
+	return ""
 
 ## Cena que NAO pode virar checkpoint sozinha depois do prologo.
 ##
@@ -478,6 +515,7 @@ const CENA_DE_PASSAGEM := "battlefield"
 
 ## O mapa da cidade. E pra ca que se volta quando o checkpoint gravado nao serve.
 const CENA_CIDADE := "res://scenes/stages/stage_1/stage_1.tscn"
+const CENA_ESCOLA := "res://scenes/stages/escola/escola.tscn"
 
 
 ## Esta cena pode ser gravada como o ponto pra onde o "Carregar" leva?
@@ -532,7 +570,8 @@ func save_game(scene_path: String = ""):
 		"evento_dona_nice": evento_dona_nice,
 		"igreja_destrancada": igreja_destrancada,
 		"jonny_no_hospital": jonny_no_hospital,
-		"jonny_deixado_em": jonny_deixado_em
+		"jonny_deixado_em": jonny_deixado_em,
+		"eventos_concluidos": eventos_concluidos
 	}
 	
 	save_config() # Sempre salvar config junto
@@ -598,6 +637,7 @@ func load_game(slot_id: int = -1) -> bool:
 				igreja_destrancada = bool(data.get("igreja_destrancada", false))
 				jonny_no_hospital = data.get("jonny_no_hospital", [])
 				jonny_deixado_em = data.get("jonny_deixado_em", "")
+				eventos_concluidos = data.get("eventos_concluidos", [])
 				# As mascaras vivas sao do save ANTERIOR: sem isto, a escola
 				# descoberta no slot 1 apareceria descoberta no slot 2.
 				MapaNevoa.esquecer_tudo()
@@ -680,6 +720,7 @@ func load_slot_data_only(slot_id: int = 1) -> bool:
 	igreja_destrancada = bool(data.get("igreja_destrancada", false))
 	jonny_no_hospital = data.get("jonny_no_hospital", [])
 	jonny_deixado_em = data.get("jonny_deixado_em", "")
+	eventos_concluidos = data.get("eventos_concluidos", [])
 	print("Game data loaded into memory from slot ", slot_id, " (no scene change)")
 	return true
 
@@ -712,6 +753,7 @@ func reset_progress() -> void:
 	igreja_destrancada = false
 	jonny_no_hospital = []
 	jonny_deixado_em = ""
+	eventos_concluidos = []
 	MapaNevoa.esquecer_tudo()
 
 
@@ -894,7 +936,15 @@ func amuleto_disponivel() -> bool:
 		return false
 	if not amuleto_equipado and _capitulo_1():
 		return false
-	return na_cidade()
+	return na_cidade() or _na_quadra_contra_o_grizzolito()
+
+
+## A excecao do Capitulo 1: na escola escura, enquanto o Grizzolito esta' vivo,
+## o amuleto vale — e' ele que leva o Grizzolito pra arena. Fora dessa luta a
+## escola e' um lugar fechado como os outros.
+func _na_quadra_contra_o_grizzolito() -> bool:
+	var cena := get_tree().current_scene if is_inside_tree() else null
+	return cena != null and cena.scene_file_path == CENA_ESCOLA and Eventos.luta_grizzolito()
 
 
 func na_cidade() -> bool:

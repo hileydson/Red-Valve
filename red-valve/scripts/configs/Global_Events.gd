@@ -17,6 +17,9 @@ var default_language:String = language_pt_br
 
 var is_maycow_normal = false
 var entering_chapter_1: bool = false
+## Ligado pela escola quando o Maycow sai dela no fim do Capitulo 1; a stage_1
+## consome (e zera) isto pra mostrar o "CAPITULO 2" na chegada.
+var entering_chapter_2: bool = false
 var debug_mode_unlocked: bool = false
 
 func show_debug_mode_banner() -> void:

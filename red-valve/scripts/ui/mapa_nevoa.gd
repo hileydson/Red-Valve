@@ -298,6 +298,23 @@ static func ha_novidade() -> bool:
 	return false
 
 
+## Apaga UMA planta, na memória e no save: o mapa volta todo escuro.
+##
+## Quem chama é a história — no Capítulo 1 a escola vira outra (a escura) e o
+## que o Maycow já tinha visto dela não vale mais. Se a planta está aberta
+## (o minimapa da cena atual está desenhando ela), a máscara é zerada no
+## lugar, e não descartada: o minimapa continua com a mesma instância na mão.
+static func esquecer(caminho_json: String) -> void:
+	SaveManager.mapas_descobertos.erase(caminho_json)
+	if not _abertas.has(caminho_json):
+		return
+	var n: MapaNevoa = _abertas[caminho_json]
+	n._bytes.fill(0)
+	n._reveladas.clear()
+	n._ultimo = Vector2(INF, INF)
+	n._aplicar()
+
+
 ## Esquece tudo o que está na memória. Chamado ao carregar um save ou ao
 ## começar um jogo novo: sem isto, a escola descoberta no slot 1 apareceria
 ## descoberta no slot 2.

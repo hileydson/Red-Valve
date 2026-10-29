@@ -160,7 +160,6 @@
 
 [ext_resource type="PackedScene" path="res://assets/3d_model/player/the_negotiator_V1/cartridge/scene.gltf" id="modelo_34"]
 
-[ext_resource type="PackedScene" path="res://assets/3d_model/player/the_negotiator_V1/the_negotiator_v1.glb" id="modelo_35"]
 
 [ext_resource type="PackedScene" path="res://assets/3d_model/objects/chave_igreja/chave_igreja.glb" id="modelo_36"]
 
@@ -1997,27 +1996,6 @@ collision_layer = 0
 monitorable = false
 
 [node name="forma" type="CollisionShape3D" parent="municao_quarto/area"]
-shape = SubResource("shape41")
-
-[node name="pistola_altar" type="Node3D" parent="."]
-transform = Transform3D(0.16997, 0, 0.98545, 0, 1.00000, 0, -0.98545, 0, 0.16997, 1.8700, 0.8800, 2.4100)
-script = ExtResource("item_script")
-metadata/id = "casa_nice_pistola_altar"
-metadata/item = "pistol"
-metadata/quantidade = 1
-metadata/prompt = "PROMPT_TAKE_PISTOL"
-metadata/texto = "PICKUP_PISTOL"
-metadata/repetido = ""
-
-[node name="modelo" parent="pistola_altar" instance=ExtResource("modelo_35")]
-transform = Transform3D(0.115, 0, 0, 0, 0, 0.115, 0, -0.115, 0, 0, 0.021, 0)
-
-[node name="area" type="Area3D" parent="pistola_altar"]
-transform = Transform3D(1.00000, 0, 0.00000, 0, 1.00000, 0, -0.00000, 0, 1.00000, 0.0000, 0.2500, 0.0000)
-collision_layer = 0
-monitorable = false
-
-[node name="forma" type="CollisionShape3D" parent="pistola_altar/area"]
 shape = SubResource("shape41")
 
 [node name="municao_altar" type="Node3D" parent="."]

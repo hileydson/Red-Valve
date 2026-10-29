@@ -161,9 +161,9 @@ func _process(delta: float) -> void:
 ## O portão do pátio só entra nisto DEPOIS de destrancado: trancado, ele é uma
 ## conversa, e conversa não se tem esbarrando.
 func _empurrando() -> bool:
-	if aberta or _trancada or _saida or not is_instance_valid(_player):
+	if aberta or _trancada_agora() or _saida or not is_instance_valid(_player):
 		return false
-	if _portao and not GlobalEvents.escola_portao_destrancado:
+	if _portao_trancado():
 		return false
 	var v := _velocidade_do_player()
 	if v.length() < EMPURRAO_VEL_MINIMA:
@@ -230,19 +230,31 @@ func _acionar() -> void:
 	# O portão do pátio: destranca só por dentro, e fica destrancado. O estado
 	# vive em GlobalEvents porque o jogador vai e volta entre esta cena e a do
 	# porão — guardado aqui no nó, ele se perderia na primeira troca de cena.
-	if _portao and not GlobalEvents.escola_portao_destrancado:
+	if _portao_trancado():
 		if _no_lado_de_dentro():
-			GlobalEvents.escola_portao_destrancado = true
+			# No Capítulo 1 é a saída da prisão: o evento solta também o
+			# portão da rua (ver `_rua_selada`).
+			var era_a_prisao := Eventos.pode(Eventos.CAP1_PORTAO_PATIO)
+			if era_a_prisao:
+				Eventos.concluir(Eventos.CAP1_PORTAO_PATIO)
+			else:
+				GlobalEvents.escola_portao_destrancado = true
 			GlobalUtils.show_center_message(
 				_id_msg, tr("PROMPT_ESC_PORTAO_DESTRANCADO"), 16, 2.2)
+			if era_a_prisao:
+				GlobalUtils.mostrar_objetivo(tr(Eventos.objetivo_atual()), 45.0)
 			_abrir()
 			return
 		GlobalUtils.show_center_message(
 			_id_msg, tr("PROMPT_ESC_PORTAO_TRANCADO"), 16, 1.8)
 		return
 
-	if _trancada:
+	if _trancada_agora():
 		GlobalUtils.show_center_message(_id_msg, tr("PROMPT_ESC_TRANCADA"), 16, 1.6)
+		return
+
+	if _saida and _rua_selada():
+		GlobalUtils.show_center_message(_id_msg, tr("PROMPT_ESC_PORTAO_RUA_SELADO"), 16, 2.2)
 		return
 
 	# O portão da rua é a única porta que não é uma porta: quem manda nela é a
@@ -334,23 +346,43 @@ func _ao_sair(body: Node3D) -> void:
 func _atualizar_prompt() -> void:
 	if not _player_perto:
 		return
-	if _portao and not GlobalEvents.escola_portao_destrancado:
+	if _portao_trancado():
 		GlobalUtils.show_center_message(
 			_id_msg,
 			tr("PROMPT_ESC_PORTAO_ABRIR") if _no_lado_de_dentro()
 			else tr("PROMPT_ESC_PORTAO_TRANCADO"), 16)
 		return
-	if _trancada:
+	if _trancada_agora():
 		GlobalUtils.show_center_message(_id_msg, tr("PROMPT_ESC_TRANCADA"), 16)
 		return
 	if _saida:
-		GlobalUtils.show_center_message(_id_msg, tr("PROMPT_ESC_SAIR"), 16)
+		GlobalUtils.show_center_message(_id_msg,
+			tr("PROMPT_ESC_PORTAO_RUA_SELADO" if _rua_selada() else "PROMPT_ESC_SAIR"), 16)
 		return
 	# Porta comum: não há mais o que apertar, então o que fica na tela é só o
 	# NOME DA SALA — que era a única informação útil do prompt antigo. Ele sai
 	# do CSV traduzido, igual antes.
 	var sala := String(get_meta("sala", "ESC_SALA_GENERICA"))
 	GlobalUtils.show_center_message(_id_msg, tr(sala), 16)
+
+
+## Na escola CLARA do Capítulo 1 (fim de expediente) nenhuma porta está
+## trancada — nem a sala trancada, nem o portão do pátio.
+func _trancada_agora() -> bool:
+	return _trancada and not Eventos.escola_clara()
+
+
+func _portao_trancado() -> bool:
+	return _portao and not GlobalEvents.escola_portao_destrancado and not Eventos.escola_clara()
+
+
+## O portão da rua no Capítulo 1: do raio da Dona Nice até destrancar o portão
+## do pátio por dentro, ele não abre — a escola é uma prisão (ver
+## `Eventos.escola_presa`). Durante a luta também: não se foge do Grizzolito.
+func _rua_selada() -> bool:
+	return Eventos.capitulo_atual() == Eventos.CAPITULO_1 \
+		and Eventos.feito(Eventos.CAP1_ESCOLA_TRANSFORMADA) \
+		and not Eventos.feito(Eventos.CAP1_PORTAO_PATIO)
 
 
 func _eh_player(body: Node3D) -> bool:
