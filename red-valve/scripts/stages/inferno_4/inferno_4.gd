@@ -25,6 +25,7 @@ extends "res://scripts/stages/inferno_3/inferno_3.gd"
 ## marcador `boss/mini_boss` fica no centro, com o raio livre na metadata.
 
 const CutsceneMirante := preload("res://scripts/stages/inferno_4/cutscene_mirante.gd")
+const GargulaDoLimite := preload("res://scripts/stages/inferno_4/gargula_do_limite.gd")
 
 @export_group("Névoa do mirante")
 ## z (mundo) onde a névoa começa a abrir, onde fica toda aberta (o topo), onde
@@ -64,10 +65,12 @@ var _drone: AudioStreamPlayer
 var abertura: float = 0.0
 var _mirante_visto: bool = false
 ## Capítulo 1: o portal do fim não leva a lugar nenhum (o Maycow ainda é fraco
-## demais pra ir além) e o aviso disso sai uma vez, chegando perto dele.
+## demais pra ir além). Chegando perto dele, uma gárgula o leva de volta ao
+## portal do começo e o joga lá dentro (`gargula_do_limite.gd`).
 var _fim_trancado := false
 var _avisou_do_fim := false
-## A que distância (no chão) do portal do fim o aviso aparece.
+var _gargula_levando := false
+## A que distância (no chão) do portal do fim a gárgula vem.
 const PERTO_DO_FIM := 16.0
 
 
@@ -104,19 +107,20 @@ func _regras_da_historia() -> void:
 
 func _passo(delta: float) -> void:
 	super._passo(delta)
-	if not _fim_trancado or _avisou_do_fim or GlobalEvents.in_cutscene:
+	if not _fim_trancado or _gargula_levando or GlobalEvents.in_cutscene:
 		return
-	var jogador := get_node_or_null("Player") as Node3D
-	if jogador == null or not is_instance_valid(_portal_saida):
+	var jogador := get_node_or_null("Player") as CharacterBody3D
+	if jogador == null or not is_instance_valid(_portal_saida) or not is_instance_valid(_portal_entrada):
 		return
 	var d := Vector2(jogador.global_position.x - _portal_saida.global_position.x,
 		jogador.global_position.z - _portal_saida.global_position.z).length()
 	if d < PERTO_DO_FIM:
-		_avisou_do_fim = true
-		GlobalUtils.show_center_message("inferno_4_limite", tr("AVISO_INFERNO_4_FRACO"), 20, 6.0)
-		GlobalUtils.shake_camera(0.6, 0.2)
-		Eventos.concluir(Eventos.CAP1_INFERNO_4_LIMITE)
-		GlobalUtils.mostrar_objetivo(tr("OBJ_CAP1_INFERNO_4_VOLTAR"), 60.0)
+		# Toda vez, não só a primeira: no Capítulo 1 não se passa daqui.
+		_gargula_levando = true
+		var g = GargulaDoLimite.new()
+		g.name = "gargula_do_limite"
+		add_child(g)
+		g.levar(jogador, _portal_entrada)
 
 
 ## Os gigantes da vista olham pro mirante, não pro meio do mapa.

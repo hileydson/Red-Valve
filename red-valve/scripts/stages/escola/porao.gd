@@ -85,6 +85,7 @@ func _ready() -> void:
 	_preparar_lanterna()
 	_avisar_da_lanterna()
 	_preparar_red_valve()
+	_falar_que_e_fraco()
 	Municao.espalhar(self, MUNICAO_PORAO)
 	# Capítulo 1, preso na escola: a saída do calabouço é o que ele procura.
 	if Eventos.escola_presa():
@@ -185,6 +186,21 @@ func _pegar_lanterna() -> void:
 	var jogador := _jogador()
 	if jogador and jogador.has_method("acender_lanterna_agora"):
 		jogador.acender_lanterna_agora()
+
+
+## Capítulo 1: a gárgula do inferno 4 o jogou no portal do começo e ele foi
+## cuspido aqui, pela red valve. Depois que o portal termina de cuspir, ele fala.
+func _falar_que_e_fraco() -> void:
+	if not GlobalEvents.aviso_fraco_no_porao:
+		return
+	GlobalEvents.aviso_fraco_no_porao = false
+	await get_tree().create_timer(3.2).timeout
+	if not is_instance_valid(self):
+		return
+	GlobalUtils.show_center_message("porao_fraco", tr("CAP1_FALA_FRACO_PORTAL"), 20, 6.0)
+	await get_tree().create_timer(6.0).timeout
+	if is_instance_valid(self) and Eventos.objetivo_atual() != "":
+		GlobalUtils.mostrar_objetivo(tr(Eventos.objetivo_atual()), 45.0)
 
 
 ## Por qual das duas bocas o jogador entrou. O marcador mora na cena gerada, e

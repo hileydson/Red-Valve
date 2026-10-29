@@ -590,3 +590,4 @@ DEBUG_EVENT_PICKUP_JIMMY_AMMO,Pickup: Ammo in Jimmy's Drawer,Pickup: Munição n
 CAP1_CENA_PORTA_FECHOU,Maycow: It slammed shut... Something is holding it from the courtyard side.,Maycow: Bateu sozinha... Alguma coisa está segurando do lado do pátio.
 PROMPT_ESC_PORTA_PRESA,It won't budge. Something is holding it from the courtyard side.,Não se mexe. Alguma coisa a segura do lado do pátio.
 MAP_POI_CALABOUCO,Dungeon,Calabouço
+CAP1_FALA_FRACO_PORTAL,"Maycow: I'm still too weak... That portal won't let me through.","Maycow: Ainda sou fraco demais... Aquele portal não me deixa passar."

@@ -89,9 +89,10 @@ e a do próprio Maycow abrem.
    — sem ela o túnel é breu. Há pouca munição espalhada pelas salas e pelo túnel.
 6. **O portal.** No meio do calabouço, na câmara grande, há uma **Red Valve**. Na primeira vez ela o
    chama: Maycow anda até ela (em primeira pessoa), a porta abre e o leva ao **Inferno 4**, uma parte
-   mais escura do mundo paralelo. No fim do caminho o portal não o aceita: ele ainda é fraco demais para
-   ir além. Volta pelo portal do começo, que o devolve à Red Valve (dali em diante ela só abre quando
-   ele quer).
+   mais escura do mundo paralelo. No fim do caminho o portal não o aceita: uma **gárgula** de fogo
+   desce do céu, agarra o Maycow, voa com ele por cima do mapa inteiro e o arremessa no portal do
+   começo, que o cospe de volta pela Red Valve do calabouço. Lá ele entende: ainda é fraco demais para
+   atravessar aquele portal. (Dali em diante a Red Valve só abre quando ele quer.)
 7. **Saída.** Maycow segue pelo calabouço até o outro lado da escola, sobe pelo almoxarifado e
    destranca por dentro o portão do pátio — a única porta de volta para a quadra. Com isso o portão
    da rua solta, e ele sai.

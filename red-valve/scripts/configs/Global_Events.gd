@@ -20,6 +20,9 @@ var entering_chapter_1: bool = false
 ## Ligado pela escola quando o Maycow sai dela no fim do Capitulo 1; a stage_1
 ## consome (e zera) isto pra mostrar o "CAPITULO 2" na chegada.
 var entering_chapter_2: bool = false
+## Capítulo 1: a gárgula do inferno 4 jogou o Maycow no portal do começo; o
+## porão, ao recebê-lo pela red valve, mostra a fala de que ele ainda é fraco.
+var aviso_fraco_no_porao: bool = false
 var debug_mode_unlocked: bool = false
 
 func show_debug_mode_banner() -> void:
