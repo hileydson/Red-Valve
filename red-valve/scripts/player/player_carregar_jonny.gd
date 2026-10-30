@@ -52,7 +52,7 @@ const PEGAR := &"pegar_jonny"
 const PASSO_DO_CLIPE := 1.3
 ## Correndo (2,6 m/s) o pe' casaria com o chao so' a 2x, e as pernas giram
 ## rapido demais: a corrida fica nesse teto (o usuario pediu mais devagar).
-const PASSADA_MAX := 1.2
+const PASSADA_MAX := 1.05
 ## `largar_jonny` (3,2 s): as maos descem com o Jonny e chegam la' embaixo em
 ## ~1,6 s (medido nos ossos: 27 cm do chao, e ficam ate' 2,2 s). Ate' SOLTA ele
 ## vai NAS MAOS; dali ate' NO_CHAO assenta no chao, exatamente embaixo delas.

@@ -58,6 +58,8 @@ var _apertando := 0.0
 var _na_cabine := false
 var _dy_cabine := 0.0
 var _relogio_fala := 0.0
+## Saindo da cabine: anda sem parar pra esperar o Maycow.
+var _sem_esperar := false
 
 
 func _ready() -> void:
@@ -82,6 +84,8 @@ func conduzir() -> void:
 	_falar("ENF_ELEVADOR", 3.4)
 	await _virar_para(PORTA_DO_ELEVADOR)
 	await _apertar_botao()
+	if not is_inside_tree():
+		return
 	elevador.guiado = true
 	elevador.segurar_aberto = true
 	await elevador.chamar_pelo_guia(1)
@@ -92,20 +96,31 @@ func conduzir() -> void:
 	_falar("ENF_ENTRA", 3.0)
 	# espera ele entrar, com o Jonny
 	while is_inside_tree() and not (elevador.player_dentro() and jogador.carregando_jonny):
-		_chamar_com_a_mao()
-		_cobrar(not jogador.carregando_jonny)
+		if jogador.carregando_jonny:
+			_chamar_com_a_mao()
+			_cobrar()
 		await get_tree().physics_frame
 	await _virar_para(PORTA_DO_ELEVADOR + Vector3(0.0, 0.0, -1.3))
 	await _apertar_botao()
-	elevador.segurar_aberto = false
+	if not is_inside_tree():
+		return
 
 	_na_cabine = true
 	var cabine := elevador.get_node("cabine") as Node3D
 	_dy_cabine = global_position.y - cabine.global_position.y
+	# a porta fica aberta até ela sair: o Maycow sai correndo na frente, e
+	# ela esperando por ele DENTRO da cabine deixava a porta fechar com ela
+	# lá, e o elevador (guiado) não atendia mais ninguém
+	elevador.segurar_aberto = true
 	await elevador.viajar_pelo_guia(2)
 	_na_cabine = false
 
+	_sem_esperar = true
 	await _ir_ate(SAIDA_DO_ELEVADOR)
+	_sem_esperar = false
+	if not is_inside_tree():
+		return
+	elevador.segurar_aberto = false
 	elevador.guiado = false
 	_falar("ENF_SEGUE", 2.6)
 	await _seguir_ate(DIANTE_DA_CIRURGIA)
@@ -119,6 +134,9 @@ func conduzir() -> void:
 
 ## Anda pelo navmesh até `destino`, ponto a ponto, esperando o Maycow.
 func _seguir_ate(destino: Vector3) -> void:
+	# saindo pelo menu a cena morre no meio do roteiro
+	if not is_inside_tree():
+		return
 	var mapa := get_world_3d().navigation_map
 	var caminho := NavigationServer3D.map_get_path(mapa, global_position, destino, true, 0xFFFFFFFF)
 	if caminho.is_empty():
@@ -149,9 +167,10 @@ func _ir_ate(alvo: Vector3) -> void:
 	_andando = false
 
 
-## Longe dele (ou ele largou o Jonny): para, vira e chama até ele chegar.
+## Longe dele (ou ele largou o Jonny): para. Com o Jonny no colo ela vira e
+## chama até ele chegar; sem o Jonny ela só fica onde está, quieta.
 func _deve_esperar() -> bool:
-	if not is_instance_valid(jogador) or _na_cabine:
+	if not is_instance_valid(jogador) or _na_cabine or _sem_esperar:
 		return false
 	return _distancia_do_maycow() > LONGE or not jogador.carregando_jonny
 
@@ -160,9 +179,12 @@ func _esperar_o_maycow() -> void:
 	while is_inside_tree():
 		if is_instance_valid(jogador) and _distancia_do_maycow() < PERTO and jogador.carregando_jonny:
 			break
-		_olhar = jogador.global_position if is_instance_valid(jogador) else Vector3.INF
-		_chamar_com_a_mao()
-		_cobrar(is_instance_valid(jogador) and not jogador.carregando_jonny)
+		if is_instance_valid(jogador) and jogador.carregando_jonny:
+			_olhar = jogador.global_position
+			_chamar_com_a_mao()
+			_cobrar()
+		else:
+			_olhar = Vector3.INF
 		await get_tree().physics_frame
 	_olhar = Vector3.INF
 
@@ -176,10 +198,10 @@ func _distancia_do_maycow() -> float:
 
 
 ## Uma fala de quando em quando enquanto ela espera.
-func _cobrar(sem_o_jonny: bool) -> void:
+func _cobrar() -> void:
 	if _relogio_fala > 0.0:
 		return
-	_falar("ENF_SEM_JONNY" if sem_o_jonny else "ENF_VENHA", 2.6)
+	_falar("ENF_VENHA", 2.6)
 	_relogio_fala = 7.0
 
 
@@ -194,6 +216,8 @@ func _chamar_com_a_mao() -> void:
 
 ## Empurra a porta (o mesmo gesto do botão) e espera a folha sair da frente.
 func _abrir_a_porta(caminho: String) -> void:
+	if not is_inside_tree():
+		return
 	var porta := get_tree().current_scene.get_node_or_null(caminho)
 	if porta == null or not porta.has_method("abrir_por"):
 		return
@@ -204,6 +228,8 @@ func _abrir_a_porta(caminho: String) -> void:
 
 
 func _apertar_botao() -> void:
+	if not is_inside_tree():
+		return
 	_apertando = 0.8
 	await get_tree().create_timer(0.8, false).timeout
 

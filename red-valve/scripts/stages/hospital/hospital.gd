@@ -53,6 +53,15 @@ func _ready() -> void:
 	_preparar_lampadas()
 	_preparar_cameras()
 
+	# Capítulo 2, hospital claro: o save foi carregado com o Jonny largado aqui
+	# dentro (num andar qualquer). A cena recomeça com ele no colo do Maycow, na
+	# entrada, com a enfermeira chamando do hall. (Com ele aqui a porta da rua
+	# não abre: chegar nesta cena no estado 5 só acontece carregando o save.)
+	if Eventos.hospital_claro() and SaveManager.evento_dona_nice == 5 and _jonny_aqui():
+		SaveManager.evento_dona_nice = 4
+		SaveManager.jonny_no_hospital = []
+		SaveManager.jonny_deixado_em = ""
+
 	# save_game() toma o caminho da cena atual como checkpoint, igual a' casa do
 	# Jimmy e a' igreja.
 	SaveManager.save_game()
