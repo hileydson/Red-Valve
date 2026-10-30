@@ -33,6 +33,10 @@ const TEMPO_ABRIR := 0.5
 ## Fundo interno da gaveta, no espaço do nó dela (a caixa vai de -0,045 a 0,05).
 const FUNDO := -0.03
 
+## Id do save da gaveta aberta. A gaveta da chave da Dona Nice
+## (`gaveta_chave.gd`) herda daqui e troca o id e o que vai dentro.
+var id_gaveta: String = GAVETA
+
 var _gaveta: Node3D
 var _selecao: Node
 
@@ -45,7 +49,7 @@ func instalar(movel: Node3D) -> bool:
 		return false
 	global_transform = movel.global_transform
 
-	if SaveManager.pickup_ja_pego(GAVETA):
+	if SaveManager.pickup_ja_pego(id_gaveta):
 		_gaveta.position.z += CURSO
 		_por_itens()
 		return true
@@ -71,7 +75,7 @@ func instalar(movel: Node3D) -> bool:
 
 func _abrir() -> void:
 	_selecao.disponivel = false
-	SaveManager.marcar_pickup(GAVETA)
+	SaveManager.marcar_pickup(id_gaveta)
 	SaveManager.save_game()
 	ItemDeBalcao.tocar_som(get_tree(), SOM_ABRIR, -6.0)
 

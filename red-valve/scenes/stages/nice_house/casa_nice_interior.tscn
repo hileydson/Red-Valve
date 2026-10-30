@@ -160,8 +160,9 @@
 
 [ext_resource type="PackedScene" path="res://assets/3d_model/player/the_negotiator_V1/cartridge/scene.gltf" id="modelo_34"]
 
+[ext_resource type="PackedScene" path="res://assets/3d_model/player/the_negotiator_V3/the_negotiator_V3.glb" id="modelo_35"]
 
-[ext_resource type="PackedScene" path="res://assets/3d_model/objects/chave_igreja/chave_igreja.glb" id="modelo_36"]
+[ext_resource type="PackedScene" path="res://assets/3d_model/player/the_negotiator_V3/cartridge/the_negotiator_V3_bullet_x2.glb" id="modelo_36"]
 
 [ext_resource type="PackedScene" path="res://assets/3d_model/objects/seringa_adrenalina/seringa_adrenalina.glb" id="modelo_37"]
 
@@ -2019,25 +2020,46 @@ monitorable = false
 [node name="forma" type="CollisionShape3D" parent="municao_altar/area"]
 shape = SubResource("shape41")
 
-[node name="chave_igreja" type="Node3D" parent="."]
-transform = Transform3D(0.87758, 0, 0.47943, 0, 1.00000, 0, -0.47943, 0, 0.87758, -1.3300, 1.1800, 3.0500)
+[node name="shotgun_laje" type="Node3D" parent="."]
+transform = Transform3D(0.00000, 0, 1.00000, 0, 1.00000, 0, -1.00000, 0, 0.00000, 1.9700, 0.9430, 2.5500)
 script = ExtResource("item_script")
-metadata/id = "casa_nice_chave_igreja"
-metadata/item = "chave_igreja"
+metadata/id = "casa_nice_shotgun_laje"
+metadata/item = "shotgun"
 metadata/quantidade = 1
-metadata/prompt = "PROMPT_TAKE_KEY"
-metadata/texto = "PICKUP_CHAVE_IGREJA"
-metadata/repetido = "PICKUP_AMMO_AGAIN"
+metadata/prompt = "PROMPT_TAKE_SHOTGUN"
+metadata/texto = "PICKUP_SHOTGUN"
+metadata/repetido = ""
 
-[node name="modelo" parent="chave_igreja" instance=ExtResource("modelo_36")]
-transform = Transform3D(1.40000, 0, 0.00000, 0, 1.40000, 0, -0.00000, 0, 1.40000, 0.0000, 0.0000, 0.0000)
+[node name="modelo" parent="shotgun_laje" instance=ExtResource("modelo_35")]
+transform = Transform3D(0.523, 0, 0, 0, 0, 0.523, 0, -0.523, 0, 0, 0, 0)
 
-[node name="area" type="Area3D" parent="chave_igreja"]
+[node name="area" type="Area3D" parent="shotgun_laje"]
 transform = Transform3D(1.00000, 0, 0.00000, 0, 1.00000, 0, -0.00000, 0, 1.00000, 0.0000, 0.2500, 0.0000)
 collision_layer = 0
 monitorable = false
 
-[node name="forma" type="CollisionShape3D" parent="chave_igreja/area"]
+[node name="forma" type="CollisionShape3D" parent="shotgun_laje/area"]
+shape = SubResource("shape41")
+
+[node name="shotgun_municao_laje" type="Node3D" parent="."]
+transform = Transform3D(0.92106, 0, 0.38942, 0, 1.00000, 0, -0.38942, 0, 0.92106, 1.5500, 0.8910, 2.8500)
+script = ExtResource("item_script")
+metadata/id = "casa_nice_shotgun_municao_laje"
+metadata/item = "shotgun_ammo"
+metadata/quantidade = 2
+metadata/prompt = "PROMPT_TAKE_SHOTGUN_AMMO"
+metadata/texto = "PICKUP_SHOTGUN_AMMO"
+metadata/repetido = "PICKUP_SHOTGUN_AMMO_AGAIN"
+
+[node name="modelo" parent="shotgun_municao_laje" instance=ExtResource("modelo_36")]
+transform = Transform3D(1.00000, 0, 0.00000, 0, 1.00000, 0, -0.00000, 0, 1.00000, 0.0000, 0.0000, 0.0000)
+
+[node name="area" type="Area3D" parent="shotgun_municao_laje"]
+transform = Transform3D(1.00000, 0, 0.00000, 0, 1.00000, 0, -0.00000, 0, 1.00000, 0.0000, 0.2500, 0.0000)
+collision_layer = 0
+monitorable = false
+
+[node name="forma" type="CollisionShape3D" parent="shotgun_municao_laje/area"]
 shape = SubResource("shape41")
 
 [node name="seringa_ritual" type="Node3D" parent="."]

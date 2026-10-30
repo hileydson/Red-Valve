@@ -47,6 +47,7 @@ signal poder_mudou(id: String, liberado: bool)
 const PROLOGO := 0
 const CAPITULO_1 := 1
 const CAPITULO_2 := 2
+const CAPITULO_3 := 3
 
 # --- Prólogo (estado nas variáveis antigas) ---------------------------------
 const PROLOGO_TELEFONE := "prologo_telefone"
@@ -86,7 +87,24 @@ const CAP1_PORTAO_PATIO := "cap1_portao_patio"
 const CAP1_CONCLUIDO := "cap1_concluido"
 
 # --- Capítulo 2 — Dona Nice ---------------------------------------------------
+## A cutscene da praça: o Maycow vê a Dona Nice entrando na igreja de mão dada
+## com o Jonny. Só passa uma vez; daí em diante a casa dela abre.
+const CAP2_NICE_ENTRA_IGREJA := "cap2_nice_entra_igreja"
+## Leu a carta em cima da laje do cômodo do ritual, na casa dela.
+const CAP2_CARTA_NICE := "cap2_carta_nice"
+## Usou a chave reserva na porta da igreja (estado em
+## `SaveManager.igreja_destrancada`).
 const CAP2_IGREJA_DESTRANCADA := "cap2_igreja_destrancada"
+## A Dona Nice morreu na igreja (estado em `SaveManager.evento_dona_nice` >= 3).
+## Abre o hospital.
+const CAP2_DONA_NICE_DERROTADA := "cap2_dona_nice_derrotada"
+## O Jonny ficou na maca da cirurgia do hospital (claro); o hospital vira o
+## escuro (estado em `SaveManager.evento_dona_nice` == 6).
+const CAP2_JONNY_NA_MACA := "cap2_jonny_na_maca"
+## A Drizzi Wisny falou com o Maycow (a cutscene do fundo preto).
+const CAP2_DRIZZI := "cap2_drizzi"
+## Saiu do hospital escuro: começa o Capítulo 3.
+const CAP2_CONCLUIDO := "cap2_concluido"
 
 ## A ordem da lista é a ordem da história (e a do debug).
 ## `rotulo` é a chave do CSV mostrada no debug.
@@ -127,8 +145,20 @@ const CATALOGO := [
 	{"id": CAP1_CONCLUIDO, "cap": CAPITULO_1, "rotulo": "DEBUG_EVT_CAP1_CONCLUIDO",
 		"depende": [CAP1_PORTAO_PATIO]},
 
-	{"id": CAP2_IGREJA_DESTRANCADA, "cap": CAPITULO_2, "rotulo": "DEBUG_EVENT_IGREJA_DESTRANCADA",
+	{"id": CAP2_NICE_ENTRA_IGREJA, "cap": CAPITULO_2, "rotulo": "DEBUG_EVT_CAP2_NICE_IGREJA",
 		"depende": [CAP1_CONCLUIDO]},
+	{"id": CAP2_CARTA_NICE, "cap": CAPITULO_2, "rotulo": "DEBUG_EVT_CAP2_CARTA",
+		"depende": [CAP2_NICE_ENTRA_IGREJA]},
+	{"id": CAP2_IGREJA_DESTRANCADA, "cap": CAPITULO_2, "rotulo": "DEBUG_EVENT_IGREJA_DESTRANCADA",
+		"depende": [CAP2_NICE_ENTRA_IGREJA]},
+	{"id": CAP2_DONA_NICE_DERROTADA, "cap": CAPITULO_2, "rotulo": "DEBUG_EVT_CAP2_NICE_MORTA",
+		"depende": [CAP2_IGREJA_DESTRANCADA]},
+	{"id": CAP2_JONNY_NA_MACA, "cap": CAPITULO_2, "rotulo": "DEBUG_EVT_CAP2_MACA",
+		"depende": [CAP2_DONA_NICE_DERROTADA]},
+	{"id": CAP2_DRIZZI, "cap": CAPITULO_2, "rotulo": "DEBUG_EVT_CAP2_DRIZZI",
+		"depende": [CAP2_JONNY_NA_MACA]},
+	{"id": CAP2_CONCLUIDO, "cap": CAPITULO_2, "rotulo": "DEBUG_EVT_CAP2_CONCLUIDO",
+		"depende": [CAP2_DRIZZI]},
 ]
 
 ## Os poderes da cogblade, na ordem do círculo (o primeiro fica no topo).
@@ -154,6 +184,7 @@ const TITULOS_CAPITULO := {
 	PROLOGO: "TXT_PROLOGUE",
 	CAPITULO_1: "TXT_CHAPTER_1",
 	CAPITULO_2: "TXT_CHAPTER_2",
+	CAPITULO_3: "TXT_CHAPTER_3",
 }
 
 ## Os lugares da cidade com porta. O que cada um precisa para abrir está em
@@ -205,7 +236,9 @@ func capitulo_atual() -> int:
 		return PROLOGO
 	if not feito(CAP1_CONCLUIDO):
 		return CAPITULO_1
-	return CAPITULO_2
+	if not feito(CAP2_CONCLUIDO):
+		return CAPITULO_2
+	return CAPITULO_3
 
 
 # ==============================================================================
@@ -339,8 +372,16 @@ func _legado_ler(id: String) -> Variant:
 			return SaveManager.tutorial_amuleto_visto
 		CAP1_PORTAO_PATIO:
 			return GlobalEvents.escola_portao_destrancado
+		CAP2_NICE_ENTRA_IGREJA:
+			# save de antes desta cena com a igreja já aberta (ou a luta já
+			# começada) não volta pra praça: pra ele, ela já entrou
+			return SaveManager.eventos_concluidos.has(id) or SaveManager.igreja_aberta()
 		CAP2_IGREJA_DESTRANCADA:
 			return SaveManager.igreja_destrancada
+		CAP2_DONA_NICE_DERROTADA:
+			return SaveManager.evento_dona_nice >= 3
+		CAP2_JONNY_NA_MACA:
+			return SaveManager.evento_dona_nice == 6
 	return null
 
 
@@ -364,6 +405,20 @@ func _legado_escrever(id: String, valor: bool) -> bool:
 			GlobalEvents.escola_portao_destrancado = valor
 		CAP2_IGREJA_DESTRANCADA:
 			SaveManager.igreja_destrancada = valor
+		CAP2_DONA_NICE_DERROTADA:
+			# morta = o Jonny caído na igreja (3); desfeito, tudo volta ao começo
+			if valor and SaveManager.evento_dona_nice < 3:
+				SaveManager.evento_dona_nice = 3
+			elif not valor:
+				SaveManager.evento_dona_nice = 0
+		CAP2_JONNY_NA_MACA:
+			# desfeito, o Jonny volta pro colo (o debug liga o hospital claro)
+			if valor:
+				SaveManager.evento_dona_nice = 6
+				SaveManager.jonny_no_hospital = []
+				SaveManager.jonny_deixado_em = ""
+			elif SaveManager.evento_dona_nice == 6:
+				SaveManager.evento_dona_nice = 4
 		_:
 			return false
 	return true
@@ -377,8 +432,9 @@ func _legado_escrever(id: String, valor: bool) -> bool:
 ##
 ## No prólogo nada muda (o roteiro de lá já se controla sozinho). No Capítulo 1
 ## a cidade inteira está fechada, menos a casa do Maycow, a do Jimmy e — depois
-## do diário — a escola. Do Capítulo 2 em diante valem as regras de cada lugar
-## (a igreja continua pedindo a chave, ver `SaveManager.igreja_aberta`).
+## do diário — a escola. No Capítulo 2 a casa da Dona Nice abre depois de ele
+## a ver entrando na igreja (e só no Capítulo 2), a igreja continua pedindo a
+## chave (ver `SaveManager.igreja_aberta`) e o hospital só abre com ela morta.
 func local_aberto(local: String) -> bool:
 	match capitulo_atual():
 		PROLOGO:
@@ -390,7 +446,14 @@ func local_aberto(local: String) -> bool:
 				"escola":
 					return feito(CAP1_DIARIO_JIMMY)
 			return false
-	return true
+		CAPITULO_2:
+			match local:
+				"casa_nice", "igreja":
+					return feito(CAP2_NICE_ENTRA_IGREJA)
+				"hospital":
+					return feito(CAP2_DONA_NICE_DERROTADA)
+			return true
+	return local != "casa_nice"
 
 
 ## A frase de "trancado" deste lugar (chave do CSV), ou "" se ele está aberto.
@@ -427,6 +490,14 @@ func escola_presa() -> bool:
 	return feito(CAP1_ESCOLA_PRESA) and not feito(CAP1_PORTAO_PATIO)
 
 
+## O hospital desta visita: o CLARO (funcionando, gente andando, mapa inteiro)
+## da morte da Dona Nice até o Jonny ficar na maca; o ESCURO, o de sempre,
+## dali em diante (e fora do Capítulo 2).
+func hospital_claro() -> bool:
+	return capitulo_atual() == CAPITULO_2 and feito(CAP2_DONA_NICE_DERROTADA) \
+		and not feito(CAP2_JONNY_NA_MACA)
+
+
 ## O que fazer agora (chave do CSV), ou "" quando não há objetivo.
 func objetivo_atual() -> String:
 	match capitulo_atual():
@@ -447,6 +518,19 @@ func objetivo_atual() -> String:
 				return "OBJ_CAP1_ATRAVESSAR_PORAO"
 			return "OBJ_CAP1_SAIR_PELO_PATIO"
 		CAPITULO_2:
-			if SaveManager.evento_dona_nice == 0:
-				return "OBJ_CAP2_CASA_NICE"
+			if not feito(CAP2_NICE_ENTRA_IGREJA):
+				return "OBJ_CAP2_BUSCAR_NICE_JONNY"
+			# a chave pode ser usada sem a carta: aberta a igreja, o que vale
+			# já é ir atrás dela
+			if not feito(CAP2_CARTA_NICE) and not feito(CAP2_IGREJA_DESTRANCADA):
+				return "OBJ_CAP2_ENTRAR_IGREJA"
+			if not feito(CAP2_DONA_NICE_DERROTADA):
+				return "OBJ_CAP2_CONFRONTAR_NICE"
+			if not feito(CAP2_JONNY_NA_MACA):
+				return "OBJ_LEVAR_JONNY_HOSPITAL"
+			if not feito(CAP2_DRIZZI):
+				return ""
+			return "OBJ_CAP2_SAIR_HOSPITAL"
+		CAPITULO_3:
+			return "OBJ_CAP3_CEMITERIO"
 	return ""

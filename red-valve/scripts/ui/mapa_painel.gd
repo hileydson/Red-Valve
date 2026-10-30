@@ -63,6 +63,8 @@ const COR_INTERROGACAO := Color(1.0, 0.86, 0.25)
 
 var _dados: MapaDados
 var _mat: ShaderMaterial
+## A prancha da cidade, que vem na cena: perfil sem `textura_mapa` usa esta.
+var _textura_padrao: Texture2D = null
 var _player: Node3D = null
 var _centro := Vector2(0.5, 0.5)
 var _meia: float = 0.09
@@ -78,7 +80,12 @@ var _nevoa: MapaNevoa = null
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	_mat = _mapa.material as ShaderMaterial
+	# duplicate(): o ShaderMaterial é sub-recurso da cena e fica em cache entre
+	# instâncias do menu — sem a cópia, a prancha da escola ficava gravada nele
+	# e a aba MAPA da cidade abria com o desenho da escola (ver o minimapa).
+	_mat = (_mapa.material as ShaderMaterial).duplicate() as ShaderMaterial
+	_mapa.material = _mat
+	_textura_padrao = _mat.get_shader_parameter("mapa")
 	_btn_centralizar.text = tr("MAP_RECENTER")
 	_btn_centralizar.pressed.connect(centralizar)
 	_ajuda_pad.text = tr("MAP_HELP_PAD")
@@ -129,8 +136,10 @@ func _carregar_fonte() -> void:
 		return
 	_fonte = caminho
 	_dados = novos
-	if perfil and perfil.get("textura_mapa") != null:
-		_mat.set_shader_parameter("mapa", perfil.get("textura_mapa"))
+	# sem textura própria no perfil é a da cidade — e precisa voltar a ela
+	# explicitamente, senão fica a do último prédio aberto
+	var textura = perfil.get("textura_mapa") if perfil else null
+	_mat.set_shader_parameter("mapa", textura if textura != null else _textura_padrao)
 	_nevoa = MapaNevoa.para(_dados, caminho)
 	_mat.set_shader_parameter("nevoa_ligada", _nevoa != null)
 	if _nevoa != null:

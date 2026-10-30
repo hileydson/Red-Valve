@@ -16,6 +16,7 @@ class_name ArquivosDados
 ##   telefonema_dona_nice     -> the_house.gd, ao terminar a ligacao
 ##   caderno_do_jimmy         -> stage_1.gd, quando o Capitulo 1 comeca
 ##   diario_do_jimmy          -> diario_jimmy.gd, ao ler o diario na casa do Jimmy
+##   carta_da_dona_nice       -> carta_nice.gd, ao ler a carta na casa da Dona Nice
 ##
 ## O que o jogador ja abriu mora em SaveManager.arquivos_desbloqueados; aqui so
 ## existe o conteudo.
@@ -66,6 +67,17 @@ const CATALOGO := [
 			["DIARIO_JIMMY_2_1", "DIARIO_JIMMY_2_2", "DIARIO_JIMMY_2_3"],
 			["DIARIO_JIMMY_3_1", "DIARIO_JIMMY_3_2", "DIARIO_JIMMY_3_3"],
 			["DIARIO_JIMMY_4_1", "DIARIO_JIMMY_4_2", "DIARIO_JIMMY_4_3"],
+		],
+	},
+	{
+		"id": "carta_da_dona_nice",
+		"titulo": "FILE_CARTA_NICE_TITLE",
+		# a carta em cima da laje do ritual, na casa dela (Capitulo 2): ela e' a
+		# quinta dos Anti-Lopes e vai sacrificar um inocente pra atravessar
+		"paragrafos": [
+			["CARTA_NICE_1_1", "CARTA_NICE_1_2", "CARTA_NICE_1_3"],
+			["CARTA_NICE_2_1", "CARTA_NICE_2_2", "CARTA_NICE_2_3"],
+			["CARTA_NICE_3_1", "CARTA_NICE_3_2", "CARTA_NICE_3_3"],
 		],
 	},
 ]

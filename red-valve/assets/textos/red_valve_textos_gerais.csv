@@ -479,7 +479,7 @@ AVISO_HOSPITAL_TRANCADO,The door is locked. There's no way out.,A porta está tr
 OBJ_HOSPITAL_AJUDA_JONNY,Find help for Jonny,Encontre ajuda para o Jonny
 OBJ_LEVAR_JONNY_HOSPITAL,Take Jonny to the hospital,Leve o Jonny ao hospital
 AVISO_SEM_MUNICAO_IGREJA,Out of ammo — look for ammo boxes around the church,Sem munição — procure caixas de munição pela igreja
-DEBUG_EVENT_DONA_NICE,Dona Nice event (0-5),Evento Dona Nice (0-5)
+DEBUG_EVENT_DONA_NICE,Dona Nice event (0-6),Evento Dona Nice (0-6)
 ITEM_CHAVE_IGREJA_NAME,Church Key,Chave da Igreja
 ITEM_CHAVE_IGREJA_DESC,"The church's spare key, rusted through. Dona Nice kept it in her bedroom.","A chave reserva da igreja, toda enferrujada. A Dona Nice guardava no quarto dela."
 ITEM_SERINGA_NAME,Adrenaline Syringe,Seringa de Adrenalina
@@ -610,3 +610,58 @@ PODER_NOVO_COGBLADE,Maycow has just acquired a new power for the Cogblade,Maycow
 PODER_NOVO_USO_PAD,Hold LB and point at the power to use it,Segure LB e aponte para o poder para usá-lo
 PODER_NOVO_USO_KEY,Hold C and point at the power with the mouse to use it,Segure C e aponte para o poder com o mouse para usá-lo
 DEBUG_EVT_CAP1_MIRANTE,Hell 4: saw the lookout cutscene (gargoyle over the crater),Inferno 4: viu a cutscene do mirante (gárgula sobre a cratera)
+OBJ_CAP2_BUSCAR_NICE_JONNY,Go after Ms. Nice and Jonny.,Vá em busca de Dona Nice e Jonny.
+OBJ_CAP2_ENTRAR_IGREJA,Find a way into the church.,Encontre uma forma de entrar na igreja.
+OBJ_CAP2_CONFRONTAR_NICE,Confront Ms. Nice at the church.,Confronte Dona Nice na igreja.
+OBJ_CAP2_SIGA_ENFERMEIRA,Follow the nurse to the operating room.,Siga a enfermeira até a sala de cirurgia.
+OBJ_CAP2_MACA,Lay Jonny on the stretcher in the operating room.,Coloque o Jonny na maca da sala de cirurgia.
+OBJ_CAP2_SAIR_HOSPITAL,Get out of the hospital.,Saia do hospital.
+OBJ_CAP3_CEMITERIO,Go to the cemetery in search of answers.,Vá para o cemitério em busca de respostas.
+TXT_CHAPTER_3,CHAPTER 3,CAPÍTULO 3
+TXT_CHAPTER_3_SUBTITULO,The Cemetery,O Cemitério
+CAP2_CENA_IGREJA_MAYCOW_1,Ms. Nice?! ...And Jonny!,Dona Nice?! ...E o Jonny!
+CAP2_CENA_IGREJA_MAYCOW_2,She took Jonny into the church... I have to get in there.,Ela levou o Jonny pra dentro da igreja... Eu preciso entrar lá.
+AVISO_IGREJA_DESTRANCADA,The key turned in the lock. The church is open.,A chave girou na tranca. A igreja está aberta.
+PROMPT_HOSPITAL_TRAGA_JONNY,I need to bring Jonny.,Preciso trazer o Jonny.
+AVISO_HOSPITAL_CUIDAR_DO_JONNY,I can't leave until Jonny is taken care of.,Não posso sair antes de cuidarem do Jonny.
+PROMPT_LER_CARTA,Read the letter?,Ler a carta?
+FILE_CARTA_NICE_TITLE,Ms. Nice's Letter,A Carta da Dona Nice
+CARTA_NICE_1_1,"To my brothers on the other side: El Fofon, Leo Weaky, Grizzolito Marolis and Pastor Seco.","Aos meus irmãos do outro lado: El Fofon, Leo Weaky, Grizzolito Marolis e Pastor Seco."
+CARTA_NICE_1_2,The four of you have already crossed. I am the last of the Anti-Lopes still trapped on this side.,Vocês quatro já atravessaram. Eu sou a última dos Anti-Lopes que ainda está presa deste lado.
+CARTA_NICE_1_3,"Without me the ritual cannot be completed. Five must pass through the veil, or none of us will stand on the other side.","Sem mim o ritual não se completa. Cinco precisam passar pelo véu, ou nenhum de nós fica de pé do outro lado."
+CARTA_NICE_2_1,The amulet I was keeping is lost. I turned this whole house upside down and could not find it.,O amuleto que eu guardava se perdeu. Revirei esta casa inteira e não o encontrei.
+CARTA_NICE_2_2,"Without the amulet, only the other path remains, the one written in the book: the sacrifice of an innocent.","Sem o amuleto, só resta o outro caminho, o que está escrito no livro: o sacrifício de um inocente."
+CARTA_NICE_2_3,"I have already chosen. I have looked after him for years, and no one will find it strange if I take him with me.","Eu já escolhi. Faz anos que eu cuido dele, e ninguém vai estranhar se eu o levar comigo."
+CARTA_NICE_3_1,"Tonight, at the abandoned church, before the altar. The way you taught me.","Hoje à noite, na igreja abandonada, diante do altar. Do jeito que vocês me ensinaram."
+CARTA_NICE_3_2,"When his blood touches the stone, the veil will open and I will join you.","Quando o sangue dele tocar a pedra, o véu se abre e eu me junto a vocês."
+CARTA_NICE_3_3,Wait for me. — Ms. Nice,Esperem por mim. — Dona Nice
+PROMPT_COLOCAR_JONNY_MACA,Lay Jonny on the stretcher?,Colocar o Jonny na maca?
+ENF_CHEGADA,"My God, this boy is hurt! Come with me, quickly!","Meu Deus, esse menino está ferido! Venha comigo, rápido!"
+ENF_ELEVADOR,The operating room is on the second floor. We'll take the elevator.,A sala de cirurgia fica no segundo andar. Vamos pelo elevador.
+ENF_ENTRA,"Come in, come in! Careful with him.","Entre, entre! Cuidado com ele."
+ENF_SEGUE,This way! Don't stop!,Por aqui! Não pare!
+ENF_VENHA,Over here! Hurry!,Aqui! Depressa!
+ENF_SEM_JONNY,Bring the boy! We can't lose any time!,Traga o menino! Não podemos perder tempo!
+ENF_SALA,Lay him on the stretcher. The doctors are already waiting.,Coloque ele na maca. Os médicos já estão esperando.
+AVISO_LIGAR_LANTERNA_PAD,It's too dark. Turn on the flashlight (L3).,Está escuro demais. Ligue a lanterna (L3).
+AVISO_LIGAR_LANTERNA_KEY,It's too dark. Turn on the flashlight (Y).,Está escuro demais. Ligue a lanterna (Y).
+DRIZZI_1,Maycow...,Maycow...
+DRIZZI_2,Don't be afraid. I didn't come to hurt you.,Não tenha medo. Eu não vim te fazer mal.
+DRIZZI_3,I'm so sorry for what's happening to Jonny. More sorry than anyone could ever be.,Sinto muito pelo que está acontecendo com o Jonny. Mais do que qualquer um poderia sentir.
+DRIZZI_4,I need to know who did this to him. I need to find the one to blame.,Eu preciso saber quem fez isso com ele. Preciso encontrar o culpado.
+DRIZZI_5,My name is Drizzi Wisny. I was Jimmy's wife.,Meu nome é Drizzi Wisny. Eu era a esposa do Jimmy.
+DRIZZI_6,I'm Jonny's mother. I died when he was too little to remember me.,Eu sou a mãe do Jonny. Morri quando ele era pequeno demais pra se lembrar de mim.
+DRIZZI_7,"Now I live on the other side, in the parallel world. From here I see everything... but I can barely touch anything.","Agora eu vivo do outro lado, no mundo paralelo. Daqui eu vejo tudo... mas quase não consigo tocar em nada."
+DRIZZI_8,I can't stay any longer. The veil is closing.,Não posso ficar mais. O véu está se fechando.
+DRIZZI_9,Meet me at the cemetery. There I'll tell you the rest.,Me encontre no cemitério. Lá eu te conto o resto.
+DEBUG_EVT_CAP2_NICE_IGREJA,Square: saw Ms. Nice entering the church,Praça: viu a Dona Nice entrando na igreja
+DEBUG_EVT_CAP2_CARTA,Ms. Nice's house: letter read,Casa da Dona Nice: carta lida
+DEBUG_EVT_CAP2_NICE_MORTA,Church: Ms. Nice defeated,Igreja: Dona Nice derrotada
+DEBUG_EVT_CAP2_MACA,Hospital: Jonny on the stretcher,Hospital: Jonny na maca
+DEBUG_EVT_CAP2_DRIZZI,Hospital: Drizzi spoke,Hospital: a Drizzi falou
+DEBUG_EVT_CAP2_CONCLUIDO,Chapter 2 finished (left the hospital),Capítulo 2 concluído (saiu do hospital)
+DEBUG_EVENT_FILE_CARTA_NICE,File: Ms. Nice's Letter,Arquivo: Carta da Dona Nice
+DEBUG_EVENT_PICKUP_NICE_GAVETA,Ms. Nice's drawer opened,Gaveta da Dona Nice aberta
+DEBUG_EVENT_PICKUP_NICE_CHAVE,Pickup: Church Key (Nice's drawer),Pickup: Chave da Igreja (gaveta da Nice)
+DEBUG_EVENT_PICKUP_NICE_SHOTGUN,Pickup: Shotgun (Nice's ritual slab),Pickup: Espingarda (laje do ritual da Nice)
+DEBUG_EVENT_PICKUP_NICE_SHELLS,Pickup: Shells (Nice's ritual slab),Pickup: Cartuchos (laje do ritual da Nice)

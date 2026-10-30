@@ -1,6 +1,12 @@
 extends Node3D
 
 const CENA_MAPA := "res://scenes/stages/stage_1/stage_1.tscn"
+const GavetaChave := preload("res://scripts/stages/nice_house/gaveta_chave.gd")
+const CartaNice := preload("res://scripts/stages/nice_house/carta_nice.gd")
+## A carta em cima da laje do cômodo do ritual, do lado do bilhete: no tampo
+## (0,88), em cima da correia do meio.
+const CARTA_POS := Vector3(1.56, 0.893, 2.1)
+const CARTA_GIRO := -0.25
 
 @onready var fade: ColorRect = $fade
 
@@ -21,6 +27,33 @@ func _ready() -> void:
 	for luz in $luzes.get_children():
 		if luz is OmniLight3D and luz.has_meta("piscar"):
 			_lampadas.append({"luz": luz, "base": luz.light_energy, "tempo": 0.0})
+	_preparar_gaveta()
+	_preparar_carta()
+
+
+## A chave reserva da igreja, na gaveta do criado-mudo do quarto dela.
+func _preparar_gaveta() -> void:
+	var movel := get_node_or_null("objetos/criado_mudo") as Node3D
+	if movel == null:
+		return
+	var gaveta = GavetaChave.new()
+	gaveta.name = "gaveta_chave"
+	add_child(gaveta)
+	gaveta.instalar(movel)
+
+
+## A carta dela sobre a seita, na laje do ritual — até ser lida (aí ela é do
+## Maycow, na aba ARQUIVOS). Ver `carta_nice.gd`.
+func _preparar_carta() -> void:
+	if not Eventos.pode(Eventos.CAP2_CARTA_NICE):
+		return
+	var carta = CartaNice.new()
+	carta.name = "carta_nice"
+	add_child(carta)
+	carta.position = CARTA_POS
+	carta.rotation.y = CARTA_GIRO
+	if Eventos.objetivo_atual() != "":
+		GlobalUtils.mostrar_objetivo(tr(Eventos.objetivo_atual()), 30.0)
 
 
 func _process(delta: float) -> void:

@@ -249,6 +249,9 @@ func _ready() -> void:
 	# não pode deixar cena/HUD/sangue do jogo pendurados na árvore.
 	GlobalUtils.cleanup_gameplay_leftovers()
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	# Até o jogador escolher um slot nada é gravado: o menu de configurações
+	# muda só a memória, e isso vai pro slot escolhido (ver SaveManager).
+	SaveManager.sem_slot_escolhido = true
 	
 	# Uma opção só: sem save nenhum aparece "Novo Jogo"; com algum save aparece
 	# só "Carregar", e os slots vazios lá dentro viram "Novo Jogo".
@@ -502,7 +505,7 @@ func _on_slot_selected(slot_id: int, is_new_game: bool) -> void:
 	
 	if is_new_game:
 		SaveManager.reset_progress()
-		SaveManager.current_slot = slot_id
+		SaveManager.escolher_slot(slot_id)
 		SaveManager.save_game()
 		get_tree().change_scene_to_file("res://scenes/stages/stage_1/stage_1_cutscene_prologo.tscn")
 	else:
@@ -528,6 +531,7 @@ func _on_config_pressed() -> void:
 		config_menu.back_btn.pressed.disconnect(config_menu._on_back_pressed)
 		config_menu.back_btn.pressed.connect(func():
 			GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/selecionar_item_voltar.mp3")
+			# sem slot escolhido não grava nada: vai junto com o slot
 			SaveManager.save_config()
 			$UI/Control.visible = true
 			$UI/Control/VBoxContainer/config.grab_focus()

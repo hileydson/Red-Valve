@@ -75,6 +75,13 @@ var _player_no_pavimento: int = 0
 var _y_anterior: float = 0.0
 var _espera: float = 0.0
 
+## Capítulo 2 (hospital claro): quem aperta os botões é a enfermeira que leva
+## o Maycow até a cirurgia (`enfermeira_guia.gd`). Enquanto `guiado`, o botão
+## do jogador não faz nada e o prompt não aparece; `segurar_aberto` não deixa
+## a porta fechar sozinha enquanto ela espera ele entrar.
+var guiado: bool = false
+var segurar_aberto: bool = false
+
 
 func _ready() -> void:
 	_cotas[1] = float(get_meta("andar_1", 0.0))
@@ -101,12 +108,12 @@ func _physics_process(delta: float) -> void:
 
 	if estado == ABERTO:
 		_espera -= delta
-		if _espera <= 0.0 and not _player_dentro:
+		if _espera <= 0.0 and not _player_dentro and not segurar_aberto:
 			_fechar_portas()
 
 	if estado != ABERTO and estado != PARADO:
 		return
-	if GlobalEvents.in_cutscene or GlobalUtils.in_cinematic_cutscene:
+	if guiado or GlobalEvents.in_cutscene or GlobalUtils.in_cinematic_cutscene:
 		return
 	if not Input.is_action_just_pressed("ui_accept"):
 		return
@@ -129,6 +136,37 @@ func _chamar(andar: int) -> void:
 	_mensagem("PROMPT_HOSP_ELEVADOR_VINDO", 2.4)
 	await _mover_ate(andar)
 	_abrir_portas()
+
+
+# ==============================================================================
+# PELA ENFERMEIRA (guiado)
+# ==============================================================================
+
+## Chama a cabine pro andar e volta com as portas abertas.
+func chamar_pelo_guia(andar: int) -> void:
+	if estado == ABERTO and andar_atual == andar:
+		_espera = ESPERA_ABERTA
+		return
+	while estado != PARADO and estado != ABERTO:
+		await get_tree().physics_frame
+	if estado == ABERTO:
+		if andar_atual == andar:
+			return
+		await _fechar_portas()
+	await _chamar(andar)
+	while estado != ABERTO:
+		await get_tree().physics_frame
+
+
+## Fecha, viaja e volta com as portas abertas no destino.
+func viajar_pelo_guia(destino: int) -> void:
+	await _viajar(destino)
+	while estado != ABERTO:
+		await get_tree().physics_frame
+
+
+func player_dentro() -> bool:
+	return _player_dentro
 
 
 func _viajar(destino: int) -> void:
@@ -233,6 +271,9 @@ func _mensagem(chave: String, duracao: float = 0.0) -> void:
 
 
 func _atualizar_prompt() -> void:
+	if guiado:
+		GlobalUtils.hide_center_message(_id_prompt())
+		return
 	if _player_dentro:
 		if estado == ABERTO:
 			_mensagem("PROMPT_HOSP_ELEVADOR_SUBIR" if andar_atual == 1

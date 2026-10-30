@@ -20,6 +20,9 @@ var entering_chapter_1: bool = false
 ## Ligado pela escola quando o Maycow sai dela no fim do Capitulo 1; a stage_1
 ## consome (e zera) isto pra mostrar o "CAPITULO 2" na chegada.
 var entering_chapter_2: bool = false
+## Ligado pelo hospital quando o Maycow sai dele no fim do Capitulo 2 (depois
+## da Drizzi); a stage_1 consome (e zera) isto pra mostrar o "CAPITULO 3".
+var entering_chapter_3: bool = false
 ## Capítulo 1: a gárgula do inferno 4 jogou o Maycow no portal do começo; o
 ## porão, ao recebê-lo pela red valve, mostra a fala de que ele ainda é fraco.
 var aviso_fraco_no_porao: bool = false
@@ -75,6 +78,13 @@ func bloquear_dash_por(ms: int = 250) -> void:
 
 func dash_bloqueado() -> bool:
 	return Time.get_ticks_msec() < _dash_liberado_em_ms
+
+
+## A mesma janelinha, pra quem não é o dash: o B também é "largar o Jonny" (e
+## o G no teclado). `Input.action_release` NÃO serve pra isto — no 4.6 o
+## `is_action_just_pressed` continua verdadeiro no quadro mesmo depois de solto.
+func acoes_bloqueadas() -> bool:
+	return dash_bloqueado()
 
 ## Ligado enquanto a volta da arena para a stage_1 está em andamento. A sequência
 ## final da batalha liga `in_cutscene` (que mata TODO o input) antes de uma espera

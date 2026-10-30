@@ -18,6 +18,9 @@ extends Node3D
 const LAYER_CHAO := 2
 const CENA_MAPA := "res://scenes/stages/stage_1/stage_1.tscn"
 const CARREGAR_JONNY := "res://scripts/player/player_carregar_jonny.gd"
+## O Capítulo 2 aqui dentro: o hospital claro, a enfermeira, a maca, a
+## transformação e a Drizzi (ver `capitulo_2_hospital.gd`).
+const CAPITULO_2_HOSPITAL := "res://scripts/stages/hospital/capitulo_2_hospital.gd"
 
 @onready var fade: ColorRect = $fade
 
@@ -29,6 +32,16 @@ var _lampadas: Array[Dictionary] = []
 ## Trava a saida: o fade dura dois segundos, e sem isto cada aperto no botao
 ## durante esses dois segundos empilha mais uma troca de cena.
 var _saindo: bool = false
+
+## Desligado no hospital claro (Capítulo 2): lá as lâmpadas funcionam. A onda
+## da transformação liga de volta (`hospital_versoes.gd`).
+var piscar_lampadas: bool = true:
+	set(v):
+		piscar_lampadas = v
+		if not v:
+			_lampadas_firmes()
+
+var _capitulo_2: Node = null
 
 
 func _ready() -> void:
@@ -46,6 +59,13 @@ func _ready() -> void:
 
 	if _jonny_aqui():
 		_jonny_no_hospital()
+	# no Capítulo 2 o objetivo é da história (ver `capitulo_2_hospital.gd`)
+	_capitulo_2 = load(CAPITULO_2_HOSPITAL).new()
+	_capitulo_2.name = "capitulo_2_hospital"
+	add_child(_capitulo_2)
+	if _capitulo_2.iniciar(self):
+		return
+	if _jonny_aqui():
 		GlobalUtils.mostrar_objetivo(tr("OBJ_HOSPITAL_AJUDA_JONNY"))
 	else:
 		GlobalUtils.mostrar_objetivo(tr("OBJ_HOSP_EXPLORAR"))
@@ -134,9 +154,16 @@ func sair_do_hospital() -> void:
 	# Com o Jonny aqui dentro a porta nao abre — a saida vem com a chave, que e'
 	# outra parte da historia.
 	if _jonny_aqui():
-		GlobalUtils.show_center_message("hospital_trancado", tr("AVISO_HOSPITAL_TRANCADO"), 16, 2.2)
+		var aviso := "AVISO_HOSPITAL_CUIDAR_DO_JONNY" if Eventos.hospital_claro() \
+			else "AVISO_HOSPITAL_TRANCADO"
+		GlobalUtils.show_center_message("hospital_trancado", tr(aviso), 16, 2.2)
 		return
 	_saindo = true
+	# Saiu do hospital escuro depois da Drizzi: acabou o Capítulo 2. A stage_1
+	# mostra o "CAPÍTULO 3" na chegada.
+	if Eventos.pode(Eventos.CAP2_CONCLUIDO):
+		Eventos.concluir(Eventos.CAP2_CONCLUIDO)
+		GlobalEvents.entering_chapter_3 = true
 	GlobalEvents.in_cutscene = true
 	GlobalEvents.voltando_do_hospital = true
 	GlobalUtils.esconder_objetivo()
@@ -149,6 +176,17 @@ func _process(delta: float) -> void:
 	_atualizar_lampadas(delta)
 
 
+## Sem piscar: toda lâmpada na energia de projeto e com o feixe aceso.
+func _lampadas_firmes() -> void:
+	for lamp in _lampadas:
+		var luz: Light3D = lamp["luz"]
+		if is_instance_valid(luz):
+			luz.light_energy = lamp["base"]
+		var cone: Node3D = lamp["cone"]
+		if is_instance_valid(cone):
+			cone.visible = true
+
+
 ## Duas falhas diferentes, as mesmas da casa do Jimmy e da igreja: a "nervosa"
 ## e' o reator velho da fluorescente, que treme o tempo todo sem nunca apagar;
 ## a "quebrada" ja' morreu e so' da' estouros curtos, com longos intervalos de
@@ -158,6 +196,8 @@ func _process(delta: float) -> void:
 ## sincronizadas, as lampadas de um corredor piscam como um pisca-pisca de
 ## natal em vez de um corredor de hospital quebrado.
 func _atualizar_lampadas(delta: float) -> void:
+	if not piscar_lampadas:
+		return
 	for lamp in _lampadas:
 		var luz: Light3D = lamp["luz"]
 		if not is_instance_valid(luz):

@@ -871,6 +871,10 @@ func execute_action() -> void:
 
 func close_menu() -> void:
 	GlobalUtils.play_ui_sound("res://assets/sounds/menu_itens/sair_menu.mp3")
+	# DOIS quadros: o primeiro `process_frame` sai no MESMO quadro do aperto
+	# (o sinal vem antes dos `_process`), e o jogo despausado lia a tecla que
+	# fechou o menu como "acabou de apertar" — o B largava o Jonny no chão.
+	await get_tree().process_frame
 	await get_tree().process_frame
 	get_tree().paused = false
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)

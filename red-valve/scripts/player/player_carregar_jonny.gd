@@ -26,6 +26,8 @@ extends Node
 
 signal largou
 signal pegou
+## O Jonny ficou na maca da cirurgia (Capítulo 2) — ver `deitar_na_maca`.
+signal deitou
 
 const ESTE := "res://scripts/player/player_carregar_jonny.gd"
 const CENA_JONNY := "res://scenes/npcs/igreja/jonny.tscn"
@@ -73,6 +75,12 @@ const ATRAS_DO_JONNY := 0.62
 const ENCAIXE := 0.35
 ## Ate' que distancia (no chao) aparece o "Pegar Jonny no colo".
 const RAIO_PEGAR := 1.5
+## Na maca (Capítulo 2) o tampo fica na altura do colo: o `largar_jonny` só
+## começa a descer as mãos, o Jonny passa das mãos pro tampo entre
+## MACA_SOLTA e MACA_NO_TAMPO, e em MACA_FIM o gesto para ali mesmo.
+const MACA_SOLTA := 0.2
+const MACA_NO_TAMPO := 0.85
+const MACA_FIM := 1.05
 
 var player: CharacterBody3D
 var jonny: Node3D
@@ -84,7 +92,8 @@ var _arvore: AnimationTree
 var _ap: AnimationPlayer
 var _suporte: Node3D
 var _ponto: Node
-## "colo", "chao", "largando", "pegando".
+## "colo", "chao", "largando", "pegando", "maca" (deitando na maca) e
+## "entregue" (ficou na maca: daqui em diante o hospital cuida dele).
 var _modo := ""
 ## 1 = Jonny nas maos, 0 = no `_base` (o chao). No meio, misturado.
 var _peso_maos := 1.0
@@ -167,7 +176,7 @@ func _mostrar_dica() -> void:
 
 
 func _process(delta: float) -> void:
-	if _ap == null or _modo == "":
+	if _ap == null or _modo == "" or _modo == "entregue":
 		return
 	if _modo == "chao":
 		_checar_perto()
@@ -184,7 +193,7 @@ func _process(delta: float) -> void:
 			_mostrar_dica()
 	_ap.advance(delta)
 	_jonny_nas_maos()
-	if _modo == "colo" and not GlobalEvents.in_cutscene \
+	if _modo == "colo" and not GlobalEvents.in_cutscene and not GlobalEvents.acoes_bloqueadas() \
 			and Input.is_action_just_pressed("ui_largar") and player.is_on_floor():
 		_largar()
 
@@ -307,6 +316,62 @@ func _chao_em(p: Vector3) -> Vector3:
 	if r.is_empty():
 		return Vector3(p.x, player.global_position.y - 1.0, p.z)
 	return r["position"]
+
+
+# ==============================================================================
+# NA MACA (Capítulo 2)
+# ==============================================================================
+
+## Deita o Jonny no tampo da maca (`tampo` = o meio dele, na superfície) com o
+## Maycow virado pra `de_frente_para` (giro do corpo). Ele fica lá de vez: o
+## estado vai pra 6 e o Jonny sai do colo — quem cuida dele daqui em diante é
+## o hospital. O corpo do Maycow fica PARADO no fim do gesto até alguém
+## chamar `soltar_corpo` (a cena da transformação corta antes).
+func deitar_na_maca(tampo: Vector3, de_frente_para: float) -> void:
+	_modo = "maca"
+	GlobalUtils.hide_center_message("largar_jonny")
+	player.cutscene_set_player_control(false)
+	player.velocity = Vector3.ZERO
+	var giro_ini := player.rotation.y
+	var vira := create_tween()
+	vira.tween_method(func(k: float): player.rotation.y = lerp_angle(giro_ini, de_frente_para, k),
+		0.0, 1.0, ENCAIXE).set_trans(Tween.TRANS_SINE)
+	await vira.finished
+
+	# atravessado na frente dele, como no chao
+	var frente := (_suporte.global_basis.z * Vector3(1, 0, 1)).normalized()
+	_giro_largar = Basis.looking_at(-frente, Vector3.UP) * Basis(Vector3.UP, deg_to_rad(90.0))
+	_chao_largar = tampo
+	_base = jonny.no_chao(Transform3D(_giro_largar, tampo))
+	_base_nas_maos = false
+	_peso_maos = 1.0
+	_ap.speed_scale = 1.0
+	_ap.play(LARGAR, 0.2)
+	jonny.tocar(&"sendo_largado", 0.2)
+	var t := create_tween()
+	t.tween_interval(MACA_SOLTA)
+	t.tween_property(self, "_peso_maos", 0.0, MACA_NO_TAMPO - MACA_SOLTA).set_trans(Tween.TRANS_SINE)
+	await get_tree().create_timer(MACA_FIM, false).timeout
+
+	jonny.global_transform = _base
+	jonny.tocar(&"deitado", 0.4)
+	_modo = "entregue"
+	player.carregando_jonny = false
+	SaveManager.evento_dona_nice = 6
+	# o lugar dele na maca (sem o assentar do corpo deitado, como no chao):
+	# o hospital o deita de novo ali a cada visita
+	SaveManager.jonny_no_hospital = [tampo.x, tampo.y, tampo.z, _giro_largar.get_euler().y]
+	SaveManager.jonny_deixado_em = CENA_HOSPITAL
+	deitou.emit()
+
+
+## Devolve o corpo do Maycow à AnimationTree (e as armas) depois da maca. O
+## controle volta com o fim da cena de quem chamou.
+func soltar_corpo() -> void:
+	if _ap == null:
+		return
+	_corpo_nos_clipes(false)
+	_suspender_armas(false)
 
 
 # ==============================================================================

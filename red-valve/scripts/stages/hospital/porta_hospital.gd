@@ -233,6 +233,19 @@ func _abrir(atraso: float = 0.0) -> void:
 	_atualizar_prompt()
 
 
+## Abre empurrada por outra pessoa (a enfermeira do Capítulo 2 leva o Maycow
+## até a cirurgia): as folhas vão pro lado oposto ao de `quem`.
+func abrir_por(quem: Node3D) -> void:
+	if aberta or _mexendo or _trancada or _saida:
+		_conta_regressiva = ESPERA_FECHAR
+		return
+	var sinal := -1.0 if to_local(quem.global_position).z > 0.0 else 1.0
+	_girar(-ABERTURA * sinal, TEMPO_ABRIR_LENTO * 0.6)
+	aberta = true
+	_conta_regressiva = ESPERA_FECHAR
+	_atualizar_prompt()
+
+
 ## Quanto mais rapido o jogador chega, mais rapido a folha sai da frente.
 func _tempo_de_abrir() -> float:
 	var v := _velocidade_do_player().length()

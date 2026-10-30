@@ -122,8 +122,8 @@ func _ready() -> void:
 	_build_controls_tab()
 	_build_video_tab()
 	if GlobalEvents.debug_mode_unlocked:
-		# Sempre carregar os dados em memória como estão gravados no Slot 1 (sem troca de cena)
-		SaveManager.load_slot_data_only(1)
+		# Os dados em memória são os do jogo em andamento (ou, no menu principal,
+		# os do último slot lido); o que mudar aqui vai pro slot escolhido.
 		_build_debug_tab()
 		_build_debug_itens_tab()
 		_build_debug_travel_tab()
@@ -678,7 +678,7 @@ func _build_debug_tab():
 	_foco_debug(debug_infinite_stamina_check)
 	vbox.add_child(debug_infinite_stamina_check)
 
-	# --- Eventos da historia, por capitulo (Slot 1) ---
+	# --- Eventos da historia, por capitulo (do slot em jogo) ---
 	# Ligar um evento liga tudo o que ele exige; desligar desliga tudo o que
 	# depende dele (ver scripts/systems/eventos_historia.gd).
 	var dica := Label.new()
@@ -694,17 +694,18 @@ func _build_debug_tab():
 			var id_evento: String = id
 			_add_event_checkbox(vbox, "evt_" + id_evento, tr(Eventos.rotulo(id_evento)),
 				Eventos.feito(id_evento), func(val):
-					Eventos.forcar(id_evento, val)
+					SaveManager.alterar_pelo_menu("evt_" + id_evento, Eventos.forcar.bind(id_evento, val))
 					_atualizar_checks_de_eventos()
 			)
 		if cap == Eventos.CAPITULO_2:
 			# O evento da Dona Nice (igreja), por etapa: 0 nada, 1 luta fase 1,
-			# 2 luta fase 2, 3 o Jonny no chao da igreja, 4 no colo, 5 deixado.
-			var etapa := _linha_quantidade(vbox, tr("DEBUG_EVENT_DONA_NICE"), 0, 5,
+			# 2 luta fase 2, 3 o Jonny no chao da igreja, 4 no colo, 5 deixado,
+			# 6 na maca do hospital.
+			var etapa := _linha_quantidade(vbox, tr("DEBUG_EVENT_DONA_NICE"), 0, 6,
 				SaveManager.evento_dona_nice)
 			etapa.value_changed.connect(func(v):
-				SaveManager.evento_dona_nice = int(v)
-				_auto_save_debug()
+				SaveManager.alterar_pelo_menu("evento_dona_nice",
+					SaveManager.set.bind("evento_dona_nice", int(v)))
 			)
 
 	# --- Poderes da cogblade: o jogo comeca sem nenhum; o evento da aura do
@@ -714,7 +715,7 @@ func _build_debug_tab():
 		var id_poder: String = p["id"]
 		_add_event_checkbox(vbox, "poder_" + id_poder, tr(String(p["rotulo"])),
 			Eventos.poder_liberado(id_poder), func(val):
-				Eventos.forcar_poder(id_poder, val)
+				SaveManager.alterar_pelo_menu("poder_" + id_poder, Eventos.forcar_poder.bind(id_poder, val))
 		)
 
 	tab_container.add_child(tab_debug)
@@ -752,6 +753,7 @@ const DEBUG_ARQUIVOS_POR_CAPITULO := {
 		["file_telefone", "DEBUG_EVENT_FILE_TELEFONE", "telefonema_dona_nice"]],
 	1: [["file_caderno", "DEBUG_EVENT_FILE_CADERNO", "caderno_do_jimmy"],
 		["file_diario", "DEBUG_EVENT_FILE_DIARIO", "diario_do_jimmy"]],
+	2: [["file_carta_nice", "DEBUG_EVENT_FILE_CARTA_NICE", "carta_da_dona_nice"]],
 }
 ## [chave do checkbox, rotulo, id do pickup no save, (sala, se o rotulo for
 ## o generico "Municao (%s)")]
@@ -767,7 +769,11 @@ const DEBUG_PICKUPS_POR_CAPITULO := {
 		["pickup_por_1", "DEBUG_PICKUP_MUNICAO_EM", "porao_municao_1", "DEBUG_LOCAL_PORAO_BECO_1"],
 		["pickup_por_2", "DEBUG_PICKUP_MUNICAO_EM", "porao_municao_2", "MAP_POI_POR_CAMARA"],
 		["pickup_por_3", "DEBUG_PICKUP_MUNICAO_EM", "porao_municao_3", "DEBUG_LOCAL_PORAO_BECO_2"]],
-	2: [["pickup_nice_ammo1", "DEBUG_EVENT_PICKUP_NICE_AMMO1", "casa_nice_municao_cozinha"],
+	2: [["pickup_nice_gaveta", "DEBUG_EVENT_PICKUP_NICE_GAVETA", "casa_nice_gaveta_aberta"],
+		["pickup_nice_chave", "DEBUG_EVENT_PICKUP_NICE_CHAVE", "casa_nice_chave_igreja"],
+		["pickup_nice_shotgun", "DEBUG_EVENT_PICKUP_NICE_SHOTGUN", "casa_nice_shotgun_laje"],
+		["pickup_nice_shells", "DEBUG_EVENT_PICKUP_NICE_SHELLS", "casa_nice_shotgun_municao_laje"],
+		["pickup_nice_ammo1", "DEBUG_EVENT_PICKUP_NICE_AMMO1", "casa_nice_municao_cozinha"],
 		["pickup_nice_ammo2", "DEBUG_EVENT_PICKUP_NICE_AMMO2", "casa_nice_municao_quarto"],
 		["pickup_seringa_igreja", "DEBUG_EVENT_PICKUP_SERINGA_IGREJA", "igreja_seringa_galeria"],
 		["pickup_ammo1", "DEBUG_EVENT_PICKUP_AMMO1", "hospital_municao_no_balcao"],
@@ -815,7 +821,7 @@ func _build_debug_itens_tab() -> void:
 		for arq in DEBUG_ARQUIVOS_POR_CAPITULO.get(cap, []):
 			var arq_id: String = arq[2]
 			_add_event_checkbox(vbox, arq[0], tr(arq[1]), SaveManager.tem_arquivo(arq_id), func(val):
-				_debug_set_array_entry(SaveManager.arquivos_desbloqueados, arq_id, val)
+				_debug_set_array_entry("arquivos_desbloqueados", arq_id, val)
 				_atualizar_checks_de_eventos()
 			)
 		var pickups: Array = DEBUG_PICKUPS_POR_CAPITULO.get(cap, [])
@@ -825,7 +831,7 @@ func _build_debug_itens_tab() -> void:
 			var pk_id: String = pk[2]
 			var texto: String = tr(pk[1]) % tr(pk[3]) if pk.size() > 3 else tr(pk[1])
 			_add_event_checkbox(vbox, pk[0], texto, SaveManager.pickups_pegos.has(pk_id), func(val):
-				_debug_set_array_entry(SaveManager.pickups_pegos, pk_id, val)
+				_debug_set_array_entry("pickups_pegos", pk_id, val)
 			)
 		var quantidades: Array = DEBUG_QUANTIDADES_POR_CAPITULO.get(cap, [])
 		if not quantidades.is_empty():
@@ -843,19 +849,15 @@ func _build_debug_itens_tab() -> void:
 	_secao_debug(vbox, tr("DEBUG_SECAO_RECURSOS"))
 	debug_rusks_spin = _linha_quantidade(vbox, tr("DEBUG_EVENT_IRON_RUSKS"), 0, 99999, SaveManager.iron_rusks)
 	debug_rusks_spin.value_changed.connect(func(v):
-		SaveManager.iron_rusks = int(v)
-		SaveManager.iron_rusks_display = SaveManager.iron_rusks
-		_auto_save_debug()
+		SaveManager.alterar_pelo_menu("iron_rusks", SaveManager.debug_definir_iron_rusks.bind(int(v)))
 	)
 	debug_max_mp_spin = _linha_quantidade(vbox, tr("DEBUG_EVENT_MAX_MP"), 1, 100, SaveManager.max_mp)
 	debug_max_mp_spin.value_changed.connect(func(v):
-		SaveManager.max_mp = float(v)
-		_auto_save_debug()
+		SaveManager.alterar_pelo_menu("max_mp", SaveManager.set.bind("max_mp", float(v)))
 	)
 	debug_curr_mp_spin = _linha_quantidade(vbox, tr("DEBUG_EVENT_CURRENT_MP"), 0, 100, SaveManager.current_mp)
 	debug_curr_mp_spin.value_changed.connect(func(v):
-		SaveManager.current_mp = float(v)
-		_auto_save_debug()
+		SaveManager.alterar_pelo_menu("current_mp", SaveManager.set.bind("current_mp", float(v)))
 	)
 
 	tab_container.add_child(tab_debug_itens)
@@ -944,61 +946,22 @@ func _add_event_checkbox(parent: Node, id: String, title: String, current_state:
 	if parent.get_parent() == debug_itens_scroll and debug_itens_first == null:
 		debug_itens_first = check
 
-func _auto_save_debug() -> void:
-	SaveManager.current_slot = 1
-	SaveManager.save_game()
-
-func _debug_set_array_entry(target_array: Array, entry_id: String, active: bool) -> void:
-	if active:
-		if not target_array.has(entry_id):
-			target_array.append(entry_id)
-	else:
-		target_array.erase(entry_id)
-	_auto_save_debug()
+## Lista do SaveManager pelo nome (ver `SaveManager.debug_marcar_na_lista`).
+func _debug_set_array_entry(lista: String, entry_id: String, active: bool) -> void:
+	SaveManager.alterar_pelo_menu(lista + ":" + entry_id,
+		SaveManager.debug_marcar_na_lista.bind(lista, entry_id, active))
 
 func _debug_set_item(item_id: String, active: bool, amount: int = 1) -> void:
-	if active:
-		if not SaveManager.tem_item(item_id):
-			SaveManager.add_item(item_id, amount)
-	else:
-		for lista in [SaveManager.inventory_normal, SaveManager.inventory_combat]:
-			for i in range(lista.size() - 1, -1, -1):
-				if lista[i].get("id") == item_id:
-					lista.remove_at(i)
-		if item_id in SaveManager.equipped_items:
-			SaveManager.equipped_items.erase(item_id)
-		if SaveManager.ultima_arma_equipada == item_id:
-			SaveManager.ultima_arma_equipada = ""
-		if SaveManager.equipado_na_cidade == item_id:
-			SaveManager.equipado_na_cidade = ""
-		SaveManager.garantir_equipamento_do_normal()
-	_auto_save_debug()
+	SaveManager.alterar_pelo_menu("item:" + item_id,
+		SaveManager.debug_definir_item.bind(item_id, active, amount))
 
 func _debug_get_item_amount(item_id: String) -> int:
-	for item in SaveManager.inventory_normal:
-		if item.get("id") == item_id:
-			return int(item.get("amount", 0))
-	for item in SaveManager.inventory_combat:
-		if item.get("id") == item_id:
-			return int(item.get("amount", 0))
-	return 0
+	return SaveManager.debug_quantidade_do_item(item_id)
 
 func _debug_set_item_amount(item_id: String, new_amount: int) -> void:
-	if new_amount <= 0:
-		for lista in [SaveManager.inventory_normal, SaveManager.inventory_combat]:
-			for i in range(lista.size() - 1, -1, -1):
-				if lista[i].get("id") == item_id:
-					lista.remove_at(i)
-	else:
-		var current_amt = _debug_get_item_amount(item_id)
-		if current_amt == 0:
-			SaveManager.add_item(item_id, new_amount)
-		else:
-			for lista in [SaveManager.inventory_normal, SaveManager.inventory_combat]:
-				for item in lista:
-					if item.get("id") == item_id:
-						item["amount"] = new_amount
-	_auto_save_debug()
+	# a caixinha do item e a quantidade mexem no mesmo dado: a mais recente vence
+	SaveManager.alterar_pelo_menu("item:" + item_id,
+		SaveManager.debug_definir_quantidade.bind(item_id, new_amount))
 
 func _build_debug_travel_tab() -> void:
 	tab_debug_travel = MarginContainer.new()

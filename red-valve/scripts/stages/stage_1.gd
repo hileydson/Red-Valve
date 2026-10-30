@@ -69,6 +69,8 @@ const NO_ESCOLA := "locais_importantes/escola_exterior"
 const CENA_ESCOLA := "res://scenes/stages/escola/escola.tscn"
 const NO_CASA_NICE := "casa_nice"
 const CENA_CASA_NICE := "res://scenes/stages/nice_house/casa_nice_interior.tscn"
+## O Capítulo 2 na cidade: a interrogação do mapa e a cena da praça da igreja.
+const CAPITULO_2_CIDADE := "res://scripts/stages/stage_1/capitulo_2_cidade.gd"
 
 @onready var navigation_region_3d: NavigationRegion3D = $NavigationRegion3D
 @onready var real_time_label: Label = $real_time_label
@@ -140,6 +142,7 @@ func _ready() -> void:
 	setup_player_spawn()
 	_salvar_posicao_de_chegada()
 	_jonny_na_cidade()
+	_capitulo_2()
 	# a cidade sem o amuleto no pescoço (R3 / H) tem mais cor: entra já assim
 	(func() -> void: Realidade.ajustar_cor_ao_entrar(self)).call_deferred()
 
@@ -354,15 +357,20 @@ func _process(delta: float) -> void:
 		if not SaveManager.igreja_aberta():
 			if not SaveManager.tem_item("chave_igreja"):
 				return
+			# a chave gira na tranca e some do menu; a porta, agora aberta,
+			# entra no aperto seguinte
 			SaveManager.usar_chave_da_igreja()
 			GlobalUtils.play_ui_sound(SOM_DESTRANCAR)
+			GlobalUtils.show_center_message("igreja_destrancada", tr("AVISO_IGREJA_DESTRANCADA"), 18, 2.6)
+			_mostrar_prompt(tr(_prompt_da_igreja()))
+			return
 		player_na_igreja = false
 		_esconder_prompt()
 		$fade.fade_out()
 		await get_tree().create_timer(2.0).timeout
 		LoadingScreen.load_scene(CENA_IGREJA)
 	elif player_no_hospital:
-		if not Eventos.local_aberto("hospital"):
+		if not Eventos.local_aberto("hospital") or _hospital_sem_o_jonny():
 			return
 		player_no_hospital = false
 		_esconder_prompt()
@@ -606,7 +614,18 @@ func _ao_entrar_area_hospital(body: Node3D) -> void:
 		_ignorar_prompt_hospital = false
 		_esconder_prompt(true)
 		return
+	if Eventos.local_aberto("hospital") and _hospital_sem_o_jonny():
+		_mostrar_prompt(tr("PROMPT_HOSPITAL_TRAGA_JONNY"))
+		return
 	_mostrar_prompt(_prompt_do_local("hospital", "PROMPT_ENTER_HOSPITAL"))
+
+
+## O hospital claro do Capítulo 2 é pra levar o Jonny: sem ele no colo a porta
+## não abre (a não ser que ele já esteja deitado lá dentro, save antigo).
+func _hospital_sem_o_jonny() -> bool:
+	if not Eventos.hospital_claro() or _jonny_no_colo():
+		return false
+	return not load(CARREGAR_JONNY).jonny_esta_em(CENA_HOSPITAL)
 
 
 func _ao_sair_area_hospital(body: Node3D) -> void:
@@ -754,6 +773,17 @@ func _jonny_na_cidade() -> void:
 	GlobalUtils.mostrar_objetivo(tr("OBJ_LEVAR_JONNY_HOSPITAL"))
 
 
+## O Capítulo 2 na cidade (ver `capitulo_2_cidade.gd`). Em qualquer capítulo:
+## fora do 2 ele não faz nada.
+func _capitulo_2() -> void:
+	if get_node_or_null("capitulo_2_cidade") != null:
+		return
+	var c = load(CAPITULO_2_CIDADE).new()
+	c.name = "capitulo_2_cidade"
+	add_child(c)
+	c.iniciar(self)
+
+
 func _jonny_no_colo() -> bool:
 	var jogador := get_node_or_null("Player")
 	return jogador != null and jogador.get("carregando_jonny") == true
@@ -879,6 +909,14 @@ func _play_intro_text() -> void:
 		await get_tree().create_timer(1.0, false).timeout
 		await _titulo_do_capitulo("TXT_CHAPTER_2", "TXT_CHAPTER_2_SUBTITULO")
 		_mostrar_objetivo_da_historia(2.0)
+		return
+
+	# saiu do hospital escuro depois da Drizzi: acabou o Capítulo 2
+	if GlobalEvents.entering_chapter_3:
+		GlobalEvents.entering_chapter_3 = false
+		await get_tree().create_timer(1.0, false).timeout
+		await _titulo_do_capitulo("TXT_CHAPTER_3", "TXT_CHAPTER_3_SUBTITULO")
+		_mostrar_objetivo_da_historia(1.5)
 		return
 
 	if SaveManager.prolog_finished:

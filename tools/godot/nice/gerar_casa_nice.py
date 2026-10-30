@@ -614,11 +614,23 @@ def interior():
     c.pegavel('municao_altar', 'pistol_ammo', 16, (cx - 0.2, 0.88, cz + 0.33), 0.3, 'PROMPT_TAKE_AMMO',
               'PICKUP_AMMO', 'PICKUP_AMMO_AGAIN', cartucho, _giro((0, 0.036, 0)))
 
-    # A chave reserva da igreja, no quarto dela: em cima da comoda, debaixo do
-    # espelho. Um pouco maior que a real (7,5 cm) pra se ver de pe'.
-    c.pegavel('chave_igreja', 'chave_igreja', 1, (-1.33, 1.18, 3.05), 0.5, 'PROMPT_TAKE_KEY',
-              'PICKUP_CHAVE_IGREJA', 'PICKUP_AMMO_AGAIN',
-              'res://assets/3d_model/objects/chave_igreja/chave_igreja.glb', _giro((0, 0, 0), 0.0, 1.4))
+    # A chave reserva da igreja saiu de cima da comoda: no Capitulo 2 ela fica
+    # DENTRO da gaveta do criado-mudo do quarto, posta pelo script da cena
+    # (`scripts/stages/nice_house/gaveta_chave.gd`, mesmo id de save).
+
+    # A espingarda (The Negotiator Mk. III) na laje, ao comprido, do lado
+    # dos pes, e um par de cartuchos ao lado dela. Deitada de lado como no
+    # balcao do hospital: 0,523 leva os 1,913 do .glb a 1 m, e 0,063 e' a meia
+    # espessura que a tira de dentro do tampo (0,88).
+    s_cac = 0.523
+    c.pegavel('shotgun_laje', 'shotgun', 1, (cx + 0.22, 0.88 + 0.063, cz + 0.45), pi / 2,
+              'PROMPT_TAKE_SHOTGUN', 'PICKUP_SHOTGUN', '',
+              'res://assets/3d_model/player/the_negotiator_V3/the_negotiator_V3.glb',
+              f'Transform3D({s_cac}, 0, 0, 0, 0, {s_cac}, 0, {-s_cac}, 0, 0, 0, 0)')
+    c.pegavel('shotgun_municao_laje', 'shotgun_ammo', 2, (cx - 0.2, 0.88 + 0.011, cz + 0.75), 0.4,
+              'PROMPT_TAKE_SHOTGUN_AMMO', 'PICKUP_SHOTGUN_AMMO', 'PICKUP_SHOTGUN_AMMO_AGAIN',
+              'res://assets/3d_model/player/the_negotiator_V3/cartridge/the_negotiator_V3_bullet_x2.glb',
+              _giro((0, 0, 0)))
 
     # A seringa de adrenalina, na mesma laje, entre a correia da cabeca e a do
     # meio (do outro lado do bilhete).

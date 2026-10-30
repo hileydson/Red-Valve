@@ -83,6 +83,8 @@ var mapas_descobertos: Dictionary = {}
 ##   4 o Maycow esta' carregando o Jonny (da porta da igreja ate' o hospital,
 ##     andando pela cidade, e dentro do hospital)
 ##   5 o Jonny ficou no chao, onde o Maycow o deixou (na cidade ou no hospital)
+##   6 o Jonny ficou na maca da cirurgia do hospital (Capitulo 2): o hospital
+##     virou o escuro e ele nao sai mais de la'
 ## E' daqui que a igreja sabe se roda a cutscene, recomeca a luta (morte do
 ## jogador volta pro comeco da fase em que ele estava) ou so' mostra o
 ## resultado final.
@@ -125,6 +127,18 @@ var default_config = {
 }
 
 var config = default_config.duplicate()
+## O que esta' no `config.json` (lido no boot ou gravado por ultimo). Comparar
+## com `config` diz se o menu de configuracoes mudou alguma coisa.
+var _config_em_disco: Dictionary = {}
+
+## No menu principal, antes de o jogador escolher o slot (carregar ou novo
+## jogo): NADA e' gravado — nem save, nem `config.json`. O que o menu de
+## configuracoes muda fica em memoria e vai pro slot quando ele for escolhido
+## (`escolher_slot` / `load_game`). Liga no `_ready` do menu principal.
+var sem_slot_escolhido: bool = false
+## O que as abas de debug mudaram sem slot escolhido, na ordem da ultima mexida:
+## chave do controle -> acao (Callable de autoload, nunca do menu, que morre).
+var _alteracoes_do_menu: Dictionary = {}
 var _last_applied_mode: String = ""
 var _last_applied_resolution: String = ""
 
@@ -362,6 +376,7 @@ func _ready():
 				if typeof(data) == TYPE_DICTIONARY:
 					for key in data.keys():
 						config[key] = data[key]
+	_config_em_disco = config.duplicate(true)
 	apply_configs()
 
 	# Ao rodar qualquer scene do game pelo editor (ou ao iniciar), o default sempre é o save do Slot 1:
@@ -370,10 +385,50 @@ func _ready():
 		load_slot_data_only(1)
 
 func save_config() -> void:
+	if sem_slot_escolhido:
+		return
 	var file = FileAccess.open(CONFIG_PATH, FileAccess.WRITE)
 	if file:
 		file.store_string(JSON.stringify(config))
 		file.close()
+		_config_em_disco = config.duplicate(true)
+
+
+## O menu de configuracoes mudou alguma opcao desde o que esta' gravado?
+func config_alterada_no_menu() -> bool:
+	return config != _config_em_disco
+
+
+## O menu de configuracoes mexendo no jogo (abas de debug). A acao vale na hora;
+## com slot escolhido grava nele, sem slot guarda pra quando ele for escolhido.
+## `acao` tem de ser de autoload: o menu e' destruido antes de ela rodar de novo.
+func alterar_pelo_menu(chave: String, acao: Callable) -> void:
+	acao.call()
+	if sem_slot_escolhido:
+		_alteracoes_do_menu.erase(chave)
+		_alteracoes_do_menu[chave] = acao
+	else:
+		save_game()
+
+
+## O jogador escolheu o slot no menu principal: dali em diante grava nele, e o
+## que o menu de debug mudou antes passa a valer pro progresso dele.
+func escolher_slot(slot_id: int) -> void:
+	current_slot = slot_id
+	sem_slot_escolhido = false
+	for chave in _alteracoes_do_menu:
+		(_alteracoes_do_menu[chave] as Callable).call()
+	_alteracoes_do_menu.clear()
+
+
+## As opcoes gravadas no slot (saves antigos nao tem: fica a atual).
+func _ler_config_do_slot(data: Dictionary) -> void:
+	var cfg = data.get("config", {})
+	if typeof(cfg) != TYPE_DICTIONARY or cfg.is_empty():
+		return
+	for key in cfg.keys():
+		config[key] = cfg[key]
+	apply_configs()
 
 func is_window_embedded() -> bool:
 	if Engine.has_method("is_embedded_in_editor") and Engine.is_embedded_in_editor():
@@ -469,6 +524,8 @@ func get_slots_info() -> Array:
 							ch = "TXT_CHAPTER_1"
 						if (data.get("eventos_concluidos", []) as Array).has("cap1_concluido"):
 							ch = "TXT_CHAPTER_2"
+						if (data.get("eventos_concluidos", []) as Array).has("cap2_concluido"):
+							ch = "TXT_CHAPTER_3"
 						info.append({"empty": false, "slot": i, "chapter": ch,
 							"local": nome_do_local(str(data.get("current_stage", ""))),
 							"iron_rusks": int(data.get("iron_rusks", 0))})
@@ -535,6 +592,8 @@ func _pode_virar_checkpoint(caminho: String) -> bool:
 ## quer que o jogador reapareca (o fim do prologo faz isso pra mandar pro
 ## stage_1). Sem ele, vale a cena atual — desde que ela sirva de checkpoint.
 func save_game(scene_path: String = ""):
+	if sem_slot_escolhido:
+		return
 	var temp_stage = current_stage
 	
 	if scene_path != "":
@@ -576,7 +635,8 @@ func save_game(scene_path: String = ""):
 		"jonny_no_hospital": jonny_no_hospital,
 		"jonny_deixado_em": jonny_deixado_em,
 		"eventos_concluidos": eventos_concluidos,
-		"poderes_cogblade": poderes_cogblade
+		"poderes_cogblade": poderes_cogblade,
+		"config": config
 	}
 	
 	save_config() # Sempre salvar config junto
@@ -665,6 +725,17 @@ func load_game(slot_id: int = -1) -> bool:
 				# So vale pro mapa da cidade: e la que a posicao exata foi gravada.
 				spawn_from_saved_position = not stage_1_saved_position.is_empty() \
 					and current_stage == CENA_CIDADE
+
+				# Vindo do menu principal: as opcoes mudadas la' valem pra este
+				# slot (e vao pra ele); sem mudanca, valem as que o slot gravou.
+				var do_menu := sem_slot_escolhido
+				var mudou_no_menu := do_menu and (config_alterada_no_menu() or not _alteracoes_do_menu.is_empty())
+				if not (do_menu and config_alterada_no_menu()):
+					_ler_config_do_slot(data)
+				if do_menu:
+					escolher_slot(current_slot)
+					if mudou_no_menu:
+						save_game()
 				
 				if current_stage != "" and ResourceLoader.exists(current_stage):
 					print("Game Loaded from slot ", current_slot, "! ", current_stage)
@@ -919,6 +990,72 @@ func remove_item_amount(item_id: String, amount: int) -> void:
 			if lista[i]["id"] == item_id:
 				lista[i]["amount"] = maxi(0, int(lista[i]["amount"]) - amount)
 				break
+
+
+# --- acoes das abas de debug do menu de configuracoes ---------------------------
+# Moram aqui (e nao no menu) porque, sem slot escolhido, rodam de novo depois
+# que o menu ja' foi fechado (ver `alterar_pelo_menu`).
+
+func debug_definir_item(item_id: String, active: bool, amount: int = 1) -> void:
+	if active:
+		if not tem_item(item_id):
+			add_item(item_id, amount)
+	else:
+		for lista in [inventory_normal, inventory_combat]:
+			for i in range(lista.size() - 1, -1, -1):
+				if lista[i].get("id") == item_id:
+					lista.remove_at(i)
+		if item_id in equipped_items:
+			equipped_items.erase(item_id)
+		if ultima_arma_equipada == item_id:
+			ultima_arma_equipada = ""
+		if equipado_na_cidade == item_id:
+			equipado_na_cidade = ""
+		garantir_equipamento_do_normal()
+
+
+## A quantidade do item em qualquer dos dois inventarios.
+func debug_quantidade_do_item(item_id: String) -> int:
+	for item in inventory_normal:
+		if item.get("id") == item_id:
+			return int(item.get("amount", 0))
+	for item in inventory_combat:
+		if item.get("id") == item_id:
+			return int(item.get("amount", 0))
+	return 0
+
+
+func debug_definir_quantidade(item_id: String, new_amount: int) -> void:
+	if new_amount <= 0:
+		for lista in [inventory_normal, inventory_combat]:
+			for i in range(lista.size() - 1, -1, -1):
+				if lista[i].get("id") == item_id:
+					lista.remove_at(i)
+	else:
+		var current_amt = debug_quantidade_do_item(item_id)
+		if current_amt == 0:
+			add_item(item_id, new_amount)
+		else:
+			for lista in [inventory_normal, inventory_combat]:
+				for item in lista:
+					if item.get("id") == item_id:
+						item["amount"] = new_amount
+
+
+## Liga/desliga `entry_id` na lista de nome `lista` (pelo nome: o load troca o
+## Array inteiro, e uma referencia guardada apontaria pro do save anterior).
+func debug_marcar_na_lista(lista: String, entry_id: String, active: bool) -> void:
+	var alvo: Array = get(lista)
+	if active:
+		if not alvo.has(entry_id):
+			alvo.append(entry_id)
+	else:
+		alvo.erase(entry_id)
+
+
+func debug_definir_iron_rusks(valor: int) -> void:
+	iron_rusks = valor
+	iron_rusks_display = valor
 
 
 ## Equipado E' TER: um save antigo carrega com "pistol" na lista de equipados, e

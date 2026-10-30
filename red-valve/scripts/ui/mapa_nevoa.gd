@@ -317,6 +317,21 @@ static func esquecer(caminho_json: String) -> void:
 	n._aplicar()
 
 
+## Acende UMA planta inteira, na memória e no save: o mapa todo à vista.
+##
+## Quem chama é a história — no Capítulo 2 o hospital CLARO é um hospital
+## funcionando, com placa em toda porta, e não um lugar a desbravar. Quando
+## ele vira o escuro, `esquecer` apaga de novo.
+static func revelar_tudo(caminho_json: String) -> void:
+	var n := para(MapaDados.new(caminho_json), caminho_json)
+	if n == null:
+		return
+	n._bytes.fill(255)
+	for zona in n._zonas:
+		n._reveladas[String(zona.get("id", ""))] = true
+	n._aplicar()
+
+
 ## Esquece tudo o que está na memória. Chamado ao carregar um save ou ao
 ## começar um jogo novo: sem isto, a escola descoberta no slot 1 apareceria
 ## descoberta no slot 2.

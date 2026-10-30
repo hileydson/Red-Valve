@@ -147,7 +147,8 @@ static func is_infinite_stamina_debug() -> bool:
 ## casa nao cansa. O gasto so' liga com inimigo vivo por perto ou dentro da
 ## arena (ver `_atualizar_combate`).
 func _stamina_infinita() -> bool:
-	return infinite_stamina_test or _stamina_infinita_na_sessao or not _em_combate
+	# levando o Jonny pro hospital o Maycow normal nao cansa
+	return infinite_stamina_test or _stamina_infinita_na_sessao or not _em_combate or carregando_jonny
 
 
 # --- Estamina so' em combate ---
@@ -719,12 +720,12 @@ var _modelo_escondido_por_cena: bool = false
 ## dash, lanterna, atalho ou agarrao. Quem liga e desliga e' o
 ## `player_carregar_jonny.gd`.
 var carregando_jonny: bool = false
-## Teto do andar com o Jonny no colo (m/s): o passo de quem carrega alguem (o
-## `correr_carregando` casa com o chao a 1,3; aqui toca um pouco mais devagar).
-const VELOCIDADE_NO_COLO := 1.15
-## Teto da corrida com ele no colo: o mesmo clipe acelerado, e a cidade nao
-## vira uma caminhada de 4 minutos (3,4 ficou rapido demais pra quem carrega).
-const VELOCIDADE_NO_COLO_CORRENDO := 2.6
+## Teto do andar com o Jonny no colo (m/s). O passo do clipe nao acelera
+## junto (teto `PASSADA_MAX` em player_carregar_jonny.gd).
+const VELOCIDADE_NO_COLO := 1.7
+## Teto da corrida com ele no colo. So' o deslocamento: o passo do clipe tem
+## teto proprio (`PASSADA_MAX` em player_carregar_jonny.gd) e nao acelera junto.
+const VELOCIDADE_NO_COLO_CORRENDO := 3.6
 
 
 # HAND ADJUSTMENTS
@@ -1029,6 +1030,15 @@ func acender_lanterna_agora() -> void:
 	_tirar_corpo_da_sombra_da_lanterna()
 	lanterna_ligada = true
 	lanterna.visible = true
+
+
+## Apaga sem o clique (o hospital do Capítulo 2 a desliga quando escurece:
+## é o jogador quem tem de acender).
+func apagar_lanterna_agora() -> void:
+	if not is_instance_valid(lanterna):
+		return
+	lanterna_ligada = false
+	lanterna.visible = false
 
 
 ## O facho segue o pitch da câmera que estiver valendo. Em terceira pessoa quem

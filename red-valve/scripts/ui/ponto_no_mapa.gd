@@ -15,11 +15,30 @@ extends Node
 ## Aparece mesmo com a área ainda na névoa (a interrogação do calabouço: o mapa
 ## zera, mas o lugar pra onde ir tem de estar marcado).
 @export var sempre_visivel: bool = false
+## O pai ANDA (a enfermeira que leva o Maycow pelo hospital): de tempos em
+## tempos o minimapa refaz os marcadores pra o ponto acompanhar. Os marcadores
+## guardam a posição de quando nasceram — sem isto o "?" ficaria pra trás.
+@export var segue_o_pai: bool = false
+
+var _visto_em := Vector3.INF
+var _relogio := 0.0
 
 
 func _enter_tree() -> void:
 	add_to_group("ponto_no_mapa")
+	set_process(segue_o_pai)
 	_avisar.call_deferred()
+
+
+func _process(delta: float) -> void:
+	_relogio -= delta
+	if _relogio > 0.0:
+		return
+	_relogio = 0.2
+	var p := (get_parent() as Node3D).global_position
+	if p.distance_to(_visto_em) > 0.6:
+		_visto_em = p
+		_avisar()
 
 
 func _exit_tree() -> void:

@@ -1,0 +1,80 @@
+[gd_scene load_steps=9 format=3]
+
+[sub_resource type="StandardMaterial3D" id="papel"]
+albedo_color = Color(0.80, 0.74, 0.60, 1)
+roughness = 1.0
+
+[sub_resource type="StandardMaterial3D" id="envelope"]
+albedo_color = Color(0.55, 0.45, 0.33, 1)
+roughness = 1.0
+
+[sub_resource type="StandardMaterial3D" id="lacre"]
+albedo_color = Color(0.42, 0.03, 0.03, 1)
+roughness = 0.45
+
+[sub_resource type="StandardMaterial3D" id="tinta"]
+albedo_color = Color(0.18, 0.08, 0.07, 1)
+roughness = 1.0
+
+[sub_resource type="BoxMesh" id="folha"]
+material = SubResource("papel")
+size = Vector3(0.2, 0.002, 0.27)
+
+[sub_resource type="BoxMesh" id="caixa_envelope"]
+material = SubResource("envelope")
+size = Vector3(0.23, 0.004, 0.16)
+
+[sub_resource type="CylinderMesh" id="selo"]
+material = SubResource("lacre")
+top_radius = 0.017
+bottom_radius = 0.019
+height = 0.006
+radial_segments = 14
+rings = 1
+
+[sub_resource type="BoxMesh" id="linha"]
+material = SubResource("tinta")
+size = Vector3(0.15, 0.0006, 0.004)
+
+[node name="carta_dona_nice" type="Node3D"]
+editor_description = "A carta da Dona Nice sobre a seita (Capitulo 2): folha, envelope e o lacre vermelho dos Anti-Lopes. Origem na base, apoiada no tampo."
+
+[node name="envelope" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.9659, 0, 0.2588, 0, 1, 0, -0.2588, 0, 0.9659, 0.05, 0.002, 0.07)
+mesh = SubResource("caixa_envelope")
+
+[node name="lacre" type="MeshInstance3D" parent="envelope"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.005, 0)
+mesh = SubResource("selo")
+
+[node name="folha" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.9962, 0, -0.0872, 0, 1, 0, 0.0872, 0, 0.9962, 0, 0.005, 0)
+mesh = SubResource("folha")
+
+[node name="linha_1" type="MeshInstance3D" parent="folha"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.005, 0.0013, -0.1)
+mesh = SubResource("linha")
+
+[node name="linha_2" type="MeshInstance3D" parent="folha"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 0.0013, -0.07)
+mesh = SubResource("linha")
+
+[node name="linha_3" type="MeshInstance3D" parent="folha"]
+transform = Transform3D(0.8, 0, 0, 0, 1, 0, 0, 0, 1, -0.012, 0.0013, -0.04)
+mesh = SubResource("linha")
+
+[node name="linha_4" type="MeshInstance3D" parent="folha"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 0.0013, -0.01)
+mesh = SubResource("linha")
+
+[node name="linha_5" type="MeshInstance3D" parent="folha"]
+transform = Transform3D(0.9, 0, 0, 0, 1, 0, 0, 0, 1, -0.006, 0.0013, 0.02)
+mesh = SubResource("linha")
+
+[node name="linha_6" type="MeshInstance3D" parent="folha"]
+transform = Transform3D(0.55, 0, 0, 0, 1, 0, 0, 0, 1, -0.03, 0.0013, 0.05)
+mesh = SubResource("linha")
+
+[node name="assinatura" type="MeshInstance3D" parent="folha"]
+transform = Transform3D(0.35, 0, 0, 0, 1, 0, 0, 0, 1, 0.04, 0.0013, 0.1)
+mesh = SubResource("linha")
