@@ -27,6 +27,9 @@ const MarcaDeItem := preload("res://scripts/stages/hospital/marca_de_item.gd")
 
 ## Falso enquanto nao ha' o que pegar (ja' pego, esperando reaparecer...).
 var disponivel: bool = true
+## O som de ir pro bolso. Desligado por quem nao e' pegar (o botao do
+## elevador tem o clique dele).
+var som_de_pegar: bool = true
 
 ## O objeto: o que acende e o ponto que a mira procura.
 var _raiz: Node3D = null
@@ -80,7 +83,8 @@ func _process(_delta: float) -> void:
 		Balcao._selecionado = null
 		_pintar(null)
 		_mostrar_prompt(false)
-		Balcao.tocar_som(get_tree(), Balcao.SOM_PEGAR, Balcao.VOLUME_PEGAR)
+		if som_de_pegar:
+			Balcao.tocar_som(get_tree(), Balcao.SOM_PEGAR, Balcao.VOLUME_PEGAR)
 		pegar.emit()
 
 

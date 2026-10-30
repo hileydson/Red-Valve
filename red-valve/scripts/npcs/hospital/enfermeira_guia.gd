@@ -296,7 +296,10 @@ func _pose(delta: float) -> void:
 	if _poser == null:
 		return
 	var plano := Vector2(velocity.x, velocity.z).length()
-	var cadencia := 4.2 + plano * 1.6
+	# Mais pressa = passos mais rápidos, não mais largos: com a cadência do
+	# adulto (4,2 + 1,6·v) os 2,2 m/s dela davam 0,9 m de passada, a perna
+	# subindo e abrindo demais. Aqui fica em ~0,77 m, perto do que era.
+	var cadencia := 4.2 + plano * 2.2
 	if plano > 0.15:
 		_fase_passo += delta * cadencia
 	_abertura = lerpf(_abertura, _poser.abertura_para(plano, cadencia), clampf(delta * 6.0, 0.0, 1.0))

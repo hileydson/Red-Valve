@@ -650,8 +650,9 @@ def pecas_do_painel():
 
 
 def pecas_da_folha_corredica(largura, altura=P.PORTA_H):
-    return [(0.0, altura * 0.5, 0.0, 0.10, altura, largura, "porta_metal"),
-            (0.055, altura * 0.60, 0.0, 0.02, 0.44, largura * 0.5, "vidro")]
+    # sem o visor de vidro: de dentro da cabine os dois apareciam como
+    # quadrados brancos no meio da porta (pedido de 2026-10-30)
+    return [(0.0, altura * 0.5, 0.0, 0.10, altura, largura, "porta_metal")]
 
 
 # ==========================================================================

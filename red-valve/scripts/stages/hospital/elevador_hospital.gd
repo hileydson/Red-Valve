@@ -17,9 +17,12 @@ extends Node3D
 ##   1. O jogador chega na porta do pavimento -> "Chamar o elevador".
 ##   2. Se a cabine estiver no outro andar, ela vem primeiro (devagar).
 ##      Chegando, as duas portas (a do pavimento e a da cabine) abrem juntas.
-##   3. Ele entra. Dentro, o prompt vira "Subir para o 2o andar".
-##   4. Aciona -> as portas fecham, o elevador da' um tranco e sobe DEVAGAR.
-##   5. Chegou, as portas abrem.
+##   3. Ele entra. No painel acende o botao do OUTRO andar (no terreo o de
+##      cima, la' em cima o de baixo), com o indicador de item: e' preciso ir
+##      ate' o painel e apertar ("Subir para o 2o andar").
+##   4. Aciona -> as portas fecham, o elevador da' um tranco e sobe DEVAGAR,
+##      com o motor roncando e a tela tremendo nos solavancos.
+##   5. Chegou: tranco, campainha, as portas abrem.
 ##
 ## ==========================================================================
 ## COMO O JOGADOR SOBE JUNTO
@@ -61,6 +64,23 @@ const TRANCO := 0.45
 const CURSO_FOLHA := 1.10
 const ESPERA_ABERTA := 9.0
 
+## Sons sintetizados por `tools/audio/gerar_sons_elevador.py`.
+const SOM_MOTOR := "res://assets/sounds/hospital/elevador_motor.ogg"
+const SOM_PORTA := "res://assets/sounds/hospital/elevador_porta.ogg"
+const SOM_TRANCO := "res://assets/sounds/hospital/elevador_tranco.ogg"
+const SOM_DING := "res://assets/sounds/hospital/elevador_ding.ogg"
+const SOM_BOTAO := "res://assets/sounds/hospital/elevador_botao.ogg"
+## Tremor da câmera de quem está dentro: o solavanco e o trepidar da viagem.
+const TREME_TRANCO := 0.045
+const TREME_VIAGEM := 0.009
+
+const ItemSelecionavel := preload("res://scripts/stages/hospital/item_selecionavel.gd")
+## Os botões do painel (`pecas_do_painel` do gerador): no espaço do painel, o
+## de cima em y 1,52 e o de baixo em 1,22, a face em x 0,06.
+const BOTOES := {2: Vector3(0.068, 1.52, 0.0), 1: Vector3(0.068, 1.22, 0.0)}
+const COR_BOTAO_ACESO := Color(1.0, 0.72, 0.28)
+const COR_BOTAO_APAGADO := Color(0.16, 0.15, 0.13)
+
 @onready var cabine: Node3D = $cabine
 @onready var area_dentro: Area3D = $cabine/area_dentro
 
@@ -82,6 +102,18 @@ var _espera: float = 0.0
 var guiado: bool = false
 var segurar_aberto: bool = false
 
+var _som_motor: AudioStreamPlayer3D
+var _som_porta: AudioStreamPlayer3D
+var _som_tranco: AudioStreamPlayer3D
+var _som_ding: AudioStreamPlayer3D
+var _som_botao: AudioStreamPlayer3D
+## andar de destino -> o botão (malha) e a seleção dele
+var _botoes := {}
+var _selecoes := {}
+var _mat_aceso: StandardMaterial3D
+var _mat_apagado: StandardMaterial3D
+var _treme_relogio := 0.0
+
 
 func _ready() -> void:
 	_cotas[1] = float(get_meta("andar_1", 0.0))
@@ -96,6 +128,8 @@ func _ready() -> void:
 		area.body_entered.connect(_ao_chegar_no_pavimento.bind(andar))
 		area.body_exited.connect(_ao_sair_do_pavimento.bind(andar))
 	_portas_instantaneas(false)
+	_montar_sons()
+	_montar_painel()
 
 
 func _physics_process(delta: float) -> void:
@@ -105,6 +139,8 @@ func _physics_process(delta: float) -> void:
 	if absf(passo) > 0.0 and leva and is_instance_valid(_player):
 		_player.global_position.y += passo
 	_y_anterior = cabine.position.y
+	_trepidar(delta)
+	_atualizar_painel()
 
 	if estado == ABERTO:
 		_espera -= delta
@@ -118,9 +154,10 @@ func _physics_process(delta: float) -> void:
 	if not Input.is_action_just_pressed("ui_accept"):
 		return
 
-	if _player_dentro and estado == ABERTO:
-		_viajar(2 if andar_atual == 1 else 1)
-	elif _player_no_pavimento != 0 and estado == PARADO:
+	# dentro da cabine quem manda é o botão do painel (`_apertar_no_painel`)
+	if _player_dentro:
+		return
+	if _player_no_pavimento != 0 and estado == PARADO:
 		_chamar(_player_no_pavimento)
 
 
@@ -169,6 +206,14 @@ func player_dentro() -> bool:
 	return _player_dentro
 
 
+## O jogador apertou o botão aceso do painel.
+func _apertar_no_painel(destino: int) -> void:
+	if guiado or estado != ABERTO or destino == andar_atual:
+		return
+	_tocar(_som_botao)
+	_viajar(destino)
+
+
 func _viajar(destino: int) -> void:
 	estado = FECHANDO
 	GlobalUtils.hide_center_message(_id_prompt())
@@ -188,6 +233,10 @@ func _mover_ate(andar: int) -> void:
 		andar_atual = andar
 		return
 	var tempo := distancia / VELOCIDADE
+	_solavanco()
+	_som_motor.volume_db = -30.0
+	_som_motor.play()
+	create_tween().tween_property(_som_motor, "volume_db", -6.0, 1.2)
 
 	var tween := create_tween()
 	tween.set_process_mode(Tween.TWEEN_PROCESS_PHYSICS)
@@ -199,6 +248,10 @@ func _mover_ate(andar: int) -> void:
 		cabine.position.y - signf(alvo - cabine.position.y) * 0.04, TRANCO * 0.4)
 	tween.tween_property(cabine, "position:y", alvo, tempo)
 	await tween.finished
+	var some := create_tween()
+	some.tween_property(_som_motor, "volume_db", -40.0, 0.5)
+	some.tween_callback(_som_motor.stop)
+	_solavanco()
 	andar_atual = andar
 	_viajando_com_player = false
 
@@ -209,6 +262,7 @@ func _mover_ate(andar: int) -> void:
 
 func _abrir_portas() -> void:
 	estado = ABRINDO
+	_tocar(_som_ding)
 	await _animar_portas(true)
 	estado = ABERTO
 	_espera = ESPERA_ABERTA
@@ -226,6 +280,7 @@ func _fechar_portas() -> void:
 ## que ela esta'. As do outro andar nao se mexem — a porta de pavimento sem
 ## cabine atras tem de continuar solida, senao o jogador cai no poco.
 func _animar_portas(abrir: bool) -> void:
+	_tocar(_som_porta)
 	var tween := create_tween()
 	tween.set_parallel(true)
 	tween.set_process_mode(Tween.TWEEN_PROCESS_PHYSICS)
@@ -275,9 +330,8 @@ func _atualizar_prompt() -> void:
 		GlobalUtils.hide_center_message(_id_prompt())
 		return
 	if _player_dentro:
-		if estado == ABERTO:
-			_mensagem("PROMPT_HOSP_ELEVADOR_SUBIR" if andar_atual == 1
-				else "PROMPT_HOSP_ELEVADOR_DESCER")
+		# o prompt de dentro é o do botão aceso do painel (seleção de item)
+		GlobalUtils.hide_center_message(_id_prompt())
 		return
 	if _player_no_pavimento != 0 and estado == PARADO:
 		_mensagem("PROMPT_HOSP_ELEVADOR_CHAMAR")
@@ -317,3 +371,120 @@ func _ao_sair_do_pavimento(body: Node3D, andar: int) -> void:
 
 func _eh_player(body: Node3D) -> bool:
 	return body.is_in_group("player") or body.name.to_lower() == "player"
+
+
+# ==============================================================================
+# PAINEL (os dois botões da cabine)
+# ==============================================================================
+
+## Cada botão é uma malha acesa por cima do botão modelado, com a seleção de
+## item (realce, indicador, prompt). Só o do OUTRO andar acende, e só ele
+## aceita o aperto — e só com a porta aberta e o jogador dentro.
+func _montar_painel() -> void:
+	var painel := cabine.get_node_or_null("painel") as Node3D
+	if painel == null:
+		return
+	_mat_aceso = StandardMaterial3D.new()
+	_mat_aceso.albedo_color = COR_BOTAO_ACESO
+	_mat_aceso.emission_enabled = true
+	_mat_aceso.emission = COR_BOTAO_ACESO
+	_mat_aceso.emission_energy_multiplier = 2.2
+	_mat_apagado = StandardMaterial3D.new()
+	_mat_apagado.albedo_color = COR_BOTAO_APAGADO
+	_mat_apagado.roughness = 0.6
+
+	# área generosa: a cápsula do jogador tem 1,35 m e para longe da parede
+	var area := Area3D.new()
+	area.name = "area_painel"
+	area.collision_layer = 0
+	area.monitorable = false
+	var forma := CollisionShape3D.new()
+	var caixa := BoxShape3D.new()
+	caixa.size = Vector3(2.6, 2.4, 2.6)
+	forma.shape = caixa
+	forma.position = Vector3(1.1, 1.2, 0.0)
+	area.add_child(forma)
+	painel.add_child(area)
+
+	for destino in BOTOES:
+		var botao := MeshInstance3D.new()
+		botao.name = "botao_%d" % destino
+		var caixa_botao := BoxMesh.new()
+		caixa_botao.size = Vector3(0.016, 0.1, 0.1)
+		botao.mesh = caixa_botao
+		botao.position = BOTOES[destino]
+		botao.material_override = _mat_apagado
+		painel.add_child(botao)
+		_botoes[destino] = botao
+		var sel = ItemSelecionavel.new()
+		sel.som_de_pegar = false
+		sel.disponivel = false
+		add_child(sel)
+		sel.configurar(botao, area, "PROMPT_HOSP_ELEVADOR_SUBIR" if destino == 2
+			else "PROMPT_HOSP_ELEVADOR_DESCER")
+		sel.pegar.connect(_apertar_no_painel.bind(destino))
+		_selecoes[destino] = sel
+
+
+func _atualizar_painel() -> void:
+	if _botoes.is_empty():
+		return
+	var destino := 2 if andar_atual == 1 else 1
+	for d in _botoes:
+		(_botoes[d] as MeshInstance3D).material_override = \
+			_mat_aceso if d == destino or (estado == VIAJANDO and d == andar_atual) \
+			else _mat_apagado
+		_selecoes[d].disponivel = d == destino and estado == ABERTO and _player_dentro \
+			and not guiado and not GlobalEvents.in_cutscene
+
+
+# ==============================================================================
+# SOM E TREMOR
+# ==============================================================================
+
+func _montar_sons() -> void:
+	var motor := load(SOM_MOTOR) as AudioStreamOggVorbis
+	if motor:
+		motor.loop = true
+	_som_motor = _fonte("som_motor", motor, -6.0, Vector3(0.0, -0.4, 0.0))
+	_som_porta = _fonte("som_porta", load(SOM_PORTA), -4.0, Vector3(-CURSO_FOLHA * 2.0, 1.2, 0.0))
+	_som_tranco = _fonte("som_tranco", load(SOM_TRANCO), -2.0, Vector3(0.0, -0.2, 0.0))
+	_som_ding = _fonte("som_ding", load(SOM_DING), -8.0, Vector3(-1.8, 2.4, 1.6))
+	_som_botao = _fonte("som_botao", load(SOM_BOTAO), -6.0, Vector3(-2.2, 1.4, 1.65))
+
+
+## Fonte presa à cabine: o som sobe e desce junto com ela.
+func _fonte(nome: String, stream: AudioStream, volume: float, onde: Vector3) -> AudioStreamPlayer3D:
+	var p := AudioStreamPlayer3D.new()
+	p.name = nome
+	p.stream = stream
+	p.volume_db = volume
+	p.unit_size = 6.0
+	p.max_distance = 30.0
+	p.position = onde
+	cabine.add_child(p)
+	return p
+
+
+func _tocar(p: AudioStreamPlayer3D) -> void:
+	if p and p.stream:
+		p.play()
+
+
+## Partida e chegada: o tranco, e a câmera treme se o jogador está dentro.
+func _solavanco() -> void:
+	_tocar(_som_tranco)
+	if _player_dentro or _viajando_com_player:
+		_treme_relogio = 0.5   # o trepidar da viagem não atropela o tranco
+		GlobalUtils.shake_camera(0.35, TREME_TRANCO)
+		GlobalUtils.vibrate_controller(null, 0.5, 0.2, 0.25)
+
+
+## Durante a viagem, um trepidar miúdo de cabo velho na câmera de quem vai dentro.
+func _trepidar(delta: float) -> void:
+	if estado != VIAJANDO or not _viajando_com_player:
+		return
+	_treme_relogio -= delta
+	if _treme_relogio <= 0.0:
+		_treme_relogio = 0.45
+		GlobalUtils.shake_camera(0.4, TREME_VIAGEM)
