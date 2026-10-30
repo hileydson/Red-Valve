@@ -89,7 +89,11 @@ e a do próprio Maycow abrem.
    — sem ela o túnel é breu. Há pouca munição espalhada pelas salas e pelo túnel.
 6. **O portal.** No meio do calabouço, na câmara grande, há uma **Red Valve**. Na primeira vez ela o
    chama: Maycow anda até ela (em primeira pessoa), a porta abre e o leva ao **Inferno 4**, uma parte
-   mais escura do mundo paralelo. No fim do caminho o portal não o aceita: uma **gárgula** de fogo
+   mais escura do mundo paralelo. Logo na chegada, sobre o altar de pedra, flutua uma pequena chama
+   roxa: a **aura do amuleto**. Maycow tira o amuleto do bolso e o passa pela chama, que entra nele; o
+   amuleto fica com uma aura roxa dali em diante, e a Cogblade ganha o primeiro dos seus quatro
+   poderes, o **Cogblade Thrown** (o arremesso). Os outros três ele ainda vai conquistar.
+   No fim do caminho o portal não o aceita: uma **gárgula** de fogo
    desce do céu, agarra o Maycow, voa com ele por cima do mapa inteiro e o arremessa no portal do
    começo, que o cospe de volta pela Red Valve do calabouço. Lá ele entende: ainda é fraco demais para
    atravessar aquele portal. (Dali em diante a Red Valve só abre quando ele quer.)

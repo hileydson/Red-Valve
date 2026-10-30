@@ -51,8 +51,6 @@ func fade_out() -> void:
 	t.tween_property(self, "modulate:a", 0.0, 0.12)
 
 func _draw() -> void:
-	if options.is_empty(): return
-	
 	var vp := get_viewport_rect().size
 	var center := vp * 0.5
 	var appear := ease(_appear, 0.35)
@@ -63,6 +61,11 @@ func _draw() -> void:
 	# Disco central e anel guia
 	draw_circle(center, r + option_radius * 1.15, Color(0.02, 0.03, 0.05, 0.45 * appear))
 	draw_arc(center, r, 0.0, TAU, 128, Color(0.55, 0.85, 1.0, 0.22 * appear), 3.0, true)
+	
+	# Nenhum poder liberado ainda: só o anel, e o aviso no meio
+	if options.is_empty():
+		_texto_central(center, tr("COGBLADE_SEM_PODERES"), appear)
+		return
 	
 	var count := options.size()
 	var sector := TAU / float(count)
@@ -126,6 +129,9 @@ func _draw() -> void:
 	var center_txt := "ESCOLHA UM PODER"
 	if selected >= 0 and selected < count:
 		center_txt = str(options[selected].get("desc", ""))
+	_texto_central(center, center_txt, appear)
+
+func _texto_central(center: Vector2, center_txt: String, appear: float) -> void:
 	var cw: float = _font.get_string_size(center_txt, HORIZONTAL_ALIGNMENT_LEFT, -1, 24).x
 	var cpos := center + Vector2(-cw * 0.5, 8.0)
 	draw_string_outline(_font, cpos, center_txt, HORIZONTAL_ALIGNMENT_LEFT, -1, 24, 7, Color(0, 0, 0, 0.9 * appear))

@@ -15,10 +15,14 @@ extends "res://scripts/stages/inferno_3/inferno_3.gd"
 ##    vórtice do céu acende em cima da catedral colossal e o drone sobe — é o
 ##    que deixa ver o GRANDE INFERNO lá embaixo. Descendo, ela fecha um pouco
 ##    de novo (o largo do fim precisa de vista para a luta);
-##  - a CUTSCENE DO MIRANTE, uma vez por visita, ao pisar no patamar do topo
-##    (ver `cutscene_mirante.gd`);
+##  - a CUTSCENE DO MIRANTE, UMA VEZ SÓ, ao pisar no patamar do topo (ver
+##    `cutscene_mirante.gd`): é o evento `Eventos.CAP1_INFERNO_4_MIRANTE`;
 ##  - o BANDO de gárgulas que voa sobre a cratera, além das do céu da base;
-##  - os gigantes de sombra da vista olham pro mirante.
+##  - os gigantes de sombra da vista olham pro mirante;
+##  - a AURA DO AMULETO (Capítulo 1): uma chama roxa flutua no altar da
+##    chegada; pegar ela roda a cutscene do amuleto passando pela chama
+##    (`cutscene_aura_amuleto.gd`) e, 2 s depois, a tela do poder novo da
+##    cogblade (o arremesso).
 ##
 ## O anel do largo do fim é a SAÍDA, mas ainda não leva a lugar nenhum
 ## (`cena_saida` vazia). O espaço em volta do selo é o do mini chefe: o
@@ -26,6 +30,8 @@ extends "res://scripts/stages/inferno_3/inferno_3.gd"
 
 const CutsceneMirante := preload("res://scripts/stages/inferno_4/cutscene_mirante.gd")
 const GargulaDoLimite := preload("res://scripts/stages/inferno_4/gargula_do_limite.gd")
+const CutsceneAura := preload("res://scripts/stages/inferno_4/cutscene_aura_amuleto.gd")
+const AuraDoAmuleto := preload("res://scripts/systems/aura_do_amuleto.gd")
 
 @export_group("Névoa do mirante")
 ## z (mundo) onde a névoa começa a abrir, onde fica toda aberta (o topo), onde
@@ -50,6 +56,14 @@ const GargulaDoLimite := preload("res://scripts/stages/inferno_4/gargula_do_limi
 ## Volume do drone com a vista toda aberta.
 @export var drone_volume: float = -8.0
 
+@export_group("Aura do amuleto")
+## Onde a chama roxa flutua: 45 cm acima do tampo do altar da chegada (o
+## `lanterna` de `inferno_4_pontos.json` é o tampo, no meio dele).
+@export var aura_posicao: Vector3 = Vector3(27.74, 1.79, 166.86)
+@export var aura_tamanho: float = 0.16
+## Depois da cutscene, quanto de jogo antes da tela do poder novo.
+@export var aura_espera_tela: float = 2.0
+
 @export_group("Bando da cratera")
 @export var bando_vista: int = 8
 @export var bando_centro: Vector3 = Vector3.ZERO
@@ -72,6 +86,8 @@ var _avisou_do_fim := false
 var _gargula_levando := false
 ## A que distância (no chão) do portal do fim a gárgula vem.
 const PERTO_DO_FIM := 16.0
+var _aura_selecao: Node
+var _aura_chama: Node3D
 
 
 func _preparar() -> void:
@@ -89,6 +105,9 @@ func _preparar() -> void:
 	if gatilho:
 		gatilho.body_entered.connect(_ao_pisar_no_mirante)
 	_regras_da_historia()
+	_preparar_aura()
+	# a cutscene do mirante é um evento: vista uma vez, nunca mais
+	_mirante_visto = Eventos.feito(Eventos.CAP1_INFERNO_4_MIRANTE)
 
 
 ## O portal do COMEÇO é a volta pra red valve do porão: pergunta antes de
@@ -121,6 +140,74 @@ func _passo(delta: float) -> void:
 		g.name = "gargula_do_limite"
 		add_child(g)
 		g.levar(jogador, _portal_entrada)
+
+
+# ==============================================================================
+# A AURA DO AMULETO
+# ==============================================================================
+## Só enquanto o evento puder acontecer (Capítulo 1, depois da red valve, e a
+## aura ainda não pega). A chama entra DEPOIS do `configurar`: o realce do
+## selecionável pinta as malhas que acha ali, e os quads da chama não são
+## malha pra contorno.
+func _preparar_aura() -> void:
+	if not Eventos.pode(Eventos.CAP1_AURA_AMULETO):
+		return
+	var altar := Node3D.new()
+	altar.name = "aura_no_altar"
+	add_child(altar)
+	altar.global_position = aura_posicao
+	var area := Area3D.new()
+	area.name = "area"
+	area.collision_layer = 0
+	area.monitorable = false
+	var forma := CollisionShape3D.new()
+	var caixa := BoxShape3D.new()
+	# o altar tem 2,2 x 1,4 m e a cápsula para longe dele: área folgada
+	caixa.size = Vector3(4.4, 2.6, 4.4)
+	forma.shape = caixa
+	area.add_child(forma)
+	altar.add_child(area)
+	area.position = Vector3(0.0, -1.0, 0.0)
+	_aura_selecao = ItemSelecionavel.new()
+	altar.add_child(_aura_selecao)
+	_aura_selecao.configurar(altar, area, "PROMPT_TAKE_AURA")
+	_aura_selecao.pegar.connect(_pegar_aura)
+	_aura_chama = AuraDoAmuleto.chama(aura_tamanho)
+	altar.add_child(_aura_chama)
+
+
+func _pegar_aura() -> void:
+	var jogador := get_node_or_null("Player") as CharacterBody3D
+	if jogador == null or not is_instance_valid(_aura_chama):
+		return
+	var cena := CutsceneAura.new()
+	cena.name = "cutscene_aura_amuleto"
+	add_child(cena)
+	cena.rodar(self, jogador, _aura_chama)
+	await cena.terminou
+	if not Eventos.amuleto_com_aura():
+		# a cena caiu no meio: a chama continua no altar, pra pegar de novo
+		if is_instance_valid(_aura_selecao):
+			_aura_selecao.disponivel = true
+		return
+	var altar := get_node_or_null("aura_no_altar")
+	if altar:
+		altar.queue_free()
+	# de volta ao jogo um instante, e só então o jogo para pra contar o poder
+	await get_tree().create_timer(aura_espera_tela, false).timeout
+	_mostrar_poder_novo()
+
+
+## A tela de item obtido com o amuleto girando JÁ com a aura, o texto do poder
+## novo e o nome dele entrando embaixo.
+func _mostrar_poder_novo() -> void:
+	var tela: CanvasLayer = load(CENA_ITEM_OBTIDO).instantiate()
+	tela.model_path = AuraDoAmuleto.MODELO_AMULETO
+	tela.aura = true
+	tela.texto = tr("PODER_NOVO_COGBLADE")
+	tela.destaque = tr(Eventos.rotulo_poder(Eventos.PODER_THROWN))
+	tela.detalhe = tr("PODER_NOVO_USO_PAD" if GlobalEvents.usando_controle else "PODER_NOVO_USO_KEY")
+	get_tree().root.add_child(tela)
 
 
 ## Os gigantes da vista olham pro mirante, não pro meio do mapa.
@@ -200,4 +287,7 @@ func _ao_pisar_no_mirante(corpo: Node3D) -> void:
 	var cena := CutsceneMirante.new()
 	cena.name = "cutscene_mirante"
 	add_child(cena)
-	cena.rodar(self, corpo as CharacterBody3D)
+	await cena.rodar(self, corpo as CharacterBody3D)
+	# conclui (e salva) no fim, já com o controle devolvido. Sem a red valve
+	# (viagem do debug) o evento recusa e ela volta a valer na próxima visita.
+	Eventos.concluir(Eventos.CAP1_INFERNO_4_MIRANTE)

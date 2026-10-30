@@ -19,7 +19,9 @@ const MENU_AUDIO_SCALE: float = 0.5
 const SELECT_DEADZONE: float = 0.35
 const SOM_EMPUNHAR := "res://assets/sounds/player/blade_in.mp3"
 
-# Poderes disponíveis, na ordem em que aparecem no círculo (começa no topo).
+# Os quatro poderes, na ordem em que aparecem no círculo (começa no topo). Só
+# entram no círculo os já LIBERADOS (`Eventos.poder_liberado`): o jogo começa
+# sem nenhum, e segurar o botão abre o círculo vazio.
 # "cost_type" diz de onde sai o custo: "mp" gasta mana (o arremesso, que antes
 # ficava no botão Y) e "cogblade" exige o medidor da cogblade cheio.
 const POWERS: Array = [
@@ -151,10 +153,9 @@ func _can_open() -> bool:
 	if not _can_use_action(): return false
 	if player.cogblade_melee_active: return false
 	if not player.is_on_floor(): return false
-	# Abre se pelo menos um dos poderes estiver disponível
-	for p in POWERS:
-		if _is_power_available(p): return true
-	return false
+	# Abre mesmo sem poder nenhum liberado (ou sem mana pra eles): o círculo
+	# vazio é o que conta ao jogador que ali vão morar os poderes.
+	return true
 
 # Cada poder tem o seu próprio custo: o arremesso gasta mana, os dois ultimates
 # exigem o medidor da cogblade cheio.
@@ -192,6 +193,8 @@ func _open_menu() -> void:
 	
 	_options = []
 	for p in POWERS:
+		if not Eventos.poder_liberado(str(p["id"])):
+			continue
 		_options.append({
 			"id": p["id"],
 			"name": p["name"],

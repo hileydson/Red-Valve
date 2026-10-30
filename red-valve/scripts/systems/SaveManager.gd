@@ -99,6 +99,10 @@ var jonny_deixado_em: String = ""
 ## nas variaveis proprias). Quem le' e escreve e' o autoload `Eventos`
 ## (scripts/systems/eventos_historia.gd) — aqui so' fica guardado.
 var eventos_concluidos: Array = []
+## Ids dos poderes da cogblade ja' liberados ("thrown", "slain", "cut",
+## "fire_cross"). O jogo comeca SEM nenhum; quem libera e' o `Eventos`
+## (`liberar_poder`), a aura do amuleto no inferno 4 libera o primeiro.
+var poderes_cogblade: Array = []
 var iron_rusks_pending: int = 0 # Ganho na luta atual, ainda não somado visualmente no HUD
 var iron_rusks_display: int = 0 # Valor mostrado no canto da tela, só sobe com a animação de tally
 
@@ -571,7 +575,8 @@ func save_game(scene_path: String = ""):
 		"igreja_destrancada": igreja_destrancada,
 		"jonny_no_hospital": jonny_no_hospital,
 		"jonny_deixado_em": jonny_deixado_em,
-		"eventos_concluidos": eventos_concluidos
+		"eventos_concluidos": eventos_concluidos,
+		"poderes_cogblade": poderes_cogblade
 	}
 	
 	save_config() # Sempre salvar config junto
@@ -638,6 +643,7 @@ func load_game(slot_id: int = -1) -> bool:
 				jonny_no_hospital = data.get("jonny_no_hospital", [])
 				jonny_deixado_em = data.get("jonny_deixado_em", "")
 				eventos_concluidos = data.get("eventos_concluidos", [])
+				poderes_cogblade = data.get("poderes_cogblade", [])
 				# As mascaras vivas sao do save ANTERIOR: sem isto, a escola
 				# descoberta no slot 1 apareceria descoberta no slot 2.
 				MapaNevoa.esquecer_tudo()
@@ -721,6 +727,7 @@ func load_slot_data_only(slot_id: int = 1) -> bool:
 	jonny_no_hospital = data.get("jonny_no_hospital", [])
 	jonny_deixado_em = data.get("jonny_deixado_em", "")
 	eventos_concluidos = data.get("eventos_concluidos", [])
+	poderes_cogblade = data.get("poderes_cogblade", [])
 	print("Game data loaded into memory from slot ", slot_id, " (no scene change)")
 	return true
 
@@ -754,6 +761,7 @@ func reset_progress() -> void:
 	jonny_no_hospital = []
 	jonny_deixado_em = ""
 	eventos_concluidos = []
+	poderes_cogblade = []
 	MapaNevoa.esquecer_tudo()
 
 

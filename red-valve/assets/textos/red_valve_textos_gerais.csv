@@ -598,3 +598,15 @@ TUTORIAL_COGBLADE_ACAO_PAD,Press LB to draw the Cogblade,Aperte LB para sacar a 
 TUTORIAL_COGBLADE_ACAO_KEY,Press C to draw the Cogblade,Aperte C para sacar a Cogblade
 DEBUG_LOCAL_JIMMY_SALA,Jimmy's house — dining room,Casa do Jimmy — sala de jantar
 DEBUG_LOCAL_JIMMY_Q2,Jimmy's house — bedroom 2,Casa do Jimmy — quarto 2
+DEBUG_EVT_CAP1_AURA_AMULETO,Hell 4: took the amulet aura (Cogblade Thrown),Inferno 4: pegou a aura do amuleto (Cogblade Thrown)
+DEBUG_SECAO_PODERES_COGBLADE,Cogblade powers,Poderes da Cogblade
+PROMPT_TAKE_AURA,Touch the aura?,Tocar a aura?
+COGBLADE_SEM_PODERES,NO POWERS YET,NENHUM PODER AINDA
+COGBLADE_PODER_THROWN,COGBLADE THROWN,COGBLADE THROWN
+COGBLADE_PODER_SLAIN,COGBLADE SLAIN,COGBLADE SLAIN
+COGBLADE_PODER_CUT,COGBLADE CUT,COGBLADE CUT
+COGBLADE_PODER_FIRE_CROSS,COGBLADE FIRE CROSS,COGBLADE FIRE CROSS
+PODER_NOVO_COGBLADE,Maycow has just acquired a new power for the Cogblade,Maycow acabou de adquirir um novo poder para a Cogblade
+PODER_NOVO_USO_PAD,Hold LB and point at the power to use it,Segure LB e aponte para o poder para usá-lo
+PODER_NOVO_USO_KEY,Hold C and point at the power with the mouse to use it,Segure C e aponte para o poder com o mouse para usá-lo
+DEBUG_EVT_CAP1_MIRANTE,Hell 4: saw the lookout cutscene (gargoyle over the crater),Inferno 4: viu a cutscene do mirante (gárgula sobre a cratera)

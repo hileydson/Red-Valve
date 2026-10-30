@@ -16,6 +16,8 @@ var base_scale: Vector3 = Vector3.ONE
 
 signal inspector_closed
 
+const AuraDoAmuleto := preload("res://scripts/systems/aura_do_amuleto.gd")
+
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	if model_path != "":
@@ -36,6 +38,8 @@ func _ready() -> void:
 				var scale_factor = 0.4 / max_size
 				base_scale = Vector3(scale_factor, scale_factor, scale_factor)
 				pivot.scale = base_scale
+			# o amuleto depois do altar do inferno 4 tem a aura roxa
+			AuraDoAmuleto.vestir_se_for_amuleto(model_path, model_instance)
 				
 	# Previne fechamento no mesmo frame que abriu
 	await get_tree().create_timer(0.1).timeout

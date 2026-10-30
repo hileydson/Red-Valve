@@ -31,8 +31,18 @@ extends Node
 ## antes tudo o que ele exige; desligar desliga junto tudo o que dependia dele.
 ## O save fica sempre coerente — nunca existe "escola escura" sem "falou do
 ## Jonny", nem "falou do Jonny" sem "leu o diário".
+##
+## ==========================================================================
+## OS PODERES DA COGBLADE
+##
+## O círculo que abre segurando o botão da cogblade só mostra os poderes já
+## LIBERADOS (`SaveManager.poderes_cogblade`); o jogo começa sem nenhum e o
+## círculo abre vazio. Cada poder é liberado por um momento da história —
+## `CAP1_AURA_AMULETO` (a aura no altar do inferno 4) libera o arremesso — e o
+## debug liga e desliga cada um com `forcar_poder`.
 
 signal mudou(id: String, feito: bool)
+signal poder_mudou(id: String, liberado: bool)
 
 const PROLOGO := 0
 const CAPITULO_1 := 1
@@ -61,6 +71,12 @@ const CAP1_GRIZZOLITO_DERROTADO := "cap1_grizzolito_derrotado"
 const CAP1_ESCOLA_PRESA := "cap1_escola_presa"
 ## A primeira travessia da red valve do porão (automática) até o inferno 4.
 const CAP1_RED_VALVE := "cap1_red_valve"
+## Pegou a aura do amuleto no altar do começo do inferno 4: o amuleto ganha a
+## aura roxa e a cogblade, o primeiro poder (o arremesso).
+const CAP1_AURA_AMULETO := "cap1_aura_amuleto"
+## Viu a cutscene do mirante no topo do inferno 4 (a vista do grande inferno e
+## a gárgula voando sobre a cratera). Só passa uma vez.
+const CAP1_INFERNO_4_MIRANTE := "cap1_inferno_4_mirante"
 ## Chegou no fim do inferno 4 e o portal não o quis: ainda é fraco demais.
 const CAP1_INFERNO_4_LIMITE := "cap1_inferno_4_limite"
 ## Destrancou por dentro o portão do pátio (estado em
@@ -100,6 +116,10 @@ const CATALOGO := [
 		"depende": [CAP1_GRIZZOLITO_DERROTADO]},
 	{"id": CAP1_RED_VALVE, "cap": CAPITULO_1, "rotulo": "DEBUG_EVT_CAP1_RED_VALVE",
 		"depende": [CAP1_ESCOLA_PRESA]},
+	{"id": CAP1_AURA_AMULETO, "cap": CAPITULO_1, "rotulo": "DEBUG_EVT_CAP1_AURA_AMULETO",
+		"depende": [CAP1_RED_VALVE]},
+	{"id": CAP1_INFERNO_4_MIRANTE, "cap": CAPITULO_1, "rotulo": "DEBUG_EVT_CAP1_MIRANTE",
+		"depende": [CAP1_RED_VALVE]},
 	{"id": CAP1_INFERNO_4_LIMITE, "cap": CAPITULO_1, "rotulo": "DEBUG_EVT_CAP1_INFERNO_4",
 		"depende": [CAP1_RED_VALVE]},
 	{"id": CAP1_PORTAO_PATIO, "cap": CAPITULO_1, "rotulo": "DEBUG_EVENT_ESCOLA_PORTAO",
@@ -110,6 +130,24 @@ const CATALOGO := [
 	{"id": CAP2_IGREJA_DESTRANCADA, "cap": CAPITULO_2, "rotulo": "DEBUG_EVENT_IGREJA_DESTRANCADA",
 		"depende": [CAP1_CONCLUIDO]},
 ]
+
+## Os poderes da cogblade, na ordem do círculo (o primeiro fica no topo).
+## `rotulo` é o nome do poder no CSV (o mesmo nas duas línguas).
+const PODER_THROWN := "thrown"
+const PODER_SLAIN := "slain"
+const PODER_CUT := "cut"
+const PODER_FIRE_CROSS := "fire_cross"
+const PODERES_COGBLADE := [
+	{"id": PODER_THROWN, "rotulo": "COGBLADE_PODER_THROWN"},
+	{"id": PODER_SLAIN, "rotulo": "COGBLADE_PODER_SLAIN"},
+	{"id": PODER_CUT, "rotulo": "COGBLADE_PODER_CUT"},
+	{"id": PODER_FIRE_CROSS, "rotulo": "COGBLADE_PODER_FIRE_CROSS"},
+]
+## O evento que libera cada poder (os que ainda não têm momento na história
+## ficam de fora até ganhar um).
+const EVENTO_DO_PODER := {
+	PODER_THROWN: CAP1_AURA_AMULETO,
+}
 
 ## Rótulo de cada capítulo no debug.
 const TITULOS_CAPITULO := {
@@ -224,6 +262,10 @@ func _escrever(id: String, valor: bool) -> void:
 				SaveManager.eventos_concluidos.append(id)
 		else:
 			SaveManager.eventos_concluidos.erase(id)
+	# o poder que este evento libera vai e volta junto com ele
+	for poder in EVENTO_DO_PODER:
+		if EVENTO_DO_PODER[poder] == id:
+			_escrever_poder(poder, valor)
 	mudou.emit(id, valor)
 
 
@@ -232,6 +274,50 @@ func _evento(id: String) -> Dictionary:
 		if e["id"] == id:
 			return e
 	return {}
+
+
+# ==============================================================================
+# OS PODERES DA COGBLADE
+# ==============================================================================
+
+func poder_liberado(id: String) -> bool:
+	return SaveManager.poderes_cogblade.has(id)
+
+
+## Os ids liberados, na ordem do círculo.
+func poderes_liberados() -> Array:
+	var out: Array = []
+	for p in PODERES_COGBLADE:
+		if poder_liberado(String(p["id"])):
+			out.append(String(p["id"]))
+	return out
+
+
+func rotulo_poder(id: String) -> String:
+	for p in PODERES_COGBLADE:
+		if p["id"] == id:
+			return String(p["rotulo"])
+	return id
+
+
+## Só pro debug: liga ou desliga um poder e grava. (O jogo libera os poderes
+## pelos eventos de `EVENTO_DO_PODER`.)
+func forcar_poder(id: String, valor: bool) -> void:
+	_escrever_poder(id, valor)
+	SaveManager.save_game()
+
+
+func _escrever_poder(id: String, valor: bool) -> void:
+	if valor and not SaveManager.poderes_cogblade.has(id):
+		SaveManager.poderes_cogblade.append(id)
+	elif not valor:
+		SaveManager.poderes_cogblade.erase(id)
+	poder_mudou.emit(id, valor)
+
+
+## O amuleto já tem a aura roxa (a do altar do inferno 4)?
+func amuleto_com_aura() -> bool:
+	return feito(CAP1_AURA_AMULETO)
 
 
 # ==============================================================================

@@ -36,6 +36,8 @@ var _gatilho_selecionar_estava_pressionado: bool = false
 
 func _ready() -> void:
 	player = get_parent()
+	# a aura pega com o amuleto já montado (mesma cena) entra na hora
+	Eventos.mudou.connect(_ao_mudar_evento)
 
 func _process_amulet_magic(delta: float) -> void:
 	# `SaveManager.prolog_finished or GlobalEvents.entering_chapter_1`, e nao so
@@ -184,6 +186,20 @@ func _ensure_amuleto_visual() -> void:
 
 	player.amuleto_node = amuleto
 	player.amuleto_particles = particles
+	_vestir_aura()
+
+
+func _ao_mudar_evento(id: String, feito: bool) -> void:
+	if id == Eventos.CAP1_AURA_AMULETO and feito:
+		_vestir_aura()
+
+
+## Depois do altar do inferno 4 o amuleto fica com a aura roxa
+## (`Eventos.amuleto_com_aura`). Quem acabou de pegar a aura com o amuleto já
+## montado chama de novo: veste sem duplicar.
+func _vestir_aura() -> void:
+	if Eventos.amuleto_com_aura() and is_instance_valid(player.amuleto_node):
+		preload("res://scripts/systems/aura_do_amuleto.gd").vestir(player.amuleto_node, false)
 
 func _hide_amulet_magic() -> void:
 	player.amulet_magic_active = false

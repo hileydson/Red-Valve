@@ -16,8 +16,17 @@ extends CanvasLayer
 ##     tela.texto = tr("PICKUP_FLASHLIGHT_L3")
 ##     get_tree().root.add_child(tela)
 ##     await tela.fechado
+##
+## O poder novo da cogblade usa a mesma tela, com o amuleto vestido da aura
+## (`aura`), o nome do poder entrando depois do texto (`destaque`) e como usar
+## embaixo dele (`detalhe`). Sem os três ela é a tela de sempre.
 
 signal fechado
+
+const AuraDoAmuleto := preload("res://scripts/systems/aura_do_amuleto.gd")
+const COR_DESTAQUE := Color(0.78, 0.5, 1.0)
+## O nome do poder entra um pouco depois do texto (que entra no fade).
+const ESPERA_DESTAQUE := 0.7
 
 const GIRO_POR_SEGUNDO := 0.7
 ## Só aceita "continuar" depois disto, contado a partir do fim do fade in. Sem
@@ -34,6 +43,9 @@ const FADE_SAIDA := 0.45
 
 var model_path: String = ""
 var texto: String = ""
+var destaque: String = ""
+var detalhe: String = ""
+var aura: bool = false
 var _aceita_input: bool = false
 var _fechando: bool = false
 var _piscar: float = 0.0
@@ -49,6 +61,8 @@ func _ready() -> void:
 	rotulo.text = texto
 	_atualizar_dica()
 	_montar_modelo()
+	if destaque != "":
+		_montar_destaque()
 
 	# Entra por fade: a tela nasce preta por cima de tudo e abre. Aparecer de
 	# estalo no meio da ação é o que fazia isto parecer erro de cena em vez de
@@ -81,6 +95,55 @@ func _montar_modelo() -> void:
 		var fator := 0.42 / maior
 		pivot.scale = Vector3(fator, fator, fator)
 	pivot.rotation = Vector3(0.25, 0.6, 0.0)
+	if aura:
+		AuraDoAmuleto.vestir(modelo, true, true)
+
+
+## O texto sobe e o nome do poder entra embaixo dele, grande e roxo, com o
+## "como usar" menor por baixo. Os dois aparecem depois do fade.
+func _montar_destaque() -> void:
+	rotulo.offset_top -= 90.0
+	rotulo.offset_bottom -= 90.0
+	var nome := Label.new()
+	nome.name = "Destaque"
+	nome.text = destaque
+	nome.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+	nome.offset_top = -235.0
+	nome.offset_bottom = -170.0
+	nome.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	nome.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	nome.add_theme_font_size_override("font_size", 46)
+	nome.add_theme_constant_override("outline_size", 8)
+	nome.add_theme_color_override("font_color", COR_DESTAQUE)
+	nome.add_theme_color_override("font_outline_color", Color(0.08, 0.0, 0.14))
+	add_child(nome)
+	move_child(nome, fade.get_index())
+	var linhas: Array[Control] = [nome]
+	if detalhe != "":
+		var uso := Label.new()
+		uso.name = "Detalhe"
+		uso.text = detalhe
+		uso.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+		uso.offset_top = -168.0
+		uso.offset_bottom = -132.0
+		uso.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		uso.add_theme_font_size_override("font_size", 20)
+		uso.add_theme_constant_override("outline_size", 5)
+		uso.add_theme_color_override("font_color", Color(0.82, 0.8, 0.86))
+		add_child(uso)
+		move_child(uso, fade.get_index())
+		linhas.append(uso)
+	for l in linhas:
+		l.modulate.a = 0.0
+	var tw := create_tween()
+	tw.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	tw.tween_interval(FADE_ENTRADA + ESPERA_DESTAQUE)
+	tw.tween_property(nome, "modulate:a", 1.0, 0.5)
+	tw.parallel().tween_property(nome, "scale", Vector2.ONE, 0.5).from(Vector2.ONE * 1.25) \
+		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	if linhas.size() > 1:
+		tw.tween_property(linhas[1], "modulate:a", 1.0, 0.4)
+	nome.pivot_offset = Vector2(get_viewport().get_visible_rect().size.x * 0.5, 32.0)
 
 
 func _aabb(no: Node3D) -> AABB:

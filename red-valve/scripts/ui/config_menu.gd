@@ -707,6 +707,16 @@ func _build_debug_tab():
 				_auto_save_debug()
 			)
 
+	# --- Poderes da cogblade: o jogo comeca sem nenhum; o evento da aura do
+	# amuleto (Capitulo 1) liga o primeiro, e cada um liga e desliga aqui ---
+	_secao_debug(vbox, tr("DEBUG_SECAO_PODERES_COGBLADE"))
+	for p in Eventos.PODERES_COGBLADE:
+		var id_poder: String = p["id"]
+		_add_event_checkbox(vbox, "poder_" + id_poder, tr(String(p["rotulo"])),
+			Eventos.poder_liberado(id_poder), func(val):
+				Eventos.forcar_poder(id_poder, val)
+		)
+
 	tab_container.add_child(tab_debug)
 
 
@@ -717,6 +727,11 @@ func _atualizar_checks_de_eventos() -> void:
 		var chave := "evt_" + String(e["id"])
 		if debug_event_checks.has(chave):
 			debug_event_checks[chave].set_pressed_no_signal(Eventos.feito(String(e["id"])))
+	# o evento da aura leva o poder junto
+	for p in Eventos.PODERES_COGBLADE:
+		var chave_poder := "poder_" + String(p["id"])
+		if debug_event_checks.has(chave_poder):
+			debug_event_checks[chave_poder].set_pressed_no_signal(Eventos.poder_liberado(String(p["id"])))
 	# o telefonema tambem e' um arquivo: a aba de itens acompanha
 	if debug_event_checks.has("file_telefone"):
 		debug_event_checks["file_telefone"].set_pressed_no_signal(SaveManager.tem_arquivo("telefonema_dona_nice"))
