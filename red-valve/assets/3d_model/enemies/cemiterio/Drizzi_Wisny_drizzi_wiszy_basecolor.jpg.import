@@ -2,20 +2,20 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d1td408v6f558"
-path.s3tc="res://.godot/imported/Drizzi_Wisny_0.jpg-e2f5281a5a7619be7eafcec99f09679d.s3tc.ctex"
+uid="uid://25bf3i444fba"
+path.s3tc="res://.godot/imported/Drizzi_Wisny_drizzi_wiszy_basecolor.jpg-7883e99e1b8d2af3d197bdc90ed175b1.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
 }
 generator_parameters={
-"md5": "a885f108fa6d0d2c8a3b3ba4b899c6ea"
+"md5": "97fa17353ff548133bd57d4fb00e6900"
 }
 
 [deps]
 
-source_file="res://assets/3d_model/enemies/cemiterio/Drizzi_Wisny_0.jpg"
-dest_files=["res://.godot/imported/Drizzi_Wisny_0.jpg-e2f5281a5a7619be7eafcec99f09679d.s3tc.ctex"]
+source_file="res://assets/3d_model/enemies/cemiterio/Drizzi_Wisny_drizzi_wiszy_basecolor.jpg"
+dest_files=["res://.godot/imported/Drizzi_Wisny_drizzi_wiszy_basecolor.jpg-7883e99e1b8d2af3d197bdc90ed175b1.s3tc.ctex"]
 
 [params]
 
