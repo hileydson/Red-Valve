@@ -141,6 +141,153 @@ CLAREIRAS = [
 ]
 
 
+# ------------------------------------------------------------ mata do sul
+# O terreno da stage_1 tem duas fileiras de regioes a mais ao SUL da area
+# importada (Z do Godot de 0 a 512): e' onde fica o comeco do prologo (a casa
+# do Maycow, os postes do caminho). O anel acima so' cobre a area importada,
+# entao as laterais dessa faixa ficavam de terra nua. Aqui elas viram mata,
+# com a mesma borda irregular e a mesma densidade crescente do anel, deixando
+# livre a faixa jogavel do meio (onde passa o navmesh do prologo).
+#
+# Sorteio PROPRIO (SEMENTE_SUL): somar esta mata nao move nenhuma planta do
+# resto do mapa. Coordenadas em MUNDO do Godot; o terreno ali e' plano em
+# y = 0 (o heightfield do Blender nao vai ate' la' e extrapolaria).
+SEMENTE_SUL = 90211
+SUL_Z = (0.5, 512.0)
+SUL_X = (0.0, 1280.0)
+# a faixa jogavel do prologo (navmesh de x 256 a 768) com folga
+SUL_LIVRE_X = (240.0, 785.0)
+# e o FUNDO dela, atras da casa do Maycow: depois das paredes de bloqueio do
+# prologo (z ~482) o terreno acaba em 512, e sem mata ali a faixa abria pro
+# vazio. Ninguem chega la' andando.
+SUL_FUNDO_Z = 490.0
+
+
+def _mata_sul(pts, w, b, margem_interna):
+    rng = random.Random(SEMENTE_SUL)
+    ox, oz = w["origin_x"], w["origin_z"]
+    passo = 7.0
+    n_i = int((SUL_X[1] - SUL_X[0]) / passo)
+    n_j = int((SUL_Z[1] - SUL_Z[0]) / passo)
+    for j in range(n_j):
+        for i in range(n_i):
+            gx = SUL_X[0] + (i + rng.random()) * passo
+            gz = SUL_Z[0] + (j + rng.random()) * passo
+            lx, ly = gx - ox, oz - gz
+            if not _fora_da_cidade(lx, ly, b, margem_interna):
+                continue
+            d = max(SUL_LIVRE_X[0] - gx, 0.0, gx - SUL_LIVRE_X[1])
+            ruido = 12.0 * math.sin(gz * 0.023 + 0.8) * math.cos(gx * 0.019 - 1.1)
+            limiar = 14.0 + ruido
+            fundo = gz - SUL_FUNDO_Z - 3.0 * math.sin(gx * 0.05)
+            if d < limiar and fundo < 0.0:
+                continue
+            dens = 1.0 if fundo >= 0.0 else min(1.0, (d - limiar) / 55.0)
+            if rng.random() > dens * 0.82:
+                continue
+            especie = "TREE_forest" if rng.random() < 0.46 else "TREE_forest_broad"
+            pts[especie].append(
+                (round(lx, 2), 0.0, round(-ly, 2),
+                 round(rng.uniform(0, 6.283), 3), round(rng.uniform(0.78, 1.40), 3)))
+            if rng.random() < 0.30:
+                bx, bz = gx + rng.uniform(-3, 3), gz + rng.uniform(-3, 3)
+                # fora do terreno ele ficaria pendurado no vazio
+                if SUL_Z[0] <= bz <= SUL_Z[1] and SUL_X[0] <= bx <= SUL_X[1]:
+                    pts["BUSH"].append(
+                        (round(bx - ox, 2), 0.0, round(bz - oz, 2),
+                         round(rng.uniform(0, 6.283), 3), round(rng.uniform(0.7, 1.5), 3)))
+
+
+# ------------------------------------------------------------ mata do meio
+# O MEIO da faixa sul (SUL_LIVRE_X) tambem vira mata, entre os pinheiros
+# grandes do prologo — so' que abrindo clareira em volta do que e' pisavel ou
+# esta' em pe' ali: o navmesh da stage_1, a casa do Maycow, os postes, a faixa
+# de grama e os proprios pinheiros (`city_data/area_prologo.json`, tirado da
+# cena por `extrair_area_prologo.py`). A mata engrossa com a distancia a isso.
+#
+# Sorteio PROPRIO (SEMENTE_MEIO): nao mexe na mata das laterais.
+SEMENTE_MEIO = 90212
+AREA_PROLOGO = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                            "city_data", "area_prologo.json")
+MEIO_FOLGA = 6.0       # nada a menos disto do navmesh / das pecas
+MEIO_RAMPA = 30.0      # ate' a mata fechar
+
+
+def _dist_segmento(px, pz, ax, az, bx, bz):
+    vx, vz = bx - ax, bz - az
+    t = ((px - ax) * vx + (pz - az) * vz) / ((vx * vx + vz * vz) or 1e-9)
+    t = max(0.0, min(1.0, t))
+    return math.hypot(px - (ax + t * vx), pz - (az + t * vz))
+
+
+def _dist_triangulo(px, pz, t):
+    ax, az, bx, bz, cx, cz = t
+    d1 = (px - bx) * (az - bz) - (ax - bx) * (pz - bz)
+    d2 = (px - cx) * (bz - cz) - (bx - cx) * (pz - cz)
+    d3 = (px - ax) * (cz - az) - (cx - ax) * (pz - az)
+    neg = d1 < 0 or d2 < 0 or d3 < 0
+    pos = d1 > 0 or d2 > 0 or d3 > 0
+    if not (neg and pos):
+        return 0.0
+    return min(_dist_segmento(px, pz, ax, az, bx, bz),
+               _dist_segmento(px, pz, bx, bz, cx, cz),
+               _dist_segmento(px, pz, cx, cz, ax, az))
+
+
+def _mata_meio(pts, w, b, margem_interna):
+    if not os.path.exists(AREA_PROLOGO):
+        return
+    area = json.load(open(AREA_PROLOGO, encoding="utf-8"))
+    alcance = MEIO_FOLGA + MEIO_RAMPA
+    # grade espacial dos triangulos (celula de 16 m)
+    cel = 16.0
+    grade = {}
+    for t in area["triangulos"]:
+        xs, zs = t[0::2], t[1::2]
+        for ci in range(int(math.floor((min(xs) - alcance) / cel)), int(math.floor((max(xs) + alcance) / cel)) + 1):
+            for cj in range(int(math.floor((min(zs) - alcance) / cel)), int(math.floor((max(zs) + alcance) / cel)) + 1):
+                grade.setdefault((ci, cj), []).append(t)
+
+    def distancia(x, z):
+        d = alcance
+        for t in grade.get((int(math.floor(x / cel)), int(math.floor(z / cel))), ()):
+            d = min(d, _dist_triangulo(x, z, t))
+            if d <= 0.0:
+                return 0.0
+        for cx, cz, raio in area["circulos"]:
+            d = min(d, max(math.hypot(x - cx, z - cz) - raio, 0.0))
+        for x0, z0, x1, z1 in area["retangulos"]:
+            d = min(d, math.hypot(max(x0 - x, 0.0, x - x1), max(z0 - z, 0.0, z - z1)))
+        return d
+
+    rng = random.Random(SEMENTE_MEIO)
+    ox, oz = w["origin_x"], w["origin_z"]
+    passo = 7.0
+    for j in range(int((SUL_FUNDO_Z - SUL_Z[0]) / passo)):
+        for i in range(int((SUL_LIVRE_X[1] - SUL_LIVRE_X[0]) / passo)):
+            gx = SUL_LIVRE_X[0] + (i + rng.random()) * passo
+            gz = SUL_Z[0] + (j + rng.random()) * passo
+            sorte = rng.random()
+            especie = "TREE_forest" if rng.random() < 0.46 else "TREE_forest_broad"
+            giro, escala = rng.uniform(0, 6.283), rng.uniform(0.78, 1.40)
+            arbusto = rng.random() < 0.30
+            bx, bz = gx + rng.uniform(-3, 3), gz + rng.uniform(-3, 3)
+            bgiro, bescala = rng.uniform(0, 6.283), rng.uniform(0.7, 1.5)
+            if not _fora_da_cidade(gx - ox, oz - gz, b, margem_interna):
+                continue
+            d = distancia(gx, gz)
+            if d < MEIO_FOLGA:
+                continue
+            dens = min(1.0, (d - MEIO_FOLGA) / MEIO_RAMPA)
+            if sorte > dens * 0.82:
+                continue
+            pts[especie].append((round(gx - ox, 2), 0.0, round(gz - oz, 2),
+                                 round(giro, 3), round(escala, 3)))
+            if arbusto and distancia(bx, bz) >= MEIO_FOLGA:
+                pts["BUSH"].append((round(bx - ox, 2), 0.0, round(bz - oz, 2),
+                                    round(bgiro, 3), round(bescala, 3)))
+
+
 def _abrir_clareiras(pts):
     def livre(p):
         for _tag, x0, z0, x1, z1 in CLAREIRAS:
@@ -277,6 +424,8 @@ def scatter(hs, rng):
                                     round(-ly, 2), round(rng.uniform(0, 6.283), 3),
                                     round(rng.uniform(0.8, 1.3), 3)))
 
+    _mata_sul(pts, w, b, margem_interna)
+    _mata_meio(pts, w, b, margem_interna)
     return _abrir_clareiras(pts)
 
 

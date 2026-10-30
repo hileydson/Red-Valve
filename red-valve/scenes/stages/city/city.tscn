@@ -359,6 +359,300 @@
 [ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_4_2.tres" id="344_hxilk"]
 [ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_4_2_LOD.tres" id="345_8rmem"]
 [ext_resource type="Script" path="res://tools/godot/citybuild/city_neblina.gd" id="383_i676f"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-5_2.tres" id="sul_0"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-5_2_LOD.tres" id="sul_1"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-4_2.tres" id="sul_2"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-4_2_LOD.tres" id="sul_3"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_2_2.tres" id="sul_4"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_2_2_LOD.tres" id="sul_5"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_3_2.tres" id="sul_6"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_3_2_LOD.tres" id="sul_7"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_4_2.tres" id="sul_8"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_4_2_LOD.tres" id="sul_9"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_1_2.tres" id="sul_10"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_1_2_LOD.tres" id="sul_11"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-4_3.tres" id="sul_12"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-4_3_LOD.tres" id="sul_13"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_2_3.tres" id="sul_14"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_2_3_LOD.tres" id="sul_15"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_3_3.tres" id="sul_16"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_3_3_LOD.tres" id="sul_17"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-5_3.tres" id="sul_18"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-5_3_LOD.tres" id="sul_19"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_1_3.tres" id="sul_20"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_1_3_LOD.tres" id="sul_21"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_4_3.tres" id="sul_22"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_4_3_LOD.tres" id="sul_23"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-5_4.tres" id="sul_24"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-5_4_LOD.tres" id="sul_25"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-4_4.tres" id="sul_26"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-4_4_LOD.tres" id="sul_27"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_1_4.tres" id="sul_28"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_1_4_LOD.tres" id="sul_29"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_2_4.tres" id="sul_30"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_2_4_LOD.tres" id="sul_31"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_3_4.tres" id="sul_32"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_3_4_LOD.tres" id="sul_33"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_4_4.tres" id="sul_34"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_4_4_LOD.tres" id="sul_35"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-5_5.tres" id="sul_36"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-5_5_LOD.tres" id="sul_37"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-4_5.tres" id="sul_38"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-4_5_LOD.tres" id="sul_39"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_1_5.tres" id="sul_40"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_1_5_LOD.tres" id="sul_41"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_2_5.tres" id="sul_42"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_2_5_LOD.tres" id="sul_43"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_3_5.tres" id="sul_44"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_3_5_LOD.tres" id="sul_45"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_4_5.tres" id="sul_46"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_4_5_LOD.tres" id="sul_47"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-5_6.tres" id="sul_48"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-5_6_LOD.tres" id="sul_49"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-4_6.tres" id="sul_50"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-4_6_LOD.tres" id="sul_51"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-3_6.tres" id="sul_52"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-3_6_LOD.tres" id="sul_53"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-2_6.tres" id="sul_54"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-2_6_LOD.tres" id="sul_55"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_0_5.tres" id="sul_56"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_0_5_LOD.tres" id="sul_57"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_1_6.tres" id="sul_58"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_1_6_LOD.tres" id="sul_59"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_2_6.tres" id="sul_60"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_2_6_LOD.tres" id="sul_61"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_3_6.tres" id="sul_62"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_3_6_LOD.tres" id="sul_63"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_4_6.tres" id="sul_64"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_4_6_LOD.tres" id="sul_65"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-1_6.tres" id="sul_66"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-1_6_LOD.tres" id="sul_67"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_0_6.tres" id="sul_68"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_0_6_LOD.tres" id="sul_69"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-3_2.tres" id="sul_70"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-3_2_LOD.tres" id="sul_71"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-2_2.tres" id="sul_72"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-2_2_LOD.tres" id="sul_73"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_0_2.tres" id="sul_74"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_0_2_LOD.tres" id="sul_75"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-3_3.tres" id="sul_76"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-3_3_LOD.tres" id="sul_77"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-2_3.tres" id="sul_78"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-2_3_LOD.tres" id="sul_79"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_0_3.tres" id="sul_80"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_0_3_LOD.tres" id="sul_81"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-1_3.tres" id="sul_82"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-1_3_LOD.tres" id="sul_83"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-2_4.tres" id="sul_84"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-2_4_LOD.tres" id="sul_85"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_0_4.tres" id="sul_86"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_0_4_LOD.tres" id="sul_87"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-1_4.tres" id="sul_88"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-1_4_LOD.tres" id="sul_89"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-3_4.tres" id="sul_90"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-3_4_LOD.tres" id="sul_91"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-3_5.tres" id="sul_92"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-3_5_LOD.tres" id="sul_93"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-1_5.tres" id="sul_94"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-1_5_LOD.tres" id="sul_95"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-2_5.tres" id="sul_96"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_sul_-2_5_LOD.tres" id="sul_97"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-5_2.tres" id="sul_98"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-5_2_LOD.tres" id="sul_99"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-4_2.tres" id="sul_100"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-4_2_LOD.tres" id="sul_101"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_2_2.tres" id="sul_102"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_2_2_LOD.tres" id="sul_103"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_3_2.tres" id="sul_104"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_3_2_LOD.tres" id="sul_105"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_4_2.tres" id="sul_106"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_4_2_LOD.tres" id="sul_107"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_1_2.tres" id="sul_108"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_1_2_LOD.tres" id="sul_109"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-5_3.tres" id="sul_110"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-5_3_LOD.tres" id="sul_111"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-4_3.tres" id="sul_112"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-4_3_LOD.tres" id="sul_113"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_2_3.tres" id="sul_114"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_2_3_LOD.tres" id="sul_115"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_3_3.tres" id="sul_116"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_3_3_LOD.tres" id="sul_117"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_4_3.tres" id="sul_118"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_4_3_LOD.tres" id="sul_119"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_1_3.tres" id="sul_120"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_1_3_LOD.tres" id="sul_121"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-5_4.tres" id="sul_122"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-5_4_LOD.tres" id="sul_123"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-4_4.tres" id="sul_124"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-4_4_LOD.tres" id="sul_125"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_1_4.tres" id="sul_126"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_1_4_LOD.tres" id="sul_127"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_2_4.tres" id="sul_128"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_2_4_LOD.tres" id="sul_129"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_3_4.tres" id="sul_130"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_3_4_LOD.tres" id="sul_131"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_4_4.tres" id="sul_132"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_4_4_LOD.tres" id="sul_133"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-5_5.tres" id="sul_134"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-5_5_LOD.tres" id="sul_135"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-4_5.tres" id="sul_136"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-4_5_LOD.tres" id="sul_137"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_1_5.tres" id="sul_138"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_1_5_LOD.tres" id="sul_139"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_2_5.tres" id="sul_140"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_2_5_LOD.tres" id="sul_141"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_3_5.tres" id="sul_142"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_3_5_LOD.tres" id="sul_143"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_4_5.tres" id="sul_144"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_4_5_LOD.tres" id="sul_145"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-5_6.tres" id="sul_146"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-5_6_LOD.tres" id="sul_147"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-4_6.tres" id="sul_148"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-4_6_LOD.tres" id="sul_149"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-3_5.tres" id="sul_150"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-3_5_LOD.tres" id="sul_151"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-3_6.tres" id="sul_152"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-3_6_LOD.tres" id="sul_153"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-2_6.tres" id="sul_154"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-2_6_LOD.tres" id="sul_155"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-1_6.tres" id="sul_156"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-1_6_LOD.tres" id="sul_157"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_0_6.tres" id="sul_158"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_0_6_LOD.tres" id="sul_159"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_1_6.tres" id="sul_160"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_1_6_LOD.tres" id="sul_161"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_2_6.tres" id="sul_162"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_2_6_LOD.tres" id="sul_163"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_3_6.tres" id="sul_164"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_3_6_LOD.tres" id="sul_165"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_4_6.tres" id="sul_166"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_4_6_LOD.tres" id="sul_167"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-3_2.tres" id="sul_168"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-3_2_LOD.tres" id="sul_169"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-2_2.tres" id="sul_170"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-2_2_LOD.tres" id="sul_171"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_0_2.tres" id="sul_172"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_0_2_LOD.tres" id="sul_173"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-3_3.tres" id="sul_174"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-3_3_LOD.tres" id="sul_175"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-2_3.tres" id="sul_176"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-2_3_LOD.tres" id="sul_177"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_0_3.tres" id="sul_178"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_0_3_LOD.tres" id="sul_179"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-1_3.tres" id="sul_180"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-1_3_LOD.tres" id="sul_181"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-3_4.tres" id="sul_182"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-3_4_LOD.tres" id="sul_183"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-2_4.tres" id="sul_184"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-2_4_LOD.tres" id="sul_185"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_0_4.tres" id="sul_186"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_0_4_LOD.tres" id="sul_187"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-1_4.tres" id="sul_188"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-1_4_LOD.tres" id="sul_189"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-2_5.tres" id="sul_190"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-2_5_LOD.tres" id="sul_191"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_0_5.tres" id="sul_192"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_0_5_LOD.tres" id="sul_193"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-1_5.tres" id="sul_194"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_TREE_forest_broad_sul_-1_5_LOD.tres" id="sul_195"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-5_2.tres" id="sul_196"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-5_2_LOD.tres" id="sul_197"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-4_2.tres" id="sul_198"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-4_2_LOD.tres" id="sul_199"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_2_2.tres" id="sul_200"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_2_2_LOD.tres" id="sul_201"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_3_2.tres" id="sul_202"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_3_2_LOD.tres" id="sul_203"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_4_2.tres" id="sul_204"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_4_2_LOD.tres" id="sul_205"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_1_2.tres" id="sul_206"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_1_2_LOD.tres" id="sul_207"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_2_3.tres" id="sul_208"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_2_3_LOD.tres" id="sul_209"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_3_3.tres" id="sul_210"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_3_3_LOD.tres" id="sul_211"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_4_3.tres" id="sul_212"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_4_3_LOD.tres" id="sul_213"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-5_3.tres" id="sul_214"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-5_3_LOD.tres" id="sul_215"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-4_3.tres" id="sul_216"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-4_3_LOD.tres" id="sul_217"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_1_3.tres" id="sul_218"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_1_3_LOD.tres" id="sul_219"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-5_4.tres" id="sul_220"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-5_4_LOD.tres" id="sul_221"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_4_4.tres" id="sul_222"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_4_4_LOD.tres" id="sul_223"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_1_4.tres" id="sul_224"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_1_4_LOD.tres" id="sul_225"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_2_4.tres" id="sul_226"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_2_4_LOD.tres" id="sul_227"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_3_4.tres" id="sul_228"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_3_4_LOD.tres" id="sul_229"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-4_4.tres" id="sul_230"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-4_4_LOD.tres" id="sul_231"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-5_5.tres" id="sul_232"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-5_5_LOD.tres" id="sul_233"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-4_5.tres" id="sul_234"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-4_5_LOD.tres" id="sul_235"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_1_5.tres" id="sul_236"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_1_5_LOD.tres" id="sul_237"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_2_5.tres" id="sul_238"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_2_5_LOD.tres" id="sul_239"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_3_5.tres" id="sul_240"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_3_5_LOD.tres" id="sul_241"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_4_5.tres" id="sul_242"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_4_5_LOD.tres" id="sul_243"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-5_6.tres" id="sul_244"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-5_6_LOD.tres" id="sul_245"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-3_6.tres" id="sul_246"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-3_6_LOD.tres" id="sul_247"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-2_5.tres" id="sul_248"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-2_5_LOD.tres" id="sul_249"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-1_5.tres" id="sul_250"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-1_5_LOD.tres" id="sul_251"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_0_5.tres" id="sul_252"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_0_5_LOD.tres" id="sul_253"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_0_6.tres" id="sul_254"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_0_6_LOD.tres" id="sul_255"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_1_6.tres" id="sul_256"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_1_6_LOD.tres" id="sul_257"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_2_6.tres" id="sul_258"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_2_6_LOD.tres" id="sul_259"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_3_6.tres" id="sul_260"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_3_6_LOD.tres" id="sul_261"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_4_6.tres" id="sul_262"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_4_6_LOD.tres" id="sul_263"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-4_6.tres" id="sul_264"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-4_6_LOD.tres" id="sul_265"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-2_6.tres" id="sul_266"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-2_6_LOD.tres" id="sul_267"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-1_6.tres" id="sul_268"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-1_6_LOD.tres" id="sul_269"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-3_2.tres" id="sul_270"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-3_2_LOD.tres" id="sul_271"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-2_2.tres" id="sul_272"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-2_2_LOD.tres" id="sul_273"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_0_2.tres" id="sul_274"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_0_2_LOD.tres" id="sul_275"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-3_3.tres" id="sul_276"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-3_3_LOD.tres" id="sul_277"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-2_3.tres" id="sul_278"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-2_3_LOD.tres" id="sul_279"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_0_3.tres" id="sul_280"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_0_3_LOD.tres" id="sul_281"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-1_3.tres" id="sul_282"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-1_3_LOD.tres" id="sul_283"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-2_4.tres" id="sul_284"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-2_4_LOD.tres" id="sul_285"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-3_4.tres" id="sul_286"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-3_4_LOD.tres" id="sul_287"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_0_4.tres" id="sul_288"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_0_4_LOD.tres" id="sul_289"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-1_4.tres" id="sul_290"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-1_4_LOD.tres" id="sul_291"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-3_5.tres" id="sul_292"]
+[ext_resource type="MultiMesh" path="res://assets/3d_model/city/multimesh/mm_BUSH_sul_-3_5_LOD.tres" id="sul_293"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_igreja"]
 size = Vector3(21.75, 26.55, 20.4)
@@ -7062,3 +7356,2355 @@ spot_angle_attenuation = 1.25
 
 [node name="Neblina" type="Node" parent="." unique_id=1843188177]
 script = ExtResource("383_i676f")
+
+[node name="TREE_forest_sul_-5_2" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -575.243408, 0, 337.184875)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_0")
+
+[node name="TREE_forest_sul_-5_2_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -575.243408, 0, 337.184875)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_1")
+
+[node name="TREE_forest_sul_-4_2" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -453.786133, 0, 334.27124)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_2")
+
+[node name="TREE_forest_sul_-4_2_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -453.786133, 0, 334.27124)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_3")
+
+[node name="TREE_forest_sul_2_2" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 321.595764, 0, 335.651611)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_4")
+
+[node name="TREE_forest_sul_2_2_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 321.595764, 0, 335.651611)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_5")
+
+[node name="TREE_forest_sul_3_2" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 446.779999, 0, 333.205109)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_6")
+
+[node name="TREE_forest_sul_3_2_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 446.779999, 0, 333.205109)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_7")
+
+[node name="TREE_forest_sul_4_2" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 576.194702, 0, 336.304047)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_8")
+
+[node name="TREE_forest_sul_4_2_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 576.194702, 0, 336.304047)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_9")
+
+[node name="TREE_forest_sul_1_2" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 208.697632, 0, 344.378937)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_10")
+
+[node name="TREE_forest_sul_1_2_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 208.697632, 0, 344.378937)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_11")
+
+[node name="TREE_forest_sul_-4_3" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -465.406586, 0, 449.10733)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_12")
+
+[node name="TREE_forest_sul_-4_3_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -465.406586, 0, 449.10733)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_13")
+
+[node name="TREE_forest_sul_2_3" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 319.08313, 0, 450.803131)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_14")
+
+[node name="TREE_forest_sul_2_3_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 319.08313, 0, 450.803131)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_15")
+
+[node name="TREE_forest_sul_3_3" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 449.477173, 0, 451.109589)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_16")
+
+[node name="TREE_forest_sul_3_3_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 449.477173, 0, 451.109589)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_17")
+
+[node name="TREE_forest_sul_-5_3" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -579.185059, 0, 448.799255)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_18")
+
+[node name="TREE_forest_sul_-5_3_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -579.185059, 0, 448.799255)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_19")
+
+[node name="TREE_forest_sul_1_3" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 206.690765, 0, 441.481659)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_20")
+
+[node name="TREE_forest_sul_1_3_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 206.690765, 0, 441.481659)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_21")
+
+[node name="TREE_forest_sul_4_3" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 571.487, 0, 446.395264)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_22")
+
+[node name="TREE_forest_sul_4_3_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 571.487, 0, 446.395264)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_23")
+
+[node name="TREE_forest_sul_-5_4" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -579.927979, 0, 583.80481)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_24")
+
+[node name="TREE_forest_sul_-5_4_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -579.927979, 0, 583.80481)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_25")
+
+[node name="TREE_forest_sul_-4_4" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -461.26593, 0, 576.715698)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_26")
+
+[node name="TREE_forest_sul_-4_4_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -461.26593, 0, 576.715698)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_27")
+
+[node name="TREE_forest_sul_1_4" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 211.701492, 0, 574.999512)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_28")
+
+[node name="TREE_forest_sul_1_4_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 211.701492, 0, 574.999512)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_29")
+
+[node name="TREE_forest_sul_2_4" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 322.034454, 0, 575.852478)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_30")
+
+[node name="TREE_forest_sul_2_4_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 322.034454, 0, 575.852478)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_31")
+
+[node name="TREE_forest_sul_3_4" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 446.176941, 0, 576.055725)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_32")
+
+[node name="TREE_forest_sul_3_4_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 446.176941, 0, 576.055725)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_33")
+
+[node name="TREE_forest_sul_4_4" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 571.002991, 0, 575.196472)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_34")
+
+[node name="TREE_forest_sul_4_4_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 571.002991, 0, 575.196472)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_35")
+
+[node name="TREE_forest_sul_-5_5" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -578.572998, 0, 700.746582)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_36")
+
+[node name="TREE_forest_sul_-5_5_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -578.572998, 0, 700.746582)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_37")
+
+[node name="TREE_forest_sul_-4_5" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -459.103027, 0, 706.839355)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_38")
+
+[node name="TREE_forest_sul_-4_5_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -459.103027, 0, 706.839355)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_39")
+
+[node name="TREE_forest_sul_1_5" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 210.308716, 0, 697.418945)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_40")
+
+[node name="TREE_forest_sul_1_5_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 210.308716, 0, 697.418945)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_41")
+
+[node name="TREE_forest_sul_2_5" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 318.287476, 0, 707.738098)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_42")
+
+[node name="TREE_forest_sul_2_5_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 318.287476, 0, 707.738098)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_43")
+
+[node name="TREE_forest_sul_3_5" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 451.51001, 0, 701.479797)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_44")
+
+[node name="TREE_forest_sul_3_5_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 451.51001, 0, 701.479797)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_45")
+
+[node name="TREE_forest_sul_4_5" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 571.265991, 0, 705.958618)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_46")
+
+[node name="TREE_forest_sul_4_5_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 571.265991, 0, 705.958618)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_47")
+
+[node name="TREE_forest_sul_-5_6" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -569.30249, 0, 780.517456)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_48")
+
+[node name="TREE_forest_sul_-5_6_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -569.30249, 0, 780.517456)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_49")
+
+[node name="TREE_forest_sul_-4_6" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -448.545197, 0, 782.300476)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_50")
+
+[node name="TREE_forest_sul_-4_6_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -448.545197, 0, 782.300476)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_51")
+
+[node name="TREE_forest_sul_-3_6" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -315.935028, 0, 780.142456)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_52")
+
+[node name="TREE_forest_sul_-3_6_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -315.935028, 0, 780.142456)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_53")
+
+[node name="TREE_forest_sul_-2_6" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -191.525803, 0, 779.444824)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_54")
+
+[node name="TREE_forest_sul_-2_6_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -191.525803, 0, 779.444824)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_55")
+
+[node name="TREE_forest_sul_0_5" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 117.979996, 0, 721.835388)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_56")
+
+[node name="TREE_forest_sul_0_5_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 117.979996, 0, 721.835388)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_57")
+
+[node name="TREE_forest_sul_1_6" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 190.80632, 0, 779.594727)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_58")
+
+[node name="TREE_forest_sul_1_6_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 190.80632, 0, 779.594727)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_59")
+
+[node name="TREE_forest_sul_2_6" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 314.311615, 0, 780.000793)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_60")
+
+[node name="TREE_forest_sul_2_6_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 314.311615, 0, 780.000793)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_61")
+
+[node name="TREE_forest_sul_3_6" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 447.025482, 0, 780.287476)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_62")
+
+[node name="TREE_forest_sul_3_6_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 447.025482, 0, 780.287476)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_63")
+
+[node name="TREE_forest_sul_4_6" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 563.845032, 0, 780.174988)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_64")
+
+[node name="TREE_forest_sul_4_6_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 563.845032, 0, 780.174988)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_65")
+
+[node name="TREE_forest_sul_-1_6" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -49.358177, 0, 780.544983)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_66")
+
+[node name="TREE_forest_sul_-1_6_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -49.358177, 0, 780.544983)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_67")
+
+[node name="TREE_forest_sul_0_6" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 66.178337, 0, 781.477966)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_68")
+
+[node name="TREE_forest_sul_0_6_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 66.178337, 0, 781.477966)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_69")
+
+[node name="TREE_forest_sul_-3_2" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -320.834473, 0, 339.537201)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_70")
+
+[node name="TREE_forest_sul_-3_2_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -320.834473, 0, 339.537201)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_71")
+
+[node name="TREE_forest_sul_-2_2" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -215.899979, 0, 342.002472)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_72")
+
+[node name="TREE_forest_sul_-2_2_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -215.899979, 0, 342.002472)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_73")
+
+[node name="TREE_forest_sul_0_2" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 115.511665, 0, 341.993317)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_74")
+
+[node name="TREE_forest_sul_0_2_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 115.511665, 0, 341.993317)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_75")
+
+[node name="TREE_forest_sul_-3_3" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -346.65683, 0, 421.812134)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_76")
+
+[node name="TREE_forest_sul_-3_3_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -346.65683, 0, 421.812134)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_77")
+
+[node name="TREE_forest_sul_-2_3" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -180.058319, 0, 454.497131)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_78")
+
+[node name="TREE_forest_sul_-2_3_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -180.058319, 0, 454.497131)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_79")
+
+[node name="TREE_forest_sul_0_3" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 118.322304, 0, 464.849182)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_80")
+
+[node name="TREE_forest_sul_0_3_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 118.322304, 0, 464.849182)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_81")
+
+[node name="TREE_forest_sul_-1_3" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -116.932503, 0, 503.040009)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_82")
+
+[node name="TREE_forest_sul_-1_3_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -116.932503, 0, 503.040009)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_83")
+
+[node name="TREE_forest_sul_-2_4" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -200.172058, 0, 558.928772)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_84")
+
+[node name="TREE_forest_sul_-2_4_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -200.172058, 0, 558.928772)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_85")
+
+[node name="TREE_forest_sul_0_4" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 92.094849, 0, 547.060791)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_86")
+
+[node name="TREE_forest_sul_0_4_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 92.094849, 0, 547.060791)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_87")
+
+[node name="TREE_forest_sul_-1_4" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -84.137863, 0, 535.766418)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_88")
+
+[node name="TREE_forest_sul_-1_4_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -84.137863, 0, 535.766418)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_89")
+
+[node name="TREE_forest_sul_-3_4" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -293.052368, 0, 587.171814)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_90")
+
+[node name="TREE_forest_sul_-3_4_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -293.052368, 0, 587.171814)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_91")
+
+[node name="TREE_forest_sul_-3_5" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -330.522949, 0, 709.904968)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_92")
+
+[node name="TREE_forest_sul_-3_5_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -330.522949, 0, 709.904968)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_93")
+
+[node name="TREE_forest_sul_-1_5" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -58.444775, 0, 710.926941)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_94")
+
+[node name="TREE_forest_sul_-1_5_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -58.444775, 0, 710.926941)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_95")
+
+[node name="TREE_forest_sul_-2_5" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -223.092224, 0, 720.005615)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_96")
+
+[node name="TREE_forest_sul_-2_5_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -223.092224, 0, 720.005615)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_97")
+
+[node name="TREE_forest_broad_sul_-5_2" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -574.623413, 0, 328.793396)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_98")
+
+[node name="TREE_forest_broad_sul_-5_2_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -574.623413, 0, 328.793396)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_99")
+
+[node name="TREE_forest_broad_sul_-4_2" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -461.958954, 0, 325.574677)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_100")
+
+[node name="TREE_forest_broad_sul_-4_2_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -461.958954, 0, 325.574677)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_101")
+
+[node name="TREE_forest_broad_sul_2_2" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 324.171692, 0, 333.061584)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_102")
+
+[node name="TREE_forest_broad_sul_2_2_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 324.171692, 0, 333.061584)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_103")
+
+[node name="TREE_forest_broad_sul_3_2" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 449.496124, 0, 331.536377)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_104")
+
+[node name="TREE_forest_broad_sul_3_2_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 449.496124, 0, 331.536377)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_105")
+
+[node name="TREE_forest_broad_sul_4_2" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 571.631226, 0, 330.335052)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_106")
+
+[node name="TREE_forest_broad_sul_4_2_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 571.631226, 0, 330.335052)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_107")
+
+[node name="TREE_forest_broad_sul_1_2" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 208.476883, 0, 343.938293)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_108")
+
+[node name="TREE_forest_broad_sul_1_2_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 208.476883, 0, 343.938293)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_109")
+
+[node name="TREE_forest_broad_sul_-5_3" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -574.541321, 0, 450.047607)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_110")
+
+[node name="TREE_forest_broad_sul_-5_3_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -574.541321, 0, 450.047607)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_111")
+
+[node name="TREE_forest_broad_sul_-4_3" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -462.887451, 0, 441.849152)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_112")
+
+[node name="TREE_forest_broad_sul_-4_3_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -462.887451, 0, 441.849152)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_113")
+
+[node name="TREE_forest_broad_sul_2_3" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 318.699524, 0, 446.283264)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_114")
+
+[node name="TREE_forest_broad_sul_2_3_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 318.699524, 0, 446.283264)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_115")
+
+[node name="TREE_forest_broad_sul_3_3" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 449.549042, 0, 447.910614)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_116")
+
+[node name="TREE_forest_broad_sul_3_3_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 449.549042, 0, 447.910614)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_117")
+
+[node name="TREE_forest_broad_sul_4_3" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 573.488525, 0, 448.733551)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_118")
+
+[node name="TREE_forest_broad_sul_4_3_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 573.488525, 0, 448.733551)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_119")
+
+[node name="TREE_forest_broad_sul_1_3" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 212.974396, 0, 448.588043)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_120")
+
+[node name="TREE_forest_broad_sul_1_3_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 212.974396, 0, 448.588043)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_121")
+
+[node name="TREE_forest_broad_sul_-5_4" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -571.63208, 0, 569.233276)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_122")
+
+[node name="TREE_forest_broad_sul_-5_4_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -571.63208, 0, 569.233276)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_123")
+
+[node name="TREE_forest_broad_sul_-4_4" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -454.408936, 0, 578.198242)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_124")
+
+[node name="TREE_forest_broad_sul_-4_4_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -454.408936, 0, 578.198242)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_125")
+
+[node name="TREE_forest_broad_sul_1_4" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 206.858932, 0, 579.064331)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_126")
+
+[node name="TREE_forest_broad_sul_1_4_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 206.858932, 0, 579.064331)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_127")
+
+[node name="TREE_forest_broad_sul_2_4" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 317.574799, 0, 574.826233)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_128")
+
+[node name="TREE_forest_broad_sul_2_4_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 317.574799, 0, 574.826233)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_129")
+
+[node name="TREE_forest_broad_sul_3_4" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 446.749023, 0, 576.906433)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_130")
+
+[node name="TREE_forest_broad_sul_3_4_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 446.749023, 0, 576.906433)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_131")
+
+[node name="TREE_forest_broad_sul_4_4" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 572.707336, 0, 576.431091)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_132")
+
+[node name="TREE_forest_broad_sul_4_4_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 572.707336, 0, 576.431091)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_133")
+
+[node name="TREE_forest_broad_sul_-5_5" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -577.765991, 0, 707.024048)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_134")
+
+[node name="TREE_forest_broad_sul_-5_5_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -577.765991, 0, 707.024048)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_135")
+
+[node name="TREE_forest_broad_sul_-4_5" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -462.549591, 0, 693.861389)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_136")
+
+[node name="TREE_forest_broad_sul_-4_5_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -462.549591, 0, 693.861389)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_137")
+
+[node name="TREE_forest_broad_sul_1_5" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 208.987656, 0, 709.688232)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_138")
+
+[node name="TREE_forest_broad_sul_1_5_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 208.987656, 0, 709.688232)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_139")
+
+[node name="TREE_forest_broad_sul_2_5" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 324.70752, 0, 701.306396)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_140")
+
+[node name="TREE_forest_broad_sul_2_5_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 324.70752, 0, 701.306396)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_141")
+
+[node name="TREE_forest_broad_sul_3_5" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 448.106354, 0, 706.465332)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_142")
+
+[node name="TREE_forest_broad_sul_3_5_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 448.106354, 0, 706.465332)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_143")
+
+[node name="TREE_forest_broad_sul_4_5" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 571.700073, 0, 704.731934)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_144")
+
+[node name="TREE_forest_broad_sul_4_5_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 571.700073, 0, 704.731934)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_145")
+
+[node name="TREE_forest_broad_sul_-5_6" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -584.894958, 0, 778.626465)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_146")
+
+[node name="TREE_forest_broad_sul_-5_6_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -584.894958, 0, 778.626465)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_147")
+
+[node name="TREE_forest_broad_sul_-4_6" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -449.221069, 0, 779.177856)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_148")
+
+[node name="TREE_forest_broad_sul_-4_6_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -449.221069, 0, 779.177856)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_149")
+
+[node name="TREE_forest_broad_sul_-3_5" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -326.978943, 0, 719.97345)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_150")
+
+[node name="TREE_forest_broad_sul_-3_5_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -326.978943, 0, 719.97345)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_151")
+
+[node name="TREE_forest_broad_sul_-3_6" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -319.940857, 0, 779.952209)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_152")
+
+[node name="TREE_forest_broad_sul_-3_6_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -319.940857, 0, 779.952209)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_153")
+
+[node name="TREE_forest_broad_sul_-2_6" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -194.363831, 0, 781.192871)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_154")
+
+[node name="TREE_forest_broad_sul_-2_6_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -194.363831, 0, 781.192871)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_155")
+
+[node name="TREE_forest_broad_sul_-1_6" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -69.806816, 0, 779.655884)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_156")
+
+[node name="TREE_forest_broad_sul_-1_6_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -69.806816, 0, 779.655884)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_157")
+
+[node name="TREE_forest_broad_sul_0_6" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55.73238, 0, 779.296204)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_158")
+
+[node name="TREE_forest_broad_sul_0_6_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55.73238, 0, 779.296204)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_159")
+
+[node name="TREE_forest_broad_sul_1_6" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 196.772171, 0, 781.35376)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_160")
+
+[node name="TREE_forest_broad_sul_1_6_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 196.772171, 0, 781.35376)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_161")
+
+[node name="TREE_forest_broad_sul_2_6" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 332.003906, 0, 776.728333)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_162")
+
+[node name="TREE_forest_broad_sul_2_6_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 332.003906, 0, 776.728333)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_163")
+
+[node name="TREE_forest_broad_sul_3_6" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 443.929016, 0, 780.426697)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_164")
+
+[node name="TREE_forest_broad_sul_3_6_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 443.929016, 0, 780.426697)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_165")
+
+[node name="TREE_forest_broad_sul_4_6" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 580.545105, 0, 780.335938)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_166")
+
+[node name="TREE_forest_broad_sul_4_6_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 580.545105, 0, 780.335938)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_167")
+
+[node name="TREE_forest_broad_sul_-3_2" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -318.931366, 0, 342.903229)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_168")
+
+[node name="TREE_forest_broad_sul_-3_2_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -318.931366, 0, 342.903229)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_169")
+
+[node name="TREE_forest_broad_sul_-2_2" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -215.177567, 0, 345.666504)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_170")
+
+[node name="TREE_forest_broad_sul_-2_2_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -215.177567, 0, 345.666504)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_171")
+
+[node name="TREE_forest_broad_sul_0_2" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 119.024277, 0, 332.787842)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_172")
+
+[node name="TREE_forest_broad_sul_0_2_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 119.024277, 0, 332.787842)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_173")
+
+[node name="TREE_forest_broad_sul_-3_3" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -352.178558, 0, 414.727905)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_174")
+
+[node name="TREE_forest_broad_sul_-3_3_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -352.178558, 0, 414.727905)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_175")
+
+[node name="TREE_forest_broad_sul_-2_3" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -180.696335, 0, 441.760101)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_176")
+
+[node name="TREE_forest_broad_sul_-2_3_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -180.696335, 0, 441.760101)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_177")
+
+[node name="TREE_forest_broad_sul_0_3" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 116.923843, 0, 440.413086)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_178")
+
+[node name="TREE_forest_broad_sul_0_3_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 116.923843, 0, 440.413086)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_179")
+
+[node name="TREE_forest_broad_sul_-1_3" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -114.556671, 0, 505.656647)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_180")
+
+[node name="TREE_forest_broad_sul_-1_3_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -114.556671, 0, 505.656647)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_181")
+
+[node name="TREE_forest_broad_sul_-3_4" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -312.297333, 0, 575.423523)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_182")
+
+[node name="TREE_forest_broad_sul_-3_4_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -312.297333, 0, 575.423523)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_183")
+
+[node name="TREE_forest_broad_sul_-2_4" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -201.836563, 0, 557.253845)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_184")
+
+[node name="TREE_forest_broad_sul_-2_4_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -201.836563, 0, 557.253845)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_185")
+
+[node name="TREE_forest_broad_sul_0_4" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 112.629997, 0, 549.571411)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_186")
+
+[node name="TREE_forest_broad_sul_0_4_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 112.629997, 0, 549.571411)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_187")
+
+[node name="TREE_forest_broad_sul_-1_4" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -70.956108, 0, 540.081665)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_188")
+
+[node name="TREE_forest_broad_sul_-1_4_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -70.956108, 0, 540.081665)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_189")
+
+[node name="TREE_forest_broad_sul_-2_5" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -218.441544, 0, 714.564331)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_190")
+
+[node name="TREE_forest_broad_sul_-2_5_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -218.441544, 0, 714.564331)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_191")
+
+[node name="TREE_forest_broad_sul_0_5" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 120.230003, 0, 699.212524)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_192")
+
+[node name="TREE_forest_broad_sul_0_5_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 120.230003, 0, 699.212524)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_193")
+
+[node name="TREE_forest_broad_sul_-1_5" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -67.112366, 0, 705.478455)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_194")
+
+[node name="TREE_forest_broad_sul_-1_5_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -67.112366, 0, 705.478455)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_195")
+
+[node name="BUSH_sul_-5_2" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -577.772583, 0, 333.002228)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_196")
+
+[node name="BUSH_sul_-5_2_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -577.772583, 0, 333.002228)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_197")
+
+[node name="BUSH_sul_-4_2" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -461.063049, 0, 329.708984)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_198")
+
+[node name="BUSH_sul_-4_2_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -461.063049, 0, 329.708984)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_199")
+
+[node name="BUSH_sul_2_2" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 322.21637, 0, 330.886993)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_200")
+
+[node name="BUSH_sul_2_2_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 322.21637, 0, 330.886993)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_201")
+
+[node name="BUSH_sul_3_2" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 448.692902, 0, 335.278107)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_202")
+
+[node name="BUSH_sul_3_2_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 448.692902, 0, 335.278107)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_203")
+
+[node name="BUSH_sul_4_2" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 572.956299, 0, 331.621765)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_204")
+
+[node name="BUSH_sul_4_2_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 572.956299, 0, 331.621765)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_205")
+
+[node name="BUSH_sul_1_2" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 203.949127, 0, 338.960266)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_206")
+
+[node name="BUSH_sul_1_2_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 203.949127, 0, 338.960266)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_207")
+
+[node name="BUSH_sul_2_3" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 318.875244, 0, 445.411316)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_208")
+
+[node name="BUSH_sul_2_3_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 318.875244, 0, 445.411316)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_209")
+
+[node name="BUSH_sul_3_3" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 447.845673, 0, 449.437683)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_210")
+
+[node name="BUSH_sul_3_3_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 447.845673, 0, 449.437683)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_211")
+
+[node name="BUSH_sul_4_3" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 570.437988, 0, 450.776703)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_212")
+
+[node name="BUSH_sul_4_3_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 570.437988, 0, 450.776703)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_213")
+
+[node name="BUSH_sul_-5_3" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -581.8526, 0, 453.727173)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_214")
+
+[node name="BUSH_sul_-5_3_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -581.8526, 0, 453.727173)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_215")
+
+[node name="BUSH_sul_-4_3" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -467.336334, 0, 445.526306)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_216")
+
+[node name="BUSH_sul_-4_3_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -467.336334, 0, 445.526306)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_217")
+
+[node name="BUSH_sul_1_3" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 211.547516, 0, 441.457855)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_218")
+
+[node name="BUSH_sul_1_3_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 211.547516, 0, 441.457855)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_219")
+
+[node name="BUSH_sul_-5_4" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -575.145813, 0, 579.042297)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_220")
+
+[node name="BUSH_sul_-5_4_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -575.145813, 0, 579.042297)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_221")
+
+[node name="BUSH_sul_4_4" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 566.982483, 0, 575.152649)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_222")
+
+[node name="BUSH_sul_4_4_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 566.982483, 0, 575.152649)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_223")
+
+[node name="BUSH_sul_1_4" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 202.689514, 0, 577.578796)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_224")
+
+[node name="BUSH_sul_1_4_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 202.689514, 0, 577.578796)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_225")
+
+[node name="BUSH_sul_2_4" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 324.228699, 0, 572.224854)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_226")
+
+[node name="BUSH_sul_2_4_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 324.228699, 0, 572.224854)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_227")
+
+[node name="BUSH_sul_3_4" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 451.731812, 0, 574.577026)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_228")
+
+[node name="BUSH_sul_3_4_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 451.731812, 0, 574.577026)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_229")
+
+[node name="BUSH_sul_-4_4" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -463.439941, 0, 580.449768)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_230")
+
+[node name="BUSH_sul_-4_4_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -463.439941, 0, 580.449768)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_231")
+
+[node name="BUSH_sul_-5_5" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -573.401917, 0, 703.949219)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_232")
+
+[node name="BUSH_sul_-5_5_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -573.401917, 0, 703.949219)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_233")
+
+[node name="BUSH_sul_-4_5" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -467.206482, 0, 698.089172)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_234")
+
+[node name="BUSH_sul_-4_5_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -467.206482, 0, 698.089172)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_235")
+
+[node name="BUSH_sul_1_5" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 219.508301, 0, 701.180725)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_236")
+
+[node name="BUSH_sul_1_5_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 219.508301, 0, 701.180725)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_237")
+
+[node name="BUSH_sul_2_5" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 316.807526, 0, 702.640381)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_238")
+
+[node name="BUSH_sul_2_5_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 316.807526, 0, 702.640381)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_239")
+
+[node name="BUSH_sul_3_5" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 444.406189, 0, 707.535278)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_240")
+
+[node name="BUSH_sul_3_5_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 444.406189, 0, 707.535278)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_241")
+
+[node name="BUSH_sul_4_5" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 572.607666, 0, 705.431824)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_242")
+
+[node name="BUSH_sul_4_5_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 572.607666, 0, 705.431824)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_243")
+
+[node name="BUSH_sul_-5_6" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -589.246094, 0, 780.980591)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_244")
+
+[node name="BUSH_sul_-5_6_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -589.246094, 0, 780.980591)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_245")
+
+[node name="BUSH_sul_-3_6" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -318.731506, 0, 780.40918)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_246")
+
+[node name="BUSH_sul_-3_6_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -318.731506, 0, 780.40918)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_247")
+
+[node name="BUSH_sul_-2_5" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -224.082413, 0, 712.980042)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_248")
+
+[node name="BUSH_sul_-2_5_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -224.082413, 0, 712.980042)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_249")
+
+[node name="BUSH_sul_-1_5" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -62.860466, 0, 708.315247)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_250")
+
+[node name="BUSH_sul_-1_5_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -62.860466, 0, 708.315247)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_251")
+
+[node name="BUSH_sul_0_5" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 109.147499, 0, 736.70752)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_252")
+
+[node name="BUSH_sul_0_5_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 109.147499, 0, 736.70752)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_253")
+
+[node name="BUSH_sul_0_6" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 76.692497, 0, 778.268372)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_254")
+
+[node name="BUSH_sul_0_6_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 76.692497, 0, 778.268372)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_255")
+
+[node name="BUSH_sul_1_6" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 191.898224, 0, 778.540527)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_256")
+
+[node name="BUSH_sul_1_6_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 191.898224, 0, 778.540527)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_257")
+
+[node name="BUSH_sul_2_6" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 334.11142, 0, 774.802856)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_258")
+
+[node name="BUSH_sul_2_6_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 334.11142, 0, 774.802856)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_259")
+
+[node name="BUSH_sul_3_6" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 451.244385, 0, 779.97998)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_260")
+
+[node name="BUSH_sul_3_6_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 451.244385, 0, 779.97998)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_261")
+
+[node name="BUSH_sul_4_6" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 556.101685, 0, 779.817566)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_262")
+
+[node name="BUSH_sul_4_6_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 556.101685, 0, 779.817566)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_263")
+
+[node name="BUSH_sul_-4_6" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -451.897461, 0, 783.03418)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_264")
+
+[node name="BUSH_sul_-4_6_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -451.897461, 0, 783.03418)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_265")
+
+[node name="BUSH_sul_-2_6" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -193.969421, 0, 780.51416)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_266")
+
+[node name="BUSH_sul_-2_6_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -193.969421, 0, 780.51416)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_267")
+
+[node name="BUSH_sul_-1_6" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -70.642502, 0, 782.193726)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_268")
+
+[node name="BUSH_sul_-1_6_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -70.642502, 0, 782.193726)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_269")
+
+[node name="BUSH_sul_-3_2" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -317.004028, 0, 341.43634)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_270")
+
+[node name="BUSH_sul_-3_2_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -317.004028, 0, 341.43634)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_271")
+
+[node name="BUSH_sul_-2_2" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -217.698212, 0, 344.605896)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_272")
+
+[node name="BUSH_sul_-2_2_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -217.698212, 0, 344.605896)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_273")
+
+[node name="BUSH_sul_0_2" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 119.472862, 0, 334.068542)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_274")
+
+[node name="BUSH_sul_0_2_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 119.472862, 0, 334.068542)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_275")
+
+[node name="BUSH_sul_-3_3" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -343.576172, 0, 411.30896)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_276")
+
+[node name="BUSH_sul_-3_3_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -343.576172, 0, 411.30896)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_277")
+
+[node name="BUSH_sul_-2_3" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -175.837082, 0, 454.817261)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_278")
+
+[node name="BUSH_sul_-2_3_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -175.837082, 0, 454.817261)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_279")
+
+[node name="BUSH_sul_0_3" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 120.796669, 0, 465.213287)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_280")
+
+[node name="BUSH_sul_0_3_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 120.796669, 0, 465.213287)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_281")
+
+[node name="BUSH_sul_-1_3" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -124.876671, 0, 500.896637)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_282")
+
+[node name="BUSH_sul_-1_3_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -124.876671, 0, 500.896637)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_283")
+
+[node name="BUSH_sul_-2_4" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -202.491653, 0, 561.473389)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_284")
+
+[node name="BUSH_sul_-2_4_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -202.491653, 0, 561.473389)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_285")
+
+[node name="BUSH_sul_-3_4" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -301.682739, 0, 575.999573)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_286")
+
+[node name="BUSH_sul_-3_4_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -301.682739, 0, 575.999573)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_287")
+
+[node name="BUSH_sul_0_4" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 87.854111, 0, 549.047058)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_288")
+
+[node name="BUSH_sul_0_4_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 87.854111, 0, 549.047058)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_289")
+
+[node name="BUSH_sul_-1_4" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -78.474373, 0, 538.918152)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_290")
+
+[node name="BUSH_sul_-1_4_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -78.474373, 0, 538.918152)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_291")
+
+[node name="BUSH_sul_-3_5" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -355.37619, 0, 713.254761)
+cast_shadow = 0
+visibility_range_end = 340
+visibility_range_end_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_292")
+
+[node name="BUSH_sul_-3_5_LOD" type="MultiMeshInstance3D" parent="Vegetation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -355.37619, 0, 713.254761)
+cast_shadow = 0
+visibility_range_begin = 340
+visibility_range_begin_margin = 30
+visibility_range_fade_mode = 1
+multimesh = ExtResource("sul_293")
