@@ -10,17 +10,23 @@ extends Node3D
 ##  - o VENTO: faíscas e poeira nascendo numa casca em volta e sendo puxadas,
 ##    girando, até o centro — o redemoinho respirando pra dentro — e o som de
 ##    vendaval, que cresce quando se chega perto;
-##  - a SUCÇÃO: o jogador que entra no `raio_captura` perde o controle e é
-##    arrastado numa curva até o centro, girando e esticando, enquanto a
-##    câmera fica olhando; no meio do caminho começa a viagem
-##    (`viagem_portal.gd`: as linhas roxas);
-##  - a CHEGADA (`ejetar`): o jogador sai do centro voando e cai no marcador de
-##    chegada. O portal fica DESARMADO até ele se afastar, senão o sugaria de
-##    volta no mesmo instante.
+##  - a SUCÇÃO: o jogador que entra no `raio_captura` perde o controle e vai
+##    andando pro portal enquanto o corpo QUEIMA E SOME — o teleporte da Dona
+##    Nice (`dissolver_corpo.gd` + `teleporte_dona_nice.gd`) —, com a câmera
+##    olhando; no meio do caminho começa a viagem (`viagem_portal.gd`: as
+##    linhas roxas). Sem rodopio: era o que fazia o Maycow girar na entrada;
+##  - a CHEGADA (`ejetar`): o jogador SURGE no marcador de chegada com o mesmo
+##    efeito, ao contrário. O portal fica DESARMADO até ele se afastar, senão o
+##    sugaria de volta no mesmo instante.
 ##
 ## Quem monta: a cena (`inferno.gd`, a porta red valve), com `montar(...)`.
 
 const ViagemPortal := preload("res://scripts/systems/viagem_portal.gd")
+const DissolverCorpo := preload("res://scripts/effects/dissolver_corpo.gd")
+const TELEPORTE := preload("res://scripts/effects/teleporte_dona_nice.gd")
+## Andando pro portal enquanto some; e surgindo na chegada.
+const DUR_SUMINDO := 2.2
+const DUR_SURGINDO := 0.9
 const SOM_VENTO := "res://assets/sounds/cenarios/vento_tempestade.ogg"
 
 ## O jogador entrou no portal (a viagem já começou).
@@ -125,92 +131,91 @@ func sugar(player: CharacterBody3D) -> void:
 	_ocupado = true
 	armado = false
 	_travar(player)
-	var p0 := player.global_position
 	var centro := global_position
-	var p1 := p0 + Vector3.UP * 1.6 + (centro - p0) * 0.12
-	var p2 := centro + frente * raio * 0.55
-	var giro0 := player.rotation.y
-	var cam0 := _cam.global_position
 	var fov0 := _cam.fov
-	var modelo := _modelo(player)
-	var esc0: Vector3 = modelo.scale if modelo else Vector3.ONE
+	var corpo = _vestir_dissolver(player)
+	var rastro := TELEPORTE.criar(get_tree().current_scene, _pe(player), 1.0, false)
 	_soprar(2.4)
 	GlobalUtils.vibrate_controller(null, 0.6, 0.8, 1.4)
 	var estado := {"pediu": false, "viajou": false}
-	var dur := 1.8
-	await _fase(dur, func(k: float) -> void:
-		var e := k * k
-		player.global_position = _bezier(p0, p1, p2, centro, e)
-		player.rotation.y = giro0 + e * TAU * 2.2
-		if modelo:
-			var some := 1.0 - smoothstep(0.55, 1.0, k) * 0.9
-			modelo.scale = esc0 * Vector3(1.0 - 0.3 * e, 1.0 + 0.6 * e, 1.0 - 0.3 * e) * some
+	if player.has_method("cutscene_set_auto_walk"):
+		player.cutscene_set_auto_walk(true)
+	await _fase(DUR_SUMINDO, func(k: float) -> void:
+		if not is_instance_valid(player):
+			return
+		# de frente pro portal, andando pra ele (a caminhada é a da cutscene)
+		var d := Vector3(centro.x - player.global_position.x, 0.0, centro.z - player.global_position.z)
+		if d.length() > 0.3:
+			player.rotation.y = lerp_angle(player.rotation.y, atan2(-d.x, -d.z), 0.2)
+		if corpo:
+			# o corpo queima quase todo ANTES da viagem tomar a tela
+			corpo.parametro("dissolver", smoothstep(0.05, 0.62, k))
+			corpo.parametro("veias", clampf(k * 3.0, 0.0, 1.0))
+		if is_instance_valid(rastro):
+			rastro.global_position = _pe(player)
 		if is_instance_valid(_cam):
-			_cam.global_position = cam0.lerp(player.global_position, 0.22 * e)
-			_cam.look_at(player.global_position + Vector3.UP * 0.8)
-			_cam.fov = lerpf(fov0, fov0 + 22.0, e)
-		if not estado.pediu and k > 0.4:
+			_cam.look_at(player.global_position + Vector3.UP * 0.4)
+			_cam.fov = lerpf(fov0, fov0 - 10.0, smoothstep(0.0, 1.0, k))
+		if not estado.pediu and k > 0.6:
 			estado.pediu = true
 			estado.viajou = ViagemPortal.viajar(get_tree(), destino, ponto_destino, 1.6, 2.0) != null
 			if estado.viajou:
 				sugou.emit())
-	if modelo:
-		modelo.visible = false
+	if not is_instance_valid(player):
+		return
+	if player.has_method("cutscene_set_auto_walk"):
+		player.cutscene_set_auto_walk(false)
+	player.velocity = Vector3.ZERO
+	_esconder(player, true)
 	if not estado.viajou:
 		# outra viagem já estava em curso (ou destino ruim): devolve tudo
-		if modelo:
-			modelo.scale = esc0
-			modelo.visible = true
-		player.global_position = p0
+		if corpo:
+			corpo.restaurar()
+		_esconder(player, false)
 		_soltar(player)
 
 
 # ==============================================================================
 # CHEGADA
 # ==============================================================================
-## Cospe o jogador do centro do vórtice até `marcador` (os pés dele ficam na
-## posição do marcador, virado pra onde o marcador olha).
+## O jogador SURGE em `marcador` (os pés na posição dele, virado pra onde ele
+## olha): o corpo aparece queimando, ao contrário de quando entrou.
 func ejetar(player: CharacterBody3D, marcador: Node3D) -> void:
 	_ocupado = true
 	armado = false
 	_travar(player)
-	var fim := marcador.global_position + Vector3.UP
 	var giro_fim := marcador.global_rotation.y
-	var ini := global_position
-	var fora := Vector3(fim.x - ini.x, 0.0, fim.z - ini.z)
-	if fora.length() < 0.5:
-		fora = frente
-	fora = fora.normalized()
-	var lado := Vector3(-fora.z, 0.0, fora.x)
-	var modelo := _modelo(player)
-	var esc0: Vector3 = modelo.scale if modelo else Vector3.ONE
-	if modelo:
-		modelo.scale = esc0 * 0.12
-	player.global_position = ini
-	_cam.global_position = fim + fora * 5.2 + lado * 2.4 + Vector3.UP * 1.5
-	_cam.look_at(ini.lerp(fim, 0.72))
+	var fim := marcador.global_position + Vector3.UP
+	player.global_transform = Transform3D(Basis(Vector3.UP, giro_fim), fim)
+	player.velocity = Vector3.ZERO
+	# o corpo olha pro -Z: a câmera fica na frente dele, um pouco de lado
+	var olha := Vector3(-sin(giro_fim), 0.0, -cos(giro_fim))
+	var lado := Vector3(-olha.z, 0.0, olha.x)
+	_cam.global_position = fim + olha * 3.6 + lado * 1.3 + Vector3.UP * 0.5
+	_cam.look_at(fim + Vector3.UP * 0.1)
+	var corpo = _vestir_dissolver(player)
+	if corpo:
+		corpo.parametro("dissolver", 1.0)
+		corpo.parametro("veias", 1.0)
+	_esconder(player, true)
 	_soprar(1.6)
-	# a tela ainda está saindo do preto: o primeiro instante é o vórtice sozinho
+	# a tela ainda está saindo do preto: o primeiro instante é o lugar sozinho
 	await _esperar(0.55)
 	if not is_instance_valid(player):
 		return
-	var p1 := ini + fora * raio * 0.5 + Vector3.UP * 1.5
-	var p2 := fim + Vector3.UP * 4.5 - fora * 2.0
-	var olhar0 := ini.lerp(fim, 0.72)
-	await _fase(1.25, func(k: float) -> void:
-		var e := 1.0 - pow(1.0 - k, 2.2)
-		player.global_position = _bezier(ini, p1, p2, fim, e)
-		player.rotation.y = giro_fim + (1.0 - e) * TAU * 1.6
-		if modelo:
-			modelo.scale = esc0 * lerpf(0.12, 1.0, smoothstep(0.0, 0.45, k))
-		if is_instance_valid(_cam):
-			_cam.look_at(olhar0.lerp(player.global_position + Vector3.UP * 0.6, smoothstep(0.0, 0.5, k))))
+	TELEPORTE.criar(get_tree().current_scene, marcador.global_position, 1.0, true)
+	await _esperar(0.2)
 	if not is_instance_valid(player):
 		return
-	if modelo:
-		modelo.scale = esc0
-	player.global_transform = Transform3D(Basis(Vector3.UP, giro_fim), fim)
-	player.rotation.y = giro_fim
+	_esconder(player, false)
+	await _fase(DUR_SURGINDO, func(k: float) -> void:
+		if corpo:
+			corpo.parametro("dissolver", 1.0 - smoothstep(0.0, 1.0, k))
+			corpo.parametro("veias", 1.0 - k * 0.8))
+	if not is_instance_valid(player):
+		return
+	if corpo:
+		corpo.restaurar()
 	GlobalUtils.vibrate_controller(null, 0.7, 0.5, 0.35)
 	_tremer_camera(0.35)
 	await _esperar(0.45)
@@ -236,17 +241,12 @@ func _travar(player: CharacterBody3D) -> void:
 		player.cutscene_set_hud_enabled(false)
 		player.cutscene_set_camera_current(false)
 	player.velocity = Vector3.ZERO
-	# parado de verdade: a física dele não briga com a curva
-	player.process_mode = Node.PROCESS_MODE_DISABLED
 
 
 func _soltar(player: CharacterBody3D) -> void:
 	if is_instance_valid(player):
-		player.process_mode = Node.PROCESS_MODE_INHERIT
 		player.velocity = Vector3.ZERO
-		var modelo := _modelo(player)
-		if modelo:
-			modelo.visible = true
+		_esconder(player, false)
 		if player.has_method("cutscene_set_player_control"):
 			player.cutscene_set_camera_current(true)
 			player.cutscene_set_player_control(true)
@@ -260,6 +260,40 @@ func _soltar(player: CharacterBody3D) -> void:
 func _modelo(player: Node) -> Node3D:
 	var m = player.get("modelo_visual")
 	return m as Node3D if m is Node3D else null
+
+
+## O modelo inteiro do jogador (o nó filho dele que tem a malha): a arma na
+## mão e a lanterna no cinto queimam junto com o corpo.
+func _raiz_do_modelo(player: Node) -> Node:
+	var m: Node = _modelo(player)
+	while m and m.get_parent() and m.get_parent() != player:
+		m = m.get_parent()
+	return m
+
+
+func _vestir_dissolver(player: Node) -> RefCounted:
+	var raiz := _raiz_do_modelo(player)
+	return DissolverCorpo.vestir(raiz) if raiz else null
+
+
+## Esconde pela trava de cutscene: o player reescreve a visibilidade do modelo
+## todo quadro, e só ela segura.
+func _esconder(player: Node, sim: bool) -> void:
+	if player.has_method("cutscene_set_model_hidden"):
+		player.cutscene_set_model_hidden(sim)
+	var modelo := _modelo(player)
+	if modelo:
+		modelo.visible = not sim
+
+
+## Os pés dele (a origem é o meio da cápsula).
+func _pe(player: Node3D) -> Vector3:
+	var de := player.global_position
+	var q := PhysicsRayQueryParameters3D.create(de, de + Vector3.DOWN * 3.0)
+	if player is CollisionObject3D:
+		q.exclude = [(player as CollisionObject3D).get_rid()]
+	var h := player.get_world_3d().direct_space_state.intersect_ray(q)
+	return (h.position as Vector3) if not h.is_empty() else de - Vector3.UP * 0.9
 
 
 ## O vento acelera um tempo (quem entra ou sai leva a ventania junto).
