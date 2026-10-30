@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://wh4dbny3hdt7"
-path="res://.godot/imported/mov_d60c65f29c.gltf-ae34adf8918b99af68ef4f609f62df4e.scn"
+uid="uid://b7k1b7dom1xw6"
+path="res://.godot/imported/mov_5ea10ba705.gltf-4b767cd1a852d7067061cdf72583b0ef.scn"
 
 [deps]
 
-source_file="res://assets/3d_model/stages/hospital/pecas/mov_d60c65f29c.gltf"
-dest_files=["res://.godot/imported/mov_d60c65f29c.gltf-ae34adf8918b99af68ef4f609f62df4e.scn"]
+source_file="res://assets/3d_model/stages/hospital/pecas/mov_5ea10ba705.gltf"
+dest_files=["res://.godot/imported/mov_5ea10ba705.gltf-4b767cd1a852d7067061cdf72583b0ef.scn"]
 
 [params]
 

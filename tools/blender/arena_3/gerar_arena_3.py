@@ -527,10 +527,13 @@ class Arena3(Cena):
             luz.append(caixa((lx - 0.7, ly - h * 0.08 - 1.8, lz - 0.7), (lx + 0.7, ly - h * 0.08 - 0.2, lz + 0.7)))
             self.pontos.setdefault("lanternas", []).append([lx, ly - h * 0.08 - 1.0, lz])
         else:
-            # espada fincada: lamina da mao ao pedestal
+            # espada fincada: lamina da mao ao pedestal — ou ate' o CHAO, quando
+            # ela cai na frente dele (o colosso de 26 m: a ponta ficava 1,45 m
+            # no ar, 2 m a frente do pedestal)
             mx, my, mz = P(0.0, y0 + h * 0.56, h * 0.2)
-            metal.append(caixa_girada(mx, (y + y0 + my) / 2.0 - h * 0.05, mz, h * 0.035,
-                                      my - y - y0 + h * 0.05, h * 0.012, giro))
+            fundo = y + y0 - h * 0.05 if (not base or h * 0.2 < 3.2) else y - 0.3
+            metal.append(caixa_girada(mx, (fundo + my) / 2.0, mz, h * 0.035,
+                                      my - fundo, h * 0.012, giro))
             metal.append(caixa_girada(mx, my + h * 0.02, mz, h * 0.16, h * 0.02, h * 0.03, giro))
             metal.append(caixa_girada(mx, my + h * 0.07, mz, h * 0.025, h * 0.08, h * 0.025, giro))
         self.m.add_pecas(setor, mat, pecas, suave=False)

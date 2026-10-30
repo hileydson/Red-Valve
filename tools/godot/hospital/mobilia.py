@@ -36,6 +36,7 @@ afinado modelo a modelo.
 
 import json
 import math
+import struct
 import os
 import random
 import sys
@@ -121,8 +122,48 @@ FISICOS = {
 _aabb_cache = {}
 
 
+def _matriz_do_no(no):
+    """Matriz 4x4 (linhas) do no' glTF: `matrix` (colunas) ou T * R * S."""
+    if "matrix" in no:
+        m = no["matrix"]
+        return [[m[c * 4 + r] for c in range(4)] for r in range(4)]
+    x, y, z, w = no.get("rotation", [0.0, 0.0, 0.0, 1.0])
+    sx, sy, sz = no.get("scale", [1.0, 1.0, 1.0])
+    tx, ty, tz = no.get("translation", [0.0, 0.0, 0.0])
+    r = [[1 - 2 * (y * y + z * z), 2 * (x * y - z * w), 2 * (x * z + y * w)],
+         [2 * (x * y + z * w), 1 - 2 * (x * x + z * z), 2 * (y * z - x * w)],
+         [2 * (x * z - y * w), 2 * (y * z + x * w), 1 - 2 * (x * x + y * y)]]
+    return [[r[0][0] * sx, r[0][1] * sy, r[0][2] * sz, tx],
+            [r[1][0] * sx, r[1][1] * sy, r[1][2] * sz, ty],
+            [r[2][0] * sx, r[2][1] * sy, r[2][2] * sz, tz],
+            [0.0, 0.0, 0.0, 1.0]]
+
+
+def _vezes(a, b):
+    return [[sum(a[i][k] * b[k][j] for k in range(4)) for j in range(4)]
+            for i in range(4)]
+
+
+def _vertices(j, acc, pasta):
+    """As posicoes (float32 VEC3) de um accessor, lidas do .bin."""
+    vista = j["bufferViews"][acc["bufferView"]]
+    buf = j["buffers"][vista["buffer"]]
+    with open(os.path.join(pasta, buf["uri"]), "rb") as f:
+        f.seek(vista.get("byteOffset", 0) + acc.get("byteOffset", 0))
+        passo = vista.get("byteStride", 12)
+        dados = f.read(passo * (acc["count"] - 1) + 12)
+    return [struct.unpack_from("<3f", dados, i * passo)
+            for i in range(acc["count"])]
+
+
 def aabb(nome):
-    """(min, max) do .gltf, lido direto dos accessors — sem abrir o Blender."""
+    """(min, max) do .gltf, lido direto dos accessors — sem abrir o Blender.
+
+    Os accessors guardam o vertice no espaco da MALHA; o Godot importa com a
+    transformacao dos nos aplicada. A lixeira de metal vem girada ~105 graus
+    dentro do arquivo: lida crua, a "base" dava 1,05 m abaixo da origem e ela
+    subia isso, flutuando no corredor. Entao cada no' leva a caixa da malha
+    dele (os 8 cantos) pelo caminho de matrizes ate' a raiz da cena."""
     if nome in _aabb_cache:
         return _aabb_cache[nome]
     pasta = os.path.join(DIR_MODELOS, nome)
@@ -134,12 +175,36 @@ def aabb(nome):
     j = json.load(open(arquivo))
     mn = [1e9] * 3
     mx = [-1e9] * 3
-    for malha in j.get("meshes", []):
-        for prim in malha.get("primitives", []):
-            acc = j["accessors"][prim["attributes"]["POSITION"]]
-            for i in range(3):
-                mn[i] = min(mn[i], acc["min"][i])
-                mx[i] = max(mx[i], acc["max"][i])
+
+    def descer(indice, pai):
+        no = j["nodes"][indice]
+        m = _vezes(pai, _matriz_do_no(no))
+        if "mesh" in no:
+            # sem giro "torto" os 8 cantos bastam; girado, a caixa dos cantos
+            # incha (a lixeira dava 2 m de largura) e e' preciso ler os vertices
+            reto = all(sum(1 for c in range(3) if abs(m[k][c]) > 1e-6) == 1
+                       for k in range(3))
+            for prim in j["meshes"][no["mesh"]].get("primitives", []):
+                acc = j["accessors"][prim["attributes"]["POSITION"]]
+                if reto:
+                    pontos = [(cx, cy, cz)
+                              for cx in (acc["min"][0], acc["max"][0])
+                              for cy in (acc["min"][1], acc["max"][1])
+                              for cz in (acc["min"][2], acc["max"][2])]
+                else:
+                    pontos = _vertices(j, acc, os.path.dirname(arquivo))
+                for (cx, cy, cz) in pontos:
+                    for k in range(3):
+                        v = (m[k][0] * cx + m[k][1] * cy
+                             + m[k][2] * cz + m[k][3])
+                        mn[k] = min(mn[k], v)
+                        mx[k] = max(mx[k], v)
+        for filho in no.get("children", []):
+            descer(filho, m)
+
+    identidade = [[1.0 if i == k else 0.0 for k in range(4)] for i in range(4)]
+    for raiz in j["scenes"][j.get("scene", 0)]["nodes"]:
+        descer(raiz, identidade)
     _aabb_cache[nome] = (mn, mx)
     return _aabb_cache[nome]
 
@@ -325,6 +390,12 @@ def biombo(largura=1.90, altura=2.05):
         x = (i - (n - 1) * 0.5) * (largura / n)
         p.append((x, altura * 0.5 + 0.10, (i % 2) * 0.06,
                   largura / n - 0.02, altura - 0.20, 0.03, "mat_cortina"))
+    # os pes: sem eles a barra de cima e os panos ficavam pendurados no nada
+    topo = altura + 0.075
+    for lado in (-1, 1):
+        x = lado * (largura * 0.5 + 0.08)
+        p.append((x, topo * 0.5, 0.03, 0.04, topo, 0.04, "mat_inox"))
+        p.append((x, 0.015, 0.03, 0.06, 0.03, 0.40, "mat_inox"))
     return p
 
 
@@ -450,7 +521,7 @@ def _prop(tipo, sala, x, z, giro, **extra):
 def caixas_na_parede(s, pecas, parede, t, recuo, nome, bloqueia=None, dy=0.0):
     x, z = _lugar_na_parede(s, parede, t, recuo)
     return _prop("caixas", s, x, z, GIRO_PAREDE[parede], pecas=pecas,
-                 nome=nome, bloqueia=bloqueia, dy=dy)
+                 nome=nome, bloqueia=bloqueia, dy=dy, na_parede=parede)
 
 
 def modelo_na_parede(s, nome_modelo, parede, t, recuo, nome, bloqueia=None,
@@ -460,7 +531,7 @@ def modelo_na_parede(s, nome_modelo, parede, t, recuo, nome, bloqueia=None,
     giro = GIRO_PAREDE[parede] + (info["giro_extra"] if giro_extra is None
                                   else giro_extra)
     return _prop("modelo", s, x, z, giro, modelo=nome_modelo, nome=nome,
-                 bloqueia=bloqueia, dy=dy,
+                 bloqueia=bloqueia, na_parede=parede, dy=dy,
                  escala=info["escala"] if escala is None else escala)
 
 
@@ -519,7 +590,8 @@ def livre_de_porta(x, z, andar, folga=2.1):
 def _por(s, lista):
     """Filtra o que caiu em frente a uma porta."""
     return [p for p in lista
-            if p is not None and livre_de_porta(p["x"], p["z"], p["andar"])]
+            if p is not None and livre_de_porta(p["x"], p["z"], p["andar"])
+            and not (p.get("na_parede") and _parede_falta(s, p))]
 
 
 # --------------------------------------------------------------------------
@@ -759,9 +831,8 @@ def _esterilizacao(s, d):
 def _maquinas(s, d):
     itens = [modelo_na_parede(s, "portable_generator", "s", 0.28, 0.85,
                               "gerador", bloqueia=(1.0, 0.8))]
-    itens.append(modelo_na_parede(s, "modular_pipes", "s", 0.62, 0.40, "canos"))
-    itens.append(modelo_na_parede(s, "modular_airduct_rectangular_01", "l", 0.30,
-                                  1.10, "duto", dy=2.10))
+    # (o `modular_pipes` e o `modular_airduct_rectangular_01` sairam: os dois
+    # sao KITS do Poly Haven — o catalogo de pecas soltas, lado a lado, no ar)
     for i, t in enumerate((0.22, 0.40, 0.58)):
         itens.append(modelo_na_parede(s, "power_box_01", "n", t, 0.24,
                                       "quadro_%d" % i, dy=1.45))
@@ -947,8 +1018,9 @@ def _corredor(s, d):
                                pecas=maca(), nome="maca_%d" % k,
                                bloqueia=(2.2, 1.0)))
         outro = lados[(k + 1) % 2]
+        # recuo 0,074: o suporte encosta na parede (com 0,16 ficava 9 cm no ar)
         itens.append(caixas_na_parede(s, extintor_suporte(), outro,
-                                      min(t + 0.06, 0.94), 0.16,
+                                      min(t + 0.06, 0.94), 0.074,
                                       "sup_extintor_%d" % k, dy=1.30))
         itens.append(modelo_na_parede(s, "korean_fire_extinguisher_01", outro,
                                       min(t + 0.06, 0.94), 0.34,
@@ -994,7 +1066,78 @@ def _corredor(s, d):
     for t, lado in ((0.05, lados[0]), (0.95, lados[1])):
         itens.append(modelo_na_parede(s, "security_camera_01", lado, t, 0.30,
                                       "camera_%d" % int(t * 100), dy=3.05))
-    return itens
+    return [p for p in itens if p is None or not _parede_falta(s, p)]
+
+
+# Meia extensao, ao longo da parede, do que o corredor encosta nela.
+_MEIA_NA_PAREDE = {"maca": 1.10, "bebedouro": 0.25, "carro": 0.6}
+
+
+def _parede_falta(s, p):
+    """A peca "na parede" so' existe se a parede existe ali: na esquina de dois
+    corredores (e no vao de porta ou janela) ela falta, e o que nascia ali
+    ficava no ar ou no meio da passagem — o armario do corredor leste. Procura
+    em `P.muros()` a parede da face mais perto da peca, cobrindo a extensao
+    dela, sem vao na altura dela.
+    """
+    nome = p.get("nome", "")
+    if nome.startswith(("placa_", "camera_")):
+        return False
+    meia = next((v for k, v in _MEIA_NA_PAREDE.items() if nome.startswith(k)), 0.3)
+    x, z = p["x"], p["z"]
+    bordas = {"o": x - s["x0"], "l": s["x1"] - x, "n": z - s["z0"], "s": s["z1"] - z}
+    lado = p.get("na_parede") or min(bordas, key=bordas.get)
+    if bordas[lado] > 1.0:
+        return False                 # longe da parede: ela nao o segura
+    face = {"o": s["x0"], "l": s["x1"], "n": s["z0"], "s": s["z1"]}[lado]
+    eixo = "x" if lado in ("n", "s") else "z"
+    c = x if eixo == "x" else z
+    y0 = p.get("y", 0.0) + p.get("dy", 0.0)
+    y1 = y0 + _ALTURA_NA_PAREDE.get(nome.split("_")[0], 0.6)
+    # pendurada (relogio, extintor, monitor) x de chao ou em cima de movel
+    # (armario, maca, a TV no gaveteiro, o microscopio na bancada)
+    pendurada = y0 - P.cota(s.get("andar")) >= 1.0
+    cobre = []
+    for m in _muros_do_andar(s):
+        if m["eixo"] != eixo or abs(m["coord"] - face) > m.get("esp", 0.35) * 0.5 + 0.1:
+            continue
+        cobre.append((m["a"], m["b"]))
+        for v in m["vaos"]:
+            if not (v["y0"] < y1 and v["y1"] > y0):
+                continue
+            if v["tipo"] in ("porta", "passagem", "buraco"):
+                # qualquer pedaco na frente de porta a tapa
+                if abs(v["c"] - c) < v["l"] * 0.5 + meia:
+                    return True
+            elif pendurada and abs(v["c"] - c) + meia <= v["l"] * 0.5:
+                return True          # inteira em cima de uma janela: no ar
+    falta = any(not any(a - 0.05 <= q <= b + 0.05 for (a, b) in cobre)
+                for q in (c - meia, c + meia))
+    if not falta:
+        return False
+    if pendurada:
+        return True
+    # as fileiras de espera ficam no meio do salao aberto de proposito
+    if nome.startswith("espera_"):
+        return False
+    # de chao, sem parede atras: so' sai se ali atras se anda (a esquina de
+    # dois corredores) — na beira da galeria, ela da' pro vazio e fica
+    atras = 0.6
+    bx = {"o": s["x0"] - atras, "l": s["x1"] + atras}.get(lado, x)
+    bz = {"n": s["z0"] - atras, "s": s["z1"] + atras}.get(lado, z)
+    for e in P.espacos(s.get("andar")):
+        if e["ident"] != s["ident"] and e["x0"] <= bx <= e["x1"] and e["z0"] <= bz <= e["z1"]:
+            return True
+    return False
+
+
+# Altura (m) que a peca ocupa a partir da base, pra saber se um vao (janela)
+# fica atras dela. O padrao e' 0,6.
+_ALTURA_NA_PAREDE = {"armarios": 1.98, "mural": 1.10, "bebedouro": 1.2, "maca": 0.9}
+
+
+def _muros_do_andar(s):
+    return P.muros(s.get("andar"))
 
 
 RECEITUARIO = {

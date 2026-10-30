@@ -115,6 +115,20 @@ PROPS = {
 # entao os angulos do JSON entram aqui diretos, sem inverter sinal.
 
 
+
+def _encostos():
+    """{no: (dx, dy, dz)}: o quanto baixar cada prop que ficava acima do chao.
+
+    A altura de cada prop vem de UM ponto do terreno (o pivo); no chao
+    inclinado o resto da peca fica no ar (o carro 10 cm, o tronco 43). Sai de
+    `red-valve/tools/flutuantes/achar.gd` na cena gerada; so' o Y e' usado.
+    """
+    caminho = os.path.join(os.path.dirname(os.path.abspath(__file__)), "encostos.json")
+    if not os.path.exists(caminho):
+        return {}
+    with open(caminho) as f:
+        return {k: tuple(v) for k, v in json.load(f).items()}
+
 def cor(c):
     return "Color(%s)" % ", ".join("%.4f" % x for x in c)
 
@@ -552,9 +566,11 @@ def main():
 
     # --- as fogueiras: braseiro + chama + estalo
     no("fogo", tipo="Node3D", pai=".")
+    encostos = _encostos()
     for i, (x, y, z) in enumerate(pontos["fogos"]):
         tipo = "fogo_tambor" if i % 2 == 0 else "fogo_pedra"
         _, dy, _ = PROPS[tipo]
+        dy += encostos.get("fogo/braseiro_%d" % i, (0.0, 0.0, 0.0))[1]
         no("braseiro_%d" % i, pai="fogo", instancia=ident_de[tipo],
            props=[("transform", transform((x, y + dy, z), giro_y=i * 0.9))])
         alto = 0.95 if tipo == "fogo_tambor" else 0.15
@@ -637,6 +653,7 @@ def main():
         caminho, dy, caixa = PROPS[tipo]
         x, y, z = p["pos"]
         giro = p["giro"]
+        dy += encostos.get("props/prop_%02d_%s" % (i, tipo), (0.0, 0.0, 0.0))[1]
         no("prop_%02d_%s" % (i, tipo), pai="props", instancia=ident_de[tipo],
            props=[("transform", transform((x, y + dy, z), giro, p["escala"]))])
         if not caixa:

@@ -590,7 +590,7 @@ def _corredor(saida, s, d, ocup):
     a, b = extensao(s, lados[0])
     comprimento = b - a
     # avisos sobre os murais de cortica (o `mural()` do mobilia.py: 2,40 x
-    # 1,10 a 1,70 m de altura e 0,10 m da parede)
+    # 1,10 a 1,70 m de altura e 0,03 m da parede)
     for p in list(saida._props_mobilia):
         if p["sala"] != s["ident"] or not p.get("nome", "").startswith("mural_"):
             continue
@@ -606,22 +606,22 @@ def _corredor(saida, s, d, ocup):
             cel = avisos[k]
             off = -0.80 + k * 0.53 + d.uniform(-0.04, 0.04)
             yy = 1.70 + d.uniform(-0.18, 0.18)
-            pos, giro = _na_parede(saida, s, lado, c + off, yy, 0.165 + k * 0.002)
+            pos, giro = _na_parede(saida, s, lado, c + off, yy, 0.095 + k * 0.002)
             saida.quad("papeis", cel, pos, "parede", giro + d.uniform(-0.05, 0.05),
                        0.28, tipo="papel", tom=d.uniform(0.6, 0.85))
             alt = 0.28 * T.proporcao("papeis")
             if cel == "aviso":
-                tp, _g = _na_parede(saida, s, lado, c + off, yy + alt * 0.30, 0.172)
+                tp, _g = _na_parede(saida, s, lado, c + off, yy + alt * 0.30, 0.102)
                 saida.texto(titulos[d.randrange(len(titulos))], "maquina", tp, giro, 26,
                             COR_TINTA, px=0.0012)
             elif cel == "desaparecido":
-                tp, _g = _na_parede(saida, s, lado, c + off, yy + alt * 0.40, 0.172)
+                tp, _g = _na_parede(saida, s, lado, c + off, yy + alt * 0.40, 0.102)
                 saida.texto("ESC_CARTAZ_DESAPARECIDO", "placa", tp, giro, 40, COR_TINTA,
                             px=0.0012)
-                tp, _g = _na_parede(saida, s, lado, c + off, yy - alt * 0.36, 0.172)
+                tp, _g = _na_parede(saida, s, lado, c + off, yy - alt * 0.36, 0.102)
                 saida.texto("ESC_CARTAZ_DESAPARECIDO_TEXTO", "maquina", tp, giro, 16,
                             COR_TINTA, px=0.0012)
-        tp, _g = _na_parede(saida, s, lado, c, 2.18, 0.12)
+        tp, _g = _na_parede(saida, s, lado, c, 2.18, 0.05)
         saida.texto("ESC_MURAL_TITULO", "placa", tp, GIRO[lado], 64, (0.86, 0.84, 0.70, 0.9),
                     px=0.0024)
 
@@ -724,7 +724,13 @@ def _patio(saida, s, d, ocup):
                    d.uniform(0, math.tau), d.uniform(1.0, 2.0), tipo="chao")
     _espalhar_chao(saida, s, d, ocup, papeis=10, bolas=6, lixo=5, margem=1.0)
     x, z = s["x1"] - 3.0, s["z1"] - 4.2
-    saida.props.append(_modelo(s, "baseball_bat", x, z, 0.7, "taco", dy=0.03))
+    # o .gltf traz o taco EM PE' (o no' dele vem girado): deitado no chao, o
+    # eixo fica a um raio (3,2 cm) do piso. O dy vai depois do _modelo porque a
+    # peca fisica sobe sempre ate' a base da caixa em pe'.
+    taco = _modelo(s, "baseball_bat", x, z, 0.7, "taco")
+    taco["incl_z"] = math.pi * 0.5
+    taco["dy"] = 0.032
+    saida.props.append(taco)
     _bandeirinhas(saida, d)
 
 
@@ -839,12 +845,14 @@ def _secretaria(saida, s, d, ocup):
         p = _modelo(s, nome, x, z, GIRO["n"], "quadro_%d" % int(t * 100), dy=y, fisico=False)
         p["incl_z"] = d.uniform(-0.12, 0.12)
         saida.props.append(p)
-    # sobre o balcao
+    # sobre o balcao — so' se o balcao existe: o `mobilia._por` descarta o que
+    # nasce na frente de porta, e sem ele as coisas ficavam no ar a 1 m
     bx, _y, bz = ponto_na_parede(s, "s", s["x0"] + (s["x1"] - s["x0"]) * 0.32, 0, 1.40)
-    for (k, (nome, dx)) in enumerate((("Megaphone_01", -1.2), ("cassette_player", -0.4),
-                                      ("vintage_stapler", 0.3), ("alarm_clock_01", 1.1))):
-        saida.props.append(_modelo(s, nome, bx + dx, bz, d.uniform(0, math.tau),
-                                   "balcao_%d" % k, dy=1.06, fisico=False))
+    if MOB.livre_de_porta(bx, bz):
+        for (k, (nome, dx)) in enumerate((("Megaphone_01", -1.2), ("cassette_player", -0.4),
+                                          ("vintage_stapler", 0.3), ("alarm_clock_01", 1.1))):
+            saida.props.append(_modelo(s, nome, bx + dx, bz, d.uniform(0, math.tau),
+                                       "balcao_%d" % k, dy=1.06, fisico=False))
     _teias(saida, s, d, 3)
     _infiltracao(saida, s, "l", (s["z0"] + s["z1"]) * 0.5, d, 2.6)
     _espalhar_chao(saida, s, d, ocup, papeis=0, bolas=6, lixo=1)
@@ -975,15 +983,16 @@ def _laboratorio(saida, s, d, ocup):
         c = a + (b - a) * t
         if _cabe_na_parede(s, lado, c, 0.9, 2.0, 2.5, ocup):
             _placa_parede(saida, s, lado, c, 2.25, chave, 0.9, 0.38)
-    # o que sobrou na bancada
-    ox, _y, oz = ponto_na_parede(s, "o", s["z0"] + (s["z1"] - s["z0"]) * 0.50, 0, 0.50)
+    # o que sobrou na bancada — a `bancada_o` do `mobilia._laboratorio` (t 0,66,
+    # recuo 0,45 + meia profundidade): no meio dela, e nao a 1 m da ponta
+    ox, _y, oz = ponto_na_parede(s, "o", s["z0"] + (s["z1"] - s["z0"]) * 0.66, 0, 0.45)
     for (k, (nome, dz)) in enumerate((("vintage_microscope", -0.6), ("magnifying_glass_01", 0.1),
                                       ("bleach_bottle", 0.5), ("drain_cleaner", 0.8))):
         saida.props.append(_modelo(s, nome, ox, oz + dz, d.uniform(0, math.tau),
                                    "bancada_%d" % k, dy=0.90, fisico=False))
     cx, cz = (s["x0"] + s["x1"]) * 0.5, (s["z0"] + s["z1"]) * 0.5
     saida.props.append(_modelo(s, "filmstrip_projector_8mm", cx, s["z0"] + (s["z1"] - s["z0"]) * 0.62,
-                               1.2, "projetor", dy=0.90 + 0.16, fisico=False))
+                               1.2, "projetor", dy=0.90, fisico=False))
     _teias(saida, s, d, 3)
     _espalhar_chao(saida, s, d, ocup, papeis=6, bolas=4, lixo=3)
     saida.quad("chao", "mancha", (cx + 1.2, P.cota() + 0.007, cz - 2.0), "chao", 0.7, 1.6,
@@ -1010,9 +1019,14 @@ def _servico(saida, s, d, ocup):
                                    dy=0.05 if nome == "wooden_broom" else 0.0))
     if s["ident"] == "deposito":
         b = P.BURACO_ENTRADA
-        # a picareta que cavou o rombo, encostada do lado dele
-        saida.props.append(_modelo(s, "picke_dirty_01", b["x"] + 1.6, b["z"] - 0.3, 0.2,
-                                   "picareta", dy=0.32, incl=0.32))
+        # a picareta que cavou o rombo, largada do lado dele: deitada de chapa
+        # (inclinada ela nao tinha parede onde escorar e escorregava ao nascer).
+        # O dy vai depois do _modelo, como o do taco: a espessura dela (Z do
+        # arquivo) vira a altura, e a face de baixo esta' 2,3 cm sob a origem.
+        picareta = _modelo(s, "picke_dirty_01", b["x"] + 1.6, b["z"] - 0.3, 0.2,
+                           "picareta", incl=-math.pi * 0.5)
+        picareta["dy"] = 0.025
+        saida.props.append(picareta)
         saida.quad("chao", "barro", (b["x"], P.cota() + 0.01, b["z"] - 1.6), "chao", 0.0, 2.8,
                    tipo="chao", tom=1.0)
         saida.quad("chao", "barro", (b["x"] - 1.6, P.cota() + 0.01, b["z"] - 3.2), "chao", 1.3, 2.0,

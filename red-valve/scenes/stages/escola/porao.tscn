@@ -1,4 +1,4 @@
-[gd_scene load_steps=500 format=3]
+[gd_scene load_steps=499 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="e0"]
 [ext_resource type="PackedScene" path="res://scenes/configs/pause.tscn" id="e1"]
@@ -19,17 +19,16 @@
 [ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/Barrel_02/Barrel_02_1k.gltf" id="e16"]
 [ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/metal_jerrycan/metal_jerrycan_1k.gltf" id="e17"]
 [ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/wooden_crate_02/wooden_crate_02_1k.gltf" id="e18"]
-[ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/dry_branches_medium_01/dry_branches_medium_01_1k.gltf" id="e19"]
-[ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/wooden_bucket_01/wooden_bucket_01_1k.gltf" id="e20"]
-[ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/cement_bag/cement_bag_1k.gltf" id="e21"]
-[ext_resource type="PackedScene" path="res://assets/3d_model/stages/escola/pecas_porao/bulbo_5cc96b1375.gltf" id="e22"]
-[ext_resource type="PackedScene" path="res://assets/3d_model/stages/escola/pecas_porao/bulbo_54472a2b3a.gltf" id="e23"]
-[ext_resource type="PackedScene" path="res://scenes/effects/porta_red_valve.tscn" id="e24"]
-[ext_resource type="PackedScene" path="res://assets/3d_model/player/lanterna/lanterna.glb" id="e25"]
-[ext_resource type="Texture2D" path="res://assets/images/textures/pichacao/pichacao_parede.png" id="e26"]
-[ext_resource type="Shader" path="res://shaders/post_process/escola_lente.gdshader" id="e27"]
-[ext_resource type="AudioStream" path="res://assets/sounds/escola/goteira_porao.ogg" id="e28"]
-[ext_resource type="AudioStream" path="res://assets/sounds/escola/atmosfera_fantasma.ogg" id="e29"]
+[ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/wooden_bucket_01/wooden_bucket_01_1k.gltf" id="e19"]
+[ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/cement_bag/cement_bag_1k.gltf" id="e20"]
+[ext_resource type="PackedScene" path="res://assets/3d_model/stages/escola/pecas_porao/bulbo_5cc96b1375.gltf" id="e21"]
+[ext_resource type="PackedScene" path="res://assets/3d_model/stages/escola/pecas_porao/bulbo_54472a2b3a.gltf" id="e22"]
+[ext_resource type="PackedScene" path="res://scenes/effects/porta_red_valve.tscn" id="e23"]
+[ext_resource type="PackedScene" path="res://assets/3d_model/player/lanterna/lanterna.glb" id="e24"]
+[ext_resource type="Texture2D" path="res://assets/images/textures/pichacao/pichacao_parede.png" id="e25"]
+[ext_resource type="Shader" path="res://shaders/post_process/escola_lente.gdshader" id="e26"]
+[ext_resource type="AudioStream" path="res://assets/sounds/escola/goteira_porao.ogg" id="e27"]
+[ext_resource type="AudioStream" path="res://assets/sounds/escola/atmosfera_fantasma.ogg" id="e28"]
 
 [sub_resource type="Environment" id="ambiente"]
 background_mode = 0
@@ -1223,7 +1222,7 @@ size = Vector3(0.8310, 0.3520, 0.4120)
 size = Vector3(0.3740, 0.6150, 0.3740)
 
 [sub_resource type="BoxShape3D" id="f377"]
-size = Vector3(0.3770, 0.3030, 0.1300)
+size = Vector3(1.3850, 0.4890, 0.2060)
 
 [sub_resource type="BoxShape3D" id="f378"]
 size = Vector3(0.6610, 0.6610, 0.1820)
@@ -1244,7 +1243,7 @@ size = Vector3(0.6680, 0.6680, 0.1840)
 size = Vector3(0.9000, 1.2000, 0.9000)
 
 [sub_resource type="BoxShape3D" id="f384"]
-size = Vector3(0.4120, 0.3320, 0.1420)
+size = Vector3(1.5170, 0.5360, 0.2260)
 
 [sub_resource type="BoxShape3D" id="f385"]
 size = Vector3(0.7980, 0.3380, 0.3950)
@@ -1289,7 +1288,7 @@ size = Vector3(0.5200, 0.9370, 0.5160)
 size = Vector3(0.7610, 0.3220, 0.3770)
 
 [sub_resource type="BoxShape3D" id="f399"]
-size = Vector3(0.3210, 0.3390, 1.2910)
+size = Vector3(0.5960, 0.5960, 0.1640)
 
 [sub_resource type="BoxShape3D" id="f400"]
 size = Vector3(0.6150, 0.6150, 0.1690)
@@ -1307,10 +1306,10 @@ size = Vector3(0.3270, 0.1000, 0.2520)
 size = Vector3(0.5510, 0.5510, 0.1520)
 
 [sub_resource type="BoxShape3D" id="f405"]
-size = Vector3(0.3730, 0.3630, 0.3480)
+size = Vector3(0.3730, 0.5590, 0.3480)
 
 [sub_resource type="BoxShape3D" id="f406"]
-size = Vector3(0.4210, 0.3390, 0.1450)
+size = Vector3(1.5480, 0.5470, 0.2300)
 
 [sub_resource type="BoxShape3D" id="f407"]
 size = Vector3(0.6670, 0.6670, 0.1830)
@@ -1325,7 +1324,7 @@ size = Vector3(0.4810, 0.4220, 1.0610)
 size = Vector3(0.6170, 0.9060, 0.6220)
 
 [sub_resource type="BoxShape3D" id="f411"]
-size = Vector3(0.2910, 0.3080, 1.1720)
+size = Vector3(0.5410, 0.5410, 0.1490)
 
 [sub_resource type="BoxShape3D" id="f412"]
 size = Vector3(0.3640, 0.1110, 0.2800)
@@ -1343,16 +1342,16 @@ size = Vector3(0.4650, 0.1810, 0.7040)
 size = Vector3(0.5610, 0.5610, 0.1540)
 
 [sub_resource type="BoxShape3D" id="f417"]
-size = Vector3(0.5010, 0.4040, 0.1730)
+size = Vector3(1.8420, 0.6510, 0.2740)
 
 [sub_resource type="BoxShape3D" id="f418"]
 size = Vector3(0.5490, 0.9900, 0.5450)
 
 [sub_resource type="BoxShape3D" id="f419"]
-size = Vector3(0.2980, 0.3140, 1.1960)
+size = Vector3(0.5530, 0.5530, 0.1520)
 
 [sub_resource type="BoxShape3D" id="f420"]
-size = Vector3(0.4400, 0.3540, 0.1520)
+size = Vector3(1.6170, 0.5710, 0.2400)
 
 [sub_resource type="BoxShape3D" id="f421"]
 size = Vector3(0.5340, 0.4680, 1.1770)
@@ -1361,7 +1360,7 @@ size = Vector3(0.5340, 0.4680, 1.1770)
 size = Vector3(0.3200, 0.4150, 0.1570)
 
 [sub_resource type="BoxShape3D" id="f423"]
-size = Vector3(0.3740, 0.3640, 0.3490)
+size = Vector3(0.3740, 0.5610, 0.3490)
 
 [sub_resource type="BoxShape3D" id="f424"]
 size = Vector3(0.3380, 0.1030, 0.2600)
@@ -1379,7 +1378,7 @@ size = Vector3(0.5550, 0.4870, 1.2240)
 size = Vector3(0.3240, 0.5320, 0.3240)
 
 [sub_resource type="BoxShape3D" id="f429"]
-size = Vector3(0.3690, 0.3590, 0.3440)
+size = Vector3(0.3690, 0.5530, 0.3440)
 
 [sub_resource type="BoxShape3D" id="f430"]
 size = Vector3(0.4340, 0.1330, 0.3340)
@@ -1401,7 +1400,7 @@ cull_mode = 2
 shading_mode = 1
 specular_mode = 2
 albedo_color = Color(0.550, 0.550, 0.550, 1)
-albedo_texture = ExtResource("e26")
+albedo_texture = ExtResource("e25")
 texture_repeat = false
 uv1_scale = Vector3(0.125000, 0.140351, 1)
 uv1_offset = Vector3(0.128906, 0.001096, 0)
@@ -1421,7 +1420,7 @@ cull_mode = 2
 shading_mode = 1
 specular_mode = 2
 albedo_color = Color(0.550, 0.550, 0.550, 1)
-albedo_texture = ExtResource("e26")
+albedo_texture = ExtResource("e25")
 texture_repeat = false
 uv1_scale = Vector3(0.187500, 0.105263, 1)
 uv1_offset = Vector3(0.699219, 0.248904, 0)
@@ -1441,7 +1440,7 @@ cull_mode = 2
 shading_mode = 1
 specular_mode = 2
 albedo_color = Color(0.550, 0.550, 0.550, 1)
-albedo_texture = ExtResource("e26")
+albedo_texture = ExtResource("e25")
 texture_repeat = false
 uv1_scale = Vector3(0.187500, 0.105263, 1)
 uv1_offset = Vector3(0.509766, 0.248904, 0)
@@ -1461,7 +1460,7 @@ cull_mode = 2
 shading_mode = 1
 specular_mode = 2
 albedo_color = Color(0.550, 0.550, 0.550, 1)
-albedo_texture = ExtResource("e26")
+albedo_texture = ExtResource("e25")
 texture_repeat = false
 uv1_scale = Vector3(0.250000, 0.140351, 1)
 uv1_offset = Vector3(0.382812, 0.001096, 0)
@@ -1481,7 +1480,7 @@ cull_mode = 2
 shading_mode = 1
 specular_mode = 2
 albedo_color = Color(0.550, 0.550, 0.550, 1)
-albedo_texture = ExtResource("e26")
+albedo_texture = ExtResource("e25")
 texture_repeat = false
 uv1_scale = Vector3(0.125000, 0.140351, 1)
 uv1_offset = Vector3(0.255859, 0.001096, 0)
@@ -1501,7 +1500,7 @@ cull_mode = 2
 shading_mode = 1
 specular_mode = 2
 albedo_color = Color(0.550, 0.550, 0.550, 1)
-albedo_texture = ExtResource("e26")
+albedo_texture = ExtResource("e25")
 texture_repeat = false
 uv1_scale = Vector3(0.125000, 0.140351, 1)
 uv1_offset = Vector3(0.001953, 0.001096, 0)
@@ -1582,7 +1581,7 @@ material = SubResource("pich_mat_3")
 size = Vector2(1.70, 1.70)
 
 [sub_resource type="ShaderMaterial" id="lente_mat"]
-shader = ExtResource("e27")
+shader = ExtResource("e26")
 shader_parameter/barril = 0.0
 shader_parameter/aberracao = 1.8
 shader_parameter/exposicao = 1.0
@@ -4267,7 +4266,7 @@ transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0
 shape = SubResource("f376")
 
 [node name="entulho_36" type="RigidBody3D" parent="entulho"]
-transform = Transform3D(0.40549, 0.00000, 0.91410, 0.00000, 1.00000, 0.00000, -0.91410, 0.00000, 0.40549, 15.26000, 0.29561, 60.50000)
+transform = Transform3D(0.09917, 0.00000, 0.99507, 0.00000, 1.00000, 0.00000, -0.99507, 0.00000, 0.09917, 15.26000, 0.00009, 60.50000)
 collision_layer = 2
 collision_mask = 2
 mass = 5.0
@@ -4278,7 +4277,7 @@ angular_damp = 3.0
 transform = Transform3D(0.86138, 0.00000, 0.00000, 0.00000, 0.86138, 0.00000, -0.00000, 0.00000, 0.86138, 0.00000, 0.00000, 0.00000)
 
 [node name="entulho_36_colisao" type="CollisionShape3D" parent="entulho/entulho_36"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00032, -0.14388, 0.00824)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00062, 0.24450, -0.00795)
 shape = SubResource("f377")
 
 [node name="entulho_53" type="RigidBody3D" parent="entulho"]
@@ -4357,14 +4356,14 @@ transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0
 shape = SubResource("f382")
 
 [node name="entulho_69" parent="entulho" instance=ExtResource("e15")]
-transform = Transform3D(-0.92650, 0.00000, 0.11331, 0.00000, 0.93341, 0.00000, -0.11331, 0.00000, -0.92650, 19.74000, 0.00000, 62.50000)
+transform = Transform3D(0.00561, 0.00000, 0.93339, 0.00000, 0.93341, 0.00000, -0.93339, 0.00000, 0.00561, 19.74000, 0.00000, 62.50000)
 
 [node name="ce8" type="CollisionShape3D" parent="colisao_entulho"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 19.74000, 0.60000, 62.50000)
 shape = SubResource("f383")
 
 [node name="entulho_106" type="RigidBody3D" parent="entulho"]
-transform = Transform3D(0.49745, 0.00000, -0.86749, 0.00000, 1.00000, 0.00000, 0.86749, 0.00000, 0.49745, 24.26000, 0.32374, 39.50000)
+transform = Transform3D(-0.10446, 0.00000, 0.99453, 0.00000, 1.00000, 0.00000, -0.99453, 0.00000, -0.10446, 24.26000, 0.00010, 39.50000)
 collision_layer = 2
 collision_mask = 2
 mass = 5.0
@@ -4375,7 +4374,7 @@ angular_damp = 3.0
 transform = Transform3D(0.94336, 0.00000, 0.00000, 0.00000, 0.94336, 0.00000, -0.00000, 0.00000, 0.94336, 0.00000, 0.00000, 0.00000)
 
 [node name="entulho_106_colisao" type="CollisionShape3D" parent="entulho/entulho_106"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00035, -0.15757, 0.00902)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00068, 0.26777, -0.00871)
 shape = SubResource("f384")
 
 [node name="entulho_112" type="RigidBody3D" parent="entulho"]
@@ -4409,7 +4408,7 @@ transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0
 shape = SubResource("f386")
 
 [node name="entulho_125" parent="entulho" instance=ExtResource("e15")]
-transform = Transform3D(-0.04328, 0.00000, 0.86516, 0.00000, 0.86625, 0.00000, -0.86516, 0.00000, -0.04328, 25.50000, 0.00000, 68.26000)
+transform = Transform3D(0.86375, 0.00000, -0.06574, 0.00000, 0.86625, 0.00000, 0.06574, 0.00000, 0.86375, 25.50000, 0.00000, 68.26000)
 
 [node name="ce12" type="CollisionShape3D" parent="colisao_entulho"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 25.50000, 0.60000, 68.26000)
@@ -4596,18 +4595,18 @@ transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0
 shape = SubResource("f398")
 
 [node name="entulho_216" type="RigidBody3D" parent="entulho"]
-transform = Transform3D(-0.99510, 0.00000, -0.09885, 0.00000, 1.00000, 0.00000, 0.09885, 0.00000, -0.99510, 39.50000, 0.13938, 53.74000)
+transform = Transform3D(-0.99510, 0.00000, -0.09885, 0.00000, 1.00000, 0.00000, 0.09885, 0.00000, -0.99510, 39.50000, 0.29821, 53.74000)
 collision_layer = 2
 collision_mask = 2
 mass = 5.0
 linear_damp = 2.0
 angular_damp = 3.0
 
-[node name="entulho_216_malha" parent="entulho/entulho_216" instance=ExtResource("e19")]
+[node name="entulho_216_malha" parent="entulho/entulho_216" instance=ExtResource("e11")]
 transform = Transform3D(0.99404, 0.00000, 0.00000, 0.00000, 0.99404, 0.00000, -0.00000, 0.00000, 0.99404, 0.00000, 0.00000, 0.00000)
 
 [node name="entulho_216_colisao" type="CollisionShape3D" parent="entulho/entulho_216"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.02439, 0.03009, 0.01511)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, -0.00026)
 shape = SubResource("f399")
 
 [node name="entulho_221" type="RigidBody3D" parent="entulho"]
@@ -4686,22 +4685,22 @@ transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0
 shape = SubResource("f404")
 
 [node name="entulho_285" type="RigidBody3D" parent="entulho"]
-transform = Transform3D(0.97246, 0.00000, 0.23307, 0.00000, 1.00000, 0.00000, -0.23307, 0.00000, 0.97246, 47.74000, 0.00773, 50.50000)
+transform = Transform3D(0.97246, 0.00000, 0.23307, 0.00000, 1.00000, 0.00000, -0.23307, 0.00000, 0.97246, 47.74000, 0.00000, 50.50000)
 collision_layer = 2
 collision_mask = 2
 mass = 5.0
 linear_damp = 2.0
 angular_damp = 3.0
 
-[node name="entulho_285_malha" parent="entulho/entulho_285" instance=ExtResource("e20")]
+[node name="entulho_285_malha" parent="entulho/entulho_285" instance=ExtResource("e19")]
 transform = Transform3D(1.01736, 0.00000, 0.00000, 0.00000, 1.01736, 0.00000, -0.00000, 0.00000, 1.01736, 0.00000, 0.00000, 0.00000)
 
 [node name="entulho_285_colisao" type="CollisionShape3D" parent="entulho/entulho_285"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00098, 0.17375, 0.00105)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00098, 0.27984, 0.00117)
 shape = SubResource("f405")
 
 [node name="entulho_288" type="RigidBody3D" parent="entulho"]
-transform = Transform3D(-0.99976, 0.00000, 0.02192, 0.00000, 1.00000, 0.00000, -0.02192, 0.00000, -0.99976, 48.74000, 0.33039, 9.50000)
+transform = Transform3D(0.00102, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00102, 48.74000, 0.00010, 9.50000)
 collision_layer = 2
 collision_mask = 2
 mass = 5.0
@@ -4712,7 +4711,7 @@ angular_damp = 3.0
 transform = Transform3D(0.96274, 0.00000, 0.00000, 0.00000, 0.96274, 0.00000, -0.00000, 0.00000, 0.96274, 0.00000, 0.00000, 0.00000)
 
 [node name="entulho_288_colisao" type="CollisionShape3D" parent="entulho/entulho_288"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00036, -0.16080, 0.00920)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00069, 0.27327, -0.00889)
 shape = SubResource("f406")
 
 [node name="entulho_291" type="RigidBody3D" parent="entulho"]
@@ -4776,18 +4775,18 @@ transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0
 shape = SubResource("f410")
 
 [node name="entulho_300" type="RigidBody3D" parent="entulho"]
-transform = Transform3D(0.99104, 0.00000, 0.13353, 0.00000, 1.00000, 0.00000, -0.13353, 0.00000, 0.99104, 49.26000, 0.12649, 16.50000)
+transform = Transform3D(0.99104, 0.00000, 0.13353, 0.00000, 1.00000, 0.00000, -0.13353, 0.00000, 0.99104, 49.26000, 0.27062, 16.50000)
 collision_layer = 2
 collision_mask = 2
 mass = 5.0
 linear_damp = 2.0
 angular_damp = 3.0
 
-[node name="entulho_300_malha" parent="entulho/entulho_300" instance=ExtResource("e19")]
+[node name="entulho_300_malha" parent="entulho/entulho_300" instance=ExtResource("e11")]
 transform = Transform3D(0.90208, 0.00000, 0.00000, 0.00000, 0.90208, 0.00000, -0.00000, 0.00000, 0.90208, 0.00000, 0.00000, 0.00000)
 
 [node name="entulho_300_colisao" type="CollisionShape3D" parent="entulho/entulho_300"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.02213, 0.02731, 0.01371)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, -0.00024)
 shape = SubResource("f411")
 
 [node name="entulho_301" type="RigidBody3D" parent="entulho"]
@@ -4843,7 +4842,7 @@ mass = 5.0
 linear_damp = 2.0
 angular_damp = 3.0
 
-[node name="entulho_331_malha" parent="entulho/entulho_331" instance=ExtResource("e21")]
+[node name="entulho_331_malha" parent="entulho/entulho_331" instance=ExtResource("e20")]
 transform = Transform3D(1.00577, 0.00000, 0.00000, 0.00000, 1.00577, 0.00000, -0.00000, 0.00000, 1.00577, 0.00000, 0.00000, 0.00000)
 
 [node name="entulho_331_colisao" type="CollisionShape3D" parent="entulho/entulho_331"]
@@ -4866,7 +4865,7 @@ transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0
 shape = SubResource("f416")
 
 [node name="entulho_386" type="RigidBody3D" parent="entulho"]
-transform = Transform3D(0.35018, 0.00000, -0.93668, 0.00000, 1.00000, 0.00000, 0.93668, 0.00000, 0.35018, 61.50000, 0.39315, 32.26000)
+transform = Transform3D(0.99535, 0.00000, 0.09636, 0.00000, 1.00000, 0.00000, -0.09636, 0.00000, 0.99535, 61.50000, 0.00012, 32.26000)
 collision_layer = 2
 collision_mask = 2
 mass = 5.0
@@ -4877,7 +4876,7 @@ angular_damp = 3.0
 transform = Transform3D(1.14560, 0.00000, 0.00000, 0.00000, 1.14560, 0.00000, -0.00000, 0.00000, 1.14560, 0.00000, 0.00000, 0.00000)
 
 [node name="entulho_386_colisao" type="CollisionShape3D" parent="entulho/entulho_386"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00043, -0.19135, 0.01095)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00083, 0.32517, -0.01058)
 shape = SubResource("f417")
 
 [node name="entulho_408" type="RigidBody3D" parent="entulho"]
@@ -4896,22 +4895,22 @@ transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0
 shape = SubResource("f418")
 
 [node name="entulho_412" type="RigidBody3D" parent="entulho"]
-transform = Transform3D(-0.29912, 0.00000, 0.95422, 0.00000, 1.00000, 0.00000, -0.95422, 0.00000, -0.29912, 63.26000, 0.12913, 69.50000)
+transform = Transform3D(-0.29912, 0.00000, 0.95422, 0.00000, 1.00000, 0.00000, -0.95422, 0.00000, -0.29912, 63.26000, 0.27626, 69.50000)
 collision_layer = 2
 collision_mask = 2
 mass = 5.0
 linear_damp = 2.0
 angular_damp = 3.0
 
-[node name="entulho_412_malha" parent="entulho/entulho_412" instance=ExtResource("e19")]
+[node name="entulho_412_malha" parent="entulho/entulho_412" instance=ExtResource("e11")]
 transform = Transform3D(0.92088, 0.00000, 0.00000, 0.00000, 0.92088, 0.00000, -0.00000, 0.00000, 0.92088, 0.00000, 0.00000, 0.00000)
 
 [node name="entulho_412_colisao" type="CollisionShape3D" parent="entulho/entulho_412"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.02259, 0.02788, 0.01400)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00000, 0.00000, -0.00024)
 shape = SubResource("f419")
 
 [node name="entulho_414" type="RigidBody3D" parent="entulho"]
-transform = Transform3D(-0.85144, 0.00000, -0.52445, 0.00000, 1.00000, 0.00000, 0.52445, 0.00000, -0.85144, 64.50000, 0.34507, 16.74000)
+transform = Transform3D(0.99962, 0.00000, 0.02768, 0.00000, 1.00000, 0.00000, -0.02768, 0.00000, 0.99962, 64.50000, 0.00011, 16.74000)
 collision_layer = 2
 collision_mask = 2
 mass = 5.0
@@ -4922,11 +4921,11 @@ angular_damp = 3.0
 transform = Transform3D(1.00551, 0.00000, 0.00000, 0.00000, 1.00551, 0.00000, -0.00000, 0.00000, 1.00551, 0.00000, 0.00000, 0.00000)
 
 [node name="entulho_414_colisao" type="CollisionShape3D" parent="entulho/entulho_414"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00038, -0.16795, 0.00961)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 0.00073, 0.28541, -0.00928)
 shape = SubResource("f420")
 
 [node name="entulho_419" parent="entulho" instance=ExtResource("e15")]
-transform = Transform3D(1.06196, 0.00000, -0.40468, 0.00000, 1.13646, 0.00000, 0.40468, 0.00000, 1.06196, 64.50000, 0.00000, 66.26000)
+transform = Transform3D(1.12550, 0.00000, 0.15741, 0.00000, 1.13646, 0.00000, -0.15741, 0.00000, 1.12550, 64.50000, 0.00000, 66.26000)
 
 [node name="ce47" type="CollisionShape3D" parent="colisao_entulho"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 64.50000, 0.60000, 66.26000)
@@ -4963,18 +4962,18 @@ transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0
 shape = SubResource("f422")
 
 [node name="entulho_439" type="RigidBody3D" parent="entulho"]
-transform = Transform3D(0.70109, 0.00000, 0.71307, 0.00000, 1.00000, 0.00000, -0.71307, 0.00000, 0.70109, 67.50000, 0.00775, 31.26000)
+transform = Transform3D(0.70109, 0.00000, 0.71307, 0.00000, 1.00000, 0.00000, -0.71307, 0.00000, 0.70109, 67.50000, 0.00000, 31.26000)
 collision_layer = 2
 collision_mask = 2
 mass = 5.0
 linear_damp = 2.0
 angular_damp = 3.0
 
-[node name="entulho_439_malha" parent="entulho/entulho_439" instance=ExtResource("e20")]
+[node name="entulho_439_malha" parent="entulho/entulho_439" instance=ExtResource("e19")]
 transform = Transform3D(1.01945, 0.00000, 0.00000, 0.00000, 1.01945, 0.00000, -0.00000, 0.00000, 1.01945, 0.00000, 0.00000, 0.00000)
 
 [node name="entulho_439_colisao" type="CollisionShape3D" parent="entulho/entulho_439"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00098, 0.17411, 0.00105)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00098, 0.28042, 0.00117)
 shape = SubResource("f423")
 
 [node name="entulho_441" type="RigidBody3D" parent="entulho"]
@@ -5008,14 +5007,14 @@ transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0
 shape = SubResource("f425")
 
 [node name="entulho_447" parent="entulho" instance=ExtResource("e15")]
-transform = Transform3D(0.92636, 0.00000, 0.16515, 0.00000, 0.94097, 0.00000, -0.16515, 0.00000, 0.92636, 68.50000, 0.00000, 31.26000)
+transform = Transform3D(0.93066, 0.00000, -0.13892, 0.00000, 0.94097, 0.00000, 0.13892, 0.00000, 0.93066, 68.50000, 0.00000, 31.26000)
 
 [node name="ce53" type="CollisionShape3D" parent="colisao_entulho"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 68.50000, 0.60000, 31.26000)
 shape = SubResource("f383")
 
 [node name="entulho_475" parent="entulho" instance=ExtResource("e15")]
-transform = Transform3D(0.52062, 0.00000, -0.89638, 0.00000, 1.03660, 0.00000, 0.89638, 0.00000, 0.52062, 72.50000, 0.00000, 29.26000)
+transform = Transform3D(1.03090, 0.00000, 0.10857, 0.00000, 1.03660, 0.00000, -0.10857, 0.00000, 1.03090, 72.50000, 0.00000, 29.26000)
 
 [node name="ce54" type="CollisionShape3D" parent="colisao_entulho"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 72.50000, 0.60000, 29.26000)
@@ -5052,7 +5051,7 @@ transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0
 shape = SubResource("f427")
 
 [node name="entulho_489" parent="entulho" instance=ExtResource("e15")]
-transform = Transform3D(-0.01379, 0.00000, -0.94024, 0.00000, 0.94034, 0.00000, 0.94024, 0.00000, -0.01379, 74.50000, 0.00000, 28.26000)
+transform = Transform3D(0.93749, 0.00000, 0.07317, 0.00000, 0.94034, 0.00000, -0.07317, 0.00000, 0.93749, 74.50000, 0.00000, 28.26000)
 
 [node name="ce57" type="CollisionShape3D" parent="colisao_entulho"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 74.50000, 0.60000, 28.26000)
@@ -5089,18 +5088,18 @@ transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0
 shape = SubResource("f428")
 
 [node name="entulho_509" type="RigidBody3D" parent="entulho"]
-transform = Transform3D(-0.87711, 0.00000, 0.48028, 0.00000, 1.00000, 0.00000, -0.48028, 0.00000, -0.87711, 77.50000, 0.00765, 29.74000)
+transform = Transform3D(-0.87711, 0.00000, 0.48028, 0.00000, 1.00000, 0.00000, -0.48028, 0.00000, -0.87711, 77.50000, 0.00000, 29.74000)
 collision_layer = 2
 collision_mask = 2
 mass = 5.0
 linear_damp = 2.0
 angular_damp = 3.0
 
-[node name="entulho_509_malha" parent="entulho/entulho_509" instance=ExtResource("e20")]
+[node name="entulho_509_malha" parent="entulho/entulho_509" instance=ExtResource("e19")]
 transform = Transform3D(1.00610, 0.00000, 0.00000, 0.00000, 1.00610, 0.00000, -0.00000, 0.00000, 1.00610, 0.00000, 0.00000, 0.00000)
 
 [node name="entulho_509_colisao" type="CollisionShape3D" parent="entulho/entulho_509"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00097, 0.17183, 0.00104)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, -0.00097, 0.27675, 0.00116)
 shape = SubResource("f429")
 
 [node name="entulho_511" type="RigidBody3D" parent="entulho"]
@@ -5135,67 +5134,67 @@ shape = SubResource("f431")
 
 [node name="luminarias" type="Node3D" parent="."]
 
-[node name="bulbo_0" parent="luminarias" instance=ExtResource("e22")]
+[node name="bulbo_0" parent="luminarias" instance=ExtResource("e21")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 10.58581, 2.60000, 8.45858)
 
-[node name="bulbo_1" parent="luminarias" instance=ExtResource("e22")]
+[node name="bulbo_1" parent="luminarias" instance=ExtResource("e21")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 19.50609, 2.60000, 10.40243)
 
-[node name="bulbo_2" parent="luminarias" instance=ExtResource("e23")]
+[node name="bulbo_2" parent="luminarias" instance=ExtResource("e22")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 28.77469, 2.60000, 19.24306)
 
-[node name="bulbo_3" parent="luminarias" instance=ExtResource("e22")]
+[node name="bulbo_3" parent="luminarias" instance=ExtResource("e21")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 38.14606, 2.60000, 24.44382)
 
-[node name="bulbo_4" parent="luminarias" instance=ExtResource("e23")]
+[node name="bulbo_4" parent="luminarias" instance=ExtResource("e22")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 53.38252, 2.60000, 20.30874)
 
-[node name="bulbo_5" parent="luminarias" instance=ExtResource("e22")]
+[node name="bulbo_5" parent="luminarias" instance=ExtResource("e21")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 61.62678, 2.60000, 16.18661)
 
-[node name="bulbo_6" parent="luminarias" instance=ExtResource("e22")]
+[node name="bulbo_6" parent="luminarias" instance=ExtResource("e21")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 74.27201, 2.60000, 18.68002)
 
-[node name="bulbo_7" parent="luminarias" instance=ExtResource("e23")]
+[node name="bulbo_7" parent="luminarias" instance=ExtResource("e22")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 74.61181, 2.60000, 29.69410)
 
-[node name="bulbo_8" parent="luminarias" instance=ExtResource("e22")]
+[node name="bulbo_8" parent="luminarias" instance=ExtResource("e21")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 66.18116, 2.60000, 33.15157)
 
-[node name="bulbo_9" parent="luminarias" instance=ExtResource("e22")]
+[node name="bulbo_9" parent="luminarias" instance=ExtResource("e21")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 48.36952, 2.60000, 37.05219)
 
-[node name="bulbo_10" parent="luminarias" instance=ExtResource("e23")]
+[node name="bulbo_10" parent="luminarias" instance=ExtResource("e22")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 37.10085, 5.20000, 44.92156)
 
-[node name="bulbo_11" parent="luminarias" instance=ExtResource("e22")]
+[node name="bulbo_11" parent="luminarias" instance=ExtResource("e21")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 28.00617, 5.20000, 51.99520)
 
-[node name="bulbo_12" parent="luminarias" instance=ExtResource("e22")]
+[node name="bulbo_12" parent="luminarias" instance=ExtResource("e21")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 17.00505, 2.60000, 60.51261)
 
-[node name="bulbo_13" parent="luminarias" instance=ExtResource("e23")]
+[node name="bulbo_13" parent="luminarias" instance=ExtResource("e22")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 25.54019, 2.60000, 69.58291)
 
-[node name="bulbo_14" parent="luminarias" instance=ExtResource("e22")]
+[node name="bulbo_14" parent="luminarias" instance=ExtResource("e21")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 36.69600, 2.60000, 71.61486)
 
-[node name="bulbo_15" parent="luminarias" instance=ExtResource("e22")]
+[node name="bulbo_15" parent="luminarias" instance=ExtResource("e21")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 52.46984, 2.60000, 68.51005)
 
-[node name="bulbo_16" parent="luminarias" instance=ExtResource("e23")]
+[node name="bulbo_16" parent="luminarias" instance=ExtResource("e22")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 65.46739, 2.60000, 68.18695)
 
-[node name="bulbo_17" parent="luminarias" instance=ExtResource("e22")]
+[node name="bulbo_17" parent="luminarias" instance=ExtResource("e21")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 73.87787, 2.60000, 71.93893)
 
-[node name="bulbo_18" parent="luminarias" instance=ExtResource("e22")]
+[node name="bulbo_18" parent="luminarias" instance=ExtResource("e21")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 31.68000, 5.20000, 42.30000)
 
-[node name="bulbo_19" parent="luminarias" instance=ExtResource("e23")]
+[node name="bulbo_19" parent="luminarias" instance=ExtResource("e22")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 38.88000, 5.20000, 43.20000)
 
-[node name="bulbo_20" parent="luminarias" instance=ExtResource("e22")]
+[node name="bulbo_20" parent="luminarias" instance=ExtResource("e21")]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 35.52000, 5.20000, 48.96000)
 
 [node name="luzes" type="Node3D" parent="."]
@@ -5400,7 +5399,7 @@ monitorable = false
 [node name="forma" type="CollisionShape3D" parent="boca_saida/area"]
 shape = SubResource("f432")
 
-[node name="red_valve" parent="." instance=ExtResource("e24")]
+[node name="red_valve" parent="." instance=ExtResource("e23")]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 24.00, 0.0, 42.00)
 cena_destino = "res://scenes/stages/inferno_4/inferno_4.tscn"
 ponto_destino = "spawn_entrada"
@@ -5413,7 +5412,7 @@ transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1
 
 [node name="lanterna_no_chao" type="Node3D" parent="."]
 
-[node name="modelo" parent="lanterna_no_chao" instance=ExtResource("e25")]
+[node name="modelo" parent="lanterna_no_chao" instance=ExtResource("e24")]
 transform = Transform3D(-0.15949, 0.00000, 0.01276, 0.00000, 0.16000, 0.00000, -0.01276, 0.00000, -0.15949, 11.00000, 0.05200, 8.60000)
 
 [node name="facho" type="SpotLight3D" parent="lanterna_no_chao"]
@@ -5447,252 +5446,252 @@ navigation_layers = 4
 [node name="manchas" type="Node3D" parent="."]
 
 [node name="rab_0" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 4.05000, 1.26912, 7.50000)
+transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 4.02000, 1.26912, 7.50000)
 mesh = SubResource("pich_malha_0")
 cast_shadow = 0
 
 [node name="rab_1" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 5.50000, 1.36200, 9.95000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 5.50000, 1.36200, 9.98000)
 mesh = SubResource("pich_malha_1")
 cast_shadow = 0
 
 [node name="rab_2" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 9.50000, 1.37178, 9.95000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 9.50000, 1.37178, 9.98000)
 mesh = SubResource("pich_malha_2")
 cast_shadow = 0
 
 [node name="rab_3" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 12.05000, 1.14754, 45.50000)
+transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 12.02000, 1.14754, 45.50000)
 mesh = SubResource("pich_malha_1")
 cast_shadow = 0
 
 [node name="rab_4" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 14.95000, 1.44160, 44.50000)
+transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 14.98000, 1.44160, 44.50000)
 mesh = SubResource("pich_malha_3")
 cast_shadow = 0
 
 [node name="rab_5" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 15.50000, 1.22731, 7.05000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 15.50000, 1.22731, 7.02000)
 mesh = SubResource("pich_malha_4")
 cast_shadow = 0
 
 [node name="rab_6" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 16.50000, 1.39195, 11.95000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 16.50000, 1.39195, 11.98000)
 mesh = SubResource("pich_malha_5")
 cast_shadow = 0
 
 [node name="rab_7" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 18.95000, 1.34427, 61.50000)
+transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 18.98000, 1.34427, 61.50000)
 mesh = SubResource("pich_malha_0")
 cast_shadow = 0
 
 [node name="rab_8" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 19.50000, 1.37796, 47.05000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 19.50000, 1.37796, 47.02000)
 mesh = SubResource("pich_malha_6")
 cast_shadow = 0
 
 [node name="rab_9" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 19.95000, 1.63359, 62.50000)
+transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 19.98000, 1.63359, 62.50000)
 mesh = SubResource("pich_malha_7")
 cast_shadow = 0
 
 [node name="rab_10" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 21.50000, 1.26816, 69.95000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 21.50000, 1.26816, 69.98000)
 mesh = SubResource("pich_malha_0")
 cast_shadow = 0
 
 [node name="rab_11" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 22.50000, 1.22860, 13.95000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 22.50000, 1.22860, 13.98000)
 mesh = SubResource("pich_malha_5")
 cast_shadow = 0
 
 [node name="rab_12" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 24.50000, 0.96787, 10.05000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 24.50000, 0.96787, 10.02000)
 mesh = SubResource("pich_malha_8")
 cast_shadow = 0
 
 [node name="rab_13" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 24.95000, 1.33515, 67.50000)
+transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 24.98000, 1.33515, 67.50000)
 mesh = SubResource("pich_malha_0")
 cast_shadow = 0
 
 [node name="rab_14" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 24.50000, 0.83420, 67.05000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 24.50000, 0.83420, 67.02000)
 mesh = SubResource("pich_malha_9")
 cast_shadow = 0
 
 [node name="rab_15" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 25.05000, 3.06978, 37.50000)
+transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 25.02000, 3.06978, 37.50000)
 mesh = SubResource("pich_malha_10")
 cast_shadow = 0
 
 [node name="rab_16" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 27.05000, 1.24035, 19.50000)
+transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 27.02000, 1.24035, 19.50000)
 mesh = SubResource("pich_malha_11")
 cast_shadow = 0
 
 [node name="rab_17" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 29.50000, 1.29874, 23.95000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 29.50000, 1.29874, 23.98000)
 mesh = SubResource("pich_malha_6")
 cast_shadow = 0
 
 [node name="rab_18" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 30.50000, 3.07924, 36.05000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 30.50000, 3.07924, 36.02000)
 mesh = SubResource("pich_malha_12")
 cast_shadow = 0
 
 [node name="rab_19" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 31.50000, 2.95306, 53.95000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 31.50000, 2.95306, 53.98000)
 mesh = SubResource("pich_malha_11")
 cast_shadow = 0
 
 [node name="rab_20" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 33.50000, 1.36663, 73.95000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 33.50000, 1.36663, 73.98000)
 mesh = SubResource("pich_malha_5")
 cast_shadow = 0
 
 [node name="rab_21" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 35.50000, 1.28100, 22.05000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 35.50000, 1.28100, 22.02000)
 mesh = SubResource("pich_malha_13")
 cast_shadow = 0
 
 [node name="rab_22" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 36.50000, 1.00957, 73.95000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 36.50000, 1.00957, 73.98000)
 mesh = SubResource("pich_malha_14")
 cast_shadow = 0
 
 [node name="rab_23" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 41.50000, 1.35310, 23.05000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 41.50000, 1.35310, 23.02000)
 mesh = SubResource("pich_malha_0")
 cast_shadow = 0
 
 [node name="rab_24" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 43.50000, 1.34305, 7.05000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 43.50000, 1.34305, 7.02000)
 mesh = SubResource("pich_malha_6")
 cast_shadow = 0
 
 [node name="rab_25" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 46.50000, 1.65887, 52.95000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 46.50000, 1.65887, 52.98000)
 mesh = SubResource("pich_malha_15")
 cast_shadow = 0
 
 [node name="rab_26" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 47.95000, 2.93567, 41.50000)
+transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 47.98000, 2.93567, 41.50000)
 mesh = SubResource("pich_malha_16")
 cast_shadow = 0
 
 [node name="rab_27" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 47.95000, 1.77770, 50.50000)
+transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 47.98000, 1.77770, 50.50000)
 mesh = SubResource("pich_malha_17")
 cast_shadow = 0
 
 [node name="rab_28" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 48.50000, 1.30811, 20.05000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 48.50000, 1.30811, 20.02000)
 mesh = SubResource("pich_malha_6")
 cast_shadow = 0
 
 [node name="rab_29" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 48.50000, 1.35449, 39.95000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 48.50000, 1.35449, 39.98000)
 mesh = SubResource("pich_malha_18")
 cast_shadow = 0
 
 [node name="rab_30" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 49.05000, 1.39616, 17.50000)
+transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 49.02000, 1.39616, 17.50000)
 mesh = SubResource("pich_malha_0")
 cast_shadow = 0
 
 [node name="rab_31" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 51.50000, 1.33372, 67.05000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 51.50000, 1.33372, 67.02000)
 mesh = SubResource("pich_malha_6")
 cast_shadow = 0
 
 [node name="rab_32" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 56.50000, 1.24216, 20.95000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 56.50000, 1.24216, 20.98000)
 mesh = SubResource("pich_malha_5")
 cast_shadow = 0
 
 [node name="rab_33" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 56.50000, 1.59043, 65.05000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 56.50000, 1.59043, 65.02000)
 mesh = SubResource("pich_malha_14")
 cast_shadow = 0
 
 [node name="rab_34" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 57.50000, 1.48727, 16.05000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 57.50000, 1.48727, 16.02000)
 mesh = SubResource("pich_malha_19")
 cast_shadow = 0
 
 [node name="rab_35" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 58.50000, 1.72531, 16.05000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 58.50000, 1.72531, 16.02000)
 mesh = SubResource("pich_malha_7")
 cast_shadow = 0
 
 [node name="rab_36" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 60.50000, 1.20111, 18.95000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 60.50000, 1.20111, 18.98000)
 mesh = SubResource("pich_malha_0")
 cast_shadow = 0
 
 [node name="rab_37" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 61.50000, 1.25343, 17.95000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 61.50000, 1.25343, 17.98000)
 mesh = SubResource("pich_malha_5")
 cast_shadow = 0
 
 [node name="rab_38" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 61.95000, 1.21317, 35.50000)
+transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 61.98000, 1.21317, 35.50000)
 mesh = SubResource("pich_malha_6")
 cast_shadow = 0
 
 [node name="rab_39" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 64.95000, 1.30157, 13.50000)
+transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 64.98000, 1.30157, 13.50000)
 mesh = SubResource("pich_malha_0")
 cast_shadow = 0
 
 [node name="rab_40" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 65.50000, 1.39611, 34.95000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 65.50000, 1.39611, 34.98000)
 mesh = SubResource("pich_malha_5")
 cast_shadow = 0
 
 [node name="rab_41" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 65.95000, 1.20406, 56.50000)
+transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 65.98000, 1.20406, 56.50000)
 mesh = SubResource("pich_malha_0")
 cast_shadow = 0
 
 [node name="rab_42" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 67.50000, 1.21809, 17.95000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 67.50000, 1.21809, 17.98000)
 mesh = SubResource("pich_malha_20")
 cast_shadow = 0
 
 [node name="rab_43" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 67.50000, 0.93359, 67.05000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 67.50000, 0.93359, 67.02000)
 mesh = SubResource("pich_malha_7")
 cast_shadow = 0
 
 [node name="rab_44" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 68.05000, 1.34785, 71.50000)
+transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 68.02000, 1.34785, 71.50000)
 mesh = SubResource("pich_malha_21")
 cast_shadow = 0
 
 [node name="rab_45" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 69.95000, 1.39463, 52.50000)
+transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 69.98000, 1.39463, 52.50000)
 mesh = SubResource("pich_malha_5")
 cast_shadow = 0
 
 [node name="rab_46" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 70.50000, 1.25358, 72.95000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 70.50000, 1.25358, 72.98000)
 mesh = SubResource("pich_malha_18")
 cast_shadow = 0
 
 [node name="rab_47" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 72.95000, 1.25998, 32.50000)
+transform = Transform3D(0.00000, 0.00000, 1.00000, 0.00000, 1.00000, 0.00000, -1.00000, 0.00000, 0.00000, 72.98000, 1.25998, 32.50000)
 mesh = SubResource("pich_malha_5")
 cast_shadow = 0
 
 [node name="rab_48" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 76.50000, 1.34420, 30.95000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 76.50000, 1.34420, 30.98000)
 mesh = SubResource("pich_malha_22")
 cast_shadow = 0
 
 [node name="rab_49" type="MeshInstance3D" parent="manchas"]
-transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 77.50000, 1.28045, 71.05000)
+transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 77.50000, 1.28045, 71.02000)
 mesh = SubResource("pich_malha_0")
 cast_shadow = 0
 
@@ -5726,7 +5725,7 @@ mouse_filter = 2
 
 [node name="goteira_0" type="AudioStreamPlayer3D" parent="sons"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 28.77469, 1.80000, 19.24306)
-stream = ExtResource("e28")
+stream = ExtResource("e27")
 volume_db = -8.0
 unit_size = 3.0
 max_distance = 16.0
@@ -5735,7 +5734,7 @@ autoplay = true
 
 [node name="goteira_1" type="AudioStreamPlayer3D" parent="sons"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 77.69525, 1.80000, 27.23812)
-stream = ExtResource("e28")
+stream = ExtResource("e27")
 volume_db = -8.0
 unit_size = 3.0
 max_distance = 16.0
@@ -5744,7 +5743,7 @@ autoplay = true
 
 [node name="goteira_2" type="AudioStreamPlayer3D" parent="sons"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 42.55766, 1.80000, 40.67738)
-stream = ExtResource("e28")
+stream = ExtResource("e27")
 volume_db = -8.0
 unit_size = 3.0
 max_distance = 16.0
@@ -5753,7 +5752,7 @@ autoplay = true
 
 [node name="goteira_3" type="AudioStreamPlayer3D" parent="sons"]
 transform = Transform3D(1.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -0.00000, 0.00000, 1.00000, 36.69600, 1.80000, 71.61486)
-stream = ExtResource("e28")
+stream = ExtResource("e27")
 volume_db = -8.0
 unit_size = 3.0
 max_distance = 16.0
@@ -5761,6 +5760,6 @@ max_polyphony = 1
 autoplay = true
 
 [node name="atmosfera" type="AudioStreamPlayer" parent="sons"]
-stream = ExtResource("e29")
+stream = ExtResource("e28")
 volume_db = -17.0
 autoplay = true

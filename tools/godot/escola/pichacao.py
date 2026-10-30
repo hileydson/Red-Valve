@@ -77,7 +77,7 @@ RES_ATLAS = {
 
 # Quanto o quad descola da superficie. Menos que isto briga com a parede
 # (z-fighting); mais e o rabisco flutua e a sombra denuncia.
-AFASTAMENTO = 0.05
+AFASTAMENTO = 0.02   # era 0,05: o rabisco lia como placa solta da parede (2026-10-29)
 AFASTAMENTO_CHAO = 0.03
 
 # Passo da varredura ao longo de cada muro, em metros.

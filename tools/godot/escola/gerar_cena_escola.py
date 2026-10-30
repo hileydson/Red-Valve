@@ -29,6 +29,7 @@ O QUE ESTA CENA TEM QUE O HOSPITAL NAO TEM
    que e' o contrario do que o buraco promete.
 """
 
+import json
 import math
 import os
 import sys
@@ -728,6 +729,7 @@ def escrever_cena(colisoes, props, portas, plano_luz, lista_luminarias, nav,
     C.emitir_colisoes(c, colisoes)
 
     # ---- moveis
+    encostos = _encostos()
     c.no("mobilia", tipo="Node3D", pai=".")
     c.no("colisao_mobilia", tipo="StaticBody3D", pai=".",
          props=[("collision_layer", "2"), ("collision_mask", "0")])
@@ -739,6 +741,9 @@ def escrever_cena(colisoes, props, portas, plano_luz, lista_luminarias, nav,
             nome += "_%d" % i
         usados.add(nome)
         y = p["y"] + p.get("dy", 0.0)
+        ex, ey, ez = encostos.get("mobilia/" + nome, (0.0, 0.0, 0.0))
+        p = dict(p, x=p["x"] + ex, z=p["z"] + ez)
+        y += ey
         id_peca = (c.peca(p["arquivo"]) if p["tipo"] == "caixas"
                    else c.externo("PackedScene", MOB.caminho(p["modelo"])))
         if p.get("fisico"):
@@ -783,8 +788,10 @@ def escrever_cena(colisoes, props, portas, plano_luz, lista_luminarias, nav,
     c.no("luminarias", tipo="Node3D", pai=".")
     for (i, lum) in enumerate(lista_luminarias):
         giro_l = lum.get("giro", 0.0 if lum["eixo"] == "x" else math.pi * 0.5)
+        ex, ey, ez = encostos.get("luminarias/lum_%d" % i, (0.0, 0.0, 0.0))
+        pos_l = (lum["pos"][0] + ex, lum["pos"][1] + ey, lum["pos"][2] + ez)
         c.no("lum_%d" % i, pai="luminarias", instancia=c.peca(lum["arquivo"]),
-             props=[("transform", C.transform_pos(lum["pos"], giro_l))])
+             props=[("transform", C.transform_pos(pos_l, giro_l))])
 
     # ---- cones de luz (o "volumetrico" possivel no renderer mobile)
     c.no("cones", tipo="Node3D", pai=".")
@@ -996,10 +1003,29 @@ def _xform_decalque(q):
     return C.transform_pos((x, y, z), g)
 
 
+def _decalque_sem_parede(q):
+    """Decalque de parede que caiu onde a parede nao existe — numa esquina de
+    corredores ou num vao de porta — ficava pregado no ar."""
+    if q["plano"] in ("chao", "teto"):
+        return False
+    x, y, z = q["pos"]
+    nx, nz = math.sin(q["giro"]), math.cos(q["giro"])
+    bx, bz = x - nx * 0.2, z - nz * 0.2
+    for e in P.espacos():
+        if e["x0"] <= bx <= e["x1"] and e["z0"] <= bz <= e["z1"]:
+            return True
+    if y < P.PORTA_H:
+        for (px, pz, l) in MOB._portas():
+            if abs(x - px) < l * 0.5 and abs(z - pz) < 0.4:
+                return True
+    return False
+
+
 def _emitir_decalques(c, quads):
     c.no("detalhes", tipo="Node3D", pai=".")
     c.no("decalques", tipo="Node3D", pai="detalhes")
     mats, malhas = {}, {}
+    quads = [q for q in quads if not _decalque_sem_parede(q)]
     for (i, q) in enumerate(quads):
         tom = round(q["tom"] * 5.0) / 5.0
         chave = (q["atlas"], q["cel"], q["tipo"], tom)
@@ -1403,6 +1429,22 @@ def _emitir_porta(c, d, id_script):
                 ("collision_layer", "0"), ("monitorable", "false")])
     c.no("forma", tipo="CollisionShape3D", pai=caminho + "/area",
          props=[("shape", 'SubResource("%s")' % ident)])
+
+
+def _encostos():
+    """{no: (dx, dy, dz)}: o quanto encostar cada peca que sairia flutuando.
+
+    Sai de `red-valve/tools/flutuantes/achar.gd` rodado na cena gerada (raios
+    curtos nas 6 faces de cada malha): quadro a 4 cm da parede, luminaria a
+    7 cm do forro, poste de refletor 20 cm acima do chao. A tabela fica em
+    `encostos.json` ao lado deste arquivo, por nome de no' — regerar a escola
+    reaplica.
+    """
+    caminho = os.path.join(os.path.dirname(os.path.abspath(__file__)), "encostos.json")
+    if not os.path.exists(caminho):
+        return {}
+    with open(caminho) as f:
+        return {k: tuple(v) for k, v in json.load(f).items()}
 
 
 def _emitir_grade(c, arquivo, id_script):

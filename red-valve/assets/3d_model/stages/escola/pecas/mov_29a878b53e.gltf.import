@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://bli4oyew1ot76"
-path="res://.godot/imported/mov_b62e40122d.gltf-6a034f31064f8a29db87f274b3975d0a.scn"
+uid="uid://bj6bmqi2icbwv"
+path="res://.godot/imported/mov_29a878b53e.gltf-3c6d80c3a5686d949643a0e27299a016.scn"
 
 [deps]
 
-source_file="res://assets/3d_model/stages/escola/pecas/mov_b62e40122d.gltf"
-dest_files=["res://.godot/imported/mov_b62e40122d.gltf-6a034f31064f8a29db87f274b3975d0a.scn"]
+source_file="res://assets/3d_model/stages/escola/pecas/mov_29a878b53e.gltf"
+dest_files=["res://.godot/imported/mov_29a878b53e.gltf-3c6d80c3a5686d949643a0e27299a016.scn"]
 
 [params]
 

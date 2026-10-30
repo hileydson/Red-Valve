@@ -1,71 +1,137 @@
 [gd_scene uid="uid://druv0jroonr5v" format=3]
 
 [ext_resource type="PackedScene" uid="uid://cluvbknxfjx2k" path="res://scenes/player/player.tscn" id="player"]
+
 [ext_resource type="PackedScene" uid="uid://bhyhnppiawn07" path="res://scenes/configs/pause.tscn" id="pause"]
+
 [ext_resource type="PackedScene" uid="uid://dy356o67p6jyn" path="res://scenes/configs/fade.tscn" id="fade"]
+
 [ext_resource type="AudioStream" uid="uid://b3ahi8d8px8qi" path="res://assets/sounds/episodios/ambiente_noise_sublime.mp3" id="ambiente"]
+
 [ext_resource type="Script" uid="uid://bnj7xtg5wsyjp" path="res://scripts/stages/jimmy_house/casa_jimmy_interior.gd" id="script_casa"]
+
 [ext_resource type="Texture2D" path="res://assets/images/textures/polyhaven/grey_plaster_02_diff.jpg" id="grey_plaster_02_diff"]
+
 [ext_resource type="Texture2D" path="res://assets/images/textures/polyhaven/grey_plaster_02_nor_gl.jpg" id="grey_plaster_02_nor_gl"]
+
 [ext_resource type="Texture2D" path="res://assets/images/textures/polyhaven/grey_plaster_02_arm.jpg" id="grey_plaster_02_arm"]
+
 [ext_resource type="Texture2D" path="res://assets/images/textures/polyhaven/wood_floor_worn_diff.jpg" id="wood_floor_worn_diff"]
+
 [ext_resource type="Texture2D" path="res://assets/images/textures/polyhaven/wood_floor_worn_nor_gl.jpg" id="wood_floor_worn_nor_gl"]
+
 [ext_resource type="Texture2D" path="res://assets/images/textures/polyhaven/wood_floor_worn_arm.jpg" id="wood_floor_worn_arm"]
+
 [ext_resource type="Texture2D" path="res://assets/images/textures/polyhaven/plank_flooring_03_diff.jpg" id="plank_flooring_03_diff"]
+
 [ext_resource type="Texture2D" path="res://assets/images/textures/polyhaven/plank_flooring_03_nor_gl.jpg" id="plank_flooring_03_nor_gl"]
+
 [ext_resource type="Texture2D" path="res://assets/images/textures/polyhaven/plank_flooring_03_arm.jpg" id="plank_flooring_03_arm"]
+
 [ext_resource type="Texture2D" path="res://assets/images/textures/polyhaven/dark_wooden_planks_diff.jpg" id="dark_wooden_planks_diff"]
+
 [ext_resource type="Texture2D" path="res://assets/images/textures/polyhaven/dark_wooden_planks_nor_gl.jpg" id="dark_wooden_planks_nor_gl"]
+
 [ext_resource type="Texture2D" path="res://assets/images/textures/polyhaven/dark_wooden_planks_arm.jpg" id="dark_wooden_planks_arm"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/tiny_living_contemporary_carpet_40.tscn" id="mb_tiny_living_contemporary_carpet_40"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/tiny_living_lovely_loveseat_12.tscn" id="mb_tiny_living_lovely_loveseat_12"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/throw_pillows_01/throw_pillows_01_1k.gltf" id="ph_throw_pillows_01"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/tiny_living_sir_cumference_coffee_table_11.tscn" id="mb_tiny_living_sir_cumference_coffee_table_11"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/tiny_living_my_kinda_zen_22.tscn" id="mb_tiny_living_my_kinda_zen_22"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/tiny_living_botanical_bookends_5.tscn" id="mb_tiny_living_botanical_bookends_5"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/tiny_living_lovely_armchair_33.tscn" id="mb_tiny_living_lovely_armchair_33"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/tiny_living_modern_pouffe_36.tscn" id="mb_tiny_living_modern_pouffe_36"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/tiny_living_media_marathoner_allonthe_wall_10.tscn" id="mb_tiny_living_media_marathoner_allonthe_wall_10"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/tiny_living_media_marathoner_8.tscn" id="mb_tiny_living_media_marathoner_8"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/tiny_living_not_a_table_end_43.tscn" id="mb_tiny_living_not_a_table_end_43"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/tiny_living_the_modern_desk_lamp_23.tscn" id="mb_tiny_living_the_modern_desk_lamp_23"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/tiny_living_lamp_without_storage_20.tscn" id="mb_tiny_living_lamp_without_storage_20"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/tiny_living_simpleand_clean_art_39.tscn" id="mb_tiny_living_simpleand_clean_art_39"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/side_table_01/side_table_01_1k.gltf" id="ph_side_table_01"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/vintage_oil_lamp/vintage_oil_lamp_1k.gltf" id="ph_vintage_oil_lamp"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/wall_clock/wall_clock_1k.gltf" id="ph_wall_clock"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/hanging_picture_frame_02/hanging_picture_frame_02_1k.gltf" id="ph_hanging_picture_frame_02"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/round_wooden_table_01/round_wooden_table_01_1k.gltf" id="ph_round_wooden_table_01"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/painted_wooden_chair_01/painted_wooden_chair_01_1k.gltf" id="ph_painted_wooden_chair_01"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/WoodenTable_03/WoodenTable_03_1k.gltf" id="ph_WoodenTable_03"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/vintage_grandfather_clock_01/vintage_grandfather_clock_01_1k.gltf" id="ph_vintage_grandfather_clock_01"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/tiny_living_tiny_console_44.tscn" id="mb_tiny_living_tiny_console_44"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/tiny_living_vertical_mini_garden_27.tscn" id="mb_tiny_living_vertical_mini_garden_27"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/wicker_basket_01/wicker_basket_01_1k.gltf" id="ph_wicker_basket_01"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/painted_wooden_cabinet/painted_wooden_cabinet_1k.gltf" id="ph_painted_wooden_cabinet"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/electric_stove/electric_stove_1k.gltf" id="ph_electric_stove"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/tiny_living_the_sinkz_bathroom_vanity_32.tscn" id="mb_tiny_living_the_sinkz_bathroom_vanity_32"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/painted_wooden_table/painted_wooden_table_1k.gltf" id="ph_painted_wooden_table"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/wooden_stool_01/wooden_stool_01_1k.gltf" id="ph_wooden_stool_01"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/tiny_living_open_shelf_31.tscn" id="mb_tiny_living_open_shelf_31"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/tiny_living_tiered_shelf_29.tscn" id="mb_tiny_living_tiered_shelf_29"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/cardboard_box_01/cardboard_box_01_1k.gltf" id="ph_cardboard_box_01"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/wooden_bookshelf_worn/wooden_bookshelf_worn_1k.gltf" id="ph_wooden_bookshelf_worn"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/tiny_living_power_tower_bookcase_47.tscn" id="mb_tiny_living_power_tower_bookcase_47"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/tiny_living_just_a_little_peek_18.tscn" id="mb_tiny_living_just_a_little_peek_18"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/tinyt_living_miracle_mirror_26.tscn" id="mb_tinyt_living_miracle_mirror_26"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/ornate_mirror_01/ornate_mirror_01_1k.gltf" id="ph_ornate_mirror_01"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/vintage_suitcase/vintage_suitcase_1k.gltf" id="ph_vintage_suitcase"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/tiny_living_space_saving_single_13.tscn" id="mb_tiny_living_space_saving_single_13"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/painted_wooden_nightstand/painted_wooden_nightstand_1k.gltf" id="ph_painted_wooden_nightstand"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/tiny_living_power_tower_dresser_24.tscn" id="mb_tiny_living_power_tower_dresser_24"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/painted_wooden_shelves/painted_wooden_shelves_1k.gltf" id="ph_painted_wooden_shelves"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/tiny_living_stubby_cubby_dresser_38.tscn" id="mb_tiny_living_stubby_cubby_dresser_38"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/tiny_living_tiny_desk_for_tiny_living_37.tscn" id="mb_tiny_living_tiny_desk_for_tiny_living_37"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/old_bed_frame/old_bed_frame_1k.gltf" id="ph_old_bed_frame"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/tiny_living_compact_lavatory_45.tscn" id="mb_tiny_living_compact_lavatory_45"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/mobilia/tiny_living_don_tripp_light_fixture_19.tscn" id="mb_tiny_living_don_tripp_light_fixture_19"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/caged_hanging_light/caged_hanging_light_1k.gltf" id="ph_caged_hanging_light"]
+
 [ext_resource type="PackedScene" path="res://assets/3d_model/polyhaven/pull_chain_light_socket/pull_chain_light_socket_1k.gltf" id="ph_pull_chain_light_socket"]
 
 [sub_resource type="StandardMaterial3D" id="mat_parede"]
@@ -2728,38 +2794,44 @@ shadow_enabled = false
 [node name="tapete_estar" parent="mobilia" instance=ExtResource("mb_tiny_living_contemporary_carpet_40")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.012, 3.4)
 
-[node name="sofa_estar" parent="mobilia" instance=ExtResource("mb_tiny_living_lovely_loveseat_12")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 4, 0, 4.3)
-
-[node name="col_sofa_estar" type="StaticBody3D" parent="colisoes_mobilia"]
+[node name="sofa_estar" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 4, 0, 4.3)
 collision_layer = 2
-collision_mask = 0
+collision_mask = 2
+mass = 45
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="colisoes_mobilia/col_sofa_estar"]
+[node name="sofa_estar_malha" parent="mobilia/sofa_estar" instance=ExtResource("mb_tiny_living_lovely_loveseat_12")]
+
+[node name="sofa_estar_colisao" type="CollisionShape3D" parent="mobilia/sofa_estar"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4565, 0)
 shape = SubResource("bs_1p828_0p913_0p748")
 
-[node name="almofadas_sofa" parent="mobilia" instance=ExtResource("ph_throw_pillows_01")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 4, 0.44, 4.05)
 
-[node name="mesa_de_centro" parent="mobilia" instance=ExtResource("mb_tiny_living_sir_cumference_coffee_table_11")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 2.5)
 
-[node name="col_mesa_de_centro" type="StaticBody3D" parent="colisoes_mobilia"]
+[node name="almofadas_sofa" parent="mobilia/sofa_estar" instance=ExtResource("ph_throw_pillows_01")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.44, 0.25)
+
+[node name="mesa_de_centro" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 2.5)
 collision_layer = 2
-collision_mask = 0
+collision_mask = 2
+mass = 14
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="colisoes_mobilia/col_mesa_de_centro"]
+[node name="mesa_de_centro_malha" parent="mobilia/mesa_de_centro" instance=ExtResource("mb_tiny_living_sir_cumference_coffee_table_11")]
+
+[node name="mesa_de_centro_colisao" type="CollisionShape3D" parent="mobilia/mesa_de_centro"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2485, 0)
 shape = SubResource("bs_0p731_0p497_0p731")
 
-[node name="enfeite_mesa_centro" parent="mobilia" instance=ExtResource("mb_tiny_living_my_kinda_zen_22")]
-transform = Transform3D(0.939373, 0, 0.342898, 0, 1, 0, -0.342898, 0, 0.939373, 4.3, 0.5, 2.75)
+[node name="enfeite_mesa_centro" parent="mobilia/mesa_de_centro" instance=ExtResource("mb_tiny_living_my_kinda_zen_22")]
+transform = Transform3D(0.939373, 0, 0.342898, 0, 1, 0, -0.342898, 0, 0.939373, 0.3, 0.5, 0.25)
 
-[node name="livros_estar" parent="mobilia" instance=ExtResource("mb_tiny_living_botanical_bookends_5")]
-transform = Transform3D(0.877583, 0, -0.479426, 0, 1, 0, 0.479426, 0, 0.877583, 3.7, 0.5, 2.3)
+[node name="livros_estar" parent="mobilia/mesa_de_centro" instance=ExtResource("mb_tiny_living_botanical_bookends_5")]
+transform = Transform3D(0.877583, 0, -0.479426, 0, 1, 0, 0.479426, 0, 0.877583, -0.3, 0.5, -0.2)
 
 [node name="poltrona_estar" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 6.1, 0, 4.6)
@@ -2804,26 +2876,28 @@ collision_mask = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.044, 0)
 shape = SubResource("bs_1p331_2p088_0p425")
 
-[node name="mesinha_estar" parent="mobilia" instance=ExtResource("mb_tiny_living_not_a_table_end_43")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2, 0, 4.2)
-
-[node name="col_mesinha_estar" type="StaticBody3D" parent="colisoes_mobilia"]
+[node name="mesinha_estar" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2, 0, 4.2)
 collision_layer = 2
-collision_mask = 0
+collision_mask = 2
+mass = 8
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="colisoes_mobilia/col_mesinha_estar"]
+[node name="mesinha_estar_malha" parent="mobilia/mesinha_estar" instance=ExtResource("mb_tiny_living_not_a_table_end_43")]
+
+[node name="mesinha_estar_colisao" type="CollisionShape3D" parent="mobilia/mesinha_estar"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2895, 0)
 shape = SubResource("bs_0p639_0p579_0p639")
 
-[node name="abajur_estar" parent="mobilia" instance=ExtResource("mb_tiny_living_the_modern_desk_lamp_23")]
-transform = Transform3D(0.921061, 0, 0.389418, 0, 1, 0, -0.389418, 0, 0.921061, 2.2, 0.58, 4.2)
+[node name="abajur_estar" parent="mobilia/mesinha_estar" instance=ExtResource("mb_tiny_living_the_modern_desk_lamp_23")]
+transform = Transform3D(0.921061, 0, 0.389418, 0, 1, 0, -0.389418, 0, 0.921061, 0, 0.58, 0)
 
 [node name="luminaria_pe_estar" parent="mobilia" instance=ExtResource("mb_tiny_living_lamp_without_storage_20")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.7, 0, 5.9)
 
 [node name="quadro_estar" parent="mobilia" instance=ExtResource("mb_tiny_living_simpleand_clean_art_39")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0.28, 1.65, 5.6)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0.204, 1.65, 5.6)
 
 [node name="mesa_lateral_estar" parent="mobilia" instance=ExtResource("ph_side_table_01")]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0.6, 0, 1.4)
@@ -2844,7 +2918,7 @@ transform = Transform3D(0.955336, 0, 0.29552, 0, 1, 0, -0.29552, 0, 0.955336, 1.
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0.27, 2.25, 1.4)
 
 [node name="quadro_estar_2" parent="mobilia" instance=ExtResource("ph_hanging_picture_frame_02")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.9, 2, 0.26)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.9, 2, 0.202)
 
 [node name="mesa_jantar" parent="mobilia" instance=ExtResource("ph_round_wooden_table_01")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.9, 0, 5.4)
@@ -2951,10 +3025,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3935, 0)
 shape = SubResource("bs_0p784_0p787_0p48")
 
 [node name="planta_parede_sala" parent="mobilia" instance=ExtResource("mb_tiny_living_vertical_mini_garden_27")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 12.84, 2.15, 5.9)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 12.896, 2.15, 5.9)
 
 [node name="quadro_sala" parent="mobilia" instance=ExtResource("ph_hanging_picture_frame_02")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 7.76, 2, 5.3)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 7.702, 2, 5.3)
 
 [node name="cesto_sala" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(0.921061, 0, 0.389418, 0, 1, 0, -0.389418, 0, 0.921061, 12.4, 0, 6.5)
@@ -3018,17 +3092,22 @@ collision_mask = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.685, 0)
 shape = SubResource("bs_0p65_1p37_0p679")
 
-[node name="mesa_cozinha" parent="mobilia" instance=ExtResource("ph_painted_wooden_table")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.4, 0, 3.5)
-
-[node name="col_mesa_cozinha" type="StaticBody3D" parent="colisoes_mobilia"]
+[node name="mesa_cozinha" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.4, 0, 3.5)
 collision_layer = 2
-collision_mask = 0
+collision_mask = 2
+mass = 30
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="colisoes_mobilia/col_mesa_cozinha"]
+[node name="mesa_cozinha_malha" parent="mobilia/mesa_cozinha" instance=ExtResource("ph_painted_wooden_table")]
+
+[node name="mesa_cozinha_colisao" type="CollisionShape3D" parent="mobilia/mesa_cozinha"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.48, 0)
 shape = SubResource("bs_2p41_0p96_1p14")
+
+[node name="potes_cozinha" parent="mobilia/mesa_cozinha" instance=ExtResource("mb_tiny_living_botanical_bookends_5")]
+transform = Transform3D(0.968912, 0, 0.247404, 0, 1, 0, -0.247404, 0, 0.968912, -0.3, 0.97, 0)
 
 [node name="banco_coz_1" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 15.5, 0, 4.6)
@@ -3057,9 +3136,6 @@ angular_damp = 3.0
 [node name="banco_coz_2_colisao" type="CollisionShape3D" parent="mobilia/banco_coz_2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.22, 0)
 shape = SubResource("bs_0p43_0p44_0p44")
-
-[node name="potes_cozinha" parent="mobilia" instance=ExtResource("mb_tiny_living_botanical_bookends_5")]
-transform = Transform3D(0.968912, 0, 0.247404, 0, 1, 0, -0.247404, 0, 0.968912, 16.1, 0.97, 3.5)
 
 [node name="prateleira_cozinha" parent="mobilia" instance=ExtResource("mb_tiny_living_open_shelf_31")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.6, 1.85, 0.32)
@@ -3144,16 +3220,16 @@ shape = SubResource("bs_0p85_2p19_0p263")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4, 1.65, 7.34)
 
 [node name="espelho_corredor_2" parent="mobilia" instance=ExtResource("ph_ornate_mirror_01")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.4, 1.6, 7.33)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.4, 1.6, 7.304)
 
 [node name="quadro_corredor" parent="mobilia" instance=ExtResource("mb_tiny_living_simpleand_clean_art_39")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1.85, 7.33)
 
 [node name="quadro_corredor_2" parent="mobilia" instance=ExtResource("ph_hanging_picture_frame_02")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 2, 7.33)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 2, 7.302)
 
 [node name="quadro_corredor_3" parent="mobilia" instance=ExtResource("ph_hanging_picture_frame_02")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 9.5, 2, 10.07)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 9.5, 2, 10.098)
 
 [node name="malas_corredor" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0.36, 0, 8.35)
@@ -3195,20 +3271,22 @@ collision_mask = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5565, 0)
 shape = SubResource("bs_0p85_1p113_2p425")
 
-[node name="criado_mudo_q1" parent="mobilia" instance=ExtResource("ph_painted_wooden_nightstand")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.75, 0, 12.3)
-
-[node name="col_criado_mudo_q1" type="StaticBody3D" parent="colisoes_mobilia"]
+[node name="criado_mudo_q1" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.75, 0, 12.3)
 collision_layer = 2
-collision_mask = 0
+collision_mask = 2
+mass = 8
+linear_damp = 2.0
+angular_damp = 3.0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="colisoes_mobilia/col_criado_mudo_q1"]
+[node name="criado_mudo_q1_malha" parent="mobilia/criado_mudo_q1" instance=ExtResource("ph_painted_wooden_nightstand")]
+
+[node name="criado_mudo_q1_colisao" type="CollisionShape3D" parent="mobilia/criado_mudo_q1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.31, 0)
 shape = SubResource("bs_0p5_0p62_0p51")
 
-[node name="lampiao_q1" parent="mobilia" instance=ExtResource("ph_vintage_oil_lamp")]
-transform = Transform3D(0.980067, 0, 0.198669, 0, 1, 0, -0.198669, 0, 0.980067, 1.75, 0.62, 12.3)
+[node name="lampiao_q1" parent="mobilia/criado_mudo_q1" instance=ExtResource("ph_vintage_oil_lamp")]
+transform = Transform3D(0.980067, 0, 0.198669, 0, 1, 0, -0.198669, 0, 0.980067, 0, 0.62, 0)
 
 [node name="guarda_roupa_q1" parent="mobilia" instance=ExtResource("ph_painted_wooden_cabinet")]
 transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 4.57, 0, 13.7)
@@ -3241,7 +3319,7 @@ transform = Transform3D(0.169967, 0, -0.98545, 0, 1, 0, 0.98545, 0, 0.169967, 4.
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.72, 1.95, 10.44)
 
 [node name="prateleirinha_q1" parent="mobilia" instance=ExtResource("ph_painted_wooden_shelves")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9, 1.15, 10.46)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9, 1.15, 10.304)
 
 [node name="tapete_q1" parent="mobilia" instance=ExtResource("mb_tiny_living_contemporary_carpet_40")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.9, 0.012, 12.9)
@@ -3315,7 +3393,7 @@ shape = SubResource("bs_0p43_0p96_0p54")
 transform = Transform3D(0.825336, 0, 0.564642, 0, 1, 0, -0.564642, 0, 0.825336, 7.35, 0.76, 14.35)
 
 [node name="livros_q2" parent="mobilia" instance=ExtResource("mb_tiny_living_botanical_bookends_5")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 8.05, 1.02, 14.3)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 8.05, 0.928, 14.3)
 
 [node name="prateleira_q2" parent="mobilia" instance=ExtResource("mb_tiny_living_open_shelf_31")]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 8.7, 1.85, 14.64)
@@ -3360,7 +3438,7 @@ transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 9.87, 1.9, 13.6)
 transform = Transform3D(0.980067, 0, 0.198669, 0, 1, 0, -0.198669, 0, 0.980067, 11.9, 0.012, 13.2)
 
 [node name="quadro_torto_q3" parent="mobilia" instance=ExtResource("mb_tiny_living_simpleand_clean_art_39")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 10.4, 1.6, 14.66)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 10.4, 1.6, 14.796)
 
 [node name="malas_q3" type="RigidBody3D" parent="mobilia"]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 13.1, 0, 14.2)
@@ -3554,4 +3632,5 @@ monitorable = false
 shape = SubResource("forma_saida")
 
 [connection signal="body_entered" from="porta_saida" to="." method="_ao_entrar_na_porta"]
+
 [connection signal="body_exited" from="porta_saida" to="." method="_ao_sair_da_porta"]

@@ -10,6 +10,14 @@ extends Node3D
 const CENA_MAPA := "res://scenes/stages/stage_1/stage_1.tscn"
 const DiarioJimmy := preload("res://scripts/stages/jimmy_house/diario_jimmy.gd")
 const GavetaPistola := preload("res://scripts/stages/jimmy_house/gaveta_pistola.gd")
+const Municao := preload("res://scripts/stages/escola/municao_espalhada.gd")
+
+## Balas da pistola espalhadas pela casa, além da caixa da gaveta:
+## [id do save, (x, altura do raio, z), balas]. O raio desce até o tampo.
+const MUNICAO_CASA := [
+	["casa_jimmy_municao_aparador", Vector3(8.0, 2.5, 1.2), 8],
+	["casa_jimmy_municao_q2", Vector3(9.16, 2.5, 13.7), 6],
+]
 
 @onready var fade: ColorRect = $fade
 
@@ -33,6 +41,7 @@ func _ready() -> void:
 	_preparar_lampadas()
 	_preparar_diario()
 	_preparar_gaveta()
+	Municao.espalhar(self, MUNICAO_CASA)
 
 
 ## O diário do Jimmy na mesa de jantar: a pista do Capítulo 1 que manda o

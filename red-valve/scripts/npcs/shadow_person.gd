@@ -124,6 +124,8 @@ var _step_half := 0
 # controle de "so anda na rua"
 var _road_timer := 0.0
 var _off_road := 0.0
+## Quanto tempo ele esta' empurrando uma parede sem sair do lugar.
+var _preso := 0.0
 
 # rig
 var _rig: Node3D
@@ -581,7 +583,32 @@ func _physics_process(delta: float) -> void:
 				_pick_wander_target()
 
 	move_and_slide()
+	_vigiar_parede(delta)
 	_animate(delta)
+
+
+## Andando e travado numa parede (o alvo e' em linha reta e o caminho cortava
+## uma casa): em vez de ficar de cara pra parede ate' o tempo do alvo acabar,
+## escolhe outro destino PELA RUA, do lado de onde ele veio.
+func _vigiar_parede(delta: float) -> void:
+	if not (state in [State.WANDER, State.LEAVE, State.APPROACH, State.FOLLOW]):
+		_preso = 0.0
+		return
+	var real := get_real_velocity()
+	real.y = 0.0
+	if is_on_wall() and real.length() < walk_speed * 0.3:
+		_preso += delta
+	else:
+		_preso = maxf(0.0, _preso - delta * 2.0)
+	if _preso < 0.6:
+		return
+	_preso = 0.0
+	if state != State.WANDER:
+		if partner != null:
+			_end_interaction()
+		_follow_target = null
+		state = State.WANDER
+	_pick_wander_target(get_wall_normal())
 
 
 func _reached(p: Vector3) -> bool:
@@ -620,22 +647,43 @@ func _face(target: Vector3, delta: float) -> void:
 	rotation.y = rotate_toward(rotation.y, want, turn_speed * delta)
 
 
-func _pick_wander_target() -> void:
+## `fugir_de`: normal da parede em que ele travou — o novo alvo fica do lado
+## de la' dela (o meio-espaco pra onde a normal aponta).
+func _pick_wander_target(fugir_de := Vector3.ZERO) -> void:
 	# crianca solta perto de um adulto as vezes larga tudo e vai atras dele
-	if is_child and state == State.WANDER and partner == null \
+	if fugir_de == Vector3.ZERO and is_child and state == State.WANDER and partner == null \
 			and _rng.randf() < follow_chance and _try_follow_adult():
 		return
-	# tenta varios pontos e fica com o primeiro que caia sobre asfalto
+	# tenta varios pontos: o melhor e' o que fica no asfalto E com o caminho
+	# reto ate' ele todo no asfalto (anda pela rua, nao corta casa); na falta,
+	# o primeiro que pelo menos caia na rua
 	var found := false
-	for attempt in (10 if road_only else 1):
+	var reserva := Vector3.INF
+	var origem := global_position if fugir_de != Vector3.ZERO else _home
+	for attempt in (18 if road_only else 1):
 		var ang := _rng.randf() * TAU
+		var dirv := Vector3(cos(ang), 0.0, sin(ang))
+		if fugir_de != Vector3.ZERO and dirv.dot(Vector3(fugir_de.x, 0.0, fugir_de.z)) < 0.2:
+			continue
 		# crianca nao vai longe: fica indo e voltando em trechos curtos
 		var dist := _rng.randf_range(wander_radius * 0.10, wander_radius * 0.35) if is_child \
 			else _rng.randf_range(wander_radius * 0.25, wander_radius)
-		_target = _home + Vector3(cos(ang) * dist, 0.0, sin(ang) * dist)
-		if not road_only or _is_road_at(_target):
+		var cand := origem + dirv * dist
+		if not road_only:
+			_target = cand
 			found = true
 			break
+		if not _is_road_at(cand):
+			continue
+		if _caminho_na_rua(global_position, cand):
+			_target = cand
+			found = true
+			break
+		if reserva == Vector3.INF:
+			reserva = cand
+	if road_only and not found and reserva != Vector3.INF:
+		_target = reserva
+		found = true
 	if road_only and not found:
 		# nenhuma direcao livre: anda pouco, na propria rua onde ja esta
 		_target = ShadowRoads.nearest(global_position, wander_radius * 0.5)
@@ -755,6 +803,34 @@ func _is_road_at(pos: Vector3) -> bool:
 	return ShadowRoads.is_road(pos)
 
 
+## O caminho reto de `de` ate' `ate` passa todo pelo asfalto? (amostra a cada
+## 1,5 m) — e' o que faz ele andar PELA rua em vez de cortar o quarteirao.
+func _caminho_na_rua(de: Vector3, ate: Vector3) -> bool:
+	var d := Vector2(ate.x - de.x, ate.z - de.z).length()
+	var n := maxi(1, int(d / 1.5))
+	for i in range(1, n + 1):
+		if not ShadowRoads.is_road(de.lerp(ate, float(i) / n)):
+			return false
+	return true
+
+
+## Esta' de verdade na rua: em cima da celula de asfalto E na altura dela. O
+## telhado da esquina fica em cima de celula de rua (a rasterizacao vaza um
+## pouco), e so' a altura separa um do outro.
+func _na_rua_de_verdade() -> bool:
+	return ShadowRoads.is_road(global_position) \
+		and ShadowRoads.esta_no_nivel_da_rua(global_position)
+
+
+## A camera esta' vendo este ponto? Teleporte so' fora da vista.
+func _na_vista() -> bool:
+	var cam := get_viewport().get_camera_3d() if is_inside_tree() else null
+	if cam == null:
+		return false
+	return cam.is_position_in_frustum(global_position + Vector3.UP) \
+		and cam.global_position.distance_to(global_position) < 60.0
+
+
 ## Quem foi posicionado em cima de uma casa (ou de qualquer coisa que nao seja
 ## rua) e puxado pro asfalto mais proximo assim que a cena comeca.
 func _snap_to_road() -> void:
@@ -774,12 +850,26 @@ func _keep_on_road(delta: float) -> void:
 	if _road_timer > 0.0:
 		return
 	_road_timer = 0.35
-	if _is_road_at(global_position):
+	if _na_rua_de_verdade():
 		_off_road = 0.0
 		return
 	_off_road += 0.35
 	if _off_road < 0.7:
 		return
+	# Em cima de telhado (celula de rua, altura errada) ou preso fora da rua ha'
+	# tempo: volta pro asfalto de uma vez — de preferencia fora da vista.
+	var no_telhado := ShadowRoads.is_road(global_position) \
+		and not ShadowRoads.esta_no_nivel_da_rua(global_position)
+	if no_telhado or _off_road > 4.0:
+		var alvo := Vector3(global_position.x, ShadowRoads.road_y(global_position), global_position.z) \
+			if no_telhado else ShadowRoads.nearest(global_position, 30.0)
+		if not is_nan(alvo.y) and alvo != global_position and not _na_vista():
+			global_position = alvo + Vector3.UP * 0.3
+			velocity = Vector3.ZERO
+			_home = global_position
+			_off_road = 0.0
+			_pick_wander_target()
+			return
 	var p := ShadowRoads.nearest(global_position, 20.0)
 	if p == global_position:
 		return

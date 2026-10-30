@@ -169,6 +169,24 @@ func _ready() -> void:
 				
 		GlobalEvents.in_cutscene = false
 
+		if is_first_time:
+			_tutorial_da_cogblade()
+
+
+## Prólogo: a primeira luta começa com a cogblade guardada, e uns segundos
+## depois o jogo pausa e ensina a sacá-la (ver `tutorial_cogblade.gd`).
+func _tutorial_da_cogblade() -> void:
+	if SaveManager.cogblade_como_arma():
+		SaveManager.unequip_item("cogblade")
+		if is_instance_valid(player) and player.has_method("update_equipment_visuals"):
+			player.update_equipment_visuals()
+	await get_tree().create_timer(3.0, false).timeout
+	if not is_inside_tree() or SaveManager.cogblade_como_arma():
+		return
+	var tutorial = load("res://scripts/ui/tutorial_cogblade.gd").new()
+	tutorial.player = player
+	get_tree().root.add_child(tutorial)
+
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:

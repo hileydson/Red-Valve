@@ -1,0 +1,497 @@
+{
+ "luminarias/lum_0": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_1": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_10": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_11": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_12": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_13": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_14": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_15": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_16": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_17": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_18": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_19": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_2": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_20": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_21": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_22": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_23": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_24": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_25": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_26": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_27": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_28": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_29": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_3": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_30": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_31": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_32": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_34": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_35": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_36": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_37": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_38": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_39": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_4": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_40": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_41": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_42": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_43": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_44": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_45": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_46": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_47": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_48": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_49": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_5": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_50": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_51": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_52": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_53": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_54": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_55": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_56": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_57": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_58": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_59": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_6": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_60": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_61": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_62": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_63": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_64": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_65": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_66": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_67": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_68": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_69": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_7": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_70": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_71": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_72": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_73": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_74": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_75": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_76": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_77": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_78": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_79": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_8": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_80": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_81": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_82": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_83": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_84": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_85": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_87": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_88": [
+  0.0,
+  0.456,
+  0.0
+ ],
+ "luminarias/lum_89": [
+  0.0,
+  0.456,
+  0.0
+ ],
+ "luminarias/lum_9": [
+  0.0,
+  0.056,
+  0.0
+ ],
+ "luminarias/lum_90": [
+  0.0,
+  0.456,
+  0.0
+ ],
+ "luminarias/lum_91": [
+  0.0,
+  0.456,
+  0.0
+ ],
+ "luminarias/lum_92": [
+  0.0,
+  0.456,
+  0.0
+ ],
+ "luminarias/lum_93": [
+  0.0,
+  0.456,
+  0.0
+ ],
+ "luminarias/lum_94": [
+  0.0,
+  0.456,
+  0.0
+ ],
+ "luminarias/lum_95": [
+  0.0,
+  0.456,
+  0.0
+ ],
+ "mobilia/corredor2_norte_camera_95": [
+  0.0,
+  0.285,
+  0.0
+ ],
+ "mobilia/hall_principal_tv": [
+  0.0,
+  0.0,
+  0.068
+ ],
+ "mobilia/quarto_105_monitor_l_2": [
+  0.076,
+  0.0,
+  0.0
+ ],
+ "mobilia/uti_monitor_0": [
+  0.0,
+  0.0,
+  -0.096
+ ],
+ "mobilia/uti_monitor_3": [
+  0.0,
+  0.0,
+  -0.096
+ ]
+}

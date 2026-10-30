@@ -12,19 +12,19 @@ PROMPT_TURN_OFF_TV,Turn off TV,Desligar Tv
 PROMPT_ENTER_WORKSHOP,Enter Jimmy's workshop?,Entrar na oficina do Jimmy?
 PROMPT_ENTER_JIMMY_HOUSE,Enter Jimmy's house?,Entrar na casa do Jimmy?
 PROMPT_ENTER_NICE_HOUSE,Enter Ms. Nice's house?,Entrar na casa da Dona Nice?
-NICE_HOUSE_SIGN,Ms. Nice,Sra. Nice
+NICE_HOUSE_SIGN,Ms. Nice,Dona Nice
 NICE_HOUSE_INSCRIPTION,ANTI-LOPES / THE PATH DEMANDS A LIFE,ANTI-LOPES / O CAMINHO EXIGE UMA VIDA
-NICE_HOUSE_NOTE,JONNY - the final offering,JONNY - a última oferenda
-NICE_HOUSE_WALL_RITUAL,SEVEN INNOCENTS OPEN THE VEIL,SETE INOCENTES ABREM O VÉU
+NICE_HOUSE_NOTE,JONNY - the offering,JONNY - a oferenda
+NICE_HOUSE_WALL_RITUAL,ONE INNOCENT OPENS THE VEIL,UM INOCENTE ABRE O VÉU
 NICE_HOUSE_WALL_MIRROR,THE OTHER SIDE IS WATCHING,O OUTRO LADO ESTÁ OLHANDO
 NICE_HOUSE_WALL_BEDROOM,THEY CALL ME IN MY SLEEP,ELES ME CHAMAM ENQUANTO DURMO
 PROMPT_ENTER_MAYCOW_HOUSE,Enter Maycow's house?,Entrar na casa do Maycow?
 PROMPT_ENTER_CHURCH,Enter the church?,Entrar na igreja?
 PROMPT_TAKE_FLASHLIGHT,Take the flashlight?,Pegar a lanterna?
 ITEM_AMULETO_NAME,Gear Amulet,Amuleto da Engrenagem
-ITEM_AMULETO_DESC,"The Gear Amulet, forged by the Calixto family. It warms in the pocket when something from Arorua is close — and it is what drags the enemies over there. R3 (H) takes it off and puts it back on: without it the city is just a city, and the monsters can't see you. Each switch costs magic and tires it for a few seconds.","O Amuleto da Engrenagem, forjado pela família Calixto. Esquenta no bolso quando algo de Arorua está perto — e é ele que arrasta os inimigos para lá. R3 (H) tira e põe o amuleto: sem ele a cidade volta a ser só uma cidade, e os monstros não te enxergam. Cada troca gasta magia e o cansa por alguns segundos."
-PICKUP_AMULETO_PAD,"You now carry the amulet, the gateway to the parallel universe of Arorua. Hold the left shoulder button (LB) to call its vision","Agora você possui o amuleto, o portal para o universo paralelo de Arorua. Segure o botão de ombro esquerdo (LB) para chamar a visão dele"
-PICKUP_AMULETO_KEY,"You now carry the amulet, the gateway to the parallel universe of Arorua. Hold V to call its vision","Agora você possui o amuleto, o portal para o universo paralelo de Arorua. Segure a tecla V para chamar a visão dele"
+ITEM_AMULETO_DESC,"The Gear Amulet, blessed by the gods of the parallel world and taken from one of the sect's rituals. Jimmy gave it to Maycow as a gift. It is what drags the enemies to the other side. R3 (H) takes it off and puts it back on: without it the city is just a city, and the monsters can't see you. Each switch costs magic and tires it for a few seconds.","O Amuleto da Engrenagem, abençoado pelos deuses do mundo paralelo e conquistado num dos cultos da seita. O Jimmy deu de presente ao Maycow. É ele que arrasta os inimigos para o outro lado. R3 (H) tira e põe o amuleto: sem ele a cidade volta a ser só uma cidade, e os monstros não te enxergam. Cada troca gasta magia e o cansa por alguns segundos."
+PICKUP_AMULETO_PAD,"You now carry the amulet, blessed by the gods of the parallel world. Hold LB to call its vision and mark enemies to drag them into the arena. Press R3 to switch between the realities: wearing it, the city shows its shadows and its enemies; without it, the people who live here. Each switch costs a little magic.","Agora você possui o amuleto, abençoado pelos deuses do mundo paralelo. Segure LB para chamar a visão dele e marcar inimigos para levá-los à arena. Aperte R3 para alternar entre as realidades: com ele no pescoço, a cidade mostra as sombras e os inimigos; sem ele, as pessoas que moram aqui. Cada troca gasta um pouco de magia."
+PICKUP_AMULETO_KEY,"You now carry the amulet, blessed by the gods of the parallel world. Hold V to call its vision and mark enemies to drag them into the arena. Press H to switch between the realities: wearing it, the city shows its shadows and its enemies; without it, the people who live here. Each switch costs a little magic.","Agora você possui o amuleto, abençoado pelos deuses do mundo paralelo. Segure V para chamar a visão dele e marcar inimigos para levá-los à arena. Aperte H para alternar entre as realidades: com ele no pescoço, a cidade mostra as sombras e os inimigos; sem ele, as pessoas que moram aqui. Cada troca gasta um pouco de magia."
 AVISO_AMULETO_INDISPONIVEL,The amulet doesn't answer in here,O amuleto não responde aqui dentro
 AVISO_AMULETO_GUARDADO,The amulet is off. Press R3 (H) to put it on,O amuleto está guardado. Aperte R3 (H) para colocá-lo
 AVISO_REALIDADE_ESPERA,The amulet is still recovering (%d s),O amuleto ainda está se recuperando (%d s)
@@ -89,7 +89,7 @@ WITH_POWER_7_8,In his hand was the Cogblade.,Em sua mão estava a Cogblade.
 WITH_POWER_7_9,It bleeds...,Ela sangra...
 UI_HOLD,HOLD,SEGURE
 ITEM_PISTOL_NAME,Pistol,Pistola
-ITEM_PISTOL_DESC,"The Negotiator — heavy pistol left on the altar in Dona Nice's ritual room. Eight in the magazine.","A Negotiator — pistola pesada largada no altar do cômodo do ritual da Dona Nice. Oito no pente."
+ITEM_PISTOL_DESC,"The Negotiator — Jimmy's heavy pistol, kept in the nightstand drawer of his bedroom. Eight in the magazine.","A Negotiator — a pistola pesada do Jimmy, guardada na gaveta do criado-mudo do quarto dele. Oito no pente."
 ITEM_COGBLADE_NAME,Crescent Cogblade,Crescent Cogblade
 ITEM_COGBLADE_DESC,A gear-powered blade.,Uma lâmina de engrenagem.
 ITEM_AMMO_NAME,Pistol Ammo,Balas de Pistola
@@ -114,8 +114,8 @@ CONFIG_LANGUAGE,Language,Idioma
 CONFIG_LANG_PT,Portuguese,Português
 CONFIG_LANG_EN,English,Inglês
 BTN_BACK,Back,Voltar
-LOADING_TEXT_1,Anti-Lopes: Creatures that inhabit the forgotten outskirts.,Anti-Lopes: Criaturas que habitam os arredores esquecidos.
-LOADING_TEXT_2,The Red Valve: The artifact that tore reality.,A Válvula Vermelha: O artefato que rasgou a realidade.
+LOADING_TEXT_1,Anti-Lopes: a hidden sect that gathers in the city's abandoned church.,Anti-Lopes: uma seita oculta que se reúne na igreja abandonada da cidade.
+LOADING_TEXT_2,The Red Valve: the physical passage between our world and the parallel one.,A Red Valve: a passagem física entre o nosso mundo e o paralelo.
 LOADING_TEXT_3,'The Negotiator' Projectile: Made to pierce any armor.,Projétil 'The Negotiator': Feito para perfurar qualquer armadura.
 LOADING_TEXT_4,The Negotiator (V1): A powerful and rustic weapon.,The Negotiator (V1): Uma arma poderosa e rústica.
 LOADING_TEXT_5,The Negotiator (V2): The evolution of firepower.,The Negotiator (V2): A evolução do poder de fogo.
@@ -276,7 +276,7 @@ ESC_SALA_GENERICA,Door,Porta
 ESC_AREA_LAZER,Recreation Yard,Área de Lazer
 ESC_LOUSA_101,Monday\nHOMEWORK: pages 32 to 35\nBring the signed\nfield trip permission slip!,Segunda-feira\nTAREFA: páginas 32 a 35\nTrazer a autorização\nda excursão assinada!
 ESC_LOUSA_102,7 x 8 = 56\n9 x 6 = 54\n12 ÷ 4 = 3\n30 - 1 = 29\n29 - 1 = 28\n28 - 1 = ...\nhow many of us are left?,7 x 8 = 56\n9 x 6 = 54\n12 ÷ 4 = 3\n30 - 1 = 29\n29 - 1 = 28\n28 - 1 = ...\nquantos de nós sobraram?
-ESC_LOUSA_103,TOWN HISTORY\nWhy is the valve red?\nAsk your grandparents.\nDue: Friday,HISTÓRIA DA CIDADE\nPor que a válvula é vermelha?\nPerguntar aos avós.\nEntrega: sexta
+ESC_LOUSA_103,TOWN HISTORY\nWho founded our town?\nAsk your grandparents.\nDue: Friday,HISTÓRIA DA CIDADE\nQuem fundou a nossa cidade?\nPerguntar aos avós.\nEntrega: sexta
 ESC_LOUSA_104,I will not go down to the basement.\nI will not go down to the basement.\nI will not go down to the basement.\nI will not go down to the basement.\nI will not go down to the basement.\nI will not go down to the basement.\nI will not go down to the,Eu não vou descer ao porão.\nEu não vou descer ao porão.\nEu não vou descer ao porão.\nEu não vou descer ao porão.\nEu não vou descer ao porão.\nEu não vou descer ao porão.\nEu não vou descer ao
 ESC_LOUSA_105,TERM EXAM — 4TH GRADE\n1) Complete the sentences.\n2) Draw your family.\n3) Who is standing behind you?,PROVA BIMESTRAL — 4ª SÉRIE\n1) Complete as frases.\n2) Desenhe a sua família.\n3) Quem está atrás de você?
 ESC_LOUSA_106,DICTATION\nhouse · door · window\nstairs · basement · dark\nmom · come back · soon,DITADO\ncasa · porta · janela\nescada · porão · escuro\nmãe · volta · logo
@@ -297,7 +297,7 @@ ESC_PLACA_OCULOS,SAFETY GOGGLES\nREQUIRED,USO OBRIGATÓRIO\nDE ÓCULOS
 ESC_PLACA_DIRETORIA,PRINCIPAL,DIRETORIA
 ESC_PLACA_ATENDIMENTO,OPEN 7 AM TO 11 AM,ATENDIMENTO: 7H ÀS 11H
 ESC_PLACA_DEVOLUCAO,RETURN BOOKS ON TIME,DEVOLVA OS LIVROS NO PRAZO
-ESC_PINTURA_NOME,RED VALVE\nPUBLIC SCHOOL,ESCOLA MUNICIPAL\nRED VALVE
+ESC_PINTURA_NOME,MONTEIRO LOBATO\nPUBLIC SCHOOL,ESCOLA MUNICIPAL\nMONTEIRO LOBATO
 ESC_PINTURA_LEMA,EDUCATION IS THE WAY,EDUCAR É O CAMINHO
 ESC_CARTAZ_ALFABETO,ALPHABET,ALFABETO
 ESC_CARTAZ_TABUADA,TIMES TABLES,TABUADA
@@ -522,8 +522,8 @@ TXT_CHAPTER_2,CHAPTER 2,CAPÍTULO 2
 TXT_CHAPTER_2_SUBTITULO,Ms. Nice,Dona Nice
 OBJ_CAP1_CASA_JIMMY,Go to Jimmy's house and find out where he is.,Vá até a casa do Jimmy e descubra onde ele está.
 OBJ_CAP1_PROCURAR_PISTA,Look around the house for a clue about Jimmy.,Procure alguma pista do Jimmy pela casa.
-OBJ_CAP1_IR_ESCOLA,Jimmy went to pick up Jonny at school. Go to the school.,O Jimmy foi buscar o Jonny na escola. Vá até a escola.
-OBJ_CAP1_ULTIMA_SALA,Look for Jonny in the school's last classroom (Room 107).,Procure o Jonny na última sala da escola (Sala 107).
+OBJ_CAP1_IR_ESCOLA,Jimmy went to pick up Jonny at school. Go to the school: Jonny's classroom is Room 107.,O Jimmy foi buscar o Jonny na escola. Vá até a escola: a sala do Jonny é a 107.
+OBJ_CAP1_ULTIMA_SALA,"Jonny's classroom is Room 107, the last one, on the south corridor. Look for him there.","A sala do Jonny é a 107, a última, no corredor sul. Procure ele lá."
 OBJ_CAP1_CASA_NICE,Ms. Nice took Jonny. Go to her house.,A Dona Nice levou o Jonny. Vá até a casa dela.
 OBJ_CAP1_GRIZZOLITO,Take Grizzolito to the arena with the amulet!,Leve o Grizzolito para a arena com o amuleto!
 OBJ_CAP1_SAIR_ESCOLA,You're trapped inside the school. Find a way out.,Você está preso dentro da escola. Encontre uma forma de sair.
@@ -555,7 +555,7 @@ DIARIO_JIMMY_3_2,"Without the amulet, there is another way to cross. It's writte
 DIARIO_JIMMY_3_3,I got myself into something bigger than me.,Eu me meti numa confusão maior do que eu.
 DIARIO_JIMMY_4_1,"It's almost six o'clock. I have to pick Jonny up at school, NOW.","Já são quase seis horas. Tenho que buscar o Jonny na escola, AGORA."
 DIARIO_JIMMY_4_2,I'm running out. I won't leave him alone for another minute.,Saio correndo. Não deixo ele sozinho nem mais um minuto.
-DIARIO_JIMMY_4_3,If anyone finds this: Jonny is at the school.,Se alguém achar isto: o Jonny está na escola.
+DIARIO_JIMMY_4_3,"If anyone finds this: Jonny is at the school, in Room 107.","Se alguém achar isto: o Jonny está na escola, na sala 107."
 CAP1_107_MAYCOW_1,"Maycow: Good evening... I came to pick up Jonny, Jimmy's son. Is he still here?","Maycow: Boa tarde... Eu vim buscar o Jonny, filho do Jimmy. Ele ainda está aí?"
 CAP1_107_PROF_1,Teacher: Jonny? He left a little while ago.,Professora: O Jonny? Ele já foi embora faz um tempinho.
 CAP1_107_PROF_2,Teacher: Ms. Nice came to get him early today. She said his father had asked her to.,Professora: A Dona Nice veio buscar ele mais cedo hoje. Disse que o pai tinha pedido.
@@ -591,3 +591,10 @@ CAP1_CENA_PORTA_FECHOU,Maycow: It slammed shut... Something is holding it from t
 PROMPT_ESC_PORTA_PRESA,It won't budge. Something is holding it from the courtyard side.,Não se mexe. Alguma coisa a segura do lado do pátio.
 MAP_POI_CALABOUCO,Dungeon,Calabouço
 CAP1_FALA_FRACO_PORTAL,"Maycow: I'm still too weak... That portal won't let me through.","Maycow: Ainda sou fraco demais... Aquele portal não me deixa passar."
+TUTORIAL_COGBLADE_TITULO,THE COGBLADE,A COGBLADE
+TUTORIAL_COGBLADE_PAD,"The Cogblade is a magic item. To fight with it you first have to DRAW it: press the draw button (LB). Once it is in your hand, attack with RT. Holding LB opens its powers.","A Cogblade é um item mágico. Para lutar com ela, primeiro é preciso SACÁ-LA: aperte o botão de sacar (LB). Com ela na mão, ataque com RT. Segurar LB abre os poderes dela."
+TUTORIAL_COGBLADE_KEY,"The Cogblade is a magic item. To fight with it you first have to DRAW it: press the draw key (C). Once it is in your hand, attack with the left mouse button. Holding C opens its powers.","A Cogblade é um item mágico. Para lutar com ela, primeiro é preciso SACÁ-LA: aperte a tecla de sacar (C). Com ela na mão, ataque com o botão esquerdo do mouse. Segurar C abre os poderes dela."
+TUTORIAL_COGBLADE_ACAO_PAD,Press LB to draw the Cogblade,Aperte LB para sacar a Cogblade
+TUTORIAL_COGBLADE_ACAO_KEY,Press C to draw the Cogblade,Aperte C para sacar a Cogblade
+DEBUG_LOCAL_JIMMY_SALA,Jimmy's house — dining room,Casa do Jimmy — sala de jantar
+DEBUG_LOCAL_JIMMY_Q2,Jimmy's house — bedroom 2,Casa do Jimmy — quarto 2

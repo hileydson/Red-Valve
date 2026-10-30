@@ -68,6 +68,19 @@ MOVER = {
     'cadeira_caida_q3': (13.35, 0.33, 13.55, None),
     # o criado-mudo do q3 (a gaveta com a pistola do Jimmy) flutuava a 25 cm
     'criado_mudo_q3': (10.25, 0.0, 10.95, None),
+    # quadros, espelhos e prateleiras que ficavam a centímetros da parede, no ar
+    # (2026-10-29, achados por red-valve/tools/flutuantes/achar.gd)
+    'quadro_estar': (0.204, 1.650, 5.600, None),
+    # os livros do q2 ficavam 9 cm acima do móvel embaixo deles
+    'livros_q2': (8.05, 0.928, 14.3, None),
+    'quadro_estar_2': (6.900, 2.000, 0.202, None),
+    'planta_parede_sala': (12.896, 2.150, 5.900, None),
+    'quadro_sala': (7.702, 2.000, 5.300, None),
+    'espelho_corredor_2': (18.400, 1.600, 7.304, None),
+    'quadro_corredor_2': (12.000, 2.000, 7.302, None),
+    'quadro_corredor_3': (9.500, 2.000, 10.098, None),
+    'prateleirinha_q1': (3.900, 1.150, 10.304, None),
+    'quadro_torto_q3': (10.400, 1.600, 14.796, None),
     # banheiro: o cesto fechava o caminho até o vaso
     'cesto_banheiro': (19.5, 0.0, 14.45, None),
 }

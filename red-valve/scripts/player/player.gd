@@ -616,8 +616,10 @@ var amulet_hud_icon: TextureRect
 # dois Maycows e o aim assist), o que fazia mexer num só sair pela culatra: a
 # mira descia mais que a câmera, ou o controle mais que o mouse. Agora todos
 # leem daqui, então mouse e controle são obrigatoriamente iguais.
-@export var PITCH_MIN_3P: float = -32.0  # era -25: desce um pouco mais
-@export var PITCH_MAX_3P: float = 20.0
+# 3P é o Maycow normal. 2026-10-29: "olhar mais pra cima" (20 -> 28) e 15% a
+# mais pra baixo (-32 -> -36,8).
+@export var PITCH_MIN_3P: float = -36.8  # era -25, depois -32
+@export var PITCH_MAX_3P: float = 28.0   # era 20
 @export var PITCH_MIN_1P: float = -70.0  # era -60: desce um pouco mais
 @export var PITCH_MAX_1P: float = 60.0
 
@@ -833,6 +835,16 @@ const LANTERNA_SWAY_MAX := 0.09
 var lanterna_ligada: bool = false
 var _lanterna_som: AudioStreamPlayer = null
 
+## A camada de render (20) do CORPO do Maycow. A lanterna nasce à frente do
+## peito, mas o braço e a mão balançando na corrida passavam na frente da
+## fonte: a sombra deles cobria o facho e a luz piscava. O corpo vai pra esta
+## camada e o facho não a usa pra sombra (`shadow_caster_mask`) — câmeras e as
+## outras luzes enxergam todas as camadas, então nada mais muda.
+const CAMADA_CORPO := 1 << 19
+## Cenas onde a lanterna NÃO entra acesa por padrão (o resto entra acesa se
+## ela estiver no inventário).
+const CENAS_LANTERNA_APAGADA := ["inferno_4"]
+
 ## O som de sacar: toca quando uma arma de fogo passa a estar na mão (atalho do
 ## direcional ou "Equipar" no menu — este, ao fechar o menu, que é quando o
 ## jogo volta a andar). `_arma_na_mao_antes` começa em "?" para não tocar ao
@@ -880,6 +892,7 @@ func _configurar_lanterna() -> void:
 	lanterna.shadow_bias = 0.04
 	lanterna.shadow_normal_bias = 1.4
 	lanterna.distance_fade_enabled = false
+	lanterna.shadow_caster_mask = 0xFFFFFFFF & ~CAMADA_CORPO
 	lanterna.visible = false
 	lanterna_ligada = false
 
@@ -951,6 +964,8 @@ func alternar_lanterna() -> void:
 		return
 	lanterna_ligada = not lanterna_ligada
 	lanterna.visible = lanterna_ligada
+	if lanterna_ligada:
+		_tirar_corpo_da_sombra_da_lanterna()
 	if is_instance_valid(_lanterna_som) and _lanterna_som.stream:
 		# variação pequena no pitch a cada clique: dois cliques idênticos
 		# seguidos soam gravados, e este é um som que o jogador vai ouvir muito
@@ -982,10 +997,36 @@ func _vigiar_arma_sacada() -> void:
 	_som_sacar.play()
 
 
+## Entrou num lugar: com a lanterna no inventário ela já vem acesa (menos nas
+## `CENAS_LANTERNA_APAGADA`). Deferido porque é o `_ready` da CENA, que roda
+## depois do deste nó, quem diz se este é o Maycow normal.
+func _lanterna_ao_entrar() -> void:
+	_tirar_corpo_da_sombra_da_lanterna()
+	if not GlobalEvents.is_maycow_normal or not SaveManager.tem_item(LANTERNA_ITEM):
+		return
+	var cena := get_tree().current_scene
+	var caminho := cena.scene_file_path if cena else ""
+	for nome in CENAS_LANTERNA_APAGADA:
+		if caminho.contains(nome):
+			return
+	acender_lanterna_agora()
+
+
+## Põe toda malha do Maycow na `CAMADA_CORPO` (ver lá). Repetido ao acender,
+## porque arma e efeito entram no corpo depois do `_ready`.
+func _tirar_corpo_da_sombra_da_lanterna() -> void:
+	for no in find_children("*", "GeometryInstance3D", true, false):
+		var g := no as GeometryInstance3D
+		if g.is_ancestor_of(lanterna) or g == lanterna:
+			continue
+		g.layers = CAMADA_CORPO
+
+
 ## Chamado quando o jogador acaba de pegar a lanterna: já entra acesa.
 func acender_lanterna_agora() -> void:
 	if not is_instance_valid(lanterna):
 		return
+	_tirar_corpo_da_sombra_da_lanterna()
 	lanterna_ligada = true
 	lanterna.visible = true
 
@@ -1319,6 +1360,7 @@ func _exit_tree() -> void:
 func _ready():
 	_sincroniza_flags_de_teste()
 	_configurar_lanterna()
+	_lanterna_ao_entrar.call_deferred()
 
 	$CollisionShape3D.scale = Vector3(1, 1, 1) # Corrigir colisão oval travando nas quinas
 		

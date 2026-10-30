@@ -186,10 +186,15 @@ def emitir_portao(fac):
               E.PORTAO_TOPO, E.FOLHA_Z0, E.FOLHA_Z1, 2.4)
     colisoes.append((E.X0 - 0.30, E.X0 + E.ESP, E.FOLHA_TOPO, E.PORTAO_TOPO,
                      E.FOLHA_Z0, E.FOLHA_Z1))
-    # a folha: duas chapas
+    # a folha: duas chapas, FECHADAS. Com 3 cm de folga em cada borda sobrava
+    # um rasgo de 6 cm no meio (e frestas nas ombreiras) e, como atras desta
+    # casca nao ha' patio, o portao lia como entreaberto (2026-10-29).
     for (za, zb) in ((E.FOLHA_Z0, E.PORTAO_Z), (E.PORTAO_Z, E.FOLHA_Z1)):
         fac.caixa("fac_metal", E.X0 - 0.04, E.X0 + 0.06, E.CHAO + 0.04,
-                  E.FOLHA_TOPO, za + 0.03, zb - 0.03, 1.6)
+                  E.FOLHA_TOPO, za, zb - 0.004 if zb == E.PORTAO_Z else zb, 1.6)
+    # o mata-junta: a tira que cobre o encontro das duas folhas, por fora
+    fac.caixa("fac_metal", E.X0 - 0.07, E.X0 - 0.04, E.CHAO + 0.04,
+              E.FOLHA_TOPO, E.PORTAO_Z - 0.05, E.PORTAO_Z + 0.05, 1.6)
     colisoes.append((E.X0 - 0.10, E.X0 + 0.10, E.CALCADA_Y[0], E.FOLHA_TOPO,
                      E.FOLHA_Z0, E.FOLHA_Z1))
     return colisoes

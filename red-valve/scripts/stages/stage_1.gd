@@ -201,6 +201,9 @@ func setup_player_spawn() -> void:
 		if jogador and saida:
 			jogador.global_position = saida.global_position
 			jogador.global_rotation.y = saida.global_rotation.y
+			# O marcador fica rente à base da casa e o terreno ali sobe: sem o
+			# raio, o jogador nascia dentro do chão e caía pro infinito.
+			_pousar_no_chao.call_deferred(jogador, saida.global_position)
 	elif GlobalEvents.voltando_da_casa_nice:
 		GlobalEvents.voltando_da_casa_nice = false
 		var saida_nice := get_node_or_null(NO_CASA_NICE + "/ponto_de_saida") as Marker3D
@@ -710,7 +713,9 @@ func _devolver_ao_portao_da_escola() -> void:
 		return
 	_ignorar_prompt_escola = true
 	jogador.global_position = saida.global_position
-	jogador.global_rotation.y = saida.global_rotation.y
+	# O marcador olha pro portão (de costas pra rua); quem sai da escola sai
+	# de frente pra rua.
+	jogador.global_rotation.y = saida.global_rotation.y + PI
 	_pousar_no_chao.call_deferred(jogador, saida.global_position)
 
 

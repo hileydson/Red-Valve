@@ -47,8 +47,8 @@ TEXTOS = {
         "7 x 8 = 56\\n9 x 6 = 54\\n12 ÷ 4 = 3\\n30 - 1 = 29\\n29 - 1 = 28\\n28 - 1 = ...\\nhow many of us are left?",
         "7 x 8 = 56\\n9 x 6 = 54\\n12 ÷ 4 = 3\\n30 - 1 = 29\\n29 - 1 = 28\\n28 - 1 = ...\\nquantos de nós sobraram?"),
     "ESC_LOUSA_103": (
-        "TOWN HISTORY\\nWhy is the valve red?\\nAsk your grandparents.\\nDue: Friday",
-        "HISTÓRIA DA CIDADE\\nPor que a válvula é vermelha?\\nPerguntar aos avós.\\nEntrega: sexta"),
+        "TOWN HISTORY\\nWho founded our town?\\nAsk your grandparents.\\nDue: Friday",
+        "HISTÓRIA DA CIDADE\\nQuem fundou a nossa cidade?\\nPerguntar aos avós.\\nEntrega: sexta"),
     "ESC_LOUSA_104": (
         "I will not go down to the basement.\\nI will not go down to the basement.\\n"
         "I will not go down to the basement.\\nI will not go down to the basement.\\n"
@@ -91,7 +91,7 @@ TEXTOS = {
     "ESC_PLACA_DIRETORIA": ("PRINCIPAL", "DIRETORIA"),
     "ESC_PLACA_ATENDIMENTO": ("OPEN 7 AM TO 11 AM", "ATENDIMENTO: 7H ÀS 11H"),
     "ESC_PLACA_DEVOLUCAO": ("RETURN BOOKS ON TIME", "DEVOLVA OS LIVROS NO PRAZO"),
-    "ESC_PINTURA_NOME": ("RED VALVE\\nPUBLIC SCHOOL", "ESCOLA MUNICIPAL\\nRED VALVE"),
+    "ESC_PINTURA_NOME": ("MONTEIRO LOBATO\\nPUBLIC SCHOOL", "ESCOLA MUNICIPAL\\nMONTEIRO LOBATO"),
     "ESC_PINTURA_LEMA": ("EDUCATION IS THE WAY", "EDUCAR É O CAMINHO"),
 
     # ------------------------------------------------------------------

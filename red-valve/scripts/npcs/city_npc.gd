@@ -340,6 +340,9 @@ func _camera_agora() -> Vector3:
 ## conversa, voltar pra rua) e desejavel. Enquanto ele nao esta parado, o
 ## comportamento e o de sempre, e a unica coisa a mais e a chance de decidir ir
 ## pra um ponto.
+var _preso_no_ponto := 0.0
+
+
 func _physics_process(delta: float) -> void:
 	if not usa_pontos_de_parada or _parada == Parada.NENHUMA:
 		super._physics_process(delta)
@@ -361,6 +364,13 @@ func _physics_process(delta: float) -> void:
 				_chegou_no_ponto()
 			elif _parada_relogio <= 0.0:
 				_soltar_ponto()          # nao achou caminho; volta a vagar
+			elif is_on_wall() and Vector2(get_real_velocity().x, get_real_velocity().z).length() < walk_speed * 0.3:
+				# de cara pra parede a caminho do banco: desiste ja', sem
+				# esperar o relogio
+				_preso_no_ponto += delta
+				if _preso_no_ponto > 0.6:
+					_preso_no_ponto = 0.0
+					_soltar_ponto()
 		Parada.PARADO:
 			velocity.x = move_toward(velocity.x, 0.0, walk_speed * 8.0 * delta)
 			velocity.z = move_toward(velocity.z, 0.0, walk_speed * 8.0 * delta)

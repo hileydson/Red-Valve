@@ -743,6 +743,8 @@ const DEBUG_ARQUIVOS_POR_CAPITULO := {
 const DEBUG_PICKUPS_POR_CAPITULO := {
 	1: [["pickup_pistol", "DEBUG_EVENT_PICKUP_PISTOL", "casa_jimmy_pistola_gaveta"],
 		["pickup_jimmy_ammo", "DEBUG_EVENT_PICKUP_JIMMY_AMMO", "casa_jimmy_municao_gaveta"],
+		["pickup_jimmy_ammo_2", "DEBUG_PICKUP_MUNICAO_EM", "casa_jimmy_municao_aparador", "DEBUG_LOCAL_JIMMY_SALA"],
+		["pickup_jimmy_ammo_3", "DEBUG_PICKUP_MUNICAO_EM", "casa_jimmy_municao_q2", "DEBUG_LOCAL_JIMMY_Q2"],
 		["pickup_esc_101", "DEBUG_PICKUP_MUNICAO_EM", "escola_municao_101", "ESC_SALA_101"],
 		["pickup_esc_secretaria", "DEBUG_PICKUP_MUNICAO_EM", "escola_municao_secretaria", "ESC_SALA_SECRETARIA"],
 		["pickup_esc_biblioteca", "DEBUG_PICKUP_MUNICAO_EM", "escola_municao_biblioteca", "ESC_SALA_BIBLIOTECA"],

@@ -26,6 +26,7 @@ sao o mesmo arquivo, instanciado N vezes.
 """
 
 import hashlib
+import json
 import math
 import os
 import sys
@@ -55,6 +56,19 @@ LIMITE_LUZ = 8
 # ==========================================================================
 # ferramentas de texto do .tscn
 # ==========================================================================
+
+
+def _encostos():
+    """{no: (dx, dy, dz)}: o quanto encostar cada peca que sairia flutuando
+    (monitor a 10 cm da parede, luminaria a 6 cm do forro...). Sai de
+    `red-valve/tools/flutuantes/achar.gd` na cena gerada; fica em
+    `encostos.json` ao lado deste arquivo e e' reaplicado a cada geracao.
+    """
+    caminho = os.path.join(os.path.dirname(os.path.abspath(__file__)), "encostos.json")
+    if not os.path.exists(caminho):
+        return {}
+    with open(caminho) as f:
+        return {k: tuple(v) for k, v in json.load(f).items()}
 
 def v3(v):
     return "Vector3(%s)" % ", ".join("%.4f" % c for c in v)
@@ -830,12 +844,16 @@ def escrever_cena(cena_gltf, setores, colisoes, props, portas, plano_luz,
        props_=[("collision_layer", "2"), ("collision_mask", "0")])
     usados = set()
     n_bloqueio = 0
+    encostos = _encostos()
     for i, p in enumerate(props):
         nome = "%s_%s" % (p["sala"], p["nome"])
         if nome in usados:
             nome += "_%d" % i
         usados.add(nome)
         y = p["y"] + p.get("dy", 0.0)
+        ex, ey, ez = encostos.get("mobilia/" + nome, (0.0, 0.0, 0.0))
+        p = dict(p, x=p["x"] + ex, z=p["z"] + ez)
+        y += ey
         if p["tipo"].startswith("caixas"):
             id_peca = peca(p["arquivo"])
         else:
@@ -874,8 +892,10 @@ def escrever_cena(cena_gltf, setores, colisoes, props, portas, plano_luz,
     no("luminarias", tipo="Node3D", pai=".")
     for i, lum in enumerate(lista_luminarias):
         giro = 0.0 if lum["eixo"] == "x" else math.pi * 0.5
+        ex, ey, ez = encostos.get("luminarias/lum_%d" % i, (0.0, 0.0, 0.0))
+        pos_l = (lum["pos"][0] + ex, lum["pos"][1] + ey, lum["pos"][2] + ez)
         no("lum_%d" % i, pai="luminarias", instancia=peca(lum["arquivo"]),
-           props_=[("transform", transform_pos(lum["pos"], giro))])
+           props_=[("transform", transform_pos(pos_l, giro))])
 
     # ---- cones de luz (o "volumetrico" possivel no renderer mobile)
     no("cones", tipo="Node3D", pai=".")
@@ -1414,7 +1434,8 @@ def _emitir_elevador(no, peca, forma, arquivos, id_script):
 
     no("painel", pai="elevador/cabine",
        instancia=peca(arquivos["painel"]),
-       props_=[("transform", transform_pos((-CABINE_L * 0.5 + 0.22, 0.0,
+       # 0,154 (era 0,22): o painel encosta na parede da cabine
+       props_=[("transform", transform_pos((-CABINE_L * 0.5 + 0.154, 0.0,
                                             CABINE_PORTA_L * 0.5 + 0.55)))])
     no("luz_cabine", tipo="OmniLight3D", pai="elevador/cabine",
        props_=[("transform", transform_pos((0.0, CABINE_H - 0.35, 0.0))),

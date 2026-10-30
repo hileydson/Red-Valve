@@ -4,6 +4,9 @@
     blender --background --factory-startup \
         --python tools/blender/cenarios/achar_flutuantes.py -- inferno_2
 
+Um 2o argumento opcional soma prefixos de setor que tambem sao chao, pra
+cenario que nao chama o piso de `chao` (a arena 3: `-- arena_3 praca`).
+
 O argumento e' a pasta do gerador em tools/blender (`gerar_<pasta>.py`).
 Roda o gerador inteiro, anota cada peca que entra nas malhas (com a linha do
 gerador que a criou) e separa em componentes conexos. Imprime:
@@ -30,6 +33,8 @@ from mathutils import Vector
 from mathutils.bvhtree import BVHTree
 
 ALVO = sys.argv[sys.argv.index("--") + 1]
+_ARGS = sys.argv[sys.argv.index("--") + 1:]
+CHAO_EXTRA = tuple(_ARGS[1].split(",")) if len(_ARGS) > 1 else ()
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(RAIZ, ALVO))
 sys.path.insert(0, os.path.join(RAIZ, "cenarios"))
@@ -108,7 +113,7 @@ def amostra(vs, k=40):
 
 
 def eh_chao(setor):
-    return setor.startswith("chao") or setor.startswith("lava")
+    return setor.startswith(("chao", "lava") + CHAO_EXTRA)
 
 
 chao_v, chao_f = [], []
