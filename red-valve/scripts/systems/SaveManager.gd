@@ -912,6 +912,19 @@ func add_iron_rusks(amount: int) -> void:
 	iron_rusks += amount
 	iron_rusks_pending += amount
 
+
+## Avisa o contador da HUD (a animação de gasto). `restam` já é o saldo novo.
+signal iron_rusks_gastos(qtd: int, restam: int)
+
+## Paga `qtd` iron rusks. Sem saldo não gasta nada e devolve false.
+func gastar_iron_rusks(qtd: int) -> bool:
+	if qtd <= 0 or iron_rusks < qtd:
+		return false
+	iron_rusks -= qtd
+	iron_rusks_display = maxi(iron_rusks_display - qtd, 0)
+	iron_rusks_gastos.emit(qtd, iron_rusks)
+	return true
+
 ## As listas em que este item mora.
 ##
 ## Quase todo item vive so' no inventario da forma atual (`inventory`); os de

@@ -488,6 +488,12 @@ func _setup_iron_rusks_hud() -> void:
 	iron_rusks_layer.value_label = value_label
 	iron_rusks_layer.caption_label = caption_label
 
+	# sem o amuleto o contador cresce, treme e pinga sangue (a cidade cobra)
+	var efeito = load("res://scripts/ui/iron_rusks_realidade.gd").new()
+	efeito.value_label = value_label
+	efeito.camada = iron_rusks_layer
+	iron_rusks_layer.add_child(efeito)
+
 	player.add_child(iron_rusks_layer)
 	player.iron_rusks_value_label = value_label
 

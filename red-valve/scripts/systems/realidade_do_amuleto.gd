@@ -47,11 +47,14 @@ const ALTURA_ONDA := 14.0
 ## cena tinha.
 const HORA_SEM_AMULETO := 19.0
 const AMBIENTE_SEM_AMULETO := 1.25
-## A troca cansa o amuleto: depois de uma, a proxima so' depois desta espera
-## (segundos de relogio de parede, pra pausa e camera lenta nao mexerem nela).
-const ESPERA_ENTRE_TROCAS := 15.0
-## E cada troca gasta esta fracao da magia maxima — que nao volta sozinha.
-const CUSTO_MAGIA := 0.15
+## O preco de ficar SEM o amuleto (a cidade de gente): tirar custa
+## CUSTO_TIRAR iron rusks, e cada INTERVALO_COBRANCA segundos fora custa
+## mais CUSTO_POR_INTERVALO. Zerou, o amuleto volta sozinho
+## (`player.gd._cobrar_realidade`). Pôr de volta é de graça: o normal da
+## cidade é com ele.
+const CUSTO_TIRAR := 1
+const CUSTO_POR_INTERVALO := 1
+const INTERVALO_COBRANCA := 10.0
 
 ## A onda de agora (lida pelos objetos da cidade).
 static var onda_ativa: bool = false
@@ -61,7 +64,8 @@ static var _em_curso: bool = false
 static var _mat_sombra: ShaderMaterial
 static var _cache_quadro: int = -1
 static var _cache_oculto: bool = false
-static var _proxima_troca_ms: int = 0
+## Segundos sem o amuleto desde a última cobrança (zera a cada troca).
+static var relogio_cobranca: float = 0.0
 
 var para_normal: bool = false
 ## Onde o Maycow estava no aperto: a onda nasce aqui. Vem antes do add_child —
@@ -130,31 +134,28 @@ static func em_outra_realidade(no: Object) -> bool:
 
 # ============================================================ a troca
 
-## Quantos segundos faltam pra poder trocar de novo (0 = ja' pode).
-static func segundos_para_trocar() -> int:
-	return maxi(ceili((_proxima_troca_ms - Time.get_ticks_msec()) / 1000.0), 0)
-
-
-## Tem magia pra pagar uma troca?
-static func magia_para_trocar() -> bool:
-	return SaveManager.current_mp + 0.001 >= SaveManager.max_mp * CUSTO_MAGIA
+## Tem iron rusks pra tirar o amuleto?
+static func rusks_para_tirar() -> bool:
+	return SaveManager.iron_rusks >= CUSTO_TIRAR
 
 
 ## Aperto do R3 / H. Tira ou poe o amuleto e solta a onda. Devolve false se
-## nao deu (prologo, fora da cidade, sem o amuleto, troca em andamento, ainda
-## na espera, sem magia).
+## nao deu (prologo, fora da cidade, sem o amuleto, troca em andamento, sem
+## iron rusks pra tirar).
 static func alternar(arvore: SceneTree) -> bool:
 	if _em_curso or not SaveManager.pode_alternar_realidade():
 		return false
-	if segundos_para_trocar() > 0 or not magia_para_trocar():
+	var tirando: bool = SaveManager.amuleto_equipado
+	if tirando and not rusks_para_tirar():
 		return false
 	var player := arvore.get_first_node_in_group("player") as Node3D
 	var cena := arvore.current_scene
 	if player == null or cena == null:
 		return false
+	if tirando:
+		SaveManager.gastar_iron_rusks(CUSTO_TIRAR)
 	SaveManager.amuleto_equipado = not SaveManager.amuleto_equipado
-	SaveManager.current_mp = maxf(SaveManager.current_mp - SaveManager.max_mp * CUSTO_MAGIA, 0.0)
-	_proxima_troca_ms = Time.get_ticks_msec() + int(ESPERA_ENTRE_TROCAS * 1000.0)
+	relogio_cobranca = 0.0
 	_cache_quadro = -1
 	var n = (load(_EU) as GDScript).new()
 	n.name = "troca_de_realidade"

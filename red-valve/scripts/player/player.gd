@@ -147,8 +147,10 @@ static func is_infinite_stamina_debug() -> bool:
 ## casa nao cansa. O gasto so' liga com inimigo vivo por perto ou dentro da
 ## arena (ver `_atualizar_combate`).
 func _stamina_infinita() -> bool:
-	# levando o Jonny pro hospital o Maycow normal nao cansa
-	return infinite_stamina_test or _stamina_infinita_na_sessao or not _em_combate or carregando_jonny
+	# levando o Jonny pro hospital o Maycow normal nao cansa; sem o amuleto
+	# (a cidade de gente, que ja' cobra iron rusk) tambem nao
+	return infinite_stamina_test or _stamina_infinita_na_sessao or not _em_combate or carregando_jonny \
+		or SaveManager.realidade_normal()
 
 
 # --- Estamina so' em combate ---
@@ -944,16 +946,32 @@ func alternar_realidade() -> void:
 	if Realidade.alternar(get_tree()):
 		return
 	if SaveManager.pode_alternar_realidade():
-		var espera := Realidade.segundos_para_trocar()
-		if espera > 0:
-			GlobalUtils.mostrar_aviso_no_mapa(tr("AVISO_REALIDADE_ESPERA") % espera)
-		elif not Realidade.magia_para_trocar():
-			GlobalUtils.mostrar_aviso_no_mapa(tr("AVISO_REALIDADE_SEM_MAGIA"))
-			mostrar_magia()
+		if SaveManager.amuleto_equipado and not Realidade.rusks_para_tirar():
+			GlobalUtils.mostrar_aviso_no_mapa(tr("AVISO_REALIDADE_SEM_RUSKS"))
 		return
 	var capitulo_1: bool = SaveManager.prolog_finished or GlobalEvents.entering_chapter_1
 	if capitulo_1 and SaveManager.tem_item("amuleto") and not SaveManager.na_cidade():
 		GlobalUtils.mostrar_aviso_no_mapa(tr("AVISO_AMULETO_INDISPONIVEL"))
+
+
+## Sem o amuleto a cidade cobra: 1 iron rusk a cada INTERVALO_COBRANCA
+## segundos de jogo (pausa e cutscene não contam). Zerou, o amuleto volta
+## sozinho — com a mesma onda do R3.
+func _cobrar_realidade(delta: float) -> void:
+	if not GlobalEvents.is_maycow_normal or not SaveManager.realidade_normal():
+		return
+	if GlobalEvents.in_cutscene or GlobalUtils.in_cinematic_cutscene:
+		return
+	if SaveManager.iron_rusks <= 0:
+		Realidade.alternar(get_tree())   # recusa só se uma onda ainda corre
+		return
+	Realidade.relogio_cobranca += delta
+	if Realidade.relogio_cobranca < Realidade.INTERVALO_COBRANCA:
+		return
+	Realidade.relogio_cobranca -= Realidade.INTERVALO_COBRANCA
+	SaveManager.gastar_iron_rusks(Realidade.CUSTO_POR_INTERVALO)
+	if SaveManager.iron_rusks <= 0:
+		Realidade.alternar(get_tree())
 
 
 ## Liga/desliga. Sem o item no inventário não acontece nada — é o que impede o
@@ -1628,6 +1646,7 @@ func _physics_process(delta: float) -> void:
 
 	_atualizar_mira_lanterna(delta)
 	_vigiar_arma_sacada()
+	_cobrar_realidade(delta)
 	
 	if damage_blur_timer > 0.0:
 		damage_blur_timer -= delta
