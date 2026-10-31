@@ -14,6 +14,9 @@ extends "res://scripts/cutscenes/cutscene_cap1.gd"
 ## do braço quadro a quadro. A cabeça mira o amuleto pelo mesmo modificador.
 ##
 ## Quem chama: `inferno_4.gd`, ao pegar a chama (o selecionável do altar).
+## O púlpito do cemitério (Capítulo 3) roda a MESMA cena com a chama
+## vermelha: `evento` e `cor_aura` dizem qual poder é e de que cor o amuleto
+## brilha quando a chama entra nele.
 
 const PoseApontada := preload("res://scripts/cutscenes/pose_apontada.gd")
 const AuraDoAmuleto := preload("res://scripts/systems/aura_do_amuleto.gd")
@@ -31,6 +34,10 @@ const TAMANHO_AMULETO := 0.075
 const PALMA := 0.07
 
 var chama: Node3D
+## O evento que a chama conclui (e que libera o poder).
+var evento: String = Eventos.CAP1_AURA_AMULETO
+## A cor do brilho no amuleto quando a chama entra (alfa 0 = o roxo da aura).
+var cor_aura: Color = Color(0, 0, 0, 0)
 ## Onde a chama flutuava: se a cena cair antes dela entrar no amuleto, volta.
 var _chama_origem := Vector3.ZERO
 var _pose: SkeletonModifier3D
@@ -169,8 +176,11 @@ func _gesto() -> void:
 	await esperar(0.45)
 	clarao(0.35, 0.5)
 	if is_instance_valid(_amuleto):
-		AuraDoAmuleto.vestir(_amuleto, true)
-	Eventos.concluir(Eventos.CAP1_AURA_AMULETO)
+		if cor_aura.a > 0.0:
+			AuraDoAmuleto.vestir(_amuleto, true, false, cor_aura, cor_aura.lerp(Color.WHITE, 0.45))
+		else:
+			AuraDoAmuleto.vestir(_amuleto, true)
+	Eventos.concluir(evento)
 	await esperar(0.5)
 	if not vale():
 		return
@@ -249,6 +259,9 @@ func _montar_amuleto() -> void:
 	var fator := TAMANHO_AMULETO / maior if maior > 0.0 else 0.24
 	modelo.scale = Vector3.ONE * fator
 	modelo.position = -caixa.get_center() * fator
+	# a chama de outro poder: o amuleto já sai do bolso com a aura de antes
+	if evento != Eventos.CAP1_AURA_AMULETO and Eventos.amuleto_com_aura():
+		AuraDoAmuleto.vestir(_amuleto, true)
 	_amuleto.visible = false
 
 
@@ -259,7 +272,7 @@ func _soltar() -> void:
 		_amuleto.queue_free()
 	# a cena caiu antes da chama entrar no amuleto: ela volta pro altar e
 	# continua lá pra ser pega (o dono religa a seleção)
-	if is_instance_valid(chama) and not Eventos.amuleto_com_aura():
+	if is_instance_valid(chama) and not Eventos.feito(evento):
 		chama.global_position = _chama_origem
 
 

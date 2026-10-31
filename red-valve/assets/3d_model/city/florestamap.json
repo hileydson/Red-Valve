@@ -1,0 +1,8 @@
+{
+ "nota": "recorte da FLORESTA do Capítulo 3 (a leste da cidade, além da borda do citymap); a textura é desenhada em runtime por scripts/stages/stage_1/mapa_da_floresta.gd",
+ "nome": "MAP_FLORESTA",
+ "mundo_x0": 880.0,
+ "mundo_z0": -450.0,
+ "tamanho_m": 440.0,
+ "pontos": []
+}

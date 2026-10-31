@@ -526,6 +526,8 @@ func get_slots_info() -> Array:
 							ch = "TXT_CHAPTER_2"
 						if (data.get("eventos_concluidos", []) as Array).has("cap2_concluido"):
 							ch = "TXT_CHAPTER_3"
+						if (data.get("eventos_concluidos", []) as Array).has("cap3_concluido"):
+							ch = "TXT_CHAPTER_4"
 						info.append({"empty": false, "slot": i, "chapter": ch,
 							"local": nome_do_local(str(data.get("current_stage", ""))),
 							"iron_rusks": int(data.get("iron_rusks", 0))})
@@ -577,6 +579,7 @@ const CENA_DE_PASSAGEM := "battlefield"
 ## O mapa da cidade. E pra ca que se volta quando o checkpoint gravado nao serve.
 const CENA_CIDADE := "res://scenes/stages/stage_1/stage_1.tscn"
 const CENA_ESCOLA := "res://scenes/stages/escola/escola.tscn"
+const CENA_CEMITERIO := "res://scenes/stages/cemiterio/cemiterio.tscn"
 
 
 ## Esta cena pode ser gravada como o ponto pra onde o "Carregar" leva?
@@ -1094,7 +1097,7 @@ func amuleto_disponivel() -> bool:
 		return false
 	if not amuleto_equipado and _capitulo_1():
 		return false
-	return na_cidade() or _na_quadra_contra_o_grizzolito()
+	return na_cidade() or _na_quadra_contra_o_grizzolito() or _no_cemiterio_contra_a_drizzi()
 
 
 ## A excecao do Capitulo 1: na escola escura, enquanto o Grizzolito esta' vivo,
@@ -1103,6 +1106,13 @@ func amuleto_disponivel() -> bool:
 func _na_quadra_contra_o_grizzolito() -> bool:
 	var cena := get_tree().current_scene if is_inside_tree() else null
 	return cena != null and cena.scene_file_path == CENA_ESCOLA and Eventos.luta_grizzolito()
+
+
+## A do Capitulo 3: o cemiterio e' a ceu aberto, e durante a luta com a Drizzi
+## monstro o amuleto vale — da' pra leva-la pra arena, se ele quiser.
+func _no_cemiterio_contra_a_drizzi() -> bool:
+	var cena := get_tree().current_scene if is_inside_tree() else null
+	return cena != null and cena.scene_file_path == CENA_CEMITERIO and Eventos.luta_drizzi()
 
 
 func na_cidade() -> bool:

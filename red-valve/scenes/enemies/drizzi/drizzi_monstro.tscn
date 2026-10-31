@@ -1,0 +1,39 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/drizzi/drizzi_monstro.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://assets/3d_model/npc/drizzi/drizzi_monstro.glb" id="2_modelo"]
+
+[sub_resource type="CapsuleShape3D" id="corpo"]
+radius = 0.75
+height = 2.3
+
+[node name="drizzi_monstro" type="CharacterBody3D" groups=["enemies"]]
+editor_description = "Drizzi Wisny monstro, a chefe do cemiterio (Capitulo 3). Flutua; poeira da boca, orgao das tripas, se enterra e sai noutro canto; cai com 15%. O modelo e' medido e escalado no _ready (ALTURA). Clipes em tools/blender/drizzi/anim_drizzi_monstro.py. Frente = +Z."
+collision_layer = 4
+collision_mask = 0
+script = ExtResource("1_script")
+
+[node name="forma" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.45, 0)
+shape = SubResource("corpo")
+
+[node name="visual" type="Node3D" parent="."]
+
+[node name="modelo" parent="visual" instance=ExtResource("2_modelo")]
+
+[node name="sons" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+
+[node name="voz" type="AudioStreamPlayer3D" parent="sons"]
+volume_db = 3.0
+max_distance = 55.0
+
+[node name="golpe" type="AudioStreamPlayer3D" parent="sons"]
+max_distance = 30.0
+
+[node name="dano" type="AudioStreamPlayer3D" parent="sons"]
+max_distance = 30.0
+
+[node name="respira" type="AudioStreamPlayer3D" parent="sons"]
+volume_db = -6.0
+max_distance = 18.0

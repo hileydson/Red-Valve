@@ -126,6 +126,7 @@ CONFIG_TAB_VIDEO,Video,Vídeo
 CONFIG_TAB_DEBUG,Debug Events,Debug Eventos
 CONFIG_DEBUG_INFINITE_HP,Infinite HP,Vida infinita
 CONFIG_DEBUG_INFINITE_STAMINA,Infinite stamina,Estamina infinita
+CONFIG_DEBUG_CORRIDA_DOBRADA,Double running speed,Corrida com o dobro da velocidade
 CONFIG_RUN_MODE,Run Mode,Modo de Corrida
 CONFIG_RUN_HOLD,Hold to Run,Segurar para Correr
 CONFIG_RUN_TOGGLE,Toggle Run,Alternar Corrida
@@ -149,6 +150,7 @@ ACTION_USE,Use,Usar
 ACTION_EQUIP,Equip,Equipar
 ACTION_UNEQUIP,Unequip,Remover
 ACTION_INSPECT,Inspect,Inspecionar
+MAP_FLORESTA,Forest,Floresta
 MAP_POI_PRACINHA,Town Square,Pracinha
 MAP_POI_IGREJA,Main Church,Igreja Matriz
 MAP_POI_OFICINA_JIMMY,Jimmy's Workshop,Oficina do Jimmy
@@ -666,3 +668,47 @@ DEBUG_EVENT_PICKUP_NICE_GAVETA,Ms. Nice's drawer opened,Gaveta da Dona Nice aber
 DEBUG_EVENT_PICKUP_NICE_CHAVE,Pickup: Church Key (Nice's drawer),Pickup: Chave da Igreja (gaveta da Nice)
 DEBUG_EVENT_PICKUP_NICE_SHOTGUN,Pickup: Shotgun (Nice's ritual slab),Pickup: Espingarda (laje do ritual da Nice)
 DEBUG_EVENT_PICKUP_NICE_SHELLS,Pickup: Shells (Nice's ritual slab),Pickup: Cartuchos (laje do ritual da Nice)
+TXT_CHAPTER_4,CHAPTER 4,CAPÍTULO 4
+TXT_CHAPTER_4_SUBTITULO,Beyond Life,Além da Vida
+OBJ_CAP3_ATRAVESSAR_FLORESTA,Cross the forest to reach the cemetery.,Atravesse a floresta para chegar ao cemitério.
+OBJ_CAP3_CAPELA,Find Drizzi Wisny at the cemetery chapel.,Encontre Drizzi Wisny na capela do cemitério.
+OBJ_CAP3_DRIZZI,Face Drizzi Wisny.,Enfrente Drizzi Wisny.
+OBJ_CAP3_PULPITO,Touch the red flame on the pulpit over the pentagram.,Toque a chama vermelha no púlpito sobre o pentagrama.
+OBJ_CAP3_RED_VALVE_ESCOLA,Go back to the Red Valve portal in the school dungeon.,Volte até o portal Red Valve no calabouço da escola.
+CAP3_FLORESTA_MAYCOW_1,So quiet... the rain barely gets through these trees.,Que silêncio... a chuva quase não passa por essas árvores.
+CAP3_FLORESTA_MAYCOW_2,Is this really the way to the cemetery?,Será que esse é mesmo o caminho pro cemitério?
+CAP3_FLORESTA_MAYCOW_3,I can't even see the city from here anymore.,Já não dá mais pra ver a cidade daqui.
+CAP3_FLORESTA_PRESO,There's no way back... the forest has closed behind me.,Não dá pra voltar... a floresta se fechou atrás de mim.
+CAP3_DRIZZI_1,Maycow... you came.,Maycow... você veio.
+CAP3_DRIZZI_2,I saw everything from the other side.,Eu vi tudo lá do outro lado.
+CAP3_DRIZZI_3,I saw my son bleeding... in your arms.,Eu vi o meu filho sangrando... nos seus braços.
+CAP3_DRIZZI_4,I can't believe it. I can't believe you would hurt Jonny.,Eu não acredito. Não acredito que você faria mal ao Jonny.
+CAP3_DRIZZI_5,Jimmy trusted you. I never imagined anything like this.,O Jimmy confiava em você. Eu nunca imaginei uma coisa dessas.
+CAP3_MAYCOW_1,"Drizzi, wait! It's not like that!","Drizzi, espera! Não é nada disso!"
+CAP3_DRIZZI_6,"You hurt my son, Maycow!","Você maltratou o meu filho, Maycow!"
+CAP3_DRIZZI_7,You'll pay for every drop of that blood.,Você vai pagar por cada gota daquele sangue.
+CAP3_MAYCOW_2,What... what are you doing?,O que... o que você está fazendo?
+CAP3_MAYCOW_3,Drizzi...?,Drizzi...?
+CAP3_FIM_MAYCOW_1,Drizzi... listen to me. It wasn't me.,Drizzi... me escuta. Não fui eu.
+CAP3_FIM_MAYCOW_2,It was Ms. Nice. She's the real villain in all of this.,Foi a Dona Nice. Ela é a verdadeira vilã de tudo isso.
+CAP3_FIM_MAYCOW_3,"She's part of a sect, the Anti-Lopes. She stabbed Jonny in a ritual to cross over to the other side.","Ela faz parte de uma seita, os Anti-Lopes. Ela esfaqueou o Jonny num ritual pra atravessar pro outro lado."
+CAP3_FIM_MAYCOW_4,All I did was carry him to the hospital.,Eu só levei ele pro hospital.
+CAP3_FIM_DRIZZI_1,Ms. Nice... my son's nanny...,A Dona Nice... a babá do meu filho...
+CAP3_FIM_DRIZZI_2,"Forgive me, Maycow. Please, forgive me.","Me perdoa, Maycow. Me perdoa."
+CAP3_FIM_DRIZZI_3,Jimmy is on the other side. He's trapped in the parallel world.,O Jimmy está do outro lado. Ele está preso no mundo paralelo.
+CAP3_FIM_DRIZZI_4,Go back to the portal at the school. Down that path there is a sacred artifact...,Volte ao portal da escola. Por aquele caminho existe um artefato sagrado...
+CAP3_FIM_DRIZZI_5,...it will help you go after Jimmy in the parallel world.,...ele vai te ajudar a ir atrás do Jimmy no mundo paralelo.
+CAP3_FIM_DRIZZI_6,"After that, go back to the workshop and cross that Red Valve too. Jimmy is there.","Depois disso, volte à oficina e atravesse aquela Red Valve também. O Jimmy está lá."
+CAP3_FIM_DRIZZI_7,Now I can feel it... you're ready to cross over to the parallel world.,Agora eu sinto... você está preparado para atravessar para o mundo paralelo.
+CAP3_FIM_DRIZZI_8,I'll leave you some help.,Vou deixar uma ajuda pra você.
+DRIZZI_MONSTRO_NOME,Drizzi Wisny,Drizzi Wisny
+AVISO_CEMITERIO_PORTAO,The gate won't open. I can't leave this place now.,O portão não abre. Não posso sair daqui agora.
+AVISO_DRIZZI_ARENA_PAD,"The sky is open here: hold LB, mark Drizzi with the amulet and let go to drag her to the arena.","Aqui o céu é aberto: segure LB, marque a Drizzi com o amuleto e solte para levá-la à arena."
+AVISO_DRIZZI_ARENA_KEY,"The sky is open here: hold V, mark Drizzi with the amulet and let go to drag her to the arena.","Aqui o céu é aberto: segure V, marque a Drizzi com o amuleto e solte para levá-la à arena."
+PROMPT_TOCAR_CHAMA_VERMELHA,Touch the red flame?,Tocar a chama vermelha?
+DEBUG_EVT_CAP3_FLORESTA,Forest: entered (walking scene),Floresta: entrou (cena da caminhada)
+DEBUG_EVT_CAP3_CEMITERIO,Cemetery: arrived through the forest,Cemitério: chegou pela floresta
+DEBUG_EVT_CAP3_ENCONTRO,Cemetery: Drizzi scene at the chapel,Cemitério: cena da Drizzi na capela
+DEBUG_EVT_CAP3_DRIZZI,Cemetery: Drizzi defeated (the truth),Cemitério: Drizzi derrotada (a verdade)
+DEBUG_EVT_CAP3_PODER_CUT,Cemetery: took the red flame (Cogblade Cut),Cemitério: pegou a chama vermelha (Cogblade Cut)
+DEBUG_EVT_CAP3_CONCLUIDO,Chapter 3 finished (left the cemetery),Capítulo 3 concluído (saiu do cemitério)

@@ -62,6 +62,7 @@ var debug_infinite_hp_label: Label
 var debug_infinite_hp_check: CheckButton
 var debug_infinite_stamina_label: Label
 var debug_infinite_stamina_check: CheckButton
+var debug_corrida_dobrada_check: CheckButton
 var debug_events_scroll: ScrollContainer
 var debug_event_checks: Dictionary = {}
 
@@ -678,6 +679,14 @@ func _build_debug_tab():
 	_foco_debug(debug_infinite_stamina_check)
 	vbox.add_child(debug_infinite_stamina_check)
 
+	debug_corrida_dobrada_check = CheckButton.new()
+	debug_corrida_dobrada_check.text = tr("CONFIG_DEBUG_CORRIDA_DOBRADA")
+	debug_corrida_dobrada_check.add_theme_font_size_override("font_size", 18)
+	debug_corrida_dobrada_check.button_pressed = PlayerScript.is_corrida_dobrada_debug()
+	debug_corrida_dobrada_check.toggled.connect(func(pressed): PlayerScript.set_corrida_dobrada_debug(pressed))
+	_foco_debug(debug_corrida_dobrada_check)
+	vbox.add_child(debug_corrida_dobrada_check)
+
 	# --- Eventos da historia, por capitulo (do slot em jogo) ---
 	# Ligar um evento liga tudo o que ele exige; desligar desliga tudo o que
 	# depende dele (ver scripts/systems/eventos_historia.gd).
@@ -688,7 +697,7 @@ func _build_debug_tab():
 	dica.add_theme_color_override("font_color", Color(0.75, 0.75, 0.75))
 	vbox.add_child(dica)
 
-	for cap in [Eventos.PROLOGO, Eventos.CAPITULO_1, Eventos.CAPITULO_2]:
+	for cap in [Eventos.PROLOGO, Eventos.CAPITULO_1, Eventos.CAPITULO_2, Eventos.CAPITULO_3]:
 		_secao_debug(vbox, tr(Eventos.TITULOS_CAPITULO[cap]))
 		for id in Eventos.do_capitulo(cap):
 			var id_evento: String = id

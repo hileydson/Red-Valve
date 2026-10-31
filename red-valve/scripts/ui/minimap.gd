@@ -98,6 +98,11 @@ var _textura_terreo: Texture2D = null
 var _no_andar_2: bool = false
 ## A descoberta desta prancha, ou null quando a planta não tem névoa.
 var _nevoa: MapaNevoa = null
+## A textura que veio na cena (a da cidade), pra voltar a ela depois de uma
+## prancha emprestada (`usar_prancha`).
+var _textura_cena: Texture2D = null
+## Prancha emprestada em uso (a floresta do Capítulo 3), "" = a da cena.
+var _emprestada: String = ""
 
 
 func _ready() -> void:
@@ -125,6 +130,7 @@ func _ready() -> void:
 	_mat.set_shader_parameter("raio_uv", (alcance_m * 0.5) / _dados.tam)
 	_json_terreo = dados_json
 	_textura_terreo = textura_mapa
+	_textura_cena = _mat.get_shader_parameter("mapa")
 	_ligar_nevoa()
 	_criar_marcadores()
 	visible = false
@@ -259,7 +265,7 @@ func _process(delta: float) -> void:
 ## mudar de andar que venha a existir depois (escada, buraco no piso, queda), e
 ## um save carregado no andar de cima já abre com o mapa certo.
 func _ver_andar(y: float) -> void:
-	if dados_json_andar_2 == "":
+	if dados_json_andar_2 == "" or _emprestada != "":
 		return
 	var cima: bool = y >= altura_andar_2
 	if cima == _no_andar_2:
@@ -290,6 +296,23 @@ func _trocar_prancha(caminho: String, textura: Texture2D) -> void:
 		_marcas.remove_child(velho)
 		velho.queue_free()
 	_criar_marcadores()
+
+
+## Troca a prancha por uma que não é desta cena — a FLORESTA do Capítulo 3,
+## que fica além da borda do mapa da cidade e tem a textura desenhada em
+## runtime (`mapa_da_floresta.gd`). `caminho` vazio volta à prancha da cena.
+## A aba MAPA do menu acompanha sozinha: ela lê `dados_json`/`textura_mapa`.
+func usar_prancha(caminho: String, textura: Texture2D = null) -> void:
+	if _dados == null or caminho == _emprestada:
+		return
+	_emprestada = caminho
+	if caminho == "":
+		_no_andar_2 = false
+		textura_mapa = _textura_terreo
+		_trocar_prancha(_json_terreo, _textura_terreo if _textura_terreo else _textura_cena)
+		textura_mapa = _textura_terreo
+		return
+	_trocar_prancha(caminho, textura)
 
 
 func _pos_marcas(centro: Vector2) -> void:

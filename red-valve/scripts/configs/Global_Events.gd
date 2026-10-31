@@ -23,6 +23,10 @@ var entering_chapter_2: bool = false
 ## Ligado pelo hospital quando o Maycow sai dele no fim do Capitulo 2 (depois
 ## da Drizzi); a stage_1 consome (e zera) isto pra mostrar o "CAPITULO 3".
 var entering_chapter_3: bool = false
+## Ligado pelo cemitério quando o Maycow sai pelo portão no fim do Capítulo 3
+## (depois do poder da chama vermelha); a stage_1 consome (e zera) isto pra
+## mostrar o "CAPÍTULO 4".
+var entering_chapter_4: bool = false
 ## Capítulo 1: a gárgula do inferno 4 jogou o Maycow no portal do começo; o
 ## porão, ao recebê-lo pela red valve, mostra a fala de que ele ainda é fraco.
 var aviso_fraco_no_porao: bool = false
@@ -114,6 +118,12 @@ var voltando_do_hospital: bool = false
 ## Mesma coisa para a escola: ligado quando ele sai pelo portão da rua, e
 ## consumido pelo stage_1 para devolvê-lo à calçada diante do portão.
 var voltando_da_escola: bool = false
+## Ligado pelo cemitério quando ele sai pelo portão: o stage_1 consome (e zera)
+## isto no spawn para pô-lo dentro da floresta, no `cemiterio_local`.
+var voltando_do_cemiterio: bool = false
+## Ligado pela floresta quando ele chega no `cemiterio_local`: o cemitério
+## consome (e zera) isto e abre a tela devagar, saindo do preto.
+var chegando_ao_cemiterio: bool = false
 
 # --- escola <-> porão ---------------------------------------------------------
 # A escola e o porão são duas cenas, e o jogador vai e volta entre elas pelos

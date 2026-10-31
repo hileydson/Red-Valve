@@ -46,6 +46,9 @@ var texto: String = ""
 var destaque: String = ""
 var detalhe: String = ""
 var aura: bool = false
+## A cor da aura e do nome do poder (alfa 0 = o roxo da aura do amuleto). O
+## Cogblade Cut vem da chama vermelha do cemitério.
+var cor_aura: Color = Color(0, 0, 0, 0)
 var _aceita_input: bool = false
 var _fechando: bool = false
 var _piscar: float = 0.0
@@ -96,7 +99,10 @@ func _montar_modelo() -> void:
 		pivot.scale = Vector3(fator, fator, fator)
 	pivot.rotation = Vector3(0.25, 0.6, 0.0)
 	if aura:
-		AuraDoAmuleto.vestir(modelo, true, true)
+		if cor_aura.a > 0.0:
+			AuraDoAmuleto.vestir(modelo, true, true, cor_aura, cor_aura.lerp(Color.WHITE, 0.45))
+		else:
+			AuraDoAmuleto.vestir(modelo, true, true)
 
 
 ## O texto sobe e o nome do poder entra embaixo dele, grande e roxo, com o
@@ -114,7 +120,8 @@ func _montar_destaque() -> void:
 	nome.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	nome.add_theme_font_size_override("font_size", 46)
 	nome.add_theme_constant_override("outline_size", 8)
-	nome.add_theme_color_override("font_color", COR_DESTAQUE)
+	nome.add_theme_color_override("font_color", COR_DESTAQUE if cor_aura.a <= 0.0
+		else cor_aura.lerp(Color.WHITE, 0.3))
 	nome.add_theme_color_override("font_outline_color", Color(0.08, 0.0, 0.14))
 	add_child(nome)
 	move_child(nome, fade.get_index())

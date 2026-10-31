@@ -142,4 +142,37 @@ no cemitério.
 
 Começa quando Maycow sai do hospital escuro, em busca de respostas no cemitério.
 
+1. **A floresta.** O caminho do cemitério passa pela mata a leste da cidade. Na beira dela, Maycow
+   entra no meio das árvores e anda, perguntando a si mesmo se aquele é mesmo o caminho. A floresta
+   se fecha atrás dele: não há volta para a cidade, só adiante, até o cemitério.
+2. **A capela.** No cemitério, na névoa, uma mulher está de costas na porta da capela dos ossos: é a
+   **Drizzi Wisny**, gente de novo. Ela viu tudo do outro lado — viu o filho sangrando nos braços do
+   Maycow — e conclui o que parecia óbvio: foi ele. Não acredita que Maycow faria mal ao Jonny, nunca
+   imaginou uma coisa dessas, e vem andando atrás dele enquanto o acusa.
+3. **A terra.** Tomada pela raiva, ela pega terra do chão e come; cai de joelhos e come sem parar,
+   gritando, até a poeira tomar conta de tudo. Quando a poeira assenta, ela não está mais lá. Ela sai
+   do chão, cavando de baixo para cima: a **Drizzi monstro**, tomada pelo parasita — sem pernas, a
+   barriga aberta, as tripas penduradas.
+4. **A luta.** Ela flutua; tira da boca a terra que comeu e a arremessa, arranca os próprios órgãos
+   e os joga nele, e se enterra para sair noutro canto. O portão não deixa Maycow sair. O cemitério é
+   a céu aberto: o amuleto pode levá-la para a arena.
+5. **A verdade.** Ferida, ela cai e volta a ser gente. Nos braços do Maycow, ouve o que aconteceu:
+   quem fez tudo foi a Dona Nice, dos Anti-Lopes, no ritual da igreja. Drizzi pede perdão e conta onde
+   o Jimmy está — **do outro lado, no mundo paralelo**. Maycow precisa voltar ao portal da escola, onde
+   há um **artefato sagrado** por aquele caminho, e depois à oficina, pela Red Valve de lá: o Jimmy
+   está lá. Ela sente que agora ele está pronto para atravessar, promete deixar uma ajuda e se desfaz
+   no ar.
+6. **A chama vermelha.** No meio da praça, sobre o pentagrama, sobe da terra o mesmo púlpito de pedra
+   do Inferno 4, com uma chama vermelha. Maycow passa o amuleto por ela, como fez com a aura roxa, e a
+   Cogblade ganha o segundo poder: o **Cogblade Cut**.
+7. **Saída.** Maycow sai pelo portão do cemitério e volta pela floresta.
+
+Ao fim do capítulo, Maycow sabe que a Dona Nice era a vilã, que o Jimmy está no mundo paralelo e o
+caminho até ele: o portal da escola e a Red Valve da oficina.
+
+## Capítulo 4 — Além da Vida
+
+Começa quando Maycow sai do cemitério. A floresta agora tem duas saídas: a beira da mata, de volta à
+cidade, e o cemitério. O objetivo é voltar ao portal Red Valve no calabouço da escola.
+
 *(Continua.)*

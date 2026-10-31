@@ -633,7 +633,7 @@ func _espalhar_muro(lista: Array, saida: Dictionary) -> int:
 			break
 		var item := _sortear(lista)
 		var raio: float = float(item.get("raio", 0.4))
-		var encosto: float = float(item.get("encosto", maxf(raio * 0.85, 0.20)))
+		var encosto: float = float(item.get("encosto", minf(raio, 0.25)))
 		var normal: Vector3 = s["n"]
 		var base: Vector3 = s["p"]
 		var p := base + normal * (encosto + _rng.randf_range(0.01, 0.08))

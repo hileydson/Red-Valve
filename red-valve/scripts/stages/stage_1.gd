@@ -71,6 +71,9 @@ const NO_CASA_NICE := "casa_nice"
 const CENA_CASA_NICE := "res://scenes/stages/nice_house/casa_nice_interior.tscn"
 ## O Capítulo 2 na cidade: a interrogação do mapa e a cena da praça da igreja.
 const CAPITULO_2_CIDADE := "res://scripts/stages/stage_1/capitulo_2_cidade.gd"
+## Do Capítulo 3 em diante: a floresta entre o `floresta_local` e o
+## `cemiterio_local`, o caminho do cemitério.
+const CAPITULO_3_CIDADE := preload("res://scripts/stages/stage_1/capitulo_3_cidade.gd")
 
 @onready var navigation_region_3d: NavigationRegion3D = $NavigationRegion3D
 @onready var real_time_label: Label = $real_time_label
@@ -143,6 +146,7 @@ func _ready() -> void:
 	_salvar_posicao_de_chegada()
 	_jonny_na_cidade()
 	_capitulo_2()
+	_capitulo_3()
 	# a cidade sem o amuleto no pescoço (R3 / H) tem mais cor: entra já assim
 	(func() -> void: Realidade.ajustar_cor_ao_entrar(self)).call_deferred()
 
@@ -223,6 +227,10 @@ func setup_player_spawn() -> void:
 	elif GlobalEvents.voltando_da_escola:
 		GlobalEvents.voltando_da_escola = false
 		_devolver_ao_portao_da_escola()
+	elif GlobalEvents.voltando_do_cemiterio:
+		# saiu pelo portão do cemitério: volta pra floresta, no `cemiterio_local`
+		GlobalEvents.voltando_do_cemiterio = false
+		CAPITULO_3_CIDADE.posicionar_na_volta_do_cemiterio(self, get_node_or_null("Player"))
 	elif GlobalEvents.voltando_da_casa_maycow:
 		GlobalEvents.voltando_da_casa_maycow = false
 		# Ele reaparece dentro da própria área de entrada: segura o prompt até
@@ -784,6 +792,15 @@ func _capitulo_2() -> void:
 	c.iniciar(self)
 
 
+func _capitulo_3() -> void:
+	if get_node_or_null("capitulo_3_cidade") != null:
+		return
+	var c = CAPITULO_3_CIDADE.new()
+	c.name = "capitulo_3_cidade"
+	add_child(c)
+	c.iniciar(self)
+
+
 func _jonny_no_colo() -> bool:
 	var jogador := get_node_or_null("Player")
 	return jogador != null and jogador.get("carregando_jonny") == true
@@ -916,6 +933,14 @@ func _play_intro_text() -> void:
 		GlobalEvents.entering_chapter_3 = false
 		await get_tree().create_timer(1.0, false).timeout
 		await _titulo_do_capitulo("TXT_CHAPTER_3", "TXT_CHAPTER_3_SUBTITULO")
+		_mostrar_objetivo_da_historia(1.5)
+		return
+
+	# saiu do cemitério depois da Drizzi e do poder novo: acabou o Capítulo 3
+	if GlobalEvents.entering_chapter_4:
+		GlobalEvents.entering_chapter_4 = false
+		await get_tree().create_timer(1.0, false).timeout
+		await _titulo_do_capitulo("TXT_CHAPTER_4", "TXT_CHAPTER_4_SUBTITULO")
 		_mostrar_objetivo_da_historia(1.5)
 		return
 

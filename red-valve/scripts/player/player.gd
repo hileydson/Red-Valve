@@ -116,6 +116,7 @@ var blur_overlay: ColorRect
 # padrao. Quem liga/desliga e' a aba DEBUG, em tempo real.
 static var _vida_infinita_na_sessao: bool = false
 static var _stamina_infinita_na_sessao: bool = false
+static var _corrida_dobrada_na_sessao := false
 
 ## Liga/desliga a vida infinita para a sessao inteira, em tempo real — usado
 ## pela aba DEBUG do menu de configuracoes. Ao contrario da caixinha do
@@ -136,6 +137,15 @@ static func set_infinite_stamina_debug(ligado: bool) -> void:
 
 static func is_infinite_stamina_debug() -> bool:
 	return _stamina_infinita_na_sessao
+
+
+## E a da corrida com o dobro da velocidade (vale pros dois Maycows).
+static func set_corrida_dobrada_debug(ligado: bool) -> void:
+	_corrida_dobrada_na_sessao = ligado
+
+
+static func is_corrida_dobrada_debug() -> bool:
+	return _corrida_dobrada_na_sessao
 
 
 ## A stamina esta infinita agora? Junta a caixinha do editor com o interruptor
@@ -654,7 +664,8 @@ func corrida_proibida() -> bool:
 
 ## Velocidade AGORA: a de sempre na rua, a curta nos interiores.
 func _velocidade_corrida() -> float:
-	return RUN_SPEED_INTERIOR if em_interior() else RUN_SPEED
+	var v := RUN_SPEED_INTERIOR if em_interior() else RUN_SPEED
+	return v * 2.0 if _corrida_dobrada_na_sessao else v
 
 
 func _velocidade_caminhada() -> float:
@@ -1987,7 +1998,7 @@ func _physics_process(delta: float) -> void:
 			elif is_aiming:
 				velocidade_atual = WALK_SPEED * 0.4
 			elif _run_toggle_active and (current_stamina > 0 or _stamina_infinita()) and not is_exhausted:
-				velocidade_atual = RUN_SPEED
+				velocidade_atual = RUN_SPEED * (2.0 if _corrida_dobrada_na_sessao else 1.0)
 				correndo_agora = true
 			
 			# Mais lento ao andar para trás

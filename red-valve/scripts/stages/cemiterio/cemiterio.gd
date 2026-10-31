@@ -29,6 +29,9 @@ extends "res://scripts/stages/cenario_aberto.gd"
 @export var sussurro_espera_min: float = 20.0
 @export var sussurro_espera_max: float = 48.0
 
+## O Capítulo 3 aqui: a Drizzi, a luta e o púlpito da chama vermelha.
+const CAPITULO_3 := preload("res://scripts/stages/cemiterio/capitulo_3_cemiterio.gd")
+
 ## Meio-tamanho do terreno útil (o muro invisível está um pouco antes).
 const MEIO_X := 55.0
 const MEIO_Z := 59.0
@@ -51,6 +54,10 @@ func _preparar() -> void:
 	_olhos_prazo = randf_range(olhos_espera_min, olhos_espera_max)
 	_sino_prazo = randf_range(6.0, 14.0)
 	_sussurro_prazo = randf_range(sussurro_espera_min, sussurro_espera_max)
+	var cap3 = CAPITULO_3.new()
+	cap3.name = "capitulo_3_cemiterio"
+	add_child(cap3)
+	cap3.iniciar(self)
 
 
 func _passo(delta: float) -> void:

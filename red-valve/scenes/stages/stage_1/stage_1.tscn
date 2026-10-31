@@ -236,8 +236,8 @@ shader_parameter/cirrus_absorption = 2.0
 shader_parameter/cirrus_sky_tint_fade = 0.5
 shader_parameter/cirrus_size = 1.0
 shader_parameter/cirrus_uv = Vector2(0.16, 0.11)
-shader_parameter/cirrus_position1 = Vector2(0.48840195, 0.48840195)
-shader_parameter/cirrus_position2 = Vector2(0.48840195, 0.48840195)
+shader_parameter/cirrus_position1 = Vector2(0.12595417, 0.12595417)
+shader_parameter/cirrus_position2 = Vector2(0.12595417, 0.12595417)
 shader_parameter/cirrus_texture = ExtResource("3_kvc23")
 shader_parameter/cumulus_visible = true
 shader_parameter/cumulus_intensity = 9.245
@@ -247,7 +247,7 @@ shader_parameter/cumulus_absorption = 2.0
 shader_parameter/cumulus_noise_freq = 2.7
 shader_parameter/cumulus_sky_tint_fade = 0.0
 shader_parameter/cumulus_size = 0.5
-shader_parameter/cumulus_position = Vector2(2.4419198, 2.4419198)
+shader_parameter/cumulus_position = Vector2(0.62977546, 0.62977546)
 shader_parameter/cumulus_texture = ExtResource("4_2wkc3")
 shader_parameter/cumulus_partial_mie_phase = Vector3(0.957564, 1.042436, 0.412)
 shader_parameter/cumulus_mie_intensity = 1.0
@@ -6872,7 +6872,7 @@ omni_attenuation = 0.162
 [node name="locais_importantes" type="Node3D" parent="." unique_id=1450729080]
 
 [node name="floresta_local" type="Marker3D" parent="locais_importantes" unique_id=2068690304]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 996.6888, 3.4929876, -78.61734)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 964.9985, 3.4929876, -79.01114)
 
 [node name="cemiterio_local" type="Marker3D" parent="locais_importantes" unique_id=1277113517]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1192.0708, 3.493003, -329.8351)

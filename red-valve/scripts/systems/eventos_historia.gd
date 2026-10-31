@@ -38,8 +38,9 @@ extends Node
 ## O círculo que abre segurando o botão da cogblade só mostra os poderes já
 ## LIBERADOS (`SaveManager.poderes_cogblade`); o jogo começa sem nenhum e o
 ## círculo abre vazio. Cada poder é liberado por um momento da história —
-## `CAP1_AURA_AMULETO` (a aura no altar do inferno 4) libera o arremesso — e o
-## debug liga e desliga cada um com `forcar_poder`.
+## `CAP1_AURA_AMULETO` (a aura no altar do inferno 4) libera o arremesso,
+## `CAP3_PODER_CUT` (a chama vermelha no púlpito do cemitério) libera o corte —
+## e o debug liga e desliga cada um com `forcar_poder`.
 
 signal mudou(id: String, feito: bool)
 signal poder_mudou(id: String, liberado: bool)
@@ -48,6 +49,7 @@ const PROLOGO := 0
 const CAPITULO_1 := 1
 const CAPITULO_2 := 2
 const CAPITULO_3 := 3
+const CAPITULO_4 := 4
 
 # --- Prólogo (estado nas variáveis antigas) ---------------------------------
 const PROLOGO_TELEFONE := "prologo_telefone"
@@ -106,6 +108,24 @@ const CAP2_DRIZZI := "cap2_drizzi"
 ## Saiu do hospital escuro: começa o Capítulo 3.
 const CAP2_CONCLUIDO := "cap2_concluido"
 
+# --- Capítulo 3 — O Cemitério -------------------------------------------------
+## Chegou no `floresta_local` (a beira da mata a leste da cidade) e viu a cena
+## dele andando no meio das árvores. Daí em diante a floresta o prende: só sai
+## pelo `cemiterio_local`.
+const CAP3_FLORESTA := "cap3_floresta"
+## Atravessou a floresta e chegou no cemitério.
+const CAP3_CEMITERIO := "cap3_cemiterio"
+## A cena da capela: a Drizzi acusa o Maycow, come terra e volta do chão como
+## monstro. Começa a luta.
+const CAP3_DRIZZI_ENCONTRO := "cap3_drizzi_encontro"
+## A Drizzi monstro caiu (15% do sangue), voltou a ser gente e ouviu a verdade
+## sobre a Dona Nice nos braços do Maycow. Ela se desfaz no ar.
+const CAP3_DRIZZI_DERROTADA := "cap3_drizzi_derrotada"
+## Pegou a chama vermelha do púlpito do pentagrama: o Cogblade Cut.
+const CAP3_PODER_CUT := "cap3_poder_cut"
+## Saiu do cemitério pelo portão: começa o Capítulo 4.
+const CAP3_CONCLUIDO := "cap3_concluido"
+
 ## A ordem da lista é a ordem da história (e a do debug).
 ## `rotulo` é a chave do CSV mostrada no debug.
 const CATALOGO := [
@@ -159,6 +179,19 @@ const CATALOGO := [
 		"depende": [CAP2_JONNY_NA_MACA]},
 	{"id": CAP2_CONCLUIDO, "cap": CAPITULO_2, "rotulo": "DEBUG_EVT_CAP2_CONCLUIDO",
 		"depende": [CAP2_DRIZZI]},
+
+	{"id": CAP3_FLORESTA, "cap": CAPITULO_3, "rotulo": "DEBUG_EVT_CAP3_FLORESTA",
+		"depende": [CAP2_CONCLUIDO]},
+	{"id": CAP3_CEMITERIO, "cap": CAPITULO_3, "rotulo": "DEBUG_EVT_CAP3_CEMITERIO",
+		"depende": [CAP3_FLORESTA]},
+	{"id": CAP3_DRIZZI_ENCONTRO, "cap": CAPITULO_3, "rotulo": "DEBUG_EVT_CAP3_ENCONTRO",
+		"depende": [CAP3_CEMITERIO]},
+	{"id": CAP3_DRIZZI_DERROTADA, "cap": CAPITULO_3, "rotulo": "DEBUG_EVT_CAP3_DRIZZI",
+		"depende": [CAP3_DRIZZI_ENCONTRO]},
+	{"id": CAP3_PODER_CUT, "cap": CAPITULO_3, "rotulo": "DEBUG_EVT_CAP3_PODER_CUT",
+		"depende": [CAP3_DRIZZI_DERROTADA]},
+	{"id": CAP3_CONCLUIDO, "cap": CAPITULO_3, "rotulo": "DEBUG_EVT_CAP3_CONCLUIDO",
+		"depende": [CAP3_PODER_CUT]},
 ]
 
 ## Os poderes da cogblade, na ordem do círculo (o primeiro fica no topo).
@@ -177,6 +210,7 @@ const PODERES_COGBLADE := [
 ## ficam de fora até ganhar um).
 const EVENTO_DO_PODER := {
 	PODER_THROWN: CAP1_AURA_AMULETO,
+	PODER_CUT: CAP3_PODER_CUT,
 }
 
 ## Rótulo de cada capítulo no debug.
@@ -185,6 +219,7 @@ const TITULOS_CAPITULO := {
 	CAPITULO_1: "TXT_CHAPTER_1",
 	CAPITULO_2: "TXT_CHAPTER_2",
 	CAPITULO_3: "TXT_CHAPTER_3",
+	CAPITULO_4: "TXT_CHAPTER_4",
 }
 
 ## Os lugares da cidade com porta. O que cada um precisa para abrir está em
@@ -238,7 +273,9 @@ func capitulo_atual() -> int:
 		return CAPITULO_1
 	if not feito(CAP2_CONCLUIDO):
 		return CAPITULO_2
-	return CAPITULO_3
+	if not feito(CAP3_CONCLUIDO):
+		return CAPITULO_3
+	return CAPITULO_4
 
 
 # ==============================================================================
@@ -498,6 +535,23 @@ func hospital_claro() -> bool:
 		and not feito(CAP2_JONNY_NA_MACA)
 
 
+## A floresta a leste da cidade (do `floresta_local` ao `cemiterio_local`)
+## só existe como passagem do Capítulo 3 em diante.
+func floresta_aberta() -> bool:
+	return capitulo_atual() >= CAPITULO_3
+
+
+## Na primeira travessia (Capítulo 3, até chegar no cemitério) a floresta
+## prende o Maycow: a volta pelo `floresta_local` não leva à cidade.
+func floresta_presa() -> bool:
+	return feito(CAP3_FLORESTA) and not feito(CAP3_CEMITERIO)
+
+
+## A luta com a Drizzi monstro no cemitério está valendo?
+func luta_drizzi() -> bool:
+	return feito(CAP3_DRIZZI_ENCONTRO) and not feito(CAP3_DRIZZI_DERROTADA)
+
+
 ## O que fazer agora (chave do CSV), ou "" quando não há objetivo.
 func objetivo_atual() -> String:
 	match capitulo_atual():
@@ -532,5 +586,17 @@ func objetivo_atual() -> String:
 				return ""
 			return "OBJ_CAP2_SAIR_HOSPITAL"
 		CAPITULO_3:
-			return "OBJ_CAP3_CEMITERIO"
+			if not feito(CAP3_FLORESTA):
+				return "OBJ_CAP3_CEMITERIO"
+			if not feito(CAP3_CEMITERIO):
+				return "OBJ_CAP3_ATRAVESSAR_FLORESTA"
+			if not feito(CAP3_DRIZZI_ENCONTRO):
+				return "OBJ_CAP3_CAPELA"
+			if not feito(CAP3_DRIZZI_DERROTADA):
+				return "OBJ_CAP3_DRIZZI"
+			if not feito(CAP3_PODER_CUT):
+				return "OBJ_CAP3_PULPITO"
+			return "OBJ_CAP3_RED_VALVE_ESCOLA"
+		CAPITULO_4:
+			return "OBJ_CAP3_RED_VALVE_ESCOLA"
 	return ""

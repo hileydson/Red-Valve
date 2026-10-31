@@ -17,6 +17,9 @@ extends Node3D
 const MODELO_AMULETO := "res://assets/3d_model/player/Maycow Lopes/amuleto_power.glb"
 const ROXO := Color(0.62, 0.28, 1.0)
 const LILAS := Color(0.78, 0.55, 1.0)
+## A chama do segundo poder (o Cogblade Cut, no púlpito do cemitério).
+const VERMELHO := Color(1.0, 0.16, 0.08)
+const ROSADO := Color(1.0, 0.55, 0.42)
 
 enum Modo { CHAMA, AURA }
 
@@ -27,6 +30,9 @@ var raio: float = 0.16
 var com_luz: bool = true
 ## Partículas no espaço do pai: na tela que gira, a aura gira junto.
 var local: bool = false
+## A cor do fogo e a do miolo (roxo/lilás é a aura do amuleto).
+var cor: Color = ROXO
+var cor_clara: Color = LILAS
 
 var _luz: OmniLight3D
 var _nucleo: MeshInstance3D
@@ -35,22 +41,30 @@ var _tempo: float = 0.0
 var _forca: float = 1.0
 
 
-static func chama(tamanho: float) -> Node3D:
+static func chama(tamanho: float, cor_fogo: Color = ROXO, cor_miolo: Color = LILAS) -> Node3D:
 	var a = load("res://scripts/systems/aura_do_amuleto.gd").new()
 	a.name = "chama_da_aura"
 	a.modo = Modo.CHAMA
 	a.raio = tamanho
+	a.cor = cor_fogo
+	a.cor_clara = cor_miolo
 	return a
 
 
 ## Põe a aura em volta de `modelo` (o amuleto), no tamanho dele. Mede a caixa
 ## das malhas no espaço do próprio modelo e centra a aura nela.
-static func vestir(modelo: Node3D, luz: bool = true, no_espaco_do_modelo: bool = false) -> Node3D:
+static func vestir(modelo: Node3D, luz: bool = true, no_espaco_do_modelo: bool = false,
+		cor_fogo: Color = ROXO, cor_miolo: Color = LILAS) -> Node3D:
 	if modelo == null:
 		return null
 	var velha := modelo.get_node_or_null("aura_do_amuleto")
 	if velha:
-		return velha
+		if velha.get("cor") != cor_fogo:
+			# trocou de cor (a chama vermelha do cemitério): refaz
+			modelo.remove_child(velha)
+			velha.queue_free()
+		else:
+			return velha
 	var caixa := _caixa(modelo, Transform3D.IDENTITY)
 	var a = load("res://scripts/systems/aura_do_amuleto.gd").new()
 	a.name = "aura_do_amuleto"
@@ -58,6 +72,8 @@ static func vestir(modelo: Node3D, luz: bool = true, no_espaco_do_modelo: bool =
 	a.raio = maxf(maxf(caixa.size.x, caixa.size.y), caixa.size.z) * 0.6 if caixa.has_volume() else 0.1
 	a.com_luz = luz
 	a.local = no_espaco_do_modelo
+	a.cor = cor_fogo
+	a.cor_clara = cor_miolo
 	modelo.add_child(a)
 	a.position = caixa.get_center()
 	return a
@@ -109,8 +125,8 @@ func _ready() -> void:
 	_fogo.scale_amount_curve = curva
 	var cores := Gradient.new()
 	cores.offsets = PackedFloat32Array([0.0, 0.2, 0.55, 1.0])
-	cores.colors = PackedColorArray([Color(LILAS, 0.0), Color(LILAS, 0.75),
-		Color(ROXO, 0.65), Color(0.25, 0.04, 0.5, 0.0)])
+	cores.colors = PackedColorArray([Color(cor_clara, 0.0), Color(cor_clara, 0.75),
+		Color(cor, 0.65), Color(cor.darkened(0.6), 0.0)])
 	_fogo.color_ramp = cores
 	var quad := QuadMesh.new()
 	quad.size = Vector2.ONE * r * (0.9 if chama_ else 0.45)
@@ -125,7 +141,7 @@ func _ready() -> void:
 		var bola := QuadMesh.new()
 		bola.size = Vector2.ONE * r * 1.1
 		var m := _material_brilho()
-		m.albedo_color = Color(0.7, 0.42, 1.0, 0.75)
+		m.albedo_color = Color(cor.lerp(cor_clara, 0.4), 0.75)
 		m.vertex_color_use_as_albedo = false
 		m.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
 		bola.material = m
@@ -136,7 +152,7 @@ func _ready() -> void:
 	if com_luz:
 		_luz = OmniLight3D.new()
 		_luz.name = "luz"
-		_luz.light_color = ROXO
+		_luz.light_color = cor
 		_luz.light_energy = 1.8 if chama_ else 0.6
 		_luz.omni_range = 4.0 if chama_ else 1.2
 		_luz.shadow_enabled = false
