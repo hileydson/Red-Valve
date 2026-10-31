@@ -18,6 +18,8 @@ extends Node3D
 
 const CENA_MAPA := "res://scenes/stages/stage_1/stage_1.tscn"
 const EVENTO := preload("res://scripts/stages/igreja/evento_dona_nice.gd")
+## O despertar no pentagrama (fim do Capítulo 4, começo do 5).
+const DESPERTAR := preload("res://scripts/stages/igreja/despertar_capitulo_5.gd")
 ## A seringa de adrenalina da igreja, no `item_secreto` da galeria (a
 ## interrogacao do mapa). Posta por codigo: a cena da igreja e' regerada por
 ## script, e no' colocado a mao no .tscn some na proxima geracao.
@@ -67,6 +69,12 @@ func _ready() -> void:
 		_evento = EVENTO.new()
 		_evento.name = "evento_dona_nice"
 		add_child(_evento)
+		# fim do Capítulo 4: ele acorda no pentagrama (usa a cena do evento)
+		if Eventos.despertar_na_igreja():
+			var despertar = DESPERTAR.new()
+			despertar.name = "despertar_capitulo_5"
+			add_child(despertar)
+			despertar.rodar(self, _evento)
 
 
 ## A seringa vai no marcador; ja' pega, ela mesma se apaga (`item_de_balcao`).
@@ -156,6 +164,10 @@ func _sair_da_igreja() -> void:
 	# Marca a volta ANTES de trocar de cena: o stage_1 consome isto no spawn
 	# para pôr o jogador de volta no adro, de frente para o portal.
 	GlobalEvents.voltando_da_igreja = true
+	# Capítulo 5: saindo depois de acordar no pentagrama, as forças voltam e o
+	# objetivo aparece lá fora (a cidade grava ao abrir)
+	if Eventos.pode(Eventos.CAP5_SAIU_IGREJA):
+		Eventos.concluir(Eventos.CAP5_SAIU_IGREJA, false)
 
 	fade.fade_out()
 	await get_tree().create_timer(2.0).timeout

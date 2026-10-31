@@ -24,9 +24,11 @@ extends "res://scripts/stages/inferno_3/inferno_3.gd"
 ##    (`cutscene_aura_amuleto.gd`) e, 2 s depois, a tela do poder novo da
 ##    cogblade (o arremesso).
 ##
-## O anel do largo do fim é a SAÍDA, mas ainda não leva a lugar nenhum
-## (`cena_saida` vazia). O espaço em volta do selo é o do mini chefe: o
-## marcador `boss/mini_boss` fica no centro, com o raio livre na metadata.
+## O anel do largo do fim é a SAÍDA: leva ao começo do inferno 3. No Capítulo
+## 1 ele não aceita o Maycow (a gárgula do limite); do Capítulo 4 em diante
+## está SELADO até ele pagar os iron rusks (`portal_selado.gd`). O espaço em
+## volta do selo é o do mini chefe: o marcador `boss/mini_boss` fica no
+## centro, com o raio livre na metadata.
 
 const CutsceneMirante := preload("res://scripts/stages/inferno_4/cutscene_mirante.gd")
 const GargulaDoLimite := preload("res://scripts/stages/inferno_4/gargula_do_limite.gd")
@@ -122,6 +124,19 @@ func _regras_da_historia() -> void:
 		_avisou_do_fim = Eventos.feito(Eventos.CAP1_INFERNO_4_LIMITE)
 		GlobalUtils.mostrar_objetivo(tr("OBJ_CAP1_INFERNO_4_VOLTAR" if _avisou_do_fim
 			else "OBJ_CAP1_INFERNO_4_SEGUIR"), 40.0)
+
+
+## As pontas daqui são as da cena (o desvio pra arena é só do inferno 3).
+func _ligacoes_da_historia() -> void:
+	pass
+
+
+## Do Capítulo 4 em diante o portal do fim pede iron rusks pra abrir.
+func _historia_do_capitulo_4() -> void:
+	if not Eventos.portal_inferno_4_selado() or _portal_saida == null:
+		return
+	_selar(_portal_saida, Eventos.CAP4_PORTAL_INFERNO_4)
+	GlobalUtils.mostrar_objetivo(tr("OBJ_CAP4_INFERNO_4"), 40.0)
 
 
 func _passo(delta: float) -> void:

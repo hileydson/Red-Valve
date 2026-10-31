@@ -528,6 +528,8 @@ func get_slots_info() -> Array:
 							ch = "TXT_CHAPTER_3"
 						if (data.get("eventos_concluidos", []) as Array).has("cap3_concluido"):
 							ch = "TXT_CHAPTER_4"
+						if (data.get("eventos_concluidos", []) as Array).has("cap4_concluido"):
+							ch = "TXT_CHAPTER_5"
 						info.append({"empty": false, "slot": i, "chapter": ch,
 							"local": nome_do_local(str(data.get("current_stage", ""))),
 							"iron_rusks": int(data.get("iron_rusks", 0))})

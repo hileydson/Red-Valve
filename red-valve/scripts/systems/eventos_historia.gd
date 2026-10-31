@@ -50,6 +50,7 @@ const CAPITULO_1 := 1
 const CAPITULO_2 := 2
 const CAPITULO_3 := 3
 const CAPITULO_4 := 4
+const CAPITULO_5 := 5
 
 # --- Prólogo (estado nas variáveis antigas) ---------------------------------
 const PROLOGO_TELEFONE := "prologo_telefone"
@@ -126,6 +127,28 @@ const CAP3_PODER_CUT := "cap3_poder_cut"
 ## Saiu do cemitério pelo portão: começa o Capítulo 4.
 const CAP3_CONCLUIDO := "cap3_concluido"
 
+# --- Capítulo 4 — Além da Vida ------------------------------------------------
+## Pagou os iron rusks do portal do fim do inferno 4: ele passa a levar ao
+## começo do inferno 3 (e o do começo do 3 volta pra ele).
+const CAP4_PORTAL_INFERNO_4 := "cap4_portal_inferno_4"
+## Pagou os iron rusks do portal do fim do inferno 3: ele passa a levar à
+## arena 2.
+const CAP4_PORTAL_INFERNO_3 := "cap4_portal_inferno_3"
+## Venceu a luta da arena 2 (o lugar do chefe que ainda não existe) e viu o
+## Maycow queimar com o amuleto na mão. O save já aponta pra igreja.
+const CAP4_ARENA_2 := "cap4_arena_2"
+## Acordou no pentagrama da igreja (os flashes da Dona Nice): começa o
+## Capítulo 5.
+const CAP4_CONCLUIDO := "cap4_concluido"
+
+# --- Capítulo 5 — O Pastor ----------------------------------------------------
+## Saiu da igreja depois de acordar nela. Até aqui ele não corre, a estamina
+## não volta e o jogo não dá orientação nenhuma.
+const CAP5_SAIU_IGREJA := "cap5_saiu_igreja"
+
+## Quantos iron rusks cada portal selado do Capítulo 4 pede.
+const CUSTO_PORTAL := 100
+
 ## A ordem da lista é a ordem da história (e a do debug).
 ## `rotulo` é a chave do CSV mostrada no debug.
 const CATALOGO := [
@@ -192,6 +215,18 @@ const CATALOGO := [
 		"depende": [CAP3_DRIZZI_DERROTADA]},
 	{"id": CAP3_CONCLUIDO, "cap": CAPITULO_3, "rotulo": "DEBUG_EVT_CAP3_CONCLUIDO",
 		"depende": [CAP3_PODER_CUT]},
+
+	{"id": CAP4_PORTAL_INFERNO_4, "cap": CAPITULO_4, "rotulo": "DEBUG_EVT_CAP4_PORTAL_INF4",
+		"depende": [CAP3_CONCLUIDO]},
+	{"id": CAP4_PORTAL_INFERNO_3, "cap": CAPITULO_4, "rotulo": "DEBUG_EVT_CAP4_PORTAL_INF3",
+		"depende": [CAP4_PORTAL_INFERNO_4]},
+	{"id": CAP4_ARENA_2, "cap": CAPITULO_4, "rotulo": "DEBUG_EVT_CAP4_ARENA_2",
+		"depende": [CAP4_PORTAL_INFERNO_3]},
+	{"id": CAP4_CONCLUIDO, "cap": CAPITULO_4, "rotulo": "DEBUG_EVT_CAP4_CONCLUIDO",
+		"depende": [CAP4_ARENA_2]},
+
+	{"id": CAP5_SAIU_IGREJA, "cap": CAPITULO_5, "rotulo": "DEBUG_EVT_CAP5_SAIU_IGREJA",
+		"depende": [CAP4_CONCLUIDO]},
 ]
 
 ## Os poderes da cogblade, na ordem do círculo (o primeiro fica no topo).
@@ -220,6 +255,7 @@ const TITULOS_CAPITULO := {
 	CAPITULO_2: "TXT_CHAPTER_2",
 	CAPITULO_3: "TXT_CHAPTER_3",
 	CAPITULO_4: "TXT_CHAPTER_4",
+	CAPITULO_5: "TXT_CHAPTER_5",
 }
 
 ## Os lugares da cidade com porta. O que cada um precisa para abrir está em
@@ -275,7 +311,9 @@ func capitulo_atual() -> int:
 		return CAPITULO_2
 	if not feito(CAP3_CONCLUIDO):
 		return CAPITULO_3
-	return CAPITULO_4
+	if not feito(CAP4_CONCLUIDO):
+		return CAPITULO_4
+	return CAPITULO_5
 
 
 # ==============================================================================
@@ -552,6 +590,41 @@ func luta_drizzi() -> bool:
 	return feito(CAP3_DRIZZI_ENCONTRO) and not feito(CAP3_DRIZZI_DERROTADA)
 
 
+## Do Capítulo 4 em diante a beira da mata deixa de ser interrogação: os dois
+## pontos da floresta ganham nome no mapa (ver `capitulo_3_cidade.gd`).
+func floresta_com_nomes() -> bool:
+	return capitulo_atual() >= CAPITULO_4
+
+
+## O portal do fim do inferno 4 está selado (do Capítulo 4 em diante, até
+## pagar). No Capítulo 1 ele é o limite da gárgula; no 2 e no 3, o de sempre.
+func portal_inferno_4_selado() -> bool:
+	return capitulo_atual() >= CAPITULO_4 and not feito(CAP4_PORTAL_INFERNO_4)
+
+
+## O portal do fim do inferno 3 leva à arena 2: só no Capítulo 4, enquanto a
+## luta de lá não acontece. Fora disso ele volta pro porão, como sempre foi.
+func inferno_3_leva_a_arena() -> bool:
+	return capitulo_atual() == CAPITULO_4 and not feito(CAP4_ARENA_2)
+
+
+## A luta da arena 2 está valendo (pagou o portal do inferno 3 e não venceu)?
+func luta_arena_2() -> bool:
+	return feito(CAP4_PORTAL_INFERNO_3) and not feito(CAP4_ARENA_2)
+
+
+## O despertar na igreja ainda vai acontecer (a arena passou e o Capítulo 4
+## não fechou): a igreja roda a cena em vez do jogo.
+func despertar_na_igreja() -> bool:
+	return feito(CAP4_ARENA_2) and not feito(CAP4_CONCLUIDO)
+
+
+## O começo do Capítulo 5, ainda dentro da igreja: sem corrida, estamina presa
+## lá embaixo e nenhuma orientação na tela.
+func sem_forcas_na_igreja() -> bool:
+	return feito(CAP4_CONCLUIDO) and not feito(CAP5_SAIU_IGREJA)
+
+
 ## O que fazer agora (chave do CSV), ou "" quando não há objetivo.
 func objetivo_atual() -> String:
 	match capitulo_atual():
@@ -598,5 +671,17 @@ func objetivo_atual() -> String:
 				return "OBJ_CAP3_PULPITO"
 			return "OBJ_CAP3_RED_VALVE_ESCOLA"
 		CAPITULO_4:
-			return "OBJ_CAP3_RED_VALVE_ESCOLA"
+			# dentro do inferno 4 quem fala é a cena (ver `inferno_4.gd`)
+			if not feito(CAP4_PORTAL_INFERNO_4):
+				return "OBJ_CAP3_RED_VALVE_ESCOLA"
+			if not feito(CAP4_PORTAL_INFERNO_3):
+				return "OBJ_CAP4_INFERNO_3"
+			if not feito(CAP4_ARENA_2):
+				return "OBJ_CAP4_ARENA_2"
+			return ""
+		CAPITULO_5:
+			# acordou na igreja: até sair dela, o drama fica no ar
+			if not feito(CAP5_SAIU_IGREJA):
+				return ""
+			return "OBJ_CAP5_OFICINA"
 	return ""

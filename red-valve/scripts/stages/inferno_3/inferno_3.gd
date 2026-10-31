@@ -17,12 +17,18 @@ extends "res://scripts/stages/inferno/inferno.gd"
 ##  - a NÉVOA respira: a densidade sobe e desce devagar;
 ##  - SUSSURROS e um grito distante, raros;
 ##  - as sombras gigantes do abismo e o anel de volta vêm do inferno.gd.
+##
+## No Capítulo 4 (`Eventos.inferno_3_leva_a_arena`) a porta da catedral, o
+## portal do fim, deixa de voltar pro porão: leva à ARENA 2 — e está selada até
+## o Maycow pagar os iron rusks dela (`portal_selado.gd`).
 
 const ITEM_LANTERNA := "lanterna"
 const MODELO_LANTERNA := "res://assets/3d_model/player/lanterna/lanterna.glb"
 const CENA_ITEM_OBTIDO := "res://scenes/ui/item_obtido.tscn"
 const ItemSelecionavel := preload("res://scripts/stages/hospital/item_selecionavel.gd")
 const DICA_ID := "inferno_3_lanterna"
+const PortalSelado := preload("res://scripts/effects/portal_selado.gd")
+const CENA_ARENA_2 := "res://scenes/stages/battlefield/battlefield_2.tscn"
 
 @export_group("Sino")
 @export var sino_espera_min: float = 40.0
@@ -60,7 +66,10 @@ var _dica_prazo: float = 3.5
 
 
 func _preparar() -> void:
+	# antes do super: é ele que monta os portais a partir de `cena_saida`
+	_ligacoes_da_historia()
 	super._preparar()
+	_historia_do_capitulo_4()
 	_sino = get_node_or_null("sino") as AudioStreamPlayer3D
 	_sino_prazo = randf_range(8.0, 20.0)
 	var amb := get_node_or_null("WorldEnvironment") as WorldEnvironment
@@ -77,6 +86,36 @@ func _preparar() -> void:
 ## Aqui não há mar de lava: nada de fogo ao longe.
 func _ponto_erupcao(_cam: Camera3D) -> Vector3:
 	return Vector3.INF
+
+
+# ==============================================================================
+# O CAPÍTULO 4
+# ==============================================================================
+## Pra onde as pontas levam nesta visita. O inferno 4 herda daqui e tem as
+## dele (sobrescreve as duas funções abaixo).
+func _ligacoes_da_historia() -> void:
+	if Eventos.inferno_3_leva_a_arena():
+		cena_saida = CENA_ARENA_2
+		ponto_saida = ""
+
+
+## A porta da catedral selada até pagar, e o que fazer agora.
+func _historia_do_capitulo_4() -> void:
+	if not Eventos.inferno_3_leva_a_arena():
+		return
+	if _portal_saida and not Eventos.feito(Eventos.CAP4_PORTAL_INFERNO_3):
+		_selar(_portal_saida, Eventos.CAP4_PORTAL_INFERNO_3)
+	var chave := Eventos.objetivo_atual()
+	if chave != "":
+		GlobalUtils.mostrar_objetivo(tr(chave), 40.0)
+
+
+## Põe o selo de iron rusks no portal (`portal_selado.gd`).
+func _selar(portal: Node3D, evento: String) -> void:
+	var selo = PortalSelado.new()
+	selo.name = "selo"
+	selo.evento = evento
+	portal.add_child(selo)
 
 
 ## As sombras ficam no abismo dos dois lados da cidade: olham pra ela.

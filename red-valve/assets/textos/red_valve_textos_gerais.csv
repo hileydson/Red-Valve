@@ -712,3 +712,20 @@ DEBUG_EVT_CAP3_ENCONTRO,Cemetery: Drizzi scene at the chapel,Cemitério: cena da
 DEBUG_EVT_CAP3_DRIZZI,Cemetery: Drizzi defeated (the truth),Cemitério: Drizzi derrotada (a verdade)
 DEBUG_EVT_CAP3_PODER_CUT,Cemetery: took the red flame (Cogblade Cut),Cemitério: pegou a chama vermelha (Cogblade Cut)
 DEBUG_EVT_CAP3_CONCLUIDO,Chapter 3 finished (left the cemetery),Capítulo 3 concluído (saiu do cemitério)
+MAP_POI_FLORESTA,Forest,Floresta
+MAP_POI_CIDADE,City,Cidade
+MAP_POI_CEMITERIO,Cemetery,Cemitério
+PROMPT_PORTAL_SELADO,Use %d Iron Rusks to open the portal?,Usar %d Iron Rusks para abrir o portal?
+AVISO_PORTAL_SEM_RUSKS,"The portal is sealed. It takes %d Iron Rusks to open it (you have %d).","O portal está selado. São precisos %d Iron Rusks para abri-lo (você tem %d)."
+AVISO_PORTAL_ABERTO,The seal broke. The portal is open.,O selo se rompeu. O portal está aberto.
+OBJ_CAP4_INFERNO_4,Cross the parallel world to the portal at the end of the path.,Atravesse o mundo paralelo até o portal no fim do caminho.
+OBJ_CAP4_INFERNO_3,Cross the city of mourners to the cathedral portal.,Atravesse a cidade dos enlutados até o portal da catedral.
+OBJ_CAP4_ARENA_2,Go through the cathedral portal.,Atravesse o portal da catedral.
+OBJ_CAP5_OFICINA,Go after Jimmy through the Red Valve portal in the workshop.,Vá em busca de Jimmy no portal Red Valve da oficina.
+TXT_CHAPTER_5,CHAPTER 5,CAPÍTULO 5
+TXT_CHAPTER_5_SUBTITULO,The Pastor,O Pastor
+DEBUG_EVT_CAP4_PORTAL_INF4,Inferno 4: paid the end portal (100 Iron Rusks),Inferno 4: pagou o portal do fim (100 Iron Rusks)
+DEBUG_EVT_CAP4_PORTAL_INF3,Inferno 3: paid the cathedral portal (100 Iron Rusks),Inferno 3: pagou o portal da catedral (100 Iron Rusks)
+DEBUG_EVT_CAP4_ARENA_2,Arena 2: won the fight and burned with the amulet,Arena 2: venceu a luta e queimou com o amuleto
+DEBUG_EVT_CAP4_CONCLUIDO,Chapter 4 finished (woke up in the church),Capítulo 4 concluído (acordou na igreja)
+DEBUG_EVT_CAP5_SAIU_IGREJA,Church: left after waking up,Igreja: saiu depois de acordar

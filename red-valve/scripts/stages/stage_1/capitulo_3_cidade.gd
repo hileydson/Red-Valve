@@ -30,6 +30,11 @@ extends Node
 ##
 ## Estar "na floresta" é estar dentro do contorno — não há estado gravado: um
 ## save feito lá dentro carrega lá dentro.
+##
+## Do Capítulo 4 em diante (`Eventos.floresta_com_nomes`) a interrogação sai da
+## beira da mata e os dois pontos ganham NOME no mapa: o F se chama "Floresta"
+## visto da cidade e "Cidade" visto de dentro da mata (é a saída pra ela); o C
+## é sempre "Cemitério".
 
 const CutsceneFloresta := preload("res://scripts/stages/stage_1/cutscene_floresta.gd")
 const PontoNoMapa := preload("res://scripts/ui/ponto_no_mapa.gd")
@@ -100,6 +105,11 @@ var _arvores_mapa: Array = []
 var _textura_mapa: Texture2D
 var _marca: Node3D
 var _marcado_em := "-"
+## Os pontos com nome do Capítulo 4 em diante (o F e o C) e a chave que o F
+## está mostrando agora.
+var _nome_f: Node3D
+var _nome_c: Node3D
+var _chave_f := ""
 var _ocupado := false
 var _dentro := false
 var _aviso_preso := 0.0
@@ -531,7 +541,8 @@ func _onde_marcar() -> String:
 				return "cemiterio" if na_floresta else "floresta"
 			return "floresta" if na_floresta else "escola"
 		Eventos.CAPITULO_4:
-			return "floresta" if na_floresta else "escola"
+			# na mata a saída já tem nome ("Cidade"): nada de interrogação
+			return "" if na_floresta else "escola"
 	return ""
 
 
@@ -550,6 +561,7 @@ func _posicao(onde: String) -> Variant:
 
 
 func _atualizar_interrogacao() -> void:
+	_atualizar_nomes()
 	var onde := _onde_marcar()
 	if onde == _marcado_em:
 		return
@@ -568,3 +580,41 @@ func _atualizar_interrogacao() -> void:
 	ponto.tipo = "interrogacao"
 	ponto.sempre_visivel = true
 	_marca.add_child(ponto)
+
+
+# ==============================================================================
+# OS NOMES DO MAPA (Capítulo 4 em diante)
+# ==============================================================================
+
+## O F muda de nome conforme o lado em que o Maycow está; o C não muda. No
+## Capítulo 3 nenhum dos dois tem nome (a interrogação faz esse papel).
+func _atualizar_nomes() -> void:
+	if not Eventos.floresta_com_nomes() or not is_instance_valid(player):
+		_chave_f = ""
+		for no in [_nome_f, _nome_c]:
+			if is_instance_valid(no):
+				no.queue_free()
+		_nome_f = null
+		_nome_c = null
+		return
+	var chave := "MAP_POI_CIDADE" if dentro(player.global_position) else "MAP_POI_FLORESTA"
+	if chave != _chave_f or not is_instance_valid(_nome_f):
+		_chave_f = chave
+		if is_instance_valid(_nome_f):
+			_nome_f.queue_free()
+		_nome_f = _ponto_com_nome("nome_floresta_local", _f, chave)
+	if not is_instance_valid(_nome_c):
+		_nome_c = _ponto_com_nome("nome_cemiterio_local", _c, "MAP_POI_CEMITERIO")
+
+
+func _ponto_com_nome(nome: String, onde: Vector3, chave: String) -> Node3D:
+	var no := Node3D.new()
+	no.name = nome
+	cidade.add_child(no)
+	no.global_position = onde
+	var ponto = PontoNoMapa.new()
+	ponto.tipo = "local"
+	ponto.chave = chave
+	ponto.sempre_visivel = true
+	no.add_child(ponto)
+	return no

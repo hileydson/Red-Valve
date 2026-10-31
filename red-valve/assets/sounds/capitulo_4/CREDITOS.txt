@@ -1,0 +1,18 @@
+Sons das cutscenes do fim do Capitulo 4 e do comeco do Capitulo 5
+(a queima na arena 2 e o despertar na igreja). Compostos por
+tools/audio/gerar_sons_capitulo_4.py.
+
+A VOZ (respiracao_maycow, gemido_maycow, grito_fogo, levantar_ferido)
+sai de pacotes CC0 (dominio publico) do OpenGameArt:
+
+  "breathing tired"  https://opengameart.org/content/breathing-tired
+  "80 CC0 creature SFX"  https://opengameart.org/content/80-cc0-creature-sfx
+  "Horror Scream1"  https://opengameart.org/content/horror-scream1
+  "CC0 Deep Monster Roar"  https://opengameart.org/content/cc0-deep-monster-roar
+  "Heartbeat sounds"  https://opengameart.org/content/heartbeat-sounds
+  "75 CC0 breaking / falling / hit sfx"  https://opengameart.org/content/75-cc0-breaking-falling-hit-sfx
+
+O FOGO (fogo_rugindo, erupcao_fogo) e o flash de memoria (flash_memoria)
+sao sintetizados com ruido filtrado e senoide; o flash usa ainda o
+batimento do "Heartbeat sounds" e a erupcao, a pancada de metal do
+"75 CC0 breaking / falling / hit sfx" (os dois CC0, listados acima).

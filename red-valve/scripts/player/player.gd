@@ -157,10 +157,27 @@ static func is_corrida_dobrada_debug() -> bool:
 ## casa nao cansa. O gasto so' liga com inimigo vivo por perto ou dentro da
 ## arena (ver `_atualizar_combate`).
 func _stamina_infinita() -> bool:
+	# acordou queimado na igreja (comeco do Capitulo 5): nada e' de graca
+	if _sem_forcas():
+		return false
 	# levando o Jonny pro hospital o Maycow normal nao cansa; sem o amuleto
 	# (a cidade de gente, que ja' cobra iron rusk) tambem nao
 	return infinite_stamina_test or _stamina_infinita_na_sessao or not _em_combate or carregando_jonny \
 		or SaveManager.realidade_normal()
+
+
+## Comeco do Capitulo 5: o Maycow acordou queimado no pentagrama da igreja e,
+## ate' sair dela, nao corre e a estamina fica presa aqui embaixo, sem voltar
+## (ver `Eventos.sem_forcas_na_igreja` e `despertar_capitulo_5.gd`).
+const ESTAMINA_SEM_FORCAS: float = 10.0
+
+
+func _sem_forcas() -> bool:
+	if not GlobalEvents.is_maycow_normal or not Eventos.sem_forcas_na_igreja():
+		return false
+	var arvore := get_tree()
+	return arvore != null and arvore.current_scene != null \
+		and String(arvore.current_scene.name) == "igreja_interior"
 
 
 # --- Estamina so' em combate ---
@@ -1719,7 +1736,7 @@ func _physics_process(delta: float) -> void:
 		else:
 			_run_toggle_active = Input.is_action_pressed("ui_run")
 		# nas casas ele so' anda (a corrida das cutscenes liga depois, no movimento)
-		if corrida_proibida():
+		if corrida_proibida() or _sem_forcas():
 			_run_toggle_active = false
 	else:
 		if not _cutscene_auto_run:
@@ -1727,6 +1744,8 @@ func _physics_process(delta: float) -> void:
 
 	
 	_atualizar_combate(delta)
+	if _sem_forcas():
+		current_stamina = minf(current_stamina, ESTAMINA_SEM_FORCAS)
 
 	# --- STAMINA EXHAUSTION LOGIC ---
 	if current_stamina <= 0.5:
@@ -1750,7 +1769,11 @@ func _physics_process(delta: float) -> void:
 		stamina_fade_timer = 2.0
 		if is_instance_valid(stamina_bar): stamina_bar.modulate.a = 1.0
 	else:
-		if current_stamina < max_stamina:
+		if _sem_forcas():
+			# sem forcas a estamina nao volta, e a barra fica a' vista
+			stamina_fade_timer = 2.0
+			if is_instance_valid(stamina_bar): stamina_bar.modulate.a = 1.0
+		elif current_stamina < max_stamina:
 			current_stamina += 15.0 * delta
 			if current_stamina > max_stamina: current_stamina = max_stamina
 			stamina_fade_timer = 2.0
@@ -1769,7 +1792,7 @@ func _physics_process(delta: float) -> void:
 		# Fora de briga não há o que medir: a barra se apaga mesmo correndo ou
 		# dando dash. Fica no self_modulate pra não brigar com o `modulate`,
 		# que é o apagar de "estamina cheia" de sempre.
-		stamina_bar.self_modulate.a = move_toward(stamina_bar.self_modulate.a, 1.0 if _em_combate else 0.0, delta * 2.0)
+		stamina_bar.self_modulate.a = move_toward(stamina_bar.self_modulate.a, 1.0 if (_em_combate or _sem_forcas()) else 0.0, delta * 2.0)
 		
 	if is_instance_valid(mp_bar):
 		# A magia e' uma so' e nao volta sozinha. O Maycow da primeira pessoa a

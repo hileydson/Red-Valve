@@ -175,4 +175,35 @@ caminho até ele: o portal da escola e a Red Valve da oficina.
 Começa quando Maycow sai do cemitério. A floresta agora tem duas saídas: a beira da mata, de volta à
 cidade, e o cemitério. O objetivo é voltar ao portal Red Valve no calabouço da escola.
 
+1. **O caminho livre.** A floresta não o prende mais. No mapa, a beira da mata deixa de ser uma
+   interrogação: da cidade ela se chama **Floresta**; de dentro da mata, o mesmo ponto se chama
+   **Cidade**, porque é a saída para ela. O cemitério continua sendo o **Cemitério**, e Maycow pode
+   voltar a ele quando quiser.
+2. **A Red Valve da escola.** Maycow volta à escola, desce ao calabouço e atravessa a Red Valve até o
+   **Inferno 4**. Desta vez percorre o mapa inteiro até o portal do fim, o mesmo que no Capítulo 1 não
+   o aceitou. Agora o portal está selado, e o selo só se rompe com **100 iron rusks**. Pago o preço,
+   ele leva ao começo do **Inferno 3**, a cidade dos enlutados. Dali em diante os dois portais ligam
+   um mapa ao outro, nos dois sentidos.
+3. **A catedral.** No fim do Inferno 3, o portal da catedral também está selado e pede mais **100
+   iron rusks**. Aberto, ele não volta mais para o calabouço: leva à **Arena 2**, o Adro Partido.
+4. **A Arena 2.** É o lugar de um chefe. *(O chefe ainda não existe: por enquanto, dois zumbis e um
+   Husk lutam no lugar dele.)* Quem luta ali é o Maycow do outro lado, o parasita, e ele vence.
+5. **O fogo.** Exausto, Maycow cai de joelhos no meio do adro, em cima da grelha por onde a coisa lá
+   embaixo cospe fogo. Depois de uns instantes só de fôlego, as labaredas sobem e o tomam. Em câmera
+   lenta, com o amuleto apertado na mão, ele queima inteiro, e tudo se apaga sobre o amuleto.
+6. **O pentagrama.** Maycow, agora o normal, abre os olhos deitado no pentagrama da igreja, onde o
+   Jonny estava, no meio do sangue. Em flashes, vê a Dona Nice fazendo com ele o que fez com o
+   Jonny: o mesmo ritual, a mesma faca. Ele balança a cabeça e os flashes param, porque era só
+   memória. Então se levanta, bem devagar.
+
+Ao fim do capítulo, Maycow passou pelo fogo e voltou ao lugar do ritual, com o corpo em pedaços. O
+caminho até o Jimmy continua sendo a Red Valve da oficina.
+
+## Capítulo 5 — O Pastor
+
+Começa quando Maycow se levanta no pentagrama da igreja. Está sem forças: 10% do sangue, 10% da
+magia e nenhum iron rusk. Até sair da igreja ele não consegue correr, a estamina não volta e nada
+diz o que fazer. Lá fora as forças voltam, e o objetivo é ir atrás do Jimmy pela Red Valve da
+oficina.
+
 *(Continua.)*

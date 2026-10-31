@@ -697,7 +697,8 @@ func _build_debug_tab():
 	dica.add_theme_color_override("font_color", Color(0.75, 0.75, 0.75))
 	vbox.add_child(dica)
 
-	for cap in [Eventos.PROLOGO, Eventos.CAPITULO_1, Eventos.CAPITULO_2, Eventos.CAPITULO_3]:
+	for cap in [Eventos.PROLOGO, Eventos.CAPITULO_1, Eventos.CAPITULO_2, Eventos.CAPITULO_3,
+			Eventos.CAPITULO_4, Eventos.CAPITULO_5]:
 		_secao_debug(vbox, tr(Eventos.TITULOS_CAPITULO[cap]))
 		for id in Eventos.do_capitulo(cap):
 			var id_evento: String = id

@@ -18,6 +18,11 @@ extends Node3D
 ## O único perigo que a arena tem por conta própria é o FOGARÉU: o meio do adro
 ## é uma grelha de ferro sobre a Boca, se anda por cima dela normalmente, e de
 ## tempos em tempos a coisa lá embaixo cospe fogo pelas barras.
+##
+## CAPÍTULO 4: quem chega pela porta da catedral do inferno 3
+## (`Eventos.luta_arena_2`) luta aqui no lugar do chefe, que ainda não existe:
+## dois zumbis e um Husk surgem queimando à frente dele. Mortos os três, a cena
+## do fogo (`cutscene_fogo_arena_2.gd`) e o despertar na igreja.
 
 ## A layer em que o chão do jogo vive. O player é `CharacterBody3D` com
 ## `collision_mask = 2`: ele SÓ enxerga a layer 2. O importador de .glb cria o
@@ -86,6 +91,112 @@ func _ready() -> void:
 	_preparar_lampadas()
 	_preparar_fogareu()
 	_soltar_gargulas()
+	if Eventos.luta_arena_2():
+		_luta_do_capitulo_4()
+
+
+# ==============================================================================
+# CAPÍTULO 4 — A LUTA NO LUGAR DO CHEFE
+#
+# O chefe desta arena ainda não foi feito. Até ele existir, a luta é com dois
+# zumbis e um Husk, que surgem queimando (o teleporte da Dona Nice) nos
+# marcadores do nó `enemies` à frente de quem chega (o jogador nasce em z 33
+# olhando pro -Z). Eles já nascem atrás dele: a praça tem 80 m e o alcance de
+# fábrica do zumbi é 15.
+# ==============================================================================
+const CENA_ZUMBI := "res://scenes/enemies/zombie_1.tscn"
+const CENA_HUSK := "res://scenes/enemies/the_cobalt_husker.tscn"
+const CENA_IGREJA := "res://scenes/stages/igreja/igreja_interior.tscn"
+const TELEPORTE := preload("res://scripts/effects/teleporte_dona_nice.gd")
+const CutsceneFogo := preload("res://scripts/stages/battlefield/cutscene_fogo_arena_2.gd")
+## [cena, marcador] de cada um.
+const LUTADORES := [[CENA_ZUMBI, "enemy_2"], [CENA_ZUMBI, "enemy_11"], [CENA_HUSK, "enemy_7"]]
+## Respiro entre chegar (cuspido pelo portal) e eles surgirem.
+const LUTA_ESPERA := 2.4
+const LUTA_ALCANCE := 200.0
+
+## Quem manda na Boca durante a cena do fogo: o ciclo sorteado para, sem dano.
+var fogareu_da_cena := false
+var _lutadores: Array[Node] = []
+var _luta_acabou := false
+
+
+func _luta_do_capitulo_4() -> void:
+	await get_tree().create_timer(LUTA_ESPERA, false).timeout
+	if not is_inside_tree():
+		return
+	var raiz := get_node_or_null("enemies")
+	if raiz == null:
+		push_warning("arena 2: sem o nó `enemies` — cena regerada sem os marcadores?")
+		return
+	for par in LUTADORES:
+		var marca := raiz.get_node_or_null(String(par[1])) as Node3D
+		if marca == null:
+			continue
+		var casca := (load(String(par[0])) as PackedScene).instantiate() as Node3D
+		raiz.add_child(casca)
+		casca.global_position = marca.global_position + Vector3.UP * 0.3
+		casca.global_rotation = marca.global_rotation
+		TELEPORTE.criar(self, marca.global_position, 1.0, true)
+		# a raiz das cenas de inimigo é uma casca sem script: quem tem `dead`
+		# e `died` é o filho "enemy" (ver o battlefield.gd da arena 1)
+		var corpo := _corpo_do_inimigo(casca)
+		if corpo == null:
+			continue
+		if not corpo.is_in_group("enemies"):
+			corpo.add_to_group("enemies")
+		corpo.set("distance_to_aproach", LUTA_ALCANCE)
+		corpo.set("activation_distance", LUTA_ALCANCE)
+		corpo.died.connect(_ao_morrer_lutador)
+		_lutadores.append(corpo)
+		await get_tree().create_timer(0.45, false).timeout
+
+
+func _corpo_do_inimigo(no: Node) -> Node:
+	if "dead" in no and no.has_signal("died"):
+		return no
+	for filho in no.get_children():
+		var c := _corpo_do_inimigo(filho)
+		if c:
+			return c
+	return null
+
+
+func _ao_morrer_lutador() -> void:
+	if _luta_acabou or _lutadores.size() < LUTADORES.size():
+		return
+	for corpo in _lutadores:
+		if is_instance_valid(corpo) and not corpo.dead:
+			return
+	_luta_acabou = true
+	_fim_da_luta()
+
+
+## O último caiu: câmera lenta no golpe, a tela vai ao preto e a cena do fogo
+## começa nele. No fim dela o save já aponta pra igreja.
+func _fim_da_luta() -> void:
+	GlobalEvents.in_cutscene = true
+	var player := get_node_or_null("Player") as CharacterBody3D
+	if player:
+		player.set("invulnerable", true)
+	var barra := get_tree().root.get_node_or_null("GlobalEnemyHealthUI")
+	if barra:
+		barra.queue_free()
+	Engine.time_scale = 0.2
+	await get_tree().create_timer(1.6, true, false, true).timeout
+	Engine.time_scale = 1.0
+	var cena = CutsceneFogo.new()
+	cena.name = "cutscene_fogo_arena_2"
+	add_child(cena)
+	await cena.rodar(self, player)
+	# A arena nunca vira checkpoint: o save da volta nasce aqui, já na igreja
+	# (o `concluir` sem gravar, e o save com o caminho dela). Fechar o jogo
+	# antes disto devolve pro inferno 3, com a luta ainda por fazer.
+	Eventos.concluir(Eventos.CAP4_ARENA_2, false)
+	SaveManager.sair_da_arena()
+	SaveManager.save_game(CENA_IGREJA)
+	GlobalEvents.in_cutscene = false
+	LoadingScreen.load_scene(CENA_IGREJA)
 
 
 # ==============================================================================
@@ -222,7 +333,7 @@ func _preparar_fogareu() -> void:
 
 
 func _fogareu_passo(delta: float) -> void:
-	if _jato == null:
+	if _jato == null or fogareu_da_cena:
 		return
 	_fogareu_prazo -= delta
 	match _fogareu_fase:
