@@ -17,6 +17,13 @@ extends "res://scripts/stages/cenario_aberto.gd"
 ##    Parte delas mira PERTO do jogador — a chuva é um terceiro lutador, não
 ##    enfeite.
 ##  - REDEMOINHOS de poeira que passeiam pela praça, empurrados pelo vento.
+##
+## CAPÍTULO 5: quem chega pelo portal do fim do inferno 2
+## (`Eventos.luta_arena_3`) luta aqui no lugar do Pastor, que ainda não
+## existe: os mesmos dois zumbis e o Husk da arena 2 surgem queimando. No alto
+## do pilar partido da esquerda de quem chega, o Jimmy, numa jaula
+## (`jaula_do_jimmy.gd`), sacode a grade e grita a luta inteira. Mortos os
+## três, a cena do resgate (`cutscene_resgate_jimmy.gd`) e a oficina.
 
 @export_group("Chuva de fogo")
 @export var chuva_ativa: bool = true
@@ -57,6 +64,14 @@ var _chovendo: bool = false
 var _redemoinhos: Array[Dictionary] = []
 
 
+func _ready() -> void:
+	# a gárgula não pode pousar em cima da jaula: o pouso daquele pilar sai
+	# antes de a base soltar as gárgulas
+	if Eventos.luta_arena_3():
+		_tirar_pouso_da_jaula()
+	super._ready()
+
+
 func _preparar() -> void:
 	_raiz_chuva = get_node_or_null("chuva_fogo") as Node3D
 	if _raiz_chuva:
@@ -82,6 +97,9 @@ func _preparar() -> void:
 		for r in raiz_red.get_children():
 			if r is Node3D:
 				_redemoinhos.append({"no": r, "alvo": _ponto_redemoinho(), "giro": randf() * TAU})
+	if Eventos.luta_arena_3():
+		_por_jaula()
+		_luta_do_capitulo_5()
 
 
 func _passo(delta: float) -> void:
@@ -287,3 +305,153 @@ func _mover_redemoinhos(delta: float) -> void:
 		r["giro"] = float(r["giro"]) + delta * 0.7
 		var lado := Vector3(-para.z, 0.0, para.x).normalized() * sin(float(r["giro"])) * 0.6
 		no.position += (para.normalized() + lado).normalized() * redemoinho_velocidade * delta
+
+
+# ==============================================================================
+# CAPÍTULO 5 — A LUTA NO LUGAR DO PASTOR
+#
+# O chefe desta arena ainda não foi feito. Até ele existir a luta é a mesma da
+# arena 2 no Capítulo 4: dois zumbis e um Husk, que surgem queimando (o
+# teleporte da Dona Nice) nos marcadores do nó `enemies`. O jogador nasce na
+# ponte (z 84) olhando pro -Z; os marcadores ficam a uns 30 m do meio da praça.
+# ==============================================================================
+const CENA_ZUMBI := "res://scenes/enemies/zombie_1.tscn"
+const CENA_HUSK := "res://scenes/enemies/the_cobalt_husker.tscn"
+const CENA_OFICINA := "res://scenes/stages/prolog/oficina_jimmy.tscn"
+const TELEPORTE := preload("res://scripts/effects/teleporte_dona_nice.gd")
+const JaulaDoJimmy := preload("res://scripts/stages/battlefield/jaula_do_jimmy.gd")
+const CutsceneResgate := preload("res://scripts/stages/battlefield/cutscene_resgate_jimmy.gd")
+## [cena, marcador] de cada um.
+const LUTADORES := [[CENA_ZUMBI, "enemy_1"], [CENA_ZUMBI, "enemy_12"], [CENA_HUSK, "enemy_6"]]
+## Respiro entre chegar (cuspido pelo portal) e eles surgirem.
+const LUTA_ESPERA := 2.4
+const LUTA_ALCANCE := 200.0
+## O pilar da jaula: o partido da esquerda de quem chega pela ponte (o
+## `pilar_10` de `gerar_arena_3.py`) — o centro no chão e a altura onde o
+## fuste quebra; o entulho do topo sobe até uns 2 m acima disso.
+const PILAR_DA_JAULA := Vector3(-33.71, 16.66, 28.28)
+const MALHA_DO_PILAR := "SM_ar3_pilar_10_pedra_esc"
+## O capitel da jaula assenta acima do entulho.
+const CAPITEL_ACIMA := 2.0
+
+var jaula: Node3D
+var _lutadores: Array[Node] = []
+var _luta_acabou := false
+
+
+func _tirar_pouso_da_jaula() -> void:
+	var pousos := get_node_or_null("pousos")
+	if pousos == null:
+		return
+	for p in pousos.get_children():
+		var m := p as Node3D
+		if m and Vector2(m.position.x - PILAR_DA_JAULA.x, m.position.z - PILAR_DA_JAULA.z).length() < 3.0:
+			pousos.remove_child(m)
+			m.free()
+
+
+func _por_jaula() -> void:
+	jaula = JaulaDoJimmy.new()
+	jaula.name = "jaula_do_jimmy"
+	add_child(jaula)
+	var topo := Vector3(PILAR_DA_JAULA.x, PILAR_DA_JAULA.y + CAPITEL_ACIMA, PILAR_DA_JAULA.z)
+	# a porta (o +Z da jaula) olha pro meio da praça
+	var para := Vector3(0.0, 0.0, 6.0) - topo
+	jaula.global_transform = Transform3D(Basis(Vector3.UP, atan2(para.x, para.z)), topo)
+	var malha := find_child(MALHA_DO_PILAR, true, false) as MeshInstance3D
+	if malha and malha.mesh:
+		jaula.usar_pedra(malha.get_active_material(0))
+	# duas chamas das fogueiras da arena nos cantos da frente do capitel: o
+	# fogo tremendo lá no alto é o que puxa o olho de quem luta lá embaixo
+	var chama := get_node_or_null("fogo/chama_0") as GPUParticles3D
+	if chama:
+		for lado in [-1.0, 1.0]:
+			var c := chama.duplicate() as GPUParticles3D
+			jaula.add_child(c)
+			c.position = Vector3(lado * 1.45, 0.0, 1.45)
+			c.scale = Vector3.ONE * 0.55
+			c.emitting = true
+	jaula.agitar()
+
+
+func _luta_do_capitulo_5() -> void:
+	await get_tree().create_timer(LUTA_ESPERA, false).timeout
+	if not is_inside_tree():
+		return
+	var raiz := get_node_or_null("enemies")
+	if raiz == null:
+		push_warning("arena 3: sem o nó `enemies` — cena regerada sem os marcadores?")
+		return
+	for par in LUTADORES:
+		var marca := raiz.get_node_or_null(String(par[1])) as Node3D
+		if marca == null:
+			continue
+		var casca := (load(String(par[0])) as PackedScene).instantiate() as Node3D
+		raiz.add_child(casca)
+		casca.global_position = marca.global_position + Vector3.UP * 0.3
+		casca.global_rotation = marca.global_rotation
+		TELEPORTE.criar(self, marca.global_position, 1.0, true)
+		# a raiz das cenas de inimigo é uma casca sem script: quem tem `dead`
+		# e `died` é o filho "enemy"
+		var corpo := _corpo_do_inimigo(casca)
+		if corpo == null:
+			continue
+		if not corpo.is_in_group("enemies"):
+			corpo.add_to_group("enemies")
+		corpo.set("distance_to_aproach", LUTA_ALCANCE)
+		corpo.set("activation_distance", LUTA_ALCANCE)
+		corpo.died.connect(_ao_morrer_lutador)
+		_lutadores.append(corpo)
+		await get_tree().create_timer(0.45, false).timeout
+
+
+func _corpo_do_inimigo(no: Node) -> Node:
+	if "dead" in no and no.has_signal("died"):
+		return no
+	for filho in no.get_children():
+		var c := _corpo_do_inimigo(filho)
+		if c:
+			return c
+	return null
+
+
+func _ao_morrer_lutador() -> void:
+	if _luta_acabou or _lutadores.size() < LUTADORES.size():
+		return
+	for corpo in _lutadores:
+		if is_instance_valid(corpo) and not corpo.dead:
+			return
+	_luta_acabou = true
+	_fim_da_luta()
+
+
+## O último caiu: câmera lenta no golpe, a tela vai ao preto e o resgate
+## começa. No fim dele o save já aponta pra oficina.
+func _fim_da_luta() -> void:
+	GlobalEvents.in_cutscene = true
+	chuva_ativa = false
+	var player := get_node_or_null("Player") as CharacterBody3D
+	if player:
+		player.set("invulnerable", true)
+	var barra := get_tree().root.get_node_or_null("GlobalEnemyHealthUI")
+	if barra:
+		barra.queue_free()
+	Engine.time_scale = 0.2
+	await get_tree().create_timer(1.6, true, false, true).timeout
+	Engine.time_scale = 1.0
+	var cena = CutsceneResgate.new()
+	cena.name = "cutscene_resgate_jimmy"
+	cena.jaula = jaula
+	add_child(cena)
+	await cena.rodar(self, player)
+	# A arena nunca vira checkpoint: o save da volta nasce aqui, já na oficina.
+	# Quem chegou sem passar pelo caminho (Debug Travel) fecha o caminho aqui:
+	# o resgate depende dele, e o `concluir` recusaria.
+	for id in [Eventos.CAP5_SAIU_IGREJA, Eventos.CAP5_RED_VALVE_OFICINA,
+			Eventos.CAP5_PORTAL_INFERNO_1, Eventos.CAP5_PORTAL_INFERNO_2]:
+		Eventos.concluir(id, false)
+	Eventos.concluir(Eventos.CAP5_JIMMY_RESGATADO, false)
+	SaveManager.sair_da_arena()
+	SaveManager.save_game(CENA_OFICINA)
+	GlobalEvents.in_cutscene = false
+	LoadingScreen.load_scene(CENA_OFICINA)

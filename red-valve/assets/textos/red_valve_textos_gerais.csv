@@ -730,3 +730,43 @@ DEBUG_EVT_CAP4_PORTAL_INF3,Inferno 3: paid the cathedral portal (100 Iron Rusks)
 DEBUG_EVT_CAP4_ARENA_2,Arena 2: won the fight and burned with the amulet,Arena 2: venceu a luta e queimou com o amuleto
 DEBUG_EVT_CAP4_CONCLUIDO,Chapter 4 finished (woke up in the church),Capítulo 4 concluído (acordou na igreja)
 DEBUG_EVT_CAP5_SAIU_IGREJA,Church: left after waking up,Igreja: saiu depois de acordar
+OBJ_CAP5_INFERNO_1,Cross the parallel world to the portal at the end of the path.,Atravesse o mundo paralelo até o portal no fim do caminho.
+OBJ_CAP5_INFERNO_2,Go down the funnel to the portal at the foot of the spire.,Desça o funil até o portal na base da agulha.
+OBJ_CAP5_ARENA_3,Go through the portal at the foot of the spire: Jimmy is on the other side.,Atravesse o portal na base da agulha: o Jimmy está do outro lado.
+OBJ_CAP5_HOSPITAL,Take Jimmy to Jonny at the hospital.,Leve o Jimmy ao encontro do Jonny no hospital.
+OBJ_CAP5_CIRURGIA,Take Jimmy to the operating room where you left Jonny.,Leve o Jimmy até a sala de cirurgia onde você deixou o Jonny.
+AVISO_CAP5_HOSPITAL,I need to get to the hospital.,Preciso ir ao hospital.
+AVISO_CAP5_AMULETO,The amulet doesn't answer anymore.,O amuleto não responde mais.
+PROMPT_LEAVE_WORKSHOP,Leave the workshop?,Sair da oficina?
+DEBUG_EVT_CAP5_RED_VALVE,Workshop: crossed the Red Valve,Oficina: atravessou a Red Valve
+DEBUG_EVT_CAP5_PORTAL_INF1,Hell: paid the end portal (100 Iron Rusks),Inferno: pagou o portal do fim (100 Iron Rusks)
+DEBUG_EVT_CAP5_PORTAL_INF2,Hell 2: paid the spire portal (100 Iron Rusks),Inferno 2: pagou o portal da agulha (100 Iron Rusks)
+DEBUG_EVT_CAP5_JIMMY,Arena 3: won the fight and freed Jimmy,Arena 3: venceu a luta e libertou o Jimmy
+DEBUG_EVT_CAP5_CONVERSA,Workshop: told Jimmy everything,Oficina: contou tudo ao Jimmy
+DEBUG_EVT_CAP5_FIM,Hospital: Jimmy and Jonny (end of the game),Hospital: o Jimmy e o Jonny (fim do jogo)
+CREDITOS_UM_JOGO_DE,A game by,Um jogo de
+CREDITOS_EQUIPE,Team,Equipe
+CREDITOS_CRIACAO,"Creation, direction, script, design and programming","Criação, direção, roteiro, design e programação"
+CREDITOS_PARCEIRO,Creative partner — story and assets,Parceiro de criação — história e assets
+CREDITOS_ROSTOS,Character faces,Rostos dos personagens
+CREDITOS_TESTES,Testing,Testes
+CREDITOS_APOIO,"My wife, who supported this project from start to finish","Minha esposa, que apoiou este projeto do começo ao fim"
+CREDITOS_TECNOLOGIA,Technology,Tecnologia
+CREDITOS_MOTOR,Engine,Motor
+CREDITOS_MOTOR_NOTA,Mobile renderer (Vulkan) · GDScript · Godot Physics · AnimationTree · GPUParticles3D · custom shaders,Renderizador Mobile (Vulkan) · GDScript · física Godot · AnimationTree · GPUParticles3D · shaders próprios
+CREDITOS_ADDONS,Add-ons,Addons
+CREDITOS_ARTE_3D,"Modeling, rigging and animation","Modelagem, rig e animação"
+CREDITOS_ARTE_3D_NOTA,"Script-generated levels, rigs built from measured points with voxel-proxy skin weights, motion capture retargeting","Cenários gerados por script, rigs por pontos medidos com pesos em proxy de voxel, retarget de captura de movimento"
+CREDITOS_IMAGEM,Images and textures,Imagem e texturas
+CREDITOS_AUDIO,Audio,Áudio
+CREDITOS_AUDIO_NOTA,Sound effects composed and synthesized by script,Efeitos sonoros compostos e sintetizados por script
+CREDITOS_ASSISTENCIA,Development assistance,Assistência de desenvolvimento
+CREDITOS_MUSICA,Music,Música
+CREDITOS_MUSICA_NOTA,"based on ""Nostalgic Piano"" by Rafael Krux (CC0)","a partir de ""Nostalgic Piano"", de Rafael Krux (CC0)"
+CREDITOS_SONS,"Sound effects (CC0, OpenGameArt)","Efeitos sonoros (CC0, OpenGameArt)"
+CREDITOS_MODELOS,Third-party 3D models,Modelos 3D de terceiros
+CREDITOS_FONTES,Fonts,Fontes
+CREDITOS_AGRADECIMENTOS,Thanks,Agradecimentos
+CREDITOS_AGRADECIMENTOS_TEXTO,"To the Godot, Blender and OpenGameArt communities — and to you, who played all the way here.","Às comunidades Godot, Blender e OpenGameArt — e a você, que jogou até aqui."
+CREDITOS_OBRIGADO,Thank you for playing,Obrigado por jogar
+CREDITOS_ACELERAR,Hold confirm to speed up,Segure confirmar para acelerar

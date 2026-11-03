@@ -15,6 +15,9 @@ const ViagemPortal := preload("res://scripts/systems/viagem_portal.gd")
 const DUR_ANDAR := 4.2
 
 var porta: Node3D
+## O evento que a travessia conclui (vazio = a do porão, `CAP1_RED_VALVE`). A
+## red valve da oficina, no Capítulo 5, usa a mesma cena.
+var evento: String = ""
 var _fp: Node3D
 
 
@@ -49,7 +52,7 @@ func rodar(dono: Node3D, jogador: CharacterBody3D) -> void:
 	# o vórtice puxa a câmera pra dentro
 	var centro: Vector3 = porta.centro_do_vortice()
 	var p0 := _fp.global_position
-	Eventos.concluir(Eventos.CAP1_RED_VALVE)
+	Eventos.concluir(evento if evento != "" else Eventos.CAP1_RED_VALVE)
 	ViagemPortal.viajar(get_tree(), porta.cena_destino, porta.ponto_destino)
 	await fase(1.6, func(k: float) -> void:
 		var e := k * k

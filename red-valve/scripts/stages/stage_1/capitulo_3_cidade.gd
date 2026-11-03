@@ -360,6 +360,12 @@ func _physics_process(delta: float) -> void:
 		_trocar_mapa(_dentro)
 	if not _dentro:
 		if _no_chao(p, _f) < RAIO_DO_PONTO:
+			# levando o Jimmy (fim do Capítulo 5) o caminho é só até o hospital
+			if Eventos.levando_jimmy():
+				if _aviso_preso <= 0.0:
+					_aviso_preso = 8.0
+					GlobalUtils.show_center_message("floresta_hospital", tr("AVISO_CAP5_HOSPITAL"), 18, 3.2)
+				return
 			_entrar_na_floresta()
 		return
 	if _no_chao(p, _c) < RAIO_DO_PONTO:

@@ -25,6 +25,12 @@ extends "res://scripts/stages/cenario_aberto.gd"
 ##
 ## O inferno 2 herda daqui: o que muda de um mapa pro outro (onde nasce o fogo
 ## ao longe, pra onde a sombra olha) está em `_ponto_erupcao` e `_giro_sombra`.
+##
+## CAPÍTULO 5 (`Eventos.caminho_do_jimmy`): o caminho até o Jimmy é inferno 1
+## → inferno 2 → arena 3. O portal do fim de cada um está SELADO até o Maycow
+## pagar os iron rusks dele (`portal_selado.gd`, o mesmo do Capítulo 4), e o do
+## começo do inferno 1 volta pra red valve da oficina, perguntando antes.
+## Cada mapa diz o evento do seu portal em `_evento_do_capitulo_5`.
 
 @export_group("Ligações")
 ## Cena do portal do FIM. Vazio = o portal só gira (e não suga).
@@ -52,6 +58,10 @@ extends "res://scripts/stages/cenario_aberto.gd"
 
 const LAVA := -14.0
 const PortalVortice := preload("res://scripts/effects/portal_vortice.gd")
+const PortalSelado := preload("res://scripts/effects/portal_selado.gd")
+const CENA_OFICINA := "res://scenes/stages/prolog/oficina_jimmy.tscn"
+## O nome da red valve na oficina (`capitulo_5_oficina.gd`): o ponto de chegada.
+const RED_VALVE_DA_OFICINA := "red_valve"
 
 var _geiseres: Array[Dictionary] = []
 var _modelo_erupcao: GPUParticles3D
@@ -92,11 +102,57 @@ func _preparar() -> void:
 			})
 			n3.rotation.y = _giro_sombra(n3.position) + randf_range(-0.5, 0.5)
 
+	_ligacoes_do_capitulo_5()
 	_portal_saida = _montar_portal("saida", "spawn_saida", cena_saida, ponto_saida)
 	_portal_entrada = _montar_portal("entrada", "spawn_entrada", cena_entrada, ponto_entrada)
+	_historia_do_capitulo_5()
 	var ponto := ViagemPortal.pegar_chegada(scene_file_path)
 	if ponto != "":
 		_chegar(ponto)
+
+
+# ==============================================================================
+# O CAPÍTULO 5
+# ==============================================================================
+## O evento que paga o portal do FIM deste mapa no Capítulo 5, ou "" se o mapa
+## não faz parte do caminho até o Jimmy (o inferno 3 e o 4).
+func _evento_do_capitulo_5() -> String:
+	return Eventos.CAP5_PORTAL_INFERNO_1
+
+
+## O objetivo deste mapa no caminho até o Jimmy.
+func _objetivo_do_capitulo_5() -> String:
+	return "OBJ_CAP5_INFERNO_1"
+
+
+## O portal do começo do inferno 1 volta pra red valve da oficina. Roda antes
+## de os portais serem montados (eles leem `cena_entrada`).
+func _ligacoes_do_capitulo_5() -> void:
+	if _evento_do_capitulo_5() != Eventos.CAP5_PORTAL_INFERNO_1 or not Eventos.caminho_do_jimmy():
+		return
+	cena_entrada = CENA_OFICINA
+	ponto_entrada = RED_VALVE_DA_OFICINA
+
+
+## O portal do fim selado até pagar, e o que fazer agora.
+func _historia_do_capitulo_5() -> void:
+	var evento := _evento_do_capitulo_5()
+	if evento == "" or not Eventos.caminho_do_jimmy():
+		return
+	# a volta pra oficina só leva quem quer (não suga quem passou perto)
+	if evento == Eventos.CAP5_PORTAL_INFERNO_1 and _portal_entrada:
+		_portal_entrada.com_prompt = true
+	if _portal_saida and Eventos.portal_do_capitulo_5_selado(evento):
+		_selar(_portal_saida, evento)
+	GlobalUtils.mostrar_objetivo(tr(_objetivo_do_capitulo_5()), 40.0)
+
+
+## Põe o selo de iron rusks no portal (`portal_selado.gd`).
+func _selar(portal: Node3D, evento: String) -> void:
+	var selo = PortalSelado.new()
+	selo.name = "selo"
+	selo.evento = evento
+	portal.add_child(selo)
 
 
 ## Para onde a SOMBRA em `p` olha. Aqui, pro caminho (o centro do mapa é x=0).

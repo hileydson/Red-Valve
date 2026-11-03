@@ -54,6 +54,15 @@ func _preparar() -> void:
 	_grito_prazo = randf_range(grito_espera_min * 0.5, grito_espera_max * 0.5)
 
 
+## No Capítulo 5 o portal da boca da agulha leva à arena 3, selado até pagar.
+func _evento_do_capitulo_5() -> String:
+	return Eventos.CAP5_PORTAL_INFERNO_2
+
+
+func _objetivo_do_capitulo_5() -> String:
+	return "OBJ_CAP5_INFERNO_2"
+
+
 ## A cutscene da oficina (prólogo) passa por aqui: o Husk traz o Maycow pelo
 ## anel de chegada (ver `cutscene_husk_inferno_2.gd`).
 func _chegar(ponto: String) -> void:

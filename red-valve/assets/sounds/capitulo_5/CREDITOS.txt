@@ -1,0 +1,16 @@
+Sons do fim do Capitulo 5 (o resgate do Jimmy e o reencontro com o Jonny).
+Compostos por tools/audio/gerar_sons_capitulo_5.py.
+
+A MUSICA do reencontro e dos creditos (reencontro.ogg) e'
+
+  "I Want to go Home", de Eldritch Grim — CC0 (dominio publico)
+  https://opengameart.org/content/i-want-to-go-home
+  (versao sentimental de "Nostalgic Piano", de Rafael Krux, tambem CC0)
+
+As PANCADAS de ferro (grade_pancada, porta_arrancada) saem do pacote CC0 do
+OpenGameArt:
+
+  "75 CC0 breaking / falling / hit sfx"  https://opengameart.org/content/75-cc0-breaking-falling-hit-sfx
+
+O rangido da porta e a vibracao da barra sao sintetizados (ruido filtrado e
+senoide) — sem licenca nem credito a cumprir nessa parte.

@@ -2,6 +2,9 @@ extends Node3D
 
 const ViagemPortal := preload("res://scripts/systems/viagem_portal.gd")
 const AgarraoRedValve := preload("res://scripts/stages/prolog/agarrao_red_valve.gd")
+## Do Capítulo 5 em diante a oficina é outra: a red valve até o Jimmy e a
+## conversa depois da arena 3 (ver `capitulo_5_oficina.gd`).
+const Capitulo5Oficina := preload("res://scripts/stages/prolog/capitulo_5_oficina.gd")
 
 @onready var camera_oficina: Camera3D = $camera_oficina
 @onready var player = $Player
@@ -130,6 +133,8 @@ func _finalizar_cutscene_tudo() -> void:
 		camera_oficina.queue_free()
 
 func _ready() -> void:
+	if Capitulo5Oficina.assumir(self):
+		return
 	GlobalUtils.esconder_objetivo()
 	GlobalEvents.in_cutscene = true
 	SaveManager.save_game()

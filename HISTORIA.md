@@ -201,9 +201,45 @@ caminho até o Jimmy continua sendo a Red Valve da oficina.
 
 ## Capítulo 5 — O Pastor
 
-Começa quando Maycow se levanta no pentagrama da igreja. Está sem forças: 10% do sangue, 10% da
-magia e nenhum iron rusk. Até sair da igreja ele não consegue correr, a estamina não volta e nada
-diz o que fazer. Lá fora as forças voltam, e o objetivo é ir atrás do Jimmy pela Red Valve da
-oficina.
+Começa quando Maycow se levanta no pentagrama da igreja. No meio da tela: **CAPÍTULO 5 — O Pastor**.
 
-*(Continua.)*
+1. **Sem forças.** Ele está com 10% do sangue, 10% da magia e nenhum iron rusk. Até sair da igreja
+   não consegue correr, a estamina não volta e nada diz o que fazer.
+2. **A oficina.** Lá fora a estamina volta ao normal — o sangue, a magia e os iron rusks continuam
+   como estavam. O objetivo é ir atrás do Jimmy pela Red Valve da oficina, que pela primeira vez
+   desde o prólogo está aberta. O armário continua arrastado e, atrás dele, a Red Valve. Na primeira
+   vez ela o chama, como a do calabouço da escola: Maycow anda até ela, a porta abre e o leva ao
+   **Inferno 1**. Dali em diante ela só abre quando ele quer, e o portal do começo do Inferno 1 o
+   devolve à oficina.
+3. **Os portais selados.** No fim do Inferno 1 o portal está selado e só se abre com **100 iron
+   rusks**. Ele leva ao **Inferno 2**, o funil, que termina noutro portal selado, de mais **100
+   iron rusks**. Esse leva à **Arena 3**, o Trono do Abismo.
+4. **A Arena 3.** É o lugar do Pastor. *(O chefe ainda não existe: por enquanto, dois zumbis e um
+   Husk lutam no lugar dele.)* No alto de um dos pilares partidos, numa jaula de ferro, está o
+   **Jimmy**: de pé, com as mãos nas grades, sacudindo, socando as barras, pondo o braço pra fora e
+   gritando enquanto o Maycow luta lá embaixo.
+5. **O resgate.** Mortos os três, em cortes: Maycow atravessa a praça até o pilar; lá em cima, o
+   Jimmy o vê; Maycow agarra as barras da porta da jaula e a arranca, e ela cai do pilar. O Jimmy
+   sai e os dois se abraçam. Depois vão embora juntos, pela ponte por onde ele chegou — o caminho
+   de volta.
+6. **A conversa.** A Red Valve da oficina se abre num clarão vermelho e cospe os dois: o Jimmy,
+   olhando a oficina dele como quem não acredita, e o Maycow, o normal, de volta deste lado. No meio
+   do galpão o Maycow conta tudo, sem uma palavra na tela: ele fala com a mão aberta, o Jimmy ouve,
+   pergunta, leva a mão à cabeça. Enquanto ele conta, vêm os flashes do que aconteceu, como se
+   fossem vistos de um universo paralelo — só os protagonistas de cada momento, soltos num fundo de
+   nebulosa que gira, com partículas e luzes voando em volta: a Dona Nice levando o Jonny pela mão,
+   o Grizzolito, o ritual, a Dona Nice monstro, a Drizzi conversando com o Maycow, a Drizzi monstro,
+   o Maycow queimando com o amuleto na mão, o Jimmy na jaula. A tela apaga bem devagar, e Maycow
+   aparece na calçada da oficina, com o Jimmy ao lado.
+7. **Pela cidade.** O objetivo passa a ser levar o Jimmy ao encontro do Jonny, no hospital. O Jimmy
+   segue o Maycow aonde ele for. O amuleto não responde mais: a cidade é a de gente, de dia claro,
+   sem monstro e sem sombra. Todo lugar está fechado — casas, igreja, escola, oficina, a floresta —
+   e cada porta só diz *"Preciso ir ao hospital"*. É da cidade para o hospital, e só.
+8. **O hospital.** O hospital é o de verdade, aceso, com gente nos corredores. O Jimmy segue o
+   Maycow até a sala de cirurgia do segundo andar, onde ele deixou o Jonny no Capítulo 2.
+9. **O reencontro.** Quando a porta da cirurgia se abre, lá está o Jonny, agora sentado na maca. O
+   Jimmy se aproxima devagar e abraça o filho; os dois ficam abraçados, em prantos, enquanto a
+   câmera gira em volta deles e a música entra. A tela apaga muito devagar, com a música tocando, e
+   rolam os créditos.
+
+**Fim.**

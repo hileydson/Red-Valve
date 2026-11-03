@@ -47,7 +47,7 @@ func _process(delta: float) -> void:
 	if not is_instance_valid(value_label):
 		return
 	var no_menu: bool = camada != null and camada.get("is_in_menu") == true
-	var cobrando := SaveManager.realidade_normal() and camada.visible and not no_menu
+	var cobrando := SaveManager.realidade_cobrada() and camada.visible and not no_menu
 	_peso = move_toward(_peso, 1.0 if cobrando else 0.0, delta * 3.0)
 	_soco = move_toward(_soco, 0.0, delta * 2.6)
 	_clarao = move_toward(_clarao, 0.0, delta * 3.2)

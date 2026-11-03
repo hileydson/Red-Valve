@@ -27,7 +27,6 @@ const MODELO_LANTERNA := "res://assets/3d_model/player/lanterna/lanterna.glb"
 const CENA_ITEM_OBTIDO := "res://scenes/ui/item_obtido.tscn"
 const ItemSelecionavel := preload("res://scripts/stages/hospital/item_selecionavel.gd")
 const DICA_ID := "inferno_3_lanterna"
-const PortalSelado := preload("res://scripts/effects/portal_selado.gd")
 const CENA_ARENA_2 := "res://scenes/stages/battlefield/battlefield_2.tscn"
 
 @export_group("Sino")
@@ -110,12 +109,9 @@ func _historia_do_capitulo_4() -> void:
 		GlobalUtils.mostrar_objetivo(tr(chave), 40.0)
 
 
-## Põe o selo de iron rusks no portal (`portal_selado.gd`).
-func _selar(portal: Node3D, evento: String) -> void:
-	var selo = PortalSelado.new()
-	selo.name = "selo"
-	selo.evento = evento
-	portal.add_child(selo)
+## O caminho do Capítulo 5 (infernos 1 e 2) não passa por aqui (nem pelo 4).
+func _evento_do_capitulo_5() -> String:
+	return ""
 
 
 ## As sombras ficam no abismo dos dois lados da cidade: olham pra ela.

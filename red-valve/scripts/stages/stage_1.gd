@@ -74,6 +74,10 @@ const CAPITULO_2_CIDADE := "res://scripts/stages/stage_1/capitulo_2_cidade.gd"
 ## Do Capítulo 3 em diante: a floresta entre o `floresta_local` e o
 ## `cemiterio_local`, o caminho do cemitério.
 const CAPITULO_3_CIDADE := preload("res://scripts/stages/stage_1/capitulo_3_cidade.gd")
+## O Capítulo 5 na cidade: a oficina reaberta e o Jimmy seguindo o Maycow até
+## o hospital.
+const CAPITULO_5_CIDADE := preload("res://scripts/stages/stage_1/capitulo_5_cidade.gd")
+const CENA_OFICINA := "res://scenes/stages/prolog/oficina_jimmy.tscn"
 
 @onready var navigation_region_3d: NavigationRegion3D = $NavigationRegion3D
 @onready var real_time_label: Label = $real_time_label
@@ -96,6 +100,8 @@ var _ignorar_prompt_hospital: bool = false
 ## Mesma coisa para a escola: quem volta de dentro reaparece na calçada diante
 ## do portão, que é exatamente onde a área do prompt está.
 var _ignorar_prompt_escola: bool = false
+## E para a oficina do Capítulo 5: quem sai dela reaparece na calçada da porta.
+var _ignorar_prompt_oficina: bool = false
 ## Engole UMA entrada na área da casa do Maycow. Ligado quando o jogador volta
 ## de dentro da casa: ele reaparece na soleira, já dentro da área, e sem isto o
 ## prompt de "entrar" pipocaria no mesmo instante em que ele acabou de sair.
@@ -147,6 +153,7 @@ func _ready() -> void:
 	_jonny_na_cidade()
 	_capitulo_2()
 	_capitulo_3()
+	_capitulo_5()
 	# a cidade sem o amuleto no pescoço (R3 / H) tem mais cor: entra já assim
 	(func() -> void: Realidade.ajustar_cor_ao_entrar(self)).call_deferred()
 
@@ -231,6 +238,14 @@ func setup_player_spawn() -> void:
 		# saiu pelo portão do cemitério: volta pra floresta, no `cemiterio_local`
 		GlobalEvents.voltando_do_cemiterio = false
 		CAPITULO_3_CIDADE.posicionar_na_volta_do_cemiterio(self, get_node_or_null("Player"))
+	elif GlobalEvents.voltando_da_oficina:
+		# saiu da oficina (Capítulo 5): na calçada da porta dela
+		GlobalEvents.voltando_da_oficina = false
+		# só se ele nascer DENTRO da área (o `body_entered` vem nos primeiros
+		# quadros); fora dela, a próxima entrada já tem de avisar
+		_ignorar_prompt_oficina = true
+		get_tree().create_timer(1.0).timeout.connect(func() -> void: _ignorar_prompt_oficina = false)
+		CAPITULO_5_CIDADE.posicionar_na_porta_da_oficina(self, get_node_or_null("Player"))
 	elif GlobalEvents.voltando_da_casa_maycow:
 		GlobalEvents.voltando_da_casa_maycow = false
 		# Ele reaparece dentro da própria área de entrada: segura o prompt até
@@ -270,8 +285,9 @@ func setup_player_spawn() -> void:
 	if bloqueio:
 		bloqueio.queue_free()
 		
-	# Remove os inimigos imediatamente se ainda estiver no prólogo
-	if not is_chapter_1:
+	# Remove os inimigos imediatamente se ainda estiver no prólogo — e levando
+	# o Jimmy ao hospital (fim do Capítulo 5), quando não há mais monstro
+	if not is_chapter_1 or Eventos.levando_jimmy():
 		var enemies_node = get_node_or_null("enemies")
 		if not enemies_node:
 			enemies_node = find_child("enemies", true, false)
@@ -326,6 +342,17 @@ func _process(delta: float) -> void:
 		return
 
 	if player_na_oficina:
+		# Capítulo 5: a oficina só abre enquanto o Jimmy está do outro lado
+		if SaveManager.prolog_finished:
+			if not Eventos.local_aberto("oficina"):
+				return
+			player_na_oficina = false
+			_esconder_prompt()
+			GlobalUtils.esconder_objetivo()
+			$fade.fade_out()
+			await get_tree().create_timer(2.0).timeout
+			LoadingScreen.load_scene(CENA_OFICINA)
+			return
 		player_na_oficina = false
 		_esconder_prompt()
 		GlobalUtils.esconder_objetivo()
@@ -351,6 +378,9 @@ func _process(delta: float) -> void:
 		await get_tree().create_timer(2.0).timeout
 		LoadingScreen.load_scene(CENA_CASA_NICE)
 	elif player_na_casa_maycow:
+		# levando o Jimmy: o aviso já está na tela e o botão não faz nada
+		if not Eventos.local_aberto("casa_maycow"):
+			return
 		player_na_casa_maycow = false
 		GlobalEvents.entrando_na_casa_maycow = true
 		_esconder_prompt()
@@ -801,6 +831,15 @@ func _capitulo_3() -> void:
 	c.iniciar(self)
 
 
+func _capitulo_5() -> void:
+	if get_node_or_null("capitulo_5_cidade") != null:
+		return
+	var c = CAPITULO_5_CIDADE.new()
+	c.name = "capitulo_5_cidade"
+	add_child(c)
+	c.iniciar(self)
+
+
 func _jonny_no_colo() -> bool:
 	var jogador := get_node_or_null("Player")
 	return jogador != null and jogador.get("carregando_jonny") == true
@@ -854,7 +893,7 @@ func _ao_entrar_area_casa_maycow(body: Node3D) -> void:
 		_esconder_prompt(true)
 		return
 
-	_mostrar_prompt(tr("PROMPT_ENTER_MAYCOW_HOUSE"))
+	_mostrar_prompt(_prompt_do_local("casa_maycow", "PROMPT_ENTER_MAYCOW_HOUSE"))
 
 
 func _ao_sair_area_casa_maycow(body: Node3D) -> void:
@@ -882,20 +921,34 @@ func _on_camera_2_body_entered(body: Node3D) -> void:
 
 
 func _on_area_3d_jimmy_house_body_entered(body: Node3D) -> void:
-	if SaveManager.prolog_finished:
+	if SaveManager.prolog_finished and not _oficina_no_capitulo_5():
 		return
 	if _eh_o_player(body):
 		player_na_oficina = true
+		if SaveManager.prolog_finished:
+			if _ignorar_prompt_oficina:
+				_ignorar_prompt_oficina = false
+				_esconder_prompt(true)
+				return
+			_mostrar_prompt(_prompt_do_local("oficina", "PROMPT_ENTER_WORKSHOP"))
+			return
 		_mostrar_prompt(tr("PROMPT_ENTER_WORKSHOP"))
 		GlobalUtils.esconder_objetivo()
 
 
 func _on_area_3d_jimmy_house_body_exited(body: Node3D) -> void:
-	if SaveManager.prolog_finished:
+	if SaveManager.prolog_finished and not _oficina_no_capitulo_5():
 		return
 	if _eh_o_player(body):
 		player_na_oficina = false
+		_ignorar_prompt_oficina = false
 		_esconder_prompt()
+
+
+## Depois do prólogo a porta da oficina só volta a falar no Capítulo 5: aberta
+## enquanto o Jimmy está do outro lado, e com o aviso do hospital levando ele.
+func _oficina_no_capitulo_5() -> bool:
+	return Eventos.oficina_aberta() or Eventos.levando_jimmy()
 
 func _play_intro_text() -> void:
 	if GlobalEvents.entering_chapter_1:
@@ -934,6 +987,11 @@ func _play_intro_text() -> void:
 		await get_tree().create_timer(1.0, false).timeout
 		await _titulo_do_capitulo("TXT_CHAPTER_3", "TXT_CHAPTER_3_SUBTITULO")
 		_mostrar_objetivo_da_historia(1.5)
+		return
+
+	# saiu da oficina depois de contar tudo ao Jimmy: quem fala é o Capítulo 5
+	# (`capitulo_5_cidade.gd`)
+	if Eventos.levando_jimmy():
 		return
 
 	# saiu do cemitério depois da Drizzi e do poder novo: acabou o Capítulo 3

@@ -121,6 +121,9 @@ var voltando_da_escola: bool = false
 ## Ligado pelo cemitério quando ele sai pelo portão: o stage_1 consome (e zera)
 ## isto no spawn para pô-lo dentro da floresta, no `cemiterio_local`.
 var voltando_do_cemiterio: bool = false
+## Ligado pela oficina do Jimmy (Capítulo 5) quando ele sai pela porta da rua:
+## o stage_1 consome (e zera) isto no spawn para pô-lo na calçada da oficina.
+var voltando_da_oficina: bool = false
 ## Ligado pela floresta quando ele chega no `cemiterio_local`: o cemitério
 ## consome (e zera) isto e abre a tela devagar, saindo do preto.
 var chegando_ao_cemiterio: bool = false

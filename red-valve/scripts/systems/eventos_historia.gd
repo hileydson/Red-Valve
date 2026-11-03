@@ -145,8 +145,26 @@ const CAP4_CONCLUIDO := "cap4_concluido"
 ## Saiu da igreja depois de acordar nela. Até aqui ele não corre, a estamina
 ## não volta e o jogo não dá orientação nenhuma.
 const CAP5_SAIU_IGREJA := "cap5_saiu_igreja"
+## A primeira travessia da red valve da oficina (a cena em primeira pessoa,
+## a mesma da escola) até o começo do inferno 1.
+const CAP5_RED_VALVE_OFICINA := "cap5_red_valve_oficina"
+## Pagou os iron rusks do portal do fim do inferno 1: ele passa a levar ao
+## inferno 2.
+const CAP5_PORTAL_INFERNO_1 := "cap5_portal_inferno_1"
+## Pagou os iron rusks do portal do fim do inferno 2: ele passa a levar à
+## arena 3.
+const CAP5_PORTAL_INFERNO_2 := "cap5_portal_inferno_2"
+## Venceu a luta da arena 3 (o lugar do Pastor, que ainda não existe) e tirou
+## o Jimmy da jaula. O save já aponta pra oficina.
+const CAP5_JIMMY_RESGATADO := "cap5_jimmy_resgatado"
+## Na oficina, o Maycow contou tudo ao Jimmy (os flashes da história). Daí em
+## diante é levar o Jimmy até o Jonny, no hospital.
+const CAP5_CONVERSA_OFICINA := "cap5_conversa_oficina"
+## Abriu a porta da cirurgia com o Jimmy: o reencontro com o Jonny e os
+## créditos. Fim do jogo.
+const CAP5_FIM := "cap5_fim"
 
-## Quantos iron rusks cada portal selado do Capítulo 4 pede.
+## Quantos iron rusks cada portal selado (Capítulos 4 e 5) pede.
 const CUSTO_PORTAL := 100
 
 ## A ordem da lista é a ordem da história (e a do debug).
@@ -227,6 +245,18 @@ const CATALOGO := [
 
 	{"id": CAP5_SAIU_IGREJA, "cap": CAPITULO_5, "rotulo": "DEBUG_EVT_CAP5_SAIU_IGREJA",
 		"depende": [CAP4_CONCLUIDO]},
+	{"id": CAP5_RED_VALVE_OFICINA, "cap": CAPITULO_5, "rotulo": "DEBUG_EVT_CAP5_RED_VALVE",
+		"depende": [CAP5_SAIU_IGREJA]},
+	{"id": CAP5_PORTAL_INFERNO_1, "cap": CAPITULO_5, "rotulo": "DEBUG_EVT_CAP5_PORTAL_INF1",
+		"depende": [CAP5_RED_VALVE_OFICINA]},
+	{"id": CAP5_PORTAL_INFERNO_2, "cap": CAPITULO_5, "rotulo": "DEBUG_EVT_CAP5_PORTAL_INF2",
+		"depende": [CAP5_PORTAL_INFERNO_1]},
+	{"id": CAP5_JIMMY_RESGATADO, "cap": CAPITULO_5, "rotulo": "DEBUG_EVT_CAP5_JIMMY",
+		"depende": [CAP5_PORTAL_INFERNO_2]},
+	{"id": CAP5_CONVERSA_OFICINA, "cap": CAPITULO_5, "rotulo": "DEBUG_EVT_CAP5_CONVERSA",
+		"depende": [CAP5_JIMMY_RESGATADO]},
+	{"id": CAP5_FIM, "cap": CAPITULO_5, "rotulo": "DEBUG_EVT_CAP5_FIM",
+		"depende": [CAP5_CONVERSA_OFICINA]},
 ]
 
 ## Os poderes da cogblade, na ordem do círculo (o primeiro fica no topo).
@@ -260,7 +290,7 @@ const TITULOS_CAPITULO := {
 
 ## Os lugares da cidade com porta. O que cada um precisa para abrir está em
 ## `local_aberto`; o aviso de trancado, em `aviso_local_fechado`.
-const LOCAIS := ["casa_maycow", "casa_jimmy", "escola", "igreja", "hospital", "casa_nice"]
+const LOCAIS := ["casa_maycow", "casa_jimmy", "escola", "igreja", "hospital", "casa_nice", "oficina"]
 
 
 # ==============================================================================
@@ -510,7 +540,11 @@ func _legado_escrever(id: String, valor: bool) -> bool:
 ## do diário — a escola. No Capítulo 2 a casa da Dona Nice abre depois de ele
 ## a ver entrando na igreja (e só no Capítulo 2), a igreja continua pedindo a
 ## chave (ver `SaveManager.igreja_aberta`) e o hospital só abre com ela morta.
+## A oficina só reabre no Capítulo 5, enquanto o Jimmy está do outro lado; e
+## levando o Jimmy ao Jonny, o único lugar que abre é o hospital.
 func local_aberto(local: String) -> bool:
+	if local == "oficina":
+		return oficina_aberta()
 	match capitulo_atual():
 		PROLOGO:
 			return true
@@ -528,6 +562,9 @@ func local_aberto(local: String) -> bool:
 				"hospital":
 					return feito(CAP2_DONA_NICE_DERROTADA)
 			return true
+		CAPITULO_5:
+			if levando_jimmy():
+				return local == "hospital"
 	return local != "casa_nice"
 
 
@@ -535,6 +572,9 @@ func local_aberto(local: String) -> bool:
 func aviso_local_fechado(local: String) -> String:
 	if local_aberto(local):
 		return ""
+	# levando o Jimmy: não é que esteja trancado, é que agora só importa o hospital
+	if levando_jimmy():
+		return "AVISO_CAP5_HOSPITAL"
 	match local:
 		"escola":
 			return "PROMPT_ESCOLA_FECHADA"
@@ -627,6 +667,46 @@ func sem_forcas_na_igreja() -> bool:
 	return feito(CAP4_CONCLUIDO) and not feito(CAP5_SAIU_IGREJA)
 
 
+## A oficina reabre (Capítulo 5, fora da igreja, o Jimmy ainda do outro lado):
+## a red valve dela leva ao inferno 1.
+func oficina_aberta() -> bool:
+	return capitulo_atual() == CAPITULO_5 and feito(CAP5_SAIU_IGREJA) \
+		and not feito(CAP5_JIMMY_RESGATADO)
+
+
+## O caminho do Capítulo 5 até o Jimmy está valendo: o inferno 1 volta pra
+## oficina pelo portal do começo e os portais do fim dos infernos 1 e 2 pedem
+## iron rusks (o do 1 leva ao 2; o do 2, à arena 3).
+func caminho_do_jimmy() -> bool:
+	return capitulo_atual() == CAPITULO_5 and not feito(CAP5_JIMMY_RESGATADO)
+
+
+## O portal do fim deste inferno (o evento do pagamento dele) ainda está
+## selado no Capítulo 5?
+func portal_do_capitulo_5_selado(evento: String) -> bool:
+	return caminho_do_jimmy() and not feito(evento)
+
+
+## A luta da arena 3 está valendo (Capítulo 5 e o Jimmy ainda na jaula)? Como a
+## arena 2 do Capítulo 4, chegar nela já é a luta — o Debug Travel chega sem os
+## portais pagos.
+func luta_arena_3() -> bool:
+	return caminho_do_jimmy()
+
+
+## A conversa na oficina ainda vai acontecer (o Jimmy saiu da jaula e o Maycow
+## ainda não contou nada): a oficina roda a cena em vez do jogo.
+func conversa_na_oficina() -> bool:
+	return feito(CAP5_JIMMY_RESGATADO) and not feito(CAP5_CONVERSA_OFICINA)
+
+
+## O fim do Capítulo 5: o Jimmy segue o Maycow da oficina até o Jonny, no
+## hospital. A cidade fica sem amuleto (dia claro, gente, nada de monstro nem
+## de sombra), todo lugar fechado menos o hospital — que é o claro, o de gente.
+func levando_jimmy() -> bool:
+	return feito(CAP5_CONVERSA_OFICINA) and not feito(CAP5_FIM)
+
+
 ## O que fazer agora (chave do CSV), ou "" quando não há objetivo.
 func objetivo_atual() -> String:
 	match capitulo_atual():
@@ -685,5 +765,16 @@ func objetivo_atual() -> String:
 			# acordou na igreja: até sair dela, o drama fica no ar
 			if not feito(CAP5_SAIU_IGREJA):
 				return ""
-			return "OBJ_CAP5_OFICINA"
+			# dentro dos infernos quem fala é a cena (ver `inferno.gd`)
+			if not feito(CAP5_PORTAL_INFERNO_1):
+				return "OBJ_CAP5_OFICINA"
+			if not feito(CAP5_PORTAL_INFERNO_2):
+				return "OBJ_CAP5_INFERNO_2"
+			if not feito(CAP5_JIMMY_RESGATADO):
+				return "OBJ_CAP5_ARENA_3"
+			if not feito(CAP5_CONVERSA_OFICINA):
+				return ""
+			if not feito(CAP5_FIM):
+				return "OBJ_CAP5_HOSPITAL"
+			return ""
 	return ""

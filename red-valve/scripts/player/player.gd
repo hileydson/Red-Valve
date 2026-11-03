@@ -971,6 +971,10 @@ func mostrar_magia() -> void:
 func alternar_realidade() -> void:
 	if not GlobalEvents.is_maycow_normal:
 		return
+	# levando o Jimmy ao hospital o amuleto não responde mais
+	if Eventos.levando_jimmy() and SaveManager.tem_item("amuleto"):
+		GlobalUtils.mostrar_aviso_no_mapa(tr("AVISO_CAP5_AMULETO"))
+		return
 	if Realidade.alternar(get_tree()):
 		return
 	if SaveManager.pode_alternar_realidade():
@@ -986,7 +990,7 @@ func alternar_realidade() -> void:
 ## segundos de jogo (pausa e cutscene não contam). Zerou, o amuleto volta
 ## sozinho — com a mesma onda do R3.
 func _cobrar_realidade(delta: float) -> void:
-	if not GlobalEvents.is_maycow_normal or not SaveManager.realidade_normal():
+	if not GlobalEvents.is_maycow_normal or not SaveManager.realidade_cobrada():
 		return
 	if GlobalEvents.in_cutscene or GlobalUtils.in_cinematic_cutscene:
 		return
@@ -2156,8 +2160,11 @@ func _physics_process(delta: float) -> void:
 		if normal_can_aim and Input.is_action_just_pressed("ui_amuleto") \
 				and SaveManager.tem_item("amuleto") and not SaveManager.amuleto_disponivel():
 			# na rua, com ele fora do pescoço, o aviso é outro: falta pôr (R3 / H)
-			GlobalUtils.mostrar_aviso_no_mapa(tr("AVISO_AMULETO_GUARDADO" if SaveManager.realidade_normal() \
-				else "AVISO_AMULETO_INDISPONIVEL"))
+			if Eventos.levando_jimmy():
+				GlobalUtils.mostrar_aviso_no_mapa(tr("AVISO_CAP5_AMULETO"))
+			else:
+				GlobalUtils.mostrar_aviso_no_mapa(tr("AVISO_AMULETO_GUARDADO" if SaveManager.realidade_normal() \
+					else "AVISO_AMULETO_INDISPONIVEL"))
 
 		# A troca de câmera para 1ª pessoa é controlada pelo poder do amuleto
 		# (player_amulet.gd), que faz o zoom gradual da 3ª pessoa antes de trocar.

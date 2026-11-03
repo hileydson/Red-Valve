@@ -21,6 +21,8 @@ const CARREGAR_JONNY := "res://scripts/player/player_carregar_jonny.gd"
 ## O Capítulo 2 aqui dentro: o hospital claro, a enfermeira, a maca, a
 ## transformação e a Drizzi (ver `capitulo_2_hospital.gd`).
 const CAPITULO_2_HOSPITAL := "res://scripts/stages/hospital/capitulo_2_hospital.gd"
+## O fim do Capítulo 5: o hospital do reencontro do Jimmy com o Jonny.
+const CAPITULO_5_HOSPITAL := "res://scripts/stages/hospital/capitulo_5_hospital.gd"
 
 @onready var fade: ColorRect = $fade
 
@@ -68,6 +70,13 @@ func _ready() -> void:
 
 	if _jonny_aqui():
 		_jonny_no_hospital()
+	# levando o Jimmy ao Jonny (fim do Capítulo 5) o hospital é o do reencontro
+	if Eventos.levando_jimmy():
+		_capitulo_2 = load(CAPITULO_5_HOSPITAL).new()
+		_capitulo_2.name = "capitulo_5_hospital"
+		add_child(_capitulo_2)
+		_capitulo_2.iniciar(self)
+		return
 	# no Capítulo 2 o objetivo é da história (ver `capitulo_2_hospital.gd`)
 	_capitulo_2 = load(CAPITULO_2_HOSPITAL).new()
 	_capitulo_2.name = "capitulo_2_hospital"

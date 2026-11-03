@@ -1097,6 +1097,9 @@ func is_equipped(item_id: String) -> bool:
 func amuleto_disponivel() -> bool:
 	if not tem_item("amuleto"):
 		return false
+	# levando o Jimmy ao hospital (fim do Capitulo 5) o amuleto nao responde mais
+	if Eventos.levando_jimmy():
+		return false
 	if not amuleto_equipado and _capitulo_1():
 		return false
 	return na_cidade() or _na_quadra_contra_o_grizzolito() or _no_cemiterio_contra_a_drizzi()
@@ -1131,13 +1134,27 @@ func _capitulo_1() -> bool:
 ## cidade, so' com o amuleto no inventario e so' o Maycow normal (o outro ja'
 ## vive na outra realidade e nao tem amuleto).
 func pode_alternar_realidade() -> bool:
+	if Eventos.levando_jimmy():
+		return false
 	return GlobalEvents.is_maycow_normal and _capitulo_1() and tem_item("amuleto") and na_cidade()
 
 
 ## A cidade esta na realidade "de gente" (amuleto fora do pescoco)? E' a
 ## pergunta que as sombras, os carros e os inimigos fazem.
+##
+## Levando o Jimmy ao hospital (fim do Capitulo 5) ela e' SEMPRE a de gente,
+## de graca e sem volta: o R3 nao troca (`pode_alternar_realidade`) e nada e'
+## cobrado (`realidade_cobrada`).
 func realidade_normal() -> bool:
+	if Eventos.levando_jimmy():
+		return GlobalEvents.is_maycow_normal and na_cidade()
 	return pode_alternar_realidade() and not amuleto_equipado
+
+
+## A realidade de gente esta custando iron rusks agora (o amuleto tirado com o
+## R3)? Levando o Jimmy ela nao custa nada.
+func realidade_cobrada() -> bool:
+	return realidade_normal() and not Eventos.levando_jimmy()
 
 
 ## Os inimigos da cidade enxergam o Maycow? Sem o amuleto, nao: eles viram
