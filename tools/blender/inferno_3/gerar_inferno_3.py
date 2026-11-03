@@ -1283,6 +1283,12 @@ class Inferno3(Cena):
         degraus = []
         for k in range(6):
             degraus.append(bloco(P, -10.0, 10.0, base, yc + 0.25 * (k + 1), -9.0 + k * 1.4, 0.2))
+        # a colisao dela e' uma RAMPA (~15%) por cima dos degraus: o Maycow
+        # normal nao pula, e degrau de 25 cm prendia ele no pe' da escada — no
+        # Capitulo 4 ele tem de subir ate' a porta selada (portal_selado.gd)
+        self.col.append(hexaedro([P(-10.0, base, -9.8), P(10.0, base, -9.8), P(10.0, base, 0.2), P(-10.0, base, 0.2),
+                                  P(-10.0, yc + 0.02, -9.8), P(10.0, yc + 0.02, -9.8),
+                                  P(10.0, yc + 1.5, 0.2), P(-10.0, yc + 1.5, 0.2)]))
         # os tres portais: aro ogival em camadas e o vao escuro
         escuro = []
         for uc, vao, alt in ((0.0, 7.0, 9.0), (-11.75, 3.6, 6.0), (11.75, 3.6, 6.0)):
@@ -1463,11 +1469,29 @@ class Inferno3(Cena):
                     continue
                 pts.append((x, z))
             muro_invisivel(self, pts, y0=FUNDO - 10.0, y1=60.0, esp=1.6, fechar=False)
-        for st in (S_INICIO, S_FIM):
-            i = LINHA.em_s(st)
-            q = LINHA.p[i]
-            tx, tz = LINHA.t[i]
-            self.col.append(caixa_girada(q[0], q[3] + 10.0, q[1], 2 * q[2] + 8.0, 150.0, 1.6, math.atan2(tx, tz)))
+        i = LINHA.em_s(S_INICIO)
+        q = LINHA.p[i]
+        tx, tz = LINHA.t[i]
+        self.col.append(caixa_girada(q[0], q[3] + 10.0, q[1], 2 * q[2] + 8.0, 150.0, 1.6, math.atan2(tx, tz)))
+        self.tampa_da_catedral()
+
+    def tampa_da_catedral(self):
+        """A tampa do fim, 6 m antes do fim do caminho, ficava no pe' da
+        escadaria da porta: com o portal livre a area da porta puxa o jogador
+        antes, mas a porta SELADA do Capitulo 4 pede que ele suba ate' ela.
+        Fica aberta na largura da escadaria (+-10 m) e fecha os lados ate'
+        entrar no bloco da catedral (que comeca em v = -2,4 e vai a +-26 m)."""
+        q = LINHA.p[-1]
+        tx, tz = LINHA.t[-1]
+        yc = q[3]
+        # o mesmo referencial da catedral (u de lado, v pra dentro, 0 na fachada)
+        P = moldura(q[0] + tx * 4.0, 0.0, q[1] + tz * 4.0, -tz, tx, tx, tz)
+        fora = q[2] + 4.0
+        for sg in (-1, 1):
+            u0, u1 = sorted((sg * 10.5, sg * fora))
+            self.col.append(bloco(P, u0, u1, yc - 65.0, yc + 85.0, -10.8, -9.2))
+            u0, u1 = sorted((sg * 24.7, sg * 26.3))
+            self.col.append(bloco(P, u0, u1, yc - 65.0, yc + 85.0, -10.8, -1.0))
 
     def _marcadores(self):
         nav = self.pontos["navmesh"]
