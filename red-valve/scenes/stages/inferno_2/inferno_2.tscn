@@ -463,8 +463,8 @@ agent_radius = 0.6
 [node name="inferno_2" type="Node3D"]
 script = ExtResource("1_inferno_2")
 cena_entrada = "res://scenes/stages/inferno/inferno.tscn"
-ponto_entrada = "spawn_entrada"
-cena_saida = "res://scenes/stages/battlefield/battlefield_2.tscn"
+ponto_entrada = "spawn_saida"
+cena_saida = "res://scenes/stages/battlefield/battlefield_3.tscn"
 ponto_saida = ""
 salvar_ao_entrar = true
 nevoa_do_player = "baixa"

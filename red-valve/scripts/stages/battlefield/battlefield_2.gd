@@ -192,6 +192,10 @@ func _fim_da_luta() -> void:
 	# A arena nunca vira checkpoint: o save da volta nasce aqui, já na igreja
 	# (o `concluir` sem gravar, e o save com o caminho dela). Fechar o jogo
 	# antes disto devolve pro inferno 3, com a luta ainda por fazer.
+	# Quem chegou sem pagar os portais (Debug Travel) fecha os dois aqui: a
+	# arena depende deles, e o `concluir` dela recusaria.
+	Eventos.concluir(Eventos.CAP4_PORTAL_INFERNO_4, false)
+	Eventos.concluir(Eventos.CAP4_PORTAL_INFERNO_3, false)
 	Eventos.concluir(Eventos.CAP4_ARENA_2, false)
 	SaveManager.sair_da_arena()
 	SaveManager.save_game(CENA_IGREJA)

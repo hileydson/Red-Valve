@@ -427,6 +427,7 @@ DEBUG_TRAVEL_HELL,Hell,Inferno
 DEBUG_TRAVEL_HELL_2,Hell 2,Inferno 2
 DEBUG_TRAVEL_HELL_3,Hell 3,Inferno 3
 DEBUG_TRAVEL_HELL_4,Hell 4,Inferno 4
+DEBUG_TRAVEL_ARENA_2,Arena 2,Arena 2
 DEBUG_TRAVEL_ARENA_3,Arena 3 (Throne),Arena 3 (Trono)
 DEBUG_EVENT_PROLOG_FINISHED,Prologue Finished (Cap. 1),Prólogo Finalizado (Cap. 1)
 DEBUG_EVENT_STAGE1_INTRO,Stage 1 Intro Played,Intro da Stage 1 Reproduzida

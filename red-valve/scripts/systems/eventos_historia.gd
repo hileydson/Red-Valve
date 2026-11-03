@@ -608,9 +608,11 @@ func inferno_3_leva_a_arena() -> bool:
 	return capitulo_atual() == CAPITULO_4 and not feito(CAP4_ARENA_2)
 
 
-## A luta da arena 2 está valendo (pagou o portal do inferno 3 e não venceu)?
+## A luta da arena 2 está valendo (Capítulo 4 e não venceu)? A arena só se
+## alcança pelo portal do inferno 3, então chegar nela já é a luta — não exige
+## o portal pago (o Debug Travel chega sem passar por ele).
 func luta_arena_2() -> bool:
-	return feito(CAP4_PORTAL_INFERNO_3) and not feito(CAP4_ARENA_2)
+	return capitulo_atual() == CAPITULO_4 and not feito(CAP4_ARENA_2)
 
 
 ## O despertar na igreja ainda vai acontecer (a arena passou e o Capítulo 4
