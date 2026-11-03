@@ -3,9 +3,10 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bfxoavrx5w574"
-path="res://.godot/imported/dona_nice_metallic_roughness.jpg-5430c1705bf53d2a1da87c650f963888.ctex"
+path.s3tc="res://.godot/imported/dona_nice_metallic_roughness.jpg-5430c1705bf53d2a1da87c650f963888.s3tc.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
 }
 generator_parameters={
 "md5": "1da87e281a8db02096efe67c7704d57c"
@@ -14,11 +15,11 @@ generator_parameters={
 [deps]
 
 source_file="res://assets/3d_model/npc/igreja/dona_nice_metallic_roughness.jpg"
-dest_files=["res://.godot/imported/dona_nice_metallic_roughness.jpg-5430c1705bf53d2a1da87c650f963888.ctex"]
+dest_files=["res://.godot/imported/dona_nice_metallic_roughness.jpg-5430c1705bf53d2a1da87c650f963888.s3tc.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
@@ -40,4 +41,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=1
+detect_3d/compress_to=0

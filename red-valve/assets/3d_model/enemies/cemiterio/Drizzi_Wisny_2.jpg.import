@@ -2,20 +2,20 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://25bf3i444fba"
-path.s3tc="res://.godot/imported/Drizzi_Wisny_drizzi_wiszy_basecolor.jpg-7883e99e1b8d2af3d197bdc90ed175b1.s3tc.ctex"
+uid="uid://dmjsx0fjv0qbb"
+path.s3tc="res://.godot/imported/Drizzi_Wisny_2.jpg-d3064ee612104992690f483da647ca5c.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
 }
 generator_parameters={
-"md5": "97fa17353ff548133bd57d4fb00e6900"
+"md5": "041226d22338097237e8ec3ac1fdcdab"
 }
 
 [deps]
 
-source_file="res://assets/3d_model/enemies/cemiterio/Drizzi_Wisny_drizzi_wiszy_basecolor.jpg"
-dest_files=["res://.godot/imported/Drizzi_Wisny_drizzi_wiszy_basecolor.jpg-7883e99e1b8d2af3d197bdc90ed175b1.s3tc.ctex"]
+source_file="res://assets/3d_model/enemies/cemiterio/Drizzi_Wisny_2.jpg"
+dest_files=["res://.godot/imported/Drizzi_Wisny_2.jpg-d3064ee612104992690f483da647ca5c.s3tc.ctex"]
 
 [params]
 
@@ -25,12 +25,12 @@ compress/lossy_quality=0.7
 compress/uastc_level=0
 compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
-compress/normal_map=0
+compress/normal_map=1
 compress/channel_pack=0
 mipmaps/generate=true
 mipmaps/limit=-1
-roughness/mode=0
-roughness/src_normal=""
+roughness/mode=1
+roughness/src_normal="res://assets/3d_model/enemies/cemiterio/Drizzi_Wisny_2.jpg"
 process/channel_remap/red=0
 process/channel_remap/green=1
 process/channel_remap/blue=2
