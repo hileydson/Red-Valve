@@ -8,6 +8,8 @@ extends "res://scripts/cutscenes/cutscene_cap1.gd"
 ##     (`hospital_versoes.transformar`); a câmera vai mostrando os lugares
 ##     sendo tomados — a sala, o saguão do 2º andar, o corredor do elevador, o
 ##     hall de entrada, o corredor norte — e quem estiver no caminho some;
+##     o Jonny, de onde ela sai, é o primeiro: vira SOMBRA na maca, como as
+##     ShadowPerson da cidade (`Realidade.disfarcar`);
 ##  4. a tela escurece de vez e fica preta: `no_escuro` avisa. Quem chamou
 ##     roda a Drizzi por cima e só depois chama `encerrar`.
 
@@ -102,6 +104,7 @@ func _luzes_da_sala() -> Array:
 func _a_onda() -> void:
 	versoes.transformar(MESA, DURACAO_ONDA)
 	_tocar(SOM_SUMIR, -2.0, 0.6)
+	_o_jonny_vira_sombra()
 	for p in PLANOS_DA_ONDA:
 		while vale() and versoes.raio_onda < float(p[0]):
 			_some_quem_a_onda_pegou()
@@ -113,6 +116,14 @@ func _a_onda() -> void:
 	for a in pessoas:
 		if is_instance_valid(a):
 			a.queue_free()
+
+
+## A onda nasce na maca: ele é o primeiro que ela pega, e fica (de sombra).
+func _o_jonny_vira_sombra() -> void:
+	if not is_instance_valid(jonny):
+		return
+	Realidade.nuvem(cena, jonny.global_position + Vector3.UP * 0.3, 1.1, false)
+	Realidade.disfarcar(jonny, true)
 
 
 func _some_quem_a_onda_pegou() -> void:

@@ -34,6 +34,7 @@ const CutsceneTransforma := preload("res://scripts/stages/hospital/cutscene_hosp
 const CutsceneBase := preload("res://scripts/cutscenes/cutscene_cap1.gd")
 const CutsceneDrizzi := preload("res://scripts/cutscenes/cutscene_drizzi.gd")
 const CityNpcScript := preload("res://scripts/npcs/city_npc.gd")
+const Realidade := preload("res://scripts/systems/realidade_do_amuleto.gd")
 
 const CENA_JONNY := "res://scenes/npcs/igreja/jonny.tscn"
 const CENA_HOSPITAL := "res://scenes/stages/hospital/hospital.tscn"
@@ -402,6 +403,8 @@ func _pedir_a_lanterna() -> void:
 
 ## Deitado na maca, quieto, respirando. No colo do Maycow ele é do
 ## `player_carregar_jonny`; aqui ele é só do hospital (não se pega mais).
+## De SOMBRA, como a onda da transformação o deixou: com ele na maca o
+## hospital já é o escuro, em qualquer capítulo.
 func _jonny_na_maca() -> void:
 	var jonny := load(CENA_JONNY).instantiate() as Node3D
 	jonny.set("clipe_inicial", &"deitado")
@@ -415,3 +418,4 @@ func _jonny_na_maca() -> void:
 		giro = float(p[3])
 	jonny.global_transform = jonny.no_chao(Transform3D(Basis(Vector3.UP, giro), tampo))
 	jonny_na_maca = jonny
+	Realidade.disfarcar(jonny, true)
