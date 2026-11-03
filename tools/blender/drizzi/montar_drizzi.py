@@ -13,8 +13,12 @@ MEDIDOS e os pesos de um proxy de voxel. Os pontos foram medidos em render
 ortografico com grade (frente e lado, coordenadas do .glb importado: Z pra
 cima, frente no -Y, +X e' a ESQUERDA dela).
 
-Desde 2026-10-30 o `Drizzi_Wisny.glb` e' ela HUMANA (de avental, em pose A,
-1,0 de altura no arquivo) — e' a que aparece na cutscene do hospital. A versao
+O scan trocado em 2026-11-03 e' a mesma Drizzi na mesma pose, mas noutra
+escala: 1,90 de altura CENTRADA na origem (z de -0,952 a 0,949; o anterior ia
+de 0 a 1,0). Os pontos foram levados pra ela (x1,901, z-0,952) e as pernas
+remedidas por fatias da malha (ficaram mais abertas e ~5 cm pra tras).
+
+Desde 2026-10-30 o `Drizzi_Wisny.glb` e' ela HUMANA (de avental, em pose A) — e' a que aparece na cutscene do hospital. A versao
 tomada pelo parasita virou `Drizzi_Wisny_monster.glb`; o rig antigo dela
 ficou em `Red-Valve-Blender/drizzi/drizzi_monstro.blend`.
 
@@ -38,25 +42,25 @@ ALTURA = 1.68
 VOXEL = 0.014
 
 PONTOS = {
-    "hips": (0.0, -0.01, 0.53), "spine": (0.0, -0.01, 0.60),
-    "chest": (0.0, -0.01, 0.68), "upper_chest": (0.0, -0.005, 0.75),
-    "neck": (0.0, 0.0, 0.83), "head": (0.0, -0.005, 0.86),
-    "head_top": (0.0, 0.0, 1.0),
+    "hips": (0.0, -0.019, 0.056), "spine": (0.0, -0.019, 0.189),
+    "chest": (0.0, -0.019, 0.341), "upper_chest": (0.0, -0.01, 0.474),
+    "neck": (0.0, 0.0, 0.626), "head": (0.0, -0.01, 0.683),
+    "head_top": (0.0, 0.0, 0.949),
     # bracos em A, os dois iguais
-    "shoulder.R": (-0.03, 0.0, 0.80), "upper_arm.R": (-0.11, 0.0, 0.78),
-    "forearm.R": (-0.197, -0.01, 0.653), "hand.R": (-0.288, -0.03, 0.542),
-    "fingers_tip.R": (-0.312, -0.05, 0.494),
-    "thumb.R": (-0.285, -0.06, 0.535), "thumb_tip.R": (-0.29, -0.08, 0.505),
-    "shoulder.L": (0.03, 0.0, 0.80), "upper_arm.L": (0.11, 0.0, 0.78),
-    "forearm.L": (0.197, -0.01, 0.653), "hand.L": (0.288, -0.03, 0.542),
-    "fingers_tip.L": (0.312, -0.05, 0.494),
-    "thumb.L": (0.285, -0.06, 0.535), "thumb_tip.L": (0.29, -0.08, 0.505),
-    "thigh.L": (0.055, 0.0, 0.50), "shin.L": (0.06, 0.0, 0.24),
-    "foot.L": (0.065, 0.025, 0.045), "toe.L": (0.065, -0.04, 0.015),
-    "toe_tip.L": (0.065, -0.085, 0.01),
-    "thigh.R": (-0.055, 0.0, 0.50), "shin.R": (-0.06, 0.0, 0.24),
-    "foot.R": (-0.065, 0.025, 0.045), "toe.R": (-0.065, -0.04, 0.015),
-    "toe_tip.R": (-0.065, -0.085, 0.01),
+    "shoulder.R": (-0.057, 0.0, 0.569), "upper_arm.R": (-0.209, 0.0, 0.531),
+    "forearm.R": (-0.374, -0.019, 0.289), "hand.R": (-0.547, -0.057, 0.078),
+    "fingers_tip.R": (-0.593, -0.095, -0.013),
+    "thumb.R": (-0.542, -0.114, 0.065), "thumb_tip.R": (-0.551, -0.152, 0.008),
+    "shoulder.L": (0.057, 0.0, 0.569), "upper_arm.L": (0.209, 0.0, 0.531),
+    "forearm.L": (0.374, -0.019, 0.289), "hand.L": (0.547, -0.057, 0.078),
+    "fingers_tip.L": (0.593, -0.095, -0.013),
+    "thumb.L": (0.542, -0.114, 0.065), "thumb_tip.L": (0.551, -0.152, 0.008),
+    "thigh.L": (0.11, 0.03, -0.001), "shin.L": (0.133, 0.047, -0.496),
+    "foot.L": (0.155, 0.05, -0.866), "toe.L": (0.16, -0.076, -0.923),
+    "toe_tip.L": (0.16, -0.16, -0.933),
+    "thigh.R": (-0.11, 0.03, -0.001), "shin.R": (-0.133, 0.047, -0.496),
+    "foot.R": (-0.155, 0.05, -0.866), "toe.R": (-0.16, -0.076, -0.923),
+    "toe_tip.R": (-0.16, -0.16, -0.933),
 }
 
 
