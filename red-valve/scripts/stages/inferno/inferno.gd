@@ -30,7 +30,9 @@ extends "res://scripts/stages/cenario_aberto.gd"
 ## → inferno 2 → arena 3. O portal do fim de cada um está SELADO até o Maycow
 ## pagar os iron rusks dele (`portal_selado.gd`, o mesmo do Capítulo 4), e o do
 ## começo do inferno 1 volta pra red valve da oficina, perguntando antes.
-## Cada mapa diz o evento do seu portal em `_evento_do_capitulo_5`.
+## Cada mapa diz o evento do seu portal em `_evento_do_capitulo_5`. Logo
+## depois da chegada no inferno 1, no meio do caminho, um PÚLPITO com a chama
+## amarela do Cogblade Fire Cross (`pulpito_do_poder.gd`).
 
 @export_group("Ligações")
 ## Cena do portal do FIM. Vazio = o portal só gira (e não suga).
@@ -59,6 +61,10 @@ extends "res://scripts/stages/cenario_aberto.gd"
 const LAVA := -14.0
 const PortalVortice := preload("res://scripts/effects/portal_vortice.gd")
 const PortalSelado := preload("res://scripts/effects/portal_selado.gd")
+const PulpitoDoPoder := preload("res://scripts/stages/inferno/pulpito_do_poder.gd")
+## O púlpito do Fire Cross: no meio do caminho, uns 12 m depois de onde o
+## portal do começo cospe o Maycow (`spawn_entrada`, z 393).
+const PULPITO_FIRE_CROSS := Vector3(0.0, 0.3, 381.0)
 const CENA_OFICINA := "res://scenes/stages/prolog/oficina_jimmy.tscn"
 ## O nome da red valve na oficina (`capitulo_5_oficina.gd`): o ponto de chegada.
 const RED_VALVE_DA_OFICINA := "red_valve"
@@ -106,6 +112,7 @@ func _preparar() -> void:
 	_portal_saida = _montar_portal("saida", "spawn_saida", cena_saida, ponto_saida)
 	_portal_entrada = _montar_portal("entrada", "spawn_entrada", cena_entrada, ponto_entrada)
 	_historia_do_capitulo_5()
+	_pulpito_do_capitulo_5()
 	var ponto := ViagemPortal.pegar_chegada(scene_file_path)
 	if ponto != "":
 		_chegar(ponto)
@@ -145,6 +152,23 @@ func _historia_do_capitulo_5() -> void:
 	if _portal_saida and Eventos.portal_do_capitulo_5_selado(evento):
 		_selar(_portal_saida, evento)
 	GlobalUtils.mostrar_objetivo(tr(_objetivo_do_capitulo_5()), 40.0)
+
+
+## O púlpito da chama amarela (o Fire Cross), só no inferno 1 e enquanto ela
+## não foi pega.
+func _pulpito_do_capitulo_5() -> void:
+	if _evento_do_capitulo_5() != Eventos.CAP5_PORTAL_INFERNO_1 \
+			or not Eventos.pode(Eventos.CAP5_PODER_FIRE_CROSS):
+		return
+	var p = PulpitoDoPoder.new()
+	p.name = "pulpito_fire_cross"
+	p.evento = Eventos.CAP5_PODER_FIRE_CROSS
+	p.poder = Eventos.PODER_FIRE_CROSS
+	p.cor = PulpitoDoPoder.AuraDoAmuleto.AMARELO
+	p.cor_miolo = PulpitoDoPoder.AuraDoAmuleto.DOURADO
+	p.prompt = "PROMPT_TOCAR_CHAMA_AMARELA"
+	add_child(p)
+	p.global_position = PULPITO_FIRE_CROSS
 
 
 ## Põe o selo de iron rusks no portal (`portal_selado.gd`).

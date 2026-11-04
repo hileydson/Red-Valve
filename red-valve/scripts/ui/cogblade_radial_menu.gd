@@ -4,8 +4,11 @@ extends Control
 # Os poderes aparecem em círculo e a seleção é feita apontando o analógico
 # esquerdo (ou movendo o mouse) na direção da opção desejada. Quem instancia é o
 # PlayerCogbladeMenu, que também executa o poder ao soltar o botão.
+# Cada poder aparece como o AMULETO com a aura da cor dele em volta (a cor da
+# chama que liberou o poder) e o nome embaixo.
 
-# Cada opção: { "id": String, "name": String, "desc": String, "enabled": bool }
+# Cada opção: { "id": String, "name": String, "desc": String, "enabled": bool,
+# "cor": Color }
 var options: Array = []
 var selected: int = -1
 var icon_texture: Texture2D = null
@@ -16,6 +19,9 @@ var radius: float = 265.0
 var option_radius: float = 78.0
 
 var _font: Font = null
+# Disco suave (branco no meio, transparente na borda): pintado com a cor do
+# poder, é o brilho e as línguas de fogo da aura.
+var _brilho: Texture2D = null
 var _appear: float = 0.0
 var _time: float = 0.0
 var _last_ms: int = 0
@@ -33,6 +39,17 @@ func _ready() -> void:
 		_font = load(font_path)
 	else:
 		_font = ThemeDB.fallback_font
+	var disco := GradientTexture2D.new()
+	disco.fill = GradientTexture2D.FILL_RADIAL
+	disco.fill_from = Vector2(0.5, 0.5)
+	disco.fill_to = Vector2(0.5, 0.0)
+	var g := Gradient.new()
+	g.offsets = PackedFloat32Array([0.0, 0.3, 1.0])
+	g.colors = PackedColorArray([Color(1, 1, 1, 1), Color(1, 1, 1, 0.5), Color(1, 1, 1, 0)])
+	disco.gradient = g
+	disco.width = 128
+	disco.height = 128
+	_brilho = disco
 
 func _process(_delta: float) -> void:
 	var now := Time.get_ticks_msec()
@@ -108,28 +125,63 @@ func _draw() -> void:
 		draw_circle(pos, orad, Color(0.04, 0.05, 0.07, 0.85 * appear))
 		draw_arc(pos, orad, 0.0, TAU, 64, Color(base_col.r, base_col.g, base_col.b, (0.95 if is_sel else 0.5) * appear), (6.0 if is_sel else 3.0), true)
 		
-		# Ícone da cogblade
+		# A aura do amuleto, da cor do poder
+		var cor: Color = opt.get("cor", Color(0.62, 0.28, 1.0))
+		_desenhar_aura(pos, orad, cor, i, (1.0 if enabled else 0.3) * appear, is_sel and enabled)
+		
+		# O amuleto
 		if icon_texture:
-			var isize: float = orad * 1.3
+			var isize: float = orad * 1.4
 			var rect := Rect2(pos - Vector2(isize, isize) * 0.5, Vector2(isize, isize))
 			var icol := Color(1, 1, 1, (1.0 if enabled else 0.35) * appear)
-			if is_sel and enabled: icol = Color(1.0, 0.8, 0.75, appear)
+			if is_sel and enabled: icol = Color(1.0, 0.95, 0.9, appear)
 			draw_texture_rect(icon_texture, rect, false, icol)
 		
-		# Nome do poder abaixo do ícone
+		# Nome do poder abaixo do amuleto, na cor da aura
+		var name_col := cor.lerp(Color.WHITE, 0.55 if is_sel else 0.3)
+		if not enabled:
+			name_col = base_col
 		var name_txt: String = str(opt.get("name", ""))
 		var fsize: int = 28 if is_sel else 24
 		var tw: float = _font.get_string_size(name_txt, HORIZONTAL_ALIGNMENT_LEFT, -1, fsize).x
 		var tpos := pos + Vector2(-tw * 0.5, orad + 36.0)
 		draw_string_outline(_font, tpos, name_txt, HORIZONTAL_ALIGNMENT_LEFT, -1, fsize, 7, Color(0, 0, 0, 0.9 * appear))
 		draw_string(_font, tpos, name_txt, HORIZONTAL_ALIGNMENT_LEFT, -1, fsize,
-			Color(base_col.r, base_col.g, base_col.b, (1.0 if enabled else 0.5) * appear))
+			Color(name_col.r, name_col.g, name_col.b, (1.0 if enabled else 0.5) * appear))
 	
 	# Descrição da opção apontada, no centro do círculo
 	var center_txt := "ESCOLHA UM PODER"
 	if selected >= 0 and selected < count:
 		center_txt = str(options[selected].get("desc", ""))
 	_texto_central(center, center_txt, appear)
+
+# O brilho em volta do amuleto e as línguas de fogo subindo pela borda dele,
+# tudo da cor do poder. `semente` desencontra as chamas de um ícone pro outro.
+func _desenhar_aura(pos: Vector2, orad: float, cor: Color, semente: int, alfa: float, viva: bool) -> void:
+	if _brilho == null or alfa <= 0.0:
+		return
+	var respira: float = 1.0 + sin(_time * 3.1 + float(semente) * 1.7) * 0.06
+	var forca: float = 1.25 if viva else 1.0
+	# o halo largo e o miolo claro atrás do amuleto
+	var halo: float = orad * 2.05 * respira
+	draw_texture_rect(_brilho, Rect2(pos - Vector2(halo, halo) * 0.5, Vector2(halo, halo)), false,
+		Color(cor.r, cor.g, cor.b, 0.7 * alfa * forca))
+	var miolo: float = orad * 1.15 * respira
+	var clara := cor.lerp(Color.WHITE, 0.45)
+	draw_texture_rect(_brilho, Rect2(pos - Vector2(miolo, miolo) * 0.5, Vector2(miolo, miolo)), false,
+		Color(clara.r, clara.g, clara.b, 0.5 * alfa * forca))
+	# as línguas: nascem na borda do amuleto, sobem, encolhem e somem
+	var n: int = 16
+	for k in range(n):
+		var fase: float = fposmod(_time * 0.9 + float(k) / float(n) * 2.3 + float(semente) * 0.37, 1.0)
+		var ang: float = float(k) / float(n) * TAU + sin(_time * 0.7 + float(k)) * 0.15
+		var base := pos + Vector2(cos(ang), sin(ang) * 0.92) * orad * 0.55
+		var p := base + Vector2(sin(_time * 4.0 + float(k) * 2.1) * orad * 0.04, -fase * orad * 0.55)
+		var tam: float = orad * (0.42 - fase * 0.3)
+		var a: float = sin(fase * PI) * 0.75 * alfa * forca
+		var c := cor.lerp(Color.WHITE, 0.25 * (1.0 - fase))
+		draw_texture_rect(_brilho, Rect2(p - Vector2(tam, tam) * 0.5, Vector2(tam, tam)), false,
+			Color(c.r, c.g, c.b, a))
 
 func _texto_central(center: Vector2, center_txt: String, appear: float) -> void:
 	var cw: float = _font.get_string_size(center_txt, HORIZONTAL_ALIGNMENT_LEFT, -1, 24).x

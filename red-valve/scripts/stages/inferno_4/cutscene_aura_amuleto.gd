@@ -15,14 +15,17 @@ extends "res://scripts/cutscenes/cutscene_cap1.gd"
 ##
 ## Quem chama: `inferno_4.gd`, ao pegar a chama (o selecionável do altar).
 ## O púlpito do cemitério (Capítulo 3) roda a MESMA cena com a chama
-## vermelha: `evento` e `cor_aura` dizem qual poder é e de que cor o amuleto
-## brilha quando a chama entra nele.
+## vermelha, e os púlpitos dos infernos 1 e 3 (`pulpito_do_poder.gd`) com a
+## amarela e a branca: `evento` e `cor_aura` dizem qual poder é e de que cor o
+## amuleto brilha quando a chama entra nele.
 
 const PoseApontada := preload("res://scripts/cutscenes/pose_apontada.gd")
 const AuraDoAmuleto := preload("res://scripts/systems/aura_do_amuleto.gd")
 const SOM_AURA := "res://assets/sounds/player/espaco_travel.mp3"
 
 const CAMINHO_ESQUELETO := "maycow_lopes_normal/Armature/Skeleton3D"
+## O do parasita: o púlpito do inferno 1 (Capítulo 5) é com ele.
+const CAMINHO_ESQUELETO_PARASITA := "maycow_lopes/Armature/Skeleton3D"
 const OSSOS_BRACO := ["LeftArm", "LeftForeArm"]
 const OSSO_MAO := "LeftHand"
 const OSSO_CABECA := "Head"
@@ -110,7 +113,8 @@ func _chegar_perto() -> void:
 # ============================================================ o gesto
 
 func _gesto() -> void:
-	var sk := player.get_node_or_null(CAMINHO_ESQUELETO) as Skeleton3D
+	var sk := player.get_node_or_null(CAMINHO_ESQUELETO if GlobalEvents.is_maycow_normal
+		else CAMINHO_ESQUELETO_PARASITA) as Skeleton3D
 	if sk:
 		_pose = PoseApontada.new()
 		_pose.name = "pose_aura"

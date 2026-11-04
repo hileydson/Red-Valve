@@ -20,7 +20,9 @@ extends "res://scripts/stages/inferno/inferno.gd"
 ##
 ## No Capítulo 4 (`Eventos.inferno_3_leva_a_arena`) a porta da catedral, o
 ## portal do fim, deixa de voltar pro porão: leva à ARENA 2 — e está selada até
-## o Maycow pagar os iron rusks dela (`portal_selado.gd`).
+## o Maycow pagar os iron rusks dela (`portal_selado.gd`). E logo na chegada,
+## no meio da rua, um PÚLPITO aceso de leve com a chama branca do Cogblade
+## Slain (`pulpito_do_poder.gd`).
 
 const ITEM_LANTERNA := "lanterna"
 const MODELO_LANTERNA := "res://assets/3d_model/player/lanterna/lanterna.glb"
@@ -28,6 +30,9 @@ const CENA_ITEM_OBTIDO := "res://scenes/ui/item_obtido.tscn"
 const ItemSelecionavel := preload("res://scripts/stages/hospital/item_selecionavel.gd")
 const DICA_ID := "inferno_3_lanterna"
 const CENA_ARENA_2 := "res://scenes/stages/battlefield/battlefield_2.tscn"
+## O púlpito do Slain: no meio da rua, uns 12 m depois de onde o portal do
+## começo cospe o Maycow (`spawn_entrada`, z 438).
+const PULPITO_SLAIN := Vector3(-0.3, 0.4, 426.0)
 
 @export_group("Sino")
 @export var sino_espera_min: float = 40.0
@@ -98,8 +103,10 @@ func _ligacoes_da_historia() -> void:
 		ponto_saida = ""
 
 
-## A porta da catedral selada até pagar, e o que fazer agora.
+## A porta da catedral selada até pagar, e o que fazer agora. (O inferno 4
+## sobrescreve: o púlpito do Slain é só daqui.)
 func _historia_do_capitulo_4() -> void:
+	_pulpito_do_capitulo_4()
 	if not Eventos.inferno_3_leva_a_arena():
 		return
 	if _portal_saida and not Eventos.feito(Eventos.CAP4_PORTAL_INFERNO_3):
@@ -107,6 +114,23 @@ func _historia_do_capitulo_4() -> void:
 	var chave := Eventos.objetivo_atual()
 	if chave != "":
 		GlobalUtils.mostrar_objetivo(tr(chave), 40.0)
+
+
+## O púlpito da chama branca (o Slain), enquanto ela não foi pega. A rua é
+## escura: uma luz fraca de cima ajuda a achar.
+func _pulpito_do_capitulo_4() -> void:
+	if not Eventos.pode(Eventos.CAP4_PODER_SLAIN):
+		return
+	var p = PulpitoDoPoder.new()
+	p.name = "pulpito_slain"
+	p.evento = Eventos.CAP4_PODER_SLAIN
+	p.poder = Eventos.PODER_SLAIN
+	p.cor = PulpitoDoPoder.AuraDoAmuleto.BRANCO
+	p.cor_miolo = PulpitoDoPoder.AuraDoAmuleto.NEVE
+	p.prompt = "PROMPT_TOCAR_CHAMA_BRANCA"
+	p.iluminado = true
+	add_child(p)
+	p.global_position = PULPITO_SLAIN
 
 
 ## O caminho do Capítulo 5 (infernos 1 e 2) não passa por aqui (nem pelo 4).

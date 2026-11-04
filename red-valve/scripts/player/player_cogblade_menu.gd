@@ -18,6 +18,10 @@ const MENU_TIME_SCALE: float = 0.02 # Tempo ultra lento enquanto escolhe
 const MENU_AUDIO_SCALE: float = 0.5
 const SELECT_DEADZONE: float = 0.35
 const SOM_EMPUNHAR := "res://assets/sounds/player/blade_in.mp3"
+## No círculo cada poder é o AMULETO com a aura da cor dele (a da chama que o
+## liberou, `AuraDoAmuleto.COR_DO_PODER`).
+const ICONE_AMULETO := "res://assets/images/menu/itens/amuleto_2d.png"
+const AuraDoAmuleto := preload("res://scripts/systems/aura_do_amuleto.gd")
 
 # Os quatro poderes, na ordem em que aparecem no círculo (começa no topo). Só
 # entram no círculo os já LIBERADOS (`Eventos.poder_liberado`): o jogo começa
@@ -197,9 +201,10 @@ func _open_menu() -> void:
 			continue
 		_options.append({
 			"id": p["id"],
-			"name": p["name"],
+			"name": tr(Eventos.rotulo_poder(str(p["id"]))),
 			"desc": p["desc"],
 			"enabled": _is_power_available(p),
+			"cor": AuraDoAmuleto.COR_DO_PODER.get(str(p["id"]), AuraDoAmuleto.ROXO),
 		})
 	
 	_menu_layer = CanvasLayer.new()
@@ -210,9 +215,8 @@ func _open_menu() -> void:
 	
 	_menu = load("res://scripts/ui/cogblade_radial_menu.gd").new()
 	_menu.options = _options
-	var icon_path := "res://assets/images/menu/itens/red_valve/cogblade.png"
-	if ResourceLoader.exists(icon_path):
-		_menu.icon_texture = load(icon_path)
+	if ResourceLoader.exists(ICONE_AMULETO):
+		_menu.icon_texture = load(ICONE_AMULETO)
 	_menu_layer.add_child(_menu)
 	
 	GlobalUtils.vibrate_controller(Input, 0.15, 0.15, 0.1)

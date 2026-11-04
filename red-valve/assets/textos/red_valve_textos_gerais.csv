@@ -770,3 +770,7 @@ CREDITOS_AGRADECIMENTOS,Thanks,Agradecimentos
 CREDITOS_AGRADECIMENTOS_TEXTO,"To the Godot, Blender and OpenGameArt communities — and to you, who played all the way here.","Às comunidades Godot, Blender e OpenGameArt — e a você, que jogou até aqui."
 CREDITOS_OBRIGADO,Thank you for playing,Obrigado por jogar
 CREDITOS_ACELERAR,Hold confirm to speed up,Segure confirmar para acelerar
+PROMPT_TOCAR_CHAMA_AMARELA,Touch the yellow flame?,Tocar a chama amarela?
+PROMPT_TOCAR_CHAMA_BRANCA,Touch the white flame?,Tocar a chama branca?
+DEBUG_EVT_CAP4_PODER_SLAIN,Hell 3: took the white flame (Cogblade Slain),Inferno 3: pegou a chama branca (Cogblade Slain)
+DEBUG_EVT_CAP5_PODER_FIRE_CROSS,Hell 1: took the yellow flame (Cogblade Fire Cross),Inferno 1: pegou a chama amarela (Cogblade Fire Cross)

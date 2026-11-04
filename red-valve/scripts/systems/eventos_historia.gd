@@ -39,8 +39,10 @@ extends Node
 ## LIBERADOS (`SaveManager.poderes_cogblade`); o jogo começa sem nenhum e o
 ## círculo abre vazio. Cada poder é liberado por um momento da história —
 ## `CAP1_AURA_AMULETO` (a aura no altar do inferno 4) libera o arremesso,
-## `CAP3_PODER_CUT` (a chama vermelha no púlpito do cemitério) libera o corte —
-## e o debug liga e desliga cada um com `forcar_poder`.
+## `CAP3_PODER_CUT` (a chama vermelha no púlpito do cemitério) libera o corte,
+## `CAP4_PODER_SLAIN` (a chama branca no começo do inferno 3) o mergulho e
+## `CAP5_PODER_FIRE_CROSS` (a chama amarela no começo do inferno 1) o X de fogo
+## — e o debug liga e desliga cada um com `forcar_poder`.
 
 signal mudou(id: String, feito: bool)
 signal poder_mudou(id: String, liberado: bool)
@@ -137,6 +139,9 @@ const CAP4_PORTAL_INFERNO_3 := "cap4_portal_inferno_3"
 ## Venceu a luta da arena 2 (o lugar do chefe que ainda não existe) e viu o
 ## Maycow queimar com o amuleto na mão. O save já aponta pra igreja.
 const CAP4_ARENA_2 := "cap4_arena_2"
+## Pegou a chama branca do púlpito do começo do inferno 3: o Cogblade Slain.
+## Fica no caminho, mas não segura a história (dá pra passar sem pegar).
+const CAP4_PODER_SLAIN := "cap4_poder_slain"
 ## Acordou no pentagrama da igreja (os flashes da Dona Nice): começa o
 ## Capítulo 5.
 const CAP4_CONCLUIDO := "cap4_concluido"
@@ -148,6 +153,9 @@ const CAP5_SAIU_IGREJA := "cap5_saiu_igreja"
 ## A primeira travessia da red valve da oficina (a cena em primeira pessoa,
 ## a mesma da escola) até o começo do inferno 1.
 const CAP5_RED_VALVE_OFICINA := "cap5_red_valve_oficina"
+## Pegou a chama amarela do púlpito do começo do inferno 1: o Cogblade Fire
+## Cross. Também não segura a história.
+const CAP5_PODER_FIRE_CROSS := "cap5_poder_fire_cross"
 ## Pagou os iron rusks do portal do fim do inferno 1: ele passa a levar ao
 ## inferno 2.
 const CAP5_PORTAL_INFERNO_1 := "cap5_portal_inferno_1"
@@ -238,6 +246,8 @@ const CATALOGO := [
 		"depende": [CAP3_CONCLUIDO]},
 	{"id": CAP4_PORTAL_INFERNO_3, "cap": CAPITULO_4, "rotulo": "DEBUG_EVT_CAP4_PORTAL_INF3",
 		"depende": [CAP4_PORTAL_INFERNO_4]},
+	{"id": CAP4_PODER_SLAIN, "cap": CAPITULO_4, "rotulo": "DEBUG_EVT_CAP4_PODER_SLAIN",
+		"depende": [CAP4_PORTAL_INFERNO_4]},
 	{"id": CAP4_ARENA_2, "cap": CAPITULO_4, "rotulo": "DEBUG_EVT_CAP4_ARENA_2",
 		"depende": [CAP4_PORTAL_INFERNO_3]},
 	{"id": CAP4_CONCLUIDO, "cap": CAPITULO_4, "rotulo": "DEBUG_EVT_CAP4_CONCLUIDO",
@@ -247,6 +257,8 @@ const CATALOGO := [
 		"depende": [CAP4_CONCLUIDO]},
 	{"id": CAP5_RED_VALVE_OFICINA, "cap": CAPITULO_5, "rotulo": "DEBUG_EVT_CAP5_RED_VALVE",
 		"depende": [CAP5_SAIU_IGREJA]},
+	{"id": CAP5_PODER_FIRE_CROSS, "cap": CAPITULO_5, "rotulo": "DEBUG_EVT_CAP5_PODER_FIRE_CROSS",
+		"depende": [CAP5_RED_VALVE_OFICINA]},
 	{"id": CAP5_PORTAL_INFERNO_1, "cap": CAPITULO_5, "rotulo": "DEBUG_EVT_CAP5_PORTAL_INF1",
 		"depende": [CAP5_RED_VALVE_OFICINA]},
 	{"id": CAP5_PORTAL_INFERNO_2, "cap": CAPITULO_5, "rotulo": "DEBUG_EVT_CAP5_PORTAL_INF2",
@@ -275,7 +287,9 @@ const PODERES_COGBLADE := [
 ## ficam de fora até ganhar um).
 const EVENTO_DO_PODER := {
 	PODER_THROWN: CAP1_AURA_AMULETO,
+	PODER_SLAIN: CAP4_PODER_SLAIN,
 	PODER_CUT: CAP3_PODER_CUT,
+	PODER_FIRE_CROSS: CAP5_PODER_FIRE_CROSS,
 }
 
 ## Rótulo de cada capítulo no debug.

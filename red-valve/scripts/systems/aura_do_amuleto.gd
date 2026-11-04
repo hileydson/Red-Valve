@@ -20,6 +20,20 @@ const LILAS := Color(0.78, 0.55, 1.0)
 ## A chama do segundo poder (o Cogblade Cut, no púlpito do cemitério).
 const VERMELHO := Color(1.0, 0.16, 0.08)
 const ROSADO := Color(1.0, 0.55, 0.42)
+## A do terceiro (o Cogblade Fire Cross, no púlpito do inferno 1): fogo.
+const AMARELO := Color(1.0, 0.5, 0.0)
+const DOURADO := Color(1.0, 0.78, 0.22)
+## A do quarto (o Cogblade Slain, no púlpito do inferno 3).
+const BRANCO := Color(0.86, 0.9, 1.0)
+const NEVE := Color(1.0, 1.0, 1.0)
+## A cor de cada poder da cogblade (a da chama que o liberou). O círculo dos
+## poderes pinta com ela a aura do amuleto de cada um.
+const COR_DO_PODER := {
+	"thrown": ROXO,
+	"slain": BRANCO,
+	"cut": VERMELHO,
+	"fire_cross": AMARELO,
+}
 
 enum Modo { CHAMA, AURA }
 
