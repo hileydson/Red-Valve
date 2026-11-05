@@ -75,6 +75,16 @@ func _ready() -> void:
 			despertar.name = "despertar_capitulo_5"
 			add_child(despertar)
 			despertar.rodar(self, _evento)
+		# carregou o save já acordado (começo do Capítulo 5): o sangue não vai
+		# no save, e sem isto ele voltaria cheio. A HUD do player só nasce
+		# depois deste _ready e lê o `sangue_entre_cenas`: vale pelos dois.
+		elif Eventos.sem_forcas_na_igreja():
+			var player := get_node_or_null("Player")
+			if player:
+				var cheio := int(player.get("max_health"))
+				var sangue := maxi(1, int(round(cheio * DESPERTAR.SANGUE)))
+				SaveManager.sangue_entre_cenas = sangue
+				player.set("current_health", sangue)
 
 
 ## A seringa vai no marcador; ja' pega, ela mesma se apaga (`item_de_balcao`).
