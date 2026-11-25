@@ -30,8 +30,15 @@ var _ap: AnimationPlayer
 
 
 func rodar(dono: Node3D, jogador: CharacterBody3D) -> void:
-	travar(dono, jogador, 50.0)
+	# a arena de noite, a cinza do abismo no ar
+	travar(dono, jogador, 50.0, "arena")
 	await escurecer(1.0, 0.01)
+	if filtro:
+		filtro.mao = 1.6
+		filtro.atmosfera(cam, "cinzas", 50)
+		# a arena à noite é quase preta: o PS1 come o escuro, a lente levanta
+		filtro.ajustar("exposicao", 1.22)
+		filtro.ajustar("haze", 0.11)
 	# a arena é de noite: uma luz presa à câmera acende o que ela olha (spot,
 	# que conta à parte das omni da arena)
 	var luz := SpotLight3D.new()
@@ -62,6 +69,7 @@ func rodar(dono: Node3D, jogador: CharacterBody3D) -> void:
 	_tocar(&"Walking", 0.0)
 	var dur1 := p0.distance_to(p1) / PASSO
 	var olhar_jaula := jaula.global_position + Vector3.UP * 1.6
+	foco(9.0, 14.0, 0.04)
 	escurecer(0.0, 1.4)
 	await fase(minf(dur1, 5.5), func(k: float) -> void:
 		maycow.global_position = p0.lerp(p1, k * minf(1.0, 5.5 / dur1))
@@ -75,6 +83,10 @@ func rodar(dono: Node3D, jogador: CharacterBody3D) -> void:
 	jimmy.tocar(&"jaula_sacudir", 0.4)
 	var rosto: Vector3 = jimmy.cabeca()
 	var de_frente := rosto + porta_dir * 2.4 + Vector3.DOWN * 0.5
+	# o rosto dele nítido, o abismo no desfoque atrás
+	foco(3.4, 6.0, 0.05)
+	if filtro:
+		filtro.mao = 0.8
 	await plano(de_frente + jaula.global_basis.x * 0.6, rosto, de_frente - jaula.global_basis.x * 0.3, rosto, 2.8)
 	if not vale():
 		return
@@ -87,6 +99,9 @@ func rodar(dono: Node3D, jogador: CharacterBody3D) -> void:
 	var lado := jaula.global_basis.x
 	var cam_lado := na_porta + lado * 3.0 + porta_dir * 1.2 + Vector3.UP * 1.5
 	clarao(0.35, 0.3)
+	foco(4.5, 8.0, 0.045)
+	if filtro:
+		filtro.mao = 1.2
 	# lambda copia variável local: a flag vai num Dictionary
 	var feito := {"arrancou": false, "apagando": false}
 	await fase(3.0, func(k: float) -> void:
@@ -94,8 +109,12 @@ func rodar(dono: Node3D, jogador: CharacterBody3D) -> void:
 		if not feito["arrancou"] and k * 3.0 >= 1.85:
 			feito["arrancou"] = true
 			jaula.arrancar_porta(maycow.global_position + porta_dir * 2.0)
-			GlobalUtils.vibrate_controller(null, 0.8, 0.6, 0.5)
-			GlobalUtils.shake_camera(0.6, 0.35))
+			if filtro:
+				# a porta arrancada: pancada de cinema, o ferro gritando
+				impacto(1.0, Color(1.0, 0.82, 0.62), true)
+			else:
+				GlobalUtils.vibrate_controller(null, 0.8, 0.6, 0.5)
+				GlobalUtils.shake_camera(0.6, 0.35))
 	if not vale():
 		return
 
@@ -110,6 +129,13 @@ func rodar(dono: Node3D, jogador: CharacterBody3D) -> void:
 			(na_porta + abraco_jimmy) * 0.5 + Vector3.UP * 1.3))
 	jimmy.tocar(&"abraco", 0.35)
 	_tocar(&"cap5/abraco", 0.35)
+	foco(3.0, 5.0, 0.05)
+	if filtro:
+		# o abraço: a câmera quieta e a luz esquentando, o resto some no escuro
+		filtro.mao = 0.6
+		filtro.ajustar("luz_tint", Color(1.0, 0.84, 0.66), 3.0)
+		filtro.ajustar("halation", 0.55, 3.0)
+		filtro.ajustar("vignette_amount", 0.58, 3.0)
 	var meio := (na_porta + abraco_jimmy) * 0.5 + Vector3.UP * 1.35
 	# a volta fica do lado de fora da jaula (do lado da praça): de um flanco
 	# até quase de frente
@@ -136,6 +162,9 @@ func rodar(dono: Node3D, jogador: CharacterBody3D) -> void:
 	maycow.global_position = m0
 	maycow.global_rotation.y = atan2(ida.x, ida.z)
 	_tocar(&"Walking", 0.0)
+	foco(0.0)
+	if filtro:
+		filtro.mao = 1.4
 	escurecer(0.0, 0.8)
 	await fase(6.0, func(k: float) -> void:
 		var anda := ida * (PASSO * 6.0 * k)
@@ -147,6 +176,9 @@ func rodar(dono: Node3D, jogador: CharacterBody3D) -> void:
 			feito["apagando"] = true
 			escurecer(1.0, 2.0))
 	await escurecer(1.0, 0.3)
+	# a tela já está no preto: quem troca de cena é a arena
+	if is_instance_valid(filtro):
+		filtro.desligar()
 
 
 # ==============================================================================

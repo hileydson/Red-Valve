@@ -64,7 +64,11 @@ var _sons: Array[AudioStreamPlayer] = []
 
 
 func rodar(dono: Node3D, jogador: CharacterBody3D, monstro: Node3D, onde: Transform3D) -> void:
-	travar(dono, jogador, 46.0)
+	# o mesmo cemitério de névoa; a conversa é de perto e de câmera quieta
+	travar(dono, jogador, 46.0, "cemiterio")
+	if filtro:
+		filtro.mao = 0.7
+		filtro.atmosfera(cam, "cinzas", 40)
 	corpo = CorpoDoMaycow.assumir(player)
 	corpo.tocar(&"normal/Long_Breathe_and_Look_Around", 0.3)
 	_som(SOM_FUNDO, 0.75, -14.0)
@@ -130,7 +134,13 @@ func _transformacao(monstro: Node3D) -> void:
 		return
 	_som(SOM_OSSOS, 0.85, -2.0)
 	_som(SOM_GRITO, 1.3, -3.0)
-	GlobalUtils.shake_camera(0.6, 0.2)
+	if filtro:
+		# o parasita queima: o roxo estoura na lente e vaza enquanto ele some
+		impacto(0.7, Color(0.75, 0.55, 1.0), true)
+		filtro.ajustar("halation", 0.7, 1.2)
+		filtro.ajustar("halation_cor", Color(0.82, 0.62, 1.0), 1.2)
+	else:
+		GlobalUtils.shake_camera(0.6, 0.2)
 	var visual := monstro.get_node_or_null("visual") as Node3D
 	var queima = DissolverCorpo.vestir(visual if visual else monstro)
 	queima.parametro("cor_borda", Color(0.75, 0.55, 1.0))
@@ -141,6 +151,8 @@ func _transformacao(monstro: Node3D) -> void:
 		plantar(lado - _eixo * k * 0.8, _centro + Vector3.UP * lerpf(0.8, 0.4, k)))
 	if is_instance_valid(monstro):
 		monstro.visible = false
+	if filtro:
+		filtro.aplicar_preset("cemiterio", 1.5)
 	await esperar(0.8)
 
 
@@ -200,6 +212,9 @@ func _conversa() -> void:
 		var qual := plano_d
 		if quem == "d":
 			plano_d += 1
+		# o rosto dele de perto: o fundo some; os planos dela são largos
+		foco(1.8 if quem == "m" else (6.5 if qual % 2 == 0 else 6.0), 3.0 if quem == "m" else 8.0,
+			0.06 if quem == "m" else 0.04)
 		await fase(dur, func(k: float) -> void:
 			if quem == "m":
 				_plano_dele(k)
@@ -216,6 +231,14 @@ func _desfaz() -> void:
 	_som(SOM_SOME, 0.8, -2.0)
 	_som(SOM_ESPACO, 0.6, -10.0)
 	drizzi.call("desfazer", 2.8, false)
+	foco(0.0)
+	if filtro:
+		# ela se desfaz em luz: a lente vaza e a cor vai embora com ela
+		filtro.clarao(Color(0.85, 0.75, 1.0), 0.35, 1.6)
+		filtro.pulso("halation", 1.0, 3.0)
+		filtro.ajustar("saturation", 0.5, 4.0)
+		filtro.ajustar("vignette_amount", 0.64, 4.0)
+		filtro.mao = 0.4
 	await fase(3.6, func(k: float) -> void: _plano_alto(1.0 - k * 0.5))
 	if not vale():
 		return

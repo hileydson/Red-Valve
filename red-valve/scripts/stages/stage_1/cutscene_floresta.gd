@@ -26,8 +26,14 @@ var _direcao := Vector3.FORWARD
 
 
 func rodar(dono: Node3D, jogador: CharacterBody3D, inicio: Vector3, rumo: Vector3, arvores: Array) -> void:
-	travar(dono, jogador, 52.0)
+	# a mata fria, a câmera andando junto com ele e o fundo das árvores no
+	# desfoque
+	travar(dono, jogador, 52.0, "floresta")
 	_tela.modulate.a = 1.0
+	if filtro:
+		filtro.mao = 1.8
+		filtro.atmosfera(cam, "poeira", 70)
+		filtro.foco(cam, 6.0, 12.0, 0.045)
 	_direcao = _rumo_livre(inicio, rumo, arvores)
 	player.velocity = Vector3.ZERO
 	player.global_position = inicio + Vector3.UP * 1.0
@@ -60,6 +66,10 @@ func rodar(dono: Node3D, jogador: CharacterBody3D, inicio: Vector3, rumo: Vector
 		return
 	player.cutscene_set_auto_walk(false)
 	player.velocity = Vector3.ZERO
+	if filtro:
+		# ele para: a câmera assenta e a mata fecha em volta
+		filtro.mao = 0.7
+		filtro.ajustar("vignette_amount", 0.62, 1.0)
 	await escurecer(1.0, 1.0)
 	await esperar(0.4)
 	encerrar(1.6)

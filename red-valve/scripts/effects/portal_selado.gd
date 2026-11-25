@@ -19,6 +19,7 @@ extends Node
 signal aberto
 
 const SOM_ABRIR := "res://assets/sounds/episodios/portal_red_valve.mp3"
+const FiltroCinema := preload("res://scripts/cutscenes/filtro_cinema.gd")
 ## Quanto tempo o portal leva acordando (o jogador fica parado olhando).
 const DUR_ABRINDO := 2.2
 
@@ -118,8 +119,24 @@ func _abrir(player: CharacterBody3D) -> void:
 	queue_free()
 
 
-## O clarão roxo do selo quebrando (a cor das linhas da viagem).
+## O clarão roxo do selo quebrando (a cor das linhas da viagem), como plano de
+## cinema: tarjas finas, a lente estourando roxa e o vendaval sacudindo a
+## câmera enquanto ele olha. O filtro mora na cena (este nó se libera antes) e
+## sai sozinho quando o portal termina de acordar.
 func _clarao() -> void:
+	var dono := get_tree().current_scene
+	if dono:
+		var roxo := Color(0.62, 0.3, 1.0)
+		var f = FiltroCinema.criar(dono, "inferno", -1)
+		f.mao = 1.4
+		f.entrar(0.3, 0.07)
+		f.impacto(1.0, roxo, true)
+		f.clarao(roxo, 0.55, 1.6)
+		f.pulso("halation", 1.2, 2.0)
+		f.pulso("borrao_radial", 0.45, 1.2)
+		f.tremer(0.55, 0.25)
+		get_tree().create_timer(DUR_ABRINDO, false).timeout.connect(f.sair)
+		return
 	var camada := CanvasLayer.new()
 	camada.layer = 90
 	get_tree().current_scene.add_child(camada)

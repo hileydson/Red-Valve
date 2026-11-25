@@ -18,7 +18,8 @@ extends Node
 ## ACABAMENTO DE CINEMA (`FiltroCinema`): quem passa um `clima` pro `travar`
 ## ganha a grade de cor, a halação, o grão e a câmera "na mão" do filtro, e os
 ## momentos (`clarao`, `tremer`, `impacto`, `foco`) passam por ele. Sem clima a
-## cena fica como sempre foi — as dos capítulos seguintes ainda não pedem.
+## cena fica como sempre foi (as do Capítulo 2 ainda não pedem). O filtro é só
+## da cutscene: some no `encerrar`, junto com ela.
 
 signal terminou
 

@@ -58,7 +58,10 @@ var _lado := Vector3.RIGHT
 
 func rodar(dono: Node3D, jogador: CharacterBody3D, a_drizzi: Node3D) -> void:
 	drizzi = a_drizzi
-	travar(dono, jogador, 48.0)
+	# névoa de lua, quase sem cor; a cinza caindo na frente da câmera
+	travar(dono, jogador, 48.0, "cemiterio")
+	if filtro:
+		filtro.atmosfera(cam, "cinzas", 50)
 	corpo = CorpoDoMaycow.assumir(player)
 	corpo.tocar(&"normal/Long_Breathe_and_Look_Around", 0.4)
 	_montar_poeira_tela()
@@ -107,6 +110,10 @@ func _nuca() -> void:
 	costas = costas.normalized()
 	var de := cab + costas * 0.95 + _lado * 0.18 + Vector3.UP * 0.06
 	var ate := cab + costas * 0.6 + _lado * 0.1 + Vector3.UP * 0.03
+	# a nuca nítida, a capela derretendo atrás
+	foco(1.6, 4.0, 0.06)
+	if filtro:
+		filtro.mao = 0.6
 	legenda("CAP3_DRIZZI_1", 3.2)
 	await plano(de, cab, ate, cab, 4.2)
 
@@ -116,6 +123,9 @@ func _nuca() -> void:
 func _vira() -> void:
 	var meio := drizzi.global_position + _rumo * 2.5
 	var longe := drizzi.global_position + _lado * 5.5 + _rumo * 1.2 + Vector3.UP * 1.7
+	foco(9.0, 10.0, 0.04)
+	if filtro:
+		filtro.mao = 1.0
 	plantar(longe, meio + Vector3.UP * 1.0)
 	var g0: float = drizzi.global_rotation.y
 	var g1: float = drizzi.call("giro_para", _pes())
@@ -131,6 +141,10 @@ func _vira() -> void:
 func _vem_atras_dele() -> void:
 	drizzi.call("tocar", &"andar", 0.4)
 	corpo.tocar(&"normal/Walk_Backward_inplace", 0.4)
+	# por cima do ombro dela: ele nítido, o cemitério atrás dele no desfoque
+	foco(6.5, 9.0, 0.045)
+	if filtro:
+		filtro.mao = 1.5
 	var falas := [[0.2, "CAP3_DRIZZI_3", 3.6], [4.0, "CAP3_DRIZZI_4", 3.9], [8.1, "CAP3_DRIZZI_5", 3.9]]
 	var ditas := {}
 	var dur := 11.5
@@ -181,6 +195,7 @@ func _acusa_e_come() -> void:
 		return
 	Poeira.nuvem(cena, drizzi.global_position + _rumo * 0.5, 0.8, 0.5, 12).call("assentar", 2.0)
 	drizzi.call("tocar", &"comer", 0.25)
+	tremer(0.25, 1.4)
 	_som(SOM_MORDIDAS.pick_random(), 0.8, -2.0)
 	legenda("CAP3_MAYCOW_2", 2.6)
 	await plano(tres - _lado * 0.3, cab - Vector3.UP * 0.4, tres - _lado * 0.5 + _rumo * 0.3, cab, 2.4)
@@ -199,6 +214,13 @@ func _poeira() -> void:
 	_vento = _som(SOM_VENTO, 0.85, -26.0, true)
 	if _vento:
 		create_tween().tween_property(_vento, "volume_db", -4.0, 6.0)
+	if filtro:
+		# a poeira toma conta: a cor some, o preto vira névoa e a câmera sacode
+		foco(0.0)
+		filtro.mao = 2.0
+		filtro.ajustar("saturation", 0.45, 7.0)
+		filtro.ajustar("haze", 0.22, 7.0)
+		filtro.ajustar("aberration", 0.005, 7.0)
 	corpo.tocar(&"normal/Walk_Backward_inplace", 0.4)
 	var estado := {"mordida": 0.0, "grito": 1.2, "gritando": false, "troca": 2.2, "nuvem2": false}
 	var dur := 9.0
@@ -228,7 +250,10 @@ func _poeira() -> void:
 			nuvens.append(Poeira.nuvem(cena, chao, 5.0, 3.5, 110))
 			nuvens.append(Poeira.nuvem(cena, chao.lerp(_pes(), 0.5), 4.0, 2.8, 80))
 		_poeira_tela.color.a = lerpf(0.0, 0.82, suave(clampf((t - 1.5) / 7.0, 0.0, 1.0)))
-		GlobalUtils.shake_camera(0.05, 0.08 * k)
+		if filtro:
+			filtro.tremor_minimo(0.2 + 0.45 * k)
+		else:
+			GlobalUtils.shake_camera(0.05, 0.08 * k)
 		# atrás dele, que recua pra câmera: ele na frente, ela e a poeira atrás
 		plantar(_pes() + _rumo * (3.2 + k * 0.8) + _lado * 1.4 + Vector3.UP * (2.2 + k * 0.6),
 			chao + Vector3.UP * 1.0))
@@ -252,6 +277,11 @@ func _silencio() -> void:
 	var cab := _pes() + Vector3.UP * 1.55
 	var frente := cab - _rumo * 2.2 + _lado * 0.9 - Vector3.UP * 0.1
 	plantar(frente, cab)
+	if filtro:
+		# o silêncio: a câmera para de vez e a cor volta devagar com a poeira
+		filtro.mao = 0.3
+		filtro.aplicar_preset("cemiterio", 6.0)
+		filtro.foco(cam, 4.0, 8.0, 0.045)
 	await esperar(1.2)
 	if not vale():
 		return
@@ -292,8 +322,15 @@ func _monstro_sai_do_chao() -> void:
 	_monstro.call("tocar", &"surgir", 0.0)
 	_som(SOM_QUEDA, 0.55, 2.0)
 	_som(SOM_OSSOS, 0.7, -2.0)
-	GlobalUtils.shake_camera(1.0, 0.45)
-	GlobalUtils.vibrate_controller(null, 0.8, 0.8, 0.6)
+	if filtro:
+		# o chão estoura: pancada de cinema e a câmera de volta na mão
+		foco(0.0)
+		filtro.mao = 1.6
+		impacto(1.2, Color(0.85, 0.78, 0.66), true)
+		filtro.tremer(0.4, 0.5)
+	else:
+		GlobalUtils.shake_camera(1.0, 0.45)
+		GlobalUtils.vibrate_controller(null, 0.8, 0.8, 0.6)
 	Poeira.estouro(cena, onde, 1.8)
 	var sobe_poeira := Poeira.nuvem(cena, onde, 3.2, 3.0, 70)
 	# baixo, de lado: os dois no quadro
@@ -301,6 +338,7 @@ func _monstro_sai_do_chao() -> void:
 	plantar(baixo, onde + Vector3.UP * 1.6)
 	await esperar(0.35)
 	_som(SOM_RUGIDO, 0.85, 0.0)
+	tremer(0.35, 0.8)
 	corpo.tocar(&"normal/Walk_Backward_inplace", 0.2)
 	var alto := onde + Vector3.UP * 0.55
 	await fase(2.4, func(k: float) -> void:
@@ -316,6 +354,10 @@ func _monstro_sai_do_chao() -> void:
 	# ela olha pra ele um instante: por cima do ombro dele
 	var c := _pes() + Vector3.UP * 1.5
 	var ombro := c + _rumo * 1.9 + _lado * 0.7 + Vector3.UP * 0.35
+	# por cima do ombro dele: ela nítida lá na frente, a névoa atrás dela
+	foco(9.0, 8.0, 0.045)
+	if filtro:
+		filtro.mao = 0.8
 	await fase(2.6, func(k: float) -> void:
 		_monstro.global_position = alto + Vector3.UP * sin(k * TAU * 0.5) * 0.1
 		plantar(ombro.lerp(ombro - _rumo * 0.5, k), onde + Vector3.UP * 1.7))
@@ -323,7 +365,14 @@ func _monstro_sai_do_chao() -> void:
 		return
 	_monstro.call("tocar", &"gritar", 0.15)
 	_som(SOM_GRITO, 0.8, 2.0)
-	GlobalUtils.shake_camera(1.2, 0.35)
+	if filtro:
+		# o grito estoura a lente e escurece o quadro em volta dela
+		impacto(0.9, Color(0.75, 0.82, 1.0), false)
+		filtro.tremer(0.45, 0.6)
+		filtro.pulso("borrao_radial", 0.5, 1.2)
+		filtro.ajustar("vignette_amount", 0.72, 0.8)
+	else:
+		GlobalUtils.shake_camera(1.2, 0.35)
 	await esperar(1.6)
 
 

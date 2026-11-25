@@ -83,8 +83,12 @@ var _chao_y := PISO
 
 
 func rodar(dono: Node3D, jogador: CharacterBody3D) -> void:
-	travar(dono, jogador, 52.0)
+	# a lâmpada da oficina, poeira no ar; os flashes ganham a lente da memória
+	travar(dono, jogador, 52.0, "interior")
 	await escurecer(1.0, 0.01)
+	if filtro:
+		filtro.mao = 1.0
+		filtro.atmosfera(cam, "poeira", 80)
 	_chao_y = _chao(MAYCOW_AQUI)
 	if is_instance_valid(player) and player.has_method("apagar_lanterna_agora"):
 		player.apagar_lanterna_agora()
@@ -141,6 +145,10 @@ func _chegada() -> void:
 	escurecer(0.0, 1.4)
 	await esperar(1.2)
 	clarao(0.55, 0.7)
+	if filtro:
+		# a red valve cospe os dois: o vermelho estoura na lente
+		impacto(0.7, Color(1.0, 0.35, 0.25), true)
+		filtro.pulso("halation", 1.0, 1.4)
 	_som(SOM_PORTAL, -2.0)
 	jimmy.visible = true
 	jimmy.tocar(&"andar", 0.0)
@@ -232,6 +240,9 @@ func _plano_oficina(angulo: int, dur: float) -> void:
 			ate = cab_j - u * 0.8 - p * 0.25
 			olhar_de = cab_j
 			olhar_ate = cab_j - Vector3.UP * 0.03
+	# quem está no quadro fica nítido; o galpão atrás, no desfoque
+	var ate_quem := (de.distance_to(olhar_de) + ate.distance_to(olhar_ate)) * 0.5
+	foco(ate_quem + 0.9, 3.0, 0.05)
 	await plano(de, olhar_de, ate, olhar_ate, dur)
 
 
@@ -256,6 +267,12 @@ func _final() -> void:
 	var de := meio - p * 2.6 + Vector3.UP * 0.2
 	var ate := meio - p * 6.5 + u * 1.5 + Vector3.UP * 2.8
 	var estado := {"apagando": false, "calou": false}
+	foco(0.0)
+	if filtro:
+		# o silêncio depois de contar: a câmera para e a cor vai embora devagar
+		filtro.mao = 0.4
+		filtro.ajustar("saturation", 0.7, 7.0)
+		filtro.ajustar("vignette_amount", 0.62, 7.0)
 	await fase(10.0, func(k: float) -> void:
 		plantar(de.lerp(ate, suave(k)), meio.lerp(meio + Vector3.DOWN * 0.3, k))
 		if not estado["calou"] and k > 0.35:
@@ -287,6 +304,10 @@ func _flash() -> void:
 	_set.visible = true
 	_palco.visible = true
 	_no_palco = true
+	if filtro:
+		filtro.aplicar_preset("memoria")
+		filtro.devolver_foco()
+		filtro.mao = 1.6
 	var raio := float(cam_p.get("raio", 3.4))
 	var altura := float(cam_p.get("altura", 1.4))
 	var alvo := PALCO + Vector3.UP * float(cam_p.get("alvo", 1.1))
@@ -298,6 +319,9 @@ func _flash() -> void:
 		plantar(PALCO + Vector3(sin(g) * r, altura, cos(g) * r), alvo))
 	_relampago()
 	await esperar(0.08)
+	if filtro:
+		filtro.aplicar_preset("interior")
+		filtro.mao = 1.0
 	_no_palco = false
 	_palco.visible = false
 	if is_instance_valid(_set):
@@ -306,6 +330,10 @@ func _flash() -> void:
 
 func _relampago() -> void:
 	clarao(0.92, 0.5)
+	if filtro:
+		# a passagem entre o agora e a lembrança: a lente estica e treme
+		filtro.pulso("borrao_radial", 0.6, 0.5)
+		filtro.tremer(0.3, 1.2)
 	_som(SOM_FLASH, -5.0, randf_range(0.9, 1.1))
 
 

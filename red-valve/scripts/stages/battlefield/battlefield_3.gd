@@ -321,6 +321,7 @@ const CENA_OFICINA := "res://scenes/stages/prolog/oficina_jimmy.tscn"
 const TELEPORTE := preload("res://scripts/effects/teleporte_dona_nice.gd")
 const JaulaDoJimmy := preload("res://scripts/stages/battlefield/jaula_do_jimmy.gd")
 const CutsceneResgate := preload("res://scripts/stages/battlefield/cutscene_resgate_jimmy.gd")
+const FiltroCinema := preload("res://scripts/cutscenes/filtro_cinema.gd")
 ## [cena, marcador] de cada um.
 const LUTADORES := [[CENA_ZUMBI, "enemy_1"], [CENA_ZUMBI, "enemy_12"], [CENA_HUSK, "enemy_6"]]
 ## Respiro entre chegar (cuspido pelo portal) e eles surgirem.
@@ -437,12 +438,17 @@ func _fim_da_luta() -> void:
 	if barra:
 		barra.queue_free()
 	Engine.time_scale = 0.2
+	# o golpe final como plano de cinema (o mesmo da arena 1)
+	var golpe = FiltroCinema.golpe_final(self)
 	await get_tree().create_timer(1.6, true, false, true).timeout
 	Engine.time_scale = 1.0
 	var cena = CutsceneResgate.new()
 	cena.name = "cutscene_resgate_jimmy"
 	cena.jaula = jaula
 	add_child(cena)
+	# some junto com o preto que abre a cena
+	if is_instance_valid(golpe):
+		golpe.sair(0.4)
 	await cena.rodar(self, player)
 	# A arena nunca vira checkpoint: o save da volta nasce aqui, já na oficina.
 	# Quem chegou sem passar pelo caminho (Debug Travel) fecha o caminho aqui:

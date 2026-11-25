@@ -35,6 +35,7 @@ const SOM_GRITO := "res://assets/sounds/capitulo_4/grito_fogo.ogg"
 const SOM_FOGO := "res://assets/sounds/capitulo_4/fogo_rugindo.ogg"
 const SOM_ERUPCAO := "res://assets/sounds/capitulo_4/erupcao_fogo.ogg"
 const SOM_BATIMENTO := "res://assets/sounds/igreja/batimento_lento.ogg"
+const FiltroCinema := preload("res://scripts/cutscenes/filtro_cinema.gd")
 
 ## O meio do adro (a grelha da Boca); a altura sai de um raio no chão.
 const CENTRO := Vector2(0.0, 0.0)
@@ -81,6 +82,9 @@ var _boca := 0
 var _boca_k := 0.0
 var _estouro_em := 0.0
 var _sons: Dictionary = {}
+## O acabamento de cinema (`filtro_cinema.gd`): o calor no ar, a lente vazando
+## o fogo, o foco no que queima.
+var filtro = null
 
 
 func rodar(dono: Node3D, jogador: CharacterBody3D) -> void:
@@ -92,12 +96,14 @@ func rodar(dono: Node3D, jogador: CharacterBody3D) -> void:
 	_preparar_boca()
 	_montar_ator()
 	_montar_camera()
+	_ligar_filtro()
 	_tocar(&"ajoelhar_cansado", 0.0)
 	ap.pause()
 
 	# --- 1. o largo: ele, sozinho no meio da ruína, cai de joelhos
 	_som("respiracao", SOM_RESPIRACAO, -4.0, true)
 	_plano("Hips", Vector3(-1.9, 0.55, 4.4), Vector3(-1.3, 0.7, 3.0), Vector3(0, 0.2, 0), 48.0, 42.0, 6.0)
+	_foco(6.5, 8.0, 0.045)
 	_fade(0.0, 2.4)
 	await _esperar(1.0)
 	ap.play()
@@ -107,11 +113,18 @@ func rodar(dono: Node3D, jogador: CharacterBody3D) -> void:
 	_tocar(&"ajoelhado_ofegante", 0.4)
 	_som("batimento", SOM_BATIMENTO, -8.0, true)
 	_plano("Spine", Vector3(1.1, 0.45, -1.3), Vector3(0.85, 0.35, -1.05), Vector3(0, 0.05, 0), 42.0, 40.0, 4.2)
+	_foco(2.6, 4.0, 0.05)
 	await _esperar_plano()
 
 	# --- 3. o rosto; embaixo dele a grelha começa a brilhar
 	_boca = 1
 	_aviso_da_boca()
+	_foco(1.4, 2.5, 0.06)
+	if filtro:
+		# a grelha acendendo embaixo dele: o ar começa a tremer e a luz a vazar
+		filtro.ajustar("halation", 0.75, 3.0)
+		filtro.ajustar("calor", 0.38, 3.0)
+		filtro.tremer(0.15, 0.4)
 	# a cabeça pende: o rosto só aparece debaixo da aba do chapéu
 	_plano("Head", Vector3(0.3, -0.62, 0.62), Vector3(0.22, -0.55, 0.48), Vector3(0, -0.06, 0), 38.0, 34.0, 3.6)
 	await _esperar_plano()
@@ -119,19 +132,37 @@ func rodar(dono: Node3D, jogador: CharacterBody3D) -> void:
 	# --- 4. as labaredas sobem: câmera lenta, o fogo toma ele
 	_plano("Hips", Vector3(-1.6, 0.25, 3.4), Vector3(-1.4, 0.4, 3.0), Vector3(0, 0.5, 0), 48.0, 50.0, 3.2)
 	_erupcao()
+	_foco(0.0)
+	if filtro:
+		# a Boca estoura: pancada, a lente cega de fogo, o ar fervendo
+		filtro.impacto(1.3, Color(1.0, 0.6, 0.25), true)
+		filtro.pulso("halation", 1.6, 2.5)
+		filtro.ajustar("calor", 0.6, 1.0)
+		filtro.mao = 1.8
+		filtro.tremer(0.5, 0.35)
 	await _esperar(0.35)
 	_lento(LENTO, 0.6)
 	_tocar(&"agonia_fogo", 0.25)
 	_acender_corpo()
 	_som("grito", SOM_GRITO, 2.0, false, 0.78)
+	if filtro:
+		filtro.tremer(0.35, 0.5)
+		filtro.pulso("aberration", 0.009, 1.5)
 	await _esperar_plano()
 
 	# --- 5. o que queima, de perto. O jato da Boca foi o ESTOURO: dentro da
 	# coluna a câmera só via branco, e daqui em diante quem queima é o corpo
 	_apagar_jato()
+	_foco(1.6, 3.0, 0.06)
+	if filtro:
+		filtro.mao = 1.1
+		filtro.ajustar("calor", 0.42, 2.0)
 	_plano("LeftForeArm", Vector3(-0.75, 0.15, 0.55), Vector3(-0.6, 0.25, 0.4), Vector3(0, 0, 0), 38.0, 34.0, 2.8)
 	await _esperar_plano()
 	_som("grito2", SOM_GRITO, 0.0, false, 0.66)
+	if filtro:
+		filtro.tremer(0.3, 0.5)
+		filtro.pulso("borrao_radial", 0.35, 1.0)
 	_plano("Head", Vector3(0.2, -0.55, 0.55), Vector3(0.05, -0.5, 0.42), Vector3(0, 0.05, 0), 40.0, 36.0, 2.8)
 	await _esperar_plano()
 	_plano("Spine01", Vector3(0.75, 0.05, 0.7), Vector3(-0.75, 0.1, 0.7), Vector3(0, 0, 0), 42.0, 42.0, 3.0)
@@ -144,6 +175,13 @@ func rodar(dono: Node3D, jogador: CharacterBody3D) -> void:
 	# --- 6. o amuleto na mão que queima, e a tela some devagar
 	_tocar(&"queimando_final", 0.4)
 	_mirar_no_amuleto(0.58, 0.3, 8.5)
+	_foco(0.9, 1.5, 0.07)
+	if filtro:
+		# só o amuleto: a câmera para, a cor vai embora e a lente vaza roxo
+		filtro.mao = 0.4
+		filtro.ajustar("saturation", 0.35, 6.0)
+		filtro.ajustar("vignette_amount", 0.78, 6.0)
+		filtro.ajustar("halation_cor", Color(0.85, 0.55, 1.0), 4.0)
 	await _esperar(2.4)
 	_fade(1.0, 5.5)
 	_calar(5.5)
@@ -152,6 +190,9 @@ func rodar(dono: Node3D, jogador: CharacterBody3D) -> void:
 
 	_lento(1.0, 0.0)
 	_boca = 0
+	# a tela já está no preto: o filtro sai sem ninguém ver
+	if is_instance_valid(filtro):
+		filtro.desligar()
 	terminou.emit()
 
 
@@ -212,6 +253,24 @@ func _montar_camera() -> void:
 	cam.far = 600.0
 	arena.add_child(cam)
 	cam.make_current()
+
+
+func _ligar_filtro() -> void:
+	filtro = FiltroCinema.criar(self, "inferno", -1)
+	filtro.ajustar("calor", 0.18)
+	filtro.mao = 0.9
+	filtro.entrar(0.6)
+	filtro.atmosfera(cam, "brasas", 40)
+
+
+## Desfoque de longe na câmera da cena (0 devolve nítida).
+func _foco(distancia: float, transicao: float = 8.0, quanto: float = 0.05) -> void:
+	if not is_instance_valid(filtro):
+		return
+	if distancia <= 0.0:
+		filtro.devolver_foco()
+	else:
+		filtro.foco(cam, distancia, transicao, quanto)
 
 
 ## Onde está a origem do osso agora (mundo).

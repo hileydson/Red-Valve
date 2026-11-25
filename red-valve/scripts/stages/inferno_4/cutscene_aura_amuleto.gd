@@ -57,12 +57,16 @@ var _esquerda := Vector3.LEFT
 func rodar(dono: Node3D, jogador: CharacterBody3D, a_chama: Node3D) -> void:
 	chama = a_chama
 	_chama_origem = chama.global_position
-	# acabamento de cinema só no altar do Capítulo 1; os púlpitos dos outros
-	# capítulos rodam a mesma cena sem ele
-	travar(dono, jogador, 50.0, "inferno" if evento == Eventos.CAP1_AURA_AMULETO else "")
+	# o acabamento de cinema vale em todos os púlpitos: o do cemitério
+	# (Capítulo 3) no frio da névoa, os dos infernos no calor
+	var no_cemiterio := evento == Eventos.CAP3_PODER_CUT
+	travar(dono, jogador, 50.0, "cemiterio" if no_cemiterio else "inferno")
 	if filtro:
-		filtro.ajustar("calor", 0.12)
-		filtro.atmosfera(cam, "brasas", 50)
+		if no_cemiterio:
+			filtro.atmosfera(cam, "cinzas", 40)
+		else:
+			filtro.ajustar("calor", 0.12)
+			filtro.atmosfera(cam, "brasas", 50)
 	await _chegar_perto()
 	if vale():
 		await _gesto()

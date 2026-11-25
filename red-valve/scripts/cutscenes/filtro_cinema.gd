@@ -116,6 +116,50 @@ const PRESETS := {
 		"sombra_tint": Color(0.46, 0.42, 0.64), "luz_tint": Color(1.0, 0.86, 0.70),
 		"calor": 0.0,
 	},
+	# A floresta (Capitulo 3): mata fechada, luz fria entre as arvores, sombra
+	# esverdeada.
+	"floresta": {
+		"halation": 0.30, "halation_limiar": 0.55, "halation_cor": Color(0.78, 0.88, 1.0),
+		"aberration": 0.0020, "vignette_amount": 0.42, "grain_amount": 0.034,
+		"exposicao": 1.20, "contrast": 1.08, "saturation": 0.84, "haze": 0.13,
+		"sombra_tint": Color(0.36, 0.52, 0.50), "luz_tint": Color(0.92, 0.96, 1.0),
+		"calor": 0.0,
+	},
+	# O cemiterio (Capitulo 3): nevoa, lua, quase sem cor.
+	"cemiterio": {
+		"halation": 0.36, "halation_limiar": 0.52, "halation_cor": Color(0.80, 0.86, 1.0),
+		"aberration": 0.0022, "vignette_amount": 0.50, "grain_amount": 0.038,
+		"exposicao": 1.08, "contrast": 1.12, "saturation": 0.72, "haze": 0.12,
+		"sombra_tint": Color(0.40, 0.46, 0.58), "luz_tint": Color(0.94, 0.95, 1.0),
+		"calor": 0.0,
+	},
+	# As lembrancas (os flashes da conversa na oficina): a luz vazando roxa, a
+	# lente se desfazendo nas bordas.
+	"memoria": {
+		"halation": 0.60, "halation_limiar": 0.45, "halation_cor": Color(0.90, 0.75, 1.0),
+		"aberration": 0.0040, "vignette_amount": 0.55, "grain_amount": 0.050,
+		"exposicao": 1.05, "contrast": 1.08, "saturation": 0.85, "haze": 0.12,
+		"sombra_tint": Color(0.45, 0.38, 0.62), "luz_tint": Color(1.0, 0.92, 0.98),
+		"calor": 0.0,
+	},
+	# O reencontro (o fim do jogo): luz quente e macia, nada duro.
+	"reencontro": {
+		"halation": 0.28, "halation_limiar": 0.62, "halation_cor": Color(1.0, 0.88, 0.74),
+		"aberration": 0.0014, "vignette_amount": 0.40, "grain_amount": 0.024,
+		"exposicao": 0.94, "contrast": 1.06, "saturation": 0.94, "haze": 0.06,
+		"sombra_tint": Color(0.50, 0.52, 0.66), "luz_tint": Color(1.0, 0.94, 0.86),
+		"calor": 0.0,
+	},
+	# Sem grade nenhuma: para as cenas que ja tem lente propria (o despertar na
+	# igreja usa a da cena da Dona Nice). Sobra so' a halacao, a camera na mao e
+	# os momentos (clarao, tremor, impacto).
+	"neutro": {
+		"halation": 0.30, "halation_limiar": 0.55, "halation_cor": Color(1.0, 0.85, 0.75),
+		"aberration": 0.0, "vignette_amount": 0.0, "grain_amount": 0.0,
+		"exposicao": 1.0, "contrast": 1.0, "saturation": 1.0, "haze": 0.0,
+		"sombra_tint": Color(1.0, 1.0, 1.0), "luz_tint": Color(1.0, 1.0, 1.0),
+		"calor": 0.0,
+	},
 }
 
 ## Quanto a camera "na mao" deriva (0 desliga). 1.0 = operador parado
@@ -139,6 +183,9 @@ var _zoom: float = 1.0
 
 var _attrs_originais: Dictionary = {}   # Camera3D -> CameraAttributes (ou null)
 var _efeitos: Array[Node] = []
+## O fade de entrada: a saida mata ele, senao uma cena pulada logo no comeco
+## deixava o fade de entrada terminar DEPOIS do de saida, e o filtro ficava.
+var _tween_entrada: Tween
 
 
 ## Cria o filtro como filho de `dono`, ja' no clima pedido e INVISIVEL
@@ -193,6 +240,7 @@ func _ready() -> void:
 ## tem as barras do `cutscene_takes`).
 func entrar(dur: float = 1.2, letterbox: float = LETTERBOX_PADRAO) -> void:
 	var t := _tween()
+	_tween_entrada = t
 	t.tween_method(_set_intensidade, _intensidade, 1.0, dur).set_trans(Tween.TRANS_SINE)
 	if letterbox > 0.0:
 		t.tween_method(_set_letterbox, _letterbox, letterbox, dur * 0.7)\
@@ -202,6 +250,8 @@ func entrar(dur: float = 1.2, letterbox: float = LETTERBOX_PADRAO) -> void:
 ## Tira o filtro devagar, devolve o foco das cameras, apaga a atmosfera e (por
 ## padrao) se libera.
 func sair(dur: float = 0.8, liberar: bool = true) -> void:
+	if _tween_entrada and _tween_entrada.is_valid():
+		_tween_entrada.kill()
 	devolver_foco()
 	for e in _efeitos:
 		if is_instance_valid(e) and e is CPUParticles3D:
@@ -214,6 +264,22 @@ func sair(dur: float = 0.8, liberar: bool = true) -> void:
 	if liberar and is_instance_valid(self):
 		_limpar_efeitos()
 		queue_free()
+
+
+## O ultimo golpe de uma luta como plano de cinema (a camera lenta e' de quem
+## chama): o estalo do impacto, as tarjas fechando, a cor indo embora e a lente
+## abrindo. Quem chama tira o filtro (`sair`) quando a tela ja' estiver no preto.
+static func golpe_final(dono: Node) -> CanvasLayer:
+	var f = criar(dono, "arena", -1)
+	f.mao = 0.4
+	f.entrar(0.25, 0.13)
+	f.impacto(1.2, Color(1.0, 0.95, 0.9), true)
+	f.ajustar("saturation", 0.25, 2.5)
+	f.ajustar("contrast", 1.28, 2.5)
+	f.ajustar("aberration", 0.007, 2.5)
+	f.ajustar("vignette_amount", 0.75, 2.5)
+	f.ajustar("halation", 0.7, 1.5)
+	return f
 
 
 ## Some na hora (pulo de cutscene, troca de cena).
@@ -260,6 +326,12 @@ func ajustar(nome: String, valor, dur: float = 0.0) -> void:
 func tremer(trauma: float, queda: float = 1.1) -> void:
 	_trauma = clampf(_trauma + trauma, 0.0, 1.0)
 	_trauma_queda = queda
+
+
+## Segura o tremor em pelo menos `valor` enquanto for chamado (a cada quadro):
+## o chao roncando continuo, que sobe e desce com a cena.
+func tremor_minimo(valor: float) -> void:
+	_trauma = maxf(_trauma, clampf(valor, 0.0, 1.0))
 
 
 ## Um valor que sobe na hora para `pico` e volta sozinho em `dur` segundos.
@@ -377,6 +449,11 @@ func atmosfera(cam: Camera3D, tipo: String = "poeira", quantidade: int = -1) -> 
 	mat.billboard_keep_scale = true
 	mat.albedo_texture = _textura_redonda()
 	mat.disable_receive_shadows = true
+	# o que passa colado na lente some: um floco a 20 cm vira um borrão do
+	# tamanho da tela (e a luz presa à câmera o acende)
+	mat.distance_fade_mode = BaseMaterial3D.DISTANCE_FADE_PIXEL_ALPHA
+	mat.distance_fade_min_distance = 0.6
+	mat.distance_fade_max_distance = 2.2
 
 	match tipo:
 		"brasas":
@@ -398,8 +475,8 @@ func atmosfera(cam: Camera3D, tipo: String = "poeira", quantidade: int = -1) -> 
 		"cinzas":
 			p.amount = quantidade if quantidade > 0 else 90
 			p.lifetime = 7.0
-			p.emission_box_extents = Vector3(6.0, 1.0, 6.0)
-			p.position = Vector3(0.0, 3.0, -3.0)
+			p.emission_box_extents = Vector3(6.0, 1.0, 4.0)
+			p.position = Vector3(0.0, 3.0, -5.5)
 			p.direction = Vector3(0.3, -1.0, 0.1)
 			p.spread = 25.0
 			p.initial_velocity_min = 0.2

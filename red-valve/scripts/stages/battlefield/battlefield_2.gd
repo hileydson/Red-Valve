@@ -109,6 +109,7 @@ const CENA_HUSK := "res://scenes/enemies/the_cobalt_husker.tscn"
 const CENA_IGREJA := "res://scenes/stages/igreja/igreja_interior.tscn"
 const TELEPORTE := preload("res://scripts/effects/teleporte_dona_nice.gd")
 const CutsceneFogo := preload("res://scripts/stages/battlefield/cutscene_fogo_arena_2.gd")
+const FiltroCinema := preload("res://scripts/cutscenes/filtro_cinema.gd")
 ## [cena, marcador] de cada um.
 const LUTADORES := [[CENA_ZUMBI, "enemy_2"], [CENA_ZUMBI, "enemy_11"], [CENA_HUSK, "enemy_7"]]
 ## Respiro entre chegar (cuspido pelo portal) e eles surgirem.
@@ -183,11 +184,16 @@ func _fim_da_luta() -> void:
 	if barra:
 		barra.queue_free()
 	Engine.time_scale = 0.2
+	# o golpe final como plano de cinema (o mesmo da arena 1)
+	var golpe = FiltroCinema.golpe_final(self)
 	await get_tree().create_timer(1.6, true, false, true).timeout
 	Engine.time_scale = 1.0
 	var cena = CutsceneFogo.new()
 	cena.name = "cutscene_fogo_arena_2"
 	add_child(cena)
+	# some junto com o preto que abre a cena
+	if is_instance_valid(golpe):
+		golpe.sair(1.1)
 	await cena.rodar(self, player)
 	# A arena nunca vira checkpoint: o save da volta nasce aqui, já na igreja
 	# (o `concluir` sem gravar, e o save com o caminho dela). Fechar o jogo

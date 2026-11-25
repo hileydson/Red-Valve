@@ -22,9 +22,9 @@ var _fp: Node3D
 
 
 func rodar(dono: Node3D, jogador: CharacterBody3D) -> void:
-	# o acabamento de cinema é do Capítulo 1 (a do porão); a da oficina, no
-	# Capítulo 5, segue como era
-	travar(dono, jogador, 70.0, "escola_escura" if evento == "" else "")
+	# o acabamento de cinema: o frio do porão (Capítulo 1) ou a lâmpada da
+	# oficina (Capítulo 5)
+	travar(dono, jogador, 70.0, "escola_escura" if evento == "" else "interior")
 	if filtro:
 		filtro.mao = 1.6
 	var olho := _olho()

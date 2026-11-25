@@ -29,6 +29,8 @@ const SOM_FLASH := "res://assets/sounds/capitulo_4/flash_memoria.ogg"
 const SOM_LEVANTAR := "res://assets/sounds/capitulo_4/levantar_ferido.ogg"
 const SOM_BATIMENTO := "res://assets/sounds/igreja/batimento_lento.ogg"
 const SOM_SUSSURRO := "res://assets/sounds/igreja/sussurro_culto.ogg"
+const FiltroCinema := preload("res://scripts/cutscenes/filtro_cinema.gd")
+const CartelaDeCapitulo := preload("res://scripts/cutscenes/cartela_de_capitulo.gd")
 
 ## O meio do pentagrama (o decalque `efeitos/simbolo` da cena).
 const SIMBOLO := Vector3(0.0, 0.0, 19.6)
@@ -69,6 +71,10 @@ var _tween_cam: Tween
 ## Eixo da cabeça (horizontal, mundo) e o lado da porta, medidos no corpo.
 var _eixo := CABECA_PARA
 var _lado := Vector3(0.0, 0.0, -1.0)
+## O acabamento de cinema: a cena já tem a lente dela (o borrão do sonho, a
+## cor), então o filtro entra "neutro" — só a câmera na mão, a halação, o foco
+## e os trancos dos flashes.
+var filtro = null
 
 
 func rodar(dono: Node3D, evento: Node) -> void:
@@ -88,6 +94,10 @@ func rodar(dono: Node3D, evento: Node) -> void:
 	_preparar_maycow()
 	_preparar_nice()
 	_montar_camera()
+	filtro = FiltroCinema.criar(self, "neutro", -1)
+	filtro.mao = 0.5
+	filtro.entrar(0.1, 0.0)
+	filtro.atmosfera(cam, "poeira", 60)
 	_sangue_no_chao()
 	var lente := cena.get_node_or_null("lente") as CanvasLayer
 	if lente:
@@ -104,6 +114,7 @@ func rodar(dono: Node3D, evento: Node) -> void:
 	var peito := maycow.call("posicao_do_osso", "Spine") as Vector3
 	_plano(peito + Vector3.UP * 3.4 - _eixo * 0.5 + _lado * 0.3, peito + Vector3.UP * 2.6 - _eixo * 0.2 + _lado * 0.1,
 		peito, peito, 46.0, 40.0, 9.0)
+	_foco(4.5, 5.0, 0.04)
 	var abre := create_tween()
 	abre.tween_property(cena, "preto", 0.0, 7.5).set_trans(Tween.TRANS_SINE)
 	await _esperar(8.5)
@@ -124,6 +135,8 @@ func rodar(dono: Node3D, evento: Node) -> void:
 	# --- 4. ele balança a cabeça: os flashes acabam e o borrão vai embora
 	maycow.call("tocar", &"cap4/balancar_cabeca", 0.25)
 	_plano_rosto(2.8)
+	if is_instance_valid(filtro):
+		filtro.tremer(0.3, 0.8)
 	await _esperar(0.7)
 	var volta := create_tween().set_parallel(true)
 	for chave in REAL:
@@ -151,6 +164,8 @@ func rodar(dono: Node3D, evento: Node) -> void:
 
 	# --- 6. de volta ao jogo, ali mesmo
 	_preto.modulate.a = 1.0
+	if is_instance_valid(filtro):
+		filtro.desligar()
 	var em_pe := maycow.call("posicao_do_osso", "Hips") as Vector3
 	_soltar(em_pe)
 	await _esperar(0.4)
@@ -255,6 +270,13 @@ func _sangue_no_chao() -> void:
 func _flash(i: int, dur: float) -> void:
 	_som("flash_%d" % i, SOM_FLASH, -1.0, false)
 	_clarao(1.0, 0.3)
+	if is_instance_valid(filtro):
+		# cada lembrança entra num tranco, e cada uma bate mais forte
+		filtro.tremer(0.25 + 0.06 * i, 1.2)
+		filtro.pulso("aberration", 0.008, 0.5)
+		filtro.pulso("borrao_radial", 0.3 + 0.05 * i, 0.45)
+		if i == FLASHES.size() - 1:
+			filtro.som_grave(0.8)
 	_memoria(true, i)
 	_plano_da_memoria(i, dur)
 	await _esperar(dur)
@@ -307,6 +329,11 @@ func _plano_da_memoria(i: int, dur: float) -> void:
 		dela = nice.call("posicao_do_osso", "head") as Vector3
 	var faca := cena.get_node_or_null("atores/DonaNice/modelo/dona_nice_rig/Skeleton3D/mao_faca") as Node3D
 	var ponta := faca.global_position if faca else (peito + dela) * 0.5
+	# os closes da memória (a faca, o rosto dela, ele) com o fundo derretido
+	if i % 5 == 0 or i % 5 == 4:
+		_foco(3.0, 4.0, 0.05)
+	else:
+		_foco(1.0, 2.0, 0.07)
 	match i % 5:
 		0:
 			# os dois, de longe: ela ajoelhada sobre ele
@@ -389,6 +416,7 @@ func _plano(de: Vector3, ate: Vector3, olhar_de: Vector3, olhar_ate: Vector3, fo
 func _plano_rosto(dur: float) -> void:
 	var cabeca := maycow.call("posicao_do_osso", "Head") as Vector3
 	var rosto := cabeca + _eixo * 0.09 + Vector3.UP * 0.06
+	_foco(1.3, 2.5, 0.06)
 	_plano(rosto + _lado * 0.72 + Vector3.UP * 0.16 + _eixo * 0.14,
 		rosto + _lado * 0.58 + Vector3.UP * 0.13 + _eixo * 0.1,
 		rosto, rosto, 36.0, 33.0, dur)
@@ -398,8 +426,19 @@ func _plano_rosto(dur: float) -> void:
 func _plano_dos_pes(dur: float) -> void:
 	var quadril := maycow.call("posicao_do_osso", "Hips") as Vector3
 	var peito := maycow.call("posicao_do_osso", "Spine") as Vector3
+	_foco(3.6, 4.0, 0.05)
 	_plano(quadril - _eixo * 2.3 + _lado * 0.4 + Vector3.UP * 0.9,
 		quadril - _eixo * 2.0 + _lado * 0.35 + Vector3.UP * 0.85, peito, peito, 40.0, 38.0, dur)
+
+
+## Desfoque de longe na câmera da cena (0 devolve nítida).
+func _foco(distancia: float, transicao: float = 4.0, quanto: float = 0.05) -> void:
+	if not is_instance_valid(filtro):
+		return
+	if distancia <= 0.0:
+		filtro.devolver_foco()
+	else:
+		filtro.foco(cam, distancia, transicao, quanto)
 
 
 func _lente(valores: Dictionary) -> void:
@@ -522,38 +561,7 @@ func _calar(chave: String, dur: float) -> void:
 # ==============================================================================
 # O TÍTULO
 # ==============================================================================
-## O mesmo título de capítulo da cidade (`stage_1._titulo_do_capitulo`): o nome
+## O mesmo título de capítulo da cidade (`cartela_de_capitulo.gd`): o nome
 ## bem grande, em vermelho, no meio da tela, e o subtítulo pequeno embaixo.
 func _titulo_do_capitulo(chave_titulo: String, chave_subtitulo: String) -> void:
-	var fonte = load("res://assets/fonts/Montserrat-ExtraBold.ttf")
-	var titulo := Label.new()
-	titulo.text = tr(chave_titulo).to_upper()
-	titulo.set_anchors_preset(Control.PRESET_FULL_RECT)
-	titulo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	titulo.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	titulo.add_theme_font_size_override("font_size", 180)
-	titulo.add_theme_color_override("font_color", Color(0.705882, 0.0, 0.0))
-	if fonte:
-		titulo.add_theme_font_override("font", fonte)
-	_camada.add_child(titulo)
-	var sub := Label.new()
-	sub.text = tr(chave_subtitulo)
-	sub.set_anchors_preset(Control.PRESET_FULL_RECT)
-	sub.offset_top = 170
-	sub.offset_bottom = 170
-	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	sub.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	sub.add_theme_font_size_override("font_size", 48)
-	sub.add_theme_color_override("font_color", Color(0.705882, 0.0, 0.0))
-	if fonte:
-		sub.add_theme_font_override("font", fonte)
-	titulo.add_child(sub)
-	titulo.modulate.a = 0.0
-	var entra := create_tween()
-	entra.tween_property(titulo, "modulate:a", 1.0, 1.0)
-	await entra.finished
-	await _esperar(3.5)
-	var sai := create_tween()
-	sai.tween_property(titulo, "modulate:a", 0.0, 1.0)
-	await sai.finished
-	titulo.queue_free()
+	await CartelaDeCapitulo.mostrar(self, _camada, chave_titulo, chave_subtitulo)
