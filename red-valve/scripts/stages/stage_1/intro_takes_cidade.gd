@@ -234,12 +234,14 @@ func preparar_takes() -> void:
 func take_1() -> void:
 	_liga_grupo(_grupo_1)
 	_atravessa(_grupo_1, dolly_curto, dur_take_curto)
+	_cinema_de_rua()
 
 
 ## 17s — a mesma coisa, em outro ponto da cidade.
 func take_2() -> void:
 	_liga_grupo(_grupo_2)
 	_atravessa(_grupo_2, dolly_curto, dur_take_curto)
+	_cinema_de_rua()
 
 
 ## 22s — o take grande. A camera atravessa devagar; por tras dela desce um muro
@@ -247,6 +249,7 @@ func take_2() -> void:
 func take_3() -> void:
 	_liga_grupo(_grupo_3)
 	_atravessa(_grupo_3, dolly_longo, dur_take_longo)
+	_cinema_de_rua()
 	_solta_o_muro(_grupo_3)
 
 
@@ -255,6 +258,11 @@ func take_3() -> void:
 func take_cidade_tomada() -> void:
 	voltar_camera_principal()
 	_nevoa_pela_cidade()
+	# a nevoa do tamanho da cidade passa por baixo do voo: um ronco longo
+	var filtro = _filtro()
+	if filtro:
+		filtro.tremer(0.32, 0.18)
+		filtro.som_grave(0.5)
 
 
 ## 15s e 20s — a camera principal reassume. O corte em si e da animacao; o que
@@ -264,6 +272,35 @@ func voltar_camera_principal() -> void:
 	if is_instance_valid(_tween_camera):
 		_tween_camera.kill()
 	_recolhe_tudo()
+	var filtro = _filtro()
+	if filtro:
+		filtro.devolver_foco()
+		filtro.mao = MAO_VOO
+
+
+# ==============================================================================
+# ACABAMENTO DE CINEMA (o filtro e' do executa_capitulo_1)
+# ==============================================================================
+
+## Deriva da camera no voo e na rua (ver FiltroCinema.mao). Na rua a camera e'
+## um operador andando com ela no ombro; no voo, um drone.
+const MAO_VOO := 0.7
+const MAO_RUA := 1.7
+## Onde a rua comeca a borrar: o morador mais proximo fica nitido e o fim da
+## rua cai no desfoque, que e' o que separa o plano da cidade atras.
+const FOCO_RUA := 24.0
+
+
+func _filtro():
+	return get_tree().get_first_node_in_group("filtro_cinema")
+
+
+func _cinema_de_rua() -> void:
+	var filtro = _filtro()
+	if filtro == null:
+		return
+	filtro.mao = MAO_RUA
+	filtro.foco(_camera_2(), FOCO_RUA, 45.0, 0.03)
 
 
 ## 38s — fim de tudo. A cidade volta a ser so' o voo.
@@ -726,6 +763,11 @@ func _monta_muro(largura: float, altura: float, fundura: float, quantas: int,
 ## vermelha na frente dela, dentro de uma coluna de fumaca; no meio do caminho,
 ## escondido pela fumaca, ele sai de cena e o Shadow Person assume o passo dele.
 func _vira_sombra(npc: ShadowPerson, sombra: ShadowPerson) -> void:
+	var filtro = _filtro()
+	if filtro:
+		# cada pessoa que a nevoa engole puxa a lente um instante
+		filtro.pulso("aberration", 0.005, 0.5)
+		filtro.tremer(0.08)
 	var altura: float = npc.get_meta("body_height", 1.8)
 	var mat := _material_escuridao(npc.global_position.y, altura)
 	_veste_escuridao(npc, mat)
@@ -877,6 +919,11 @@ func _coluna_de_fumaca(pos: Vector3, altura: float) -> GPUParticles3D:
 ## Bafo grave da virada. Nao e som posicional: a cutscene ja tem a trilha
 ## tocando e o que se quer aqui e um peso por baixo dela, nao um ponto no mapa.
 func _baque() -> void:
+	# o muro cai na rua: a camera sente antes de ver
+	var filtro = _filtro()
+	if filtro:
+		filtro.tremer(0.45, 0.35)
+		filtro.pulso("aberration", 0.006, 1.2)
 	var stream := load(SOM_SOMBRA) as AudioStream
 	if stream == null:
 		return

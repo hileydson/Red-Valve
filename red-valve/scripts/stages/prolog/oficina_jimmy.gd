@@ -5,6 +5,11 @@ const AgarraoRedValve := preload("res://scripts/stages/prolog/agarrao_red_valve.
 ## Do Capítulo 5 em diante a oficina é outra: a red valve até o Jimmy e a
 ## conversa depois da arena 3 (ver `capitulo_5_oficina.gd`).
 const Capitulo5Oficina := preload("res://scripts/stages/prolog/capitulo_5_oficina.gd")
+const FiltroCinema := preload("res://scripts/cutscenes/filtro_cinema.gd")
+## Acabamento de cinema do filme da oficina (grade de interior, halacao,
+## tremores e claroes). As tarjas ja sao o no' "cutscene" da cena. O
+## `agarrao_red_valve` usa o mesmo filtro (pega por `filtro`).
+var filtro = null
 
 @onready var camera_oficina: Camera3D = $camera_oficina
 @onready var player = $Player
@@ -112,6 +117,12 @@ func _finalizar_cutscene_tudo() -> void:
 	if is_instance_valid(motion_blur_layer):
 		motion_blur_layer.queue_free()
 		motion_blur_layer = null
+	if is_instance_valid(filtro):
+		if cutscene_skipped:
+			filtro.desligar()
+		else:
+			filtro.sair(1.2)
+	filtro = null
 		
 	GlobalEvents.in_cutscene = false
 	
@@ -436,6 +447,7 @@ func _esconder_para_o_filme() -> void:
 	var cutscene_bars = get_node_or_null("cutscene")
 	if cutscene_bars:
 		cutscene_bars.visible = true
+	_ligar_filtro()
 		
 	# Instancia o UI de Skip
 	var skip_layer = CanvasLayer.new()
@@ -448,6 +460,15 @@ func _esconder_para_o_filme() -> void:
 	skip_ui.skipped.connect(skip_cutscene)
 
 
+func _ligar_filtro() -> void:
+	if is_instance_valid(filtro):
+		return
+	filtro = FiltroCinema.criar(self, "interior", -1)
+	# a oficina ja balanca a camera (h_offset no _process): o filtro so' completa
+	filtro.mao = 0.6
+	filtro.entrar(1.2, 0.0)
+
+
 func _iniciar_cutscene_com_camera() -> void:
 	var vortex = get_node_or_null("auto_pecas_jimmy/VortexMagico")
 	var camera_inicio = get_node_or_null("portal/camera_inicio_cutscene")
@@ -458,6 +479,8 @@ func _iniciar_cutscene_com_camera() -> void:
 		
 	camera_inicio.make_current()
 	look_at_target = null
+	if filtro:
+		filtro.atmosfera(camera_inicio, "poeira")
 	
 	# Camada de texto
 	var text_layer = CanvasLayer.new()
@@ -538,6 +561,8 @@ func _iniciar_cutscene_com_camera() -> void:
 	var target_pos = camera_inicio.global_position + dir_to_vortex * (dist_to_vortex - 2.0)
 	
 	var move_duration = 9.0
+	if filtro:
+		filtro.mao = 1.3
 	var move_tween = create_tween().set_parallel(true)
 	move_tween.tween_property(camera_inicio, "global_position:x", target_pos.x, move_duration).set_trans(Tween.TRANS_LINEAR)
 	move_tween.tween_property(camera_inicio, "global_position:z", target_pos.z, move_duration).set_trans(Tween.TRANS_LINEAR)
@@ -564,6 +589,8 @@ func _iniciar_cutscene_com_camera() -> void:
 	await move_tween.finished
 	if cutscene_skipped: return
 	bob_tween.kill() # Para o balanço
+	if filtro:
+		filtro.mao = 0.6
 	
 	# Ajusta Y para garantir que fica reto após caminhar
 	var adjust_tween = create_tween()
@@ -648,6 +675,10 @@ func _iniciar_cutscene_com_camera() -> void:
 	temp_audio.pitch_scale = 0.3
 	add_child(temp_audio)
 	temp_audio.play()
+	if filtro:
+		# no escuro so' se ouve e se sente: o tremor continua quando a tela volta
+		filtro.tremer(0.5, 0.35)
+		filtro.som_grave(0.6)
 	
 	# Move a estante revelando o portal
 	_arrastar_estante()
@@ -660,6 +691,11 @@ func _iniciar_cutscene_com_camera() -> void:
 	# Tela volta, mostrando portal revelado
 	if fade:
 		fade.fade_in()
+	if filtro:
+		# a red valve aparece: a lente vaza o brilho dela e esquenta
+		filtro.pulso("halation", 0.9, 3.0)
+		filtro.ajustar("halation", 0.45, 2.5)
+		filtro.ajustar("luz_tint", Color(1.0, 0.78, 0.60), 2.5)
 	await get_tree().create_timer(2.0).timeout
 	if cutscene_skipped: return
 	
@@ -697,6 +733,9 @@ func _iniciar_cutscene_com_camera() -> void:
 		_ativar_motion_blur(true)
 		if motion_blur_mat:
 			motion_blur_mat.set_shader_parameter("blur_strength", 0.3)
+		if filtro and sub_cam:
+			filtro.devolver_foco()
+			filtro.atmosfera(sub_cam, "brasas", 40)
 			
 		# A porta abre, o Husk estica a mão, pega o Maycow pelo pescoço e o
 		# arrasta pra dentro: a viagem vai ao inferno 2 e volta por
@@ -835,6 +874,12 @@ func iniciar_cutscene_antiga() -> void:
 	_ativar_motion_blur(true)
 	_aplicar_pitch_audio_lento(true, 0.5)
 	Engine.time_scale = 0.12
+	if filtro:
+		# camera lenta = o mundo perde a cor e a lente entorta
+		filtro.mao = 0.0
+		filtro.ajustar("saturation", 0.55, 0.6)
+		filtro.ajustar("aberration", 0.006, 0.6)
+		filtro.ajustar("vignette_amount", 0.7, 0.6)
 	
 	var landing_pos = player_pos + Vector3(0, 0.3, 0)
 	# Olha intensamente para baixo, quase reto para o piso
@@ -874,6 +919,11 @@ func iniciar_cutscene_antiga() -> void:
 	Engine.time_scale = 1.0
 	_ativar_motion_blur(false)
 	_aplicar_pitch_audio_lento(false, 1.0)
+	if filtro:
+		# o baque: a cor volta de uma vez, junto com a dor
+		filtro.aplicar_preset("interior", 0.4)
+		filtro.impacto(1.0, Color(1.0, 0.92, 0.85), true)
+		filtro.mao = 1.0
 	
 	# ---------------------------------------------------------
 	# FASE 2: Balança a cabeça no chão (Sem subir a posição!)
@@ -917,6 +967,8 @@ func iniciar_cutscene_antiga() -> void:
 	
 	look_at_target = enemy
 	look_at_offset = Vector3(0, 1.5, 0)
+	if filtro:
+		filtro.foco(camera_oficina, landing_pos.distance_to(enemy_look_target) + 1.5, 8.0, 0.05)
 	await get_tree().create_timer(0.8).timeout
 	if cutscene_skipped: return
 	
@@ -968,6 +1020,9 @@ func iniciar_cutscene_antiga() -> void:
 		blur_tween.tween_property(motion_blur_mat, "shader_parameter/blur_strength", 0.0, 1.6).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 		blur_tween.tween_callback(func(): _ativar_motion_blur(false))
 	
+	if filtro:
+		filtro.foco(camera_oficina, start_orbit_radius + 1.0, 6.0, 0.06)
+		filtro.pulso("borrao_radial", 0.3, 3.0)
 	var orbit_tween = create_tween()
 	orbit_tween.tween_method(func(progress: float):
 		var angle = base_angle + (progress * TAU * 0.75)
@@ -985,6 +1040,8 @@ func iniciar_cutscene_antiga() -> void:
 	look_at_offset = Vector3(0, 0.4, 0)
 	
 	var frontal_pos = player_pos + Vector3(0, 0.4, 0) + (player_forward * 1.5)
+	if filtro:
+		filtro.foco(camera_oficina, 2.5, 5.0, 0.06)
 	var reveal_tween = create_tween().set_parallel(true)
 	reveal_tween.tween_property(camera_oficina, "global_position", frontal_pos, 1.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	reveal_tween.tween_property(camera_oficina, "fov", 45.0, 1.5).set_trans(Tween.TRANS_SINE)

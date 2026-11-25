@@ -88,6 +88,10 @@ var frente: Vector3
 var lado: Vector3
 var piso: float
 var _clarao: ColorRect
+## Acabamento de cinema: o outro mundo em brasa, o ar tremendo, tarjas. Os
+## tremores e claroes da cena passam por ele.
+const FiltroCinema := preload("res://scripts/cutscenes/filtro_cinema.gd")
+var filtro = null
 var _pulando: bool = false
 var _t: float = 0.0
 
@@ -184,7 +188,15 @@ func _cara_a_cara() -> void:
 	var de := meio + lado * 3.4 + f * 1.1
 	var ate := meio + lado * 2.6 + f * 0.9 + Vector3.UP * 0.1
 	_tocar(SOM_ROSNADO, 0.65, 8.0)
+	_desfoque(de.distance_to(meio))
+	var rugido := {"foi": false}
 	await _fase(2.4, func(k: float) -> void:
+		if not rugido.foi and k > 0.2 and is_instance_valid(filtro):
+			rugido.foi = true
+			# o rugido na cara: o ar empurra a lente
+			filtro.tremer(0.45, 0.5)
+			filtro.pulso("aberration", 0.009, 1.4)
+			filtro.pulso("borrao_radial", 0.35, 1.2)
 		_firme()
 		# traz o Maycow pra frente da cara, rugindo
 		_segurar_pelo_pescoco(lerpf(1.0, 0.25, smoothstep(0.0, 0.5, k)), 0.0,
@@ -199,6 +211,7 @@ func _cara_a_cara() -> void:
 		_chave.light_energy = 3.0
 		_chave.global_position = cabeca.lerp(cam.global_position, 0.45) + Vector3.UP * 0.3
 		cam.look_at(cabeca.lerp(pose_maycow.osso_no_mundo("Head"), 0.5)))
+	_desfoque(0.0)
 
 
 ## A mão do Husk à frente; o pescoço do Maycow nela, as mãos dele no pulso do
@@ -314,6 +327,8 @@ func _arremesso() -> void:
 		if not estado.gritou and k > 0.55:
 			estado.gritou = true
 			_tocar(SOM_GRITO, 1.4, 4.0)
+			if is_instance_valid(filtro):
+				filtro.pulso("aberration", 0.007, 1.0)
 		if k < 0.32:
 			cam.look_at(maycow.global_position)
 			cam.fov = lerpf(fov0, fov0 + 14.0, e)
@@ -515,6 +530,10 @@ func _volta_ao_anel() -> void:
 	_desfoque(0.0)
 	# larga: o Maycow é atirado no vórtice e a gárgula arremete pra cima
 	_tocar(SOM_GRITO, 1.5, 4.0)
+	if is_instance_valid(filtro):
+		filtro.tremer(0.4, 0.4)
+		filtro.ajustar("borrao_radial", 0.7, 1.6)
+		filtro.ajustar("aberration", 0.012, 1.6)
 	var p0 := maycow.global_position
 	var g := gargula.global_position
 	gargula.voo_dirigido_fugir(g + Vector3.UP * 12.0 - frente * 6.0, g + Vector3.UP * 60.0 + lado * 80.0, 3.0)
@@ -569,6 +588,10 @@ func _preparar() -> void:
 	cam.fov = 62.0
 	cena.add_child(cam)
 	cam.make_current()
+	filtro = FiltroCinema.criar(self, "inferno", -1)
+	filtro.mao = 1.2
+	filtro.entrar(0.8)
+	filtro.atmosfera(cam, "brasas", 90)
 	var camada := CanvasLayer.new()
 	camada.layer = 120
 	add_child(camada)
@@ -766,6 +789,9 @@ func _piscar(dur: float) -> void:
 
 ## Clarão de uma cor que some sozinho (não espera).
 func _piscar_cor(cor: Color, forca: float, dur: float) -> void:
+	if is_instance_valid(filtro):
+		filtro.pulso("aberration", 0.012 * forca, dur * 1.5)
+		filtro.pulso("halation", 1.2 * forca, dur * 2.0)
 	_clarao.color = Color(cor.r, cor.g, cor.b, forca)
 	var t := create_tween()
 	t.tween_property(_clarao, "color", Color(1.0, 0.96, 0.92, 0.0), dur)
@@ -778,6 +804,10 @@ func _piscar_saida(dur: float) -> void:
 
 
 func _tremer(segundos: float, forca: float) -> void:
+	if is_instance_valid(filtro):
+		filtro.tremer(clampf(forca * 3.5, 0.0, 1.0), 1.0 / maxf(segundos, 0.1))
+		filtro.pulso("borrao_radial", forca * 2.0, segundos)
+		return
 	var t := 0.0
 	while t < segundos and is_instance_valid(cam) and is_inside_tree():
 		await get_tree().process_frame

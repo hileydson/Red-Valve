@@ -39,6 +39,15 @@ var take2_time: float = 0.0
 var cam4_rot_time: float = 0.0
 var cam3_orbit_angle: float = 0.0
 
+# Acabamento de cinema: noite de chuva, poste de sodio vazando na lente.
+# As tarjas ja vem do no' "cutscene" da cena, entao o filtro entra sem elas.
+const FiltroCinema := preload("res://scripts/cutscenes/filtro_cinema.gd")
+const SOM_TROVAO := "res://assets/sounds/common/explosao.mp3"
+var filtro = null
+var relampago_luz: DirectionalLight3D
+var trovao: AudioStreamPlayer
+var relampagos_ativos: bool = false
+
 func _ready() -> void:
 	# 1. Hide/Disable the actual Player if it exists in the scene
 	var real_player = find_child("Player", true, false)
@@ -103,6 +112,7 @@ func _ready() -> void:
 
 	# 5. Create Cinematic Cameras
 	_create_cinematic_cameras()
+	_setup_cinema()
 	
 	choque_audio = AudioStreamPlayer.new()
 	choque_audio.stream = load("res://assets/sounds/episodios/prologo/choque.mp3")
@@ -138,6 +148,76 @@ func _ready() -> void:
 	
 	await get_tree().create_timer(1.0).timeout
 	load_chunk()
+
+func _setup_cinema() -> void:
+	filtro = FiltroCinema.criar(self, "chuva_noite", -1)
+	filtro.entrar(2.5, 0.0)
+
+	# Relampago de verdade: a cena acende por um instante (luz direcional
+	# fria) e o trovao chega rolando um pouco depois, como na rua.
+	relampago_luz = DirectionalLight3D.new()
+	relampago_luz.light_color = Color(0.80, 0.88, 1.0)
+	relampago_luz.light_energy = 0.0
+	relampago_luz.rotation_degrees = Vector3(-62, 35, 0)
+	add_child(relampago_luz)
+	trovao = AudioStreamPlayer.new()
+	trovao.stream = load(SOM_TROVAO)
+	trovao.pitch_scale = 0.32
+	trovao.volume_db = -13.0
+	add_child(trovao)
+	relampagos_ativos = true
+	_loop_relampagos()
+
+
+func _loop_relampagos() -> void:
+	# O primeiro espera a musica entrar; depois, de tempos em tempos.
+	await get_tree().create_timer(6.0).timeout
+	while relampagos_ativos and is_inside_tree():
+		# no take 3 (o vazio, sem chuva) o ceu nao existe
+		if current_chunk_index != 2:
+			_relampago()
+		await get_tree().create_timer(randf_range(7.0, 12.0)).timeout
+
+
+func _relampago() -> void:
+	if not is_instance_valid(relampago_luz):
+		return
+	if filtro:
+		filtro.relampago(0.8)
+	var t := create_tween()
+	t.tween_property(relampago_luz, "light_energy", 3.5, 0.03)
+	t.tween_property(relampago_luz, "light_energy", 0.4, 0.06)
+	t.tween_property(relampago_luz, "light_energy", 5.0, 0.04)
+	t.tween_property(relampago_luz, "light_energy", 0.0, 0.5).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	# o trovao vem depois da luz (a tempestade esta' longe)
+	await get_tree().create_timer(randf_range(0.6, 1.4)).timeout
+	if is_instance_valid(trovao) and relampagos_ativos:
+		trovao.pitch_scale = randf_range(0.28, 0.36)
+		trovao.play()
+		if filtro:
+			filtro.tremer(0.18, 0.5)
+
+
+## Cada take tem o seu operador: a oficina e' camera parada no tripe
+## balancando; a caminhada em 1a pessoa e' o ombro de quem anda; o take de 3a
+## pessoa segue o Maycow com o fundo caindo no desfoque; o chao olhando o ceu e'
+## quase parado.
+func _cinema_do_take(indice: int) -> void:
+	if filtro == null:
+		return
+	filtro.devolver_foco()
+	match indice:
+		0:
+			filtro.mao = 1.0
+			filtro.foco(cameras[0], 12.0, 25.0, 0.04)
+		1:
+			filtro.mao = 2.2
+		2:
+			filtro.mao = 1.3
+			filtro.foco(cameras[2], 4.5, 10.0, 0.06)
+		3:
+			filtro.mao = 0.7
+
 
 func _fix_maycow_materials(node: Node):
 	var tex = load("res://assets/3d_model/player/Maycow Lopes/maycow_normal/maycow_normal_rigged_texture_0.png")
@@ -309,6 +389,9 @@ func _process(delta: float) -> void:
 		if randf() > 0.4:
 			title_label.visible = true
 			title_label.modulate.a = randf_range(0.01, 0.12)
+			# o titulo fantasma puxa a lente junto, quadro sim quadro nao
+			if filtro and randf() > 0.75:
+				filtro.pulso("aberration", randf_range(0.003, 0.008), 0.12)
 		else:
 			title_label.visible = false
 
@@ -334,6 +417,8 @@ func load_chunk() -> void:
 			# Ocultar a chuva no take 3 (vazio)
 			rain_instance.visible = (current_chunk_index != 2)
 		
+	_cinema_do_take(current_chunk_index)
+
 	# Atualiza o estado do modelo
 	if current_chunk_index == 2:
 		maycow_model.visible = true
@@ -413,6 +498,10 @@ func show_text() -> void:
 			text_tween.tween_callback(func(): 
 				title_active = true
 				if choque_audio: choque_audio.play()
+				if filtro:
+					# o choque: a lente estoura vermelha e a imagem engasga
+					filtro.impacto(0.55, Color(1.0, 0.2, 0.15))
+					filtro.ajustar("aberration", 0.0045, 1.5)
 				
 				# Configura o pivô para o centro para poder dar zoom
 				title_label.pivot_offset = title_label.size / 2.0
@@ -438,6 +527,9 @@ func show_text() -> void:
 				title_label.visible = true
 				title_label.modulate.a = 0.25 # Mais visível para o susto
 				
+				if filtro:
+					filtro.impacto(1.0, Color(1.0, 0.15, 0.1), true)
+					filtro.pulso("borrao_radial", 0.9, 0.5)
 				var fast_zoom = create_tween()
 				fast_zoom.set_parallel(true)
 				fast_zoom.tween_property(title_label, "scale", Vector2(25.0, 25.0), 0.2).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
@@ -477,6 +569,7 @@ func finish_cutscene() -> void:
 	if cutscene_finished: return
 	cutscene_finished = true
 	is_transitioning = true
+	relampagos_ativos = false
 	
 	if text_tween: text_tween.kill()
 	

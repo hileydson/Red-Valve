@@ -19,6 +19,10 @@ var _rise_cam: Camera3D
 var _rise_cam_anchor: Node3D
 var _rise_look_at: Vector3 = Vector3.ZERO
 var _rise_cam_time: float = 0.0
+## Acabamento de cinema das cutscenes da arena NO PROLOGO (a intro da primeira
+## vez e o golpe final em camera lenta). Depois do prologo a arena segue sem ele.
+const FiltroCinema := preload("res://scripts/cutscenes/filtro_cinema.gd")
+var filtro = null
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -140,10 +144,16 @@ func _ready() -> void:
 						anim.track_set_key_value(i, key_idx, true)
 
 			camera_intro_2.make_current()
+			filtro = FiltroCinema.criar(self, "arena", -1)
+			filtro.entrar(1.0)
+			filtro.atmosfera(camera_intro_2, "cinzas", 70)
 			animation_intro.play("intro_first_time")
 			SaveManager.battlefield_1_intro_played = true
 			SaveManager.save_game()
 			await animation_intro.animation_finished
+			if is_instance_valid(filtro):
+				filtro.sair(0.8)
+			filtro = null
 		else:
 			# Pós-prólogo: player e inimigos emergem do chão da arena
 			await _play_rise_from_ground_intro()
@@ -247,6 +257,8 @@ func _start_final_sequence() -> void:
 	# 1. Ultra Câmera Lenta
 	Engine.time_scale = 0.15
 	AudioServer.set_playback_speed_scale(0.15) # Mantém o áudio (growl_death, drop_dead) em sincronia com o slowmo visual
+	if not SaveManager.prolog_finished:
+		_golpe_final_de_cinema()
 
 	# 2. Esconde Interface
 	var ui = get_tree().root.get_node_or_null("GlobalEnemyHealthUI")
@@ -326,6 +338,22 @@ func _start_final_sequence() -> void:
 			push_warning("Volta da arena: cena pausada invalida, recarregando a stage_1 do zero.")
 			GlobalEvents.arena_retorno_pendente = false
 			get_tree().change_scene_to_file("res://scenes/stages/stage_1/stage_1.tscn")
+
+## O ultimo golpe do prologo como plano de cinema: o estalo do impacto, as
+## tarjas fechando, a cor indo embora e a lente abrindo enquanto tudo desacelera
+## (o filtro corre em tempo real, entao a camera lenta nao segura os efeitos).
+## A cena troca no fim e leva o filtro junto.
+func _golpe_final_de_cinema() -> void:
+	filtro = FiltroCinema.criar(self, "arena", -1)
+	filtro.mao = 0.4
+	filtro.entrar(0.25, 0.13)
+	filtro.impacto(1.2, Color(1.0, 0.95, 0.9), true)
+	filtro.ajustar("saturation", 0.25, 2.5)
+	filtro.ajustar("contrast", 1.28, 2.5)
+	filtro.ajustar("aberration", 0.007, 2.5)
+	filtro.ajustar("vignette_amount", 0.75, 2.5)
+	filtro.ajustar("halation", 0.7, 1.5)
+
 
 func _find_player_recursive(node: Node) -> Node:
 	if node.is_in_group("player") or node.name.to_lower() == "player":

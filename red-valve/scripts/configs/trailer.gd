@@ -27,6 +27,12 @@ extends Node3D
 var ui_fader: ColorRect
 var lightning_flash_rect: ColorRect
 
+const FiltroCinema := preload("res://scripts/cutscenes/filtro_cinema.gd")
+## Acabamento de cinema (grade fria da tempestade, halacao, tarjas, camera na
+## mao, tremores e claroes). Os claroes de relampago passam por ele, e nao pelo
+## retangulo branco por cima de tudo: assim as tarjas continuam pretas no flash.
+var filtro = null
+
 # Canvas layers para filtros visuais
 var old_film_layer: CanvasLayer = null
 var old_film_mat: ShaderMaterial = null
@@ -372,46 +378,61 @@ func _disparar_relampago() -> void:
 	
 	# Sequência de relâmpago com múltiplos clarões realistas (Visual)
 	lightning_light.light_energy = 8.0
-	lightning_flash_rect.modulate.a = 0.5
+	_clarao_tela(0.5, 0.05)
 	await get_tree().create_timer(0.04).timeout
 	
 	lightning_light.light_energy = 1.5
-	lightning_flash_rect.modulate.a = 0.1
+	_clarao_tela(0.1, 0.04)
 	await get_tree().create_timer(0.03).timeout
 	
 	lightning_light.light_energy = 9.5
-	lightning_flash_rect.modulate.a = 0.65
+	_clarao_tela(0.65, 0.35)
+	if filtro:
+		filtro.pulso("halation", 0.8, 0.6)
+		filtro.tremer(0.12)
 	await get_tree().create_timer(0.06).timeout
 	
 	lightning_light.light_energy = 0.0
-	lightning_flash_rect.modulate.a = 0.0
+
+
+## Clarao de relampago na tela, pelo filtro de cinema (cai sozinho em `dur`).
+## Sem o filtro (nao deveria acontecer), volta ao retangulo branco antigo.
+func _clarao_tela(forca: float, dur: float) -> void:
+	if filtro:
+		filtro.clarao(Color(0.86, 0.92, 1.0), forca, dur)
+		return
+	lightning_flash_rect.modulate.a = forca
+	create_tween().tween_property(lightning_flash_rect, "modulate:a", 0.0, dur)
 
 func _disparar_relampago_longo() -> void:
 	if not is_instance_valid(lightning_light): return
 	
 	# Sequência de relâmpago mais longa e intensa (transição)
 	lightning_light.light_energy = 10.0
-	lightning_flash_rect.modulate.a = 0.8
+	_clarao_tela(0.8, 0.08)
 	await get_tree().create_timer(0.08).timeout
 	
 	lightning_light.light_energy = 4.0
-	lightning_flash_rect.modulate.a = 0.3
+	_clarao_tela(0.3, 0.06)
 	await get_tree().create_timer(0.06).timeout
 	
 	lightning_light.light_energy = 12.0
-	lightning_flash_rect.modulate.a = 0.95
+	_clarao_tela(0.95, 0.12)
+	if filtro:
+		filtro.pulso("halation", 1.1, 0.9)
+		filtro.pulso("aberration", 0.008, 0.6)
+		filtro.tremer(0.3)
 	await get_tree().create_timer(0.12).timeout
 	
 	lightning_light.light_energy = 5.0
-	lightning_flash_rect.modulate.a = 0.4
+	_clarao_tela(0.4, 0.05)
 	await get_tree().create_timer(0.05).timeout
 	
 	lightning_light.light_energy = 10.0
-	lightning_flash_rect.modulate.a = 0.75
+	_clarao_tela(0.75, 0.5)
 	await get_tree().create_timer(0.18).timeout
 	
 	lightning_light.light_energy = 0.0
-	lightning_flash_rect.modulate.a = 0.0
 func _iniciar_som_velocidade_continuo() -> void:
 	if is_instance_valid(zoom_sound_player) and zoom_sound_player.stream:
 		if not zoom_sound_player.finished.is_connected(_on_zoom_sound_finished):
@@ -516,8 +537,8 @@ func _setup_vhs_filter() -> void:
 	shader_type canvas_item;
 
 	uniform sampler2D screen_texture : hint_screen_texture, filter_linear_mipmap;
-	uniform float smear : hint_range(0.0, 1.0) = 0.8;
-	uniform float tracking_noise : hint_range(0.0, 1.0) = 0.15;
+	uniform float smear : hint_range(0.0, 1.0) = 0.45;
+	uniform float tracking_noise : hint_range(0.0, 1.0) = 0.10;
 	uniform float chromatic_aberration : hint_range(0.0, 0.02) = 0.004;
 
 	const mat3 RGB_TO_YIQ = mat3(
@@ -564,8 +585,10 @@ func _setup_vhs_filter() -> void:
 		
 		color = YIQ_TO_RGB * yiq;
 		
-		color -= sin(uv.y * 900.0) * 0.035;
-		color -= rand(uv + TIME) * 0.05;
+		// Fita gasta, mas discreta: o grao de cinema vem do FiltroCinema, por
+		// cima, e a linha de varredura forte era o que mais lia "indie".
+		color -= sin(uv.y * 900.0) * 0.014;
+		color -= rand(uv + TIME) * 0.022;
 		
 		COLOR = vec4(color, 1.0);
 	}
@@ -750,6 +773,8 @@ func cutscene_trailer_sequence() -> void:
 		vhs_layer.visible = true
 		
 	_setup_motion_blur_filter()
+	filtro = FiltroCinema.criar(self, "tempestade", -1)
+	filtro.entrar(1.6)
 	_iniciar_chuva_e_relampagos()
 	
 	_setup_trailer_title()
@@ -826,6 +851,10 @@ func cutscene_trailer_sequence() -> void:
 		
 	is_head_bob_active = true
 	head_bob_intensity = 0.5
+	if filtro:
+		filtro.mao = 1.6
+		# o ceu em chamas e' o assunto: a lente abre e as bolas de fogo vazam
+		filtro.ajustar("halation", 0.5, 2.0)
 	
 	# Maycow olha pra direita (-45 em Y) e pra cima (+60 em X) 
 	var tween_look_sky = create_tween().set_parallel(true)
@@ -875,6 +904,11 @@ func cutscene_trailer_sequence() -> void:
 		
 	is_head_bob_active = true
 	head_bob_intensity = 0.1
+	if filtro:
+		filtro.mao = 1.2
+		filtro.ajustar("halation", 0.34, 1.5)
+		# o vulto gigante do inimigo no fundo: o perto nitido, o resto some
+		filtro.foco(cam_fps_walk, 22.0, 40.0, 0.04)
 	
 	# Maycow olha para cima (em direção à cabeça do enemy) e depois volta a olhar pra frente
 	var tween_look_up = create_tween()
@@ -889,19 +923,25 @@ func cutscene_trailer_sequence() -> void:
 	# TAKE 4: ARRANCADA FINAL + ZOOM LEVE NA VÁLVULA + MÃO EM DIREÇÃO À VÁLVULA
 	# --------------------------------------------------------------------------
 	print("Take 4: Arrancada final até a porta portal_red_valve...")
+	var tempo_sprint_filtro := 3.5
 	
 	# Parar de spawnar novos cometas a partir do Take 4
 	loop_bolas_fogo = false
 	
 	_iniciar_som_velocidade_continuo()
 	_set_motion_blur_strength(0.35)
+	if filtro:
+		filtro.mao = 2.6
+		filtro.pulso("borrao_radial", 0.35, tempo_sprint_filtro)
+		filtro.pulso("aberration", 0.007, tempo_sprint_filtro)
+		filtro.tremer(0.18, 0.05)
 	
 	head_bob_intensity = 1.0
 	
 	player.cutscene_set_auto_walk(false)
 	player.cutscene_set_auto_run(true)
 	
-	var tempo_sprint = 3.5
+	var tempo_sprint = tempo_sprint_filtro
 	var tween_corrida = create_tween()
 	
 	# Aproxima-se da porta (recua um pouco na direção do movimento para não colar nela)
@@ -950,6 +990,10 @@ func cutscene_trailer_sequence() -> void:
 	
 	await tween_corrida.finished
 	print("Chegou à porta! Iniciando zoom LEVE no portal_red_valve...")
+	if filtro:
+		# freia na porta: o corpo para, a camera ainda vai um tico
+		filtro.impacto(0.35)
+		filtro.mao = 0.8
 	
 	# Desativa corrida e balanço extremo
 	player.cutscene_set_auto_run(false)
@@ -1108,6 +1152,9 @@ func cutscene_trailer_sequence() -> void:
 		growl_player.volume_db = 4.0
 		add_child(growl_player)
 		growl_player.play()
+	if filtro:
+		filtro.tremer(0.55, 0.3)
+		filtro.som_grave(0.9)
 		
 	await get_tree().create_timer(1.5).timeout
 	
@@ -1119,6 +1166,14 @@ func cutscene_trailer_sequence() -> void:
 	
 	# 5. REVELAÇÃO DO THE_ANTI_LOPES E ANIMAÇÃO FINAL
 	print("Removendo transparência e tocando animação 'final'...")
+	if filtro:
+		# o filme velho (sepia) manda no take final: a grade sai do frio pro
+		# neutro, senao as duas brigam e a imagem vira lama
+		filtro.devolver_foco()
+		filtro.aplicar_preset("padrao", 2.0)
+		filtro.ajustar("saturation", 1.0, 2.0)
+		filtro.ajustar("halation", 0.45, 2.0)
+		filtro.mao = 0.9
 	
 	# Mudar para a camera_final (usando find_child para encontrar em $final/camera_final)
 	var cam_final = get_tree().current_scene.find_child("camera_final", true, false) as Camera3D
@@ -1248,7 +1303,20 @@ func cutscene_trailer_sequence() -> void:
 	title_label.add_theme_font_size_override("font_size", 200)
 	title_label.add_theme_color_override("font_color", Color(1.0, 0.08, 0.08, 1.0))
 	title_label.modulate.a = 0.0
+	# Halo: o mesmo logo por tras, contorno largo e transparente — o neon
+	# vazando, em vez de letra chapada.
+	var title_halo = title_label.duplicate()
+	title_halo.add_theme_color_override("font_color", Color(1.0, 0.1, 0.05, 0.25))
+	title_halo.add_theme_color_override("font_outline_color", Color(1.0, 0.0, 0.0, 0.14))
+	title_halo.add_theme_constant_override("outline_size", 40)
+	title_canvas.add_child(title_halo)
 	title_canvas.add_child(title_label)
+	title_halo.pivot_offset = title_halo.size / 2.0
+	var empurra = create_tween().set_parallel(true)
+	empurra.tween_property(title_halo, "scale", Vector2(1.06, 1.06), 9.0).from(Vector2(0.98, 0.98)).set_trans(Tween.TRANS_SINE)
+	empurra.tween_property(title_halo, "modulate:a", 1.0, 1.5)
+	if filtro:
+		filtro.impacto(0.7, Color(1.0, 0.25, 0.2), true)
 	
 	# Toca os nós de som 'LabelFinal' e 'Glitch' da cena no momento exato em que a frase "RED VALVE" aparece
 	_tocar_sons_simultaneos("LabelFinal", "Glitch")
@@ -1371,6 +1439,10 @@ func _criar_bola_de_fogo(start_pos: Vector3, end_pos: Vector3, duration: float) 
 	fireball.queue_free()
 
 func _shake_camera(intensity: float, duration: float) -> void:
+	if filtro:
+		# o filtro treme a TELA: nao briga com o head bob, que escreve na camera
+		filtro.tremer(clampf(intensity * 2.6, 0.0, 1.0), 1.0 / maxf(duration, 0.1))
+		return
 	if not is_instance_valid(active_cam): return
 	var original_h_offset = active_cam.h_offset
 	var original_v_offset = active_cam.v_offset

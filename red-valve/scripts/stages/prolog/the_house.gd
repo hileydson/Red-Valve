@@ -236,6 +236,7 @@ func _start_phone_cutscene() -> void:
 	var cam_telefone = find_child("camera_telefone", true, false)
 	if cam_telefone:
 		cam_telefone.make_current()
+	var dolly := _cinema_do_telefone(cam_telefone)
 	
 	$ambient/fade.fade_in()
 	await get_tree().create_timer(1.0).timeout
@@ -246,6 +247,7 @@ func _start_phone_cutscene() -> void:
 	# Quando o texto global termina, faz o fade e devolve a câmera
 	$ambient/fade.fade_out()
 	await get_tree().create_timer(2.0).timeout
+	_fim_do_cinema_do_telefone(cam_telefone, dolly)
 	
 	var player = find_child("player", true, false)
 	if player:
@@ -262,6 +264,43 @@ func _start_phone_cutscene() -> void:
 	GlobalEvents.in_cutscene = false
 
 	_novo_arquivo(ARQUIVO_TELEFONE)
+
+
+## Acabamento de cinema do telefonema: filtro de interior (tungstenio, sombra
+## fria), camera "na mao" bem leve, foco no telefone com a sala borrando atras,
+## poeira parada no ar e um dolly-in lento durante toda a conversa — o plano vai
+## fechando enquanto a Dona Nice fala. Devolve a camera como estava.
+const FiltroCinema := preload("res://scripts/cutscenes/filtro_cinema.gd")
+var _filtro_telefone = null
+
+func _cinema_do_telefone(cam: Camera3D) -> Dictionary:
+	if not is_instance_valid(cam):
+		return {}
+	_filtro_telefone = FiltroCinema.criar(self, "interior", -1)
+	_filtro_telefone.mao = 0.8
+	_filtro_telefone.entrar(1.5, 0.0)
+	_filtro_telefone.foco(cam, 2.2, 6.0, 0.05)
+	_filtro_telefone.atmosfera(cam, "poeira", 70)
+	var original := {"pos": cam.global_position, "fov": cam.fov}
+	var frente := -cam.global_basis.z.normalized()
+	var t := create_tween().set_parallel(true)
+	t.tween_property(cam, "global_position", cam.global_position + frente * 0.35, 40.0)\
+		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	t.tween_property(cam, "fov", cam.fov - 7.0, 40.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	original["tween"] = t
+	return original
+
+
+func _fim_do_cinema_do_telefone(cam: Camera3D, original: Dictionary) -> void:
+	var t = original.get("tween")
+	if t is Tween and t.is_valid():
+		t.kill()
+	if is_instance_valid(cam) and not original.is_empty():
+		cam.global_position = original["pos"]
+		cam.fov = original["fov"]
+	if is_instance_valid(_filtro_telefone):
+		_filtro_telefone.desligar()
+	_filtro_telefone = null
 
 
 ## Marca o arquivo como encontrado sem gravar o jogo — quem chama aqui é o

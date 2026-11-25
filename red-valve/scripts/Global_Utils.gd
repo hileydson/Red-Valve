@@ -620,6 +620,7 @@ func start_cinematic_text_cutscene(texts: Array) -> void:
 		_cutscene_overlay = ColorRect.new()
 		_cutscene_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
 		_cutscene_overlay.color = Color(0.05, 0.05, 0.05, 0.85)
+		_cutscene_overlay.material = _material_faixa_de_legenda()
 		_cutscene_overlay.modulate.a = 0.0
 		message_canvas_layer.add_child(_cutscene_overlay)
 		
@@ -653,6 +654,23 @@ func start_cinematic_text_cutscene(texts: Array) -> void:
 	await get_tree().create_timer(1.0).timeout
 	
 	_show_next_cinematic_text()
+
+## O escuro atras do texto e' uma FAIXA, nao uma tampa: cheio no meio (onde
+## a fala esta'), abrindo para cima e para baixo. A cena continua viva em
+## volta, como legenda de filme, em vez de um slide preto.
+func _material_faixa_de_legenda() -> ShaderMaterial:
+	var shader := Shader.new()
+	shader.code = """
+	shader_type canvas_item;
+	void fragment() {
+		float d = abs(UV.y - 0.5) * 2.0;
+		COLOR.a *= mix(1.0, 0.42, smoothstep(0.22, 1.0, d));
+	}
+	"""
+	var mat := ShaderMaterial.new()
+	mat.shader = shader
+	return mat
+
 
 func _show_next_cinematic_text() -> void:
 	if _current_cutscene_idx < _cutscene_texts.size():

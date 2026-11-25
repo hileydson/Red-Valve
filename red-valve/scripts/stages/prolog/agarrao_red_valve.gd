@@ -83,6 +83,13 @@ func rodar(dono: Node, sub_cena: Node3D) -> void:
 	await _arrasta_pra_dentro()
 
 
+## O filtro de cinema da oficina (pode faltar: ai' os efeitos de tela somem e
+## o resto segue igual).
+func _filtro():
+	var f = oficina.get("filtro") if is_instance_valid(oficina) else null
+	return f if is_instance_valid(f) else null
+
+
 func _cancelado() -> bool:
 	return not is_inside_tree() or bool(oficina.get("cutscene_skipped"))
 
@@ -123,6 +130,13 @@ func _abrir_a_porta() -> void:
 	_som(SOM_ESTOURO, 0.55, 2.0)
 	_som(SOM_FOGO, 0.8, 4.0)
 	_vermelho.color = Color(1.0, 0.45, 0.08, 0.6)
+	var filtro = _filtro()
+	if filtro:
+		# a porta cospe fogo na cara: a lente estoura laranja e o ar passa a
+		# tremer de calor ate' o fim
+		filtro.impacto(0.9, Color(1.0, 0.55, 0.2), true)
+		filtro.ajustar("calor", 0.3, 0.8)
+		filtro.ajustar("halation_cor", Color(1.0, 0.6, 0.32), 0.8)
 	var clarao := create_tween()
 	clarao.tween_property(_vermelho, "color", Color(0.55, 0.0, 0.02, 0.0), 0.7)
 	var t := create_tween().set_parallel(true)
@@ -145,6 +159,9 @@ func _husk_sai() -> void:
 	husk.visible = true
 	_animar("Running", 1.1)
 	_tocar("Growl1")
+	var filtro = _filtro()
+	if filtro:
+		filtro.tremer(0.3, 0.6)
 	var de := husk.position
 	var ate := Vector3(0.0, CHAO, HUSK_BATENTE)
 	# atravessa as cortinas de fogo: primeiro é só um vulto lá no fundo
@@ -188,6 +205,10 @@ func _estica_e_agarra() -> void:
 		oficina._disparar_relampago_sub_scene()
 	_tocar("Pain")
 	GlobalUtils.vibrate_controller(null, 1.0, 0.9, 0.8)
+	var filtro = _filtro()
+	if filtro:
+		filtro.impacto(1.0, Color(1.0, 0.2, 0.15), true)
+		filtro.ajustar("saturation", 0.75, 0.5)
 	var p0 := cam.position
 	var p1 := p0 + Vector3(0.0, 0.38, -0.45)
 	await _fase(1.0, func(k: float) -> void:
@@ -216,6 +237,12 @@ func _arrasta_pra_dentro() -> void:
 	var r0 := cam.rotation
 	var fov0 := cam.fov
 	var estado := {"viajou": false}
+	var filtro = _filtro()
+	if filtro:
+		# puxado pra dentro: o quadro estica pro centro e a lente se desfaz
+		filtro.ajustar("borrao_radial", 0.85, 3.0)
+		filtro.ajustar("aberration", 0.014, 3.0)
+		filtro.tremer(0.6, 0.15)
 	await _fase(3.2, func(k: float) -> void:
 		var e := k * k
 		husk.position = h0 + Vector3(0.0, 0.0, -3.6 * e)

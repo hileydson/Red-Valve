@@ -1,5 +1,5 @@
 // Acabamento de camera para as cutscenes: aberracao cromatica, borrao radial nos
-// impactos, vinheta, grao e flash. Aplicado no SubViewportContainer, entao TEXTURE
+// impactos, halacao, vinheta, grao e flash. Aplicado no SubViewportContainer, entao TEXTURE
 // e a propria imagem renderizada da cena 3D.
 shader_type canvas_item;
 render_mode unshaded;
@@ -15,6 +15,12 @@ uniform float grain : hint_range(0.0, 0.3) = 0.045;
 uniform float grain_speed = 14.0;
 
 uniform float exposure : hint_range(0.0, 3.0) = 1.0;
+
+// Halacao: o que e' claro (fogo, brasa, luz) vaza pela lente num halo largo e
+// quente. Anel de 12 amostras em dois raios, com o aspecto corrigido.
+uniform float halation : hint_range(0.0, 2.0) = 0.0;
+uniform float halation_threshold : hint_range(0.0, 1.5) = 0.55;
+uniform vec4 halation_color : source_color = vec4(1.0, 0.72, 0.5, 1.0);
 uniform float saturation : hint_range(0.0, 2.0) = 1.0;
 uniform vec4 grade_shadows : source_color = vec4(0.05, 0.02, 0.06, 1.0);
 uniform vec4 grade_highlights : source_color = vec4(1.0, 0.93, 0.86, 1.0);
@@ -61,6 +67,20 @@ void fragment() {
 		vec2 dir = c * (aberration * 0.0035) * (0.25 + r2 * 3.0);
 		col.r = texture(TEXTURE, clamp(uv + dir, vec2(0.001), vec2(0.999))).r;
 		col.b = texture(TEXTURE, clamp(uv - dir, vec2(0.001), vec2(0.999))).b;
+	}
+
+	if (halation > 0.001) {
+		vec3 acc = vec3(0.0);
+		float aspect = TEXTURE_PIXEL_SIZE.x > 0.0 ? TEXTURE_PIXEL_SIZE.y / TEXTURE_PIXEL_SIZE.x : 1.7778;
+		for (int i = 0; i < 12; i++) {
+			float a = float(i) * 0.5235988 + (i % 2 == 0 ? 0.0 : 0.26);
+			float rr = (i % 2 == 0) ? 0.011 : 0.024;
+			vec2 o = vec2(cos(a), sin(a) * aspect) * rr;
+			acc += texture(TEXTURE, clamp(uv + o, vec2(0.001), vec2(0.999))).rgb;
+		}
+		acc /= 12.0;
+		float b = smoothstep(halation_threshold, halation_threshold + 0.45, dot(acc, vec3(0.2126, 0.7152, 0.0722)));
+		col += acc * b * halation * halation_color.rgb;
 	}
 
 	col *= exposure;
