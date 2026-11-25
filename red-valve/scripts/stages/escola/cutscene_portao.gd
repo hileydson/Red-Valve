@@ -35,7 +35,9 @@ var _luz: OmniLight3D
 
 
 func rodar(dono: Node3D, jogador: CharacterBody3D) -> void:
-	travar(dono, jogador, 55.0)
+	travar(dono, jogador, 55.0, "escola_escura")
+	if filtro:
+		filtro.mao = 1.4
 	_acender()
 	if Vector2(player.global_position.x - PARTIDA.x,
 			player.global_position.z - PARTIDA.z).length() > 9.0:
@@ -120,6 +122,9 @@ func _a_porta_bate() -> void:
 	var de := Vector3(23.6, 1.6, 11.0)
 	var olha := Vector3(20.0, 1.4, 15.5)
 	plantar(de, olha)
+	if filtro:
+		# parado, olhando a porta: a câmera assenta antes do susto
+		filtro.mao = 0.6
 	await esperar(0.6)
 	if not vale():
 		return
@@ -137,7 +142,13 @@ func _a_porta_bate() -> void:
 	if is_instance_valid(_luz):
 		_luz.light_color = Color(1.0, 0.12, 0.08)
 		create_tween().tween_property(_luz, "light_energy", 0.5, 2.5)
-	GlobalUtils.shake_camera(0.6, 0.4)
+	if filtro:
+		# a batida: a porta inteira estremece e a luz vira vermelha na lente
+		impacto(1.0, Color(1.0, 0.25, 0.18), true)
+		filtro.ajustar("luz_tint", Color(1.0, 0.72, 0.68), 2.0)
+		filtro.ajustar("vignette_amount", 0.64, 2.0)
+	else:
+		GlobalUtils.shake_camera(0.6, 0.4)
 	GlobalUtils.vibrate_controller(null, 0.9, 0.8, 0.5)
 	Realidade.nuvem(cena, PORTA + Vector3(0.0, 1.2, -0.6), 2.4, false)
 	await esperar(0.6)

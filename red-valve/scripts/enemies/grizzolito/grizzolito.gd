@@ -25,6 +25,7 @@ signal died
 signal morreu
 
 const Realidade := preload("res://scripts/systems/realidade_do_amuleto.gd")
+const FiltroCinema := preload("res://scripts/cutscenes/filtro_cinema.gd")
 
 ## Por forma: vida, velocidades, dano de cada golpe, altura da cápsula.
 const FORMAS := [
@@ -158,7 +159,16 @@ func _transformar_em(f: int) -> void:
 	_tocar(&"transformar", 0.15)
 	_som(som_voz, "res://assets/sounds/igreja/grito_transformacao.ogg", 0.95)
 	_som(som_dano, "res://assets/sounds/igreja/transformacao_ossos.ogg", 1.0)
-	GlobalUtils.shake_camera(1.2, 0.25)
+	# A transformação é um plano de cinema no meio da luta: o mundo perde a cor,
+	# a luz dele vira vermelha na lente e o chão treme (em tela, sem mexer na
+	# câmera do jogo); o rugido do corpo novo estoura e o filtro sai.
+	var filtro = FiltroCinema.criar(self, "arena", -1)
+	filtro.mao = 0.25
+	filtro.entrar(0.4, 0.0)
+	filtro.tremer(0.45, 0.35)
+	filtro.ajustar("saturation", 0.6, 1.4)
+	filtro.ajustar("luz_tint", Color(1.0, 0.7, 0.66), 1.4)
+	filtro.ajustar("halation", 0.7, 1.4)
 	var luz := OmniLight3D.new()
 	luz.light_color = Color(1.0, 0.12, 0.08)
 	luz.omni_range = 9.0
@@ -179,7 +189,10 @@ func _transformar_em(f: int) -> void:
 		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	Realidade.nuvem(get_parent(), global_position + Vector3.UP * 1.2, 3.0, false)
 	_som(som_voz, "res://assets/sounds/igreja/rugido_monstro.ogg", 0.85 if f == 1 else 0.7)
-	GlobalUtils.shake_camera(0.8, 0.35)
+	if is_instance_valid(filtro):
+		filtro.impacto(1.0, Color(1.0, 0.25, 0.15), true)
+	else:
+		GlobalUtils.shake_camera(0.8, 0.35)
 	_clipe = &""
 	_tocar(&"rugido", 0.1)
 	var apaga := create_tween()
@@ -187,6 +200,8 @@ func _transformar_em(f: int) -> void:
 	apaga.tween_callback(luz.queue_free)
 	_barra(true)
 	await get_tree().create_timer(2.4, false).timeout
+	if is_instance_valid(filtro):
+		filtro.sair(0.9)
 	_ocupado = false
 	_respiro = 0.3
 

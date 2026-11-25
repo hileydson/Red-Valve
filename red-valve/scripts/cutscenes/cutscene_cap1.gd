@@ -14,10 +14,16 @@ extends Node
 ##
 ## `encerrar` devolve TUDO ao jogador (controle, câmera, HUD) e vale também se a
 ## cena morrer no meio — o input nunca fica preso.
+##
+## ACABAMENTO DE CINEMA (`FiltroCinema`): quem passa um `clima` pro `travar`
+## ganha a grade de cor, a halação, o grão e a câmera "na mão" do filtro, e os
+## momentos (`clarao`, `tremer`, `impacto`, `foco`) passam por ele. Sem clima a
+## cena fica como sempre foi — as dos capítulos seguintes ainda não pedem.
 
 signal terminou
 
 const ALTURA_TARJA := 0.11
+const FiltroCinema := preload("res://scripts/cutscenes/filtro_cinema.gd")
 
 var cena: Node3D
 var player: CharacterBody3D
@@ -29,9 +35,11 @@ var _tarja_cima: ColorRect
 var _tarja_baixo: ColorRect
 var _modelo_escondido := false
 var _acabou := false
+## O filtro de cinema (null quando a cena não pediu clima).
+var filtro = null
 
 
-func travar(dono: Node3D, jogador: CharacterBody3D, fov: float = 60.0) -> void:
+func travar(dono: Node3D, jogador: CharacterBody3D, fov: float = 60.0, clima: String = "") -> void:
 	cena = dono
 	player = jogador
 	GlobalEvents.in_cutscene = true
@@ -66,6 +74,10 @@ func travar(dono: Node3D, jogador: CharacterBody3D, fov: float = 60.0) -> void:
 	var t := create_tween().set_parallel(true)
 	t.tween_property(_tarja_cima, "anchor_bottom", ALTURA_TARJA, 0.9).set_trans(Tween.TRANS_CUBIC)
 	t.tween_property(_tarja_baixo, "anchor_top", 1.0 - ALTURA_TARJA, 0.9).set_trans(Tween.TRANS_CUBIC)
+	if clima != "":
+		# as tarjas continuam sendo as daqui (por cima da UI); o filtro entra sem
+		filtro = FiltroCinema.criar(self, clima, -1)
+		filtro.entrar(0.9, 0.0)
 
 
 func _faixa(cima: bool) -> ColorRect:
@@ -91,6 +103,8 @@ func encerrar(fade_in: float = 1.2) -> void:
 		player.cutscene_set_camera_current(true)
 		player.cutscene_set_player_control(true)
 		player.cutscene_set_hud_enabled(true)
+	if is_instance_valid(filtro):
+		filtro.sair(fade_in, false)
 	if is_instance_valid(cam):
 		cam.queue_free()
 	GlobalEvents.in_cutscene = false
@@ -156,8 +170,14 @@ func escurecer(alvo: float, duracao: float) -> void:
 	await tw.finished
 
 
-## Um clarão branco (o raio).
+## Um clarão branco (o raio). Com o filtro ele é luz na lente (as tarjas
+## continuam pretas e o claro vaza); sem ele, um retângulo branco por cima.
 func clarao(forca: float = 1.0, descida: float = 0.6) -> void:
+	if is_instance_valid(filtro):
+		filtro.clarao(Color(0.92, 0.95, 1.0), forca, descida)
+		filtro.pulso("halation", 0.9 * forca, descida * 1.5)
+		filtro.pulso("aberration", 0.008 * forca, descida)
+		return
 	if not is_instance_valid(_camada):
 		return
 	var r := ColorRect.new()
@@ -168,6 +188,35 @@ func clarao(forca: float = 1.0, descida: float = 0.6) -> void:
 	var tw := create_tween()
 	tw.tween_property(r, "color:a", 0.0, descida)
 	tw.tween_callback(r.queue_free)
+
+
+## O chão treme (trauma 0..1, ver FiltroCinema.tremer). Sem filtro, o tremor
+## antigo, na câmera.
+func tremer(trauma: float, queda: float = 1.1) -> void:
+	if is_instance_valid(filtro):
+		filtro.tremer(trauma, queda)
+	else:
+		GlobalUtils.shake_camera(0.4 + trauma * 0.4, trauma * 0.5)
+
+
+## Pancada de cinema: tremor, clarão, lente estourando, controle vibrando.
+func impacto(forca: float = 1.0, cor: Color = Color(1.0, 0.94, 0.86), com_som: bool = false) -> void:
+	if is_instance_valid(filtro):
+		filtro.impacto(forca, cor, com_som)
+	else:
+		clarao(0.4 * forca, 0.5)
+		GlobalUtils.vibrate_controller(null, 0.6 * forca, 0.5 * forca, 0.4)
+
+
+## Profundidade de campo: o que estiver além de `distancia` da câmera borra.
+## 0 devolve a câmera nítida.
+func foco(distancia: float, transicao: float = 10.0, quanto: float = 0.05) -> void:
+	if not is_instance_valid(filtro):
+		return
+	if distancia <= 0.0:
+		filtro.devolver_foco()
+	else:
+		filtro.foco(cam, distancia, transicao, quanto)
 
 
 ## Roda `passo` quadro a quadro por `duracao` segundos, com o andamento (0..1).

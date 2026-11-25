@@ -28,7 +28,12 @@ const PLANOS := [
 
 
 func rodar(dono: Node3D, jogador: CharacterBody3D) -> void:
-	travar(dono, jogador, 55.0)
+	# fim de tarde dourado, poeira no sol, o fundo de cada plano no desfoque
+	travar(dono, jogador, 55.0, "entardecer")
+	if filtro:
+		filtro.mao = 1.1
+		filtro.atmosfera(cam, "poeira", 90)
+		filtro.foco(cam, 16.0, 30.0, 0.035)
 	await escurecer(1.0, 0.35)
 	for i in PLANOS.size():
 		var p: Array = PLANOS[i]

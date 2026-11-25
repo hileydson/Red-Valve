@@ -22,6 +22,10 @@ extends Node
 ## Quem chama: `inferno_4.gd`, ao pisar na faixa `gatilho_mirante`.
 
 const CENA_GARGULA := "res://scenes/effects/fire_gargoyle.tscn"
+## Acabamento de cinema (grade do inferno, tarjas, halação, câmera na mão). O
+## desfoque desta cena continua sendo o próprio (`foco` + `_borrao`).
+const FiltroCinema := preload("res://scripts/cutscenes/filtro_cinema.gd")
+var filtro = null
 
 # --- tempos ---
 ## Teto da caminhada até a beira (ela para antes se chegar a `PARA_NA_BEIRA`).
@@ -143,6 +147,11 @@ func _mergulhar_nos_olhos() -> void:
 func _olhar_a_vista() -> void:
 	if cena.has_method("_badalar"):
 		cena.call("_badalar")
+	if is_instance_valid(filtro):
+		# a vista: a lente abre para o fogo do outro lado e o olho quase para
+		filtro.mao = 0.5
+		filtro.ajustar("halation", 0.75, 2.5)
+		filtro.ajustar("vignette_amount", 0.6, 2.5)
 	await _fase(DUR_OLHAR, func(k: float) -> void:
 		var t := k * DUR_OLHAR
 		# levanta os olhos devagar, da beira pro alto das torres, e respira
@@ -179,6 +188,11 @@ func _gargula_passa() -> void:
 			estado.gritou = true
 			_tocar("grito_gargula", randf_range(1.3, 1.5))
 			GlobalUtils.vibrate_controller(null, 0.25, 0.4, 0.35)
+			if is_instance_valid(filtro):
+				# ela passa rente: o deslocamento de ar sacode o olho
+				filtro.tremer(0.45, 0.6)
+				filtro.pulso("aberration", 0.010, 1.0)
+				filtro.pulso("borrao_radial", 0.4, 0.8)
 		# o olho acompanha quando ela passa por cima e entra no quadro
 		var segue := _suave(clampf((k - 0.4) / 0.45, 0.0, 1.0))
 		var tremor := Vector3(randf_range(-1, 1), randf_range(-1, 1), 0.0) * 0.02 * sin(clampf((k - 0.3) / 0.4, 0.0, 1.0) * PI)
@@ -227,6 +241,10 @@ func _voar_na_gargula() -> void:
 	cena.add_child(_recorte)
 	_recorte.global_position = centro + Vector3.UP * 2.4 - d * 1.5
 	var total := DUR_PEGAR + DUR_VOO
+	if is_instance_valid(filtro):
+		# pendurado no lombo dela: a câmera balança com o voo
+		filtro.mao = 2.2
+		filtro.pulso("borrao_radial", 0.5, DUR_PEGAR * 1.5)
 	await _fase(total, func(k: float) -> void:
 		var t := k * total
 		var u := t / total
@@ -305,6 +323,10 @@ func _travar() -> void:
 		cam.global_transform = player.global_transform.translated_local(Vector3(0, 1, 3))
 	cam.make_current()
 	create_tween().tween_property(cam, "fov", 70.0, 1.2)
+	filtro = FiltroCinema.criar(self, "inferno", -1)
+	filtro.ajustar("calor", 0.15)
+	filtro.mao = 1.4
+	filtro.entrar(1.4)
 	player.cutscene_set_hud_enabled(false)
 	player.cutscene_set_player_control(false)
 	player.cutscene_set_camera_current(false)
@@ -330,6 +352,8 @@ func _encerrar() -> void:
 		_tela.modulate.a = 1.0
 	if is_instance_valid(gargula):
 		gargula.queue_free()
+	if is_instance_valid(filtro):
+		filtro.sair(DUR_FADE_IN, false)
 	if is_instance_valid(_recorte):
 		_recorte.queue_free()
 	if is_instance_valid(_borrao):

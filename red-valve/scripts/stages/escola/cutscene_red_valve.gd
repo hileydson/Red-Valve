@@ -22,7 +22,11 @@ var _fp: Node3D
 
 
 func rodar(dono: Node3D, jogador: CharacterBody3D) -> void:
-	travar(dono, jogador, 70.0)
+	# o acabamento de cinema é do Capítulo 1 (a do porão); a da oficina, no
+	# Capítulo 5, segue como era
+	travar(dono, jogador, 70.0, "escola_escura" if evento == "" else "")
+	if filtro:
+		filtro.mao = 1.6
 	var olho := _olho()
 	var frente := _frente_da_porta()
 	_fp = (load(CENA_FP) as PackedScene).instantiate() as Node3D
@@ -48,12 +52,23 @@ func rodar(dono: Node3D, jogador: CharacterBody3D) -> void:
 		return
 	await porta.abrir_sem_sugar()
 	_fp.tremer(0.02, 1.6)
+	if filtro:
+		# a porta escancara: o vermelho estoura na lente e o ar fica em brasa
+		impacto(0.9, Color(1.0, 0.3, 0.2), true)
+		filtro.ajustar("halation", 0.8, 0.8)
+		filtro.atmosfera(get_viewport().get_camera_3d(), "brasas", 60)
 	_fp.tocar(&"defesa", 1.0, 0.2)
 	# o vórtice puxa a câmera pra dentro
 	var centro: Vector3 = porta.centro_do_vortice()
 	var p0 := _fp.global_position
 	Eventos.concluir(evento if evento != "" else Eventos.CAP1_RED_VALVE)
 	ViagemPortal.viajar(get_tree(), porta.cena_destino, porta.ponto_destino)
+	if filtro:
+		# engolido: o quadro estica pro centro e a lente se desfaz
+		filtro.mao = 2.4
+		filtro.tremer(0.5, 0.2)
+		filtro.ajustar("borrao_radial", 0.85, 1.6)
+		filtro.ajustar("aberration", 0.014, 1.6)
 	await fase(1.6, func(k: float) -> void:
 		var e := k * k
 		_fp.mirar(p0.lerp(centro, e * 0.85), centro, 10.0, 8.0, e * 0.5)

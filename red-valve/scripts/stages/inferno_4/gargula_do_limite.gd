@@ -35,6 +35,10 @@ const DUR_ARREMESSO := 1.5
 
 ## Pra onde ele vai (o portal do começo do inferno 4).
 var portal: Node3D
+## Acabamento de cinema do voo (grade do inferno, tarjas, tremores). A viagem
+## troca a cena no fim e leva o filtro junto.
+const FiltroCinema := preload("res://scripts/cutscenes/filtro_cinema.gd")
+var filtro = null
 
 
 func levar(jogador: CharacterBody3D, portal_do_comeco: Node3D) -> void:
@@ -49,6 +53,10 @@ func levar(jogador: CharacterBody3D, portal_do_comeco: Node3D) -> void:
 func _roteiro() -> void:
 	_entrar_em_cena()
 	GlobalUtils.esconder_objetivo()
+	filtro = FiltroCinema.criar(self, "inferno", -1)
+	filtro.ajustar("calor", 0.1)
+	filtro.mao = 1.2
+	filtro.entrar(0.6)
 
 	var alt_olho := _altura_do_olho()
 	var olho := player.global_position + Vector3.UP * alt_olho
@@ -103,6 +111,9 @@ func _roteiro() -> void:
 		gargula.voo_dirigido_frear()
 	fp.tocar(&"agarrado")
 	fp.tremer(0.030, 0.6)
+	if is_instance_valid(filtro):
+		filtro.impacto(1.0, Color(1.0, 0.55, 0.22), true)
+		filtro.mao = 2.4
 	fp.piscar(Color(1.0, 0.62, 0.25), 0.42, 0.02, 0.35)
 	GlobalUtils.vibrate_controller(null, 1.0, 1.0, 0.5)
 	await _fase(DUR_AGARRAO, func(k: float) -> void:
@@ -130,6 +141,9 @@ func _roteiro() -> void:
 	s2.y = cruzeiro
 	var dur_voo := clampf(s0.distance_to(arremesso) / VELOCIDADE, DUR_VOO_MIN, DUR_VOO_MAX)
 	var anterior := s0
+	if is_instance_valid(filtro):
+		# o vento do voo: o quadro corre um pouco pro centro
+		filtro.ajustar("borrao_radial", 0.18, 1.5)
 	await _fase(dur_voo, func(k: float) -> void:
 		if not is_instance_valid(fp) or not is_instance_valid(gargula):
 			return
@@ -156,6 +170,10 @@ func _roteiro() -> void:
 	_fugir(gargula, arremesso, saida_portal)
 	fp.tocar(&"queda")
 	GlobalUtils.vibrate_controller(null, 0.7, 0.7, 0.4)
+	if is_instance_valid(filtro):
+		filtro.impacto(0.7, Color(1.0, 0.55, 0.22))
+		filtro.ajustar("borrao_radial", 0.85, DUR_ARREMESSO)
+		filtro.ajustar("aberration", 0.014, DUR_ARREMESSO)
 	fp.piscar(Color(1.0, 0.62, 0.25), 0.3, 0.02, 0.3)
 	# O aviso do porão e o evento valem ANTES da troca de cena: a viagem leva o
 	# jogo embora no meio desta queda.
@@ -182,6 +200,8 @@ func _roteiro() -> void:
 
 ## Algo morreu no meio (troca de cena, jogador sumiu): devolve o controle.
 func _desistir(fp: Node3D, gargula) -> void:
+	if is_instance_valid(filtro):
+		filtro.desligar()
 	if is_instance_valid(fp):
 		fp.queue_free()
 	if is_instance_valid(gargula):

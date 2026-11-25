@@ -19,8 +19,8 @@ var _rise_cam: Camera3D
 var _rise_cam_anchor: Node3D
 var _rise_look_at: Vector3 = Vector3.ZERO
 var _rise_cam_time: float = 0.0
-## Acabamento de cinema das cutscenes da arena NO PROLOGO (a intro da primeira
-## vez e o golpe final em camera lenta). Depois do prologo a arena segue sem ele.
+## Acabamento de cinema das cutscenes da arena: a intro da primeira vez (prologo),
+## a subida do chao na chegada pelo amuleto e o golpe final em camera lenta.
 const FiltroCinema := preload("res://scripts/cutscenes/filtro_cinema.gd")
 var filtro = null
 
@@ -156,7 +156,13 @@ func _ready() -> void:
 			filtro = null
 		else:
 			# Pós-prólogo: player e inimigos emergem do chão da arena
+			filtro = FiltroCinema.criar(self, "arena", -1)
+			filtro.mao = 1.2
+			filtro.entrar(0.35)
 			await _play_rise_from_ground_intro()
+			if is_instance_valid(filtro):
+				filtro.sair(0.7)
+			filtro = null
 
 		# Restaura os controles e física APÓS o fim de toda a cutscene de entrada
 		if is_instance_valid(player):
@@ -257,8 +263,7 @@ func _start_final_sequence() -> void:
 	# 1. Ultra Câmera Lenta
 	Engine.time_scale = 0.15
 	AudioServer.set_playback_speed_scale(0.15) # Mantém o áudio (growl_death, drop_dead) em sincronia com o slowmo visual
-	if not SaveManager.prolog_finished:
-		_golpe_final_de_cinema()
+	_golpe_final_de_cinema()
 
 	# 2. Esconde Interface
 	var ui = get_tree().root.get_node_or_null("GlobalEnemyHealthUI")
@@ -711,7 +716,10 @@ func _play_rise_from_ground_intro() -> void:
 			if is_instance_valid(n):
 				_spawn_ground_burst(Vector3(n.global_position.x, 0.0, n.global_position.z))
 		GlobalUtils.vibrate_controller(Input, 0.8, 0.8, 0.5)
-		if is_instance_valid(cam):
+		if is_instance_valid(filtro):
+			# furando o chão: pancada de cinema em vez do solavanco da câmera
+			filtro.impacto(1.0, Color(1.0, 0.62, 0.35), true)
+		elif is_instance_valid(cam):
 			var shake := create_tween()
 			shake.tween_property(cam, "v_offset", 0.25, 0.05)
 			shake.tween_property(cam, "v_offset", -0.18, 0.05)

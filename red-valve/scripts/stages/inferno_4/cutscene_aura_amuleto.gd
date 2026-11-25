@@ -57,7 +57,12 @@ var _esquerda := Vector3.LEFT
 func rodar(dono: Node3D, jogador: CharacterBody3D, a_chama: Node3D) -> void:
 	chama = a_chama
 	_chama_origem = chama.global_position
-	travar(dono, jogador, 50.0)
+	# acabamento de cinema só no altar do Capítulo 1; os púlpitos dos outros
+	# capítulos rodam a mesma cena sem ele
+	travar(dono, jogador, 50.0, "inferno" if evento == Eventos.CAP1_AURA_AMULETO else "")
+	if filtro:
+		filtro.ajustar("calor", 0.12)
+		filtro.atmosfera(cam, "brasas", 50)
 	await _chegar_perto()
 	if vale():
 		await _gesto()
@@ -147,6 +152,9 @@ func _gesto() -> void:
 		lado = -lado
 	var cam_lado := meio + lado * 2.4 + Vector3.UP * 0.2 - _frente * 0.3
 	plantar(cam_lado, meio)
+	foco(3.0, 6.0, 0.05)
+	if filtro:
+		filtro.mao = 0.8
 
 	# 1) a mão vai ao bolso
 	_polo = -_frente
@@ -174,6 +182,12 @@ func _gesto() -> void:
 	# 4) a chama entra no amuleto
 	await esperar(0.35)
 	_tocar(SOM_AURA, 0.8, -4.0)
+	if filtro:
+		# a chama entra: a lente toma a cor dela
+		var cor := cor_aura if cor_aura.a > 0.0 else Color(0.7, 0.3, 1.0)
+		filtro.clarao(cor, 0.4, 1.2)
+		filtro.pulso("halation", 1.4, 1.6)
+		filtro.tremer(0.25, 0.6)
 	if is_instance_valid(chama):
 		chama.absorver(0.6, _amuleto)
 	GlobalUtils.vibrate_controller(null, 0.5, 0.5, 0.35)
@@ -192,6 +206,8 @@ func _gesto() -> void:
 	# 5) traz pra frente do rosto e olha
 	var olho := pe + Vector3.UP * 1.62
 	var cam_perto := rosto + _frente * 0.55 + lado * 0.45 + Vector3.UP * 0.08
+	# o close: o amuleto e o rosto nítidos, o inferno atrás vira mancha de fogo
+	foco(1.1, 2.0, 0.07)
 	await fase(1.0, func(k: float) -> void:
 		var e := suave(k)
 		_polo = (Vector3.DOWN + _esquerda * 0.6).normalized()
@@ -210,6 +226,7 @@ func _gesto() -> void:
 
 	# 6) guarda de novo
 	var cam_fim := pe + _frente * 2.6 + lado * 1.2 + Vector3.UP * 1.5
+	foco(3.5, 8.0, 0.05)
 	await fase(0.8, func(k: float) -> void:
 		var e := suave(k)
 		_polo = (Vector3.DOWN + _esquerda * 0.6).normalized().lerp(-_frente, e)

@@ -43,7 +43,10 @@ var _dir := Vector3.LEFT
 
 
 func rodar(dono: Node3D, jogador: CharacterBody3D) -> void:
-	travar(dono, jogador, 50.0)
+	# começa no fim de tarde; a mão pro céu esfria tudo e o raio vira a escola
+	travar(dono, jogador, 50.0, "entardecer")
+	if filtro:
+		filtro.atmosfera(cam, "poeira", 60)
 	await escurecer(1.0, 0.4)
 	_posicionar()
 	await esperar(0.2)
@@ -102,6 +105,7 @@ func _eles_indo_embora() -> void:
 	pra_eles = pra_eles.normalized()
 	var lado := Vector3(-pra_eles.z, 0.0, pra_eles.x)
 	var de := player.global_position - pra_eles * 2.6 + lado * 0.9 + Vector3.UP * 0.9
+	foco(de.distance_to(dona.global_position) + 3.0, 14.0, 0.04)
 	await escurecer(0.0, 0.5)
 	legenda("CAP1_CENA_MAYCOW_CHAMA", 2.4)
 	await fase(3.4, func(k: float) -> void:
@@ -120,10 +124,15 @@ func _ela_olha_pra_tras() -> void:
 	var cabeca := dona.global_position + Vector3.UP * 1.47
 	var de := cabeca + rosto_dir * 1.9 + Vector3.UP * 0.05
 	var ate := cabeca + rosto_dir * 1.25
+	# o rosto nítido, a escola inteira atrás dela derretendo no desfoque
+	foco(2.2, 5.0, 0.06)
+	if filtro:
+		filtro.mao = 0.7
 	await plano(de, cabeca, ate, cabeca, 2.6)
 	# o contraplano: por cima do ombro dela, o Maycow lá no meio da quadra
 	var ombro := cabeca - rosto_dir * 0.55 + direita * 0.35 + Vector3.UP * 0.1
 	var alvo := player.global_position + Vector3.UP * 0.6
+	foco(ombro.distance_to(alvo) + 2.5, 8.0, 0.05)
 	await plano(ombro, alvo, ombro - rosto_dir * 0.2, alvo, 2.0)
 
 
@@ -131,6 +140,12 @@ func _ela_olha_pra_tras() -> void:
 
 func _mao_pro_ceu() -> void:
 	dona.tocar(&"escola/mao_pro_ceu", 0.2)
+	foco(0.0)
+	if filtro:
+		# o sol vai embora junto com a mão subindo: a cor esfria antes do raio
+		filtro.mao = 1.0
+		filtro.aplicar_preset("escola_escura", 3.6)
+		filtro.ajustar("saturation", 0.85, 3.6)
 	var direita := Vector3(-_dir.z, 0.0, _dir.x)
 	var frente_dela := (-_dir * 0.75 + direita * 0.65).normalized()
 	var baixo := dona.global_position + frente_dela * 2.4 + Vector3.UP * 0.55
@@ -141,6 +156,7 @@ func _mao_pro_ceu() -> void:
 	# a câmera sobe pela mão até o céu
 	var mao0: Vector3 = dona.posicao_do_osso("hand.R")
 	_tocar_som(SOM_TROVAO, -10.0, 0.7)
+	tremer(0.22, 0.4)
 	await fase(2.0, func(k: float) -> void:
 		var e := suave(k)
 		plantar(baixo + Vector3.UP * (e * 1.2), mao0.lerp(mao0 + Vector3.UP * 45.0, e)))
@@ -158,7 +174,11 @@ func _o_raio() -> void:
 	_raio(QUADRA + Vector3(1.5, 70.0, -2.0), QUADRA)
 	clarao(1.0, 0.9)
 	_tocar_som(SOM_TROVAO, 4.0, 1.0)
-	GlobalUtils.shake_camera(1.0, 0.45)
+	if filtro:
+		impacto(1.3, Color(0.86, 0.92, 1.0), true)
+		filtro.ajustar("saturation", 0.74, 1.2)
+	else:
+		GlobalUtils.shake_camera(1.0, 0.45)
 	GlobalUtils.vibrate_controller(null, 1.0, 1.0, 0.8)
 	_sumir(dona)
 	_sumir(jonny)
@@ -246,6 +266,8 @@ const PLANOS_DA_ONDA := [
 
 
 func _a_escola_escurece() -> void:
+	if filtro:
+		filtro.mao = 1.4
 	for i in PLANOS_DA_ONDA.size():
 		var p: Array = PLANOS_DA_ONDA[i]
 		# espera a onda chegar perto do lugar deste plano
@@ -254,6 +276,10 @@ func _a_escola_escurece() -> void:
 			await get_tree().process_frame
 		if not vale():
 			return
+		# a onda passando pelo lugar: um ronco no chão a cada plano
+		tremer(0.3, 0.45)
+		if filtro:
+			filtro.pulso("aberration", 0.006, 1.2)
 		await plano(p[1], p[2], p[3], p[4], 2.4, func(_k: float) -> void:
 			_some_quem_a_onda_pegou())
 	# o resto dos adultos (os que estão longe) some de vez
@@ -287,12 +313,24 @@ func _o_grizzolito() -> void:
 	grizzolito.visible = true
 	_nuvem(CANTO + Vector3.UP, 2.6)
 	_tocar_som(SOM_SUMIR, 0.0, 0.6)
+	if filtro:
+		# ele surge da fumaça: a lente puxa vermelho e o plano fecha nele
+		filtro.clarao(Color(1.0, 0.25, 0.18), 0.3, 0.6)
+		filtro.pulso("aberration", 0.008, 1.0)
+		filtro.mao = 1.0
 	var anim := grizzolito.get("_anim") as AnimationPlayer
 	if anim:
 		anim.play(&"andar")
 	var frente := Vector3(sin(grizzolito.rotation.y), 0.0, cos(grizzolito.rotation.y))
 	var de := CANTO + frente * 4.0 + Vector3(-1.6, 1.0, 0.0)
+	foco(5.5, 10.0, 0.05)
+	# cada passo dele pesa na câmera
+	var passos := {"ultimo": 0}
 	await fase(3.6, func(k: float) -> void:
+		var passo := int(k * 3.6 / 0.62)
+		if passo > passos.ultimo:
+			passos.ultimo = passo
+			tremer(0.12, 0.9)
 		grizzolito.global_position += frente * 1.25 * get_process_delta_time()
 		var peito: Vector3 = grizzolito.global_position + Vector3.UP * 1.5
 		plantar(de + frente * (k * 1.5), peito))
@@ -301,6 +339,7 @@ func _o_grizzolito() -> void:
 	# por cima do ombro dele: o Maycow lá no meio da quadra
 	var costas := grizzolito.global_position - frente * 1.6 + Vector3.UP * 2.0 \
 		+ Vector3(-frente.z, 0.0, frente.x) * 0.7
+	foco(costas.distance_to(player.global_position) + 3.0, 10.0, 0.05)
 	await plano(costas, player.global_position + Vector3.UP * 0.8,
 		costas + frente * 0.6, player.global_position + Vector3.UP * 0.8, 2.0,
 		func(_k: float) -> void:

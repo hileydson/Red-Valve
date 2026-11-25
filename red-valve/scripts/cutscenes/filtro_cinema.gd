@@ -90,6 +90,24 @@ const PRESETS := {
 		"sombra_tint": Color(0.55, 0.24, 0.26), "luz_tint": Color(1.0, 0.80, 0.58),
 		"calor": 0.35,
 	},
+	# A escola as seis da tarde (Capitulo 1): sol baixo dourado, sombra azulada,
+	# o lugar ainda vivo — o retrato do que vai se perder.
+	"entardecer": {
+		"halation": 0.38, "halation_limiar": 0.55, "halation_cor": Color(1.0, 0.80, 0.58),
+		"aberration": 0.0016, "vignette_amount": 0.36, "grain_amount": 0.028,
+		"exposicao": 1.04, "contrast": 1.08, "saturation": 1.04, "haze": 0.08,
+		"sombra_tint": Color(0.46, 0.52, 0.70), "luz_tint": Color(1.0, 0.86, 0.66),
+		"calor": 0.0,
+	},
+	# A escola escura (depois do raio) e o porao: frio, sem cor, o vermelho da
+	# red valve e das luzes de emergencia estourando na lente.
+	"escola_escura": {
+		"halation": 0.42, "halation_limiar": 0.50, "halation_cor": Color(1.0, 0.45, 0.35),
+		"aberration": 0.0024, "vignette_amount": 0.50, "grain_amount": 0.040,
+		"exposicao": 1.16, "contrast": 1.12, "saturation": 0.74, "haze": 0.11,
+		"sombra_tint": Color(0.40, 0.50, 0.56), "luz_tint": Color(0.96, 0.90, 0.86),
+		"calor": 0.0,
+	},
 	# A arena: tempestade roxa, fogo das gargulas.
 	"arena": {
 		"halation": 0.40, "halation_limiar": 0.55, "halation_cor": Color(1.0, 0.70, 0.50),
