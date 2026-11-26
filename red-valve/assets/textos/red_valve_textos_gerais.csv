@@ -429,6 +429,7 @@ DEBUG_TRAVEL_HELL_3,Hell 3,Inferno 3
 DEBUG_TRAVEL_HELL_4,Hell 4,Inferno 4
 DEBUG_TRAVEL_ARENA_2,Arena 2,Arena 2
 DEBUG_TRAVEL_ARENA_3,Arena 3 (Throne),Arena 3 (Trono)
+DEBUG_TRAVEL_TEST_ROOM,Test room (enemies),Sala de teste (inimigos)
 DEBUG_EVENT_PROLOG_FINISHED,Prologue Finished (Cap. 1),Prólogo Finalizado (Cap. 1)
 DEBUG_EVENT_STAGE1_INTRO,Stage 1 Intro Played,Intro da Stage 1 Reproduzida
 DEBUG_EVENT_BATTLEFIELD1_INTRO,Battlefield 1 Intro Played,Intro da Battlefield 1 Reproduzida
@@ -774,3 +775,13 @@ PROMPT_TOCAR_CHAMA_AMARELA,Touch the yellow flame?,Tocar a chama amarela?
 PROMPT_TOCAR_CHAMA_BRANCA,Touch the white flame?,Tocar a chama branca?
 DEBUG_EVT_CAP4_PODER_SLAIN,Hell 3: took the white flame (Cogblade Slain),Inferno 3: pegou a chama branca (Cogblade Slain)
 DEBUG_EVT_CAP5_PODER_FIRE_CROSS,Hell 1: took the yellow flame (Cogblade Fire Cross),Inferno 1: pegou a chama amarela (Cogblade Fire Cross)
+LEKROSO_NOME,Lekroso,Lekroso
+SALA_TESTE_AJUDA,Test room — L3 + R3 or F4 opens the test menu,Sala de teste — L3 + R3 ou F4 abre o menu de teste
+SALA_TESTE_NA_SALA,Enemies in the room: %d,Inimigos na sala: %d
+SALA_TESTE_TITULO,Test room,Sala de teste
+SALA_TESTE_TRAZER,Choose the enemy to drop into the room:,Escolha o inimigo que vai cair na sala:
+SALA_TESTE_DISTANCIA,Distance: %d m,Distância: %d m
+SALA_TESTE_LIMPAR,Clear enemies,Limpar inimigos
+SALA_TESTE_CURAR,Heal Maycow,Curar Maycow
+SALA_TESTE_MUNICAO,Refill ammo,Repor munição
+SALA_TESTE_FECHAR,Close,Fechar

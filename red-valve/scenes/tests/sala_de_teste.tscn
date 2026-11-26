@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/tools/sala_de_teste.gd" id="1_sala"]
+[ext_resource type="PackedScene" uid="uid://bhyhnppiawn07" path="res://scenes/configs/pause.tscn" id="2_pause"]
+
+[node name="sala_de_teste" type="Node3D"]
+editor_description = "Sala de teste de inimigos (nao faz parte do jogo). L3 + R3 ou F4 abre o menu de teste (escolher o inimigo, limpar, curar, municao). Roda no slot 9."
+script = ExtResource("1_sala")
+
+[node name="Pause" parent="." instance=ExtResource("2_pause")]
