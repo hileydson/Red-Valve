@@ -88,8 +88,10 @@ def clipes_dona_nice(rig, fontes):
     q_pe = rig.pose(NICE_PE)
     p_pe = rig.assentar(q_pe)
 
+    # o "Walking" da captura anda de re' (ver RT.retarget): lido ao contrario
     A.retarget(rig, ml, _acao(a_ml, "Walking"), "andar_de_mao", laco=True,
-               velocidade=0.85, ajustes=_prender(rig, q_pe, BRACO_DE_MAO_NICE))
+               velocidade=0.85, ajustes=_prender(rig, q_pe, BRACO_DE_MAO_NICE),
+               reverso=True)
 
     def respira(t, q, pos):
         A.girar(rig, q, "chest", A.em_torno((1, 0, 0), 1.2 * math.sin(t * math.tau / 3.5)))
@@ -141,7 +143,8 @@ def clipes_jonny(rig, fontes):
     # passada mais curta e mais rapida que a dela (velocidade > 1): a mesma
     # velocidade de chao com perna de menino
     A.retarget(rig, ml, _acao(a_ml, "Walking"), "andar_de_mao", laco=True,
-               velocidade=1.05, ajustes=_prender(rig, q_pe, BRACO_DE_MAO_JONNY))
+               velocidade=1.05, ajustes=_prender(rig, q_pe, BRACO_DE_MAO_JONNY),
+               reverso=True)
 
     def respira(t, q, pos):
         A.girar(rig, q, "chest", A.em_torno((1, 0, 0), 1.0 * math.sin(t * math.tau / 2.8)))

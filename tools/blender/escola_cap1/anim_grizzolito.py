@@ -115,7 +115,9 @@ def clipes(rig, fontes, lento=1.0):
     zb, a_zb = fontes["zombie"]
 
     A.retarget(rig, ml, _acao(a_ml, "Idle_11"), "parado", laco=True, velocidade=lento)
-    A.retarget(rig, ml, _acao(a_ml, "Walking"), "andar", laco=True, velocidade=lento)
+    # o "Walking" da captura anda de re' (ver RT.retarget): lido ao contrario
+    A.retarget(rig, ml, _acao(a_ml, "Walking"), "andar", laco=True, velocidade=lento,
+               reverso=True)
     A.retarget(rig, ml, _acao(a_ml, "Running"), "correr", laco=True)
     A.retarget(rig, ml, _acao(a_ml, "Headache_Relief"), "transformar")
     A.retarget(rig, ml, _acao(a_ml, "Angry_Ground_Stomp_2"), "rugido", velocidade=lento)

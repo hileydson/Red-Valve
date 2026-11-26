@@ -272,12 +272,15 @@ def girar_subarvore(alvo, q_mundo, nome, rot, pivo_cache=None):
 
 
 def retarget(fonte, acao_fonte, alvo, nome, ini=None, fim=None, no_lugar=True,
-             ajustes=None, velocidade=1.0, quadro0=0):
+             ajustes=None, velocidade=1.0, quadro0=0, reverso=False):
     """Copia `acao_fonte` (na armadura `fonte`) pro rig do `alvo` como `nome`.
 
     `ajustes(t, q_mundo, pos)`: chamado a cada quadro de saida (t em quadros
     desde o comeco do clipe novo), pode mexer em q_mundo/pos antes da gravacao.
     `velocidade` < 1 alonga o clipe (o andar lento da Dona Nice).
+    `reverso` le' a captura do fim pro comeco. O "Walking" do maycow_lopes.glb
+    esta' gravado de tras pra frente: o pe' de apoio desliza pra FRENTE e o
+    pe' no ar volta — quem toca ele direto anda de re' indo pra frente.
     Devolve o numero de quadros gravados.
     """
     cena = bpy.context.scene
@@ -300,7 +303,7 @@ def retarget(fonte, acao_fonte, alvo, nome, ini=None, fim=None, no_lugar=True,
     acao = nova_acao(alvo.arm, nome)
     n_saida = int(round((fim - ini) / velocidade)) + 1
     for t in range(n_saida):
-        f = ini + t * velocidade
+        f = (fim - t * velocidade) if reverso else (ini + t * velocidade)
         cena.frame_set(int(f), subframe=f - int(f))
         q = {}
         for a_nome, f_nome in alvo.mapa.items():

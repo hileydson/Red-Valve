@@ -10,8 +10,9 @@ extends "res://scripts/cutscenes/cutscene_cap1.gd"
 ##  5. o rosto do Maycow — a porta bate e o sino toca: eles entraram;
 ##  6. a porta da igreja, sem ninguém.
 ##
-## A câmera corta ANTES de eles encostarem na porta (a porta do scan não
-## abre): eles somem enquanto ela está no rosto do Maycow. Conclui
+## A câmera corta ANTES de eles chegarem no muro de pedra do adro (a porta do
+## scan não abre, e o muro eles atravessariam): eles somem enquanto ela está no
+## rosto do Maycow. Conclui
 ## `CAP2_NICE_ENTRA_IGREJA` no fim. Quem monta os atores e os solta depois é
 ## o `capitulo_2_cidade.gd`.
 
@@ -21,9 +22,12 @@ const SOM_SINO := "res://assets/sounds/cenarios/sino.ogg"
 ## Onde o Maycow anda (pela praça, paralelo à fachada, rumo ao -Z) e para.
 const MAYCOW_DE := Vector3(566.0, 0.0, -301.5)
 const MAYCOW_PARA := Vector3(566.0, 0.0, -311.5)
-## A Dona Nice sai daqui e vai até a porta; o Jonny vai do lado esquerdo dela.
-const NICE_INICIO := Vector3(573.6, 0.0, -318.0)
+## A Dona Nice sai daqui rumo à porta; o Jonny vai do lado esquerdo dela.
+const NICE_INICIO := Vector3(572.6, 0.0, -318.0)
 const NICE_PORTA := Vector3(581.0, 0.0, -318.0)
+## Onde eles param: o muro de pedra do adro começa em x ≈ 579 e passando
+## daqui as pernas entram nele. O corte pro rosto do Maycow vem antes.
+const NICE_PARA_X := 578.2
 const VELOCIDADE := 0.9
 ## A porta da igreja (a fachada olha pro -X).
 const PORTA := Vector3(582.1, 0.0, -317.7)
@@ -83,8 +87,10 @@ func _posicionar() -> void:
 func _process(delta: float) -> void:
 	if not _andando or not is_instance_valid(dona):
 		return
-	if dona.global_position.x >= NICE_PORTA.x:
+	if dona.global_position.x >= NICE_PARA_X:
 		_andando = false
+		dona.tocar(&"escola/parada_de_mao", 0.3)
+		jonny.tocar(&"escola/parado_de_mao", 0.3)
 		return
 	var passo := _dir * VELOCIDADE * delta
 	for ator in [dona, jonny]:
@@ -141,7 +147,7 @@ func _eles_no_adro() -> void:
 	# por cima do ombro direito dele: os dois lá na frente, de costas, indo pra
 	# porta
 	var de := _cabeca() + Vector3(-1.9, 0.15, 0.7)
-	await fase(4.0, func(k: float) -> void:
+	await fase(3.6, func(k: float) -> void:
 		var alvo := (dona.global_position + jonny.global_position) * 0.5 + Vector3.UP * 0.9
 		plantar(de + Vector3(suave(k) * 0.9, 0.0, 0.0), alvo))
 
@@ -150,8 +156,9 @@ func _eles_no_adro() -> void:
 
 func _chegando_na_porta() -> void:
 	# baixo, no canto do adro: eles de costas subindo pra porta
+	# curto: corta antes de eles chegarem no muro do adro (NICE_PARA_X)
 	var de := Vector3(575.6, _chao(Vector3(575.6, 0, -321.6)) + 0.9, -321.6)
-	await fase(3.9, func(k: float) -> void:
+	await fase(2.6, func(k: float) -> void:
 		var alvo := (dona.global_position + jonny.global_position) * 0.5 + Vector3.UP * 1.0
 		plantar(de + Vector3(suave(k) * 0.8, 0.0, 0.0), alvo.lerp(_porta_em(1.6), 0.35)))
 
