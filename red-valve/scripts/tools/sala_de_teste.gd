@@ -35,7 +35,7 @@ const DISTANCIAS := [12.0, 6.0, 3.0]
 class Atalhos extends Node:
 	var sala: Node
 
-	func _input_do_menu(evento: InputEvent) -> void:
+	func _input(evento: InputEvent) -> void:
 		sala._input_do_menu(evento)
 
 var _player: Node3D

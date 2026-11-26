@@ -1015,7 +1015,9 @@ func _arrancar_membro(membro: String) -> bool:
 	GlobalUtils.shake_camera(0.3, 0.22)
 	if _ossos:
 		_ossos.intensidade = minf(_ossos.intensidade + 0.25, 2.0)
-	_tranco(&"dano_forte", 0.0, 0.08)
+	# no bote ele nem sente: o braco cai e ele continua vindo
+	if not _no_bote():
+		_tranco(&"dano_forte", 0.0, 0.08)
 	return true
 
 

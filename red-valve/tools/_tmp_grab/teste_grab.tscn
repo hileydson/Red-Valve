@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3]
-
-[ext_resource type="Script" path="res://tools/_tmp_grab/teste_grab.gd" id="1"]
-
-[node name="teste" type="Node"]
-script = ExtResource("1")
