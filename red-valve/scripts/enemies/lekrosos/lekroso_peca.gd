@@ -8,7 +8,9 @@ extends RigidBody3D
 ## pose em que ela estava quando saiu. Quem monta e' o `lekroso.gd`; aqui
 ## so' a vida dela no chao:
 ##
-##   cai, quica, deita e FICA — o chao conta a briga
+##   cai, quica, deita e FICA — o chao conta a briga. Parou torta (em pe',
+##   espetada, de quina)? `_assentar` tomba ela ate' a face mais larga
+##   encostar no chao, e dali ela nao sai mais
 ##   o corte espirra sangue em golfadas por `tempo_jorro` segundos (o braco
 ##   bem mais que uma lasca), depois so' pinga
 ##   a poca cresce embaixo dela
@@ -31,8 +33,15 @@ var permanencia: float = 90.0
 var tam_poca: float = 0.5
 var e_membro: bool = false
 ## O eixo mais FINO da peca, no espaco deste corpo: deitada, ele aponta pra
-## cima. (Quem monta mede pela caixa da malha.)
+## cima. Quem monta da' um palpite pela caixa; no `_ready` ele e' refeito
+## pelos vertices de verdade (um braco dobrado no cotovelo nao cabe numa
+## caixa de repouso).
 var eixo_fino: Vector3 = Vector3.UP
+
+## Quanto tempo parada antes de assentar, e o teto (quem fica tremendo).
+const PARADA_PRA_ASSENTAR := 0.3
+const TETO_PRA_ASSENTAR := 4.0
+const DURACAO_ASSENTAR := 0.45
 
 static var _vivas: Array = []
 
@@ -42,8 +51,11 @@ var _pivo_corte: Node3D
 var _pousou: bool = false
 var _tempo: float = 0.0
 var _proxima_gota: float = 0.4
-var _tombos: int = 0
-var _proximo_tombo: float = 1.2
+## Os vertices da peca (amostra), no espaco deste corpo: e' por eles que se
+## sabe a grossura e onde fica o ponto mais baixo.
+var _pontos: PackedVector3Array = PackedVector3Array()
+var _parada: float = 0.0
+var _assentada: bool = false
 
 
 func _ready() -> void:
@@ -60,6 +72,7 @@ func _ready() -> void:
 	fis.rough = true
 	physics_material_override = fis
 	body_entered.connect(_bateu)
+	_le_pontos()
 
 	_vivas = _vivas.filter(func(p): return is_instance_valid(p))
 	_vivas.append(self)
@@ -110,27 +123,114 @@ func _physics_process(delta: float) -> void:
 				Sangue.mancha(get_tree(), c["position"], c["normal"], tam, "gota", 50.0)
 	if not _pousou and _tempo > 1.6 and linear_velocity.length() < 0.3:
 		_pousar()
-	_tombar_se_em_pe()
+	if not _assentada and not freeze:
+		var parada := linear_velocity.length() < 0.25 and angular_velocity.length() < 0.8
+		_parada = _parada + delta if parada else 0.0
+		if (_tempo > 0.6 and _parada > PARADA_PRA_ASSENTAR) or _tempo > TETO_PRA_ASSENTAR:
+			_assentar()
 
 
-## Peca que parou EM PE (o antebraco espetado no chao, a lasca de quina como
-## barbatana) le como erro, nao como membro caido. Assentou assim: um tranco
-## de lado ate' ela deitar (tres tentativas).
-func _tombar_se_em_pe() -> void:
-	if _tombos >= 3 or _tempo < _proximo_tombo:
+# ------------------------------------------------------------ deitar
+
+## Amostra dos vertices de todas as malhas da peca (o braco leva antebraco e
+## mao junto, cada um na pose em que saiu), no espaco deste corpo. Dela sai o
+## eixo fino de verdade: o de MENOR espalhamento dos pontos.
+func _le_pontos() -> void:
+	var todos := PackedVector3Array()
+	for filho in get_children():
+		var mi := filho as MeshInstance3D
+		if mi == null or mi.mesh == null:
+			continue
+		for sup in mi.mesh.get_surface_count():
+			var arr := mi.mesh.surface_get_arrays(sup)
+			if arr.is_empty():
+				continue
+			var vs: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+			var passo := maxi(1, vs.size() / 400)
+			for i in range(0, vs.size(), passo):
+				todos.append(mi.transform * vs[i])
+	if todos.size() < 4:
 		return
-	if linear_velocity.length() > 0.25 or angular_velocity.length() > 0.6:
-		return
+	_pontos = todos
+	var fino := _menor_espalhamento(todos)
+	if fino.length() > 0.5:
+		eixo_fino = fino
+
+
+## Autovetor de MENOR autovalor da covariancia dos pontos (a normal do plano
+## que melhor passa por eles). Iteracao de potencia em (λmax·I − C).
+static func _menor_espalhamento(pts: PackedVector3Array) -> Vector3:
+	var media := Vector3.ZERO
+	for q in pts:
+		media += q
+	media /= float(pts.size())
+	var xx := 0.0
+	var xy := 0.0
+	var xz := 0.0
+	var yy := 0.0
+	var yz := 0.0
+	var zz := 0.0
+	for q in pts:
+		var d := q - media
+		xx += d.x * d.x
+		xy += d.x * d.y
+		xz += d.x * d.z
+		yy += d.y * d.y
+		yz += d.y * d.z
+		zz += d.z * d.z
+	var c := Basis(Vector3(xx, xy, xz), Vector3(xy, yy, yz), Vector3(xz, yz, zz))
+	var teto := xx + yy + zz  # >= maior autovalor
+	var m := Basis(Vector3(teto, 0, 0), Vector3(0, teto, 0), Vector3(0, 0, teto))
+	m.x -= c.x; m.y -= c.y; m.z -= c.z
+	var v := Vector3(0.31, 0.83, 0.47).normalized()
+	for _i in 40:
+		var w := m * v
+		if w.length() < 1e-9:
+			break
+		v = w.normalized()
+	return v
+
+
+## Tomba a peca ate' o eixo fino ficar de pe' (a face mais larga no chao) e
+## a poe encostada no chao. Dali em diante ela e' cenario: congelada.
+func _assentar() -> void:
+	_assentada = true
+	var chao := Sangue.chao(get_world_3d(), global_position + Vector3.UP * 0.4, 3.0)
+	var normal := Vector3.UP
+	if not chao.is_empty():
+		normal = (chao["normal"] as Vector3).normalized()
 	var fino := (global_basis * eixo_fino).normalized()
-	if absf(fino.dot(Vector3.UP)) > 0.55:
-		_tombos = 3
+	if fino.dot(normal) < 0.0:
+		fino = -fino
+	var de := global_basis.get_rotation_quaternion()
+	var giro := Quaternion(fino, normal) if fino.dot(normal) < 0.9999 else Quaternion.IDENTITY
+	var ate := giro * de
+	var escala := global_basis.get_scale()
+	freeze_mode = RigidBody3D.FREEZE_MODE_KINEMATIC
+	freeze = true
+	linear_velocity = Vector3.ZERO
+	angular_velocity = Vector3.ZERO
+	var xz := global_position
+	var tw := create_tween()
+	tw.tween_method(func(t: float):
+		var q := de.slerp(ate, t)
+		global_basis = Basis(q).scaled(escala)
+		_encostar(xz, chao), 0.0, 1.0, DURACAO_ASSENTAR) \
+		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+
+
+## Poe o ponto mais baixo da peca rente ao chao, sem mexer no x/z.
+func _encostar(xz: Vector3, chao: Dictionary) -> void:
+	if _pontos.is_empty():
 		return
-	_tombos += 1
-	_proximo_tombo = _tempo + 0.9
-	sleeping = false
-	var giro := fino.cross(Vector3.UP).normalized()
-	apply_torque_impulse(giro * mass * 0.35)
-	apply_central_impulse(Vector3.UP * mass * 0.6)
+	var y_chao := global_position.y - 0.3
+	if not chao.is_empty():
+		y_chao = (chao["position"] as Vector3).y
+	var base := global_basis
+	var menor := INF
+	for q in _pontos:
+		menor = minf(menor, (base * q).y)
+	global_position = Vector3(xz.x, y_chao + 0.004 - menor, xz.z)
 
 
 func _bateu(_corpo: Node) -> void:
