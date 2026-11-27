@@ -38,3 +38,6 @@ const PECAS := {
 	"quadril_l": {"tipo": "pedaco", "zona": "cintura", "osso": "hips", "centro": Vector3(0.1485, 0.9204, 0.0169), "normal": Vector3(0.8838, 0.0, 0.4679), "raio": 0.0750, "massa": 229},
 	"quadril_r": {"tipo": "pedaco", "zona": "cintura", "osso": "hips", "centro": Vector3(-0.1337, 0.9567, 0.025), "normal": Vector3(-0.8838, 0.0, 0.4679), "raio": 0.0750, "massa": 150},
 }
+
+## Metros por ciclo de cada clipe de andar (animar.py).
+const PASSADA := {"andar": 0.333, "vagar": 0.695}

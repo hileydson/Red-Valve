@@ -17,7 +17,8 @@ extends Node3D
 ## A lista nao e' escrita a mao: sai de uma varredura de `scenes/enemies/`
 ## (ver `_descobrir_inimigos`). Inimigo novo aparece sozinho, desde que more
 ## la' e seja inimigo de verdade (grupo "enemies", ou montado sobre o
-## `enemy.tscn`).
+## `enemy.tscn`). Os lekrosos sao UMA entrada so' ("Lekroso"): cada escolha
+## traz um modelo diferente (ver `FAMILIAS`).
 ##
 ## Roda no slot 9 (`SaveManager.current_slot`): a sala nunca grava por cima do
 ## save de quem esta' testando. Isso continua valendo depois de sair dela pelo
@@ -28,6 +29,12 @@ const PLAYER := preload("res://scenes/player/player.tscn")
 const PASTA_INIMIGOS := "res://scenes/enemies"
 ## O molde comum dos inimigos antigos: sozinho nao tem corpo nem modelo.
 const MOLDES := ["res://scenes/enemies/enemy.tscn"]
+## Familias: tudo o que mora nessas pastas vira UMA entrada do menu, e cada
+## vez que ela e' escolhida cai um modelo diferente do anterior. Lekroso
+## novo (scenes/enemies/lekrosos/lekroso_N.tscn) entra no sorteio sozinho.
+const FAMILIAS := {
+	"res://scenes/enemies/lekrosos": "Lekroso",
+}
 const DISTANCIAS := [12.0, 6.0, 3.0]
 
 ## Escuta os atalhos mesmo com o jogo pausado (a sala em si pausa junto: o
@@ -42,8 +49,12 @@ var _player: Node3D
 var _inimigos: Array[Node] = []
 var _rotulo: Label
 
-## [{nome, cena}], em ordem alfabetica.
+## [{nome, cenas: [caminho...]}], em ordem alfabetica.
 var _catalogo: Array = []
+## Por familia, as cenas que ainda nao cairam nesta rodada do sorteio, e a
+## ultima que caiu (pra rodada seguinte nao comecar repetindo).
+var _sorteio := {}
+var _ultima := {}
 var _distancia: int = 0
 
 # --- o menu ---
@@ -71,7 +82,7 @@ func _ready() -> void:
 	_player.global_position = Vector3(0, 1.12, 0)
 	# comeca com o lekroso, o primeiro da lista nao e' sempre o mais testado
 	for i in _catalogo.size():
-		if String(_catalogo[i]["cena"]).ends_with("lekroso_1.tscn"):
+		if String(_catalogo[i]["nome"]) == "Lekroso":
 			_novo_inimigo(i)
 			break
 
@@ -193,10 +204,21 @@ func _descobrir_inimigos() -> Array:
 	var cenas: Array[String] = []
 	_varrer(PASTA_INIMIGOS, cenas)
 	var achados: Array = []
+	var familias := {}
 	for caminho in cenas:
 		if caminho in MOLDES or not _e_inimigo(caminho):
 			continue
-		achados.append({"nome": _nome_bonito(caminho), "cena": caminho})
+		var familia := ""
+		for pasta in FAMILIAS:
+			if caminho.begins_with(String(pasta) + "/"):
+				familia = FAMILIAS[pasta]
+		if familia == "":
+			achados.append({"nome": _nome_bonito(caminho), "cenas": [caminho]})
+		elif familias.has(familia):
+			(familias[familia]["cenas"] as Array).append(caminho)
+		else:
+			familias[familia] = {"nome": familia, "cenas": [caminho]}
+			achados.append(familias[familia])
 	achados.sort_custom(func(a, b): return String(a["nome"]).naturalnocasecmp_to(String(b["nome"])) < 0)
 	return achados
 
@@ -246,7 +268,7 @@ func _nome_bonito(caminho: String) -> String:
 func _novo_inimigo(indice: int) -> void:
 	if indice < 0 or indice >= _catalogo.size():
 		return
-	var cena := load(_catalogo[indice]["cena"]) as PackedScene
+	var cena := load(_sortear(indice)) as PackedScene
 	if cena == null:
 		return
 	var inimigo := cena.instantiate() as Node3D
@@ -267,6 +289,25 @@ func _novo_inimigo(indice: int) -> void:
 		+ frente * d + Vector3(0, 0.05, 0)
 	_inimigos.append(inimigo)
 	_atualiza_painel()
+
+
+## A cena da entrada: sozinha, ela mesma; familia, a proxima de um saco
+## embaralhado (todas caem uma vez antes de alguma repetir, e nunca a mesma
+## duas vezes seguidas).
+func _sortear(indice: int) -> String:
+	var cenas: Array = _catalogo[indice]["cenas"]
+	if cenas.size() == 1:
+		return cenas[0]
+	var saco: Array = _sorteio.get(indice, [])
+	if saco.is_empty():
+		saco = cenas.duplicate()
+		saco.shuffle()
+		if saco[0] == _ultima.get(indice, ""):
+			saco.push_back(saco.pop_front())
+	var escolhida: String = saco.pop_front()
+	_sorteio[indice] = saco
+	_ultima[indice] = escolhida
+	return escolhida
 
 
 func _limpar() -> void:

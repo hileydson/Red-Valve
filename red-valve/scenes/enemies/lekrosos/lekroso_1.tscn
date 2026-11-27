@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/enemies/lekrosos/lekroso.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://assets/3d_model/enemies/lekrosos/lekroso_1/lekroso_1_rig.glb" id="2_modelo"]
@@ -7,6 +7,7 @@
 [ext_resource type="AudioStream" path="res://assets/sounds/enemies/zombies/zombie_dead.mp3" id="5_morte"]
 [ext_resource type="AudioStream" path="res://assets/sounds/enemies/growl_2.mp3" id="6_dor"]
 [ext_resource type="AudioStream" path="res://assets/sounds/igreja/mordida_1.ogg" id="7_mordida"]
+[ext_resource type="Script" path="res://scripts/enemies/lekrosos/lekroso_1_dados.gd" id="8_dados"]
 
 [sub_resource type="CapsuleShape3D" id="corpo"]
 radius = 0.15
@@ -17,6 +18,7 @@ editor_description = "Lekroso 1, o primeiro dos lekrosos: zumbi que perambula on
 collision_layer = 4
 collision_mask = 2
 script = ExtResource("1_script")
+dados = ExtResource("8_dados")
 
 [node name="forma" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.725, 0)

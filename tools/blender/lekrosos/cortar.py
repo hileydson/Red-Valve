@@ -2,13 +2,15 @@
 """Desmembramento do Lekroso: pecas, crateras, cotos e as pecas soltas que
 caem no chao.
 
-    blender -b Red-Valve-Blender/lekrosos/lekroso_1.blend \
-        -P tools/blender/lekrosos/cortar.py -- lekroso_1
+    blender -b Red-Valve-Blender/lekrosos/lekroso_N.blend \
+        -P tools/blender/lekrosos/cortar.py -- lekroso_N
 
 Le' o .blend do `montar_lekroso.py` (malha + rig + pesos) e salva
-`Red-Valve-Blender/lekrosos/lekroso_1_cortado.blend`, que o `animar.py` abre.
-Escreve tambem `red-valve/scripts/enemies/lekrosos/lekroso_1_dados.gd` (a
-tabela das pecas que o jogo le').
+`Red-Valve-Blender/lekrosos/lekroso_N_cortado.blend`, que o `animar.py` abre.
+Escreve tambem `red-valve/scripts/enemies/lekrosos/lekroso_N_dados.gd` (a
+tabela das pecas que o jogo le'; o animar.py acrescenta a PASSADA). Tudo
+aqui e' relativo aos OSSOS, entao vale pra qualquer lekroso montado pelo
+`montar_lekroso.py`.
 
 COMO UMA PECA SOME SEM CORTAR MALHA EM TEMPO DE JOGO
 ----------------------------------------------------
@@ -314,6 +316,10 @@ class Corte:
             b = self._osso(osso)
             eixo = b.head_local + (b.tail_local - b.head_local) * t
             hit = bvh.ray_cast(eixo + n * 0.8, -n, 0.8)
+            if hit[0] is None:
+                # o eixo do osso saiu um pouco pra fora da pele (ombro
+                # estreito, scan magro): atravessa mais um palmo
+                hit = bvh.ray_cast(eixo + n * 0.8, -n, 1.0)
             if hit[0] is None:
                 print("  !! %s: o raio nao achou a pele" % nome)
                 continue

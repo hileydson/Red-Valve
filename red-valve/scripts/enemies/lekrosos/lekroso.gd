@@ -49,7 +49,12 @@ extends CharacterBody3D
 ##
 ## As pecas e o que aparece no lugar delas sao feitos no Blender
 ## (`tools/blender/lekrosos/`); a tabela que liga regiao -> peca e' gerada
-## (`lekroso_1_dados.gd`). Aqui so' se decide QUANDO.
+## (`<lekroso>_dados.gd`, um por modelo, posto em `dados` na cena). Aqui so'
+## se decide QUANDO.
+##
+## TODOS OS LEKROSOS SAO ESTE SCRIPT. O que muda de um pro outro e' so' o
+## modelo (no' `modelo`) e a tabela dele (`dados`); cena nova sai do
+## `tools/blender/lekrosos/construir.sh lekroso_N`.
 ##
 ## ==========================================================================
 ## O CONTRATO
@@ -62,7 +67,6 @@ extends CharacterBody3D
 
 const Realidade := preload("res://scripts/systems/realidade_do_amuleto.gd")
 const ShadowRoads := preload("res://scripts/npcs/shadow_roads.gd")
-const Dados := preload("res://scripts/enemies/lekrosos/lekroso_1_dados.gd")
 const CaixaMembro := preload("res://scripts/enemies/folded_neighbor_limb.gd")
 const Ossos := preload("res://scripts/enemies/lekrosos/lekroso_ossos.gd")
 const Sangue := preload("res://scripts/enemies/lekrosos/lekroso_sangue.gd")
@@ -84,9 +88,10 @@ const GEMIDOS := [
 ]
 
 ## Velocidade do pe' de apoio de cada clipe de andar (m/s), medida no
-## Blender (`animar.py` imprime): o clipe toca na razao da velocidade de
-## verdade, senao o pe' patina.
-const PASSADA := {"andar": 0.333, "vagar": 0.659}
+## Blender (`animar.py` grava no `_dados.gd` de cada lekroso): o clipe toca
+## na razao da velocidade de verdade, senao o pe' patina. Esta e' a do
+## Lekroso 1, pra um `dados` antigo que ainda nao tenha a dele.
+const PASSADA_PADRAO := {"andar": 0.333, "vagar": 0.659}
 ## Clipes em laco (o .glb nao guarda isso).
 const LACOS := ["parado", "parado_2", "vagar", "andar", "segurar"]
 
@@ -109,6 +114,9 @@ enum Estado { VAGANDO, PARADO, CACANDO, TRANCO, AGARRANDO, MORTO }
 @export var enemy_name: String = "LEKROSO_NOME"
 @export var max_health: int = 200
 @export var iron_rusks_value: int = 3
+## A tabela das pecas DESTE lekroso (`<nome>_dados.gd`, gerado pelo
+## cortar.py e pelo animar.py). Tem de casar com o `modelo`.
+@export var dados: Script
 
 @export_group("Perambular e cacar")
 ## Ate' onde ele se afasta de onde foi posto, perambulando.
@@ -171,6 +179,8 @@ var player: Node3D
 @onready var som_mordida: AudioStreamPlayer3D = $sons/mordida
 
 var _sk: Skeleton3D
+var _pecas: Dictionary = {}
+var _passada: Dictionary = PASSADA_PADRAO
 var _anim: AnimationPlayer
 var _ossos: SkeletonModifier3D
 var _clipe: StringName = &""
@@ -228,6 +238,12 @@ func _ready() -> void:
 	_proximo_tropeco = _rng.randf_range(6.0, 14.0)
 	_proximo_gemido = _rng.randf_range(2.0, 6.0)
 
+	if dados:
+		var consts := dados.get_script_constant_map()
+		_pecas = consts.get("PECAS", {})
+		_passada = consts.get("PASSADA", PASSADA_PADRAO)
+	else:
+		push_warning("%s: lekroso sem `dados` — sem desmembramento" % name)
 	_sk = modelo.find_child("Skeleton3D", true, false) as Skeleton3D
 	_anim = modelo.find_child("AnimationPlayer", true, false) as AnimationPlayer
 	if _anim:
@@ -456,7 +472,7 @@ func _bote(para: Vector3, delta: float) -> void:
 	velocity.x = lerpf(velocity.x, alvo.x, clampf(delta * 6.0, 0.0, 1.0))
 	velocity.z = lerpf(velocity.z, alvo.z, clampf(delta * 6.0, 0.0, 1.0))
 	var real := Vector2(velocity.x, velocity.z).length()
-	_tocar(&"andar", 0.25, clampf(real / float(PASSADA["andar"]), 0.8, 2.2))
+	_tocar(&"andar", 0.25, clampf(real / float(_passada["andar"]), 0.8, 2.2))
 
 
 # ------------------------------------------------------------ o passo
@@ -485,7 +501,7 @@ func _andar(para: Vector3, vel_base: float, clipe: StringName, delta: float,
 	velocity.z = lerpf(velocity.z, alvo.z, clampf(delta * 3.0, 0.0, 1.0))
 
 	var real := Vector2(velocity.x, velocity.z).length()
-	_tocar(clipe, 0.4, clampf(real / float(PASSADA[String(clipe)]), 0.55, 1.9))
+	_tocar(clipe, 0.4, clampf(real / float(_passada[String(clipe)]), 0.55, 1.9))
 	if not som_passos.playing:
 		som_passos.pitch_scale = _rng.randf_range(0.75, 0.9)
 		som_passos.play()
@@ -955,7 +971,7 @@ func _capsula(local: Vector3, raio: float) -> CollisionShape3D:
 
 ## Arranca a proxima peca da regiao. true = alguma peca saiu.
 func _arrancar(zona: String) -> bool:
-	if Dados.PECAS.has(zona) and Dados.PECAS[zona]["tipo"] == "membro":
+	if _pecas.has(zona) and _pecas[zona]["tipo"] == "membro":
 		return _arrancar_membro(zona)
 	return _arrancar_pedaco(zona)
 
@@ -966,8 +982,8 @@ func _arrancar_membro(membro: String) -> bool:
 	# o membro leva junto tudo o que esta' pendurado nele
 	var grupo: Array[String] = [membro]
 	var cortes: Array[String] = []
-	for filho in Dados.PECAS:
-		var f: Dictionary = Dados.PECAS[filho]
+	for filho in _pecas:
+		var f: Dictionary = _pecas[filho]
 		if f["tipo"] == "membro" and _pendurado_em(filho, membro):
 			if _perdidas.has(filho):
 				# ja' tinha caido: a ponta do membro e' o coto dele
@@ -975,7 +991,7 @@ func _arrancar_membro(membro: String) -> bool:
 					cortes.append(filho)
 			else:
 				grupo.append(filho)
-	var info: Dictionary = Dados.PECAS[membro]
+	var info: Dictionary = _pecas[membro]
 	var junta: Vector3 = info.get("junta", info["centro"])
 	var normal: Vector3 = info["normal"]
 	var pai_osso := _osso_acima(membro)
@@ -986,7 +1002,7 @@ func _arrancar_membro(membro: String) -> bool:
 		_perdidas[p] = true
 		if _ossos:
 			_ossos.sumir(p, pai_osso, sumidouro)
-			_ossos.perdeu_osso(String(Dados.PECAS[p]["osso"]))
+			_ossos.perdeu_osso(String(_pecas[p]["osso"]))
 			if p.begins_with("mao"):
 				_ossos.perdeu_osso("fingers." + p.right(1).to_upper())
 				_ossos.perdeu_osso("thumb." + p.right(1).to_upper())
@@ -1023,8 +1039,8 @@ func _arrancar_membro(membro: String) -> bool:
 
 func _arrancar_pedaco(zona: String) -> bool:
 	var vivos: Array[String] = []
-	for p in Dados.PECAS:
-		var d: Dictionary = Dados.PECAS[p]
+	for p in _pecas:
+		var d: Dictionary = _pecas[p]
 		if d["tipo"] == "pedaco" and d["zona"] == zona and not _perdidas.has(p):
 			vivos.append(p)
 	if vivos.is_empty():
@@ -1043,11 +1059,11 @@ func _arrancar_pedaco(zona: String) -> bool:
 		var dcam := -cam.global_basis.z
 		var menor := INF
 		for p in vivos:
-			var c := _no_mundo(p, Dados.PECAS[p]["centro"])
+			var c := _no_mundo(p, _pecas[p]["centro"])
 			var rel := c - o
 			var fora := (rel - dcam * rel.dot(dcam)).length()
 			# lasca do outro lado do corpo nao conta (o tiro nao atravessa)
-			var n := _normal_no_mundo(p, Dados.PECAS[p]["normal"])
+			var n := _normal_no_mundo(p, _pecas[p]["normal"])
 			if n.dot(-dcam) < -0.2:
 				fora += 0.5
 			if fora < menor:
@@ -1057,7 +1073,7 @@ func _arrancar_pedaco(zona: String) -> bool:
 		escolha = vivos[_rng.randi() % vivos.size()]
 
 	_perdidas[escolha] = true
-	var info: Dictionary = Dados.PECAS[escolha]
+	var info: Dictionary = _pecas[escolha]
 	var centro: Vector3 = info["centro"]
 	var normal: Vector3 = info["normal"]
 	if _ossos:
@@ -1087,27 +1103,27 @@ func _arrancar_pedaco(zona: String) -> bool:
 
 
 func _pendurado_em(filho: String, membro: String) -> bool:
-	var p := String(Dados.PECAS[filho].get("pai", ""))
+	var p := String(_pecas[filho].get("pai", ""))
 	var voltas := 0
 	while p != "" and voltas < 4:
 		if p == membro:
 			return true
-		p = String(Dados.PECAS[p].get("pai", ""))
+		p = String(_pecas[p].get("pai", ""))
 		voltas += 1
 	return false
 
 
 ## O osso em que o coto fica: o principal do membro de cima, ou o ombro.
 func _osso_acima(membro: String) -> String:
-	var pai := String(Dados.PECAS[membro].get("pai", ""))
+	var pai := String(_pecas[membro].get("pai", ""))
 	if pai != "":
-		return String(Dados.PECAS[pai]["osso"])
-	var i := _sk.find_bone(String(Dados.PECAS[membro]["osso"]))
+		return String(_pecas[pai]["osso"])
+	var i := _sk.find_bone(String(_pecas[membro]["osso"]))
 	return _sk.get_bone_name(_sk.get_bone_parent(i)) if i >= 0 else ""
 
 
 func _parte_acima(membro: String) -> String:
-	return String(Dados.PECAS[membro].get("pai", ""))
+	return String(_pecas[membro].get("pai", ""))
 
 
 func _apaga_zona(zona: String) -> void:
@@ -1129,7 +1145,7 @@ func _soltar(nomes: Array[String], cortes: Array[String], ponto_corte: Vector3,
 	var malha_p: Mesh = _malhas.get("peca_" + principal)
 	if malha_p == null:
 		return
-	var x_p := _pose_do_osso(String(Dados.PECAS[principal]["osso"]))
+	var x_p := _pose_do_osso(String(_pecas[principal]["osso"]))
 	var centro_rest := malha_p.get_aabb().get_center()
 	var corpo_x := x_p * Transform3D(Basis(), centro_rest)
 
@@ -1139,7 +1155,7 @@ func _soltar(nomes: Array[String], cortes: Array[String], ponto_corte: Vector3,
 	peca.forca_jorro = 0.85 if membro else 0.4
 	peca.tam_poca = 0.75 if membro else 0.3
 	peca.permanencia = 120.0 if membro else 70.0
-	peca.mass = clampf(float(Dados.PECAS[principal]["massa"]) / 600.0, 0.3, 4.0)
+	peca.mass = clampf(float(_pecas[principal]["massa"]) / 600.0, 0.3, 4.0)
 	peca.corte_local = ponto_corte - centro_rest
 	peca.corte_normal = normal_corte
 	var caixa := malha_p.get_aabb().size
@@ -1156,7 +1172,7 @@ func _soltar(nomes: Array[String], cortes: Array[String], ponto_corte: Vector3,
 
 	var partes: Array = []
 	for n in nomes:
-		partes.append(["peca_" + n, String(Dados.PECAS[n]["osso"])])
+		partes.append(["peca_" + n, String(_pecas[n]["osso"])])
 	for c in cortes:
 		partes.append(["corte_" + c, _osso_acima(c)])
 	for par in partes:
@@ -1198,11 +1214,11 @@ func _pose_do_osso(nome: String) -> Transform3D:
 
 
 func _no_mundo(peca: String, p_rest: Vector3) -> Vector3:
-	return _pose_do_osso(String(Dados.PECAS[peca]["osso"])) * p_rest
+	return _pose_do_osso(String(_pecas[peca]["osso"])) * p_rest
 
 
 func _normal_no_mundo(peca: String, n_rest: Vector3) -> Vector3:
-	return (_pose_do_osso(String(Dados.PECAS[peca]["osso"])).basis * n_rest).normalized()
+	return (_pose_do_osso(String(_pecas[peca]["osso"])).basis * n_rest).normalized()
 
 
 func _para_quem_bateu(de: Vector3) -> Vector3:

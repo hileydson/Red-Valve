@@ -1,10 +1,16 @@
 # -*- coding: utf-8 -*-
-"""Rig do Lekroso 1 (o primeiro dos lekrosos): malha + esqueleto + pesos.
+"""Rig de um lekroso: malha + esqueleto + pesos.
 
-    blender -b --factory-startup -P tools/blender/lekrosos/montar_lekroso.py -- lekroso_1
+    blender -b --factory-startup -P tools/blender/lekrosos/montar_lekroso.py -- lekroso_N
 
-Le':   red-valve/assets/3d_model/enemies/lekrosos/lekroso_1.glb   (scan, sem rig)
-Salva: Red-Valve-Blender/lekrosos/lekroso_1.blend                  (fonte)
+Le':   red-valve/assets/3d_model/enemies/lekrosos/lekroso_N.glb   (scan, sem rig)
+Salva: Red-Valve-Blender/lekrosos/lekroso_N.blend                  (fonte)
+
+LEKROSO NOVO: nao precisa escrever nada aqui. Sem entrada em PERSONAGENS, os
+pontos do esqueleto sao MEDIDOS NA MALHA (`pontos_auto.py`, validado contra
+o Lekroso 1 com diferenca de ate' ~3 cm por ponto) e o resto usa o PADRAO
+abaixo. So' entra em PERSONAGENS quem foge do molde (outra altura, braco
+colado no corpo, pose diferente).
 
 Mesmo caminho do Grizzolito e das malhas de scan da igreja: o esqueleto sai
 de PONTOS MEDIDOS e os pesos de um proxy de voxel (ver `rig_lib.py` em
@@ -30,9 +36,15 @@ AQUI = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(os.path.dirname(AQUI), "igreja_dona_nice"))
 import rig_lib as R  # noqa: E402
 
+sys.path.insert(0, AQUI)
+import pontos_auto  # noqa: E402
+
 RAIZ = os.path.dirname(os.path.dirname(os.path.dirname(AQUI)))
 LEKROSOS = os.path.join(RAIZ, "red-valve/assets/3d_model/enemies/lekrosos")
 BLENDS = os.path.join(os.path.dirname(RAIZ), "Red-Valve-Blender")
+
+# O que todo lekroso usa quando nao diz outra coisa.
+PADRAO = {"altura": 1.88, "voxel": 0.012, "tris": 36000}
 
 PERSONAGENS = {
     # 1,88 m, bracos pendurados a' frente, cabeca pra frente do pescoco.
@@ -60,10 +72,15 @@ PERSONAGENS = {
 
 def main():
     nome = sys.argv[sys.argv.index("--") + 1]
-    cfg = PERSONAGENS[nome]
+    cfg = dict(PADRAO, arquivo=nome + ".glb")
+    cfg.update(PERSONAGENS.get(nome, {}))
     R.limpar_cena()
     malha = R.importar_malha(os.path.join(LEKROSOS, cfg["arquivo"]))
     malha.name = nome + "_malha"
+    if "pontos" not in cfg:
+        vs = [tuple(malha.matrix_world @ v.co) for v in malha.data.vertices]
+        cfg["pontos"] = R.espelhar(pontos_auto.medir(vs))
+        print("  pontos medidos na malha (pontos_auto)")
     # O glTF chega com o vertice DUPLICADO em toda costura de UV, e a
     # decimacao mexe nas duas bordas de cada costura sem saber que eram a
     # mesma: sobravam frestas pela roupa inteira (e o desmembramento poe

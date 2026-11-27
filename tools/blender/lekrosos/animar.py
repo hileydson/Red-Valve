@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 """Clipes do Lekroso e o .glb do jogo.
 
-    blender -b Red-Valve-Blender/lekrosos/lekroso_1_cortado.blend \
-        -P tools/blender/lekrosos/animar.py -- lekroso_1
+    blender -b Red-Valve-Blender/lekrosos/lekroso_N_cortado.blend \
+        -P tools/blender/lekrosos/animar.py -- lekroso_N
 
 Abre o .blend do `cortar.py`, grava as acoes NELE e exporta malha + esqueleto
 (com os ossos-sombra) + pecas soltas + clipes:
-    red-valve/assets/3d_model/enemies/lekrosos/lekroso_1/lekroso_1_rig.glb
+    red-valve/assets/3d_model/enemies/lekrosos/lekroso_N/lekroso_N_rig.glb
 
 Clipes (o jogo le' os nomes; os "laco" ficam em laco no Godot):
 
@@ -50,6 +50,26 @@ from anim_comum import D  # noqa: E402
 RAIZ = os.path.dirname(os.path.dirname(os.path.dirname(AQUI)))
 MODELOS = os.path.join(RAIZ, "red-valve/assets/3d_model")
 SAIDA = os.path.join(MODELOS, "enemies/lekrosos")
+DADOS_GD = os.path.join(RAIZ, "red-valve/scripts/enemies/lekrosos")
+
+
+def gravar_passada(nome, passadas):
+    """Poe a passada de cada clipe de andar no `<nome>_dados.gd` (que o
+    cortar.py escreveu): o jogo casa a velocidade do clipe com a do corpo, e
+    perna mais comprida da' passo mais longo."""
+    caminho = os.path.join(DADOS_GD, nome + "_dados.gd")
+    linhas = []
+    if os.path.exists(caminho):
+        with open(caminho, encoding="utf-8") as f:
+            linhas = [l.rstrip("\n") for l in f
+                      if not l.startswith(("const PASSADA", "## Metros por ciclo"))]
+    while linhas and linhas[-1] == "":
+        linhas.pop()
+    corpo = ", ".join('"%s": %.3f' % (k, v) for k, v in passadas.items())
+    linhas += ["", "## Metros por ciclo de cada clipe de andar (animar.py).",
+               "const PASSADA := {%s}" % corpo]
+    with open(caminho, "w", encoding="utf-8") as f:
+        f.write("\n".join(linhas) + "\n")
 
 FONTES = {
     "zombie": "enemies/zombie.glb",
@@ -283,6 +303,58 @@ def passada(rig, acao, ossos=("toe.L", "toe.R")):
     return vels[len(vels) // 2]
 
 
+PES = ("toe.L", "toe.R", "foot.L", "foot.R")
+
+
+def _curvas(acao):
+    for camada in acao.layers:
+        for faixa in camada.strips:
+            for slot in acao.slots:
+                cb = faixa.channelbag(slot)
+                if cb is not None:
+                    yield cb
+
+
+def por_no_chao(arm, acao):
+    """Sobe ou desce o clipe inteiro ate' o pe' mais baixo encostar na altura
+    de REPOUSO dele (toe e foot, cada um contra o proprio repouso).
+
+    O quadril dos clipes sai na mesma altura pra todo lekroso, mas a perna
+    medida em cada scan tem outra proporcao: sem isto um flutuava 4 cm no
+    andar e o parado do Lekroso 1 boiava 7 cm. Um deslocamento so' por clipe
+    (o clipe que da' passo continua dando passo)."""
+    cena = bpy.context.scene
+    arm.animation_data.action = acao
+    if acao.slots:
+        arm.animation_data.action_slot = acao.slots[0]
+    rest = {o: (arm.matrix_world @ arm.data.bones[o].head_local).z for o in PES}
+    f0, f1 = (int(x) for x in acao.frame_range)
+    sobra = 9.0
+    for f in range(f0, f1 + 1):
+        cena.frame_set(f)
+        for o in PES:
+            sobra = min(sobra, (arm.matrix_world @ arm.pose.bones[o].head).z - rest[o])
+    if abs(sobra) < 0.002:
+        return 0.0
+    osso = arm.data.bones["hips"]
+    local = (arm.matrix_world.to_3x3() @ osso.matrix_local.to_3x3()).inverted() \
+        @ Vector((0.0, 0.0, -sobra))
+    caminho = 'pose.bones["hips"].location'
+    for cb in _curvas(acao):
+        achou = {fc.array_index: fc for fc in cb.fcurves if fc.data_path == caminho}
+        for i in range(3):
+            fc = achou.get(i)
+            if fc is None:
+                fc = cb.fcurves.new(caminho, index=i, group_name="hips")
+                fc.keyframe_points.insert(f0, 0.0)
+            for k in fc.keyframe_points:
+                k.co.y += local[i]
+                k.handle_left.y += local[i]
+                k.handle_right.y += local[i]
+            fc.update()
+    return -sobra
+
+
 def tirar_ossos_sombra(acao):
     """Os ossos-sombra ficam em repouso em todo clipe: tirar as curvas deles
     (o retarget grava chave em TODO osso da armadura)."""
@@ -322,10 +394,17 @@ def main():
             bpy.data.actions.remove(a)
     for a in novas:
         tirar_ossos_sombra(a)
+    for a in sorted(novas, key=lambda a: a.name):
+        d = por_no_chao(arm, a)
+        if d:
+            print("  %-11s pe' no chao: quadril %+.3f m" % (a.name, d))
     bpy.data.orphans_purge(do_local_ids=True, do_linked_ids=True, do_recursive=True)
 
+    passadas = {}
     for n in ("andar", "vagar"):
-        print("PASSADA %s %.3f m/s" % (n, passada(rig, bpy.data.actions[n])))
+        passadas[n] = passada(rig, bpy.data.actions[n])
+        print("PASSADA %s %.3f m/s" % (n, passadas[n]))
+    gravar_passada(nome, passadas)
     for a in sorted(novas, key=lambda a: a.name):
         print("CLIPE %-11s %5.2f s laco=%s" % (a.name, (a.frame_range[1] - a.frame_range[0]) / A.FPS,
                                               bool(a.get("laco", False))))
